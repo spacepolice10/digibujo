@@ -1,0 +1,5 @@
+<%= turbo_stream.prepend "cards", @card %>
+
+<%= turbo_stream.replace "new_card" do %>
+  <%= render "form", card: Card.new %>
+<% end %>

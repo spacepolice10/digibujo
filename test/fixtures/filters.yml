@@ -1,0 +1,19 @@
+one_tasks:
+  user: one
+  name: Tasks
+  fields: { "cardable_type": "Task" }
+
+one_notes:
+  user: one
+  name: Notes
+  fields: { "cardable_type": "Note" }
+
+two_tasks:
+  user: two
+  name: Tasks
+  fields: { "cardable_type": "Task" }
+
+two_notes:
+  user: two
+  name: Notes
+  fields: { "cardable_type": "Note" }

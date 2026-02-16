@@ -1,0 +1,11 @@
+<h1>Cards</h1>
+
+<%= turbo_frame_tag "new_card" do %>
+  <%= render "form", card: Card.new %>
+<% end %>
+
+<div id="cards">
+  <% @cards.each do |card| %>
+    <%= render card %>
+  <% end %>
+</div>

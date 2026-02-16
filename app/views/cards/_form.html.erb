@@ -1,0 +1,31 @@
+<%= turbo_frame_tag "new_card" do %>
+  <%= form_with model: card do |f| %>
+    <% if card.errors.any? %>
+      <div style="color:red;">
+        <ul>
+          <% card.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div>
+      <% Card.cardable_types.each do |type| %>
+        <%= label_tag nil, style: "margin-right: 1rem;" do %>
+          <%= radio_button_tag :cardable_type, type.underscore, type == "Task" %>
+          <%= type %>
+        <% end %>
+      <% end %>
+    </div>
+
+    <div>
+      <%= f.label :content %>
+      <%= f.rich_text_area :content %>
+    </div>
+
+    <div>
+      <%= f.submit %>
+    </div>
+  <% end %>
+<% end %>

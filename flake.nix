@@ -21,11 +21,11 @@
             colima
             docker-compose
             nodejs_24
+            (writeShellScriptBin "logs" "tail -f log/development.log | tspin")
+            (writeShellScriptBin "server" "bin/rails server 2>&1 | tspin")
           ];
           shellHook = ''
             colima start &
-            alias logs="tail -f log/development.log | tspin"
-            alias server="bin/rails server 2>&1 | tspin"
           '';
         };
       });

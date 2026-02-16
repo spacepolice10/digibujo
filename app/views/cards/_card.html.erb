@@ -1,0 +1,9 @@
+<div id="<%= dom_id(card) %>" style="border:1px solid #ccc; padding:1rem; margin:1rem 0;">
+  <p><strong><%= card.cardable_type %></strong></p>
+  <%= card.content %>
+  <p>
+    <%= link_to "Show", card %> |
+    <%= link_to "Edit", edit_card_path(card) %> |
+    <%= link_to "Delete", card, data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } %>
+  </p>
+</div>

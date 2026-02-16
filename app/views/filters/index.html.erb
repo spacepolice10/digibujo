@@ -1,0 +1,6 @@
+<h1>Index</h1>
+<% @filters.each do |filter| %>
+  <div>
+    <%= link_to filter.name, filter_path(filter) %>
+  </div>
+<% end %>

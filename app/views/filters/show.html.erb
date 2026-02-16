@@ -1,0 +1,8 @@
+<h1><%= @filter.name %></h1>
+<%= link_to "Back", filters_path %>
+
+<div id="cards">
+  <% @cards.each do |card| %>
+    <%= render card %>
+  <% end %>
+</div>
