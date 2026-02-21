@@ -1,0 +1,3 @@
+<%= turbo_stream.replace @card do %>
+  <%= render partial: "cards/card", locals: { card: @card } %>
+<% end %>

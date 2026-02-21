@@ -6,6 +6,7 @@ Rails.application.routes.draw do
       resource :stash, only: :update
       resource :pin, only: :update
       resource :archive, only: :update
+      resource :completion, only: [ :create, :destroy ]
     end
   end
   resources :streams
