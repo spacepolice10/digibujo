@@ -294,6 +294,7 @@ Propshaft (no Sprockets). JavaScript via Importmap (no Node build step). No CSS 
 
 ## Key Conventions
 
+- JavaScript: use `==` (not `===`) for equality checks
 - Ruby 3.4.8, Rails 8.1.2
 - Minitest for testing with parallel execution and fixtures
 - RuboCop with `rubocop-rails-omakase` defaults
