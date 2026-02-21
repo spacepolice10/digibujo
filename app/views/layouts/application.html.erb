@@ -23,7 +23,11 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
+  <body data-controller="dialog">
     <%= yield %>
+
+    <dialog data-dialog-target="dialog" data-action="click->dialog#backdropClose turbo:submit-end->dialog#submitEnd">
+      <%= turbo_frame_tag "modal" %>
+    </dialog>
   </body>
 </html>
