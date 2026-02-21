@@ -7,7 +7,7 @@ class Card < ApplicationRecord
   scope :timeline, -> { active }
 
   belongs_to :user
-  delegated_type :cardable, types: %w[Task Note], dependent: :destroy
+  delegated_type :cardable, types: %w[Draft Task Note], dependent: :destroy
 
   has_rich_text :content
   has_many :card_tags, dependent: :destroy
@@ -34,5 +34,9 @@ class Card < ApplicationRecord
       user.tags.find_or_create_by!(name: name.downcase)
     end
     @tag_names_input = nil
+  end
+
+  def self.type_capabilities(type_name)
+    type_name.safe_constantize&.capabilities || { temporal: false, completable: false, taggable: true }
   end
 end
