@@ -1,5 +1,7 @@
-<h1>Edit card</h1>
+<%= turbo_frame_tag "modal" do %>
+  <h1>Edit card</h1>
 
-<%= render "form", card: @card %>
+  <%= render "form", card: @card %>
 
-<%= link_to "Back", cards_path %>
+  <%= link_to "Cancel", cards_path, data: { action: "dialog#close" } %>
+<% end %>

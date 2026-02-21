@@ -1,0 +1,5 @@
+<%= turbo_stream.replace @card do %>
+  <%= render @card %>
+<% end %>
+
+<%= turbo_stream.update "modal", "" %>

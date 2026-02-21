@@ -31,7 +31,10 @@ class CardsController < ApplicationController
 
   def update
     if @card.update(card_params)
-      redirect_to @card
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to @card }
+      end
     else
       render :edit, status: :unprocessable_entity
     end
@@ -39,7 +42,10 @@ class CardsController < ApplicationController
 
   def destroy
     @card.destroy
-    redirect_to cards_path
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to cards_path }
+    end
   end
 
   private
