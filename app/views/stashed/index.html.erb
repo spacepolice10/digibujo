@@ -1,0 +1,12 @@
+<turbo-frame id="stashes_panel">
+  <div data-controller="toggle">
+    <button data-action="toggle#toggle">
+      Stashed (<%= @stashed_cards.size %>)
+    </button>
+    <div data-toggle-target="content" id="stashed_cards" hidden>
+      <% @stashed_cards.each do |card| %>
+        <%= render partial: "cards/card", locals: { card: card } %>
+      <% end %>
+    </div>
+  </div>
+</turbo-frame>

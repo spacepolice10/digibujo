@@ -1,0 +1,4 @@
+<%= turbo_stream.remove @card %>
+<%= turbo_stream.prepend "cards" do %>
+  <%= render partial: "cards/card", locals: { card: @card } %>
+<% end %>

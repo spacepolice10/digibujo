@@ -1,0 +1,11 @@
+<%= turbo_stream.remove @card %>
+<% if @card.stashed? %>
+  <%= turbo_stream.append "stashed_cards" do %>
+    <%= render partial: "cards/card", locals: { card: @card } %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.prepend "cards" do %>
+    <%= render partial: "cards/card", locals: { card: @card } %>
+  <% end %>
+<% end %>
+<%= turbo_stream.update "stash_count", Current.user.cards.stashed.count.to_s %>

@@ -1,4 +1,11 @@
 class Card < ApplicationRecord
+  include Stashable
+  include Pinnable
+  include Archivable
+
+  enum :status, { active: "active", stashed: "stashed", archived: "archived" }
+  scope :timeline, -> { active }
+
   belongs_to :user
   delegated_type :cardable, types: %w[Task Note], dependent: :destroy
 
