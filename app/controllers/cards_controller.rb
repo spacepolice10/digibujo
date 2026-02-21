@@ -2,7 +2,7 @@ class CardsController < ApplicationController
   before_action :set_card, only: %i[show edit update destroy]
 
   def index
-    @cards = Current.user.cards.order(created_at: :desc)
+    @cards = Current.user.cards.includes(:tags).timeline_order
   end
 
   def show
@@ -49,7 +49,7 @@ class CardsController < ApplicationController
   end
 
   def card_params
-    params.expect(card: [:content])
+    params.expect(card: [ :content, :date, :tag_names ])
   end
 
   def cardable_type
