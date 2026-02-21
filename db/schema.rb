@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_17_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_19_200000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -49,28 +49,34 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_17_100000) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "card_tags", force: :cascade do |t|
+    t.integer "card_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "tag_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["card_id", "tag_id"], name: "index_card_tags_on_card_id_and_tag_id", unique: true
+    t.index ["card_id"], name: "index_card_tags_on_card_id"
+    t.index ["tag_id"], name: "index_card_tags_on_tag_id"
+  end
+
   create_table "cards", force: :cascade do |t|
     t.integer "cardable_id", null: false
     t.string "cardable_type", null: false
     t.datetime "created_at", null: false
+    t.date "date"
+    t.boolean "pinned", default: false, null: false
+    t.string "status", default: "active", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["cardable_type", "cardable_id"], name: "index_cards_on_cardable"
+    t.index ["user_id", "status"], name: "index_cards_on_user_id_and_status"
     t.index ["user_id"], name: "index_cards_on_user_id"
   end
 
-  create_table "filters", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.json "fields", default: {}, null: false
-    t.string "name"
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["user_id"], name: "index_filters_on_user_id"
+  create_table "drafts", force: :cascade do |t|
   end
 
   create_table "notes", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -82,9 +88,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_17_100000) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
-  create_table "tasks", force: :cascade do |t|
+  create_table "streams", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.json "fields", default: {}, null: false
+    t.string "name"
     t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_streams_on_user_id"
+  end
+
+  create_table "tags", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id", "name"], name: "index_tags_on_user_id_and_name", unique: true
+    t.index ["user_id"], name: "index_tags_on_user_id"
+  end
+
+  create_table "tasks", force: :cascade do |t|
+    t.boolean "done", default: false, null: false
+    t.datetime "done_at"
   end
 
   create_table "users", force: :cascade do |t|
@@ -97,7 +121,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_17_100000) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "card_tags", "cards"
+  add_foreign_key "card_tags", "tags"
   add_foreign_key "cards", "users"
-  add_foreign_key "filters", "users"
   add_foreign_key "sessions", "users"
+  add_foreign_key "streams", "users"
+  add_foreign_key "tags", "users"
 end
