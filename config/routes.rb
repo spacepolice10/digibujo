@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   end
   resources :streams
   resources :tags
+  resource :calendar, only: :show
   resources :stashed, only: :index
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

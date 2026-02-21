@@ -1,0 +1,12 @@
+<%= turbo_frame_tag "calendar_panel" do %>
+  <h1>Calendar</h1>
+
+  <% @cards_by_date.each do |date, cards| %>
+    <h2><%= date ? l(date, format: :long) : "No date" %></h2>
+    <div>
+      <% cards.each do |card| %>
+        <%= render card %>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
