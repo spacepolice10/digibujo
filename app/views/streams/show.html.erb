@@ -1,0 +1,13 @@
+<%= turbo_frame_tag "cards_panel" do %>
+  <div style="display: flex; align-items: baseline; gap: 1rem;">
+    <h1><%= @stream.name %></h1>
+    <%= button_to "Delete", stream_path(@stream), method: :delete,
+          data: { turbo_confirm: "Delete this stream?" } %>
+  </div>
+
+  <div id="cards">
+    <% @cards.each do |card| %>
+      <%= render card %>
+    <% end %>
+  </div>
+<% end %>

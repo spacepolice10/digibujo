@@ -1,0 +1,7 @@
+
+<%= turbo_frame_tag "modal" do %>
+<h1>New Stream</h1>
+<%= link_to "Back", streams_path %>
+
+<%= render "form", stream: @stream %>
+<% end %>

@@ -1,0 +1,61 @@
+<%= form_with model: stream do |f| %>
+  <% if stream.errors.any? %>
+    <div style="color:red;">
+      <ul>
+        <% stream.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :name %>
+    <%= f.text_field :name, required: true %>
+  </div>
+
+  <div>
+    <label>Card type</label>
+    <div class="radio-group">
+      <%= label_tag nil do %>
+        <%= radio_button_tag "stream[cardable_type]", "", stream.cardable_type.blank? %>
+        All
+      <% end %>
+      <% Card.cardable_types.each do |type| %>
+        <%= label_tag nil do %>
+          <%= radio_button_tag "stream[cardable_type]", type, stream.cardable_type == type %>
+          <%= type %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :date_from, "Date from" %>
+    <%= f.date_field :date_from %>
+  </div>
+
+  <div>
+    <%= f.label :date_to, "Date to" %>
+    <%= f.date_field :date_to %>
+  </div>
+
+  <div data-controller="tag-input">
+    <%= f.label :tag_names, "Tags" %>
+    <%= f.hidden_field :tag_names, data: { tag_input_target: "hidden" } %>
+    <div class="tag-chips" data-tag-input-target="chips"></div>
+    <input type="text" placeholder="Add tags…" autocomplete="off"
+           data-tag-input-target="input"
+           data-action="input->tag-input#onInput keydown->tag-input#onKeydown">
+    <%= turbo_frame_tag "tag-suggestions", data: { tag_input_target: "suggestions" } %>
+  </div>
+
+  <div>
+    <%= f.label :sorted_by, "Sort" %>
+    <%= f.select :sorted_by, [["Newest first", "newest"], ["Oldest first", "oldest"]], {} %>
+  </div>
+
+  <div>
+    <%= f.submit %>
+  </div>
+<% end %>
