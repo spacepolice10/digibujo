@@ -1,0 +1,11 @@
+<%= turbo_frame_tag "tag-suggestions" do %>
+  <% if @tags.any? %>
+    <ul class="tag-suggestions">
+      <% @tags.each do |tag| %>
+        <li data-action="click->tag-input#select" data-name="<%= tag.name %>">
+          <%= tag.name %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+<% end %>

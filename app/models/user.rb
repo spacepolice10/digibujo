@@ -3,6 +3,7 @@ class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
   has_many :cards, dependent: :destroy
   has_many :filters, dependent: :destroy
+  has_many :tags, dependent: :destroy
 
   after_create :create_default_filters
 
