@@ -1,0 +1,20 @@
+<div class="triage-panel">
+  <div class="triage-type-selector">
+    <% Card.cardable_types.each do |type| %>
+      <%= button_to type, card_cardable_type_path(card),
+            params: { cardable_type: type.underscore },
+            class: "type-btn #{'active' if card.cardable_type == type}" %>
+    <% end %>
+  </div>
+
+  <div class="triage-repop">
+    <%= form_with url: card_pop_path(card), method: :patch do |f| %>
+      <%= f.date_field :pops_on, value: card.pops_on %>
+      <%= f.submit "Repop" %>
+    <% end %>
+  </div>
+
+  <div class="triage-archive">
+    <%= button_to "Archive", card_archive_path(card), method: :patch %>
+  </div>
+</div>

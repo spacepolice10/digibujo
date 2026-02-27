@@ -14,6 +14,7 @@ module Cardable
   def temporal?    = false
   def completable? = false
   def taggable?    = true
+  def form_fields  = []
 
   def capabilities
     { temporal: temporal?, completable: completable?, taggable: taggable? }

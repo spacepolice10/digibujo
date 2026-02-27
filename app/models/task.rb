@@ -8,4 +8,6 @@ class Task < ApplicationRecord
   def completable?
     true
   end
+
+  def form_fields = [:date_picker, :tag_picker]
 end

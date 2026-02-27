@@ -1,9 +1,4 @@
-<div id="<%= dom_id(card) %>" class="card<%= " pinned" if card.pinned? %><%= " archived" if card.archived? %>"
-     data-controller="card-actions"
-     data-card-actions-stash-url-value="<%= card_stash_path(card) %>"
-     data-card-actions-pin-url-value="<%= card_pin_path(card) %>"
-     data-card-actions-archive-url-value="<%= card_archive_path(card) %>"
-     data-card-actions-delete-url-value="<%= card_path(card) %>">
+<div id="<%= dom_id(card) %>" class="card<%= " archived" if card.archived? %>">
   <div class="card-action">
     <% if card.cardable.completable? %>
       <% if card.cardable.done? %>
@@ -16,18 +11,15 @@
         <% end %>
       <% end %>
     <% end %>
-    <%= render card.cardable, card: card %>
+    <%= render partial: "#{card.cardable_type.underscore.pluralize}/#{card.cardable_type.underscore}", locals: { card: card } %>
   </div>
   <a class="card-body"
-     href="<%= edit_card_path(card) %>"
+     href="<%= card_path(card) %>"
      data-turbo-frame="modal"
      data-turbo-action="advance"
      data-action="dialog#open">
     <div class="card-meta">
       <span class="card-type"><%= card.cardable_type %></span>
-      <% if card.pinned? %>
-        <span class="pinned-badge">Pinned</span>
-      <% end %>
     </div>
     <p class="card-title<%= " done" if card.cardable.completable? && card.cardable.done? %>">
       <%= card.title %>
@@ -41,12 +33,34 @@
     <% end %>
   </a>
   <div class="card-menu">
-    <select data-action="change->card-actions#dispatch">
-      <option value="">⋯</option>
-      <option value="<%= card.stashed? ? 'unstash' : 'stash' %>"><%= card.stashed? ? "Unstash" : "Stash" %></option>
-      <option value="<%= card.pinned? ? 'unpin' : 'pin' %>"><%= card.pinned? ? "Unpin" : "Pin" %></option>
-      <option value="<%= card.archived? ? 'unarchive' : 'archive' %>"><%= card.archived? ? "Unarchive" : "Archive" %></option>
-      <option value="delete">Delete</option>
-    </select>
+    <button class="card-menu-trigger"
+            popovertarget="card-menu-<%= card.id %>"
+            style="anchor-name: --card-menu-<%= card.id %>">⋯</button>
+    <div id="card-menu-<%= card.id %>"
+         class="card-dropdown-menu"
+         popover
+         style="position-anchor: --card-menu-<%= card.id %>">
+      <%= button_to card.pops_on.present? ? "Dismiss" : "Pop",
+                    card_pop_path(card),
+                    method: :patch,
+                    class: "card-dropdown-item" %>
+      <%= button_to card.pinned? ? "Unpin" : "Pin",
+                    card_pin_path(card),
+                    method: :patch,
+                    class: "card-dropdown-item" %>
+      <%= link_to "Edit",
+                   edit_card_path(card),
+                   data: { turbo_frame: "modal", turbo_action: "advance", action: "dialog#open" },
+                   class: "card-dropdown-item" %>
+      <%= button_to card.archived? ? "Unarchive" : "Archive",
+                    card_archive_path(card),
+                    method: :patch,
+                    class: "card-dropdown-item" %>
+      <%= button_to "Delete",
+                    card_path(card),
+                    method: :delete,
+                    class: "card-dropdown-item card-dropdown-item--danger",
+                    form: { data: { turbo_confirm: "Are you sure?" } } %>
+    </div>
   </div>
 </div>

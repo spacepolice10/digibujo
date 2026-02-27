@@ -1,14 +1,19 @@
 module Pinnable
   extend ActiveSupport::Concern
 
+  PIN_LIMIT = 10
+
   included do
-    scope :timeline_order, -> { active.order(pinned: :desc, created_at: :desc) }
-    validate :pinned_only_when_active
+    scope :pinned, -> { where(status: :pinned) }
+    validate :pin_limit_not_exceeded, if: :pinned?
   end
 
   private
 
-  def pinned_only_when_active
-    errors.add(:pinned, "can only be set for active cards") if pinned? && !active?
+  def pin_limit_not_exceeded
+    return unless status_changed?(to: "pinned")
+    if user.cards.pinned.where.not(id: id).count >= PIN_LIMIT
+      errors.add(:base, "Cannot pin more than #{PIN_LIMIT} cards")
+    end
   end
 end

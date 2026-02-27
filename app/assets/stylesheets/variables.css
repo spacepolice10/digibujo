@@ -1,0 +1,87 @@
+@layer variables {
+  :root {
+    /* backgrounds */
+    --color-bg-base: oklch(0.96 0.005 260);
+    --color-bg-subtle: oklch(0.98 0.002 260);
+    --color-bg-strong: oklch(0.37 0.01 260);
+    --color-bg-warn: oklch(0.95 0.10 90);
+    --color-bg-negative: oklch(0.93 0.10 35);
+    --color-bg-positive: oklch(0.94 0.06 210);
+
+    /* foregrounds */
+    --color-fg-base: oklch(0.35 0.01 260);
+    --color-fg-subtle: oklch(0.53 0.01 260);
+    --color-fg-strong: white;
+    --color-fg-warn: oklch(0.65 0.19 90);
+    --color-fg-negative: oklch(0.62 0.20 35);
+    --color-fg-positive: oklch(0.60 0.13 210);
+
+    /* strokes */
+    --color-stroke-base: oklch(0.90 0.005 260);
+    --color-stroke-subtle: oklch(0.98 0.002 260);
+    --color-stroke-strong: oklch(0.37 0.01 260);
+    --color-stroke-warn: oklch(0.86 0.19 90);
+    --color-stroke-negative: oklch(0.70 0.19 35);
+    --color-stroke-positive: oklch(0.72 0.11 210);
+
+    /* model colors - based on palette */
+    --model-color-1:    oklch(52% 0.27 290);  /* Slate Purple #7540EE */
+    --model-color-1-bg: oklch(95% 0.06 290);
+    --model-color-2:    oklch(52% 0.19 260);  /* Han Blue #2F61D5 */
+    --model-color-2-bg: oklch(95% 0.05 260);
+    --model-color-3:    oklch(72% 0.11 210);  /* Piction Blue #3FB6DC */
+    --model-color-3-bg: oklch(96% 0.04 210);
+    --model-color-4:    oklch(72% 0.19 155);  /* Grass Green #2DC76D */
+    --model-color-4-bg: oklch(96% 0.06 155);
+    --model-color-5:    oklch(86% 0.19 90);   /* Golden Bay #FFC800 */
+    --model-color-5-bg: oklch(97% 0.06 90);
+    --model-color-6:    oklch(70% 0.19 35);   /* Warm Orange #FF7052 */
+    --model-color-6-bg: oklch(95% 0.06 35);
+    --model-color-7:    oklch(60% 0.03 275);  /* Steel Grey #868697 */
+    --model-color-7-bg: oklch(95% 0.02 275);
+    --model-color-8:    oklch(28% 0.08 275);  /* Space Navy #25265E */
+    --model-color-8-bg: oklch(94% 0.03 275);
+
+    /* breakpoints */
+    --breakpoint-0: 0px;
+    --breakpoint-fold: 120px;
+    --breakpoint-mobile: 360px;
+    --breakpoint-tablet: 600px;
+    --breakpoint-laptop: 800px;
+    --breakpoint-pc: 1040px;
+
+    /* spacing */
+    --spacing-vertical: 1ch;
+    --spacing-horizontal: 1rem;
+    --spacing-vertical-half: calc(var(--spacing-vertical) / 2);
+    --spacing-horizontal-half: calc(var(--spacing-horizontal) / 2);
+    --spacing-vertical-double: calc(var(--spacing-vertical) * 2);
+    --spacing-horizontal-double: calc(var(--spacing-horizontal) * 2);
+
+    /* shadows */
+    --shadow-elevated: 0 1px 2px oklch(0% 0 0 / 0.08);
+    --shadow-glow: 0px 4px 0px 0px rgba(0, 0, 0, 0.25);
+
+    /* z-index */
+    --z-base: 0;
+    --z-dropdown-bg: 1;
+    --z-dropdown: 2;
+    --z-dialog-bg: 3;
+    --z-dialog: 4;
+
+    /* font sizes */
+    --font-size-strong: clamp(1.5rem, 2.5vw, 1.75rem);
+    --font-size-base: 1rem;
+    --font-size-subtle: 0.875rem;
+
+    /* font weights */
+    --font-weight-strong: 800;
+    --font-weight-base: 400;
+    --font-weight-subtle: 200;
+
+    /* radii */
+    --radius-base: 1px;
+    --radius-subtle: 8px;
+    --radius-strong: 12px;
+  }
+}

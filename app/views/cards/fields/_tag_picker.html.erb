@@ -1,0 +1,8 @@
+<div data-controller="tag-input" style="display: flex;">
+  <%= hidden_field_tag "card[tag_names]", card.tag_names, data: { tag_input_target: "hidden" } %>
+  <div class="tag-chips" data-tag-input-target="chips"></div>
+  <input type="text" placeholder="Add tags…" autocomplete="off"
+         data-tag-input-target="input"
+         data-action="input->tag-input#onInput keydown->tag-input#onKeydown">
+  <%= turbo_frame_tag "tag-suggestions", data: { tag_input_target: "suggestions" } %>
+</div>

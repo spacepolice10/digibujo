@@ -1,4 +1,11 @@
 <%= turbo_stream.remove @card %>
-<%= turbo_stream.prepend "cards" do %>
-  <%= render partial: "cards/card", locals: { card: @card } %>
+<% if @card.pinned? %>
+  <%= turbo_stream.append "pinned_cards" do %>
+    <%= render partial: "cards/card", locals: { card: @card } %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.prepend "cards" do %>
+    <%= render partial: "cards/card", locals: { card: @card } %>
+  <% end %>
 <% end %>
+<%= turbo_stream.update "pin_count", Current.user.cards.pinned.count.to_s %>

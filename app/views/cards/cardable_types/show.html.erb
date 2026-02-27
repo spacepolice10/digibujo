@@ -1,0 +1,5 @@
+<%= turbo_frame_tag "card_type_fields" do %>
+  <% @fields.each do |field| %>
+    <%= render "cards/fields/#{field}", card: @card %>
+  <% end %>
+<% end %>

@@ -2,6 +2,7 @@ class CardsController < ApplicationController
   before_action :set_card, only: %i[show edit update destroy]
 
   def index
+    @popped_cards = Current.user.cards.includes(:tags).popped.order(pops_on: :asc)
     @cards = Current.user.cards.includes(:tags).timeline_order
   end
 
@@ -55,7 +56,7 @@ class CardsController < ApplicationController
   end
 
   def card_params
-    params.expect(card: [ :content, :date, :tag_names ])
+    params.expect(card: [ :content, :date, :pops_on, :tag_names ])
   end
 
   def cardable_type

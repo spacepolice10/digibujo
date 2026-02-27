@@ -1,0 +1,131 @@
+/* Modern CSS Reset — 2026
+ *
+ * Synthesized from:
+ *   Josh W. Comeau  — joshwcomeau.com/css/custom-css-reset
+ *   Andy Bell       — piccalil.li/blog/a-more-modern-css-reset
+ *   David Bushell   — dbushell.com/2025/09/12/css-reset
+ *
+ * In @layer reset so components always win.
+ */
+
+@layer reset {
+
+  /* Box model */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  /* Strip margins & padding — we control spacing in components */
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Root defaults */
+  html {
+    color-scheme: light dark;
+    hanging-punctuation: first allow-end last;
+    interpolate-size: allow-keywords;
+    scroll-behavior: smooth;
+    scrollbar-gutter: stable;
+    text-size-adjust: none;
+    -webkit-text-size-adjust: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  /* Body */
+  body {
+    min-block-size: 100svb;
+    line-height: 1.5;
+  }
+
+  /* Typography */
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+
+  p, li {
+    text-wrap: pretty;
+  }
+
+  p, li, h1, h2, h3, h4, h5, h6 {
+    overflow-wrap: break-word;
+  }
+
+  /* Links */
+  a:not([class]) {
+    text-decoration-skip-ink: auto;
+    color: currentColor;
+  }
+
+  /* Media */
+  img, picture, video, canvas, svg {
+    display: block;
+    max-inline-size: 100%;
+    block-size: auto;
+  }
+
+  /* Lists — only strip when used as layout (with role="list") */
+  ul[role="list"], ol[role="list"] {
+    list-style: none;
+  }
+
+  /* Form controls — inherit typography */
+  button, input, select, textarea {
+    font: inherit;
+    color: inherit;
+    line-height: inherit;
+  }
+
+  button {
+    cursor: pointer;
+    user-select: none;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  textarea:not([rows]) {
+    field-sizing: content;
+  }
+
+  fieldset {
+    border: none;
+  }
+
+  /* Dialog & Popover */
+  dialog, [popover] {
+    border: none;
+    color: inherit;
+  }
+
+  [popover] {
+    inset: auto;
+  }
+
+  dialog:not([open], [popover]), [popover]:not(:popover-open) {
+    display: none;
+  }
+
+  /* Scroll targets */
+  :target {
+    scroll-margin-block: 5ex;
+  }
+
+  /* Hidden */
+  [hidden]:not([hidden="until-found"]) {
+    display: none !important;
+  }
+
+}

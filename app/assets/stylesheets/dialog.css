@@ -1,0 +1,16 @@
+@layer components {
+
+  dialog {
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-subtle);
+    padding: var(--spacing-horizontal);
+    max-width: 40rem;
+    width: 90%;
+    z-index: var(--z-dialog);
+
+    &::backdrop {
+      background: oklch(0% 0 0 / 0.4);
+    }
+  }
+
+}

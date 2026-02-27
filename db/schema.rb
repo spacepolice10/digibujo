@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_19_200000) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_24_000002) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -64,11 +64,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_19_200000) do
     t.string "cardable_type", null: false
     t.datetime "created_at", null: false
     t.date "date"
-    t.boolean "pinned", default: false, null: false
+    t.date "pops_on"
     t.string "status", default: "active", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["cardable_type", "cardable_id"], name: "index_cards_on_cardable"
+    t.index ["user_id", "pops_on"], name: "index_cards_on_user_id_and_pops_on"
     t.index ["user_id", "status"], name: "index_cards_on_user_id_and_status"
     t.index ["user_id"], name: "index_cards_on_user_id"
   end

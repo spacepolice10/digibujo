@@ -1,0 +1,54 @@
+@layer utilities {
+
+  .flex {
+    display: flex;
+    align-items: center;
+  }
+
+  .grid {
+    display: grid;
+  }
+
+  .wide {
+    width: 100%;
+  }
+
+  .h-screen {
+    height: 100dvh;
+  }
+
+  .slightly-gapped {
+    gap: var(--spacing-horizontal);
+  }
+
+  .slightly-padded {
+    padding: var(--spacing-horizontal-half);
+  }
+
+  .mx-auto {
+    margin: auto;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  .visible-when-parent-checked {
+    display: none;
+  }
+
+  input:checked ~ .visible-when-parent-checked {
+    display: inherit;
+  }
+
+}

@@ -1,9 +1,15 @@
-<h1>Card #<%= @card.id %></h1>
+<%= turbo_frame_tag "modal" do %>
+  <h1>Card #<%= @card.id %></h1>
 
-<p><strong>Type:</strong> <%= @card.cardable_type %></p>
-<div><%= @card.content %></div>
+  <p><strong>Type:</strong> <%= @card.cardable_type %></p>
+  <div><%= @card.content %></div>
 
-<p>
-  <%= link_to "Edit", edit_card_path(@card) %> |
-  <%= link_to "Back", cards_path %>
-</p>
+  <% if @card.popped? %>
+    <%= render "cards/triage", card: @card %>
+  <% end %>
+
+  <p>
+    <%= link_to "Edit", edit_card_path(@card), data: { turbo_frame: "modal", turbo_action: "advance" } %> |
+    <%= link_to "Close", cards_path, data: { action: "dialog#close" } %>
+  </p>
+<% end %>

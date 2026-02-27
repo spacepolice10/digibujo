@@ -1,10 +1,11 @@
 class Card < ApplicationRecord
-  include Stashable
   include Pinnable
   include Archivable
 
-  enum :status, { active: "active", stashed: "stashed", archived: "archived" }
-  scope :timeline, -> { active }
+  enum :status, { active: "active", pinned: "pinned", archived: "archived" }
+  scope :popped,         -> { active.where("pops_on IS NOT NULL AND pops_on <= ?", Date.today) }
+  scope :timeline,       -> { active.where("pops_on IS NULL OR pops_on > ?", Date.today) }
+  scope :timeline_order, -> { timeline.order(created_at: :desc) }
 
   belongs_to :user
   delegated_type :cardable, types: %w[Draft Task Note], dependent: :destroy
@@ -14,6 +15,10 @@ class Card < ApplicationRecord
   has_many :tags, through: :card_tags
 
   before_save :assign_tags, if: -> { @tag_names_input }
+
+  def popped?
+    pops_on.present? && pops_on <= Date.today
+  end
 
   def title
     content.to_plain_text.lines.first&.strip.presence || "Untitled"

@@ -1,0 +1,35 @@
+<div id="<%= dom_id(card, :calendar) %>" class="card<%= " archived" if card.archived? %>">
+  <div class="card-action">
+    <% if card.cardable.completable? %>
+      <% if card.cardable.done? %>
+        <%= button_to card_completion_path(card), method: :delete, class: "completion-toggle done", aria: { label: "Mark undone" } do %>
+          &#10003;
+        <% end %>
+      <% else %>
+        <%= button_to card_completion_path(card), method: :post, class: "completion-toggle", aria: { label: "Mark done" } do %>
+          &#9675;
+        <% end %>
+      <% end %>
+    <% end %>
+    <%= render card.cardable, card: card %>
+  </div>
+  <a class="card-body"
+     href="<%= edit_card_path(card) %>"
+     data-turbo-frame="modal"
+     data-turbo-action="advance"
+     data-action="dialog#open">
+    <div class="card-meta">
+      <span class="card-type"><%= card.cardable_type %></span>
+    </div>
+    <p class="card-title<%= " done" if card.cardable.completable? && card.cardable.done? %>">
+      <%= card.title %>
+    </p>
+    <% if card.tags.any? %>
+      <div class="card-tags">
+        <% card.tags.each do |tag| %>
+          <span class="tag-chip"><%= tag.name %></span>
+        <% end %>
+      </div>
+    <% end %>
+  </a>
+</div>

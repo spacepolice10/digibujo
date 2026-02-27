@@ -1,0 +1,6 @@
+<h1>Popped (<%= @popped_cards.size %>)</h1>
+<div id="popped_cards">
+  <% @popped_cards.each do |card| %>
+    <%= render "popped/card", card: card %>
+  <% end %>
+</div>

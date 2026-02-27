@@ -5,7 +5,7 @@
     <h2><%= date ? l(date, format: :long) : "No date" %></h2>
     <div>
       <% cards.each do |card| %>
-        <%= render card %>
+        <%= render partial: "cards/calendar_card", locals: { card: card } %>
       <% end %>
     </div>
   <% end %>

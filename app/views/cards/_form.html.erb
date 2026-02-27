@@ -14,14 +14,15 @@
     <% Card.cardable_types.each do |type| %>
       <%= button_tag type, type: "button",
             data: { card_form_target: "cardTypeButton", action: "click->card-form#selectType",
-                    value: type.underscore, capabilities: Card.type_capabilities(type).to_json } %>
+                    value: type.underscore } %>
     <% end %>
   </div>
 
-  <div data-card-form-target="datePicker" hidden>
-    <%= f.label :date %>
-    <%= f.date_field :date %>
-  </div>
+  <%= turbo_frame_tag "card_type_fields", data: { card_form_target: "fieldsFrame" } do %>
+    <% (card.cardable || Task.new).form_fields.each do |field| %>
+      <%= render "cards/fields/#{field}", card: card %>
+    <% end %>
+  <% end %>
 
   <div>
     <%= f.label :content %>
@@ -30,16 +31,6 @@
   </div>
 
 <div style="display: flex; justify-content: space-between; width: 100%; margin-top: 1rem;">
-  <div data-controller="tag-input" data-card-form-target="tagPicker" style="display: none;">
-    <!-- <%= f.label :tag_names, "Tags" %> -->
-    <%= f.hidden_field :tag_names, data: { tag_input_target: "hidden" } %>
-    <div class="tag-chips" data-tag-input-target="chips"></div>
-    <input type="text" placeholder="Add tags…" autocomplete="off"
-           data-tag-input-target="input"
-           data-action="input->tag-input#onInput keydown->tag-input#onKeydown">
-    <%= turbo_frame_tag "tag-suggestions", data: { tag_input_target: "suggestions" } %>
-  </div>
-
   <div>
     <%= f.submit "Save (⌘ + ⏎)" %>
   </div>

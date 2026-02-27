@@ -1,0 +1,21 @@
+<div id="<%= dom_id(card) %>" class="popped-card">
+  <div class="popped-card-content">
+    <div class="card-meta">
+      <span class="card-type"><%= card.cardable_type %></span>
+      <span class="pop-date">Popped <%= card.pops_on %></span>
+    </div>
+    <div class="card-body">
+      <%= card.content %>
+    </div>
+    <% if card.tags.any? %>
+      <div class="card-tags">
+        <% card.tags.each do |tag| %>
+          <span class="tag-chip"><%= tag.name %></span>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+  <div class="popped-card-triage">
+    <%= render "cards/triage", card: card %>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+@layer components {
+
+  .icon {
+    display: inline-block;
+    background: currentColor;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    vertical-align: -0.125em;
+    width: calc(var(--spacing-horizontal) * 1.5);
+    height: calc(var(--spacing-horizontal) * 1.5);
+    --icon-mask: none;
+    -webkit-mask-image: var(--icon-mask);
+    mask-image: var(--icon-mask);
+  }
+
+}
