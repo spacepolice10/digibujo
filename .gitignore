@@ -36,3 +36,5 @@
 # Nix direnv
 /.direnv
 
+*.DS_Store
+l
