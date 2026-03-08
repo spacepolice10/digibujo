@@ -1,8 +1,10 @@
-<div data-controller="tag-input" style="display: flex;">
+<div class="tag-picker" data-controller="tag-input" style="anchor-name: --tag-picker;">
   <%= hidden_field_tag "card[tag_names]", card.tag_names, data: { tag_input_target: "hidden" } %>
   <div class="tag-chips" data-tag-input-target="chips"></div>
   <input type="text" placeholder="Add tags…" autocomplete="off"
          data-tag-input-target="input"
-         data-action="input->tag-input#onInput keydown->tag-input#onKeydown">
-  <%= turbo_frame_tag "tag-suggestions", data: { tag_input_target: "suggestions" } %>
+         data-action="input->tag-input#onInput keydown->tag-input#onKeydown blur->tag-input#onBlur">
+  <%= turbo_frame_tag "tag-suggestions",
+        popover: "manual",
+        data: { tag_input_target: "suggestions" } %>
 </div>

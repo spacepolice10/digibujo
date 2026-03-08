@@ -1,9 +1,26 @@
-<%= turbo_frame_tag "tag-suggestions" do %>
-  <% if @tags.any? %>
-    <ul class="tag-suggestions">
+<%= turbo_frame_tag "tag-suggestions", popover: "manual" do %>
+  <% if @tags.any? || (@query.present? && !@exact_match) %>
+    <ul class="tag-suggestions" role="listbox">
       <% @tags.each do |tag| %>
-        <li data-action="click->tag-input#select" data-name="<%= tag.name %>">
-          <%= tag.name %>
+        <li role="option"
+            data-action="click->tag-input#select"
+            data-name="<%= tag.name %>">
+          <span class="tag-chip" style="<%= tag.colour_style %>"><%= tag.name %></span>
+        </li>
+      <% end %>
+      <% if @query.present? && !@exact_match %>
+        <li class="tag-create-row" role="option" data-name="<%= @query %>">
+          <span class="tag-create-label"><kbd>↵</kbd> Create "<%= @query %>"</span>
+          <span class="colour-picker">
+            <% Colourable::COLOUR_KEYS.each do |key| %>
+              <button type="button"
+                      class="colour-dot"
+                      style="background: var(--model-color-<%= key %>);"
+                      data-action="click->tag-input#selectColour"
+                      data-colour="<%= key %>"
+                      data-name="<%= @query %>"></button>
+            <% end %>
+          </span>
         </li>
       <% end %>
     </ul>
