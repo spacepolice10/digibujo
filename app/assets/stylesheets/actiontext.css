@@ -3,7 +3,7 @@
 */
 
 trix-editor {
-  border: 1px solid #bbb;
+  border: 1px solid var(--color-stroke-base);
   border-radius: 3px;
   margin: 0;
   padding: 0.4em 0.6em;
@@ -22,9 +22,9 @@ trix-toolbar .trix-button-row {
 trix-toolbar .trix-button-group {
   display: flex;
   margin-bottom: 10px;
-  border: 1px solid #bbb;
-  border-top-color: #ccc;
-  border-bottom-color: #888;
+  border: 1px solid var(--color-stroke-base);
+  border-top-color: var(--color-stroke-base);
+  border-bottom-color: var(--color-fg-subtle);
   border-radius: 3px; }
   trix-toolbar .trix-button-group:not(:first-child) {
     margin-left: 1.5vw; }
@@ -41,7 +41,7 @@ trix-toolbar .trix-button-group-spacer {
 trix-toolbar .trix-button {
   position: relative;
   float: left;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--color-fg-subtle);
   font-size: 0.75em;
   font-weight: 600;
   white-space: nowrap;
@@ -49,18 +49,18 @@ trix-toolbar .trix-button {
   margin: 0;
   outline: none;
   border: none;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--color-stroke-base);
   border-radius: 0;
   background: transparent; }
   trix-toolbar .trix-button:not(:first-child) {
-    border-left: 1px solid #ccc; }
+    border-left: 1px solid var(--color-stroke-base); }
   trix-toolbar .trix-button.trix-active {
-    background: #cbeefa;
-    color: black; }
+    background: var(--model-color-3-bg);
+    color: var(--color-fg-base); }
   trix-toolbar .trix-button:not(:disabled) {
     cursor: pointer; }
   trix-toolbar .trix-button:disabled {
-    color: rgba(0, 0, 0, 0.125); }
+    color: color-mix(in oklch, var(--color-fg-subtle), transparent 75%); }
   @media (max-width: 768px) {
     trix-toolbar .trix-button {
       letter-spacing: -0.01em;
@@ -151,9 +151,9 @@ trix-toolbar .trix-dialog {
   right: 0;
   font-size: 0.75em;
   padding: 15px 10px;
-  background: #fff;
-  box-shadow: 0 0.3em 1em #ccc;
-  border-top: 2px solid #888;
+  background: var(--color-bg-subtle);
+  box-shadow: 0 0.3em 1em var(--color-stroke-base);
+  border-top: 2px solid var(--color-fg-subtle);
   border-radius: 5px;
   z-index: 5; }
 
@@ -163,14 +163,14 @@ trix-toolbar .trix-input--dialog {
   padding: 0.5em 0.8em;
   margin: 0 10px 0 0;
   border-radius: 3px;
-  border: 1px solid #bbb;
-  background-color: #fff;
+  border: 1px solid var(--color-stroke-base);
+  background-color: var(--color-bg-subtle);
   box-shadow: none;
   outline: none;
   -webkit-appearance: none;
   -moz-appearance: none; }
   trix-toolbar .trix-input--dialog.validate:invalid {
-    box-shadow: #F00 0px 0px 1.5px 1px; }
+    box-shadow: var(--color-fg-negative) 0px 0px 1.5px 1px; }
 
 trix-toolbar .trix-button--dialog {
   font-size: inherit;
@@ -204,17 +204,17 @@ trix-editor [data-trix-cursor-target]::selection, trix-editor [data-trix-mutable
   background: none; }
 
 trix-editor .attachment__caption-editor:focus[data-trix-mutable]::-moz-selection {
-  background: highlight; }
+  background: var(--color-stroke-positive); }
 
 trix-editor .attachment__caption-editor:focus[data-trix-mutable]::selection {
-  background: highlight; }
+  background: var(--color-stroke-positive); }
 
 trix-editor [data-trix-mutable].attachment.attachment--file {
-  box-shadow: 0 0 0 2px highlight;
+  box-shadow: 0 0 0 2px var(--color-stroke-positive);
   border-color: transparent; }
 
 trix-editor [data-trix-mutable].attachment img {
-  box-shadow: 0 0 0 2px highlight; }
+  box-shadow: 0 0 0 2px var(--color-stroke-positive); }
 
 trix-editor .attachment {
   position: relative; }
@@ -266,7 +266,7 @@ trix-editor .trix-button-group {
 trix-editor .trix-button {
   position: relative;
   float: left;
-  color: #666;
+  color: var(--color-fg-subtle);
   white-space: nowrap;
   font-size: 80%;
   padding: 0 0.8em;
@@ -276,9 +276,9 @@ trix-editor .trix-button {
   border-radius: 0;
   background: transparent; }
   trix-editor .trix-button:not(:first-child) {
-    border-left: 1px solid #ccc; }
+    border-left: 1px solid var(--color-stroke-base); }
   trix-editor .trix-button.trix-active {
-    background: #cbeefa; }
+    background: var(--model-color-3-bg); }
   trix-editor .trix-button:not(:disabled) {
     cursor: pointer; }
 
@@ -291,9 +291,9 @@ trix-editor .trix-button--remove {
   height: 1.8em;
   line-height: 1.8em;
   border-radius: 50%;
-  background-color: #fff;
-  border: 2px solid highlight;
-  box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.25); }
+  background-color: var(--color-bg-subtle);
+  border: 2px solid var(--color-stroke-positive);
+  box-shadow: 1px 1px 6px color-mix(in oklch, var(--color-bg-strong), transparent 75%); }
   trix-editor .trix-button--remove::before {
     display: inline-block;
     position: absolute;
@@ -308,7 +308,7 @@ trix-editor .trix-button--remove {
     background-repeat: no-repeat;
     background-size: 90%; }
   trix-editor .trix-button--remove:hover {
-    border-color: #333; }
+    border-color: var(--color-fg-base); }
     trix-editor .trix-button--remove:hover::before {
       opacity: 1; }
 
@@ -323,8 +323,8 @@ trix-editor .attachment__metadata {
   max-width: 90%;
   padding: 0.1em 0.6em;
   font-size: 0.8em;
-  color: #fff;
-  background-color: rgba(0, 0, 0, 0.7);
+  color: var(--color-fg-strong);
+  background-color: color-mix(in oklch, var(--color-bg-strong), transparent 30%);
   border-radius: 3px; }
   trix-editor .attachment__metadata .attachment__name {
     display: inline-block;
@@ -349,7 +349,7 @@ trix-editor .attachment__metadata {
     font-size: 1.2em;
     line-height: 1.2; }
   .trix-content blockquote {
-    border: 0 solid #ccc;
+    border: 0 solid var(--color-stroke-base);
     border-left-width: 0.3em;
     margin-left: 0.3em;
     padding-left: 0.6em; }
@@ -371,7 +371,7 @@ trix-editor .attachment__metadata {
     font-size: 0.9em;
     padding: 0.5em;
     white-space: pre;
-    background-color: #eee;
+    background-color: var(--color-bg-base);
     overflow-x: auto; }
   .trix-content img {
     max-width: 100%;
@@ -393,15 +393,15 @@ trix-editor .attachment__metadata {
     width: 100%;
     text-align: center; }
     .trix-content .attachment--preview .attachment__caption {
-      color: #666;
+      color: var(--color-fg-subtle);
       font-size: 0.9em;
       line-height: 1.2; }
   .trix-content .attachment--file {
-    color: #333;
+    color: var(--color-fg-base);
     line-height: 1;
     margin: 0 2px 2px 2px;
     padding: 0.4em 1em;
-    border: 1px solid #bbb;
+    border: 1px solid var(--color-stroke-base);
     border-radius: 5px; }
   .trix-content .attachment-gallery {
     display: flex;
@@ -437,4 +437,217 @@ trix-editor .attachment__metadata {
 .trix-content action-text-attachment .attachment {
   padding: 0 !important;
   max-width: 100% !important;
+}
+
+/* ── Paper design overrides ───────────────────────────── */
+
+trix-editor {
+  border: none;
+  border-radius: 0;
+  padding: var(--spacing-vertical) var(--spacing-horizontal);
+  min-height: calc(var(--spacing-horizontal) * 4.5);
+  background: transparent;
+  font-size: var(--font-size-subtle);
+  font-family: inherit;
+  color: var(--color-fg-base);
+  outline: none;
+}
+
+trix-toolbar {
+  background: var(--color-bg-base);
+  border: none;
+  border-radius: var(--radius-subtle);
+  padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+  margin-bottom: 0;
+}
+
+trix-toolbar .trix-button-row {
+  justify-content: flex-start;
+  gap: 0;
+  overflow-x: auto;
+  overflow-y: visible;
+}
+
+trix-toolbar .trix-button-group {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-vertical);
+  border: none;
+  border-radius: 0;
+  margin-bottom: 0;
+}
+
+trix-toolbar .trix-button-group:not(:first-child) {
+  margin-left: var(--spacing-vertical-half);
+  padding-left: var(--spacing-vertical-half);
+  border-left: 1px solid var(--color-stroke-base);
+}
+
+@media (max-width: 768px) {
+  trix-toolbar .trix-button-group:not(:first-child) {
+    margin-left: calc(var(--spacing-vertical-half) / 2);
+    padding-left: calc(var(--spacing-vertical-half) / 2);
+  }
+}
+
+trix-toolbar .trix-button {
+  float: none;
+  border: none;
+  border-bottom: none;
+  border-left: none;
+  border-radius: var(--radius-subtle);
+  padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+  height: calc(var(--spacing-horizontal) + var(--spacing-vertical));
+  font-size: var(--font-size-subtle);
+  color: var(--color-fg-base);
+  background: transparent;
+  line-height: calc(var(--font-size-base) * 1.25);
+  white-space: nowrap;
+}
+
+trix-toolbar .trix-button:not(:first-child) {
+  border-left: none;
+}
+
+trix-toolbar .trix-button:not(:disabled):hover,
+trix-toolbar .trix-button:not(:disabled):focus {
+  background: var(--color-bg-base);
+  color: var(--color-bg-strong);
+}
+
+trix-toolbar .trix-button.trix-active {
+  background: color-mix(in oklch, var(--color-bg-base), var(--color-stroke-base) 40%);
+  color: var(--color-bg-strong);
+}
+
+trix-toolbar .trix-button:disabled {
+  opacity: 0.4;
+  color: var(--color-fg-subtle);
+}
+
+trix-toolbar .trix-button--icon {
+  width: calc(var(--spacing-horizontal) + var(--spacing-vertical));
+  height: calc(var(--spacing-horizontal) + var(--spacing-vertical));
+  max-width: calc(var(--spacing-horizontal) + var(--spacing-vertical));
+}
+
+/* Heading button rendered as a text chip — matches "style ▾" in Paper */
+trix-toolbar .trix-button--icon-heading-1 {
+  text-indent: 0;
+  width: auto;
+  height: auto;
+  max-width: none;
+  font-size: var(--font-size-subtle);
+  padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+  border: 1px solid var(--color-stroke-base);
+  border-radius: var(--radius-subtle);
+}
+
+trix-toolbar .trix-button--icon-heading-1::before {
+  display: none;
+}
+
+trix-toolbar .trix-button-group-spacer {
+  flex-grow: 1;
+  min-width: var(--spacing-horizontal-half);
+}
+
+/* ── Lucide icon mask overrides ───────────────────────── */
+
+/* Reset base ::before opacity — color controls visibility now */
+trix-toolbar .trix-button--icon::before {
+  opacity: 1;
+}
+
+trix-toolbar .trix-button--icon.trix-active::before {
+  opacity: 1;
+}
+
+trix-toolbar .trix-button--icon:disabled::before {
+  opacity: 1;
+}
+
+/* Shared mask properties as a mixin-like reset */
+trix-toolbar .trix-button--icon-attach::before,
+trix-toolbar .trix-button--icon-bold::before,
+trix-toolbar .trix-button--icon-italic::before,
+trix-toolbar .trix-button--icon-link::before,
+trix-toolbar .trix-button--icon-strike::before,
+trix-toolbar .trix-button--icon-quote::before,
+trix-toolbar .trix-button--icon-code::before,
+trix-toolbar .trix-button--icon-bullet-list::before,
+trix-toolbar .trix-button--icon-number-list::before,
+trix-toolbar .trix-button--icon-undo::before,
+trix-toolbar .trix-button--icon-redo::before {
+  background-image: none;
+  background-color: currentColor;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+trix-toolbar .trix-button--icon-attach::before {
+  -webkit-mask-image: var(--icon-paperclip);
+  mask-image: var(--icon-paperclip);
+  top: 8%;
+  bottom: 4%;
+}
+
+trix-toolbar .trix-button--icon-bold::before {
+  -webkit-mask-image: var(--icon-bold);
+  mask-image: var(--icon-bold);
+}
+
+trix-toolbar .trix-button--icon-italic::before {
+  -webkit-mask-image: var(--icon-italic);
+  mask-image: var(--icon-italic);
+}
+
+trix-toolbar .trix-button--icon-link::before {
+  -webkit-mask-image: var(--icon-link);
+  mask-image: var(--icon-link);
+}
+
+trix-toolbar .trix-button--icon-strike::before {
+  -webkit-mask-image: var(--icon-strikethrough);
+  mask-image: var(--icon-strikethrough);
+}
+
+trix-toolbar .trix-button--icon-quote::before {
+  -webkit-mask-image: var(--icon-quote);
+  mask-image: var(--icon-quote);
+}
+
+trix-toolbar .trix-button--icon-code::before {
+  -webkit-mask-image: var(--icon-code);
+  mask-image: var(--icon-code);
+}
+
+trix-toolbar .trix-button--icon-bullet-list::before {
+  -webkit-mask-image: var(--icon-list);
+  mask-image: var(--icon-list);
+}
+
+trix-toolbar .trix-button--icon-number-list::before {
+  -webkit-mask-image: var(--icon-list-ordered);
+  mask-image: var(--icon-list-ordered);
+}
+
+trix-toolbar .trix-button--icon-undo::before {
+  -webkit-mask-image: var(--icon-undo);
+  mask-image: var(--icon-undo);
+}
+
+trix-toolbar .trix-button--icon-redo::before {
+  -webkit-mask-image: var(--icon-redo);
+  mask-image: var(--icon-redo);
+}
+
+/* Hide indent/outdent — not needed */
+trix-toolbar .trix-button--icon-decrease-nesting-level,
+trix-toolbar .trix-button--icon-increase-nesting-level {
+  display: none;
 }

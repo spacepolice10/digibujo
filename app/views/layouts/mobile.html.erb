@@ -11,24 +11,24 @@
 
     <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body data-controller="dialog">
-    <%= content_for?(:layout) ? yield(:layout) : yield %>
+    <main class="main-content main-content--mobile">
+      <%= yield %>
+    </main>
+
+    <nav class="tab-bar">
+      <%= link_to "Streams", streams_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'streams'}" %>
+      <%= link_to "Cards", cards_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'cards'}" %>
+      <%= link_to "Calendar", calendar_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'calendars'}" %>
+    </nav>
 
     <dialog data-dialog-target="dialog" data-action="click->dialog#backdropClose turbo:submit-end->dialog#submitEnd">
       <%= turbo_frame_tag "modal" %>

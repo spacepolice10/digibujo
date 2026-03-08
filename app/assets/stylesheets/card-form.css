@@ -1,60 +1,273 @@
 @layer components {
 
-  .radio-group {
-    display: flex;
-    gap: var(--spacing-horizontal);
-    flex-wrap: wrap;
+  /* ── Compose form ─────────────────────────────────── */
+
+  [data-controller="card-form"][data-loading] * {
+    transition: none !important;
   }
 
-  /* Tag picker */
-
-  .tag-chips {
+  [data-controller="card-form"] {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-vertical-half);
-    margin-bottom: var(--spacing-vertical-half);
+    flex-direction: column;
+    background: var(--color-bg-subtle);
+    border-radius: var(--radius-strong);
+    box-shadow: var(--shadow-elevated);
+    padding: var(--spacing-horizontal);
+    gap: 12px;
   }
 
-  .tag-chip {
-    display: inline-flex;
+  /* Reorder trix: editor above toolbar */
+  [data-controller="card-form"] div:has(trix-editor) {
+    display: flex;
+    flex-direction: column;
+  }
+
+  trix-toolbar { order: 2; }
+  trix-editor  { order: 1; }
+
+  /* Bottom actions bar: type buttons + save inline */
+  .card-form-actions {
+    display: flex;
     align-items: center;
-    gap: var(--spacing-vertical-half);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    background: var(--model-color-1-bg);
-    color: var(--model-color-1);
-    border-radius: 9999px;
-    font-size: var(--font-size-subtle);
+    justify-content: space-between;
+    gap: var(--spacing-horizontal-half);
+  }
 
-    button {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-      font-size: var(--font-size-base);
-      line-height: 1;
-      color: var(--model-color-1);
+  .card-form-type-controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: var(--spacing-horizontal-half);
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    padding-inline: var(--spacing-horizontal-half);
+    height: calc(2* var(--spacing-vertical-double));
+  }
+
+  /* ── Back button ──────────────────────────────────── */
+
+  .card-form-back {
+    display: none;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 10px;
+    border-radius: var(--radius-pill);
+    font-family: inherit;
+    font-size: var(--font-size-xs);
+    background: transparent;
+    border: 1px solid var(--color-stroke-base);
+    color: var(--color-fg-subtle);
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background 0.1s ease;
+
+    &:hover { background: var(--color-bg-base); }
+  }
+
+  [data-controller="card-form"].type-selected .card-form-back {
+    display: inline-flex;
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 0.2s ease, transform 0.2s ease, background 0.1s ease;
+
+    @starting-style {
+      opacity: 0;
+      transform: translateX(-6px);
     }
   }
 
-  .tag-suggestions {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  /* ── Type-selected state ──────────────────────────── */
+
+  [data-controller="card-form"].type-selected [data-card-form-target="cardTypeButton"]:not(.active) {
+    display: none;
+  }
+
+  /* ── Inline fields frame ──────────────────────────── */
+
+  turbo-frame.card-form-fields {
+    display: none;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    flex: 1;
+    min-width: 0;
+  }
+
+  [data-controller="card-form"].type-selected turbo-frame.card-form-fields {
+    display: flex;
+  }
+
+  turbo-frame.card-form-fields > * {
+    transition: opacity 0.2s ease 0.06s, transform 0.2s ease 0.06s;
+
+    @starting-style {
+      opacity: 0;
+      transform: translateX(-4px);
+    }
+  }
+
+  turbo-frame.card-form-fields label {
+    display: none;
+  }
+
+  turbo-frame.card-form-fields input[type="date"] {
     border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
-    max-height: 10rem;
-    overflow-y: auto;
-    position: absolute;
-    background: var(--color-bg-subtle);
-    z-index: var(--z-dropdown);
+    border-radius: var(--radius-pill);
+    padding: 5px 12px;
+    font-size: var(--font-size-xs);
+    font-family: inherit;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
 
-    li {
-      padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-      cursor: pointer;
+  turbo-frame.card-form-fields .tag-picker {
+    flex: 1;
+    min-width: 80px;
+    max-width: 200px;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 4px;
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-pill);
+    padding: 5px 12px;
+    cursor: text;
+    overflow-x: auto;
+    scrollbar-width: none;
 
-      &:hover {
-        background: var(--model-color-1-bg);
-      }
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  turbo-frame.card-form-fields .tag-chips {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 4px;
+    margin-bottom: 0;
+  }
+
+  turbo-frame.card-form-fields .tag-chip {
+    font-size: 0.7rem;
+    padding: 2px 7px;
+    gap: 3px;
+    white-space: nowrap;
+  }
+
+  turbo-frame.card-form-fields .tag-picker input[type="text"] {
+    border: none;
+    background: transparent;
+    font-size: var(--font-size-xs);
+    font-family: inherit;
+    color: var(--color-fg-base);
+    min-width: 60px;
+    flex-shrink: 0;
+    padding: 0;
+    outline: none;
+
+    &::placeholder { color: var(--color-fg-subtle); }
+  }
+
+  [data-card-form-target="cardTypeButton"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-pill);
+    padding: 6px 12px;
+    font-family: inherit;
+    font-size: var(--font-size-xs);
+    cursor: pointer;
+    transition: box-shadow 0.1s ease, opacity 0.1s ease;
+    background: var(--color-bg-base);
+    border: none;
+    color: var(--color-fg-base);
+
+    &:hover { opacity: 0.8; }
+  }
+
+  [data-card-form-target="cardTypeButton"][data-value=""] {
+    background: var(--model-color-8-bg);
+    color: var(--model-color-8);
+  }
+
+  [data-card-form-target="cardTypeButton"][data-value="task"] {
+    background: var(--model-color-1-bg);
+    color: var(--model-color-2);
+  }
+
+  [data-card-form-target="cardTypeButton"][data-value="event"] {
+    background: var(--model-color-6-bg);
+    color: var(--model-color-6);
+  }
+
+  [data-card-form-target="cardTypeButton"][data-value="note"] {
+    background: var(--color-bg-warn);
+    color: var(--color-fg-warn);
+  }
+
+  [data-card-form-target="cardTypeButton"][data-value="daylog"] {
+    background: var(--model-color-7-bg);
+    color: var(--model-color-7);
+  }
+
+  [data-card-form-target="cardTypeButton"]:disabled {
+    opacity: 0.45;
+    cursor: default;
+
+    &:hover { opacity: 0.45; }
+  }
+
+  [data-card-form-target="cardTypeButton"] span {
+    display: inline-block;
+    width: 0;
+    overflow: hidden;
+    opacity: 0;
+    white-space: nowrap;
+    margin-left: 0;
+    transition: width 0.25s ease, opacity 0.15s ease, margin-left 0.25s ease;
+  }
+
+  [data-card-form-target="cardTypeButton"].active,
+  [data-card-form-target="cardTypeButton"][aria-pressed="true"] {
+    box-shadow: 0 0 0 2px currentColor;
+
+    span {
+      width: auto;
+      opacity: 1;
+      margin-left: 5px;
+    }
+  }
+
+  /* Hide the content field label — trix placeholder is enough */
+  [data-controller="card-form"] label[for$="_content"] {
+    display: none;
+  }
+
+  .card-form-submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--color-bg-strong);
+    color: var(--color-fg-strong);
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 8px 24px;
+    font-family: inherit;
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.1s ease;
+
+    &:hover { background: color-mix(in oklch, var(--color-bg-strong), white 12%); }
+
+    kbd {
+      font-family: inherit;
+      font-size: var(--font-size-xs);
+      font-weight: 400;
+      letter-spacing: 0;
+      text-transform: none;
+      opacity: 0.6;
     }
   }
 

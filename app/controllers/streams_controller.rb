@@ -1,4 +1,6 @@
 class StreamsController < ApplicationController
+  layout -> { "mobile" if request.variant.mobile? }
+
   def index
     @streams = Current.user.streams.named
   end

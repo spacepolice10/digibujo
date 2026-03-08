@@ -1,0 +1,20 @@
+<h1>Cards</h1>
+
+<%= turbo_frame_tag "new_card" do %>
+  <%= render "form", card: Card.new %>
+<% end %>
+
+<% if @popped_cards.any? %>
+  <div id="popped_cards" class="popped-inbox">
+    <h2>Popped &mdash; <%= @popped_cards.size %></h2>
+    <% @popped_cards.each do |card| %>
+      <%= render card %>
+    <% end %>
+  </div>
+<% end %>
+
+<div id="cards">
+  <% @cards.each do |card| %>
+    <%= render card %>
+  <% end %>
+</div>
