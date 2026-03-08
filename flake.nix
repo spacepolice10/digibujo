@@ -24,11 +24,13 @@
             colima
             docker-compose
             vips
+            rubyPackages_3_4.ruby-lsp
             nodejs_24
             (writeShellScriptBin "logs" "tail -f log/development.log | tspin")
             (writeShellScriptBin "server" "bin/rails server 2>&1 | tspin")
             (writeShellScriptBin "deploy-up" "colima start --cpu 2 --memory 2 --disk 10")
             (writeShellScriptBin "deploy-down" "colima stop")
+            (writeShellScriptBin "herb-language-server" ''exec ${nodejs_24}/bin/npx --yes @herb-tools/language-server "$@"'')
           ];
           shellHook = let
             vipsLib = nixpkgs.legacyPackages.${system}.vips;

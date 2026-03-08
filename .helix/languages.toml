@@ -1,0 +1,19 @@
+[language-server.ruby-lsp]
+command = "ruby-lsp"
+
+[language-server.herb]
+command = "herb-language-server"
+args = ["--stdio"]
+
+[[language]]
+name = "ruby"
+language-servers = ["ruby-lsp"]
+auto-format = true
+
+[[language]]
+name = "erb"
+file-types = ["erb", "html.erb"]
+language-servers = ["herb", "ruby-lsp"]
+roots = ["Gemfile", "package.json"]
+auto-format = true
+formatter = { command = "bundle", args = ["exec", "htmlbeautifier"] }
