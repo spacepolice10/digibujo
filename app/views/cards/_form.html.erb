@@ -10,29 +10,58 @@
   <% end %>
 
   <div>
-    <%= hidden_field_tag :cardable_type, Card.cardable_types.first.underscore, data: { card_form_target: "cardableTypeField" } %>
-    <% Card.cardable_types.each do |type| %>
-      <%= button_tag type, type: "button",
-            data: { card_form_target: "cardTypeButton", action: "click->card-form#selectType",
-                    value: type.underscore } %>
-    <% end %>
-  </div>
-
-  <%= turbo_frame_tag "card_type_fields", data: { card_form_target: "fieldsFrame" } do %>
-    <% (card.cardable || Task.new).form_fields.each do |field| %>
-      <%= render "cards/fields/#{field}", card: card %>
-    <% end %>
-  <% end %>
-
-  <div>
     <%= f.label :content %>
-    <%= f.rich_text_area :content, autofocus: true,
+    <%= f.rich_text_area :content, autofocus: true, placeholder: "What's on your mind?",
           data: { action: "trix-change->card-form#detectTypeShortcut" } %>
   </div>
 
-<div style="display: flex; justify-content: space-between; width: 100%; margin-top: 1rem;">
-  <div>
-    <%= f.submit "Save (⌘ + ⏎)" %>
+  <div class="card-form-actions">
+    <div class="card-form-type-controls">
+      <%= hidden_field_tag :cardable_type, (card.draft? || card.cardable_type.nil? ? "" : card.cardable_type.underscore), data: { card_form_target: "cardableTypeField" } %>
+
+      <button type="button" class="card-form-back"
+              data-action="click->card-form#selectType" data-value="">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0"/><path d="M5 12l6 6"/><path d="M5 12l6-6"/></svg>
+        Back
+      </button>
+
+      <%= button_tag type: "button",
+            data: { card_form_target: "cardTypeButton", action: "click->card-form#selectType", value: "" } do %>
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 20h4l10.5-10.5a2.828 2.828 0 1 0-4-4l-10.5 10.5v4"/></svg>
+        <span>Draft</span>
+      <% end %>
+      <%= button_tag type: "button",
+            data: { card_form_target: "cardTypeButton", action: "click->card-form#selectType", value: "task" } do %>
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2l4-4"/></svg>
+        <span>Task</span>
+      <% end %>
+      <%= button_tag type: "button", disabled: true,
+            data: { card_form_target: "cardTypeButton", value: "event" } do %>
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><rect x="4" y="5" width="16" height="16" rx="2"/><line x1="16" y1="3" x2="16" y2="7"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="4" y1="11" x2="20" y2="11"/><rect x="8" y="15" width="2" height="2"/></svg>
+        <span>Event</span>
+      <% end %>
+      <%= button_tag type: "button",
+            data: { card_form_target: "cardTypeButton", action: "click->card-form#selectType", value: "note" } do %>
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+        <span>Note</span>
+      <% end %>
+      <%= button_tag type: "button", disabled: true,
+            data: { card_form_target: "cardTypeButton", value: "daylog" } do %>
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 4h11a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-11a1 1 0 0 1 -1 -1v-14a1 1 0 0 1 1 -1m3 0v18"/><line x1="13" y1="8" x2="15" y2="8"/><line x1="13" y1="12" x2="15" y2="12"/></svg>
+        <span>Daylog</span>
+      <% end %>
+
+      <%= turbo_frame_tag "card_type_fields",
+            class: "card-form-fields",
+            data: { card_form_target: "fieldsFrame" } do %>
+        <% (card.cardable&.form_fields || []).each do |field| %>
+          <%= render "cards/fields/#{field}", card: card %>
+        <% end %>
+      <% end %>
+    </div>
+
+    <%= f.button type: "submit", class: "card-form-submit" do %>
+      Save <kbd>⌘↩</kbd>
+    <% end %>
   </div>
-</div>
 <% end %>

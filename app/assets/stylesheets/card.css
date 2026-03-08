@@ -51,12 +51,17 @@
   }
 
   .card-type {
-    font-size: var(--font-size-subtle);
-    font-weight: var(--font-weight-strong);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--color-fg-subtle);
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-pill);
+    flex-shrink: 0;
+    background: var(--color-fg-subtle);
   }
+
+  .card-type--task   { background: var(--model-color-2); }
+  .card-type--note   { background: var(--model-color-5); }
+  .card-type--event  { background: var(--model-color-6); }
+  .card-type--daylog { background: var(--model-color-7); }
 
   .card-title {
     margin: 0;

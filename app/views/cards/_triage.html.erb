@@ -1,6 +1,6 @@
 <div class="triage-panel">
   <div class="triage-type-selector">
-    <% Card.cardable_types.each do |type| %>
+    <% Card.cardable_types.excluding("Draft").each do |type| %>
       <%= button_to type, card_cardable_type_path(card),
             params: { cardable_type: type.underscore },
             class: "type-btn #{'active' if card.cardable_type == type}" %>

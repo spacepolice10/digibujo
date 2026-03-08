@@ -5,7 +5,7 @@ class Cards::CardableTypesController < ApplicationController
     type = params[:id].classify
     raise ActionController::BadRequest unless Card.cardable_types.include?(type)
     @fields = type.constantize.new.form_fields
-    @card   = Card.new
+    @card = Card.new
   end
 
   def update
@@ -17,8 +17,8 @@ class Cards::CardableTypesController < ApplicationController
 
     new_cardable = target_type.constantize.create!
     old_cardable = @card.cardable
-    @card.update!(cardable_type: target_type, cardable_id: new_cardable.id)
-    old_cardable.destroy
+    @card.update!(cardable: new_cardable)
+    old_cardable&.destroy
 
     respond_to do |format|
       format.turbo_stream

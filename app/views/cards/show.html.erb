@@ -1,15 +1,40 @@
-<%= turbo_frame_tag "modal" do %>
-  <h1>Card #<%= @card.id %></h1>
+<% content_for(:title) { @card.title } %>
 
-  <p><strong>Type:</strong> <%= @card.cardable_type %></p>
-  <div><%= @card.content %></div>
+<div class="card-show">
+  <nav class="card-show-nav">
+    <%= link_to "&larr; Back".html_safe, cards_path, class: "card-show-back" %>
+    <div class="card-show-actions">
+      <%= link_to "Edit", edit_card_path(@card), class: "card-show-action" %>
+      <%= button_to "Delete", card_path(@card), method: :delete, class: "card-show-action card-show-action--danger", form: { data: { turbo_confirm: "Are you sure?" } } %>
+    </div>
+  </nav>
 
-  <% if @card.popped? %>
-    <%= render "cards/triage", card: @card %>
-  <% end %>
+  <article class="card-show-content">
+    <header class="card-show-header">
+      <div class="card-show-meta">
+        <% if @card.type_label %>
+          <span class="card-type"><%= @card.type_label %></span>
+        <% end %>
+        <% if @card.pinned? %>
+          <span class="pinned-badge">Pinned</span>
+        <% end %>
+      </div>
+      <h1 class="card-show-title"><%= @card.title %></h1>
+      <% if @card.tags.any? %>
+        <div class="card-tags">
+          <% @card.tags.each do |tag| %>
+            <span class="tag-chip" style="<%= tag.colour_style %>"><%= tag.name %></span>
+          <% end %>
+        </div>
+      <% end %>
+    </header>
 
-  <p>
-    <%= link_to "Edit", edit_card_path(@card), data: { turbo_frame: "modal", turbo_action: "advance" } %> |
-    <%= link_to "Close", cards_path, data: { action: "dialog#close" } %>
-  </p>
-<% end %>
+    <div class="card-show-body" data-controller="image-zoom" data-action="click->image-zoom#zoom">
+      <%= @card.content %>
+    </div>
+
+    <% if @card.popped? %>
+      <%= render "cards/triage", card: @card %>
+    <% end %>
+  </article>
+</div>

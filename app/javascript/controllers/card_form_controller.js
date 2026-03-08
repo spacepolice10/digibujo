@@ -1,14 +1,16 @@
 import { Controller } from "@hotwired/stimulus"
 
-const TYPE_SHORTCUTS = { "* ": "task", "- ": "note", ">d": "draft" }
+const TYPE_SHORTCUTS = { "* ": "task", "- ": "note" }
 
 export default class extends Controller {
   static values = { type: String }
   static targets = ["fieldsFrame", "cardTypeButton", "cardableTypeField"]
 
   connect() {
-    const first = this.cardTypeButtonTargets[0]
-    if (first) this.typeValue = first.dataset.value
+    this.element.dataset.loading = ""
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      delete this.element.dataset.loading
+    }))
   }
 
   selectType(event) {
@@ -17,12 +19,19 @@ export default class extends Controller {
 
   typeValueChanged(value) {
     this.cardTypeButtonTargets.forEach(b => b.classList.toggle("active", b.dataset.value == value))
+    this.element.classList.toggle("type-selected", !!value)
 
     if (this.hasCardableTypeFieldTarget) {
       this.cardableTypeFieldTarget.value = value
     }
+
     if (this.hasFieldsFrameTarget) {
-      this.fieldsFrameTarget.src = `/cards/cardable_types/${value}`
+      if (value) {
+        this.fieldsFrameTarget.src = `/cards/cardable_types/${value}`
+      } else {
+        this.fieldsFrameTarget.removeAttribute("src")
+        this.fieldsFrameTarget.innerHTML = ""
+      }
     }
   }
 
