@@ -1,7 +1,7 @@
 class Draft < ApplicationRecord
   include Cardable
+  include Schedulable
+  include Collectable
 
-  def taggable?
-    false
-  end
+  def form_fields = []
 end

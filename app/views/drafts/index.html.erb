@@ -1,0 +1,17 @@
+<div class="drafts-triage">
+  <div class="drafts-header">
+    <%= link_to "← Timeline", cards_path, class: "drafts-back-link" %>
+    <h1>Review Drafts</h1>
+    <p class="drafts-count"><%= @cards.size %> draft<%= @cards.size == 1 ? "" : "s" %> to review</p>
+  </div>
+
+  <div id="drafts">
+    <% @cards.each do |card| %>
+      <%= render "drafts/card", card: card %>
+    <% end %>
+  </div>
+
+  <% if @cards.empty? %>
+    <p class="drafts-empty">No drafts to review. You're all caught up!</p>
+  <% end %>
+</div>

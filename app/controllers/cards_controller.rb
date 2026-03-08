@@ -1,9 +1,12 @@
 class CardsController < ApplicationController
+  layout -> { "mobile" if request.variant.mobile? }
+
   before_action :set_card, only: %i[show edit update destroy]
 
   def index
     @popped_cards = Current.user.cards.includes(:tags).popped.order(pops_on: :asc)
     @cards = Current.user.cards.includes(:tags).timeline_order
+    @draft_count = Current.user.cards.draft.where(pops_on: nil).count
   end
 
   def show
@@ -15,7 +18,7 @@ class CardsController < ApplicationController
 
   def create
     @card = Current.user.cards.new(card_params)
-    @card.cardable = cardable_type.new
+    @card.cardable = (cardable_type || Draft).new
 
     if @card.save
       respond_to do |format|
@@ -62,6 +65,6 @@ class CardsController < ApplicationController
   def cardable_type
     params[:cardable_type].to_s.classify.safe_constantize.then do |klass|
       klass if klass && Card.cardable_types.include?(klass.name)
-    end || Task
+    end
   end
 end

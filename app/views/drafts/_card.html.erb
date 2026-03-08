@@ -1,0 +1,23 @@
+<div id="<%= dom_id(card) %>" class="draft-card">
+  <a class="draft-card-body" href="<%= card_path(card) %>" data-turbo-frame="_top">
+    <p class="draft-card-title"><%= card.title %></p>
+    <% if card.tags.any? %>
+      <div class="card-tags">
+        <% card.tags.each do |tag| %>
+          <span class="tag-chip" style="<%= tag.colour_style %>"><%= tag.name %></span>
+        <% end %>
+      </div>
+    <% end %>
+  </a>
+  <div class="draft-card-actions">
+    <%= button_to "Schedule", draft_schedule_path(card), class: "draft-action draft-action--schedule" %>
+    <%= button_to "Collect", draft_collect_path(card), class: "draft-action draft-action--collect" %>
+    <%= form_with url: draft_postpone_path(card), class: "draft-action-form" do |f| %>
+      <%= f.date_field :pops_on, min: Date.tomorrow, class: "draft-date-input" %>
+      <%= f.submit "Postpone", class: "draft-action draft-action--postpone" %>
+    <% end %>
+    <%= button_to "Remove", draft_removal_path(card),
+          class: "draft-action draft-action--remove",
+          form: { data: { turbo_confirm: "Are you sure?" } } %>
+  </div>
+</div>
