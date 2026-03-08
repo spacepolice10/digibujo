@@ -1,6 +1,7 @@
 class Card < ApplicationRecord
   include Pinnable
   include Archivable
+  include Taggable
 
   enum :status, { active: "active", pinned: "pinned", archived: "archived" }
   scope :draft,          -> { where(cardable_type: "Draft") }
@@ -12,10 +13,6 @@ class Card < ApplicationRecord
   delegated_type :cardable, types: %w[Draft Task Note], dependent: :destroy
 
   has_rich_text :content
-  has_many :card_tags, dependent: :destroy
-  has_many :tags, through: :card_tags
-
-  before_save :assign_tags, if: -> { @tag_names_input }
 
   def draft?
     cardable_type == "Draft"
@@ -37,27 +34,6 @@ class Card < ApplicationRecord
 
   def title
     content.to_plain_text.lines.first&.strip.presence || "Untitled"
-  end
-
-  def tag_names
-    tags.map { |t| t.colour.present? ? "#{t.name}:#{t.colour}" : t.name }.join(", ")
-  end
-
-  def tag_names=(names)
-    @tag_names_input = names
-  end
-
-  private
-
-  def assign_tags
-    self.tags = @tag_names_input.split(",").map(&:strip).reject(&:blank?).map do |entry|
-      name, colour = entry.split(":", 2)
-      tag = user.tags.find_or_initialize_by(name: name.downcase)
-      tag.colour = colour if colour.present? && tag.new_record?
-      tag.save!
-      tag
-    end
-    @tag_names_input = nil
   end
 
   def self.type_capabilities(type_name)
