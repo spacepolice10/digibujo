@@ -13,6 +13,6 @@ class Drafts::SchedulesController < ApplicationController
   private
 
   def set_card
-    @card = Current.user.cards.draft.find(params[:draft_id])
+    @card = Current.user.cards.drafts.find(params[:draft_id])
   end
 end

@@ -9,5 +9,5 @@ class Task < ApplicationRecord
     true
   end
 
-  def form_fields = [:date_picker, :tag_picker]
+  def form_fields = [:date_picker, :tags_picker]
 end

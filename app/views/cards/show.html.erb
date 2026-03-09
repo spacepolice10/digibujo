@@ -12,8 +12,8 @@
   <article class="card-show-content">
     <header class="card-show-header">
       <div class="card-show-meta">
-        <% if @card.type_label %>
-          <span class="card-type"><%= @card.type_label %></span>
+        <% if @card.cardable_type %>
+          <span class="card-type"><%= @card.cardable_type %></span>
         <% end %>
         <% if @card.pinned? %>
           <span class="pinned-badge">Pinned</span>

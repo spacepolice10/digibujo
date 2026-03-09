@@ -1,13 +1,6 @@
 class Cards::CardableTypesController < ApplicationController
   before_action :set_card, only: :update
 
-  def show
-    type = params[:id].classify
-    raise ActionController::BadRequest unless Card.cardable_types.include?(type)
-    @fields = type.constantize.new.form_fields
-    @card = Card.new
-  end
-
   def update
     target_type = params[:cardable_type].to_s.classify
     unless Card.cardable_types.include?(target_type)

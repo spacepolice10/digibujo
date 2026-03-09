@@ -3,7 +3,7 @@
     <ul class="tag-suggestions" role="listbox">
       <% @tags.each do |tag| %>
         <li role="option"
-            data-action="click->tag-input#select"
+              data-action="click->tag-input#select"
             data-name="<%= tag.name %>">
           <span class="tag-chip" style="<%= tag.colour_style %>"><%= tag.name %></span>
         </li>

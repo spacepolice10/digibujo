@@ -9,6 +9,10 @@ module Cardable
     def capabilities
       @capabilities ||= new.capabilities.freeze
     end
+
+    def form_fields
+      @form_fields ||= new.form_fields.freeze
+    end
   end
 
   def temporal?    = false

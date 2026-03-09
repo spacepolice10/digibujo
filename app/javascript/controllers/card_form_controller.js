@@ -27,7 +27,7 @@ export default class extends Controller {
 
     if (this.hasFieldsFrameTarget) {
       if (value) {
-        this.fieldsFrameTarget.src = `/cards/cardable_types/${value}`
+        this.fieldsFrameTarget.src = `/cards/fields/${value}`
       } else {
         this.fieldsFrameTarget.removeAttribute("src")
         this.fieldsFrameTarget.innerHTML = ""

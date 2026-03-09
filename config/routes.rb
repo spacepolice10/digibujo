@@ -1,7 +1,9 @@
 Rails.application.routes.draw do
   resource :session
   resources :passwords, param: :token
-  get "cards/cardable_types/:id", to: "cards/cardable_types#show", as: :card_type_fields
+  scope "cards", module: :cards do
+    resources :fields, only: :show
+  end
   resources :cards do
     scope module: :cards do
       resource :pop,           only: :update

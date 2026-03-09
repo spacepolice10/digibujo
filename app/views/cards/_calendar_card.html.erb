@@ -18,8 +18,8 @@
      data-turbo-action="advance"
      data-action="dialog#open">
     <div class="card-meta">
-      <% if card.type_label %>
-        <span class="card-type"><%= card.type_label %></span>
+      <% if card.cardable_type %>
+        <span class="card-type"><%= card.cardable_type %></span>
       <% end %>
     </div>
     <p class="card-title<%= " done" if card.done? %>">

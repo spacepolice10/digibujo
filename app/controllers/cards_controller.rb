@@ -5,8 +5,8 @@ class CardsController < ApplicationController
 
   def index
     @popped_cards = Current.user.cards.includes(:tags).popped.order(pops_on: :asc)
-    @cards = Current.user.cards.includes(:tags).timeline_order
-    @draft_count = Current.user.cards.draft.where(pops_on: nil).count
+    @cards = Current.user.cards.includes(:tags).timeline_chronological
+    @draft_count = Current.user.cards.drafts.where(pops_on: nil).count
   end
 
   def show
