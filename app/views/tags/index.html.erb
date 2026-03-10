@@ -1,4 +1,4 @@
-<%= turbo_frame_tag "tag-suggestions", popover: "manual" do %>
+<%= turbo_frame_tag (request.headers["Turbo-Frame"].presence || "tag-suggestions"), popover: "manual" do %>
   <% if @tags.any? || (@query.present? && !@exact_match) %>
     <ul class="tag-suggestions" role="listbox">
       <% @tags.each do |tag| %>

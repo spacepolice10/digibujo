@@ -66,7 +66,7 @@
     &:hover { background: var(--color-bg-base); }
   }
 
-  [data-controller="card-form"].type-selected .card-form-back {
+  .card-form-type-controls:has(input[value]:not([value=""]):checked) .card-form-back {
     display: inline-flex;
     opacity: 1;
     transform: translateX(0);
@@ -80,7 +80,7 @@
 
   /* ── Type-selected state ──────────────────────────── */
 
-  [data-controller="card-form"].type-selected [data-card-form-target="cardTypeButton"]:not(.active) {
+  .card-form-type-controls:has(input[value]:not([value=""]):checked) .card-form-type-button:not(:has(:checked)) {
     display: none;
   }
 
@@ -94,7 +94,7 @@
     min-width: 0;
   }
 
-  [data-controller="card-form"].type-selected turbo-frame.card-form-fields {
+  .card-form-type-controls:has(input[value]:not([value=""]):checked) turbo-frame.card-form-fields {
     display: flex;
   }
 
@@ -134,6 +134,8 @@
     padding: 5px 12px;
     cursor: text;
     overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-padding-inline: 12px;
     scrollbar-width: none;
 
     &::-webkit-scrollbar { display: none; }
@@ -167,7 +169,7 @@
     &::placeholder { color: var(--color-fg-subtle); }
   }
 
-  [data-card-form-target="cardTypeButton"] {
+  .card-form-type-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -184,39 +186,39 @@
     &:hover { opacity: 0.8; }
   }
 
-  [data-card-form-target="cardTypeButton"][data-value=""] {
+  .card-form-type-button[data-value=""] {
     background: var(--model-color-8-bg);
     color: var(--model-color-8);
   }
 
-  [data-card-form-target="cardTypeButton"][data-value="task"] {
+  .card-form-type-button[data-value="task"] {
     background: var(--model-color-1-bg);
     color: var(--model-color-2);
   }
 
-  [data-card-form-target="cardTypeButton"][data-value="event"] {
+  .card-form-type-button[data-value="event"] {
     background: var(--model-color-6-bg);
     color: var(--model-color-6);
   }
 
-  [data-card-form-target="cardTypeButton"][data-value="note"] {
+  .card-form-type-button[data-value="note"] {
     background: var(--color-bg-warn);
     color: var(--color-fg-warn);
   }
 
-  [data-card-form-target="cardTypeButton"][data-value="daylog"] {
+  .card-form-type-button[data-value="daylog"] {
     background: var(--model-color-7-bg);
     color: var(--model-color-7);
   }
 
-  [data-card-form-target="cardTypeButton"]:disabled {
+  .card-form-type-button.disabled {
     opacity: 0.45;
     cursor: default;
 
     &:hover { opacity: 0.45; }
   }
 
-  [data-card-form-target="cardTypeButton"] span {
+  .card-form-type-button span {
     display: inline-block;
     width: 0;
     overflow: hidden;
@@ -226,8 +228,7 @@
     transition: width 0.25s ease, opacity 0.15s ease, margin-left 0.25s ease;
   }
 
-  [data-card-form-target="cardTypeButton"].active,
-  [data-card-form-target="cardTypeButton"][aria-pressed="true"] {
+  .card-form-type-button:has(:checked) {
     box-shadow: 0 0 0 2px currentColor;
 
     span {

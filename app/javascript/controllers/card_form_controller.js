@@ -3,8 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 const TYPE_SHORTCUTS = { "* ": "task", "- ": "note" }
 
 export default class extends Controller {
-  static values = { type: String }
-  static targets = ["fieldsFrame", "cardTypeButton", "cardableTypeField"]
+  static targets = ["fieldsFrame"]
 
   connect() {
     this.element.dataset.loading = ""
@@ -13,25 +12,15 @@ export default class extends Controller {
     }))
   }
 
-  selectType(event) {
-    this.typeValue = event.currentTarget.dataset.value
-  }
-
-  typeValueChanged(value) {
-    this.cardTypeButtonTargets.forEach(b => b.classList.toggle("active", b.dataset.value == value))
-    this.element.classList.toggle("type-selected", !!value)
-
-    if (this.hasCardableTypeFieldTarget) {
-      this.cardableTypeFieldTarget.value = value
-    }
-
-    if (this.hasFieldsFrameTarget) {
-      if (value) {
-        this.fieldsFrameTarget.src = `/cards/fields/${value}`
-      } else {
-        this.fieldsFrameTarget.removeAttribute("src")
-        this.fieldsFrameTarget.innerHTML = ""
-      }
+  loadFields(event) {
+    if (!this.hasFieldsFrameTarget) return
+    if (event.target.name != "cardable_type") return
+    const value = event.target.value
+    if (value) {
+      this.fieldsFrameTarget.src = `/cards/fields/${value}`
+    } else {
+      this.fieldsFrameTarget.removeAttribute("src")
+      this.fieldsFrameTarget.innerHTML = ""
     }
   }
 
@@ -40,7 +29,11 @@ export default class extends Controller {
     const text = editor.getDocument().toString()
     for (const [shortcut, type] of Object.entries(TYPE_SHORTCUTS)) {
       if (text.startsWith(shortcut)) {
-        this.typeValue = type
+        const radio = this.element.querySelector(`input[name="cardable_type"][value="${type}"]`)
+        if (radio) {
+          radio.checked = true
+          radio.dispatchEvent(new Event("change", { bubbles: true }))
+        }
         editor.setSelectedRange([0, shortcut.length])
         editor.deleteInDirection("forward")
         break
@@ -48,10 +41,8 @@ export default class extends Controller {
     }
   }
 
-  submitOnKeyboard(event) {
-    if (event.key == "Enter" && (event.metaKey || event.ctrlKey)) {
-      event.preventDefault()
-      this.element.requestSubmit()
-    }
+  submit(event) {
+    event.preventDefault()
+    this.element.requestSubmit()
   }
 }

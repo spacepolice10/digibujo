@@ -1,7 +1,7 @@
-<turbo-frame id="pins_panel">
+<turbo-frame id="pinned_panel">
   <div data-controller="toggle">
     <button data-action="toggle#toggle">
-      Pinned (<%= @pinned_cards.size %>)
+      Pinned (<span id="pinned_number"><%= @pinned_cards.size %></span>)
     </button>
     <div data-toggle-target="content" id="pinned_cards" hidden>
       <% @pinned_cards.each do |card| %>

@@ -1,10 +1,13 @@
-<div class="tag-picker" data-controller="tag-input" style="anchor-name: --tag-picker;">
-  <%= hidden_field_tag "card[tag_names]", card.tag_names, data: { tag_input_target: "hidden" } %>
+<% field_name    = local_assigns.fetch(:field_name,    "card[tag_names]") %>
+<% initial_value = local_assigns.fetch(:initial_value, card.tag_names) %>
+<% frame_id      = local_assigns.fetch(:frame_id,      "tag-suggestions") %>
+<div class="tag-picker" data-controller="tag-input" data-action="click->tag-input#focusInput" style="anchor-name: --tag-picker;">
+  <%= hidden_field_tag field_name, initial_value, data: { tag_input_target: "hidden" } %>
   <div class="tag-chips" data-tag-input-target="chips"></div>
   <input type="text" placeholder="Add tags…" autocomplete="off"
          data-tag-input-target="input"
          data-action="input->tag-input#onInput keydown->tag-input#onKeydown blur->tag-input#onBlur">
-  <%= turbo_frame_tag "tag-suggestions",
+  <%= turbo_frame_tag frame_id,
         popover: "manual",
         data: { tag_input_target: "suggestions" } %>
 </div>

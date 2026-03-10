@@ -11,7 +11,8 @@ module Promotable
         card.tag_names = tag_names.join(", ")
         card.save!
       end
-      destroy! # safe — card no longer points here
+      association(:card).reset # force re-query so dependent: :destroy finds nothing
+      destroy!
     end
   end
 end

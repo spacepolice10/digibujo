@@ -26,6 +26,10 @@ export default class extends Controller {
     })
   }
 
+  focusInput() {
+    this.inputTarget.focus()
+  }
+
   onInput() {
     clearTimeout(this._debounce)
     this._debounce = setTimeout(() => {

@@ -8,4 +8,4 @@
     <%= render partial: "cards/card", locals: { card: @card } %>
   <% end %>
 <% end %>
-<%= turbo_stream.update "pin_count", Current.user.cards.pinned.count.to_s %>
+<%= turbo_stream.update "pinned_number", Current.user.cards.pinned.count.to_s %>

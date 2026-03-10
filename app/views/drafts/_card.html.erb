@@ -11,7 +11,13 @@
   </a>
   <div class="draft-card-actions">
     <%= button_to "Schedule", draft_schedule_path(card), class: "draft-action draft-action--schedule" %>
-    <%= button_to "Collect", draft_collect_path(card), class: "draft-action draft-action--collect" %>
+    <%= form_with url: draft_collect_path(card), class: "draft-action-form" do |f| %>
+      <%= render "cards/fields/tags_picker",
+            card: card,
+            field_name: "tag_names",
+            frame_id: "tag-suggestions-#{card.id}" %>
+      <%= f.submit "Collect", class: "draft-action draft-action--collect" %>
+    <% end %>
     <%= form_with url: draft_postpone_path(card), class: "draft-action-form" do |f| %>
       <%= f.date_field :pops_on, min: Date.tomorrow, class: "draft-date-input" %>
       <%= f.submit "Postpone", class: "draft-action draft-action--postpone" %>
