@@ -1,10 +1,8 @@
+<%= turbo_frame_tag "pinned_panel", src: pinned_index_path, loading: :lazy, data: { turbo_permanent: true } %>
 <div class="main-layout">
   <aside class="main-sidebar main-sidebar--left" id="sidebar-left" popover="auto" data-turbo-permanent>
     <%= turbo_frame_tag "streams_panel", src: streams_path, loading: :lazy do %>
       <p>Loading streams...</p>
-    <% end %>
-    <%= turbo_frame_tag "pinned_panel", src: pinned_index_path, loading: :lazy do %>
-      <p>Loading pinned...</p>
     <% end %>
   </aside>
   <main class="main-content">
@@ -23,19 +21,7 @@
           <% end %>
         <% end %>
       </div>
-      <% if @popped_cards.any? %>
-        <div id="popped_cards" class="popped-inbox">
-          <h2>Popped &mdash; <%= @popped_cards.size %></h2>
-          <% @popped_cards.each do |card| %>
-            <%= render card %>
-          <% end %>
-        </div>
-      <% end %>
-      <div id="cards">
-        <% @cards.each do |card| %>
-          <%= render card %>
-        <% end %>
-      </div>
+      <%= render "cards/paginated_list" %>
     <% end %>
   </main>
   <aside class="main-sidebar main-sidebar--right" id="sidebar-right" data-turbo-permanent>

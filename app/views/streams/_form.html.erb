@@ -41,9 +41,9 @@
   </div>
 
   <div>
-    <%= f.label :tag_names, "Tags" %>
+    <%= f.label :tags, "Tags" %>
     <div class="tag-picker" data-controller="tag-input" style="anchor-name: --tag-picker;">
-      <%= f.hidden_field :tag_names, data: { tag_input_target: "hidden" } %>
+      <%= f.hidden_field :tags, data: { tag_input_target: "hidden" } %>
       <div class="tag-chips" data-tag-input-target="chips"></div>
       <input type="text" placeholder="Add tags…" autocomplete="off"
              data-tag-input-target="input"

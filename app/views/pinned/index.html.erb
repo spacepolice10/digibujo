@@ -1,12 +1,21 @@
 <turbo-frame id="pinned_panel">
-  <div data-controller="toggle">
-    <button data-action="toggle#toggle">
-      Pinned (<span id="pinned_number"><%= @pinned_cards.size %></span>)
-    </button>
-    <div data-toggle-target="content" id="pinned_cards" hidden>
-      <% @pinned_cards.each do |card| %>
-        <%= render partial: "cards/card", locals: { card: card } %>
-      <% end %>
+  <% if @pinned_cards.any? %>
+    <% stack = @pinned_cards.first(3) %>
+    <input type="checkbox" id="pinned-expand" class="pinned-expand-input" autocomplete="off" tabindex="-1">
+    <label for="pinned-expand" class="pinned-backdrop" aria-hidden="true"></label>
+    <div class="pinned-float">
+      <label for="pinned-expand" class="pinned-float-overlay" aria-label="Show pinned cards"></label>
+      <div class="pinned-float-stack" style="--card-count: <%= stack.size %>">
+        <% stack.each_with_index do |card, i| %>
+          <a class="pinned-float-card"
+             href="<%= card_path(card) %>"
+             data-turbo-frame="_top"
+             style="--stack-i: <%= i %>">
+            <i class="icon pinned-float-pin" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
+            <span class="pinned-float-card-title"><%= card.title %></span>
+          </a>
+        <% end %>
+      </div>
     </div>
-  </div>
+  <% end %>
 </turbo-frame>

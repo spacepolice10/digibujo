@@ -3,7 +3,7 @@
       action: "keydown.meta+enter->card-form#submit keydown.ctrl+enter->card-form#submit"
     } do |f| %>
   <% if card.errors.any? %>
-    <div style="color:red;">
+    <div class="card-form-error">
       <ul>
         <% card.errors.full_messages.each do |msg| %>
           <li><%= msg %></li>
@@ -11,21 +11,17 @@
       </ul>
     </div>
   <% end %>
-
   <div>
     <%= f.label :content %>
     <%= f.rich_text_area :content, autofocus: true, placeholder: "What's on your mind?",
           data: { action: "trix-change->card-form#detectTypeShortcut" } %>
   </div>
-
   <div class="card-form-actions">
     <div class="card-form-type-controls" data-action="change->card-form#loadFields">
-
       <label class="card-form-back" for="cardable_type_draft">
         <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
         Back
       </label>
-
       <label class="card-form-type-button" data-value="">
         <input type="radio" name="cardable_type" value=""
                id="cardable_type_draft"
@@ -33,33 +29,30 @@
         <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
         <span>Draft</span>
       </label>
-
       <label class="card-form-type-button" data-value="task">
         <input type="radio" name="cardable_type" value="task"
                <%= "checked" if card.task? %> hidden>
         <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
         <span>Task</span>
       </label>
-
-      <label class="card-form-type-button disabled" data-value="event">
-        <input type="radio" name="cardable_type" value="event" disabled hidden>
+      <label class="card-form-type-button" data-value="event">
+        <input type="radio" name="cardable_type" value="event"
+               <%= "checked" if card.event? %> hidden>
         <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
         <span>Event</span>
       </label>
-
       <label class="card-form-type-button" data-value="note">
         <input type="radio" name="cardable_type" value="note"
                <%= "checked" if card.note? %> hidden>
         <i class="icon" style="--icon-mask: var(--icon-file)" aria-hidden="true"></i>
         <span>Note</span>
       </label>
-
-      <label class="card-form-type-button disabled" data-value="daylog">
-        <input type="radio" name="cardable_type" value="daylog" disabled hidden>
+      <label class="card-form-type-button" data-value="daylog">
+        <input type="radio" name="cardable_type" value="daylog"
+               <%= "checked" if card.daylog? %> hidden>
         <i class="icon" style="--icon-mask: var(--icon-book)" aria-hidden="true"></i>
         <span>Daylog</span>
       </label>
-
       <%= turbo_frame_tag "card_type_fields",
             class: "card-form-fields",
             data: { card_form_target: "fieldsFrame" } do %>
@@ -68,7 +61,6 @@
         <% end %>
       <% end %>
     </div>
-
     <%= f.button type: "submit", class: "card-form-submit" do %>
       Save <kbd>⌘↩</kbd>
     <% end %>

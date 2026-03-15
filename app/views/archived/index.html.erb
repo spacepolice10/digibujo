@@ -1,0 +1,9 @@
+<div class="cards-list">
+  <% if @archived_cards.any? %>
+    <% @archived_cards.each do |card| %>
+      <%= render partial: "cards/card", locals: { card: card } %>
+    <% end %>
+  <% else %>
+    <p>No archived cards.</p>
+  <% end %>
+</div>

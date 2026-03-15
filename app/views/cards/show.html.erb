@@ -1,14 +1,12 @@
 <% content_for(:title) { @card.title } %>
-
 <div class="card-show">
   <nav class="card-show-nav">
-    <%= link_to "&larr; Back".html_safe, cards_path, class: "card-show-back" %>
+    <%= link_to "Back", cards_path, class: "card-show-back" %>
     <div class="card-show-actions">
       <%= link_to "Edit", edit_card_path(@card), class: "card-show-action" %>
       <%= button_to "Delete", card_path(@card), method: :delete, class: "card-show-action card-show-action--danger", form: { data: { turbo_confirm: "Are you sure?" } } %>
     </div>
   </nav>
-
   <article class="card-show-content">
     <header class="card-show-header">
       <div class="card-show-meta">
@@ -19,7 +17,6 @@
           <span class="pinned-badge">Pinned</span>
         <% end %>
       </div>
-      <h1 class="card-show-title"><%= @card.title %></h1>
       <% if @card.tags.any? %>
         <div class="card-tags">
           <% @card.tags.each do |tag| %>
@@ -28,11 +25,9 @@
         </div>
       <% end %>
     </header>
-
     <div class="card-show-body" data-controller="image-zoom" data-action="click->image-zoom#zoom">
       <%= @card.content %>
     </div>
-
     <% if @card.popped? %>
       <%= render "cards/triage", card: @card %>
     <% end %>

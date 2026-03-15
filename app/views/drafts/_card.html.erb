@@ -1,29 +1,61 @@
 <div id="<%= dom_id(card) %>" class="draft-card">
-  <a class="draft-card-body" href="<%= card_path(card) %>" data-turbo-frame="_top">
-    <p class="draft-card-title"><%= card.title %></p>
-    <% if card.tags.any? %>
-      <div class="card-tags">
-        <% card.tags.each do |tag| %>
-          <span class="tag-chip" style="<%= tag.colour_style %>"><%= tag.name %></span>
-        <% end %>
+  <div class="draft-card-layout">
+    <div class="draft-card-content">
+      <div class="draft-card-body">
+        <%= card.content %>
       </div>
-    <% end %>
-  </a>
-  <div class="draft-card-actions">
-    <%= button_to "Schedule", draft_schedule_path(card), class: "draft-action draft-action--schedule" %>
-    <%= form_with url: draft_collect_path(card), class: "draft-action-form" do |f| %>
-      <%= render "cards/fields/tags_picker",
-            card: card,
-            field_name: "tag_names",
-            frame_id: "tag-suggestions-#{card.id}" %>
-      <%= f.submit "Collect", class: "draft-action draft-action--collect" %>
-    <% end %>
-    <%= form_with url: draft_postpone_path(card), class: "draft-action-form" do |f| %>
-      <%= f.date_field :pops_on, min: Date.tomorrow, class: "draft-date-input" %>
-      <%= f.submit "Postpone", class: "draft-action draft-action--postpone" %>
-    <% end %>
-    <%= button_to "Remove", draft_removal_path(card),
-          class: "draft-action draft-action--remove",
-          form: { data: { turbo_confirm: "Are you sure?" } } %>
+      <% if card.tags.any? %>
+        <div class="card-tags">
+          <% card.tags.each do |tag| %>
+            <span class="tag-chip" style="<%= tag.colour_style %>"><%= tag.name %></span>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <aside class="draft-card-actions">
+      <details class="draft-action-dropdown">
+        <summary class="draft-action draft-action--collect">Save</summary>
+        <div class="draft-action-panel">
+          <p class="draft-action-panel-title">Save as note</p>
+          <%= form_with url: draft_collect_path(card) do |f| %>
+            <%= render "cards/fields/tags_picker",
+                  card: card,
+                  field_name: "tags",
+                  frame_id: "collect-tags-#{card.id}" %>
+            <%= f.submit "Save", class: "draft-action draft-action--collect" %>
+          <% end %>
+        </div>
+      </details>
+
+      <details class="draft-action-dropdown">
+        <summary class="draft-action draft-action--schedule">Schedule</summary>
+        <div class="draft-action-panel">
+          <p class="draft-action-panel-title">Schedule as task</p>
+          <%= form_with url: draft_schedule_path(card) do |f| %>
+            <%= f.date_field :date, class: "draft-date-input" %>
+            <%= render "cards/fields/tags_picker",
+                  card: card,
+                  field_name: "tags",
+                  frame_id: "schedule-tags-#{card.id}" %>
+            <%= f.submit "Schedule", class: "draft-action draft-action--schedule" %>
+          <% end %>
+        </div>
+      </details>
+
+      <div class="draft-action-group--postpone">
+        <span class="draft-action-label">Decide later:</span>
+        <%= button_to "Tomorrow", draft_postpone_path(card),
+              params: { pops_on: Date.tomorrow },
+              class: "draft-action draft-action--postpone" %>
+        <%= button_to "Next week", draft_postpone_path(card),
+              params: { pops_on: 1.week.from_now.to_date },
+              class: "draft-action draft-action--postpone" %>
+      </div>
+
+      <%= button_to "Remove", draft_remove_path(card),
+            class: "draft-action draft-action--remove",
+            form: { data: { turbo_confirm: "Are you sure?" } } %>
+    </aside>
   </div>
 </div>

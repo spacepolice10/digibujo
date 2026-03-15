@@ -1,18 +1,102 @@
-<%= turbo_frame_tag "streams_panel" do %>
-  <h1>Streams</h1>
+<turbo-frame id="streams_panel">
+  <nav class="sidebar-panel">
 
-  <div>
-    <%= link_to "All Cards", cards_path,
-          data: { turbo_frame: "cards_panel", turbo_action: "advance" } %>
-  </div>
-
-  <% @streams.each do |stream| %>
-    <div>
-      <%= link_to stream.name, stream_path(stream),
-            data: { turbo_frame: "cards_panel", turbo_action: "advance" } %>
+    <div class="sidebar-panel__header">
+      <span class="sidebar-panel__title">Streams</span>
+      <%= link_to new_stream_path,
+            class: "streams-panel__add-btn",
+            data: { turbo_frame: "modal", action: "dialog#open" },
+            aria: { label: "New stream" } do %>+<% end %>
     </div>
-  <% end %>
 
-  <p><%= link_to "New stream", new_stream_path,
-        data: { turbo_frame: "modal", turbo_action: "advance", action: "dialog#open" } %></p>
-<% end %>
+    <section class="sidebar-panel__section">
+      <h2 class="sidebar-panel__section-label">Types</h2>
+      <ul class="streams-type-list">
+        <li>
+          <%= link_to cards_path,
+                class: "sidebar-panel__item streams-type-item",
+                data: { turbo_frame: "cards_panel", turbo_action: "advance" } do %>
+            <i class="icon" style="--icon-mask: var(--icon-menu)" aria-hidden="true"></i>
+            All Cards
+          <% end %>
+        </li>
+        <li>
+          <%= link_to tasks_stream_path,
+                class: "sidebar-panel__item sidebar-panel__item--task streams-type-item",
+                data: { turbo_frame: "cards_panel", turbo_action: "advance" } do %>
+            <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
+            Tasks
+          <% end %>
+        </li>
+        <li>
+          <%= link_to notes_stream_path,
+                class: "sidebar-panel__item sidebar-panel__item--note streams-type-item",
+                data: { turbo_frame: "cards_panel", turbo_action: "advance" } do %>
+            <i class="icon" style="--icon-mask: var(--icon-file)" aria-hidden="true"></i>
+            Notes
+          <% end %>
+        </li>
+        <li>
+          <%= link_to cards_path(cardable_type: "Event"),
+                class: "sidebar-panel__item sidebar-panel__item--event streams-type-item",
+                data: { turbo_frame: "cards_panel", turbo_action: "advance" } do %>
+            <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
+            Events
+          <% end %>
+        </li>
+        <li>
+          <%= link_to drafts_path,
+                class: "sidebar-panel__item sidebar-panel__item--draft streams-type-item",
+                data: { turbo_frame: "_top" } do %>
+            <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
+            Drafts
+          <% end %>
+        </li>
+      </ul>
+    </section>
+
+    <% if @streams.any? %>
+      <section class="sidebar-panel__section">
+        <h2 class="sidebar-panel__section-label">Custom</h2>
+        <ul class="streams-custom-list">
+          <% @streams.each do |stream| %>
+            <li>
+              <%= link_to stream_path(stream),
+                    class: "streams-stream-card",
+                    data: { turbo_frame: "cards_panel", turbo_action: "advance" } do %>
+                <span class="streams-stream-name"><%= stream.name %></span>
+                <% unless stream.empty? %>
+                  <div class="streams-stream-chips">
+                    <% if stream.tags.present? %>
+                      <% stream.tags.split(",").map(&:strip).reject(&:blank?).each do |tag| %>
+                        <span class="streams-chip streams-chip--tag">#<%= tag %></span>
+                      <% end %>
+                    <% end %>
+                    <% if stream.cardable_type.present? %>
+                      <span class="streams-chip streams-chip--type">
+                        <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
+                        <%= stream.cardable_type.downcase.pluralize %>
+                      </span>
+                    <% end %>
+                    <% if stream.date_from.present? || stream.date_to.present? %>
+                      <span class="streams-chip streams-chip--date">
+                        <% if stream.date_from.present? && stream.date_to.present? %>
+                          <%= stream.date_from %>&ndash;<%= stream.date_to %>
+                        <% elsif stream.date_from.present? %>
+                          from <%= stream.date_from %>
+                        <% else %>
+                          until <%= stream.date_to %>
+                        <% end %>
+                      </span>
+                    <% end %>
+                  </div>
+                <% end %>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </section>
+    <% end %>
+
+  </nav>
+</turbo-frame>

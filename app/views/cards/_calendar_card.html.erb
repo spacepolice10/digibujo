@@ -1,36 +1,13 @@
-<div id="<%= dom_id(card, :calendar) %>" class="card<%= " archived" if card.archived? %>">
-  <div class="card-action">
-    <% if card.completable? %>
-      <% if card.done? %>
-        <%= button_to card_completion_path(card), method: :delete, class: "completion-toggle done", aria: { label: "Mark undone" } do %>
-          &#10003;
-        <% end %>
-      <% else %>
-        <%= button_to card_completion_path(card), method: :post, class: "completion-toggle", aria: { label: "Mark done" } do %>
-          &#9675;
-        <% end %>
-      <% end %>
-    <% end %>
-  </div>
-  <a class="card-body"
-     href="<%= edit_card_path(card) %>"
-     data-turbo-frame="modal"
-     data-turbo-action="advance"
-     data-action="dialog#open">
-    <div class="card-meta">
-      <% if card.cardable_type %>
-        <span class="card-type"><%= card.cardable_type %></span>
-      <% end %>
-    </div>
-    <p class="card-title<%= " done" if card.done? %>">
-      <%= card.title %>
-    </p>
-    <% if card.tags.any? %>
-      <div class="card-tags">
-        <% card.tags.each do |tag| %>
-          <span class="tag-chip" style="<%= tag.colour_style %>"><%= tag.name %></span>
-        <% end %>
-      </div>
-    <% end %>
-  </a>
+<% icon_mask = case card.cardable_type
+               when "Task"  then "var(--icon-circle-check)"
+               when "Event" then "var(--icon-calendar)"
+               when "Note"  then "var(--icon-file)"
+               else              "var(--icon-pencil)"
+               end %>
+<div id="<%= dom_id(card, :calendar) %>"
+     class="calendar-card sidebar-panel__item sidebar-panel__item--<%= card.cardable_type.downcase %><%= " sidebar-panel__item--done" if card.done? %>">
+  <i class="icon" style="--icon-mask: <%= icon_mask %>" aria-hidden="true"></i>
+  <%= link_to card.title, card_path(card),
+        data: { turbo_frame: "_top" },
+        class: "calendar-card-title" %>
 </div>

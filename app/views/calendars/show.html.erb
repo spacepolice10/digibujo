@@ -1,12 +1,50 @@
-<%= turbo_frame_tag "calendar_panel" do %>
-  <h1>Calendar</h1>
+<turbo-frame id="calendar_panel">
+  <nav class="calendar-panel sidebar-panel">
 
-  <% @cards_by_date.each do |date, cards| %>
-    <h2><%= date ? l(date, format: :long) : "No date" %></h2>
-    <div>
-      <% cards.each do |card| %>
-        <%= render partial: "cards/calendar_card", locals: { card: card } %>
-      <% end %>
+    <div class="sidebar-panel__header">
+      <span class="sidebar-panel__title">Upcoming</span>
     </div>
-  <% end %>
-<% end %>
+
+    <a href="<%= calendar_path %>" class="calendar-panel__link-btn" data-turbo-frame="_top">
+      Calendar &rarr;
+    </a>
+
+    <% if @today_cards.any? %>
+      <section class="sidebar-panel__section">
+        <h2 class="sidebar-panel__section-label">Today</h2>
+        <div class="calendar-section">
+          <% @today_cards.each do |card| %>
+            <%= render partial: "cards/calendar_card", locals: { card: card } %>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+
+    <% if @upcoming_cards.any? %>
+      <section class="sidebar-panel__section">
+        <h2 class="sidebar-panel__section-label">Upcoming</h2>
+        <div class="calendar-section">
+          <% @upcoming_cards.each do |card| %>
+            <%= render partial: "cards/calendar_card", locals: { card: card } %>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+
+    <% if @due_cards.any? %>
+      <section class="sidebar-panel__section">
+        <h2 class="sidebar-panel__section-label sidebar-panel__section-label--alert">Due</h2>
+        <div class="calendar-section">
+          <% @due_cards.each do |card| %>
+            <%= render partial: "cards/calendar_card", locals: { card: card } %>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+
+    <% unless @today_cards.any? || @upcoming_cards.any? || @due_cards.any? %>
+      <p class="calendar-empty">Nothing scheduled.</p>
+    <% end %>
+
+  </nav>
+</turbo-frame>

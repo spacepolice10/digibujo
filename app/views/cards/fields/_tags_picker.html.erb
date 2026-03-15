@@ -1,5 +1,5 @@
-<% field_name    = local_assigns.fetch(:field_name,    "card[tag_names]") %>
-<% initial_value = local_assigns.fetch(:initial_value, card.tag_names) %>
+<% field_name    = local_assigns.fetch(:field_name,    "card[tags_string]") %>
+<% initial_value = local_assigns.fetch(:initial_value, card.tags_string) %>
 <% frame_id      = local_assigns.fetch(:frame_id,      "tag-suggestions") %>
 <div class="tag-picker" data-controller="tag-input" data-action="click->tag-input#focusInput" style="anchor-name: --tag-picker;">
   <%= hidden_field_tag field_name, initial_value, data: { tag_input_target: "hidden" } %>

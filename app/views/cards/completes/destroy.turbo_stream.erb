@@ -1,0 +1,6 @@
+<%= turbo_stream.replace @card do %>
+  <%= render partial: "cards/card", locals: { card: @card } %>
+<% end %>
+<%= turbo_stream.replace dom_id(@card, :calendar) do %>
+  <%= render partial: "cards/calendar_card", locals: { card: @card } %>
+<% end %>

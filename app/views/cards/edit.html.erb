@@ -1,7 +1,7 @@
-<%= turbo_frame_tag "modal" do %>
-  <h1>Edit card</h1>
-
+<% content_for(:title) { "Edit card" } %>
+<div class="card-show">
+  <nav class="card-show-nav">
+    <%= link_to "&larr; Back".html_safe, card_path(@card), class: "card-show-back" %>
+  </nav>
   <%= render "form", card: @card %>
-
-  <%= link_to "Cancel", cards_path, data: { action: "dialog#close" } %>
-<% end %>
+</div>
