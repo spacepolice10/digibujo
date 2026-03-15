@@ -1,4 +1,4 @@
-class Drafts::RemovalsController < ApplicationController
+class Drafts::RemovesController < ApplicationController
   before_action :set_card
 
   def create

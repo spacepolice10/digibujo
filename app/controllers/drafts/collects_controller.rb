@@ -2,7 +2,7 @@ class Drafts::CollectsController < ApplicationController
   before_action :set_card
 
   def create
-    @card.cardable.collect_as_note!(tag_names: params[:tag_names].to_s.split(",").map(&:strip).reject(&:blank?))
+    @card.cardable.collect_as_note!(tags: params[:tags].to_s.split(",").map(&:strip).reject(&:blank?))
 
     respond_to do |format|
       format.turbo_stream

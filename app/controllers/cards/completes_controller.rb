@@ -1,4 +1,4 @@
-class Cards::CompletionsController < ApplicationController
+class Cards::CompletesController < ApplicationController
   before_action :set_card
 
   def create

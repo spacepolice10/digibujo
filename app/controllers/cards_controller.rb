@@ -1,11 +1,13 @@
 class CardsController < ApplicationController
-  layout -> { "mobile" if request.variant.mobile? }
+  layout -> { 'mobile' if request.variant.mobile? }
 
   before_action :set_card, only: %i[show edit update destroy]
 
   def index
-    @popped_cards = Current.user.cards.includes(:tags).popped.order(pops_on: :asc)
-    @cards = Current.user.cards.includes(:tags).timeline_chronological
+    @cards = set_page_and_extract_portion_from(
+      Current.user.cards.includes(:tags).timeline_chronological,
+      per_page: [5, 15, 30, 50]
+    )
     @draft_count = Current.user.cards.drafts.where(pops_on: nil).count
   end
 
@@ -26,7 +28,12 @@ class CardsController < ApplicationController
         format.html { redirect_to @card }
       end
     else
-      render :new, status: :unprocessable_entity
+      respond_to do |format|
+        format.turbo_stream {
+          render turbo_stream: turbo_stream.update("new_card", partial: "form", locals: { card: @card })
+        }
+        format.html { render :new, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -35,10 +42,7 @@ class CardsController < ApplicationController
 
   def update
     if @card.update(card_params)
-      respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to @card }
-      end
+      redirect_to @card
     else
       render :edit, status: :unprocessable_entity
     end
@@ -59,7 +63,7 @@ class CardsController < ApplicationController
   end
 
   def card_params
-    params.expect(card: [ :content, :date, :pops_on, :tag_names ])
+    params.expect(card: %i[content date ends_date pops_on tags_string])
   end
 
   def cardable_type

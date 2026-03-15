@@ -1,7 +1,10 @@
 class Cards::FieldsController < ApplicationController
   def show
-    type = params[:id].classify
-    @fields = Card.cardable_types.include?(type) ? type.constantize.form_fields : []
-    @card = Card.new
+    cardable_type = params[:id].to_s.classify
+    unless Card.cardable_types.include?(cardable_type)
+      return head :not_found
+    end
+
+    @card = Card.new(cardable: cardable_type.constantize.new)
   end
 end

@@ -2,8 +2,7 @@ class Cards::PinsController < ApplicationController
   before_action :set_card
 
   def update
-    new_status = @card.pinned? ? :active : :pinned
-    if @card.update(status: new_status)
+    if @card.update(pinned: !@card.pinned?)
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to cards_path }
