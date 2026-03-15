@@ -2,7 +2,7 @@ module Collectable
   extend ActiveSupport::Concern
   include Promotable
 
-  def collect_as_note!(tag_names: [])
-    promote_to! Note.new, tag_names: tag_names
+  def collect_as_note!(tags: [])
+    promote_to! Note.new, tags: tags
   end
 end

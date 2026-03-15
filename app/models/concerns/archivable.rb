@@ -2,6 +2,6 @@ module Archivable
   extend ActiveSupport::Concern
 
   included do
-    scope :archived, -> { where(status: :archived) }
+    scope :archived, -> { where(archived: true) }
   end
 end

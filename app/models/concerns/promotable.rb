@@ -3,12 +3,14 @@ module Promotable
 
   private
 
-  def promote_to!(new_cardable, tag_names: [])
+  def promote_to!(new_cardable, tags: [], date: nil)
     transaction do
       new_cardable.save!
-      card.update!(cardable: new_cardable)
-      if tag_names.any?
-        card.tag_names = tag_names.join(", ")
+      attrs = { cardable: new_cardable }
+      attrs[:date] = date if date.present?
+      card.update!(attrs)
+      if tags.any?
+        card.tags_string = tags.join(", ")
         card.save!
       end
       association(:card).reset # force re-query so dependent: :destroy finds nothing

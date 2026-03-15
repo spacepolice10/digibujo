@@ -1,24 +1,24 @@
 class Stream < ApplicationRecord
   belongs_to :user
 
-  store_accessor :fields, :cardable_type, :sorted_by, :date_from, :date_to, :tag_names
+  store_accessor :fields, :cardable_type, :sorted_by, :date_from, :date_to, :tags
 
   validates :name, presence: true, uniqueness: { scope: :user_id }
 
   scope :named, -> { where.not(name: nil) }
 
   class << self
-    def from_params(params)
-      new(fields: params.to_h.slice(*fields_keys).compact_blank)
+    def from_params(params, user: nil)
+      new(user: user, fields: params.to_h.slice(*fields_keys).compact_blank)
     end
 
     def fields_keys
-      %w[cardable_type sorted_by date_from date_to tag_names]
+      %w[cardable_type sorted_by date_from date_to tags]
     end
   end
 
   def cards
-    scope = user.cards.includes(:tags).active
+    scope = user.cards.includes(:tags)
     scope = scope.where(cardable_type: cardable_type) if cardable_type.present?
     scope = scope.where("date >= ?", date_from) if date_from.present?
     scope = scope.where("date <= ?", date_to) if date_to.present?
@@ -34,9 +34,9 @@ class Stream < ApplicationRecord
   private
 
   def filter_by_tags(scope)
-    return scope if tag_names.blank?
+    return scope if tags.blank?
 
-    names = tag_names.split(",").map(&:strip).reject(&:blank?)
+    names = tags.split(",").map(&:strip).reject(&:blank?)
     return scope if names.empty?
 
     scope.joins(:tags).where(tags: { name: names }).distinct
