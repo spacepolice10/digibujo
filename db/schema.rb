@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_02_102445) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_14_120000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -60,21 +60,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_02_102445) do
   end
 
   create_table "cards", force: :cascade do |t|
+    t.boolean "archived", default: false, null: false
     t.integer "cardable_id", null: false
     t.string "cardable_type", null: false
     t.datetime "created_at", null: false
     t.date "date"
+    t.date "ends_date"
+    t.boolean "pinned", default: false, null: false
     t.date "pops_on"
-    t.string "status", default: "active", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["cardable_type", "cardable_id"], name: "index_cards_on_cardable"
+    t.index ["user_id", "archived"], name: "index_cards_on_user_id_and_archived"
+    t.index ["user_id", "pinned"], name: "index_cards_on_user_id_and_pinned"
     t.index ["user_id", "pops_on"], name: "index_cards_on_user_id_and_pops_on"
-    t.index ["user_id", "status"], name: "index_cards_on_user_id_and_status"
     t.index ["user_id"], name: "index_cards_on_user_id"
+    t.index ["user_id"], name: "index_cards_on_user_id_and_status"
+  end
+
+  create_table "daylogs", force: :cascade do |t|
   end
 
   create_table "drafts", force: :cascade do |t|
+  end
+
+  create_table "events", force: :cascade do |t|
   end
 
   create_table "notes", force: :cascade do |t|
