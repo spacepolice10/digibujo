@@ -42,46 +42,121 @@
 
   .draft-card {
     border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
+    border-radius: var(--radius-subtle);
     margin-bottom: var(--spacing-vertical-half);
     background: var(--color-bg-subtle);
-    overflow: hidden;
+    /* no overflow rule — default visible lets the dropdown panel escape the card */
+  }
+
+  .draft-card-layout {
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+  }
+
+  .draft-card-content {
+    flex: 1;
+    min-width: 0;
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    border-right: 1px solid var(--color-stroke-base);
   }
 
   .draft-card-body {
-    display: block;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    text-decoration: none;
     color: inherit;
-
-    &:hover {
-      background: var(--color-bg-base);
-    }
   }
 
-  .draft-card-title {
-    margin: 0;
-    font-size: var(--font-size-base);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
+  /* Sticky action panel */
 
   .draft-card-actions {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: var(--spacing-vertical-half);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    border-top: 1px solid var(--color-stroke-base);
-    flex-wrap: wrap;
+    padding: var(--spacing-vertical-half);
+    width: 140px;
+    flex-shrink: 0;
+    align-self: flex-start;
+    position: sticky;
+    top: var(--spacing-vertical);
   }
 
-  .draft-action {
+  /* Expandable action dropdowns (Save / Schedule) */
+
+  .draft-action-dropdown {
+    position: relative;
+  }
+
+  .draft-action-dropdown > summary {
+    list-style: none;
+    cursor: pointer;
+    display: block;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+  }
+
+  .draft-action-panel {
+    display: none;
+    position: absolute;
+    top: calc(100% + var(--spacing-vertical-half));
+    right: 0;
+    z-index: var(--z-dropdown);
+    min-width: 200px;
+    max-width: 280px;
+    flex-direction: column;
+    gap: var(--spacing-vertical-half);
+    padding: var(--spacing-vertical) var(--spacing-horizontal-half);
+    background: var(--color-bg-subtle);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-subtle);
+    box-shadow: var(--shadow-elevated);
+  }
+
+  .draft-action-dropdown[open] > .draft-action-panel {
+    display: flex;
+  }
+
+  .draft-action-panel-title {
+    margin: 0 0 var(--spacing-vertical-half);
     font-size: var(--font-size-subtle);
+    font-weight: var(--font-weight-strong);
+    color: var(--color-fg-subtle);
+  }
+
+  .draft-action-panel form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical-half);
+  }
+
+  /* Postpone group */
+
+  .draft-action-group--postpone {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--spacing-vertical-half) / 2);
+    padding-top: var(--spacing-vertical-half);
+    border-top: 1px solid var(--color-stroke-base);
+  }
+
+  .draft-action-label {
+    display: block;
+    font-size: var(--font-size-subtle);
+    color: var(--color-fg-subtle);
+    margin-bottom: calc(var(--spacing-vertical-half) / 2);
+  }
+
+  /* Action buttons — shared style */
+
+  .draft-action {
+    display: block;
+    width: 100%;
+    font-size: var(--font-size-subtle);
+    font-family: inherit;
+    text-align: left;
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
+    border-radius: var(--radius-subtle);
     background: var(--color-bg-subtle);
     cursor: pointer;
     color: var(--color-fg-base);
@@ -122,18 +197,14 @@
     }
   }
 
-  .draft-action-form {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-vertical-half);
-    margin: 0;
-  }
-
   .draft-date-input {
+    width: 100%;
     font-size: var(--font-size-subtle);
+    font-family: inherit;
+    color: inherit;
     padding: var(--spacing-vertical-half);
     border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
+    border-radius: var(--radius-subtle);
     background: var(--color-bg-subtle);
   }
 
@@ -142,17 +213,30 @@
   .review-drafts-btn {
     display: inline-flex;
     align-items: center;
-    gap: var(--spacing-vertical-half);
-    font-size: var(--font-size-subtle);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
-    background: var(--color-bg-subtle);
-    color: var(--color-fg-base);
+    gap: 0.4em;
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 0.45em 1em 0.45em 0.8em;
+    border: 2.5px solid #1a1a1a;
+    border-radius: 12px;
+    background: #ffdd00;
+    color: #1a1a1a;
     text-decoration: none;
+    box-shadow: 3px 3px 0px #1a1a1a;
+    transform: rotate(-1.2deg);
+    transition: transform 80ms ease, box-shadow 80ms ease, background 80ms ease;
 
     &:hover {
-      background: var(--color-bg-base);
+      background: #ff4ecb;
+      color: #fff;
+      transform: rotate(0.8deg) scale(1.04);
+      box-shadow: 4px 4px 0px #1a1a1a;
+    }
+
+    &:active {
+      transform: rotate(0deg) translateY(2px);
+      box-shadow: 1px 1px 0px #1a1a1a;
     }
   }
 
@@ -160,13 +244,19 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 1.4em;
-    height: 1.4em;
-    padding: 0 0.35em;
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-strong);
-    background: var(--color-fg-subtle);
-    color: var(--color-fg-strong);
-    border-radius: var(--radius-pill);
+    min-width: 1.5em;
+    height: 1.5em;
+    padding: 0 0.3em;
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+    font-size: 0.85em;
+    font-weight: bold;
+    background: #1a1a1a;
+    color: #ffdd00;
+    border-radius: 50%;
+
+    .review-drafts-btn:hover & {
+      background: #fff;
+      color: #ff4ecb;
+    }
   }
 }

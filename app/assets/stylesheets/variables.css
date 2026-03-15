@@ -73,7 +73,6 @@
     --font-size-strong: clamp(1.5rem, 2.5vw, 1.75rem);
     --font-size-base: 1rem;
     --font-size-subtle: 0.875rem;
-    --font-size-xs: 0.75rem;
 
     /* font weights */
     --font-weight-strong: 800;
@@ -81,9 +80,8 @@
     --font-weight-subtle: 200;
 
     /* radii */
-    --radius-base: 2px;
-    --radius-subtle: 10px;
-    --radius-strong: 16px;
-    --radius-pill: 9999px;
+    --radius-subtle: 2px;
+    --radius-base: 16px;
+    --radius-strong: 9999px;
   }
 }

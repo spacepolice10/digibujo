@@ -27,6 +27,7 @@
 
   .main-sidebar--right {
     flex: 1;
+    min-width: 0;
     border-left: 1px solid var(--color-stroke-base);
   }
 

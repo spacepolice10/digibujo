@@ -20,8 +20,24 @@
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     background: var(--model-color-1-bg);
     color: var(--model-color-1);
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-strong);
     font-size: var(--font-size-subtle);
+
+    &.tag-chip--date {
+      background: var(--model-color-3-bg);
+      color: var(--model-color-3);
+    }
+
+    &.tag-chip--status {
+      background: var(--model-color-7-bg);
+      color: var(--model-color-7);
+      padding-inline: var(--spacing-vertical-half);
+
+      .icon {
+        width: var(--font-size-subtle);
+        height: var(--font-size-subtle);
+      }
+    }
 
     button {
       background: none;
@@ -43,7 +59,7 @@
     margin: 0;
     padding: 0;
     border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
+    border-radius: var(--radius-subtle);
     background: var(--color-bg-subtle);
     width: anchor-size(inline);
     max-height: 12rem;

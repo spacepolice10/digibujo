@@ -456,7 +456,7 @@ trix-editor {
 trix-toolbar {
   background: var(--color-bg-base);
   border: none;
-  border-radius: var(--radius-subtle);
+  border-radius: var(--radius-base);
   padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
   margin-bottom: 0;
 }
@@ -495,7 +495,7 @@ trix-toolbar .trix-button {
   border: none;
   border-bottom: none;
   border-left: none;
-  border-radius: var(--radius-subtle);
+  border-radius: var(--radius-base);
   padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
   height: calc(var(--spacing-horizontal) + var(--spacing-vertical));
   font-size: var(--font-size-subtle);
@@ -540,7 +540,7 @@ trix-toolbar .trix-button--icon-heading-1 {
   font-size: var(--font-size-subtle);
   padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
   border: 1px solid var(--color-stroke-base);
-  border-radius: var(--radius-subtle);
+  border-radius: var(--radius-base);
 }
 
 trix-toolbar .trix-button--icon-heading-1::before {

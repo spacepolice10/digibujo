@@ -25,6 +25,18 @@
     padding: var(--spacing-horizontal-half);
   }
 
+  .line-clamp {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+
+  .no-underline {
+    text-decoration: none;
+    color: inherit;
+  }
+
   .mx-auto {
     margin: auto;
   }

@@ -10,11 +10,14 @@
     display: flex;
     flex-direction: column;
     background: var(--color-bg-subtle);
-    border-radius: var(--radius-strong);
+    border-radius: var(--radius-base);
     box-shadow: var(--shadow-elevated);
     padding: var(--spacing-horizontal);
-    gap: 12px;
+    gap: var(--spacing-vertical);
   }
+
+  /* Hide the content field label — trix placeholder is enough */
+  [data-controller="card-form"] label[for$="_content"] { display: none; }
 
   /* Reorder trix: editor above toolbar */
   [data-controller="card-form"] div:has(trix-editor) {
@@ -25,7 +28,8 @@
   trix-toolbar { order: 2; }
   trix-editor  { order: 1; }
 
-  /* Bottom actions bar: type buttons + save inline */
+  /* ── Bottom actions bar ───────────────────────────── */
+
   .card-form-actions {
     display: flex;
     align-items: center;
@@ -50,11 +54,11 @@
   .card-form-back {
     display: none;
     align-items: center;
-    gap: 5px;
-    padding: 6px 10px;
-    border-radius: var(--radius-pill);
+    gap: var(--spacing-vertical-half);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    border-radius: var(--radius-strong);
     font-family: inherit;
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-subtle);
     background: transparent;
     border: 1px solid var(--color-stroke-base);
     color: var(--color-fg-subtle);
@@ -107,17 +111,20 @@
     }
   }
 
-  turbo-frame.card-form-fields label {
-    display: none;
+  turbo-frame.card-form-fields label { display: none; }
+
+  /* Shared pill style for inline field controls */
+  turbo-frame.card-form-fields input[type="date"],
+  turbo-frame.card-form-fields .tag-picker {
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-strong);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    font-size: var(--font-size-subtle);
+    font-family: inherit;
+    background: transparent;
   }
 
   turbo-frame.card-form-fields input[type="date"] {
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-pill);
-    padding: 5px 12px;
-    font-size: var(--font-size-xs);
-    font-family: inherit;
-    background: transparent;
     color: inherit;
     cursor: pointer;
   }
@@ -128,14 +135,11 @@
     max-width: 200px;
     flex-wrap: nowrap;
     align-items: center;
-    gap: 4px;
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-pill);
-    padding: 5px 12px;
+    gap: var(--spacing-vertical-half);
     cursor: text;
     overflow-x: auto;
     scroll-behavior: smooth;
-    scroll-padding-inline: 12px;
+    scroll-padding-inline: var(--spacing-horizontal-half);
     scrollbar-width: none;
 
     &::-webkit-scrollbar { display: none; }
@@ -144,21 +148,21 @@
   turbo-frame.card-form-fields .tag-chips {
     display: flex;
     flex-wrap: nowrap;
-    gap: 4px;
+    gap: var(--spacing-vertical-half);
     margin-bottom: 0;
   }
 
   turbo-frame.card-form-fields .tag-chip {
     font-size: 0.7rem;
-    padding: 2px 7px;
-    gap: 3px;
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    gap: var(--spacing-vertical-half);
     white-space: nowrap;
   }
 
   turbo-frame.card-form-fields .tag-picker input[type="text"] {
     border: none;
     background: transparent;
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-subtle);
     font-family: inherit;
     color: var(--color-fg-base);
     min-width: 60px;
@@ -169,14 +173,16 @@
     &::placeholder { color: var(--color-fg-subtle); }
   }
 
+  /* ── Type buttons ─────────────────────────────────── */
+
   .card-form-type-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius-pill);
-    padding: 6px 12px;
+    border-radius: var(--radius-strong);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     font-family: inherit;
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-subtle);
     cursor: pointer;
     transition: box-shadow 0.1s ease, opacity 0.1s ease;
     background: var(--color-bg-base);
@@ -186,30 +192,11 @@
     &:hover { opacity: 0.8; }
   }
 
-  .card-form-type-button[data-value=""] {
-    background: var(--model-color-8-bg);
-    color: var(--model-color-8);
-  }
-
-  .card-form-type-button[data-value="task"] {
-    background: var(--model-color-1-bg);
-    color: var(--model-color-2);
-  }
-
-  .card-form-type-button[data-value="event"] {
-    background: var(--model-color-6-bg);
-    color: var(--model-color-6);
-  }
-
-  .card-form-type-button[data-value="note"] {
-    background: var(--color-bg-warn);
-    color: var(--color-fg-warn);
-  }
-
-  .card-form-type-button[data-value="daylog"] {
-    background: var(--model-color-7-bg);
-    color: var(--model-color-7);
-  }
+  .card-form-type-button[data-value=""]      { background: var(--model-color-8-bg); color: var(--model-color-8); }
+  .card-form-type-button[data-value="task"]  { background: var(--model-color-1-bg); color: var(--model-color-2); }
+  .card-form-type-button[data-value="event"] { background: var(--model-color-6-bg); color: var(--model-color-6); }
+  .card-form-type-button[data-value="note"]  { background: var(--color-bg-warn);    color: var(--color-fg-warn); }
+  .card-form-type-button[data-value="daylog"]{ background: var(--model-color-7-bg); color: var(--model-color-7); }
 
   .card-form-type-button.disabled {
     opacity: 0.45;
@@ -234,28 +221,44 @@
     span {
       width: auto;
       opacity: 1;
-      margin-left: 5px;
+      margin-left: var(--spacing-vertical-half);
     }
   }
 
-  /* Hide the content field label — trix placeholder is enough */
-  [data-controller="card-form"] label[for$="_content"] {
-    display: none;
+  /* ── Field errors ─────────────────────────────────── */
+
+  .card-form-error {
+    display: flex;
+    align-items: baseline;
+    gap: var(--spacing-horizontal-half);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    border-radius: var(--radius-subtle);
+    background: var(--color-bg-negative);
+    border-inline-start: 3px solid var(--color-stroke-negative);
+    font-size: var(--font-size-subtle);
+    color: var(--color-fg-negative);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+
+    @starting-style {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
   }
+
+
+  /* ── Submit button ────────────────────────────────── */
 
   .card-form-submit {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--spacing-vertical-half);
     background: var(--color-bg-strong);
     color: var(--color-fg-strong);
-    border: none;
-    border-radius: var(--radius-pill);
-    padding: 8px 24px;
+    border: 1px solid var(--color-fg-subtle);;
+    border-radius: var(--radius-strong);
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
     font-family: inherit;
-    font-size: var(--font-size-xs);
-    font-weight: 700;
-    letter-spacing: 0.08em;
+    font-size: var(--font-size-subtle);
     text-transform: uppercase;
     cursor: pointer;
     transition: background 0.1s ease;
@@ -264,8 +267,8 @@
 
     kbd {
       font-family: inherit;
-      font-size: var(--font-size-xs);
-      font-weight: 400;
+      font-size: var(--font-size-subtle);
+      font-weight: var(--font-weight-base);
       letter-spacing: 0;
       text-transform: none;
       opacity: 0.6;

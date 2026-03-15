@@ -24,3 +24,6 @@
 @import "image-zoom.css";
 @import "main-layout.css";
 @import "draft-triage.css";
+@import "pinned-panel.css";
+@import "streams-panel.css";
+@import "calendar-panel.css";

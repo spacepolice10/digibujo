@@ -2,7 +2,7 @@
 
   [data-controller="image-zoom"] .trix-content img {
     max-height: 400px;
-    border-radius: var(--radius-subtle);
+    border-radius: var(--radius-base);
     transition: opacity 0.15s;
   }
 
@@ -24,7 +24,7 @@
     max-width: 90vw;
     max-height: 90vh;
     object-fit: contain;
-    border-radius: var(--radius-subtle);
+    border-radius: var(--radius-base);
   }
 
 }

@@ -1,0 +1,144 @@
+@layer components {
+
+  /* ── Checkbox (visually hidden, drives the whole toggle) ───────────── */
+
+  .pinned-expand-input {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 2rem;
+    opacity: 0;
+    pointer-events: none;
+    width: 0;
+    height: 0;
+  }
+
+  /* ── Backdrop: invisible full-screen label, collapses on outside-click ─ */
+
+  .pinned-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--z-dropdown) - 1);
+    cursor: default;
+  }
+
+  .pinned-expand-input:checked ~ .pinned-backdrop {
+    display: block;
+  }
+
+  /* ── Floating wrapper: fixed to the viewport bottom ───────────────── */
+
+  .pinned-float {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 10%;
+    translate: -10% 0;
+    z-index: var(--z-dropdown);
+    width: clamp(260px, 40vw, 420px);
+  }
+
+  /* ── Overlay label: transparent, covers collapsed stack as expand target */
+
+  .pinned-float-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;      /* above the stacked cards */
+    cursor: pointer;
+    border-radius: var(--radius-strong);
+  }
+
+  /* Hide overlay when expanded so the card <a> links are clickable */
+  .pinned-expand-input:checked ~ .pinned-float .pinned-float-overlay {
+    display: none;
+  }
+
+  /* ── Stack container ───────────────────────────────────────────────── */
+
+  .pinned-float-stack {
+    position: relative;
+    --card-height: 2.625rem;
+    --peek-size: 0.875rem;
+    height: calc(var(--card-height) + (var(--card-count, 1) - 1) * var(--peek-size));
+  }
+
+  /* Expanded: vertical list growing upward (column-reverse so card[0]
+     stays at the bottom, matching its collapsed position) */
+  .pinned-expand-input:checked ~ .pinned-float .pinned-float-stack {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 4px;
+    height: auto;
+  }
+
+  /* ── Individual card ───────────────────────────────────────────────── */
+
+  .pinned-float-card {
+    /* Collapsed: absolute stacking */
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(var(--stack-i, 0) * var(--peek-size));
+    z-index: calc(3 - var(--stack-i, 0));
+    height: var(--card-height);
+
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.3rem 1rem;
+    overflow: hidden;
+
+    background: var(--color-bg-strong);
+    color: var(--color-fg-strong);
+    border-radius: var(--radius-strong);
+    box-shadow: var(--shadow-glow);
+    text-decoration: none;
+    font-size: var(--font-size-subtle);
+    font-family: inherit;
+
+    /* Depth cues for back cards */
+    opacity: calc(1 - var(--stack-i, 0) * 0.18);
+    transform: scaleX(calc(1 - var(--stack-i, 0) * 0.035));
+    transform-origin: bottom center;
+
+    &:hover {
+      filter: brightness(1.15);
+    }
+  }
+
+  /* Expanded: restore each card to full, natural appearance */
+  .pinned-expand-input:checked ~ .pinned-float .pinned-float-card {
+    position: static;
+    opacity: 1;
+    transform: none;
+    height: var(--card-height);
+    align-items: center;
+  }
+
+  .pinned-float-pin {
+    flex-shrink: 0;
+    opacity: 0.45;
+    width: 0.85rem;
+    height: 0.85rem;
+    margin-top: 0.1em;
+  }
+
+  .pinned-expand-input:checked ~ .pinned-float .pinned-float-pin {
+    margin-top: 0;
+  }
+
+  .pinned-float-card-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.4;
+  }
+
+  /* Mobile: sit above the tab bar */
+  @media (max-width: 600px) {
+    .pinned-float {
+      bottom: calc(3.25rem + env(safe-area-inset-bottom, 0px));
+      width: calc(100% - 2rem);
+    }
+  }
+
+}

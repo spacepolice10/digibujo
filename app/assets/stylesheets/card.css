@@ -1,28 +1,56 @@
 @layer components {
 
   .card {
+    --card-bg: var(--color-bg-subtle);
+    --card-bg-hover: var(--color-bg-base);
+    --card-border: var(--color-stroke-base);
+
     display: flex;
     align-items: center;
-    border: 1px solid var(--color-stroke-base);
+    border: 1px solid var(--card-border);
     border-radius: var(--radius-base);
     margin-bottom: var(--spacing-vertical-half);
     overflow: hidden;
-    background: var(--color-bg-subtle);
+    background: var(--card-bg);
+    transition: background 0.1s ease;
 
-    /* Variants */
+    /* Card type accent backgrounds */
+
+    &[data-card-type="task"] {
+      --card-bg: var(--model-color-2-bg);
+      --card-bg-hover: color-mix(in oklch, var(--model-color-2-bg), var(--model-color-2) 12%);
+      --card-border: color-mix(in oklch, var(--color-stroke-base), var(--model-color-2) 20%);
+    }
+
+    &[data-card-type="note"] {
+      --card-bg: var(--model-color-5-bg);
+      --card-bg-hover: color-mix(in oklch, var(--model-color-5-bg), var(--model-color-5) 12%);
+      --card-border: color-mix(in oklch, var(--color-stroke-base), var(--model-color-5) 20%);
+    }
+
+    &[data-card-type="event"] {
+      --card-bg: var(--model-color-6-bg);
+      --card-bg-hover: color-mix(in oklch, var(--model-color-6-bg), var(--model-color-6) 12%);
+      --card-border: color-mix(in oklch, var(--color-stroke-base), var(--model-color-6) 20%);
+    }
+
+    /* Pinned variant overrides type color */
 
     &.pinned {
-      background: var(--color-bg-warn);
-      border-color: var(--color-stroke-warn);
-
-      .card-body:hover {
-        background: var(--color-bg-warn);
-      }
+      --card-bg: var(--color-bg-warn);
+      --card-bg-hover: color-mix(in oklch, var(--color-bg-warn), var(--color-fg-warn) 10%);
+      --card-border: var(--color-stroke-warn);
     }
 
     &.archived .card-title {
       text-decoration: line-through;
       color: var(--color-fg-subtle);
+    }
+
+    /* Whole-card hover via the clickable body */
+
+    &:has(.card-body:hover) {
+      background: var(--card-bg-hover);
     }
   }
 
@@ -35,33 +63,7 @@
     color: inherit;
     overflow: hidden;
     min-width: 0;
-
-    &:hover {
-      background: var(--color-bg-base);
-    }
   }
-
-  .card-meta {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: var(--spacing-vertical-half);
-    margin-bottom: var(--spacing-vertical-half);
-    flex-shrink: 0;
-  }
-
-  .card-type {
-    width: 8px;
-    height: 8px;
-    border-radius: var(--radius-pill);
-    flex-shrink: 0;
-    background: var(--color-fg-subtle);
-  }
-
-  .card-type--task   { background: var(--model-color-2); }
-  .card-type--note   { background: var(--model-color-5); }
-  .card-type--event  { background: var(--model-color-6); }
-  .card-type--daylog { background: var(--model-color-7); }
 
   .card-title {
     margin: 0;
@@ -86,7 +88,18 @@
 
   .card-action {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
+    flex-shrink: 0;
+    padding-left: var(--spacing-horizontal-half);
+
+    form {
+      display: contents;
+    }
+  }
+
+  .completion-placeholder {
+    width: 1.125rem;
+    height: 1.125rem;
     flex-shrink: 0;
   }
 
@@ -122,7 +135,7 @@
     margin-top: var(--spacing-vertical-half);
     padding: var(--spacing-vertical-half);
     border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
+    border-radius: var(--radius-subtle);
     background: var(--color-bg-subtle);
     box-shadow: var(--shadow-elevated);
     min-width: 120px;
@@ -144,7 +157,7 @@
     cursor: pointer;
     font-size: var(--font-size-subtle);
     color: var(--color-fg-base);
-    border-radius: var(--radius-base);
+    border-radius: var(--radius-subtle);
 
     &:hover {
       background: var(--color-bg-base);
@@ -157,6 +170,70 @@
         background: var(--color-bg-negative);
       }
     }
+  }
+
+  .calendar-card {
+    /* Layout provided by .sidebar-panel__item */
+  }
+
+  .completion-toggle {
+    /* Checkbox shape */
+    width: 1.125rem;
+    height: 1.125rem;
+    border-radius: 3px;
+    flex-shrink: 0;
+    position: relative;
+
+    /* Button reset */
+    background: transparent;
+    border: 1.5px solid var(--color-stroke-base);
+    cursor: pointer;
+    padding: 0;
+
+    /* Hide unicode content characters */
+    font-size: 0;
+
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+
+    &:hover {
+      border-color: var(--model-color-2);
+    }
+
+    /* Ghost checkmark on hover (not done) */
+    &:not(.done):hover::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: 4px;
+      height: 7px;
+      border-right: 1.5px solid var(--model-color-2);
+      border-bottom: 1.5px solid var(--model-color-2);
+      transform: rotate(45deg) translate(0, -1px);
+      opacity: 0.4;
+    }
+
+    /* Done: filled blue square with white checkmark */
+    &.done {
+      background: var(--model-color-2);
+      border-color: var(--model-color-2);
+
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        margin: auto;
+        width: 4px;
+        height: 7px;
+        border-right: 1.5px solid white;
+        border-bottom: 1.5px solid white;
+        transform: rotate(45deg) translate(0, -1px);
+      }
+    }
+  }
+
+  .calendar-card-title {
+    min-width: 0;
   }
 
   .pinned-badge {

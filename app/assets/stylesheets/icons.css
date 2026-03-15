@@ -36,6 +36,24 @@
     --icon-file:          url("icon-file.svg");
     --icon-book:          url("icon-book.svg");
     --icon-menu:          url("icon-menu.svg");
+    --icon-pin:           url("icon-pin.svg");
+    --icon-archive:       url("icon-archive.svg");
+    --icon-spinner:       url("icon-spinner.svg");
+  }
+
+  @keyframes icon-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .icon--spin {
+    animation: icon-spin 0.8s linear infinite;
+  }
+
+  .pagination-trigger {
+    display: flex;
+    justify-content: center;
+    padding-block: var(--spacing-vertical-double);
+    color: var(--color-fg-subtle);
   }
 
 }
