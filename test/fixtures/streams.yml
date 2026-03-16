@@ -1,19 +1,69 @@
+one_drafts:
+  user: one
+  name: Drafts
+  default: true
+  position: 0
+  fields: { "cardable_type": "Draft", "icon": "pencil", "colour": "7" }
+
 one_tasks:
   user: one
   name: Tasks
-  fields: { "cardable_type": "Task" }
+  default: true
+  position: 1
+  fields: { "cardable_type": "Task", "icon": "circle-check", "colour": "2" }
 
 one_notes:
   user: one
   name: Notes
-  fields: { "cardable_type": "Note" }
+  default: true
+  position: 2
+  fields: { "cardable_type": "Note", "icon": "file", "colour": "5" }
+
+one_events:
+  user: one
+  name: Events
+  default: true
+  position: 3
+  fields: { "cardable_type": "Event", "icon": "calendar", "colour": "6" }
+
+one_daylogs:
+  user: one
+  name: Daylogs
+  default: true
+  position: 4
+  fields: { "cardable_type": "Daylog", "icon": "book", "colour": "4" }
+
+two_drafts:
+  user: two
+  name: Drafts
+  default: true
+  position: 0
+  fields: { "cardable_type": "Draft", "icon": "pencil", "colour": "7" }
 
 two_tasks:
   user: two
   name: Tasks
-  fields: { "cardable_type": "Task" }
+  default: true
+  position: 1
+  fields: { "cardable_type": "Task", "icon": "circle-check", "colour": "2" }
 
 two_notes:
   user: two
   name: Notes
-  fields: { "cardable_type": "Note" }
+  default: true
+  position: 2
+  fields: { "cardable_type": "Note", "icon": "file", "colour": "5" }
+
+two_events:
+  user: two
+  name: Events
+  default: true
+  position: 3
+  fields: { "cardable_type": "Event", "icon": "calendar", "colour": "6" }
+
+two_daylogs:
+  user: two
+  name: Daylogs
+  default: true
+  position: 4
+  fields: { "cardable_type": "Daylog", "icon": "book", "colour": "4" }

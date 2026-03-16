@@ -9,57 +9,41 @@
             aria: { label: "New stream" } do %>+<% end %>
     </div>
 
+    <% defaults, custom = @streams.partition(&:default?) %>
+
     <section class="sidebar-panel__section">
       <h2 class="sidebar-panel__section-label">Types</h2>
       <ul class="streams-type-list">
         <li>
           <%= link_to cards_path,
                 class: "sidebar-panel__item streams-type-item",
+                style: "color: var(--model-color-8)",
                 data: { turbo_frame: "cards_panel", turbo_action: "advance" } do %>
             <i class="icon" style="--icon-mask: var(--icon-menu)" aria-hidden="true"></i>
             All Cards
           <% end %>
         </li>
-        <li>
-          <%= link_to tasks_stream_path,
-                class: "sidebar-panel__item sidebar-panel__item--task streams-type-item",
-                data: { turbo_frame: "cards_panel", turbo_action: "advance" } do %>
-            <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
-            Tasks
-          <% end %>
-        </li>
-        <li>
-          <%= link_to notes_stream_path,
-                class: "sidebar-panel__item sidebar-panel__item--note streams-type-item",
-                data: { turbo_frame: "cards_panel", turbo_action: "advance" } do %>
-            <i class="icon" style="--icon-mask: var(--icon-file)" aria-hidden="true"></i>
-            Notes
-          <% end %>
-        </li>
-        <li>
-          <%= link_to cards_path(cardable_type: "Event"),
-                class: "sidebar-panel__item sidebar-panel__item--event streams-type-item",
-                data: { turbo_frame: "cards_panel", turbo_action: "advance" } do %>
-            <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
-            Events
-          <% end %>
-        </li>
-        <li>
-          <%= link_to drafts_path,
-                class: "sidebar-panel__item sidebar-panel__item--draft streams-type-item",
-                data: { turbo_frame: "_top" } do %>
-            <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
-            Drafts
-          <% end %>
-        </li>
+        <% defaults.each do |stream| %>
+          <li>
+            <%= link_to stream_path(stream),
+                  class: "sidebar-panel__item streams-type-item",
+                  style: stream.colour.present? ? "color: var(--model-color-#{stream.colour})" : nil,
+                  data: { turbo_frame: "cards_panel", turbo_action: "advance" } do %>
+              <% if stream.icon.present? %>
+                <i class="icon" style="--icon-mask: var(--icon-<%= stream.icon %>)" aria-hidden="true"></i>
+              <% end %>
+              <%= stream.name %>
+            <% end %>
+          </li>
+        <% end %>
       </ul>
     </section>
 
-    <% if @streams.any? %>
+    <% if custom.any? %>
       <section class="sidebar-panel__section">
         <h2 class="sidebar-panel__section-label">Custom</h2>
         <ul class="streams-custom-list">
-          <% @streams.each do |stream| %>
+          <% custom.each do |stream| %>
             <li>
               <%= link_to stream_path(stream),
                     class: "streams-stream-card",
