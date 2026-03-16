@@ -48,8 +48,8 @@
 
   /* Main content area */
   .main-content {
-    flex: 2;
-    max-width: 680px;
+    flex: 3;
+    max-width: 880px;
     padding: var(--spacing-horizontal);
     overflow-y: auto;
   }

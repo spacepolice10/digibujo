@@ -1,8 +1,12 @@
 class Card < ApplicationRecord
-  include Pinnable, Archivable, Completable, Taggable
+  include Taggable
+  include Completable
+  include Archivable
+  include Pinnable
 
   scope :timeline,               -> { all }
   scope :timeline_chronological, -> { timeline.order(created_at: :desc) }
+  scope :temporal, -> { timeline.where.not(date: nil) }
 
   belongs_to :user
   delegated_type :cardable, types: %w[Draft Task Note Event Daylog], dependent: :destroy
@@ -17,7 +21,7 @@ class Card < ApplicationRecord
   end
 
   def title
-    content.to_plain_text.lines.first&.strip&.truncate(100).presence || "Untitled"
+    content.to_plain_text.lines.first&.strip&.truncate(100).presence || 'Untitled'
   end
 
   def self.type_capabilities(type_name)

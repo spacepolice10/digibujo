@@ -26,7 +26,11 @@
       "mcp__paper__get_tree_summary",
       "mcp__paper__get_computed_styles",
       "mcp__paper__duplicate_nodes",
-      "mcp__paper__get_jsx"
+      "mcp__paper__get_jsx",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:api.github.com)",
+      "WebSearch",
+      "WebFetch(domain:github.com)"
     ]
   },
   "enabledPlugins": {}
