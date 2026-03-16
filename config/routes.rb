@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
-  resource :session
-  resources :passwords, param: :token
+  resource :session, only: %i[new create destroy] do
+    scope module: :sessions do
+      resource :code, only: %i[new create]
+    end
+  end
   scope 'cards', module: :cards do
     resources :fields, only: :show
   end
@@ -21,8 +24,6 @@ Rails.application.routes.draw do
     end
   end
   resources :tags
-  get "streams/tasks", to: "streams#type", defaults: { cardable_type: "Task" }, as: :tasks_stream
-  get "streams/notes", to: "streams#type", defaults: { cardable_type: "Note" }, as: :notes_stream
   resources :streams
   resource :calendar, only: :show
   resources :pinned,    only: :index

@@ -1,6 +1,6 @@
 class User < ApplicationRecord
-  has_secure_password
   has_many :sessions, dependent: :destroy
+  has_many :login_codes, dependent: :destroy
   has_many :cards, dependent: :destroy
   has_many :streams, dependent: :destroy
   has_many :tags, dependent: :destroy
@@ -9,10 +9,13 @@ class User < ApplicationRecord
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
+  validates :email_address, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
+
   private
 
   def create_default_streams
-    streams.create!(name: "Tasks", fields: { "cardable_type" => "Task" })
-    streams.create!(name: "Notes", fields: { "cardable_type" => "Note" })
+    Stream::DEFAULTS.each do |attrs|
+      streams.create!(name: attrs[:name], default: true, position: attrs[:position], fields: attrs[:fields])
+    end
   end
 end

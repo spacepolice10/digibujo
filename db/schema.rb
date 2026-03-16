@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_14_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_17_100001) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -87,6 +87,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_120000) do
   create_table "events", force: :cascade do |t|
   end
 
+  create_table "login_codes", force: :cascade do |t|
+    t.string "code_digest", null: false
+    t.datetime "created_at", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_login_codes_on_user_id"
+  end
+
   create_table "notes", force: :cascade do |t|
   end
 
@@ -101,8 +110,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_120000) do
 
   create_table "streams", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.boolean "default", default: false, null: false
     t.json "fields", default: {}, null: false
     t.string "name"
+    t.integer "position"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["user_id"], name: "index_streams_on_user_id"
@@ -126,7 +137,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_120000) do
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email_address", null: false
-    t.string "password_digest", null: false
     t.datetime "updated_at", null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
@@ -136,6 +146,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_14_120000) do
   add_foreign_key "card_tags", "cards"
   add_foreign_key "card_tags", "tags"
   add_foreign_key "cards", "users"
+  add_foreign_key "login_codes", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "streams", "users"
   add_foreign_key "tags", "users"
