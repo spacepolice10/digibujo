@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_17_100001) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_18_120000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -61,10 +61,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_100001) do
 
   create_table "cards", force: :cascade do |t|
     t.boolean "archived", default: false, null: false
+    t.date "archives_on"
     t.integer "cardable_id", null: false
     t.string "cardable_type", null: false
     t.datetime "created_at", null: false
     t.date "date"
+    t.boolean "done", default: false, null: false
+    t.datetime "done_at"
     t.date "ends_date"
     t.boolean "pinned", default: false, null: false
     t.date "pops_on"
@@ -72,6 +75,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_100001) do
     t.integer "user_id", null: false
     t.index ["cardable_type", "cardable_id"], name: "index_cards_on_cardable"
     t.index ["user_id", "archived"], name: "index_cards_on_user_id_and_archived"
+    t.index ["user_id", "archives_on"], name: "index_cards_on_user_id_and_archives_on"
+    t.index ["user_id", "done"], name: "index_cards_on_user_id_and_done"
     t.index ["user_id", "pinned"], name: "index_cards_on_user_id_and_pinned"
     t.index ["user_id", "pops_on"], name: "index_cards_on_user_id_and_pops_on"
     t.index ["user_id"], name: "index_cards_on_user_id"
@@ -79,6 +84,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_100001) do
   end
 
   create_table "daylogs", force: :cascade do |t|
+    t.integer "mood"
   end
 
   create_table "drafts", force: :cascade do |t|
@@ -130,8 +136,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_17_100001) do
   end
 
   create_table "tasks", force: :cascade do |t|
-    t.boolean "done", default: false, null: false
-    t.datetime "done_at"
   end
 
   create_table "users", force: :cascade do |t|

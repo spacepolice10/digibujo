@@ -2,7 +2,7 @@ class Cards::CompletesController < ApplicationController
   before_action :set_card
 
   def create
-    @card.cardable.update!(done: true, done_at: Time.current)
+    @card.complete!
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_to cards_path }
@@ -10,7 +10,7 @@ class Cards::CompletesController < ApplicationController
   end
 
   def destroy
-    @card.cardable.update!(done: false, done_at: nil)
+    @card.uncomplete!
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_to cards_path }

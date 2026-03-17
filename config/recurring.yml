@@ -10,6 +10,9 @@
 #     schedule: at 5am every day
 
 production:
+  sweep_cards:
+    class: SweepCardsJob
+    schedule: every day at 2am
   sweep_login_codes:
     class: SweepLoginCodesJob
     schedule: every hour

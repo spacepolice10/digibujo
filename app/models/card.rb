@@ -10,6 +10,7 @@ class Card < ApplicationRecord
 
   belongs_to :user
   delegated_type :cardable, types: %w[Draft Task Note Event Daylog], dependent: :destroy
+  accepts_nested_attributes_for :cardable
 
   has_rich_text :content
   validates :content, presence: true

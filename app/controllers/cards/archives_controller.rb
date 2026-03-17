@@ -2,14 +2,17 @@ class Cards::ArchivesController < ApplicationController
   before_action :set_card
 
   def update
-    if @card.update(archived: !@card.archived?)
-      respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to cards_path }
-      end
+    if @card.archived?
+      @card.unarchive!
     else
-      redirect_to cards_path, alert: @card.errors.full_messages.to_sentence
+      @card.archive!
     end
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to cards_path }
+    end
+  rescue ActiveRecord::RecordInvalid
+    redirect_to cards_path, alert: @card.errors.full_messages.to_sentence
   end
 
   private
