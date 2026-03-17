@@ -20,8 +20,11 @@
     <p class="card-title<%= " done" if card.done? %>">
       <%= card.title %>
     </p>
-    <% if card.pinned? || card.archived? || card.date.present? || card.ends_date.present? || card.tags.any? %>
+    <% if card.pinned? || card.archived? || card.date.present? || card.ends_date.present? || card.tags.any? || (card.daylog? && card.cardable.mood_emoji) %>
       <div class="card-tags">
+        <% if card.daylog? && card.cardable.mood_emoji %>
+          <span class="tag-chip tag-chip--mood"><%= card.cardable.mood_emoji %></span>
+        <% end %>
         <% if card.pinned? %>
           <span class="tag-chip tag-chip--status" aria-label="Pinned">
             <span class="icon" style="--icon-mask: var(--icon-pin)"></span>

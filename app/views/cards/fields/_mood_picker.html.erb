@@ -1,0 +1,8 @@
+<div class="mood-picker">
+  <% [[:excellent, "😄"], [:fine, "🙂"], [:medium, "😑"], [:terrible, "😢"]].each do |mood, emoji| %>
+    <label class="mood-option" title="<%= mood.to_s.capitalize %>">
+      <%= radio_button_tag "card[cardable_attributes][mood]", mood, card.cardable.mood == mood.to_s %>
+      <span><%= emoji %></span>
+    </label>
+  <% end %>
+</div>

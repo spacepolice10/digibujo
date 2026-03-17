@@ -20,7 +20,7 @@ class CardsController < ApplicationController
 
   def create
     @card = Current.user.cards.new(card_params)
-    @card.cardable = (cardable_type || Draft).new
+    @card.cardable = (cardable_type || Draft).new(cardable_attribute_params)
 
     if @card.save
       respond_to do |format|
@@ -42,6 +42,7 @@ class CardsController < ApplicationController
 
   def update
     if @card.update(card_params)
+      @card.cardable.update(cardable_attribute_params) unless cardable_attribute_params.empty?
       redirect_to @card
     else
       render :edit, status: :unprocessable_entity
@@ -70,5 +71,9 @@ class CardsController < ApplicationController
     params[:cardable_type].to_s.classify.safe_constantize.then do |klass|
       klass if klass && Card.cardable_types.include?(klass.name)
     end
+  end
+
+  def cardable_attribute_params
+    params.dig(:card, :cardable_attributes)&.permit(:mood)&.to_h || {}
   end
 end
