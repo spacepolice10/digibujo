@@ -29,7 +29,7 @@
     color: var(--color-fg-subtle);
     text-decoration: none;
 
-    &:hover { color: var(--color-fg-base); }
+    &:hover { color: var(--color-fg-base); text-decoration: underline; }
   }
 
   /* Section item list */
@@ -59,6 +59,8 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+
+    &:hover { text-decoration: underline; }
   }
 
   .sidebar-panel__item--done .calendar-card-title {

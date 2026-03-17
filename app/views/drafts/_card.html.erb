@@ -53,6 +53,10 @@
               class: "draft-action draft-action--postpone" %>
       </div>
 
+      <%= button_to "Archive", card_archive_path(card),
+            method: :patch,
+            class: "draft-action draft-action--archive" %>
+
       <%= button_to "Remove", draft_remove_path(card),
             class: "draft-action draft-action--remove",
             form: { data: { turbo_confirm: "Are you sure?" } } %>

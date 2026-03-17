@@ -188,6 +188,15 @@
     border-color: var(--color-stroke-base);
   }
 
+  .draft-action--archive {
+    border-color: var(--model-color-4);
+    color: var(--model-color-4);
+
+    &:hover {
+      background: var(--model-color-4-bg);
+    }
+  }
+
   .draft-action--remove {
     border-color: var(--color-stroke-negative);
     color: var(--color-fg-negative);
