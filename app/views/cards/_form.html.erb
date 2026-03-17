@@ -1,6 +1,7 @@
 <%= form_with model: card, data: {
-      controller: "card-form",
-      action: "keydown.meta+enter->card-form#submit keydown.ctrl+enter->card-form#submit"
+      controller: "card-form persist",
+      persist_key_value: dom_id(card),
+      action: "keydown.meta+enter->card-form#submit keydown.ctrl+enter->card-form#submit trix-change->persist#save"
     } do |f| %>
   <% if card.errors.any? %>
     <div class="card-form-error">
@@ -12,8 +13,7 @@
     </div>
   <% end %>
   <div>
-    <%= f.label :content %>
-    <%= f.rich_text_area :content, autofocus: true, placeholder: "What's on your mind?",
+    <%= f.rich_text_area :content, autofocus: local_assigns.fetch(:autofocus, true), placeholder: "What's on your mind?",
           data: { action: "trix-change->card-form#detectTypeShortcut" } %>
   </div>
   <div class="card-form-actions">

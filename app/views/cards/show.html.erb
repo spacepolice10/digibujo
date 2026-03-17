@@ -1,9 +1,10 @@
 <% content_for(:title) { @card.title } %>
-<div class="card-show">
+<div class="card-show" data-controller="card-inline-edit">
   <nav class="card-show-nav">
     <%= link_to "Back", cards_path, class: "card-show-back" %>
     <div class="card-show-actions">
-      <%= link_to "Edit", edit_card_path(@card), class: "card-show-action" %>
+      <button class="card-show-action card-show-edit-btn" data-action="card-inline-edit#activate">Edit</button>
+      <button class="card-show-action card-show-cancel-btn" data-action="card-inline-edit#deactivate" hidden>Cancel</button>
       <%= button_to "Delete", card_path(@card), method: :delete, class: "card-show-action card-show-action--danger", form: { data: { turbo_confirm: "Are you sure?" } } %>
     </div>
   </nav>
@@ -12,6 +13,9 @@
       <div class="card-show-meta">
         <% if @card.cardable_type %>
           <span class="card-type"><%= @card.cardable_type %></span>
+        <% end %>
+        <% if @card.daylog? && @card.cardable.mood_emoji %>
+          <span class="card-mood"><%= @card.cardable.mood_emoji %></span>
         <% end %>
         <% if @card.pinned? %>
           <span class="pinned-badge">Pinned</span>
@@ -25,8 +29,14 @@
         </div>
       <% end %>
     </header>
-    <div class="card-show-body" data-controller="image-zoom" data-action="click->image-zoom#zoom">
+    <div class="card-show-body"
+         data-card-inline-edit-target="readView"
+         data-controller="image-zoom"
+         data-action="click->image-zoom#zoom click->card-inline-edit#activate">
       <%= @card.content %>
+    </div>
+    <div data-card-inline-edit-target="editView" hidden>
+      <%= render "form", card: @card, autofocus: false %>
     </div>
     <% if @card.popped? %>
       <%= render "cards/triage", card: @card %>

@@ -3,5 +3,7 @@
   <nav class="card-show-nav">
     <%= link_to "&larr; Back".html_safe, card_path(@card), class: "card-show-back" %>
   </nav>
-  <%= render "form", card: @card %>
+  <div class="card-show-content">
+    <%= render "form", card: @card %>
+  </div>
 </div>
