@@ -1,0 +1,20 @@
+@layer components {
+
+  dialog {
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-base);
+    padding: var(--spacing-horizontal);
+    max-width: 40rem;
+    width: 90%;
+    z-index: var(--z-dialog);
+
+    &[open] {
+      animation: popout 200ms ease-out;
+    }
+
+    &::backdrop {
+      background: oklch(0% 0 0 / 0.4);
+    }
+  }
+
+}

@@ -11,21 +11,37 @@
 
 @layer reset, variables, base, utilities, components;
 
+/* Foundation */
 @import "_reset.css";
 @import "variables.css";
 @import "base.css";
 @import "utilities.css";
 
+/* Components */
 @import "icons.css";
 @import "button.css";
 @import "pill.css";
 @import "dropdown.css";
-@import "card.css";
-@import "card-show.css";
 @import "tag.css";
+@import "card.css";
 @import "card-form.css";
-@import "main-layout.css";
+@import "sidebar-panel.css";
+@import "tab-bar.css";
+@import "fab.css";
+@import "dialog.css";
+
+/* Layout */
+@import "layout.css";
+
+/* Views */
+@import "card-show.css";
 @import "drafts.css";
 @import "calendar.css";
+@import "calendar-panel.css";
 @import "type-index.css";
+@import "streams.css";
+@import "tags-page.css";
+@import "pinned.css";
+
+/* Print */
 @import "print.css";

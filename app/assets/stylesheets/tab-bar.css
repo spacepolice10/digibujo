@@ -1,0 +1,43 @@
+@layer components {
+
+  /* Floating tab bar */
+  .tab-bar {
+    position: fixed;
+    bottom: var(--tab-bar-bottom);
+    left: 50%;
+    translate: -50% 0;
+    display: flex;
+    gap: 0.125rem;
+    padding: 0.25rem;
+    background: oklch(from var(--color-bg-subtle) l c h / 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-base);
+    box-shadow: 0 2px 16px rgb(0 0 0 / 0.1);
+    z-index: var(--z-dropdown);
+  }
+
+  .tab-bar-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 2.5rem;
+    border-radius: var(--radius-base);
+    color: var(--color-fg-subtle);
+    text-decoration: none;
+    transition: color 0.15s, background 0.15s;
+
+    .icon {
+      width: var(--icon-size-base);
+      height: var(--icon-size-base);
+    }
+  }
+
+  .tab-bar-item--active {
+    color: var(--color-fg-base);
+    background: var(--color-bg-base);
+  }
+
+}

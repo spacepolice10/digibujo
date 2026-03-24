@@ -1,0 +1,102 @@
+@layer components {
+
+  /* ── Sidebar panel shared component ────────────────────────────────── */
+  /* Used by both the streams panel (left) and calendar panel (right)    */
+
+  .sidebar-panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical-double);
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .sidebar-panel__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .sidebar-panel__title {
+    font-size: var(--font-size-strong);
+    font-weight: var(--font-weight-strong);
+    color: var(--color-fg-base);
+  }
+
+  .sidebar-panel__section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical);
+  }
+
+  .sidebar-panel__section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .sidebar-panel__section-label {
+    font-size: var(--font-size-subtle);
+    font-weight: var(--font-weight-strong);
+    text-transform: uppercase;
+    color: var(--color-fg-subtle);
+    margin: 0;
+  }
+
+  .sidebar-panel__section-label--alert {
+    color: var(--color-fg-negative);
+  }
+
+  .sidebar-panel__section-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--icon-size-strong);
+    height: var(--icon-size-strong);
+    color: var(--color-fg-subtle);
+    text-decoration: none;
+    border-radius: var(--radius-subtle);
+
+    .icon {
+      width: var(--icon-size-subtle);
+      height: var(--icon-size-subtle);
+    }
+
+    &:hover { color: var(--color-fg-base); }
+  }
+
+  .sidebar-panel__empty {
+    font-size: var(--font-size-subtle);
+    color: var(--color-fg-subtle);
+    margin: 0;
+  }
+
+  .sidebar-panel__item {
+    display: flex;
+    align-items: center;
+    gap: 0.4375rem;
+    font-size: var(--font-size-subtle);
+    font-weight: var(--font-weight-base);
+    text-decoration: none;
+    color: var(--color-fg-base);
+
+    .icon {
+      flex-shrink: 0;
+      width: var(--icon-size-subtle);
+      height: var(--icon-size-subtle);
+    }
+  }
+
+  .sidebar-panel__item--task  { color: var(--model-color-2); }
+  .sidebar-panel__item--note  { color: var(--model-color-5); }
+  .sidebar-panel__item--event { color: var(--model-color-6); }
+  .sidebar-panel__item--draft { color: var(--model-color-7); }
+
+  .sidebar-panel__item--done {
+    color: var(--color-fg-subtle);
+
+    a { text-decoration: line-through; }
+  }
+
+}

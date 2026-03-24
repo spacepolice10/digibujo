@@ -1,0 +1,30 @@
+@layer components {
+
+  /* Floating action button (mobile only) */
+  .fab {
+    position: fixed;
+    bottom: calc(var(--tab-clearance) + 0.625rem);
+    right: 1rem;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: var(--radius-strong);
+    background: var(--color-bg-strong);
+    color: var(--color-fg-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-glow);
+    z-index: var(--z-dropdown);
+    text-decoration: none;
+
+    .icon {
+      width: var(--icon-size-base);
+      height: var(--icon-size-base);
+    }
+
+    &:hover {
+      opacity: 0.85;
+    }
+  }
+
+}

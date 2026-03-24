@@ -1,0 +1,168 @@
+@layer components {
+
+  /* ── Shared tab-bar clearance variables ────────────────────────────── */
+  /* Tab bar: 0.25rem padding × 2 + 2.5rem items = 3rem; sits 0.75rem above edge */
+  :root {
+    --tab-bar-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+    --tab-clearance: calc(3.75rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* ── Three-panel desktop layout ────────────────────────────────────── */
+
+  .main-layout {
+    display: flex;
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* Sidebars */
+  .main-sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    padding: var(--spacing-horizontal);
+    border-color: var(--color-stroke-base);
+  }
+
+  .main-sidebar--left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical);
+    border-inline-end: 1px solid var(--color-stroke-base);
+    overflow-y: auto;
+  }
+
+  .main-sidebar--right {
+    flex: 1;
+    min-width: 0;
+    border-inline-start: 1px solid var(--color-stroke-base);
+  }
+
+  /* Sidebar toggle (hidden on wide viewports) */
+  .sidebar-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-base);
+    background: var(--color-bg-base);
+    color: var(--color-fg-subtle);
+    cursor: pointer;
+  }
+
+  /* Main content area */
+  .main-content {
+    flex: 3;
+    max-width: 880px;
+    min-width: 0;
+    padding: var(--spacing-horizontal);
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: var(--spacing-vertical-double);
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow: hidden;
+    container-type: inline-size;
+    container-name: main;
+  }
+
+  .main-content--mobile {
+    padding-bottom: calc(var(--tab-clearance) + 1.5rem);
+  }
+
+  #cards_panel {
+    display: block;
+    min-height: 0;
+    overflow-y: auto;
+    padding-bottom: calc(
+      calc(
+        calc(
+          calc(
+            calc(var(--spacing-horizontal-double) + var(--spacing-vertical-half)) + var(--spacing-vertical-double)
+          ) + (calc(var(--spacing-vertical) + var(--spacing-vertical-half)) * 2)
+        ) + (var(--spacing-vertical) * 2) + var(--spacing-horizontal-double)
+      ) + var(--spacing-horizontal)
+    );
+  }
+
+  /* Mobile page nav (back button row) */
+  .mobile-page-nav {
+    display: flex;
+    align-items: center;
+    padding-block: var(--spacing-vertical);
+    margin-bottom: var(--spacing-vertical);
+  }
+
+  .mobile-page-nav__back {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: var(--font-size-subtle);
+    font-weight: var(--font-weight-strong);
+    color: var(--color-fg-subtle);
+    text-decoration: none;
+
+    .icon {
+      width: var(--icon-size-subtle);
+      height: var(--icon-size-subtle);
+    }
+
+    &:hover { color: var(--color-fg-base); }
+  }
+
+  /* Narrow viewport: collapse left sidebar into popover drawer */
+  @media (max-width: 1040px) { /* --breakpoint-pc */
+    .sidebar-toggle {
+      display: flex;
+    }
+
+    .main-sidebar--left:not(:popover-open) {
+      display: none;
+    }
+
+    /* Hide sidebar panels in the drawer (pins float separately) */
+    .main-sidebar--left #streams_panel,
+    .main-sidebar--left #tags_panel {
+      display: none;
+    }
+
+    .main-sidebar--left:popover-open {
+      display: flex;
+      position: fixed;
+      inset: 0 auto 0 0;
+      width: min(280px, 80vw);
+      height: 100dvh;
+      z-index: var(--z-dialog);
+      background: var(--color-bg-base);
+      border-inline-end: 1px solid var(--color-stroke-base);
+      box-shadow: 4px 0 24px rgb(0 0 0 / 0.12);
+      padding-top: calc(var(--spacing-horizontal) + env(safe-area-inset-top, 0px));
+      animation: slide-in-left 0.2s ease-out;
+    }
+  }
+
+  /* Small tablet: collapse right sidebar */
+  @media (max-width: 600px) { /* --breakpoint-tablet */
+    .main-sidebar--right {
+      display: none;
+    }
+  }
+
+  @keyframes slide-in-left {
+    from { translate: -100% 0; }
+    to   { translate: 0 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .main-sidebar--left:popover-open {
+      animation: none;
+    }
+  }
+
+}

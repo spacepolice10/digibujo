@@ -1,0 +1,28 @@
+@layer components {
+
+  .tags-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical-double);
+  }
+
+  .tags-page__title {
+    font-size: var(--font-size-strong);
+    font-weight: var(--font-weight-strong);
+    color: var(--color-fg-base);
+    margin: 0;
+  }
+
+  .tags-page__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tags-page__empty {
+    font-size: var(--font-size-subtle);
+    color: var(--color-fg-subtle);
+    margin: 0;
+  }
+
+}
