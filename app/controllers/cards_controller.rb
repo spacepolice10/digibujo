@@ -1,5 +1,5 @@
 class CardsController < ApplicationController
-  layout -> { 'mobile' if request.variant.mobile? }
+  layout -> { request.variant.mobile? ? "mobile" : "main-layout" }
 
   before_action :set_card, only: %i[show edit update destroy]
 
@@ -8,7 +8,6 @@ class CardsController < ApplicationController
       Current.user.cards.includes(:tags).timeline_chronological,
       per_page: [5, 15, 30, 50]
     )
-    @draft_count = Current.user.cards.drafts.where(pops_on: nil).count
   end
 
   def show

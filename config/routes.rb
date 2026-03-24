@@ -15,7 +15,7 @@ Rails.application.routes.draw do
       resource :complete, only: %i[create destroy]
     end
   end
-  resources :drafts, only: [:index] do
+  resources :drafts do
     scope module: :drafts do
       resource :schedule, only: :create
       resource :collect,  only: :create
@@ -23,11 +23,17 @@ Rails.application.routes.draw do
       resource :remove,   only: :create
     end
   end
-  resources :tags
+  resources :tags, only: %i[index destroy]
   resources :streams
+  resource :upcoming, only: :show
   resource :calendar, only: :show
   resources :pinned,    only: :index
+  get 'pinned/list', to: 'pinned#list', as: :pinned_list
   resources :archived,  only: :index
+  resources :tasks,     only: :index
+  resources :notes,     only: :index
+  resources :events,    only: :index
+  resources :daylogs,   only: :index
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
