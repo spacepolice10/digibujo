@@ -1,0 +1,23 @@
+<% content_for(:title) { "Tasks" } %>
+<div class="type-index">
+  <header class="type-index__header">
+    <div class="type-index__title">
+      <i class="icon" style="--icon-mask: var(--icon-circle-check); color: var(--model-color-2)" aria-hidden="true"></i>
+      <h2>Tasks</h2>
+    </div>
+    <div class="type-index__stats">
+      <span class="type-index__stat"><strong><%= @total %></strong> total</span>
+      <span class="type-index__stat type-index__stat--done"><strong><%= @done %></strong> done</span>
+      <span class="type-index__stat type-index__stat--pending"><strong><%= @pending %></strong> pending</span>
+      <%= link_to tasks_path(sort: @done_last ? "default" : "done_last"),
+            class: "type-index__sort-toggle #{"type-index__sort-toggle--active" if @done_last}",
+            data: { turbo_frame: "cards_panel", turbo_action: "advance" },
+            title: @done_last ? "Restore default sort" : "Sort done tasks last" do %>
+        <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
+        Done last
+        <i class="icon sort-direction-arrow" style="--icon-mask: var(--icon-arrow-up)" aria-hidden="true"></i>
+      <% end %>
+    </div>
+  </header>
+  <%= render "cards/paginated_list", cards: @cards, page: @page %>
+</div>

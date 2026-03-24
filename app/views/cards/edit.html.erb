@@ -1,7 +1,10 @@
 <% content_for(:title) { "Edit card" } %>
 <div class="card-show">
-  <nav class="card-show-nav">
-    <%= link_to "&larr; Back".html_safe, card_path(@card), class: "card-show-back" %>
+  <nav class="show-navigation">
+    <%= link_to card_path(@card), class: "show-navigation-back" do %>
+      <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+      Back
+    <% end %>
   </nav>
   <div class="card-show-content">
     <%= render "form", card: @card %>

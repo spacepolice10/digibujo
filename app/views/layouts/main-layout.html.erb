@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Digibujo" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Digibujo">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body data-controller="dialog">
+    <div class="main-layout">
+      <aside class="main-sidebar main-sidebar--left" id="sidebar_left" popover="auto" data-turbo-permanent>
+        <turbo-frame id="streams_panel" src="<%= streams_path %>" loading="lazy">
+          <div class="panel-loading">
+            <i class="icon icon--spin" style="--icon-mask: var(--icon-spinner)" aria-hidden="true"></i>
+          </div>
+        </turbo-frame>
+        <turbo-frame id="tags_panel" src="<%= tags_path %>" loading="lazy">
+          <div class="panel-loading">
+            <i class="icon icon--spin" style="--icon-mask: var(--icon-spinner)" aria-hidden="true"></i>
+          </div>
+        </turbo-frame>
+      </aside>
+      <main class="main-content">
+        <button class="sidebar-toggle" popovertarget="sidebar_left" aria-label="Open sidebar">
+          <i class="icon" style="--icon-mask: var(--icon-menu)" aria-hidden="true"></i>
+        </button>
+        <turbo-frame id="cards_panel">
+          <%= yield %>
+        </turbo-frame>
+        <turbo-frame id="pinned_panel" src="<%= pinned_index_path %>" loading="lazy" data-turbo-permanent></turbo-frame>
+      </main>
+      <aside class="main-sidebar main-sidebar--right" id="sidebar_right" data-turbo-permanent>
+        <turbo-frame id="upcoming_panel" src="<%= upcoming_path %>" loading="lazy">
+          <div class="panel-loading">
+            <i class="icon icon--spin" style="--icon-mask: var(--icon-spinner)" aria-hidden="true"></i>
+          </div>
+        </turbo-frame>
+      </aside>
+    </div>
+
+    <dialog data-dialog-target="dialog" data-action="click->dialog#backdropClose turbo:submit-end->dialog#submitEnd">
+      <%= turbo_frame_tag "modal" %>
+    </dialog>
+  </body>
+</html>

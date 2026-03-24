@@ -1,0 +1,43 @@
+@media print {
+  * { box-shadow: none !important; }
+
+  body {
+    font-size: 11pt;
+    color: black;
+    background: white;
+  }
+
+  .tab-bar,
+  .fab,
+  .main-sidebar,
+  .sidebar-toggle,
+  #pinned_panel,
+  .card-menu,
+  .card-action,
+  .show-navigation-actions,
+  .card-form-actions,
+  trix-toolbar,
+  .pagination-trigger {
+    display: none !important;
+  }
+
+  .main-content {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .card {
+    break-inside: avoid;
+    border: 1px solid #ddd;
+  }
+
+  .card-show-content {
+    max-width: 100%;
+  }
+
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+}

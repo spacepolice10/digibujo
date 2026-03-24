@@ -18,51 +18,30 @@
   </div>
   <div class="card-form-actions">
     <div class="card-form-type-controls" data-action="change->card-form#loadFields">
-      <label class="card-form-back" for="cardable_type_draft">
+      <label class="card-form-back button-secondary" for="cardable_type_draft">
         <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
         Back
       </label>
-      <label class="card-form-type-button" data-value="">
-        <input type="radio" name="cardable_type" value=""
-               id="cardable_type_draft"
-               <%= "checked" if card.draft? || card.cardable_type.nil? %> hidden>
-        <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
-        <span>Draft</span>
-      </label>
-      <label class="card-form-type-button" data-value="task">
-        <input type="radio" name="cardable_type" value="task"
-               <%= "checked" if card.task? %> hidden>
-        <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
-        <span>Task</span>
-      </label>
-      <label class="card-form-type-button" data-value="event">
-        <input type="radio" name="cardable_type" value="event"
-               <%= "checked" if card.event? %> hidden>
-        <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
-        <span>Event</span>
-      </label>
-      <label class="card-form-type-button" data-value="note">
-        <input type="radio" name="cardable_type" value="note"
-               <%= "checked" if card.note? %> hidden>
-        <i class="icon" style="--icon-mask: var(--icon-file)" aria-hidden="true"></i>
-        <span>Note</span>
-      </label>
-      <label class="card-form-type-button" data-value="daylog">
-        <input type="radio" name="cardable_type" value="daylog"
-               <%= "checked" if card.daylog? %> hidden>
-        <i class="icon" style="--icon-mask: var(--icon-book)" aria-hidden="true"></i>
-        <span>Daylog</span>
-      </label>
-      <%= turbo_frame_tag "card_type_fields",
-            class: "card-form-fields",
-            data: { card_form_target: "fieldsFrame" } do %>
+      <% Card.cardable_types.each do |type_name| %>
+        <% cardable = type_name.constantize %>
+        <label class="card-form-type-button" data-value="<%= type_name == 'Draft' ? '' : type_name.downcase %>">
+          <input type="radio" name="cardable_type" value="<%= type_name == 'Draft' ? '' : type_name.downcase %>"
+                 id="cardable_type_<%= type_name.downcase %>"
+                 <% if card.cardable_type == type_name || (type_name == "Draft" && card.cardable_type.nil?) %>checked<% end %> hidden>
+          <i class="icon" style="--icon-mask: var(--icon-<%= cardable.icon %>)" aria-hidden="true"></i>
+          <span><%= cardable.name %></span>
+        </label>
+      <% end %>
+      <turbo-frame id="card_type_fields"
+            class="card-form-fields"
+            data-card-form-target="fieldsFrame">
         <% (card.cardable&.form_fields || []).each do |field| %>
           <%= render "cards/fields/#{field}", card: card %>
         <% end %>
-      <% end %>
+      </turbo-frame>
     </div>
-    <%= f.button type: "submit", class: "card-form-submit" do %>
-      Save <kbd>⌘↩</kbd>
+    <%= f.button type: "submit", class: "button-primary" do %>
+      Dump <span class="hotkey">⌘</span>
     <% end %>
   </div>
 <% end %>

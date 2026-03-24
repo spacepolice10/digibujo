@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["readView", "editView"]
+  static targets = ["readView", "editView", "editBtn", "cancelBtn"]
 
   #activateTimer = null
 
@@ -73,7 +73,7 @@ export default class extends Controller {
   }
 
   #toggleNav(editing) {
-    this.element.querySelector(".card-show-edit-btn").hidden = editing
-    this.element.querySelector(".card-show-cancel-btn").hidden = !editing
+    this.editBtnTarget.hidden = editing
+    this.cancelBtnTarget.hidden = !editing
   }
 }

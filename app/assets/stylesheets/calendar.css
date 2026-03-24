@@ -1,0 +1,189 @@
+@layer components {
+
+  .future-log {
+    padding: var(--spacing-horizontal);
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .future-log__header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-horizontal-double);
+    margin-bottom: var(--spacing-vertical-double);
+    padding-block: var(--spacing-vertical);
+  }
+
+  .future-log__year {
+    font-size: var(--font-size-strong);
+    font-weight: var(--font-weight-subtle);
+    color: var(--color-fg-subtle);
+    margin: 0;
+  }
+
+  .future-log__year-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: var(--font-size-subtle);
+    color: var(--color-fg-subtle);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--color-fg-base);
+    }
+  }
+
+  .future-log__grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: var(--spacing-horizontal-double) var(--spacing-horizontal);
+    align-items: start;
+  }
+
+  @container main (max-width: 880px) {
+    .future-log__grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  @container main (max-width: 500px) {
+    .future-log__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @container main (max-width: 300px) {
+    .future-log__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .future-log__month {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .future-log__month-name {
+    font-size: clamp(1.75rem, 3.5vw, 3rem);
+    font-weight: var(--font-weight-subtle);
+    color: var(--color-fg-base);
+    margin: 0 0 var(--spacing-vertical-half);
+  }
+
+  .future-log__divider {
+    border: none;
+    border-top: 1px solid var(--color-stroke-base);
+    margin: 0 0 var(--spacing-vertical-half);
+  }
+
+  /* Mini calendar grid */
+
+  .future-log__mini-cal {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    row-gap: 1px;
+    margin-bottom: var(--spacing-vertical);
+  }
+
+  .future-log__day-label {
+    font-size: 0.5rem;
+    font-weight: var(--font-weight-strong);
+    text-transform: uppercase;
+    color: var(--color-fg-subtle);
+    padding: 1px 0 3px;
+  }
+
+  .future-log__day {
+    font-size: 0.5625rem;
+    color: var(--color-fg-base);
+    padding: 1px;
+    border-radius: var(--radius-subtle);
+  }
+
+  .future-log__day--blank {
+    visibility: hidden;
+  }
+
+  .future-log__day--today {
+    background: var(--color-fg-base);
+    color: var(--color-bg-base);
+    font-weight: var(--font-weight-strong);
+    border-radius: var(--radius-subtle);
+  }
+
+  .future-log__day[data-card-types~="task"] {
+    color: var(--model-color-2);
+    font-weight: var(--font-weight-strong);
+  }
+
+  .future-log__day[data-card-types~="event"] {
+    color: var(--model-color-6);
+    font-weight: var(--font-weight-strong);
+  }
+
+  .future-log__day[data-card-types~="note"] {
+    color: var(--model-color-5);
+    font-weight: var(--font-weight-strong);
+  }
+
+  /* Event list */
+
+  .future-log__events {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .future-log__event {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4ch;
+    font-size: var(--font-size-subtle);
+  }
+
+  .future-log__event-date {
+    font-weight: var(--font-weight-strong);
+    min-width: 1.75ch;
+    flex-shrink: 0;
+    font-size: 0.625rem;
+  }
+
+  .future-log__event-title {
+    color: var(--color-fg-base);
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .future-log__event--task .future-log__event-date {
+    color: var(--model-color-2);
+  }
+
+  .future-log__event--event .future-log__event-date {
+    color: var(--model-color-6);
+  }
+
+  .future-log__event--note .future-log__event-date {
+    color: var(--model-color-5);
+  }
+
+  .future-log__event--draft .future-log__event-date {
+    color: var(--model-color-7);
+  }
+
+}

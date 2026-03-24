@@ -2,7 +2,7 @@
   <div class="popped-card-content">
     <div class="card-meta">
       <% if card.cardable_type %>
-        <span class="card-type"><%= card.cardable_type %></span>
+        <span class="card-type"><%= card.type_name %></span>
       <% end %>
       <span class="pop-date">Popped <%= card.pops_on %></span>
     </div>
@@ -12,7 +12,7 @@
     <% if card.tags.any? %>
       <div class="card-tags">
         <% card.tags.each do |tag| %>
-          <span class="tag-chip" style="<%= tag.colour_style %>"><%= tag.name %></span>
+          <span class="pill" style="color: <%= tag.colour_variable %>"><%= tag.name %></span>
         <% end %>
       </div>
     <% end %>

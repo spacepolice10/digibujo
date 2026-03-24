@@ -1,0 +1,33 @@
+/* Base — design-level element defaults
+ *
+ * These are intentional design choices, not browser normalization.
+ * Lives in @layer base so it sits between variables and utilities.
+ */
+
+@layer base {
+
+  body {
+    font-family: 'Geologica', sans-serif;
+  }
+
+  /* Typography */
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+
+  p, li {
+    text-wrap: pretty;
+  }
+
+  p, li, h1, h2, h3, h4, h5, h6 {
+    overflow-wrap: break-word;
+  }
+
+  /* Links */
+  a:not([class]) {
+    text-decoration-skip-ink: auto;
+    color: currentColor;
+  }
+
+}

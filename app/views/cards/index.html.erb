@@ -1,32 +1,8 @@
-<%= turbo_frame_tag "pinned_panel", src: pinned_index_path, loading: :lazy, data: { turbo_permanent: true } %>
-<div class="main-layout">
-  <aside class="main-sidebar main-sidebar--left" id="sidebar-left" popover="auto" data-turbo-permanent>
-    <%= turbo_frame_tag "streams_panel", src: streams_path, loading: :lazy do %>
-      <p>Loading streams...</p>
-    <% end %>
-  </aside>
-  <main class="main-content">
-    <button class="sidebar-toggle" popovertarget="sidebar-left" aria-label="Open sidebar">
-      <i class="icon" style="--icon-mask: var(--icon-menu)" aria-hidden="true"></i>
-    </button>
-    <%= turbo_frame_tag "cards_panel" do %>
-      <%= turbo_frame_tag "new_card" do %>
-        <%= render "form", card: Card.new %>
-      <% end %>
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-block: var(--spacing-horizontal-double);">
-        <h1>Cards</h1>
-        <% if @draft_count > 0 %>
-          <%= link_to drafts_path, data: { turbo_frame: "_top" },  class: "review-drafts-btn" do %>
-            Review drafts <span class="review-drafts-count"><%= @draft_count %></span>
-          <% end %>
-        <% end %>
-      </div>
-      <%= render "cards/paginated_list" %>
-    <% end %>
-  </main>
-  <aside class="main-sidebar main-sidebar--right" id="sidebar-right" data-turbo-permanent>
-    <%= turbo_frame_tag "calendar_panel", src: calendar_path, loading: :lazy do %>
-      <p>Loading calendar...</p>
-    <% end %>
-  </aside>
+<turbo-frame id="new_card">
+  <%= render "form", card: Card.new %>
+</turbo-frame>
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-block: var(--spacing-horizontal-double);">
+  <h2>Recently Sorted</h2>
 </div>
+<%= render "cards/paginated_list", cards: @cards, page: @page %>

@@ -1,12 +1,6 @@
-<% icon_mask = case card.cardable_type
-               when "Task"  then "var(--icon-circle-check)"
-               when "Event" then "var(--icon-calendar)"
-               when "Note"  then "var(--icon-file)"
-               else              "var(--icon-pencil)"
-               end %>
 <div id="<%= dom_id(card, :calendar) %>"
      class="calendar-card sidebar-panel__item sidebar-panel__item--<%= card.cardable_type.downcase %><%= " sidebar-panel__item--done" if card.done? %>">
-  <i class="icon" style="--icon-mask: <%= icon_mask %>" aria-hidden="true"></i>
+  <i class="icon" style="--icon-mask: <%= card.type_icon_variable %>" aria-hidden="true"></i>
   <%= link_to card.title, card_path(card),
         data: { turbo_frame: "_top" },
         class: "calendar-card-title" %>

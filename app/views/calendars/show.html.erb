@@ -1,50 +1,54 @@
-<turbo-frame id="calendar_panel">
-  <nav class="calendar-panel sidebar-panel">
+<div class="future-log">
+  <header class="future-log__header">
+    <%= link_to calendar_path(year: @year - 1), class: "future-log__year-nav" do %>
+      <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+      <%= @year - 1 %>
+    <% end %>
+    <h1 class="future-log__year"><%= @year %></h1>
+    <%= link_to calendar_path(year: @year + 1), class: "future-log__year-nav" do %>
+      <%= @year + 1 %>
+      <i class="icon icon--flip-h" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+    <% end %>
+  </header>
 
-    <div class="sidebar-panel__header">
-      <span class="sidebar-panel__title">Upcoming</span>
-    </div>
+  <div class="future-log__grid">
+    <% @months.each do |month| %>
+      <div class="future-log__month">
+        <h2 class="future-log__month-name"><%= month[:name] %></h2>
+        <hr class="future-log__divider">
 
-    <a href="<%= calendar_path %>" class="calendar-panel__link-btn" data-turbo-frame="_top">
-      Calendar &rarr;
-    </a>
-
-    <% if @today_cards.any? %>
-      <section class="sidebar-panel__section">
-        <h2 class="sidebar-panel__section-label">Today</h2>
-        <div class="calendar-section">
-          <% @today_cards.each do |card| %>
-            <%= render partial: "cards/calendar_card", locals: { card: card } %>
+        <div class="future-log__mini-cal">
+          <% CalendarsHelper::DAY_LABELS.each do |d| %>
+            <span class="future-log__day-label"><%= d %></span>
+          <% end %>
+          <% calendar_weeks(month[:first_day], month[:days_in_month]).each do |week| %>
+            <% week.each do |day| %>
+              <% if day %>
+                <% day_date  = Date.new(@year, month[:number], day) %>
+                <% day_cards = month[:dates_with_cards][day_date] %>
+                <% types     = day_cards&.map { |c| c.cardable_type.downcase }&.uniq&.join(" ") %>
+                <span class="future-log__day<%= " future-log__day--today" if day_date == Date.today %>"
+                      <%= "data-card-types=\"#{types}\"".html_safe if types.present? %>>
+                  <%= day %>
+                </span>
+              <% else %>
+                <span class="future-log__day future-log__day--blank"></span>
+              <% end %>
+            <% end %>
           <% end %>
         </div>
-      </section>
-    <% end %>
 
-    <% if @upcoming_cards.any? %>
-      <section class="sidebar-panel__section">
-        <h2 class="sidebar-panel__section-label">Upcoming</h2>
-        <div class="calendar-section">
-          <% @upcoming_cards.each do |card| %>
-            <%= render partial: "cards/calendar_card", locals: { card: card } %>
-          <% end %>
-        </div>
-      </section>
+        <% if month[:cards].any? %>
+          <ul class="future-log__events">
+            <% month[:cards].each do |card| %>
+              <li class="future-log__event future-log__event--<%= card.cardable_type.downcase %>">
+                <span class="future-log__event-date"><%= card.date.day %></span>
+                <%= link_to card.title, card_path(card), class: "future-log__event-title", data: { turbo_frame: "_top" } %>
+              </li>
+            <% end %>
+          </ul>
+        <% end %>
+      </div>
     <% end %>
-
-    <% if @due_cards.any? %>
-      <section class="sidebar-panel__section">
-        <h2 class="sidebar-panel__section-label sidebar-panel__section-label--alert">Due</h2>
-        <div class="calendar-section">
-          <% @due_cards.each do |card| %>
-            <%= render partial: "cards/calendar_card", locals: { card: card } %>
-          <% end %>
-        </div>
-      </section>
-    <% end %>
-
-    <% unless @today_cards.any? || @upcoming_cards.any? || @due_cards.any? %>
-      <p class="calendar-empty">Nothing scheduled.</p>
-    <% end %>
-
-  </nav>
-</turbo-frame>
+  </div>
+</div>

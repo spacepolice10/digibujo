@@ -1,18 +1,33 @@
 <% content_for(:title) { @card.title } %>
 <div class="card-show" data-controller="card-inline-edit">
-  <nav class="card-show-nav">
-    <%= link_to "Back", cards_path, class: "card-show-back" %>
-    <div class="card-show-actions">
-      <button class="card-show-action card-show-edit-btn" data-action="card-inline-edit#activate">Edit</button>
-      <button class="card-show-action card-show-cancel-btn" data-action="card-inline-edit#deactivate" hidden>Cancel</button>
-      <%= button_to "Delete", card_path(@card), method: :delete, class: "card-show-action card-show-action--danger", form: { data: { turbo_confirm: "Are you sure?" } } %>
+  <nav class="show-navigation">
+    <button class="button-secondary" onclick="history.back()">
+      <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+      Back
+    </button>
+    <div class="show-navigation-actions">
+      <button class="button-secondary" data-card-inline-edit-target="editBtn" data-action="card-inline-edit#activate">
+        <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
+        Edit
+      </button>
+      <button class="button-secondary" data-card-inline-edit-target="cancelBtn" data-action="card-inline-edit#deactivate" hidden>
+        Cancel
+      </button>
+      <%= button_to card_path(@card), method: :delete, class: "button-secondary button-secondary--danger", form: { data: { turbo_confirm: "Are you sure?" } } do %>
+        <i class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></i>
+        Delete
+      <% end %>
+      <%= button_to card_pin_path(@card), method: :patch, class: "button-secondary" do %>
+        <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
+        Pin
+      <% end %>
     </div>
   </nav>
   <article class="card-show-content">
     <header class="card-show-header">
       <div class="card-show-meta">
         <% if @card.cardable_type %>
-          <span class="card-type"><%= @card.cardable_type %></span>
+          <span class="card-type"><%= @card.type_name %></span>
         <% end %>
         <% if @card.daylog? && @card.cardable.mood_emoji %>
           <span class="card-mood"><%= @card.cardable.mood_emoji %></span>
@@ -24,7 +39,7 @@
       <% if @card.tags.any? %>
         <div class="card-tags">
           <% @card.tags.each do |tag| %>
-            <span class="tag-chip" style="<%= tag.colour_style %>"><%= tag.name %></span>
+            <span class="pill" style="color: <%= tag.colour_variable %>"><%= tag.name %></span>
           <% end %>
         </div>
       <% end %>

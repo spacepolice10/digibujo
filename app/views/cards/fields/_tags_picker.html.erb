@@ -1,13 +1,15 @@
 <% field_name    = local_assigns.fetch(:field_name,    "card[tags_string]") %>
 <% initial_value = local_assigns.fetch(:initial_value, card.tags_string) %>
 <% frame_id      = local_assigns.fetch(:frame_id,      "tag-suggestions") %>
-<div class="tag-picker" data-controller="tag-input" data-action="click->tag-input#focusInput" style="anchor-name: --tag-picker;">
-  <%= hidden_field_tag field_name, initial_value, data: { tag_input_target: "hidden" } %>
-  <div class="tag-chips" data-tag-input-target="chips"></div>
+<div class="tag-picker" data-controller="tags-picker dropdown" data-action="click->tags-picker#focusInput dropdown:select->tags-picker#onSelect" style="anchor-name: --tag-picker;">
+  <%= hidden_field_tag field_name, initial_value, data: { tags_picker_target: "hidden" } %>
+  <div class="pills" data-tags-picker-target="chips"></div>
   <input type="text" placeholder="Add tags…" autocomplete="off"
-         data-tag-input-target="input"
-         data-action="input->tag-input#onInput keydown->tag-input#onKeydown blur->tag-input#onBlur">
+         data-tags-picker-target="input"
+         data-dropdown-target="input"
+         data-action="focus->dropdown#onFocus input->dropdown#onInput keydown->dropdown#onKeydown blur->dropdown#onBlur">
   <%= turbo_frame_tag frame_id,
+        class: "dropdown-menu",
         popover: "manual",
-        data: { tag_input_target: "suggestions" } %>
+        data: { dropdown_target: "frame" } %>
 </div>

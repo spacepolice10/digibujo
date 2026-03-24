@@ -1,4 +1,6 @@
-<div id="<%= dom_id(card) %>" class="card<%= " archived" if card.archived? %>"<%= " data-card-type=\"#{card.cardable_type.downcase}\"" unless card.draft? %>>
+<% card_dom_id = [local_assigns[:dom_prefix], dom_id(card)].compact.join("_") %>
+<% card_menu_id = [local_assigns[:dom_prefix], "card-menu", card.id].compact.join("-") %>
+<div id="<%= card_dom_id %>" class="card<%= " archived" if card.archived? %>" style="--i: <%= local_assigns[:index] || 0 %>"<%= " data-card-type=\"#{card.cardable_type.downcase}\"" unless card.draft? %>>
   <div class="card-action">
     <% if card.completable? %>
       <% if card.done? %>
@@ -23,58 +25,82 @@
     <% if card.pinned? || card.archived? || card.date.present? || card.ends_date.present? || card.tags.any? || (card.daylog? && card.cardable.mood_emoji) %>
       <div class="card-tags">
         <% if card.daylog? && card.cardable.mood_emoji %>
-          <span class="tag-chip tag-chip--mood"><%= card.cardable.mood_emoji %></span>
+          <span class="pill pill--mood"><%= card.cardable.mood_emoji %></span>
         <% end %>
         <% if card.pinned? %>
-          <span class="tag-chip tag-chip--status" aria-label="Pinned">
+          <span class="pill pill--status" aria-label="Pinned">
             <span class="icon" style="--icon-mask: var(--icon-pin)"></span>
           </span>
         <% end %>
         <% if card.archived? %>
-          <span class="tag-chip tag-chip--status" aria-label="Archived">
+          <span class="pill pill--status" aria-label="Archived">
             <span class="icon" style="--icon-mask: var(--icon-archive)"></span>
           </span>
         <% end %>
         <% if card.date.present? %>
-          <span class="tag-chip tag-chip--date"><%= card.date.strftime("%-d %b %Y") %><% if card.ends_date.present? %> → <%= card.ends_date.strftime("%-d %b %Y") %><% end %></span>
+          <span class="pill pill--date"><%= card.date.strftime(card.date.to_time.hour.zero? && card.date.to_time.min.zero? ? "%-d %b %Y" : "%-d %b %Y %H:%M") %><% if card.ends_date.present? %> → <%= card.ends_date.strftime(card.ends_date.to_time.hour.zero? && card.ends_date.to_time.min.zero? ? "%-d %b %Y" : "%-d %b %Y %H:%M") %><% end %></span>
         <% elsif card.ends_date.present? %>
-          <span class="tag-chip tag-chip--date">→ <%= card.ends_date.strftime("%-d %b %Y") %></span>
+          <span class="pill pill--date">→ <%= card.ends_date.strftime(card.ends_date.to_time.hour.zero? && card.ends_date.to_time.min.zero? ? "%-d %b %Y" : "%-d %b %Y %H:%M") %></span>
         <% end %>
         <% card.tags.each do |tag| %>
-          <span class="tag-chip" style="<%= tag.colour_style %>"><%= tag.name %></span>
+          <span class="pill" style="color: <%= tag.colour_variable %>; background: <%= tag.colour_bg_variable %>"><%= tag.name %></span>
         <% end %>
       </div>
     <% end %>
   </a>
   <div class="card-menu">
     <button class="card-menu-trigger"
-            popovertarget="card-menu-<%= card.id %>"
-            style="anchor-name: --card-menu-<%= card.id %>">⋯</button>
-    <div id="card-menu-<%= card.id %>"
-         class="card-dropdown-menu"
+            popovertarget="<%= card_menu_id %>"
+            style="anchor-name: --<%= card_menu_id %>">⋯</button>
+    <div id="<%= card_menu_id %>"
+         class="dropdown-menu card-dropdown-menu"
          popover
-         style="position-anchor: --card-menu-<%= card.id %>">
-      <%= button_to card.pops_on.present? ? "Dismiss" : "Pop",
-                    card_pop_path(card),
-                    method: :patch,
-                    class: "card-dropdown-item" %>
-      <%= button_to card.pinned? ? "Unpin" : "Pin",
-                    card_pin_path(card),
-                    method: :patch,
-                    class: "card-dropdown-item" %>
-      <%= link_to "Edit",
-                   edit_card_path(card),
-                   data: { turbo_frame: "_top" },
-                   class: "card-dropdown-item" %>
-      <%= button_to card.archived? ? "Unarchive" : "Archive",
-                    card_archive_path(card),
-                    method: :patch,
-                    class: "card-dropdown-item" %>
-      <%= button_to "Delete",
-                    card_path(card),
-                    method: :delete,
-                    class: "card-dropdown-item card-dropdown-item--danger",
-                    form: { data: { turbo_confirm: "Are you sure?" } } %>
+         style="position-anchor: --<%= card_menu_id %>">
+      <%= button_to card_pop_path(card), method: :patch, class: "card-dropdown-item" do %>
+        <span class="card-dropdown-icon card-dropdown-icon--pop">
+          <span class="icon" style="--icon-mask: var(--icon-arrow-up)"></span>
+        </span>
+        <span class="card-dropdown-text">
+          <span class="card-dropdown-label"><%= card.pops_on.present? ? "Dismiss" : "Pop" %></span>
+          <span class="card-dropdown-desc"><%= card.pops_on.present? ? "Remove from top of Timeline" : "Surface to top of Timeline" %></span>
+        </span>
+      <% end %>
+      <%= button_to card_pin_path(card), method: :patch, class: "card-dropdown-item" do %>
+        <span class="card-dropdown-icon card-dropdown-icon--pin">
+          <span class="icon" style="--icon-mask: var(--icon-pin)"></span>
+        </span>
+        <span class="card-dropdown-text">
+          <span class="card-dropdown-label"><%= card.pinned? ? "Unpin" : "Pin" %></span>
+          <span class="card-dropdown-desc"><%= card.pinned? ? "Remove from quick access" : "Keep at top for quick access" %></span>
+        </span>
+      <% end %>
+      <%= button_to card_archive_path(card), method: :patch, class: "card-dropdown-item" do %>
+        <span class="card-dropdown-icon card-dropdown-icon--archive">
+          <span class="icon" style="--icon-mask: var(--icon-archive)"></span>
+        </span>
+        <span class="card-dropdown-text">
+          <span class="card-dropdown-label"><%= card.archived? ? "Unarchive" : "Archive" %></span>
+          <span class="card-dropdown-desc"><%= card.archived? ? "Restore to Timeline" : "Stored in archive for 30 days" %></span>
+        </span>
+      <% end %>
+      <%= link_to edit_card_path(card), data: { turbo_frame: "_top" }, class: "card-dropdown-item" do %>
+        <span class="card-dropdown-icon card-dropdown-icon--edit">
+          <span class="icon" style="--icon-mask: var(--icon-pencil)"></span>
+        </span>
+        <span class="card-dropdown-text">
+          <span class="card-dropdown-label">Edit</span>
+          <span class="card-dropdown-desc">Open and edit card content</span>
+        </span>
+      <% end %>
+      <%= button_to card_path(card), method: :delete, class: "card-dropdown-item card-dropdown-item", form: { data: { turbo_confirm: "Are you sure?" } } do %>
+        <span class="card-dropdown-icon card-dropdown-icon--delete">
+          <span class="icon" style="--icon-mask: var(--icon-trash)"></span>
+        </span>
+        <span class="card-dropdown-text">
+          <span class="card-dropdown-label">Delete</span>
+          <span class="card-dropdown-desc">Permanently remove this card</span>
+        </span>
+      <% end %>
     </div>
   </div>
 </div>

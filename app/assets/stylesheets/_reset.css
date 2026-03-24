@@ -43,29 +43,10 @@
 
   /* Body */
   body {
-    min-block-size: 100svb;                  /* fill at least the small viewport block axis (avoids mobile chrome gap) */
-    font-family: 'Geologica', sans-serif;
+    min-block-size: 100svb; /* fill at least the small viewport block axis (avoids mobile chrome gap) */
   }
 
-  /* Typography */
-  h1, h2, h3, h4, h5, h6 {
-    line-height: 1.1;       /* tighter leading for large display text */
-    text-wrap: balance;     /* distribute words evenly across lines */
-  }
-
-  p, li {
-    text-wrap: pretty;      /* avoid orphaned last words on final line */
-  }
-
-  p, li, h1, h2, h3, h4, h5, h6 {
-    overflow-wrap: break-word; /* break long words/URLs instead of overflowing */
-  }
-
-  /* Links */
-  a:not([class]) {
-    text-decoration-skip-ink: auto; /* underline skips descenders for legibility */
-    color: currentColor;            /* inherit text color rather than defaulting to browser blue */
-  }
+  /* Typography, links, and font-family live in base.css (@layer base) */
 
   /* Media */
   img, picture, video, canvas, svg {

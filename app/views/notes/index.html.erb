@@ -1,0 +1,13 @@
+<% content_for(:title) { "Notes" } %>
+<div class="type-index">
+  <header class="type-index__header">
+    <div class="type-index__title">
+      <i class="icon" style="--icon-mask: var(--icon-file); color: var(--model-color-5)" aria-hidden="true"></i>
+      <h2>Notes</h2>
+    </div>
+    <div class="type-index__stats">
+      <span class="type-index__stat"><strong><%= @total %></strong> total</span>
+    </div>
+  </header>
+  <%= render "cards/paginated_list", cards: @cards, page: @page %>
+</div>

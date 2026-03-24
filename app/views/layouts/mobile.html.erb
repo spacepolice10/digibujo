@@ -2,7 +2,7 @@
 <html>
   <head>
     <title><%= content_for(:title) || "Digibujo" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Digibujo">
     <meta name="mobile-web-app-capable" content="yes">
@@ -25,10 +25,23 @@
     </main>
 
     <nav class="tab-bar">
-      <%= link_to "Streams", streams_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'streams'}" %>
-      <%= link_to "Cards", cards_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'cards'}" %>
-      <%= link_to "Calendar", calendar_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'calendars'}" %>
+      <%= link_to streams_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'streams'}", aria: { label: "Streams" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-list)" aria-hidden="true"></i>
+      <% end %>
+      <%= link_to cards_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'cards'}", aria: { label: "Cards" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-menu)" aria-hidden="true"></i>
+      <% end %>
+      <%= link_to upcoming_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'upcomings'}", aria: { label: "Upcoming" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
+      <% end %>
+      <%= link_to calendar_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'calendars'}", aria: { label: "Calendar" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
+      <% end %>
     </nav>
+
+    <%= link_to new_card_path, class: "fab", aria: { label: "New card" } do %>
+      <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
+    <% end %>
 
     <dialog data-dialog-target="dialog" data-action="click->dialog#backdropClose turbo:submit-end->dialog#submitEnd">
       <%= turbo_frame_tag "modal" %>

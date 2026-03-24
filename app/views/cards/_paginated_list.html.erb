@@ -1,11 +1,11 @@
 <div id="cards" data-controller="pagination">
-  <% @cards.each do |card| %>
+  <% cards.each do |card| %>
     <%= render card %>
   <% end %>
-  <% unless @page.last? %>
-    <%= link_to url_for(page: @page.next_param),
+  <% unless page.last? %>
+    <%= link_to url_for(page: page.next_param),
         class: "pagination-trigger",
-        data: { pagination_target: "nextPageLink", preload: @page.first? } do %>
+        data: { pagination_target: "nextPageLink", preload: page.first? } do %>
       <i class="icon icon--spin" style="--icon-mask: var(--icon-spinner)" aria-hidden="true"></i>
     <% end %>
   <% end %>

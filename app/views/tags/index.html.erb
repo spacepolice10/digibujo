@@ -1,28 +1,67 @@
-<%= turbo_frame_tag (request.headers["Turbo-Frame"].presence || "tag-suggestions"), popover: "manual" do %>
-  <% if @tags.any? || (@query.present? && !@exact_match) %>
-    <ul class="tag-suggestions" role="listbox">
-      <% @tags.each do |tag| %>
-        <li role="option"
-              data-action="click->tag-input#select"
+<% frame = request.headers["Turbo-Frame"] %>
+<% if frame == "tags_panel" %>
+  <turbo-frame id="tags_panel">
+    <section class="sidebar-panel__section">
+      <div class="sidebar-panel__section-header">
+        <h2 class="sidebar-panel__section-label">Tags</h2>
+        <%= link_to tags_path,
+              class: "sidebar-panel__section-link",
+              "aria-label": "All tags",
+              data: { turbo_frame: "_top" } do %>
+          <i class="icon" style="--icon-mask: var(--icon-arrow-up); transform: rotate(90deg);" aria-hidden="true"></i>
+        <% end %>
+      </div>
+      <% if @tags.any? %>
+        <div class="tags-panel-list">
+          <% @tags.first(8).each do |tag| %>
+            <span class="pill" style="color: <%= tag.colour_variable %>"><%= tag.name %></span>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="sidebar-panel__empty">No tags yet.</p>
+      <% end %>
+    </section>
+  </turbo-frame>
+<% elsif frame.present? %>
+  <%= turbo_frame_tag frame, popover: "manual" do %>
+    <% if @tags.any? || (@query.present? && !@exact_match) %>
+      <ul class="tag-suggestions" role="listbox">
+        <% @tags.each do |tag| %>
+          <li role="option"
+                data-action="click->dropdown#pick"
             data-name="<%= tag.name %>">
-          <span class="tag-chip" style="<%= tag.colour_style %>"><%= tag.name %></span>
-        </li>
-      <% end %>
-      <% if @query.present? && !@exact_match %>
-        <li class="tag-create-row" role="option" data-name="<%= @query %>">
-          <span class="tag-create-label"><kbd>↵</kbd> Create "<%= @query %>"</span>
-          <span class="colour-picker">
-            <% Colourable::COLOUR_KEYS.each do |key| %>
-              <button type="button"
-                      class="colour-dot"
-                      style="background: var(--model-color-<%= key %>);"
-                      data-action="click->tag-input#selectColour"
-                      data-colour="<%= key %>"
-                      data-name="<%= @query %>"></button>
-            <% end %>
-          </span>
-        </li>
-      <% end %>
-    </ul>
+            <span class="pill" style="color: <%= tag.colour_variable %>"><%= tag.name %></span>
+          </li>
+        <% end %>
+        <% if @query.present? && !@exact_match %>
+          <li class="tag-create-row" role="option" data-name="<%= @query %>">
+            <span class="tag-create-label"><kbd>↵</kbd> Create "<%= @query %>"</span>
+            <span class="colour-picker">
+              <% Colourable::COLOUR_KEYS.each do |key| %>
+                <button type="button"
+                        class="colour-dot"
+                        style="background: var(--model-color-<%= key %>);"
+                        data-action="click->dropdown#pickColour"
+                  data-colour="<%= key %>"
+                  data-name="<%= @query %>"></button>
+              <% end %>
+            </span>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
   <% end %>
+<% else %>
+  <div class="tags-page">
+    <h1 class="tags-page__title">Tags</h1>
+    <% if @tags.any? %>
+      <div class="tags-page__list">
+        <% @tags.each do |tag| %>
+          <span class="pill" style="color: <%= tag.colour_variable %>"><%= tag.name %></span>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="tags-page__empty">No tags yet. Tags are created when you add them to a card.</p>
+    <% end %>
+  </div>
 <% end %>

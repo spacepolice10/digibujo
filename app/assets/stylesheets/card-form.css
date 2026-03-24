@@ -14,6 +14,7 @@
     box-shadow: var(--shadow-elevated);
     padding: var(--spacing-horizontal);
     gap: var(--spacing-vertical);
+    --card-form-actions-height: calc(2 * var(--spacing-vertical-double));
   }
 
   /* Hide the content field label — trix placeholder is enough */
@@ -25,7 +26,7 @@
     flex-direction: column;
   }
 
-  trix-toolbar { order: 2; }
+  trix-toolbar { order: 2; position: sticky; bottom: var(--card-form-actions-height, 0); z-index: var(--z-dropdown-bg); background: var(--color-bg-subtle); }
   trix-editor  { order: 1; }
 
   /* ── Bottom actions bar ───────────────────────────── */
@@ -35,6 +36,10 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--spacing-horizontal-half);
+    position: sticky;
+    bottom: 0;
+    z-index: var(--z-dropdown);
+    background: var(--color-bg-subtle);
   }
 
   .card-form-type-controls {
@@ -51,24 +56,8 @@
 
   /* ── Back button ──────────────────────────────────── */
 
-  .card-form-back {
-    display: none;
-    align-items: center;
-    gap: var(--spacing-vertical-half);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    border-radius: var(--radius-strong);
-    font-family: inherit;
-    font-size: var(--font-size-subtle);
-    background: transparent;
-    border: 1px solid var(--color-stroke-base);
-    color: var(--color-fg-subtle);
-    cursor: pointer;
-    white-space: nowrap;
-    flex-shrink: 0;
-    transition: background 0.1s ease;
-
-    &:hover { background: var(--color-bg-base); }
-  }
+  /* Visual style lives in .btn-ghost (button.css) */
+  .card-form-back { display: none; }
 
   .card-form-type-controls:has(input[value]:not([value=""]):checked) .card-form-back {
     display: inline-flex;
@@ -115,6 +104,7 @@
 
   /* Shared pill style for inline field controls */
   turbo-frame.card-form-fields input[type="date"],
+  turbo-frame.card-form-fields input[type="datetime-local"],
   turbo-frame.card-form-fields .tag-picker {
     border: 1px solid var(--color-stroke-base);
     border-radius: var(--radius-strong);
@@ -124,7 +114,8 @@
     background: transparent;
   }
 
-  turbo-frame.card-form-fields input[type="date"] {
+  turbo-frame.card-form-fields input[type="date"],
+  turbo-frame.card-form-fields input[type="datetime-local"] {
     color: inherit;
     cursor: pointer;
   }
@@ -145,15 +136,15 @@
     &::-webkit-scrollbar { display: none; }
   }
 
-  turbo-frame.card-form-fields .tag-chips {
+  turbo-frame.card-form-fields .pills {
     display: flex;
     flex-wrap: nowrap;
     gap: var(--spacing-vertical-half);
     margin-bottom: 0;
   }
 
-  turbo-frame.card-form-fields .tag-chip {
-    font-size: 0.7rem;
+  turbo-frame.card-form-fields .pill {
+    font-size: var(--font-size-subtle);
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     gap: var(--spacing-vertical-half);
     white-space: nowrap;
@@ -199,10 +190,10 @@
   .card-form-type-button[data-value="daylog"]{ background: var(--model-color-7-bg); color: var(--model-color-7); }
 
   .card-form-type-button.disabled {
-    opacity: 0.45;
+    opacity: var(--opacity-half);
     cursor: default;
 
-    &:hover { opacity: 0.45; }
+    &:hover { opacity: var(--opacity-half); }
   }
 
   .card-form-type-button span {
@@ -211,8 +202,8 @@
     overflow: hidden;
     opacity: 0;
     white-space: nowrap;
-    margin-left: 0;
-    transition: width 0.25s ease, opacity 0.15s ease, margin-left 0.25s ease;
+    margin-inline-start: 0;
+    transition: width 0.25s ease, opacity 0.15s ease, margin-inline-start 0.25s ease;
   }
 
   .card-form-type-button:has(:checked) {
@@ -221,7 +212,7 @@
     span {
       width: auto;
       opacity: 1;
-      margin-left: var(--spacing-vertical-half);
+      margin-inline-start: var(--spacing-vertical-half);
     }
   }
 
@@ -241,8 +232,7 @@
   .mood-option input[type="radio"] { display: none; }
 
   .mood-option span {
-    font-size: 1.1rem;
-    line-height: 1;
+    font-size: var(--font-size-base);
     cursor: pointer;
     opacity: 0.3;
     transition: opacity 0.1s, transform 0.1s;
@@ -279,33 +269,6 @@
   }
 
 
-  /* ── Submit button ────────────────────────────────── */
-
-  .card-form-submit {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--spacing-vertical-half);
-    background: var(--color-bg-strong);
-    color: var(--color-fg-strong);
-    border: 1px solid var(--color-fg-subtle);;
-    border-radius: var(--radius-strong);
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
-    font-family: inherit;
-    font-size: var(--font-size-subtle);
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background 0.1s ease;
-
-    &:hover { background: color-mix(in oklch, var(--color-bg-strong), white 12%); }
-
-    kbd {
-      font-family: inherit;
-      font-size: var(--font-size-subtle);
-      font-weight: var(--font-weight-base);
-      letter-spacing: 0;
-      text-transform: none;
-      opacity: 0.6;
-    }
-  }
+  /* Submit button visual style lives in .button-primary (button.css) */
 
 }

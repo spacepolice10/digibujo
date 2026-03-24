@@ -1,0 +1,8 @@
+<div class="mobile-page-nav">
+  <%= link_to cards_path, class: "mobile-page-nav__back" do %>
+    <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+    Cards
+  <% end %>
+</div>
+
+<%= render "form", card: @card %>

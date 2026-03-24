@@ -90,7 +90,7 @@
     display: flex;
     align-items: flex-start;
     flex-shrink: 0;
-    padding-left: var(--spacing-horizontal-half);
+    padding-inline-start: var(--spacing-horizontal-half);
 
     form {
       display: contents;
@@ -98,12 +98,12 @@
   }
 
   .completion-placeholder {
-    width: 1.125rem;
-    height: 1.125rem;
+    width: var(--icon-size-base);
+    height: var(--icon-size-base);
     flex-shrink: 0;
   }
 
-  /* Dropdown menu */
+  /* Card menu trigger */
 
   .card-menu {
     display: flex;
@@ -120,67 +120,19 @@
     color: var(--color-fg-subtle);
     font-size: var(--font-size-base);
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    line-height: 1;
 
     &:hover {
       color: var(--color-fg-base);
     }
   }
 
-  .card-dropdown-menu {
-    position: absolute;
-    inset: unset;
-    top: anchor(bottom);
-    right: anchor(right);
-    margin-top: var(--spacing-vertical-half);
-    padding: var(--spacing-vertical-half);
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-subtle);
-    background: var(--color-bg-subtle);
-    box-shadow: var(--shadow-elevated);
-    min-width: 120px;
-    position-try-fallbacks: flip-block;
-
-    form {
-      display: block;
-      margin: 0;
-    }
-  }
-
-  .card-dropdown-item {
-    display: block;
-    width: 100%;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    text-align: left;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: var(--font-size-subtle);
-    color: var(--color-fg-base);
-    border-radius: var(--radius-subtle);
-
-    &:hover {
-      background: var(--color-bg-base);
-    }
-
-    &.card-dropdown-item--danger {
-      color: var(--color-fg-negative);
-
-      &:hover {
-        background: var(--color-bg-negative);
-      }
-    }
-  }
-
-  .calendar-card {
-    /* Layout provided by .sidebar-panel__item */
-  }
+  /* Dropdown menu styles live in dropdown.css */
 
   .completion-toggle {
     /* Checkbox shape */
-    width: 1.125rem;
-    height: 1.125rem;
-    border-radius: 3px;
+    width: var(--icon-size-base);
+    height: var(--icon-size-base);
+    border-radius: var(--radius-subtle);
     flex-shrink: 0;
     position: relative;
 
@@ -225,8 +177,8 @@
         margin: auto;
         width: 4px;
         height: 7px;
-        border-right: 1.5px solid white;
-        border-bottom: 1.5px solid white;
+        border-right: 1.5px solid var(--color-fg-strong);
+        border-bottom: 1.5px solid var(--color-fg-strong);
         transform: rotate(45deg) translate(0, -1px);
       }
     }
@@ -240,7 +192,6 @@
     font-size: var(--font-size-subtle);
     font-weight: var(--font-weight-strong);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
     color: var(--color-fg-warn);
   }
 

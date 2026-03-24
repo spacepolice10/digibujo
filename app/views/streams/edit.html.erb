@@ -1,0 +1,15 @@
+<% content_for(:title) { "Edit #{@stream.name}" } %>
+<div class="card-show">
+  <nav class="show-navigation">
+    <%= link_to stream_path(@stream), class: "button-secondary" do %>
+      <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+      Back
+    <% end %>
+  </nav>
+  <article class="card-show-content">
+    <header class="card-show-header">
+      <h1 class="card-show-title">Edit Stream</h1>
+    </header>
+    <%= render "form", stream: @stream %>
+  </article>
+</div>

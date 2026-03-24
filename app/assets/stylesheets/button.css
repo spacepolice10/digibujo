@@ -1,0 +1,74 @@
+@layer components {
+
+  /* ── Primary button ───────────────────────────────── */
+
+  .button-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-vertical-half);
+    background: var(--color-bg-strong);
+    color: var(--color-fg-strong);
+    border: 1px solid var(--color-fg-subtle);
+    border-radius: var(--radius-strong);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+    font-size: var(--font-size-subtle);
+    cursor: pointer;
+    transition: background 0.1s ease;
+
+    &:hover { background: color-mix(in oklch, var(--color-bg-strong), white 12%); }
+  }
+
+  /* ── Hotkey hint ──────────────────────────────────── */
+
+  .hotkey {
+    font-family: inherit;
+    font-size: var(--font-size-subtle);
+    font-weight: var(--font-weight-base);
+    text-transform: none;
+    opacity: var(--opacity-half);
+  }
+
+  /* ── Secondary button ─────────────────────────────── */
+
+  .button-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-vertical-half);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    border-radius: var(--radius-strong);
+    font-family: inherit;
+    font-size: var(--font-size-subtle);
+    background: transparent;
+    border: 1px solid var(--color-stroke-base);
+    color: var(--color-fg-subtle);
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    text-decoration: none;
+    transition: background 0.1s ease;
+
+    &:hover { background: var(--color-bg-base); }
+  }
+
+  /* ── Secondary button — active variant ────────────────── */
+
+  .button-secondary--active {
+    color: var(--model-color-2);
+    border-color: var(--model-color-2);
+    background: var(--model-color-2-bg);
+
+    &:hover { background: var(--model-color-2-bg); }
+  }
+
+  /* ── Secondary button — danger variant ────────────────── */
+
+  .button-secondary--danger {
+    color: var(--color-fg-negative);
+    border-color: var(--color-fg-negative);
+
+    &:hover {
+      background: var(--color-bg-negative);
+    }
+  }
+
+}

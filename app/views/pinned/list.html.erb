@@ -1,0 +1,15 @@
+<turbo-frame id="pinned_cards_list">
+  <section class="pinned-dock-list">
+    <div class="pinned-dock-list__header">
+      <div class="pinned-dock__copy">
+        <span class="pinned-dock__eyebrow">Pinned List</span>
+        <span class="pinned-dock__caption"><%= pluralize(@pinned_cards.count, "card") %> pinned right now</span>
+      </div>
+    </div>
+    <div class="pinned-dock-list__items">
+      <% @pinned_cards.each do |card| %>
+        <%= render partial: "cards/card", locals: { card: card, dom_prefix: "pinned" } %>
+      <% end %>
+    </div>
+  </section>
+</turbo-frame>

@@ -63,4 +63,16 @@
     display: inherit;
   }
 
+  /* ── Animation utilities ─────────────────────── */
+
+  @keyframes spin {
+    to { rotate: 360deg; }
+  }
+
+  @keyframes popout {
+    from { opacity: 0; scale: 0.88; }
+    40%  { scale: 1.04; }
+    to   { opacity: 1; scale: 1; }
+  }
+
 }

@@ -1,11 +1,68 @@
-<%= turbo_frame_tag "cards_panel" do %>
-  <div style="display: flex; align-items: baseline; gap: 1rem;">
-    <h1><%= @stream.name %></h1>
-    <% unless @stream.default? %>
-      <%= button_to "Delete", stream_path(@stream), method: :delete,
-            data: { turbo_confirm: "Delete this stream?" } %>
-    <% end %>
-  </div>
-
-  <%= render "cards/paginated_list" %>
-<% end %>
+<% content_for(:title) { @stream.name } %>
+<div class="card-show">
+  <nav class="show-navigation">
+    <button class="button-secondary" onclick="history.back()">
+      <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+      Back
+    </button>
+    <div class="show-navigation-actions">
+      <%= link_to @done_last ? stream_path(@stream) : stream_path(@stream, sort: "done_last"),
+            class: "button-secondary #{"button-secondary--active" if @done_last}",
+            data: { turbo_frame: "cards_panel", turbo_action: "advance" },
+            title: @done_last ? "Restore default sort" : "Sort done cards last" do %>
+        <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
+        Done last
+        <i class="icon sort-direction-arrow" style="--icon-mask: var(--icon-arrow-up); transform: rotate(<%= @done_last ? "180deg" : "0deg" %>)" aria-hidden="true"></i>
+      <% end %>
+      <%= link_to edit_stream_path(@stream), class: "button-secondary" do %>
+        <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
+        Edit
+      <% end %>
+      <%= button_to stream_path(@stream), method: :delete, class: "button-secondary button-secondary--danger", form: { data: { turbo_confirm: "Delete this stream?" } } do %>
+        <i class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></i>
+        Delete
+      <% end %>
+    </div>
+  </nav>
+  <article class="card-show-content">
+    <header class="card-show-header">
+      <div class="card-show-meta">
+        <% if @stream.icon.present? %>
+          <i class="icon" style="--icon-mask: var(--icon-<%= @stream.icon %>)<% if @stream.colour.present? %>; color: var(--model-color-<%= @stream.colour %>)<% end %>" aria-hidden="true"></i>
+        <% end %>
+        <span class="card-type">Stream</span>
+      </div>
+      <h1 class="card-show-title"><%= @stream.name %></h1>
+      <% unless @stream.empty? %>
+        <div class="card-tags">
+          <% if @stream.cardable_type.present? %>
+            <% @stream.cardable_type.split(",").map(&:strip).reject(&:blank?).each do |type| %>
+              <% stream_icon = type.constantize.icon rescue "menu" %>
+              <span class="pill pill--type">
+                <i class="icon" style="--icon-mask: var(--icon-<%= stream_icon %>)" aria-hidden="true"></i>
+                <%= type.downcase.pluralize %>
+              </span>
+            <% end %>
+          <% end %>
+          <% if @stream.date_from.present? || @stream.date_to.present? %>
+            <span class="pill pill--date">
+              <% if @stream.date_from.present? && @stream.date_to.present? %>
+                <%= @stream.date_from %>&ndash;<%= @stream.date_to %>
+              <% elsif @stream.date_from.present? %>
+                from <%= @stream.date_from %>
+              <% else %>
+                until <%= @stream.date_to %>
+              <% end %>
+            </span>
+          <% end %>
+          <% if @stream.tags.present? %>
+            <% @stream.tags.split(",").map(&:strip).reject(&:blank?).each do |tag| %>
+              <span class="pill">#<%= tag %></span>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    </header>
+    <%= render "cards/paginated_list", cards: @cards, page: @page %>
+  </article>
+</div>
