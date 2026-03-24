@@ -4,7 +4,7 @@ class Card < ApplicationRecord
   include Archivable
   include Pinnable
 
-  scope :timeline,               -> { all }
+  scope :timeline,               -> { where.not(cardable_type: 'Draft') }
   scope :timeline_chronological, -> { timeline.order(created_at: :desc) }
   scope :temporal, -> { timeline.where.not(date: nil) }
 
@@ -15,7 +15,10 @@ class Card < ApplicationRecord
   has_rich_text :content
   validates :content, presence: true
 
-  delegate :completable?, :temporal?, :taggable?, to: :cardable
+  delegate :completable?, :temporal?, :taggable?, :icon, :colour, :name, :marker, to: :cardable
+
+  def type_icon_variable = "var(--icon-#{cardable.icon})"
+  def type_name          = cardable.name
 
   def popped?
     pops_on.present? && pops_on <= Date.today

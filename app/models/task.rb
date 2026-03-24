@@ -1,6 +1,11 @@
 class Task < ApplicationRecord
   include Cardable
 
+  def self.icon   = 'circle-check'
+  def self.colour = '2'
+  def self.name   = 'Task'
+  def self.marker = '•'
+
   def temporal?
     true
   end
@@ -9,5 +14,5 @@ class Task < ApplicationRecord
     true
   end
 
-  def form_fields = [:date_picker, :tags_picker]
+  def form_fields = %i[date_picker tags_picker]
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_18_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_24_062323) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -65,7 +65,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_18_120000) do
     t.integer "cardable_id", null: false
     t.string "cardable_type", null: false
     t.datetime "created_at", null: false
-    t.date "date"
+    t.datetime "date"
     t.boolean "done", default: false, null: false
     t.datetime "done_at"
     t.date "ends_date"
@@ -116,10 +116,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_18_120000) do
 
   create_table "streams", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.boolean "default", default: false, null: false
     t.json "fields", default: {}, null: false
     t.string "name"
-    t.integer "position"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["user_id"], name: "index_streams_on_user_id"

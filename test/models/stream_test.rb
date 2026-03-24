@@ -5,12 +5,9 @@ class StreamTest < ActiveSupport::TestCase
     @user = users(:one)
   end
 
-  test "ordered scope returns defaults first then custom by created_at" do
-    custom = @user.streams.create!(name: "Custom", fields: { "cardable_type" => "Note" })
+  test "ordered scope sorts by created_at ascending" do
+    custom = @user.streams.create!(name: "Latest", fields: { "cardable_type" => "Note" })
     ordered = @user.streams.ordered.to_a
-
-    defaults = ordered.select(&:default?)
-    assert_equal [ 0, 1, 2, 3, 4 ], defaults.map(&:position)
     assert_equal custom, ordered.last
   end
 
@@ -32,24 +29,10 @@ class StreamTest < ActiveSupport::TestCase
     assert_equal @user.cards.count, stream.cards.count
   end
 
-  test "default stream cannot be destroyed" do
-    stream = streams(:one_tasks)
-    assert_not stream.destroy
-    assert stream.persisted?
-    assert_includes stream.errors[:base], "Default streams cannot be deleted"
-  end
-
-  test "default stream name cannot be changed" do
-    stream = streams(:one_tasks)
-    stream.name = "Renamed"
-    assert_not stream.valid?
-    assert_includes stream.errors[:name], "cannot be changed on default streams"
-  end
-
-  test "custom stream can be destroyed" do
-    custom = @user.streams.create!(name: "Deletable", fields: {})
-    assert custom.destroy
-    assert custom.destroyed?
+  test "stream can be destroyed" do
+    stream = @user.streams.create!(name: "Deletable", fields: {})
+    assert stream.destroy
+    assert stream.destroyed?
   end
 
   test "empty? ignores icon and colour fields" do
