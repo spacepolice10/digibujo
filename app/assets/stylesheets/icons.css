@@ -41,6 +41,7 @@
     --icon-archive:       url("icon-archive.svg");
     --icon-trash:         url("icon-trash.svg");
     --icon-spinner:       url("icon-spinner.svg");
+    --icon-search:        url("icon-search.svg");
   }
 
   .icon--spin {

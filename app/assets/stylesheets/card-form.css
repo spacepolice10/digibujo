@@ -1,5 +1,4 @@
 @layer components {
-
   /* ── Compose form ─────────────────────────────────── */
 
   [data-controller~="card-form"][data-loading] * {
@@ -10,15 +9,17 @@
     display: flex;
     flex-direction: column;
     background: var(--color-bg-subtle);
+    border: 1px solid var(--color-stroke-base);
     border-radius: var(--radius-base);
-    box-shadow: var(--shadow-elevated);
     padding: var(--spacing-horizontal);
     gap: var(--spacing-vertical);
     --card-form-actions-height: calc(2 * var(--spacing-vertical-double));
   }
 
   /* Hide the content field label — trix placeholder is enough */
-  [data-controller~="card-form"] label[for$="_content"] { display: none; }
+  [data-controller~="card-form"] label[for$="_content"] {
+    display: none;
+  }
 
   /* Reorder trix: editor above toolbar */
   [data-controller~="card-form"] div:has(trix-editor) {
@@ -26,8 +27,16 @@
     flex-direction: column;
   }
 
-  trix-toolbar { order: 2; position: sticky; bottom: var(--card-form-actions-height, 0); z-index: var(--z-dropdown-bg); background: var(--color-bg-subtle); }
-  trix-editor  { order: 1; }
+  trix-toolbar {
+    order: 2;
+    position: sticky;
+    bottom: var(--card-form-actions-height, 0);
+    z-index: var(--z-dropdown-bg);
+    background: var(--color-bg-subtle);
+  }
+  trix-editor {
+    order: 1;
+  }
 
   /* ── Bottom actions bar ───────────────────────────── */
 
@@ -51,19 +60,25 @@
     min-width: 0;
     overflow-x: auto;
     padding-inline: var(--spacing-horizontal-half);
-    height: calc(2* var(--spacing-vertical-double));
+    height: calc(2 * var(--spacing-vertical-double));
   }
 
   /* ── Back button ──────────────────────────────────── */
 
   /* Visual style lives in .btn-ghost (button.css) */
-  .card-form-back { display: none; }
+  .card-form-back {
+    display: none;
+  }
 
-  .card-form-type-controls:has(input[value]:not([value=""]):checked) .card-form-back {
+  .card-form-type-controls:has(input[value]:not([value=""]):checked)
+    .card-form-back {
     display: inline-flex;
     opacity: 1;
     transform: translateX(0);
-    transition: opacity 0.2s ease, transform 0.2s ease, background 0.1s ease;
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease,
+      background 0.1s ease;
 
     @starting-style {
       opacity: 0;
@@ -73,7 +88,8 @@
 
   /* ── Type-selected state ──────────────────────────── */
 
-  .card-form-type-controls:has(input[value]:not([value=""]):checked) .card-form-type-button:not(:has(:checked)) {
+  .card-form-type-controls:has(input[value]:not([value=""]):checked)
+    .card-form-type-button:not(:has(:checked)) {
     display: none;
   }
 
@@ -87,12 +103,15 @@
     min-width: 0;
   }
 
-  .card-form-type-controls:has(input[value]:not([value=""]):checked) turbo-frame.card-form-fields {
+  .card-form-type-controls:has(input[value]:not([value=""]):checked)
+    turbo-frame.card-form-fields {
     display: flex;
   }
 
   turbo-frame.card-form-fields > * {
-    transition: opacity 0.2s ease 0.06s, transform 0.2s ease 0.06s;
+    transition:
+      opacity 0.2s ease 0.06s,
+      transform 0.2s ease 0.06s;
 
     @starting-style {
       opacity: 0;
@@ -100,14 +119,16 @@
     }
   }
 
-  turbo-frame.card-form-fields label { display: none; }
+  turbo-frame.card-form-fields label {
+    display: none;
+  }
 
   /* Shared pill style for inline field controls */
   turbo-frame.card-form-fields input[type="date"],
   turbo-frame.card-form-fields input[type="datetime-local"],
   turbo-frame.card-form-fields .tag-picker {
     border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-strong);
+    border-radius: var(--radius-base);
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     font-size: var(--font-size-subtle);
     font-family: inherit;
@@ -133,7 +154,9 @@
     scroll-padding-inline: var(--spacing-horizontal-half);
     scrollbar-width: none;
 
-    &::-webkit-scrollbar { display: none; }
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 
   turbo-frame.card-form-fields .pills {
@@ -161,7 +184,9 @@
     padding: 0;
     outline: none;
 
-    &::placeholder { color: var(--color-fg-subtle); }
+    &::placeholder {
+      color: var(--color-fg-subtle);
+    }
   }
 
   /* ── Type buttons ─────────────────────────────────── */
@@ -170,30 +195,47 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius-strong);
+    border-radius: var(--radius-base);
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     font-family: inherit;
     font-size: var(--font-size-subtle);
     cursor: pointer;
-    transition: box-shadow 0.1s ease, opacity 0.1s ease;
+    transition:
+      border-color 0.1s ease,
+      background 0.1s ease,
+      opacity 0.1s ease;
     background: var(--color-bg-base);
-    border: none;
+    border: 1px solid var(--color-stroke-base);
     color: var(--color-fg-base);
 
-    &:hover { opacity: 0.8; }
+    &:hover {
+      opacity: 1;
+    }
   }
 
-  .card-form-type-button[data-value=""]      { background: var(--model-color-8-bg); color: var(--model-color-8); }
-  .card-form-type-button[data-value="task"]  { background: var(--model-color-1-bg); color: var(--model-color-2); }
-  .card-form-type-button[data-value="event"] { background: var(--model-color-6-bg); color: var(--model-color-6); }
-  .card-form-type-button[data-value="note"]  { background: var(--color-bg-warn);    color: var(--color-fg-warn); }
-  .card-form-type-button[data-value="daylog"]{ background: var(--model-color-7-bg); color: var(--model-color-7); }
+  .card-form-type-button[data-value=""] {
+    color: var(--model-color-8);
+  }
+  .card-form-type-button[data-value="task"] {
+    color: var(--model-color-2);
+  }
+  .card-form-type-button[data-value="event"] {
+    color: var(--model-color-6);
+  }
+  .card-form-type-button[data-value="note"] {
+    color: var(--color-fg-warn);
+  }
+  .card-form-type-button[data-value="daylog"] {
+    color: var(--model-color-7);
+  }
 
   .card-form-type-button.disabled {
     opacity: var(--opacity-half);
     cursor: default;
 
-    &:hover { opacity: var(--opacity-half); }
+    &:hover {
+      opacity: var(--opacity-half);
+    }
   }
 
   .card-form-type-button span {
@@ -203,17 +245,36 @@
     opacity: 0;
     white-space: nowrap;
     margin-inline-start: 0;
-    transition: width 0.25s ease, opacity 0.15s ease, margin-inline-start 0.25s ease;
+    transition:
+      width 0.25s ease,
+      opacity 0.15s ease,
+      margin-inline-start 0.25s ease;
   }
 
   .card-form-type-button:has(:checked) {
-    box-shadow: 0 0 0 2px currentColor;
+    border-color: currentColor;
 
     span {
       width: auto;
       opacity: 1;
       margin-inline-start: var(--spacing-vertical-half);
     }
+  }
+
+  .card-form-type-button:has(:checked)[data-value=""] {
+    background: var(--color-bg-base);
+  }
+  .card-form-type-button:has(:checked)[data-value="task"] {
+    background: var(--model-color-1-bg);
+  }
+  .card-form-type-button:has(:checked)[data-value="event"] {
+    background: var(--model-color-6-bg);
+  }
+  .card-form-type-button:has(:checked)[data-value="note"] {
+    background: var(--color-bg-warn);
+  }
+  .card-form-type-button:has(:checked)[data-value="daylog"] {
+    background: var(--model-color-7-bg);
   }
 
   /* ── Mood picker ──────────────────────────────────── */
@@ -224,18 +285,24 @@
     align-items: center;
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-strong);
+    border-radius: var(--radius-base);
   }
 
-  turbo-frame.card-form-fields .mood-option { display: inline-flex; }
+  turbo-frame.card-form-fields .mood-option {
+    display: inline-flex;
+  }
 
-  .mood-option input[type="radio"] { display: none; }
+  .mood-option input[type="radio"] {
+    display: none;
+  }
 
   .mood-option span {
     font-size: var(--font-size-base);
     cursor: pointer;
     opacity: 0.3;
-    transition: opacity 0.1s, transform 0.1s;
+    transition:
+      opacity 0.1s,
+      transform 0.1s;
     display: block;
     padding: 2px 3px;
     border-radius: var(--radius-base);
@@ -246,29 +313,395 @@
     transform: scale(1.15);
   }
 
-  .mood-option span:hover { opacity: 0.65; }
+  .mood-option span:hover {
+    opacity: 0.65;
+  }
 
   /* ── Field errors ─────────────────────────────────── */
 
   .card-form-error {
     display: flex;
-    align-items: baseline;
-    gap: var(--spacing-horizontal-half);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    border-radius: var(--radius-subtle);
-    background: var(--color-bg-negative);
-    border-inline-start: 3px solid var(--color-stroke-negative);
     font-size: var(--font-size-subtle);
     color: var(--color-fg-negative);
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    text-align: center;
+    width: 100%;
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
 
     @starting-style {
       opacity: 0;
       transform: translateY(-4px);
     }
-  }
 
+    ul {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-vertical-half);
+      border: 1px solid var(--color-stroke-negative);
+      background-color: var(--color-bg-negative);
+      padding: var(--spacing-vertical-half);
+      list-style: none;
+      padding-inline-start: 0;
+    }
+  }
 
   /* Submit button visual style lives in .button-primary (button.css) */
 
+  /* ── Mobile compose view ────────────────────────── */
+
+  /* Hide tab bar and FAB on compose page */
+  body:has(.compose-mobile) .tab-bar,
+  body:has(.compose-mobile) .fab {
+    display: none;
+  }
+
+  body:has(.compose-mobile) .main-content--mobile {
+    padding: 0;
+    gap: 0;
+    min-height: 100dvh;
+  }
+
+  .compose-mobile {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+  }
+
+  .compose-mobile__header {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    flex-shrink: 0;
+  }
+
+  .compose-mobile__back {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-base);
+    color: var(--color-fg-subtle);
+    text-decoration: none;
+
+    .icon {
+      width: var(--icon-size-base);
+      height: var(--icon-size-base);
+    }
+
+    &:hover {
+      color: var(--color-fg-base);
+    }
+  }
+
+  /* Form fills remaining space */
+  .compose-mobile #new_card,
+  .compose-mobile [data-controller~="card-form"] {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .compose-mobile [data-controller~="card-form"] {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    gap: 0;
+  }
+
+  /* Editor area — bottom padding clears the fixed toolbar (~6rem + safe-area) */
+  .compose-mobile .compose-editor {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0 var(--spacing-horizontal);
+    min-height: 0;
+    overflow-y: auto;
+    padding-bottom: calc(7rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .compose-mobile trix-toolbar {
+    display: none;
+  }
+
+  .compose-mobile trix-editor {
+    flex: 1;
+    min-height: 30vh;
+    order: 1;
+    border: none !important;
+    padding: 0;
+    font-size: var(--font-size-base);
+  }
+
+  /* ── Compose toolbar (above keyboard) ───────────── */
+
+  .compose-toolbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: var(--keyboard-offset, 0px);
+    background: var(--color-bg-subtle);
+    border-top: 1px solid var(--color-stroke-base);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+    padding-bottom: calc(
+      var(--spacing-vertical-half) + env(safe-area-inset-bottom, 0px)
+    );
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical-half);
+    z-index: var(--z-dropdown);
+  }
+
+  /* Keyboard visible: safe area is behind the keyboard */
+  [data-keyboard="visible"] .compose-toolbar {
+    padding-bottom: var(--spacing-vertical-half);
+  }
+
+  /* Type pills row */
+  .compose-toolbar__types {
+    display: flex;
+    gap: var(--spacing-horizontal-half);
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .compose-toolbar__type-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: var(--radius-base);
+    border: 1px solid var(--color-stroke-base);
+    background: var(--color-bg-base);
+    font-size: var(--font-size-subtle);
+    color: var(--color-fg-subtle);
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition:
+      transform 0.15s,
+      box-shadow 0.15s,
+      border-color 0.15s,
+      background 0.15s,
+      color 0.15s;
+    box-shadow: 0 2px 0 var(--color-stroke-base);
+
+    .icon {
+      width: var(--icon-size-subtle);
+      height: var(--icon-size-subtle);
+    }
+
+    span {
+      display: inline;
+    }
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 0 var(--color-stroke-base);
+    }
+
+    &:active {
+      transform: translateY(1px);
+      box-shadow: 0 1px 0 var(--color-stroke-base);
+    }
+  }
+
+  .compose-toolbar__type-pill:has(:checked) {
+    border-color: currentColor;
+    transform: translateY(2px);
+    box-shadow: none;
+  }
+
+  .compose-toolbar__type-pill[data-value=""] {
+    &:has(:checked) {
+      background: var(--model-color-8-bg);
+      color: var(--model-color-8);
+    }
+  }
+  .compose-toolbar__type-pill[data-value="task"] {
+    &:has(:checked) {
+      background: var(--model-color-1-bg);
+      color: var(--model-color-2);
+    }
+  }
+  .compose-toolbar__type-pill[data-value="event"] {
+    &:has(:checked) {
+      background: var(--model-color-6-bg);
+      color: var(--model-color-6);
+    }
+  }
+  .compose-toolbar__type-pill[data-value="note"] {
+    &:has(:checked) {
+      background: var(--color-bg-warn);
+      color: var(--color-fg-warn);
+    }
+  }
+  .compose-toolbar__type-pill[data-value="daylog"] {
+    &:has(:checked) {
+      background: var(--model-color-7-bg);
+      color: var(--model-color-7);
+    }
+  }
+
+  /* Fields + send row */
+  .compose-toolbar__fields-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+  }
+
+  .compose-toolbar__fields {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  .compose-toolbar__fields label {
+    display: none;
+  }
+
+  .compose-toolbar__fields input[type="date"],
+  .compose-toolbar__fields input[type="datetime-local"],
+  .compose-toolbar__fields .tag-picker {
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-base);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    font-size: var(--font-size-subtle);
+    font-family: inherit;
+    background: transparent;
+  }
+
+  .compose-toolbar__fields input[type="date"],
+  .compose-toolbar__fields input[type="datetime-local"] {
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .compose-toolbar__fields .tag-picker {
+    flex: 1;
+    min-width: 80px;
+    max-width: 200px;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: var(--spacing-vertical-half);
+    cursor: text;
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .compose-toolbar__fields .pills {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: var(--spacing-vertical-half);
+    margin-bottom: 0;
+  }
+
+  .compose-toolbar__fields .pill {
+    font-size: var(--font-size-subtle);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    gap: var(--spacing-vertical-half);
+    white-space: nowrap;
+  }
+
+  .compose-toolbar__fields .tag-picker input[type="text"] {
+    border: none;
+    background: transparent;
+    font-size: var(--font-size-subtle);
+    font-family: inherit;
+    color: var(--color-fg-base);
+    min-width: 60px;
+    flex-shrink: 0;
+    padding: 0;
+    outline: none;
+
+    &::placeholder {
+      color: var(--color-fg-subtle);
+    }
+  }
+
+  .compose-toolbar__fields .mood-picker {
+    display: flex;
+    gap: 2px;
+    align-items: center;
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-base);
+  }
+
+  .compose-toolbar__fields .mood-option {
+    display: inline-flex;
+  }
+  .compose-toolbar__fields .mood-option input[type="radio"] {
+    display: none;
+  }
+
+  .compose-toolbar__fields .mood-option span {
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    opacity: 0.3;
+    transition:
+      opacity 0.1s,
+      transform 0.1s;
+    display: block;
+    padding: 2px 3px;
+    border-radius: var(--radius-base);
+  }
+
+  .compose-toolbar__fields .mood-option:has(input:checked) span {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+
+  /* Send button */
+  .compose-toolbar__send {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-accent);
+    color: oklch(0.18 0.02 130);
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: opacity 0.1s;
+
+    .icon {
+      width: var(--icon-size-base);
+      height: var(--icon-size-base);
+    }
+
+    &:hover {
+      opacity: 0.85;
+    }
+    &:active {
+      opacity: 0.7;
+    }
+  }
+
+  /* Error block in compose */
+  .compose-mobile .card-form-error {
+    margin: 0 var(--spacing-horizontal);
+  }
 }

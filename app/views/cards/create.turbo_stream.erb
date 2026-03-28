@@ -1,5 +1,5 @@
-<%= turbo_stream.prepend "cards", @card %>
+<%= turbo_stream.prepend(@card.draft? ? "draft_cards" : "cards", @card) %>
 
-<%= turbo_stream.update "new_card" do %>
+<%= turbo_stream.update "card_form" do %>
   <%= render "form", card: Card.new %>
 <% end %>

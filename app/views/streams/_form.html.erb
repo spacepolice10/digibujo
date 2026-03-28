@@ -15,6 +15,38 @@
   </div>
 
   <div>
+    <label>Icon</label>
+    <div class="icon-picker">
+      <label class="icon-option">
+        <%= f.radio_button :icon, "", checked: stream.icon.blank? %>
+        <span class="icon-option__label">None</span>
+      </label>
+      <% Iconable::ICON_KEYS.each do |key| %>
+        <label class="icon-option">
+          <%= f.radio_button :icon, key %>
+          <i class="icon" style="--icon-mask: var(--icon-<%= key %>)" aria-hidden="true"></i>
+        </label>
+      <% end %>
+    </div>
+  </div>
+
+  <div>
+    <label>Colour</label>
+    <div class="colour-picker colour-picker--form">
+      <label class="colour-option">
+        <%= f.radio_button :colour, "", checked: stream.colour.blank? %>
+        <span class="colour-option__label">None</span>
+      </label>
+      <% Colourable::COLOUR_KEYS.each do |key| %>
+        <label class="colour-option">
+          <%= f.radio_button :colour, key %>
+          <span class="colour-option__swatch" style="background: var(--model-color-<%= key %>);"></span>
+        </label>
+      <% end %>
+    </div>
+  </div>
+
+  <div>
     <label>Card type</label>
     <div class="flex slightly-gapped" style="flex-wrap: wrap">
       <%= label_tag nil do %>

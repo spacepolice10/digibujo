@@ -4,17 +4,16 @@
     <section class="sidebar-panel__section">
       <div class="sidebar-panel__section-header">
         <h2 class="sidebar-panel__section-label">Tags</h2>
-        <%= link_to tags_path,
+        <span class="sidebar-panel__section-wavy" aria-hidden="true"></span>
+        <%= link_to "View All", tags_path,
               class: "sidebar-panel__section-link",
               "aria-label": "All tags",
-              data: { turbo_frame: "_top" } do %>
-          <i class="icon" style="--icon-mask: var(--icon-arrow-up); transform: rotate(90deg);" aria-hidden="true"></i>
-        <% end %>
+              data: { turbo_frame: "_top" } %>
       </div>
       <% if @tags.any? %>
         <div class="tags-panel-list">
           <% @tags.first(8).each do |tag| %>
-            <span class="pill" style="color: <%= tag.colour_variable %>"><%= tag.name %></span>
+            <span class="pill" style="background: <%= tag.colour_bg_variable %>"><%= tag.name %></span>
           <% end %>
         </div>
       <% else %>
@@ -30,7 +29,7 @@
           <li role="option"
                 data-action="click->dropdown#pick"
             data-name="<%= tag.name %>">
-            <span class="pill" style="color: <%= tag.colour_variable %>"><%= tag.name %></span>
+            <span class="pill" style="background: <%= tag.colour_bg_variable %>"><%= tag.name %></span>
           </li>
         <% end %>
         <% if @query.present? && !@exact_match %>
@@ -57,7 +56,7 @@
     <% if @tags.any? %>
       <div class="tags-page__list">
         <% @tags.each do |tag| %>
-          <span class="pill" style="color: <%= tag.colour_variable %>"><%= tag.name %></span>
+          <span class="pill" style="background: <%= tag.colour_bg_variable %>"><%= tag.name %></span>
         <% end %>
       </div>
     <% else %>

@@ -21,7 +21,16 @@
         <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
         Pin
       <% end %>
+      <%= button_to card_publish_path(@card), method: :patch, class: "button-secondary" do %>
+        <i class="icon" style="--icon-mask: var(--icon-link)" aria-hidden="true"></i>
+        <%= @card.published? ? "Unpublish" : "Publish" %>
+      <% end %>
     </div>
+    <% if @card.published? %>
+      <div class="published-link">
+        <input type="text" value="<%= published_url(@card.public_code) %>" readonly onclick="this.select()">
+      </div>
+    <% end %>
   </nav>
   <article class="card-show-content">
     <header class="card-show-header">
@@ -39,7 +48,7 @@
       <% if @card.tags.any? %>
         <div class="card-tags">
           <% @card.tags.each do |tag| %>
-            <span class="pill" style="color: <%= tag.colour_variable %>"><%= tag.name %></span>
+            <span class="pill" style="background: <%= tag.colour_bg_variable %>"><%= tag.name %></span>
           <% end %>
         </div>
       <% end %>

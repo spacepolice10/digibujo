@@ -50,6 +50,6 @@ class StreamsController < ApplicationController
   private
 
   def stream_params
-    params.require(:stream).permit(:name, :cardable_type, :sorted_by, :date_from, :date_to, :tags)
+    params.require(:stream).permit(:name, :cardable_type, :sorted_by, :date_from, :date_to, :tags, :icon, :colour)
   end
 end

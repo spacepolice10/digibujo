@@ -5,10 +5,12 @@ class UpcomingsController < ApplicationController
     temporal_cards =
       Current.user.cards
              .temporal
-             .where(done: [false, nil])
     today = Date.today
-    @today_cards    = temporal_cards.where(date: today)
-    @upcoming_cards = temporal_cards.where(date: today + 1..)
-    @due_cards      = temporal_cards.where(date: ..today - 1).where.not(cardable_type: 'Event')
+    @today_cards    = temporal_cards.where(date: today.all_day)
+    @upcoming_cards = temporal_cards.where(date: today.tomorrow.beginning_of_day..)
+    @due_cards      = temporal_cards.where(done: [false,
+                                                  nil])
+                                    .where(date: ..today.beginning_of_day)
+                                    .where.not(cardable_type: 'Event')
   end
 end

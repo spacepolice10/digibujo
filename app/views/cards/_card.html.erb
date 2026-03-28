@@ -19,7 +19,7 @@
   <a class="card-body"
      href="<%= card_path(card) %>"
      data-turbo-frame="_top">
-    <p class="card-title<%= " done" if card.done? %>">
+    <p class="card-title line-clamp<%= " done" if card.done? %>">
       <%= card.title %>
     </p>
     <% if card.pinned? || card.archived? || card.date.present? || card.ends_date.present? || card.tags.any? || (card.daylog? && card.cardable.mood_emoji) %>
@@ -43,7 +43,7 @@
           <span class="pill pill--date">→ <%= card.ends_date.strftime(card.ends_date.to_time.hour.zero? && card.ends_date.to_time.min.zero? ? "%-d %b %Y" : "%-d %b %Y %H:%M") %></span>
         <% end %>
         <% card.tags.each do |tag| %>
-          <span class="pill" style="color: <%= tag.colour_variable %>; background: <%= tag.colour_bg_variable %>"><%= tag.name %></span>
+          <span class="pill" style="background: <%= tag.colour_bg_variable %>"><%= tag.name %></span>
         <% end %>
       </div>
     <% end %>

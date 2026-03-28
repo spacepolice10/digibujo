@@ -1,8 +1,12 @@
-<div class="mobile-page-nav">
-  <%= link_to cards_path, class: "mobile-page-nav__back" do %>
-    <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
-    Cards
-  <% end %>
-</div>
+<div class="compose-mobile" data-controller="keyboard-toolbar">
+  <div class="compose-mobile__header">
+    <%= link_to cards_path, class: "compose-mobile__back" do %>
+      <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+      Cards
+    <% end %>
+  </div>
 
-<%= render "form", card: @card %>
+  <div id="new_card">
+    <%= render "form", card: @card %>
+  </div>
+</div>

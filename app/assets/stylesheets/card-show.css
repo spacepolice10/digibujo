@@ -1,5 +1,4 @@
 @layer components {
-
   .card-show {
     min-height: 100dvh;
     display: flex;
@@ -93,7 +92,12 @@
       margin-top: var(--spacing-vertical);
     }
 
-    h1, h2, h3, h4, h5, h6 {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
       margin-top: var(--spacing-vertical-double);
     }
 
@@ -116,7 +120,8 @@
       margin-inline-start: 0;
     }
 
-    pre, code {
+    pre,
+    code {
       font-size: var(--font-size-subtle);
       background: var(--color-bg-subtle);
       border-radius: var(--radius-subtle);
@@ -165,5 +170,4 @@
     object-fit: contain;
     border-radius: var(--radius-base);
   }
-
 }

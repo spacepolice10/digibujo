@@ -6,16 +6,27 @@
     display: inline-flex;
     align-items: center;
     gap: var(--spacing-vertical-half);
-    background: var(--color-bg-strong);
-    color: var(--color-fg-strong);
-    border: 1px solid var(--color-fg-subtle);
-    border-radius: var(--radius-strong);
+    background: var(--color-accent);
+    color: oklch(0.18 0.02 130);
+    border: 2.5px solid oklch(0.18 0.02 130);
+    border-radius: var(--radius-base);
     padding: var(--spacing-vertical-half) var(--spacing-horizontal);
-    font-size: var(--font-size-subtle);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-strong);
     cursor: pointer;
-    transition: background 0.1s ease;
+    box-shadow: 3px 3px 0px oklch(0.18 0.02 130);
+    transition: transform 80ms ease, box-shadow 80ms ease, background 80ms ease;
 
-    &:hover { background: color-mix(in oklch, var(--color-bg-strong), white 12%); }
+    &:hover {
+      background: oklch(0.88 0.24 130);
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0px oklch(0.18 0.02 130);
+    }
+
+    &:active {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0px oklch(0.18 0.02 130);
+    }
   }
 
   /* ── Hotkey hint ──────────────────────────────────── */

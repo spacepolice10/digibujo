@@ -4,6 +4,7 @@ class CardsController < ApplicationController
   before_action :set_card, only: %i[show edit update destroy]
 
   def index
+    @draft_cards = Current.user.cards.includes(:tags).drafts.where(archived: false).order(created_at: :desc)
     @cards = set_page_and_extract_portion_from(
       Current.user.cards.includes(:tags).timeline_chronological,
       per_page: [5, 15, 30, 50]
@@ -29,7 +30,7 @@ class CardsController < ApplicationController
     else
       respond_to do |format|
         format.turbo_stream {
-          render turbo_stream: turbo_stream.update("new_card", partial: "form", locals: { card: @card })
+          render turbo_stream: turbo_stream.update("card_form", partial: "form", locals: { card: @card })
         }
         format.html { render :new, status: :unprocessable_entity }
       end

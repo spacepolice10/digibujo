@@ -1,101 +1,108 @@
 <turbo-frame id="streams_panel">
   <nav class="sidebar-panel" data-controller="nav">
-
     <div class="sidebar-panel__header">
-      <span class="sidebar-panel__title">Streams</span>
-      <%= link_to new_stream_path,
-            class: "streams-panel__add-btn",
-            data: { turbo_frame: "modal", action: "dialog#open" },
-            aria: { label: "New stream" } do %>+<% end %>
+      <span class="sidebar-panel__title">Index!</span>
+      <div class="sidebar-panel__header-actions">
+        <%= link_to cards_path(q: ""),
+              class: "streams-panel__search-btn",
+              aria: { label: "Search" } do %>
+          <i class="icon" style="--icon-mask: var(--icon-search)" aria-hidden="true"></i>
+        <% end %>
+        <%= link_to new_stream_path,
+              class: "streams-panel__add-btn",
+              data: { turbo_frame: "modal", action: "dialog#open" },
+              aria: { label: "New stream" } do %>+<% end %>
+      </div>
     </div>
-
     <section class="sidebar-panel__section">
-      <h2 class="sidebar-panel__section-label">Types</h2>
-      <ul class="streams-type-list">
+      <ul class="streams-type-grid">
         <li>
           <%= link_to cards_path,
-                class: "sidebar-panel__item streams-type-item",
-                style: "color: var(--model-color-8)",
+                class: "streams-type-tile",
                 data: { turbo_frame: "cards_panel", turbo_action: "advance" } do %>
-            <i class="icon" style="--icon-mask: var(--icon-menu)" aria-hidden="true"></i>
-            All Cards
+            <span class="streams-type-tile__icon"><i class="icon" style="--icon-mask: var(--icon-menu)" aria-hidden="true"></i></span>
+            <span class="streams-type-tile__name">All Cards</span>
           <% end %>
         </li>
         <li>
           <%= link_to tasks_path,
-                class: "sidebar-panel__item streams-type-item",
-                style: "color: var(--model-color-2)",
+                class: "streams-type-tile",
                 data: { turbo_frame: "cards_panel", turbo_action: "advance" } do %>
-            <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
-            Tasks
+            <span class="streams-type-tile__icon"><i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i></span>
+            <span class="streams-type-tile__name">Tasks</span>
           <% end %>
         </li>
         <li>
           <%= link_to notes_path,
-                class: "sidebar-panel__item streams-type-item",
-                style: "color: var(--model-color-5)",
+                class: "streams-type-tile",
                 data: { turbo_frame: "cards_panel", turbo_action: "advance" } do %>
-            <i class="icon" style="--icon-mask: var(--icon-file)" aria-hidden="true"></i>
-            Notes
+            <span class="streams-type-tile__icon"><i class="icon" style="--icon-mask: var(--icon-file)" aria-hidden="true"></i></span>
+            <span class="streams-type-tile__name">Notes</span>
           <% end %>
         </li>
         <li>
           <%= link_to events_path,
-                class: "sidebar-panel__item streams-type-item",
-                style: "color: var(--model-color-6)",
+                class: "streams-type-tile",
                 data: { turbo_frame: "cards_panel", turbo_action: "advance" } do %>
-            <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
-            Events
+            <span class="streams-type-tile__icon"><i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i></span>
+            <span class="streams-type-tile__name">Events</span>
           <% end %>
         </li>
         <li>
           <%= link_to daylogs_path,
-                class: "sidebar-panel__item streams-type-item",
-                style: "color: var(--model-color-4)",
+                class: "streams-type-tile",
                 data: { turbo_frame: "cards_panel", turbo_action: "advance" } do %>
-            <i class="icon" style="--icon-mask: var(--icon-book)" aria-hidden="true"></i>
-            Daylogs
+            <span class="streams-type-tile__icon"><i class="icon" style="--icon-mask: var(--icon-book)" aria-hidden="true"></i></span>
+            <span class="streams-type-tile__name">Daylogs</span>
+          <% end %>
+        </li>
+        <li>
+          <%= link_to archived_index_path,
+                class: "streams-type-tile",
+                data: { turbo_frame: "cards_panel", turbo_action: "advance" } do %>
+            <span class="streams-type-tile__icon"><i class="icon" style="--icon-mask: var(--icon-archive)" aria-hidden="true"></i></span>
+            <span class="streams-type-tile__name">Archived</span>
           <% end %>
         </li>
       </ul>
     </section>
-
     <% if @streams.any? %>
       <section class="sidebar-panel__section">
         <div class="sidebar-panel__section-header">
-          <h2 class="sidebar-panel__section-label">Custom</h2>
-          <%= link_to streams_path,
+          <h2 class="sidebar-panel__section-label">Filters</h2>
+          <span class="sidebar-panel__section-wavy" aria-hidden="true"></span>
+          <%= link_to "View All", streams_path,
                 class: "sidebar-panel__section-link",
                 "aria-label": "All streams",
-                data: { turbo_frame: "_top" } do %>
-            <i class="icon" style="--icon-mask: var(--icon-arrow-up); transform: rotate(90deg);" aria-hidden="true"></i>
-          <% end %>
+                data: { turbo_frame: "_top" } %>
         </div>
-        <ul class="streams-type-list">
+        <ul class="streams-custom-list">
           <% @streams.first(8).each do |stream| %>
             <li>
               <%= link_to stream_path(stream),
-                    class: "sidebar-panel__item streams-type-item streams-type-item--custom",
-                    style: stream.colour.present? ? "color: var(--model-color-#{stream.colour})" : nil,
+                    class: "streams-stream-card",
                     data: { turbo_frame: "cards_panel", turbo_action: "advance" } do %>
-                <% if stream.icon.present? %>
-                  <i class="icon" style="--icon-mask: var(--icon-<%= stream.icon %>)" aria-hidden="true"></i>
-                <% end %>
-                <span class="streams-custom-name"><%= stream.name %></span>
+                <span class="streams-stream-card__header"<% if stream.colour.present? %> style="color: <%= stream.colour_variable %>"<% end %>>
+                  <% if stream.icon.present? %>
+                    <span class="streams-stream-icon">
+                      <i class="icon" style="--icon-mask: var(--icon-<%= stream.icon %>)" aria-hidden="true"></i>
+                    </span>
+                  <% end %>
+                  <span class="streams-stream-name"><%= stream.name %></span>
+                </span>
                 <% unless stream.empty? %>
-                  <span class="streams-custom-filters">
+                  <span class="streams-stream-filters">
                     <% if stream.cardable_type.present? %>
                       <% stream.cardable_type.split(",").map(&:strip).reject(&:blank?).each do |type| %>
                         <% stream_icon = type.constantize.icon rescue "menu" %>
-                        <i class="icon" style="--icon-mask: var(--icon-<%= stream_icon %>)" aria-hidden="true"></i>
+                        <span class="pill pill--type">
+                          <i class="icon" style="--icon-mask: var(--icon-<%= stream_icon %>)" aria-hidden="true"></i>
+                        </span>
                       <% end %>
                     <% end %>
-                    <% if stream.date_from.present? || stream.date_to.present? %>
-                      <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
-                    <% end %>
                     <% if stream.tags.present? %>
-                      <% stream.tags.split(",").map(&:strip).reject(&:blank?).first(3).each do |tag| %>
-                        <span>#<%= tag %></span>
+                      <% stream.tags.split(",").map(&:strip).reject(&:blank?).first(2).each do |tag| %>
+                        <span class="pill">#<%= tag %></span>
                       <% end %>
                     <% end %>
                   </span>
@@ -106,6 +113,5 @@
         </ul>
       </section>
     <% end %>
-
   </nav>
 </turbo-frame>

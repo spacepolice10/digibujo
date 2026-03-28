@@ -1,81 +1,57 @@
 <turbo-frame id="pinned_panel">
-  <% if @pinned_cards.any? || @draft_cards.any? %>
+  <% if @pinned_cards.any? %>
     <section class="pinned-dock" aria-label="Dock">
       <div class="pinned-dock__lanes">
-        <% if @pinned_cards.any? %>
-          <% stack_cards = @pinned_cards.first(3) %>
-          <section class="pinned-dock__lane pinned-dock__lane--active">
-            <span class="pinned-dock__icon">
-              <span class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></span>
-            </span>
-            <button class="pinned-stack-trigger"
-                    type="button"
-                    popovertarget="pinned-cards-dropdown"
-                    aria-label="Show pinned cards"
-                    style="anchor-name: --pinned-stack-trigger">
-              <div class="pinned-stack" style="--stack-count: <%= stack_cards.size %>">
-                <% stack_cards.each_with_index do |card, i| %>
-                  <div class="pinned-stack-card" style="--stack-i: <%= i %>">
-                    <span class="pinned-stack-card__body">
-                      <span class="pinned-stack-card__title"><%= card.title %></span>
-                      <span class="pinned-stack-card__meta">
-                        <%= card.name %>
-                        <% if card.date.present? %>
-                          <span class="pinned-stack-card__sep" aria-hidden="true">&middot;</span>
-                          <time datetime="<%= card.date.iso8601 %>"><%= card.date.strftime("%b %-d") %></time>
-                        <% end %>
-                        <% if card.tags.any? %>
-                          <span class="pinned-stack-card__sep" aria-hidden="true">&middot;</span>
-                          <%= card.tags.first(2).map(&:name).join(", ") %>
-                        <% end %>
-                      </span>
+        <% stack_cards = @pinned_cards.first(3) %>
+        <section class="pinned-dock__lane pinned-dock__lane--active">
+          <span class="pinned-dock__icon">
+            <span class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></span>
+          </span>
+          <button class="pinned-stack-trigger"
+                  type="button"
+                  popovertarget="pinned-cards-dropdown"
+                  aria-label="Show pinned cards"
+                  style="anchor-name: --pinned-stack-trigger">
+            <div class="pinned-stack" style="--stack-count: <%= stack_cards.size %>">
+              <% stack_cards.each_with_index do |card, i| %>
+                <div class="pinned-stack-card" style="--stack-i: <%= i %>">
+                  <span class="pinned-stack-card__body">
+                    <span class="pinned-stack-card__title"><%= card.title %></span>
+                    <span class="pinned-stack-card__meta">
+                      <%= card.name %>
+                      <% if card.date.present? %>
+                        <span class="pinned-stack-card__sep" aria-hidden="true">&middot;</span>
+                        <time datetime="<%= card.date.iso8601 %>"><%= card.date.strftime("%b %-d") %></time>
+                      <% end %>
+                      <% if card.tags.any? %>
+                        <span class="pinned-stack-card__sep" aria-hidden="true">&middot;</span>
+                        <%= card.tags.first(2).map(&:name).join(", ") %>
+                      <% end %>
                     </span>
-                  </div>
-                <% end %>
-              </div>
-            </button>
-            <div id="pinned-cards-dropdown"
-                 class="dropdown-menu pinned-dropdown-menu"
-                 style="position-anchor: --pinned-stack-trigger"
-                 popover>
-              <turbo-frame id="pinned_cards_list"
-                           src="<%= pinned_list_path %>"
-                           loading="lazy">
-                <div class="pinned-list-loading">
-                  <span class="icon icon--spin" style="--icon-mask: var(--icon-spinner)" aria-hidden="true"></span>
+                  </span>
                 </div>
-              </turbo-frame>
+              <% end %>
             </div>
-          </section>
-        <% else %>
-          <section class="pinned-dock__lane pinned-dock__lane--placeholder"></section>
-        <% end %>
-        <% if @draft_cards.any? %>
-          <section class="pinned-dock__lane pinned-dock__lane--active pinned-dock__lane--drafts">
-            <span class="pinned-dock__icon pinned-dock__icon--drafts">
-              <span class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></span>
-            </span>
-            <a href="<%= drafts_path %>"
-               class="pinned-stack-trigger"
-               aria-label="Review drafts"
-               data-turbo-frame="_top">
-              <div class="pinned-stack" style="--stack-count: <%= @draft_cards.size %>">
-                <% @draft_cards.each_with_index do |card, i| %>
-                  <div class="pinned-stack-card" style="--stack-i: <%= i %>">
-                    <span class="pinned-stack-card__body">
-                      <span class="pinned-stack-card__title"><%= card.title %></span>
-                      <span class="pinned-stack-card__meta">
-                        <time datetime="<%= card.created_at.iso8601 %>"><%= card.created_at.strftime("%b %-d") %></time>
-                      </span>
-                    </span>
-                  </div>
+          </button>
+          <div id="pinned-cards-dropdown"
+               class="dropdown-menu pinned-dropdown-menu"
+               style="position-anchor: --pinned-stack-trigger"
+               popover>
+            <section class="pinned-dock-list">
+              <div class="pinned-dock-list__header">
+                <div class="pinned-dock__copy">
+                  <span class="pinned-dock__eyebrow">Pinned List</span>
+                  <span class="pinned-dock__caption"><%= pluralize(@pinned_cards.count, "card") %> pinned right now</span>
+                </div>
+              </div>
+              <div class="pinned-dock-list__items">
+                <% @pinned_cards.each do |card| %>
+                  <%= render partial: "cards/card", locals: { card: card, dom_prefix: "pinned" } %>
                 <% end %>
               </div>
-            </a>
-          </section>
-        <% else %>
-          <section class="pinned-dock__lane pinned-dock__lane--placeholder"></section>
-        <% end %>
+            </section>
+          </div>
+        </section>
       </div>
     </section>
   <% end %>

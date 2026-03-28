@@ -94,6 +94,88 @@
     }
   }
 
+  /* ── Icon picker (form) ──────────────────────────── */
+
+  .icon-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .icon-option {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-subtle);
+    cursor: pointer;
+    transition: background 0.1s ease, box-shadow 0.1s ease;
+
+    &:hover { background: var(--color-bg-base); }
+  }
+
+  .icon-option input[type="radio"] { display: none; }
+
+  .icon-option:has(input:checked) {
+    background: var(--color-bg-base);
+    box-shadow: 0 0 0 2px var(--color-stroke-strong);
+  }
+
+  .icon-option__label {
+    font-size: var(--font-size-subtle);
+    color: var(--color-fg-subtle);
+  }
+
+  /* ── Colour picker (form) ──────────────────────────── */
+
+  .colour-picker--form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .colour-option {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .colour-option input[type="radio"] { display: none; }
+
+  .colour-option__label {
+    font-size: var(--font-size-subtle);
+    color: var(--color-fg-subtle);
+    padding: 4px 8px;
+    border-radius: var(--radius-subtle);
+    transition: background 0.1s ease, box-shadow 0.1s ease;
+  }
+
+  .colour-option:has(input:checked) .colour-option__label {
+    background: var(--color-bg-base);
+    box-shadow: 0 0 0 2px var(--color-stroke-strong);
+  }
+
+  .colour-option__swatch {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-strong);
+    border: 2px solid transparent;
+    transition: transform 0.1s ease, border-color 0.1s ease;
+  }
+
+  .colour-option:hover .colour-option__swatch {
+    transform: scale(1.2);
+  }
+
+  .colour-option:has(input:checked) .colour-option__swatch {
+    border-color: var(--color-stroke-strong);
+    transform: scale(1.2);
+  }
+
   /* ── Card dropdown menu ───────────────────────────── */
 
   /* ── Card dropdown menu (positioning only) ───────── */

@@ -286,33 +286,29 @@
   .review-drafts-btn {
     display: inline-flex;
     align-items: center;
-    width: calc(var(--spacing-horizontal) * 8);
-    height: calc(var(--spacing-vertical) * 4);
     gap: 0.4em;
     font-size: 1rem;
-    font-weight: bold;
-    padding: 0.45em 1em 0.45em 0.8em;
-    border: 2.5px solid #1a1a1a;
-    border-radius: 12px;
-    background: #ffdd00;
-    color: #1a1a1a;
+    font-weight: var(--font-weight-strong);
+    padding: 0.5em 1.1em 0.5em 0.9em;
+    border: 2.5px solid oklch(0.18 0.02 130);
+    border-radius: var(--radius-base);
+    background: var(--color-accent);
+    color: oklch(0.18 0.02 130);
     text-decoration: none;
-    box-shadow: 2px 2px 0px #1a1a1a;
+    box-shadow: 3px 3px 0px oklch(0.18 0.02 130);
     transition: transform 80ms ease, box-shadow 80ms ease, background 80ms ease;
 
     &:hover {
-      background: #ff4ecb;
-      color: #fff;
-      box-shadow: 2px 2px 0px hotpink;
-      font-style: italic;
-      text-transform: uppercase;
-      border-radius: none;
-      font-size: var(--font-size-subtle);
+      background: var(--color-accent-alternative);
+      color: oklch(0.98 0.01 195);
+      border-color: var(--color-accent-alternative);
+      box-shadow: 3px 3px 0px oklch(0.45 0.12 195);
+      transform: translate(-1px, -1px);
     }
 
     &:active {
-      transform: rotate(0deg) translateY(2px);
-      box-shadow: 1px 1px 0px #1a1a1a;
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0px oklch(0.18 0.02 130);
     }
   }
 
@@ -324,14 +320,14 @@
     height: 1.5em;
     padding: 0 0.3em;
     font-size: 0.85em;
-    font-weight: bold;
-    background: #1a1a1a;
-    color: #ffdd00;
-    border-radius: var(--radius-strong);
+    font-weight: var(--font-weight-strong);
+    background: oklch(0.18 0.02 130);
+    color: var(--color-accent);
+    border-radius: var(--radius-subtle);
 
     .review-drafts-btn:hover & {
-      background: #fff;
-      color: #ff4ecb;
+      background: oklch(0.98 0.01 195);
+      color: var(--color-accent-alternative);
     }
   }
 }

@@ -1,9 +1,13 @@
-<div class="cards-list">
-  <% if @archived_cards.any? %>
-    <% @archived_cards.each do |card| %>
-      <%= render partial: "cards/card", locals: { card: card } %>
-    <% end %>
-  <% else %>
-    <p>No archived cards.</p>
-  <% end %>
+<% content_for(:title) { "Archived" } %>
+<div class="type-index">
+  <header class="type-index__header">
+    <div class="type-index__title">
+      <i class="icon" style="--icon-mask: var(--icon-archive); color: var(--color-fg-subtle)" aria-hidden="true"></i>
+      <h2>Archived</h2>
+    </div>
+    <div class="type-index__stats">
+      <span class="type-index__stat"><strong><%= @total %></strong> total</span>
+    </div>
+  </header>
+  <%= render "cards/paginated_list", cards: @cards, page: @page %>
 </div>

@@ -1,5 +1,4 @@
 @layer components {
-
   .card {
     --card-bg: var(--color-bg-subtle);
     --card-bg-hover: var(--color-bg-base);
@@ -9,6 +8,9 @@
     align-items: center;
     border: 1px solid var(--card-border);
     border-radius: var(--radius-base);
+    @supports (corner-shape: squircle) {
+      corner-shape: squircle;
+    }
     margin-bottom: var(--spacing-vertical-half);
     overflow: hidden;
     background: var(--card-bg);
@@ -17,28 +19,38 @@
     /* Card type accent backgrounds */
 
     &[data-card-type="task"] {
-      --card-bg: var(--model-color-2-bg);
-      --card-bg-hover: color-mix(in oklch, var(--model-color-2-bg), var(--model-color-2) 12%);
-      --card-border: color-mix(in oklch, var(--color-stroke-base), var(--model-color-2) 20%);
+      --card-border: color-mix(
+        in oklch,
+        var(--color-stroke-base),
+        var(--model-color-2) 20%
+      );
     }
 
     &[data-card-type="note"] {
-      --card-bg: var(--model-color-5-bg);
-      --card-bg-hover: color-mix(in oklch, var(--model-color-5-bg), var(--model-color-5) 12%);
-      --card-border: color-mix(in oklch, var(--color-stroke-base), var(--model-color-5) 20%);
+      --card-border: color-mix(
+        in oklch,
+        var(--color-stroke-base),
+        var(--model-color-5) 20%
+      );
     }
 
     &[data-card-type="event"] {
-      --card-bg: var(--model-color-6-bg);
-      --card-bg-hover: color-mix(in oklch, var(--model-color-6-bg), var(--model-color-6) 12%);
-      --card-border: color-mix(in oklch, var(--color-stroke-base), var(--model-color-6) 20%);
+      --card-border: color-mix(
+        in oklch,
+        var(--color-stroke-base),
+        var(--model-color-6) 20%
+      );
     }
 
     /* Pinned variant overrides type color */
 
     &.pinned {
       --card-bg: var(--color-bg-warn);
-      --card-bg-hover: color-mix(in oklch, var(--color-bg-warn), var(--color-fg-warn) 10%);
+      --card-bg-hover: color-mix(
+        in oklch,
+        var(--color-bg-warn),
+        var(--color-fg-warn) 10%
+      );
       --card-border: var(--color-stroke-warn);
     }
 
@@ -51,6 +63,14 @@
 
     &:has(.card-body:hover) {
       background: var(--card-bg-hover);
+
+      .card-title::after {
+        background: linear-gradient(
+          to right,
+          transparent,
+          var(--card-bg-hover)
+        );
+      }
     }
   }
 
@@ -58,20 +78,29 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    text-decoration: none;
+    padding: var(--spacing-vertical) var(--spacing-horizontal-half);
     color: inherit;
+    text-decoration: none;
     overflow: hidden;
-    min-width: 0;
   }
 
   .card-title {
     margin: 0;
     font-size: var(--font-size-base);
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
+    max-height: 1.5em;
     overflow: hidden;
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 3em;
+      background: linear-gradient(to right, transparent, var(--card-bg));
+      pointer-events: none;
+    }
 
     &.done {
       text-decoration: line-through;
@@ -90,7 +119,7 @@
     display: flex;
     align-items: flex-start;
     flex-shrink: 0;
-    padding-inline-start: var(--spacing-horizontal-half);
+    padding-inline-start: var(--spacing-horizontal);
 
     form {
       display: contents;
@@ -109,13 +138,14 @@
     display: flex;
     align-items: flex-start;
     align-self: flex-start;
-    padding: var(--spacing-vertical-half) var(--spacing-vertical-half) 0 0;
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half) 0 0;
     flex-shrink: 0;
   }
 
   .card-menu-trigger {
-    background: none;
-    border: none;
+    background: var(--color-bg-subtle);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-subtle);
     cursor: pointer;
     color: var(--color-fg-subtle);
     font-size: var(--font-size-base);
@@ -123,6 +153,7 @@
 
     &:hover {
       color: var(--color-fg-base);
+      background: var(--color-bg-base);
     }
   }
 
@@ -145,7 +176,9 @@
     /* Hide unicode content characters */
     font-size: 0;
 
-    transition: border-color 0.15s ease, background-color 0.15s ease;
+    transition:
+      border-color 0.15s ease,
+      background-color 0.15s ease;
 
     &:hover {
       border-color: var(--model-color-2);
@@ -153,7 +186,7 @@
 
     /* Ghost checkmark on hover (not done) */
     &:not(.done):hover::after {
-      content: '';
+      content: "";
       position: absolute;
       inset: 0;
       margin: auto;
@@ -171,7 +204,7 @@
       border-color: var(--model-color-2);
 
       &::after {
-        content: '';
+        content: "";
         position: absolute;
         inset: 0;
         margin: auto;
@@ -194,5 +227,4 @@
     text-transform: uppercase;
     color: var(--color-fg-warn);
   }
-
 }

@@ -6,7 +6,7 @@
     <% if card.tags.any? %>
       <div class="card-tags">
         <% card.tags.each do |tag| %>
-          <span class="pill" style="color: <%= tag.colour_variable %>"><%= tag.name %></span>
+          <span class="pill" style="background: <%= tag.colour_bg_variable %>"><%= tag.name %></span>
         <% end %>
       </div>
     <% end %>
