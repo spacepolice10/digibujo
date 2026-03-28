@@ -1,4 +1,7 @@
 class Stream < ApplicationRecord
+  include Colourable
+  include Iconable
+
   belongs_to :user
 
   store_accessor :fields, :cardable_type, :sorted_by, :date_from, :date_to, :tags, :icon, :colour
