@@ -1,0 +1,45 @@
+<%= form_with model: card, data: {
+      controller: "card-form persist",
+      persist_key_value: dom_id(card),
+      action: "keydown.meta+enter->card-form#submit keydown.ctrl+enter->card-form#submit trix-change->persist#save"
+    } do |f| %>
+  <% if card.errors.any? %>
+    <div class="card-form-error">
+      <ul>
+        <% card.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="compose-editor">
+    <%= f.rich_text_area :content, autofocus: local_assigns.fetch(:autofocus, true), placeholder: "What's on your mind?",
+          data: { action: "trix-change->card-form#detectTypeShortcut" } %>
+  </div>
+  <div class="compose-toolbar">
+    <div class="compose-toolbar__types" data-action="change->card-form#loadFields">
+      <% Card.cardable_types.each do |type_name| %>
+        <% cardable = type_name.constantize %>
+        <label class="compose-toolbar__type-pill" data-value="<%= type_name == 'Draft' ? '' : type_name.downcase %>">
+          <input type="radio" name="cardable_type" value="<%= type_name == 'Draft' ? '' : type_name.downcase %>"
+                 id="cardable_type_<%= type_name.downcase %>"
+                 <% if card.cardable_type == type_name || (type_name == "Draft" && card.cardable_type.nil?) %>checked<% end %> hidden>
+          <i class="icon" style="--icon-mask: var(--icon-<%= cardable.icon %>)" aria-hidden="true"></i>
+          <span><%= cardable.name %></span>
+        </label>
+      <% end %>
+    </div>
+    <div class="compose-toolbar__fields-row">
+      <turbo-frame id="card_type_fields"
+            class="compose-toolbar__fields"
+            data-card-form-target="fieldsFrame">
+        <% (card.cardable&.form_fields || []).each do |field| %>
+          <%= render "cards/fields/#{field}", card: card %>
+        <% end %>
+      </turbo-frame>
+      <%= f.button type: "submit", class: "compose-toolbar__send", aria: { label: "Send" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-arrow-up)" aria-hidden="true"></i>
+      <% end %>
+    </div>
+  </div>
+<% end %>
