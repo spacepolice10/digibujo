@@ -1,8 +1,5 @@
 class Card < ApplicationRecord
-  include Taggable
-  include Completable
-  include Archivable
-  include Pinnable
+  include Taggable, Completable, Archivable, Pinnable, Poppable, Publishable
 
   scope :timeline,               -> { where.not(cardable_type: 'Draft') }
   scope :timeline_chronological, -> { timeline.order(created_at: :desc) }
@@ -20,12 +17,8 @@ class Card < ApplicationRecord
   def type_icon_variable = "var(--icon-#{cardable.icon})"
   def type_name          = cardable.name
 
-  def popped?
-    pops_on.present? && pops_on <= Date.today
-  end
-
   def title
-    content.to_plain_text.lines.first&.strip&.truncate(100).presence || 'Untitled'
+    content.to_plain_text.lines.first&.strip&.truncate(200).presence || 'Untitled'
   end
 
   def self.type_capabilities(type_name)

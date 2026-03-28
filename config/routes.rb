@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       resource :pin,           only: :update
       resource :archive,       only: :update
       resource :complete, only: %i[create destroy]
+      resource :publish,  only: :update
     end
   end
   resources :drafts do
@@ -28,12 +29,12 @@ Rails.application.routes.draw do
   resource :upcoming, only: :show
   resource :calendar, only: :show
   resources :pinned,    only: :index
-  get 'pinned/list', to: 'pinned#list', as: :pinned_list
   resources :archived,  only: :index
   resources :tasks,     only: :index
   resources :notes,     only: :index
   resources :events,    only: :index
   resources :daylogs,   only: :index
+  resources :published, only: :show, param: :code
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
