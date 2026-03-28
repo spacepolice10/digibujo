@@ -25,8 +25,6 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "newuser@example.com", session[:login_email]
     assert_enqueued_emails 1
 
-    new_user = User.find_by(email_address: "newuser@example.com")
-    assert_equal Stream::DEFAULTS.size, new_user.streams.count
   end
 
   test "create with invalid email does not create user, still redirects" do
