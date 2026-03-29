@@ -1,21 +1,26 @@
 Rails.application.routes.draw do
-  resource :session, only: %i[new create destroy] do
+  # Authentication
+  resource :session, only: %i[new create show destroy] do
     scope module: :sessions do
       resource :code, only: %i[new create]
     end
   end
+
+  # Card
   scope 'cards', module: :cards do
     resources :fields, only: :show
   end
   resources :cards do
     scope module: :cards do
-      resource :pop,           only: :update
-      resource :pin,           only: :update
-      resource :archive,       only: :update
+      resource :pop,      only: :update
+      resource :pin,      only: :update
+      resource :archive,  only: :update
       resource :complete, only: %i[create destroy]
       resource :publish,  only: :update
     end
   end
+
+  # Drafts triage
   resources :drafts do
     scope module: :drafts do
       resource :schedule, only: :create
@@ -30,20 +35,25 @@ Rails.application.routes.draw do
       resource :reorder, only: :update
     end
   end
+
+  # Organization & filtering
   resources :tags, only: %i[index destroy]
   resources :streams
-  resource :upcoming, only: :show
-  resource :calendar, only: :show
+
+  # Views
+  resource  :upcoming,  only: :show
+  resource  :calendar,  only: :show
   resources :pinned,    only: :index
   resources :archived,  only: :index
   resources :tasks,     only: :index
   resources :notes,     only: :index
   resources :events,    only: :index
   resources :daylogs,   only: :index
+
+  # Publishing
   resources :published, only: :show, param: :code
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  # Health check
   get 'up' => 'rails/health#show', as: :rails_health_check
 
   root 'home#index'
