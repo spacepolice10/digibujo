@@ -38,3 +38,9 @@
 
 *.DS_Store
 l
+
+# Git worktrees
+/.worktrees
+
+# Superpowers brainstorming
+/.superpowers
