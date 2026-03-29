@@ -24,6 +24,12 @@ Rails.application.routes.draw do
       resource :remove,   only: :create
     end
   end
+  resources :playlists, only: %i[index show create destroy] do
+    scope module: :playlists do
+      resources :cards, only: %i[create destroy]
+      resource :reorder, only: :update
+    end
+  end
   resources :tags, only: %i[index destroy]
   resources :streams
   resource :upcoming, only: :show

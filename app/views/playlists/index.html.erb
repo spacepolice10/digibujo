@@ -1,0 +1,35 @@
+<div class="playlists-page">
+  <header class="playlists-page__header">
+    <h1>Playlists</h1>
+  </header>
+
+  <div class="playlists-columns">
+    <% @playlists.each do |playlist| %>
+      <div class="playlists-column" style="--playlist-color: <%= playlist.colour_variable %>; --playlist-color-bg: <%= playlist.colour_bg_variable %>">
+        <div class="playlists-column__header">
+          <span class="playlists-column__identity">
+            <span class="icon" style="--icon-mask: var(--icon-<%= playlist.icon %>); color: <%= playlist.colour_variable %>" aria-hidden="true"></span>
+            <span class="playlists-column__count"><%= pluralize(playlist.playlist_cards.size, "card") %></span>
+          </span>
+          <%= button_to playlist_path(playlist), method: :delete,
+              class: "playlists-column__delete",
+              form: { data: { turbo_confirm: "Delete this playlist?" } },
+              aria: { label: "Delete playlist" } do %>
+            <span class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></span>
+          <% end %>
+        </div>
+        <div class="playlists-column__cards">
+          <% playlist.playlist_cards.each do |pc| %>
+            <%= render partial: "cards/card", locals: { card: pc.card, dom_prefix: "playlist_#{playlist.id}" } %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="playlists-column playlists-column--create">
+      <%= button_to playlists_path, class: "playlists-column__create-btn" do %>
+        + New playlist
+      <% end %>
+    </div>
+  </div>
+</div>

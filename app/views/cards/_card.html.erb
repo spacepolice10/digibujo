@@ -83,6 +83,30 @@
           <span class="card-dropdown-desc"><%= card.archived? ? "Restore to Timeline" : "Stored in archive for 30 days" %></span>
         </span>
       <% end %>
+      <% if @latest_playlist %>
+        <% pc = @playlist_card_map[card.id] %>
+        <% if pc %>
+          <%= button_to playlist_card_path(@latest_playlist, pc), method: :delete, class: "card-dropdown-item" do %>
+            <span class="card-dropdown-icon card-dropdown-icon--playlist" style="background: <%= @latest_playlist.colour_bg_variable %>; color: <%= @latest_playlist.colour_variable %>">
+              <span class="icon" style="--icon-mask: var(--icon-<%= @latest_playlist.icon %>)"></span>
+            </span>
+            <span class="card-dropdown-text">
+              <span class="card-dropdown-label">Remove from Playlist</span>
+              <span class="card-dropdown-desc">Remove from current playlist</span>
+            </span>
+          <% end %>
+        <% else %>
+          <%= button_to playlist_cards_path(@latest_playlist), params: { card_id: card.id }, class: "card-dropdown-item" do %>
+            <span class="card-dropdown-icon card-dropdown-icon--playlist" style="background: <%= @latest_playlist.colour_bg_variable %>; color: <%= @latest_playlist.colour_variable %>">
+              <span class="icon" style="--icon-mask: var(--icon-<%= @latest_playlist.icon %>)"></span>
+            </span>
+            <span class="card-dropdown-text">
+              <span class="card-dropdown-label">Add to Playlist</span>
+              <span class="card-dropdown-desc">Add to current playlist</span>
+            </span>
+          <% end %>
+        <% end %>
+      <% end %>
       <%= link_to edit_card_path(card), data: { turbo_frame: "_top" }, class: "card-dropdown-item" do %>
         <span class="card-dropdown-icon card-dropdown-icon--edit">
           <span class="icon" style="--icon-mask: var(--icon-pencil)"></span>

@@ -9,6 +9,9 @@ class Card < ApplicationRecord
   delegated_type :cardable, types: %w[Draft Task Note Event Daylog], dependent: :destroy
   accepts_nested_attributes_for :cardable
 
+  has_many :playlist_cards, dependent: :destroy
+  has_many :playlists, through: :playlist_cards
+
   has_rich_text :content
   validates :content, presence: true
 

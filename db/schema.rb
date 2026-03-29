@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_28_153630) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_29_161623) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -107,6 +107,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_28_153630) do
   create_table "notes", force: :cascade do |t|
   end
 
+  create_table "playlist_cards", force: :cascade do |t|
+    t.integer "card_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "playlist_id", null: false
+    t.integer "position", null: false
+    t.datetime "updated_at", null: false
+    t.index ["card_id"], name: "index_playlist_cards_on_card_id"
+    t.index ["playlist_id", "card_id"], name: "index_playlist_cards_on_playlist_id_and_card_id", unique: true
+    t.index ["playlist_id", "position"], name: "index_playlist_cards_on_playlist_id_and_position"
+    t.index ["playlist_id"], name: "index_playlist_cards_on_playlist_id"
+  end
+
+  create_table "playlists", force: :cascade do |t|
+    t.string "colour", null: false
+    t.datetime "created_at", null: false
+    t.string "icon", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_playlists_on_user_id"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ip_address"
@@ -151,6 +172,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_28_153630) do
   add_foreign_key "card_tags", "tags"
   add_foreign_key "cards", "users"
   add_foreign_key "login_codes", "users"
+  add_foreign_key "playlist_cards", "cards"
+  add_foreign_key "playlist_cards", "playlists"
+  add_foreign_key "playlists", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "streams", "users"
   add_foreign_key "tags", "users"

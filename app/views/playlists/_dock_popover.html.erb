@@ -1,0 +1,43 @@
+<section class="pinned-dock-list">
+  <div class="pinned-dock-list__header">
+    <div class="pinned-dock__copy">
+      <span class="pinned-dock__eyebrow" style="color: <%= playlist.colour_variable %>">
+        <span class="icon" style="--icon-mask: var(--icon-<%= playlist.icon %>)" aria-hidden="true"></span>
+        Playlist
+      </span>
+      <span class="pinned-dock__caption"><%= pluralize(playlist.playlist_cards.size, "card") %></span>
+    </div>
+    <div style="display: flex; gap: var(--spacing-horizontal-half); align-items: center;">
+      <a href="<%= playlist_path(playlist) %>" class="pill" data-turbo-frame="_top">Open</a>
+      <%= button_to playlist_path(playlist), method: :delete,
+          class: "pill",
+          form: { data: { turbo_confirm: "Delete this playlist?" } } do %>
+        Delete
+      <% end %>
+    </div>
+  </div>
+  <div class="pinned-dock-list__items" id="<%= dom_id(playlist, :popover_cards) %>">
+    <% if playlist.playlist_cards.any? %>
+      <% playlist.playlist_cards.each do |pc| %>
+        <div id="<%= dom_id(pc) %>" class="playlist-popover-card">
+          <span class="playlist-popover-card__drag" aria-hidden="true">⠿</span>
+          <a href="<%= card_path(pc.card) %>" class="playlist-popover-card__body" data-turbo-frame="_top">
+            <span class="playlist-popover-card__title"><%= pc.card.title %></span>
+            <span class="playlist-popover-card__meta">
+              <%= pc.card.name %>
+              <span class="pinned-stack-card__sep" aria-hidden="true">&middot;</span>
+              <%= time_ago_in_words(pc.card.created_at) %> ago
+            </span>
+          </a>
+          <%= button_to playlist_card_path(playlist, pc), method: :delete,
+              class: "playlist-popover-card__remove",
+              aria: { label: "Remove from playlist" } do %>
+            ✕
+          <% end %>
+        </div>
+      <% end %>
+    <% else %>
+      <p class="playlist-popover-empty">Add cards using the + button in any card's menu.</p>
+    <% end %>
+  </div>
+</section>

@@ -1,57 +1,77 @@
 <turbo-frame id="pinned_panel">
-  <% if @pinned_cards.any? %>
+  <% if @pinned_cards.any? || @playlists.any? %>
     <section class="pinned-dock" aria-label="Dock">
-      <div class="pinned-dock__lanes">
-        <% stack_cards = @pinned_cards.first(3) %>
-        <section class="pinned-dock__lane pinned-dock__lane--active">
-          <span class="pinned-dock__icon">
-            <span class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></span>
-          </span>
-          <button class="pinned-stack-trigger"
-                  type="button"
-                  popovertarget="pinned-cards-dropdown"
-                  aria-label="Show pinned cards"
-                  style="anchor-name: --pinned-stack-trigger">
-            <div class="pinned-stack" style="--stack-count: <%= stack_cards.size %>">
-              <% stack_cards.each_with_index do |card, i| %>
-                <div class="pinned-stack-card" style="--stack-i: <%= i %>">
-                  <span class="pinned-stack-card__body">
-                    <span class="pinned-stack-card__title"><%= card.title %></span>
-                    <span class="pinned-stack-card__meta">
-                      <%= card.name %>
-                      <% if card.date.present? %>
-                        <span class="pinned-stack-card__sep" aria-hidden="true">&middot;</span>
-                        <time datetime="<%= card.date.iso8601 %>"><%= card.date.strftime("%b %-d") %></time>
-                      <% end %>
-                      <% if card.tags.any? %>
-                        <span class="pinned-stack-card__sep" aria-hidden="true">&middot;</span>
-                        <%= card.tags.first(2).map(&:name).join(", ") %>
-                      <% end %>
+      <div class="pinned-dock__lanes" id="dock_lanes">
+        <% if @pinned_cards.any? %>
+          <% stack_cards = @pinned_cards.first(3) %>
+          <section class="pinned-dock__lane pinned-dock__lane--active">
+            <span class="pinned-dock__icon">
+              <span class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></span>
+            </span>
+            <button class="pinned-stack-trigger"
+                    type="button"
+                    popovertarget="pinned-cards-dropdown"
+                    aria-label="Show pinned cards"
+                    style="anchor-name: --pinned-stack-trigger">
+              <div class="pinned-stack" style="--stack-count: <%= stack_cards.size %>">
+                <% stack_cards.each_with_index do |card, i| %>
+                  <div class="pinned-stack-card" style="--stack-i: <%= i %>">
+                    <span class="pinned-stack-card__body">
+                      <span class="pinned-stack-card__title"><%= card.title %></span>
+                      <span class="pinned-stack-card__meta">
+                        <%= card.name %>
+                        <% if card.date.present? %>
+                          <span class="pinned-stack-card__sep" aria-hidden="true">&middot;</span>
+                          <time datetime="<%= card.date.iso8601 %>"><%= card.date.strftime("%b %-d") %></time>
+                        <% end %>
+                        <% if card.tags.any? %>
+                          <span class="pinned-stack-card__sep" aria-hidden="true">&middot;</span>
+                          <%= card.tags.first(2).map(&:name).join(", ") %>
+                        <% end %>
+                      </span>
                     </span>
-                  </span>
-                </div>
-              <% end %>
-            </div>
-          </button>
-          <div id="pinned-cards-dropdown"
-               class="dropdown-menu pinned-dropdown-menu"
-               style="position-anchor: --pinned-stack-trigger"
-               popover>
-            <section class="pinned-dock-list">
-              <div class="pinned-dock-list__header">
-                <div class="pinned-dock__copy">
-                  <span class="pinned-dock__eyebrow">Pinned List</span>
-                  <span class="pinned-dock__caption"><%= pluralize(@pinned_cards.count, "card") %> pinned right now</span>
-                </div>
-              </div>
-              <div class="pinned-dock-list__items">
-                <% @pinned_cards.each do |card| %>
-                  <%= render partial: "cards/card", locals: { card: card, dom_prefix: "pinned" } %>
+                  </div>
                 <% end %>
               </div>
-            </section>
+            </button>
+            <div id="pinned-cards-dropdown"
+                 class="dropdown-menu pinned-dropdown-menu"
+                 style="position-anchor: --pinned-stack-trigger"
+                 popover>
+              <section class="pinned-dock-list">
+                <div class="pinned-dock-list__header">
+                  <div class="pinned-dock__copy">
+                    <span class="pinned-dock__eyebrow">Pinned List</span>
+                    <span class="pinned-dock__caption"><%= pluralize(@pinned_cards.count, "card") %> pinned right now</span>
+                  </div>
+                </div>
+                <div class="pinned-dock-list__items">
+                  <% @pinned_cards.each do |card| %>
+                    <%= render partial: "cards/card", locals: { card: card, dom_prefix: "pinned" } %>
+                  <% end %>
+                </div>
+              </section>
+            </div>
+          </section>
+        <% end %>
+
+        <% @playlists.first(3).each do |playlist| %>
+          <%= render partial: "playlists/dock_stack", locals: { playlist: playlist } %>
+        <% end %>
+
+        <% if @playlists.size > 3 %>
+          <div class="pinned-dock__lane playlist-dock-overflow">
+            <a href="<%= playlists_path %>" class="playlist-dock-overflow__link" data-turbo-frame="_top">
+              +<%= @playlists.size - 3 %> more
+            </a>
           </div>
-        </section>
+        <% end %>
+
+        <div class="pinned-dock__lane playlist-dock-create" id="playlists_dock">
+          <%= button_to playlists_path, class: "playlist-dock-create__btn", aria: { label: "New playlist" } do %>
+            +
+          <% end %>
+        </div>
       </div>
     </section>
   <% end %>

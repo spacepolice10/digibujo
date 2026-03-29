@@ -1,0 +1,31 @@
+<div class="playlists-page">
+  <header class="playlists-page__header">
+    <a href="<%= playlists_path %>" class="playlists-back-link" data-turbo-frame="_top">
+      <span class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></span>
+      All playlists
+    </a>
+    <div class="playlists-page__title">
+      <span class="icon" style="--icon-mask: var(--icon-<%= @playlist.icon %>); color: <%= @playlist.colour_variable %>" aria-hidden="true"></span>
+      <h1>Playlist</h1>
+      <span class="playlists-page__count"><%= pluralize(@playlist.playlist_cards.size, "card") %></span>
+    </div>
+  </header>
+
+  <div class="playlists-show__cards" data-controller="reorder" data-reorder-url-value="<%= playlist_reorder_path(@playlist) %>">
+    <% @playlist.playlist_cards.each do |pc| %>
+      <div class="playlists-show__card" data-reorder-id-param="<%= pc.id %>" draggable="true" data-action="dragstart->reorder#dragstart dragover->reorder#dragover drop->reorder#drop dragend->reorder#dragend">
+        <span class="playlist-popover-card__drag" aria-hidden="true">⠿</span>
+        <%= render partial: "cards/card", locals: { card: pc.card, dom_prefix: "playlist_show" } %>
+        <%= button_to playlist_card_path(@playlist, pc), method: :delete,
+            class: "playlist-popover-card__remove",
+            aria: { label: "Remove from playlist" } do %>
+          ✕
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @playlist.playlist_cards.empty? %>
+    <p class="playlist-popover-empty">No cards in this playlist yet. Add cards using the + button in any card's menu.</p>
+  <% end %>
+</div>
