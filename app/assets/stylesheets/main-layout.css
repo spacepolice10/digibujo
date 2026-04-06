@@ -1184,9 +1184,9 @@
   }
 
   .workspace__bar {
-    width: 3px;
-    height: 1.25rem;
-    border-radius: 2px;
+    width: var(--radius-subtle);
+    height: var(--icon-size-strong);
+    border-radius: var(--radius-subtle);
     flex-shrink: 0;
   }
 

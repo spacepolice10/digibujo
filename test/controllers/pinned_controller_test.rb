@@ -14,6 +14,8 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
     assert_select ".workspace"
   end
 
+  # No mobile User-Agent → desktop layout. Turbo-Frame header is incidental here —
+  # used so the frame element appears in the response for assertion.
   test "index renders dock on desktop (turbo-frame request)" do
     get pinned_index_path, headers: { "Turbo-Frame" => "pinned_panel" }
     assert_response :success
