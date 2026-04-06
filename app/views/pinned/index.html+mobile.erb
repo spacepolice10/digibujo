@@ -1,0 +1,33 @@
+<section class="workspace">
+  <% if @pinned_cards.any? %>
+    <div class="workspace__section">
+      <div class="workspace__group-header">
+        <span class="workspace__bar" style="background: var(--color-fg-base)"></span>
+        <i class="icon workspace__icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
+        <span class="workspace__label">Pinned</span>
+        <span class="workspace__count"><%= pluralize(@pinned_cards.count, "card") %></span>
+      </div>
+      <% @pinned_cards.each do |card| %>
+        <%= render partial: "cards/card", locals: { card: card, dom_prefix: "workspace" } %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% @playlists.each do |playlist| %>
+    <div class="workspace__section">
+      <div class="workspace__group-header">
+        <span class="workspace__bar" style="background: <%= playlist.colour_variable %>"></span>
+        <i class="icon workspace__icon" style="--icon-mask: var(--icon-<%= playlist.icon %>)" aria-hidden="true"></i>
+        <span class="workspace__label">Playlist</span>
+        <span class="workspace__count"><%= pluralize(playlist.playlist_cards.size, "card") %></span>
+      </div>
+      <% playlist.playlist_cards.each do |pc| %>
+        <%= render partial: "cards/card", locals: { card: pc.card, dom_prefix: "workspace_#{playlist.id}" } %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if @pinned_cards.none? && @playlists.none? %>
+    <p class="workspace__empty">Nothing pinned or collected yet.</p>
+  <% end %>
+</section>
