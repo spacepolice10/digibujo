@@ -2,7 +2,12 @@
 <% popover_id = "playlist-#{playlist.id}-dropdown" %>
 <% trigger_anchor = "--playlist-#{playlist.id}-trigger" %>
 
-<section id="<%= dom_id(playlist, :dock) %>" class="pinned-dock__lane pinned-dock__lane--active">
+<section id="<%= dom_id(playlist, :dock) %>"
+         class="pinned-dock__lane pinned-dock__lane--active"
+         style="--lane-colour: <%= playlist.colour_variable %>"
+         data-controller="playlist-drop"
+         data-playlist-drop-url-value="<%= playlist_cards_path(playlist) %>"
+         data-action="dragover->playlist-drop#dragover dragleave->playlist-drop#dragleave drop->playlist-drop#drop">
   <span class="pinned-dock__icon" style="background: <%= playlist.colour_bg_variable %>; border-color: <%= playlist.colour_variable %>; color: <%= playlist.colour_variable %>">
     <span class="icon" style="--icon-mask: var(--icon-<%= playlist.icon %>)" aria-hidden="true"></span>
   </span>

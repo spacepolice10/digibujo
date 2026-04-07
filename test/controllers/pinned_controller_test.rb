@@ -22,4 +22,11 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
     assert_select "turbo-frame#pinned_panel"
     assert_select ".workspace", count: 0
   end
+
+  test "dock playlist lanes have playlist-drop controller attributes" do
+    @user.playlists.create!
+    get pinned_index_path, headers: { "Turbo-Frame" => "pinned_panel" }
+    assert_select "[data-controller~='playlist-drop']"
+    assert_select "[data-playlist-drop-url-value]"
+  end
 end

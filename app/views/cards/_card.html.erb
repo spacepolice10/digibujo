@@ -1,6 +1,13 @@
 <% card_dom_id = [local_assigns[:dom_prefix], dom_id(card)].compact.join("_") %>
 <% card_menu_id = [local_assigns[:dom_prefix], "card-menu", card.id].compact.join("-") %>
-<div id="<%= card_dom_id %>" class="card<%= " archived" if card.archived? %>" style="--i: <%= local_assigns[:index] || 0 %>"<%= " data-card-type=\"#{card.cardable_type.downcase}\"" unless card.draft? %>>
+<div id="<%= card_dom_id %>"
+     class="card<%= " archived" if card.archived? %>"
+     style="--i: <%= local_assigns[:index] || 0 %>"
+     <%= " data-card-type=\"#{card.cardable_type.downcase}\"" unless card.draft? %>
+     draggable="true"
+     data-controller="card-drag"
+     data-card-drag-id-value="<%= card.id %>"
+     data-action="dragstart->card-drag#dragstart dragend->card-drag#dragend">
   <div class="card-action">
     <% if card.completable? %>
       <% if card.done? %>
@@ -18,7 +25,8 @@
   </div>
   <a class="card-body"
      href="<%= card_path(card) %>"
-     data-turbo-frame="_top">
+     data-turbo-frame="_top"
+     draggable="false">
     <p class="card-title line-clamp<%= " done" if card.done? %>">
       <%= card.title %>
     </p>

@@ -42,6 +42,14 @@ module Playlists
       assert_redirected_to playlist_path(@playlist)
     end
 
+    test 'create responds with turbo stream when called with JSON body' do
+      post playlist_cards_path(@playlist),
+           params: { card_id: @card.id }.to_json,
+           headers: { 'Content-Type' => 'application/json', 'Accept' => 'text/vnd.turbo-stream.html' }
+      assert_response :success
+      assert_equal 'text/vnd.turbo-stream.html', response.media_type
+    end
+
     private
 
     def create_card(user)

@@ -134,4 +134,10 @@
   .dragging {
     opacity: var(--opacity-half);
   }
+
+  .pinned-dock__lane.drag-over {
+    outline: 2px solid var(--lane-colour);
+    box-shadow: 0 0 0 4px color-mix(in oklch, var(--lane-colour) 20%, transparent);
+    border-radius: var(--radius-base);
+  }
 }
