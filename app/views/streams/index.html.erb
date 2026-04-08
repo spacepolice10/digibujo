@@ -113,5 +113,22 @@
         </ul>
       </section>
     <% end %>
+    <% if @tags.any? %>
+      <section class="sidebar-panel__section">
+        <div class="sidebar-panel__section-header">
+          <h2 class="sidebar-panel__section-label">Tags</h2>
+          <span class="sidebar-panel__section-wavy" aria-hidden="true"></span>
+          <%= link_to "View All", tags_path,
+                class: "sidebar-panel__section-link",
+                "aria-label": "All tags",
+                data: { turbo_frame: "_top" } %>
+        </div>
+        <div class="tags-panel-list">
+          <% @tags.first(8).each do |tag| %>
+            <span class="pill" style="background: <%= tag.colour_bg_variable %>"><%= tag.name %></span>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
   </nav>
 </turbo-frame>

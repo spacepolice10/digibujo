@@ -3,6 +3,7 @@ class StreamsController < ApplicationController
 
   def index
     @streams = Current.user.streams.ordered
+    @tags = Current.user.tags
   end
 
   def show
