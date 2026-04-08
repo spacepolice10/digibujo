@@ -29,16 +29,16 @@
     </main>
 
     <nav class="tab-bar">
-      <%= link_to streams_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'streams'}", aria: { label: "Streams" } do %>
+      <%= link_to streams_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'streams'}", aria: { label: "Index" } do %>
         <i class="icon" style="--icon-mask: var(--icon-list)" aria-hidden="true"></i>
       <% end %>
-      <%= link_to cards_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'cards'}", aria: { label: "Cards" } do %>
-        <i class="icon" style="--icon-mask: var(--icon-menu)" aria-hidden="true"></i>
+      <%= link_to pinned_index_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'pinned'}", aria: { label: "Workspace" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
       <% end %>
-      <%= link_to upcoming_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'upcomings'}", aria: { label: "Upcoming" } do %>
-        <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
+      <%= link_to cards_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'cards'}", aria: { label: "Drafts" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
       <% end %>
-      <%= link_to calendar_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'calendars'}", aria: { label: "Calendar" } do %>
+      <%= link_to upcoming_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'upcoming'}", aria: { label: "Upcoming" } do %>
         <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
       <% end %>
     </nav>

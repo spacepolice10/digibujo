@@ -1,3 +1,18 @@
-<h1>Cards</h1>
+<% if @draft_cards.any? %>
+  <div class="sidebar-panel__section-header" style="margin-block: var(--spacing-horizontal-double);">
+    <h2 class="sidebar-panel__section-label">Your Drafts</h2>
+    <span class="sidebar-panel__section-wavy" aria-hidden="true"></span>
+    <%= link_to "Triage", drafts_path, class: "sidebar-panel__section-link", data: { turbo_frame: "_top" } %>
+  </div>
+  <div id="draft_cards">
+    <% @draft_cards.each do |card| %>
+      <%= render card %>
+    <% end %>
+  </div>
+<% end %>
 
+<div class="sidebar-panel__section-header" style="margin-block: var(--spacing-horizontal-double);">
+  <h2 class="sidebar-panel__section-label">Recently Sorted</h2>
+  <span class="sidebar-panel__section-wavy" aria-hidden="true"></span>
+</div>
 <%= render "cards/paginated_list", cards: @cards, page: @page %>
