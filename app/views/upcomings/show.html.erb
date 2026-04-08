@@ -16,6 +16,17 @@
       </section>
     <% end %>
 
+    <% if @tomorrow_cards.any? %>
+      <section class="sidebar-panel__section">
+        <h2 class="sidebar-panel__section-label">Tomorrow</h2>
+        <div class="calendar-section">
+          <% @tomorrow_cards.each do |card| %>
+            <%= render partial: "cards/calendar_card", locals: { card: card } %>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+
     <% if @upcoming_cards.any? %>
       <section class="sidebar-panel__section">
         <h2 class="sidebar-panel__section-label">Upcoming</h2>
@@ -38,7 +49,7 @@
       </section>
     <% end %>
 
-    <% unless @today_cards.any? || @upcoming_cards.any? || @due_cards.any? %>
+    <% unless @today_cards.any? || @tomorrow_cards.any? || @upcoming_cards.any? || @due_cards.any? %>
       <p class="calendar-empty">Nothing scheduled.</p>
     <% end %>
 
