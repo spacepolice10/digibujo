@@ -15,6 +15,7 @@ class PlaylistsController < ApplicationController
     @playlist = Current.user.playlists.new
 
     if @playlist.save
+      add_card_to_playlist if params[:card_id].present?
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to playlists_path }
@@ -37,5 +38,11 @@ class PlaylistsController < ApplicationController
 
   def set_playlist
     @playlist = Current.user.playlists.includes(playlist_cards: { card: :tags }).find(params[:id])
+  end
+
+  def add_card_to_playlist
+    card = Current.user.cards.find_by(id: params[:card_id])
+    return unless card
+    @playlist.playlist_cards.create!(card: card, position: 1)
   end
 end

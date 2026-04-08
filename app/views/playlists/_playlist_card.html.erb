@@ -1,0 +1,15 @@
+<div id="<%= dom_id(pc) %>"
+     class="playlists-show__card"
+     <% if local_assigns[:reorderable] %>
+       draggable="true"
+       data-reorder-id-param="<%= pc.id %>"
+       data-action="dragstart->reorder#dragstart dragover->reorder#dragover drop->reorder#drop dragend->reorder#dragend"
+     <% end %>>
+  <span class="playlist-popover-card__drag" aria-hidden="true">⠿</span>
+  <%= render partial: "cards/card", locals: { card: pc.card, dom_prefix: "playlist_#{playlist.id}" } %>
+  <%= button_to playlist_card_path(playlist, pc), method: :delete,
+      class: "playlist-popover-card__remove",
+      aria: { label: "Remove from playlist" } do %>
+    ✕
+  <% end %>
+</div>

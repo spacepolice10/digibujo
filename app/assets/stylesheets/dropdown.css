@@ -253,6 +253,7 @@
     &.card-dropdown-icon--archive { background: var(--model-color-2-bg); color: var(--model-color-2); }
     &.card-dropdown-icon--edit    { background: var(--model-color-4-bg); color: var(--model-color-4); }
     &.card-dropdown-icon--delete  { background: var(--color-bg-negative); color: var(--color-fg-negative); }
+    &.card-dropdown-icon--chooser { background: var(--model-color-5-bg); color: var(--model-color-5); }
   }
 
   .card-dropdown-text {
@@ -277,7 +278,7 @@
     inset: unset;
     position-area: block-start center;
     margin-bottom: var(--spacing-horizontal-half);
-    width: 100%;
+    min-width: 28rem;
     position-anchor: --pinned-stack-trigger;
     position-try-fallbacks: flip-block;
 

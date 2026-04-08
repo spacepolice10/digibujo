@@ -19,22 +19,7 @@
   <div class="pinned-dock-list__items" id="<%= dom_id(playlist, :popover_cards) %>">
     <% if playlist.playlist_cards.any? %>
       <% playlist.playlist_cards.each do |pc| %>
-        <div id="<%= dom_id(pc) %>" class="playlist-popover-card">
-          <span class="playlist-popover-card__drag" aria-hidden="true">⠿</span>
-          <a href="<%= card_path(pc.card) %>" class="playlist-popover-card__body" data-turbo-frame="_top">
-            <span class="playlist-popover-card__title"><%= pc.card.title %></span>
-            <span class="playlist-popover-card__meta">
-              <%= pc.card.name %>
-              <span class="pinned-stack-card__sep" aria-hidden="true">&middot;</span>
-              <%= time_ago_in_words(pc.card.created_at) %> ago
-            </span>
-          </a>
-          <%= button_to playlist_card_path(playlist, pc), method: :delete,
-              class: "playlist-popover-card__remove",
-              aria: { label: "Remove from playlist" } do %>
-            ✕
-          <% end %>
-        </div>
+        <%= render partial: "playlists/playlist_card", locals: { playlist: playlist, pc: pc } %>
       <% end %>
     <% else %>
       <p class="playlist-popover-empty">Add cards using the + button in any card's menu.</p>

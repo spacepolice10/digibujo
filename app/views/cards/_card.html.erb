@@ -114,6 +114,17 @@
             </span>
           <% end %>
         <% end %>
+        <%= link_to card_playlist_picker_path(card),
+              data: { turbo_frame: "modal", action: "dialog#open" },
+              class: "card-dropdown-item" do %>
+          <span class="card-dropdown-icon card-dropdown-icon--chooser">
+            <span class="icon" style="--icon-mask: var(--icon-pencil)"></span>
+          </span>
+          <span class="card-dropdown-text">
+            <span class="card-dropdown-label">Choose Playlist…</span>
+            <span class="card-dropdown-desc">Pick from all playlists</span>
+          </span>
+        <% end %>
       <% end %>
       <%= link_to edit_card_path(card), data: { turbo_frame: "_top" }, class: "card-dropdown-item" do %>
         <span class="card-dropdown-icon card-dropdown-icon--edit">

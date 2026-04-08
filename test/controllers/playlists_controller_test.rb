@@ -38,6 +38,16 @@ class PlaylistsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to playlists_path
   end
 
+  test 'create with card_id adds card to new playlist' do
+    draft = Draft.create!
+    card = @user.cards.create!(cardable: draft, content: "Test")
+    assert_difference [ 'Playlist.count', 'PlaylistCard.count' ], 1 do
+      post playlists_path, params: { card_id: card.id }
+    end
+    playlist = @user.playlists.order(created_at: :desc).first
+    assert playlist.cards.include?(card)
+  end
+
   test "cannot access another user's playlist" do
     other = users(:two)
     playlist = other.playlists.create!

@@ -12,11 +12,12 @@ Rails.application.routes.draw do
   end
   resources :cards do
     scope module: :cards do
-      resource :pop,      only: :update
-      resource :pin,      only: :update
-      resource :archive,  only: :update
-      resource :complete, only: %i[create destroy]
-      resource :publish,  only: :update
+      resource :pop,             only: :update
+      resource :pin,             only: :update
+      resource :archive,         only: :update
+      resource :complete,        only: %i[create destroy]
+      resource :publish,         only: :update
+      resource :playlist_picker, only: :show
     end
   end
 

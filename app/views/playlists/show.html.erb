@@ -13,15 +13,7 @@
 
   <div class="playlists-show__cards" data-controller="reorder" data-reorder-url-value="<%= playlist_reorder_path(@playlist) %>">
     <% @playlist.playlist_cards.each do |pc| %>
-      <div class="playlists-show__card" data-reorder-id-param="<%= pc.id %>" draggable="true" data-action="dragstart->reorder#dragstart dragover->reorder#dragover drop->reorder#drop dragend->reorder#dragend">
-        <span class="playlist-popover-card__drag" aria-hidden="true">⠿</span>
-        <%= render partial: "cards/card", locals: { card: pc.card, dom_prefix: "playlist_show" } %>
-        <%= button_to playlist_card_path(@playlist, pc), method: :delete,
-            class: "playlist-popover-card__remove",
-            aria: { label: "Remove from playlist" } do %>
-          ✕
-        <% end %>
-      </div>
+      <%= render partial: "playlists/playlist_card", locals: { playlist: @playlist, pc: pc, reorderable: true } %>
     <% end %>
   </div>
 
