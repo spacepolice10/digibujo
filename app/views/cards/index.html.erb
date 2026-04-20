@@ -1,22 +1,16 @@
 <turbo-frame id="card_form">
   <%= render "form", card: Card.new %>
 </turbo-frame>
-
-<% if @draft_cards.any? %>
-  <div class="sidebar-panel__section-header" style="margin-block: var(--spacing-horizontal-double);">
-    <h2 class="sidebar-panel__section-label">Your Drafts</h2>
-    <span class="sidebar-panel__section-wavy" aria-hidden="true"></span>
-    <%= link_to "Triage", drafts_path, class: "sidebar-panel__section-link", data: { turbo_frame: "_top" } %>
+  <div class="flex slightly-padded slightly-gapped">
+    <h2 class="text-sm">Your Drafts</h2>
+    <span class="wavy" aria-hidden="true"></span>
+    <%= link_to "Triage", drafts_path, class: "text-sm", data: { turbo_frame: "_top" } %>
   </div>
   <div id="draft_cards">
-    <% @draft_cards.each do |card| %>
-      <%= render card %>
-    <% end %>
+    <%= render @drafts %>
   </div>
-<% end %>
-
-<div class="sidebar-panel__section-header" style="margin-block: var(--spacing-horizontal-double);">
-  <h2 class="sidebar-panel__section-label">Recently Sorted</h2>
-  <span class="sidebar-panel__section-wavy" aria-hidden="true"></span>
+<div class="flex slightly-padded slightly-gapped">
+  <h2 class="text-sm">Recently Sorted</h2>
+  <span class="wavy" aria-hidden="true"></span>
 </div>
 <%= render "cards/paginated_list", cards: @cards, page: @page %>

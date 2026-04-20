@@ -20,10 +20,12 @@
 @import "button.css";
 @import "pill.css";
 @import "dropdown.css";
+@import "dialog.css";
 @import "card.css";
 @import "card-show.css";
 @import "tag.css";
 @import "card-form.css";
+@import "date-picker.css";
 @import "main-layout.css";
 @import "drafts.css";
 @import "calendar.css";

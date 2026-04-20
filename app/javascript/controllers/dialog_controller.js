@@ -11,41 +11,46 @@ export default class extends Controller {
         .forEach((d) => d.removeAttribute("open"))
     }
     document.addEventListener("turbo:before-render", this.beforeRenderHandler)
+
+    // Fallback for browsers without native invoker commands support
+    if (!("commandForElement" in HTMLButtonElement.prototype)) {
+      this.invokerHandler = (event) => {
+        const btn = event.target.closest("[commandfor]")
+        if (!btn) return
+        if (!this.dialogTarget.id || this.dialogTarget.id !== btn.getAttribute("commandfor")) return
+        const command = btn.getAttribute("command")
+        if (command == "show-modal") this.open()
+        else if (command == "close") this.close()
+      }
+      document.addEventListener("click", this.invokerHandler)
+    }
   }
 
   disconnect() {
     document.removeEventListener("turbo:before-render", this.beforeRenderHandler)
+    if (this.invokerHandler) {
+      document.removeEventListener("click", this.invokerHandler)
+    }
   }
 
   open() {
-    this.previousUrl = window.location.href
     this.dialogTarget.showModal()
   }
 
   close() {
-    this.#closeAndRestoreUrl()
+    this.dialogTarget.close()
   }
 
-  // Close when clicking the backdrop (outside the dialog box)
-  backdropClose(event) {
+  backdropHide(event) {
     if (event.target === this.dialogTarget) {
-      this.#closeAndRestoreUrl()
+      this.dialogTarget.close()
     }
   }
 
   // Close after a successful turbo stream submission from within the dialog
   submitEnd(event) {
     if (event.detail.success) {
-      this.previousUrl = null
       this.dialogTarget.close()
-    }
-  }
-
-  #closeAndRestoreUrl() {
-    this.dialogTarget.close()
-    if (this.previousUrl) {
-      history.replaceState(history.state, "", this.previousUrl)
-      this.previousUrl = null
     }
   }
 }

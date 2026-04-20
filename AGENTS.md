@@ -128,6 +128,8 @@ Propshaft (no Sprockets). JavaScript via Importmap (no Node build step). No CSS 
 - Ruby/ERB: use constants, model attributes, or controller-assigned `@variables` — never inline magic values
 - Configuration: use Rails credentials, environment variables, or initializers — never inline secrets or environment-specific values
 
+**CSS class naming follows a file-scoped convention.** The first segment of a class name matches the stylesheet filename it lives in (the "block"). Everything after `--` identifies a specific nested element within that block. For example, classes in `date-picker.css` are named `date-picker` (the block), `date-picker--segments-picker` (a nested container), `date-picker--segments-button` (a nested element). Never use a prefix that doesn't correspond to the file it's defined in.
+
 **CSS: pick the closest existing variable — never add new ones.** When a hardcoded CSS value (font-size, border-radius, font-weight, opacity, icon size, etc.) doesn't exactly match an existing variable, map it to the nearest one from `variables.css` rather than creating a new variable. The variable set is intentionally small and should stay that way. A 1–2px difference is acceptable — consistency across the system matters more than pixel-perfect fidelity to the original arbitrary value. Do not add `line-height` or `letter-spacing` declarations — the reset handles base values.
 
 ### Turbo

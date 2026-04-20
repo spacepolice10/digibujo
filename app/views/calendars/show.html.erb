@@ -18,7 +18,7 @@
         <hr class="future-log__divider">
 
         <div class="future-log__mini-cal">
-          <% CalendarsHelper::DAY_LABELS.each do |d| %>
+          <% CalendarsHelper::LABELS.each do |d| %>
             <span class="future-log__day-label"><%= d %></span>
           <% end %>
           <% calendar_weeks(month[:first_day], month[:days_in_month]).each do |week| %>

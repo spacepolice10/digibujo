@@ -1,10 +1,9 @@
 class CardsController < ApplicationController
-  layout -> { request.variant.mobile? ? "mobile" : "main-layout" }
 
   before_action :set_card, only: %i[show edit update destroy]
 
   def index
-    @draft_cards = Current.user.cards.includes(:tags).drafts.where(archived: false).order(created_at: :desc)
+    @drafts = Current.user.cards.includes(:tags).drafts.where(archived: false).order(created_at: :desc)
     @cards = set_page_and_extract_portion_from(
       Current.user.cards.includes(:tags).timeline_chronological,
       per_page: [5, 15, 30, 50]

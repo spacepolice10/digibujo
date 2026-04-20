@@ -1,4 +1,102 @@
-<div>
-  <%= label_tag "card[date]", "Date" %>
-  <%= datetime_local_field_tag "card[date]", card.date %>
+<% base_date = card.date&.to_date %>
+<% days_labels = Date::ABBR_DAYNAMES.map { |d| d[0] } %>
+<% month_names = Date::ABBR_MONTHNAMES.compact %>
+<div class="date-picker" data-controller="dialog date-picker" data-date-picker-date-value="<%= base_date&.strftime('%Y-%m-%d') %>">
+  <button
+    type="button"
+    class="button-secondary"
+    commandfor="date-picker-dialog"
+    command="show-modal"
+  >
+    <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
+    <span data-date-picker-target="datePickerText"><%= base_date ? base_date.strftime("%b %-d, %y") : "Date" %></span>
+  </button>
+  <input type="hidden"
+         name="card[date]"
+         value="<%= base_date&.strftime('%Y-%m-%d') %>"
+         data-date-picker-target="hiddenDate">
+  <dialog
+    id="date-picker-dialog"
+    class="dialog"
+    data-dialog-target="dialog"
+    data-action="click->dialog#backdropHide"
+    >
+    <div class="date-picker--segments-picker">
+      <button
+        type="button"
+        class="button-secondary"
+        data-date-picker-target="segmentPicker"
+        data-action="click->date-picker#showSegment"
+        data-date-picker-segment-param="day"
+        >Day</button>
+      <button
+        type="button"
+        class="button-secondary"
+        data-date-picker-target="segmentPicker"
+        data-action="click->date-picker#showSegment"
+        data-date-picker-segment-param="month"
+        >Month</button>
+      <button
+        type="button"
+        class="button-secondary"
+        data-date-picker-target="segmentPicker"
+        data-action="click->date-picker#showSegment"
+        data-date-picker-segment-param="year"
+        >Year</button>
+    </div>
+    <div class="date-picker--segments">
+      <div class="date-picker--segment" data-date-picker-target="segment" data-segment="day">
+        <div class="date-picker--weekdays">
+          <% days_labels.each do |day| %>
+            <div><%= day %></div>
+          <% end %>
+        </div>
+        <div class="date-picker--days-grid"
+             data-controller="grid-navigation"
+             data-grid-navigation-columns-value="7"
+             data-action="keydown->grid-navigation#navigate"
+             data-date-picker-target="daysGrid"></div>
+      </div>
+      <div class="date-picker--segment" data-date-picker-target="segment" data-segment="month">
+        <div class="date-picker--grid"
+             data-controller="grid-navigation"
+             data-grid-navigation-columns-value="3"
+             data-action="keydown->grid-navigation#navigate">
+          <% month_names.each_with_index do |name, i| %>
+            <button type="button"
+                  class="button-secondary"
+                  data-date-picker-target="monthsButton"
+                  data-grid-navigation-target="item"
+                  data-action="click->date-picker#selectPart"
+              data-date-picker-part-param="month"
+              data-date-picker-value-param="<%= i + 1 %>">
+              <%= name %>
+            </button>
+          <% end %>
+        </div>
+      </div>
+      <div class="date-picker--segment" data-date-picker-target="segment" data-segment="year">
+        <div class="date-picker--grid"
+             data-controller="grid-navigation"
+             data-grid-navigation-columns-value="3"
+             data-action="keydown->grid-navigation#navigate">
+          <% (Date.today.year..Date.today.year + 10).each do |year| %>
+            <button type="button"
+                  class="button-secondary"
+                  data-date-picker-target="yearButton"
+                  data-grid-navigation-target="item"
+                  data-action="click->date-picker#selectPart"
+              data-date-picker-part-param="year"
+              data-date-picker-value-param="<%= year %>">
+              <%= year %>
+            </button>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <div class="date-picker--footer">
+      <span data-date-picker-target="datePreview"><%= base_date&.strftime("%b %-d, %y") %></span>
+      <button type="button" class="button-primary" data-action="click->date-picker#save">Save</button>
+    </div>
+  </dialog>
 </div>

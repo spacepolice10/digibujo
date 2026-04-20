@@ -17,6 +17,8 @@ class Card < ApplicationRecord
 
   delegate :completable?, :temporal?, :taggable?, :icon, :colour, :name, :marker, to: :cardable
 
+  def to_partial_path     = cardable.to_partial_path
+
   def type_icon_variable = "var(--icon-#{cardable.icon})"
   def type_name          = cardable.name
 

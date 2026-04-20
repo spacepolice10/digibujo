@@ -1,51 +1,66 @@
 @layer variables {
   :root {
     /* backgrounds */
-    --color-bg-base:     light-dark(oklch(0.97 0.004 80),  oklch(0.15 0.005 260));
-    --color-bg-subtle:   light-dark(oklch(0.99 0.002 80),  oklch(0.20 0.005 260));
-    --color-bg-strong:   light-dark(oklch(0.18 0.005 260), oklch(0.95 0.004 80));
-    --color-bg-warn:     light-dark(oklch(0.96 0.07 90),   oklch(0.28 0.06 90));
-    --color-bg-negative: light-dark(oklch(0.95 0.07 35),   oklch(0.25 0.06 35));
-    --color-bg-positive: light-dark(oklch(0.95 0.05 210),  oklch(0.25 0.05 210));
+    --color-bg-base: light-dark(oklch(0.97 0.004 80), oklch(0.15 0.005 260));
+    --color-bg-subtle: light-dark(oklch(0.99 0.002 80), oklch(0.2 0.005 260));
+    --color-bg-strong: light-dark(oklch(0.18 0.005 260), oklch(0.95 0.004 80));
+    --color-bg-warn: light-dark(oklch(0.96 0.07 90), oklch(0.28 0.06 90));
+    --color-bg-negative: light-dark(oklch(0.95 0.07 35), oklch(0.25 0.06 35));
+    --color-bg-positive: light-dark(oklch(0.95 0.05 210), oklch(0.25 0.05 210));
 
     /* foregrounds */
-    --color-fg-base:     light-dark(oklch(0.35 0.01 260),  oklch(0.88 0.01 80));
-    --color-fg-subtle:   light-dark(oklch(0.53 0.01 260),  oklch(0.65 0.01 80));
-    --color-fg-strong:   light-dark(white, oklch(0.12 0.005 260));
-    --color-fg-warn:     light-dark(oklch(0.68 0.15 90),   oklch(0.78 0.15 90));
-    --color-fg-negative: light-dark(oklch(0.65 0.16 35),   oklch(0.75 0.16 35));
-    --color-fg-positive: light-dark(oklch(0.63 0.11 210),  oklch(0.73 0.11 210));
+    --color-fg-base: light-dark(oklch(0.35 0.01 260), oklch(0.88 0.01 80));
+    --color-fg-subtle: light-dark(oklch(0.53 0.01 260), oklch(0.65 0.01 80));
+    --color-fg-strong: light-dark(white, oklch(0.12 0.005 260));
+    --color-fg-warn: light-dark(oklch(0.68 0.15 90), oklch(0.78 0.15 90));
+    --color-fg-negative: light-dark(oklch(0.65 0.16 35), oklch(0.75 0.16 35));
+    --color-fg-positive: light-dark(oklch(0.63 0.11 210), oklch(0.73 0.11 210));
 
     /* accents — lime + teal */
-    --color-accent:        oklch(0.85 0.22 130);
-    --color-accent-bg:     oklch(0.96 0.10 130);
-    --color-accent-alternative:    oklch(0.68 0.16 195);
+    --color-accent: oklch(0.85 0.22 130);
+    --color-accent-bg: oklch(0.96 0.1 130);
+    --color-accent-alternative: oklch(0.68 0.16 195);
     --color-accent-alternative-bg: oklch(0.95 0.06 195);
 
     /* strokes */
-    --color-stroke-base:     light-dark(oklch(0.91 0.004 80),  oklch(0.28 0.005 260));
-    --color-stroke-subtle:   light-dark(oklch(0.99 0.002 80),  oklch(0.20 0.005 260));
-    --color-stroke-strong:   light-dark(oklch(0.18 0.005 260), oklch(0.85 0.004 80));
-    --color-stroke-warn:     light-dark(oklch(0.82 0.13 90),   oklch(0.45 0.10 90));
-    --color-stroke-negative: light-dark(oklch(0.74 0.13 35),   oklch(0.45 0.10 35));
-    --color-stroke-positive: light-dark(oklch(0.74 0.09 210),  oklch(0.45 0.08 210));
+    --color-stroke-base: light-dark(
+      oklch(0.91 0.004 80),
+      oklch(0.28 0.005 260)
+    );
+    --color-stroke-subtle: light-dark(
+      oklch(0.99 0.002 80),
+      oklch(0.2 0.005 260)
+    );
+    --color-stroke-strong: light-dark(
+      oklch(0.18 0.005 260),
+      oklch(0.85 0.004 80)
+    );
+    --color-stroke-warn: light-dark(oklch(0.82 0.13 90), oklch(0.45 0.1 90));
+    --color-stroke-negative: light-dark(
+      oklch(0.74 0.13 35),
+      oklch(0.45 0.1 35)
+    );
+    --color-stroke-positive: light-dark(
+      oklch(0.74 0.09 210),
+      oklch(0.45 0.08 210)
+    );
 
     /* model colors — electric palette */
-    --model-color-1:    oklch(68% 0.22 290);  /* Violet */
+    --model-color-1: oklch(68% 0.22 290); /* Violet */
     --model-color-1-bg: oklch(94% 0.08 290);
-    --model-color-2:    oklch(62% 0.20 260);  /* Cobalt */
+    --model-color-2: oklch(62% 0.2 260); /* Cobalt */
     --model-color-2-bg: oklch(94% 0.07 260);
-    --model-color-3:    oklch(72% 0.16 195);  /* Teal */
+    --model-color-3: oklch(72% 0.16 195); /* Teal */
     --model-color-3-bg: oklch(95% 0.06 195);
-    --model-color-4:    oklch(72% 0.20 155);  /* Emerald */
+    --model-color-4: oklch(72% 0.2 155); /* Emerald */
     --model-color-4-bg: oklch(95% 0.08 155);
-    --model-color-5:    oklch(82% 0.18 90);   /* Gold */
+    --model-color-5: oklch(82% 0.18 90); /* Gold */
     --model-color-5-bg: oklch(96% 0.08 90);
-    --model-color-6:    oklch(68% 0.20 25);   /* Vermillion */
+    --model-color-6: oklch(68% 0.2 25); /* Vermillion */
     --model-color-6-bg: oklch(95% 0.08 25);
-    --model-color-7:    oklch(60% 0.18 340);  /* Magenta */
+    --model-color-7: oklch(60% 0.18 340); /* Magenta */
     --model-color-7-bg: oklch(95% 0.07 340);
-    --model-color-8:    oklch(30% 0.10 260);  /* Ink */
+    --model-color-8: oklch(30% 0.1 260); /* Ink */
     --model-color-8-bg: oklch(94% 0.04 260);
 
     /* breakpoints */
@@ -65,19 +80,20 @@
     --spacing-horizontal-double: calc(var(--spacing-horizontal) * 2);
 
     /* shadows */
-    --shadow-elevated: 0 2px 8px oklch(0% 0 0 / 0.07), 0 0 0 1px oklch(0% 0 0 / 0.04);
+    --shadow-elevated:
+      0 2px 8px oklch(0% 0 0 / 0.07), 0 0 0 1px oklch(0% 0 0 / 0.04);
     --shadow-glow: 0px 4px 0px 0px rgba(0, 0, 0, 0.25);
 
     /* z-index */
     --z-base: 0;
     --z-dropdown-bg: 1;
     --z-dropdown: 2;
-    --z-dialog-bg: 3;
-    --z-dialog: 4;
+    --z-dialog-bg: 1;
+    --z-dialog: 2;
 
     /* font sizes — fluid */
     --font-size-strong: clamp(1.375rem, 1.1rem + 0.85vw, 1.75rem);
-    --font-size-base:   clamp(0.9375rem, 0.875rem + 0.2vw, 1rem);
+    --font-size-base: clamp(0.9375rem, 0.875rem + 0.2vw, 1rem);
     --font-size-subtle: clamp(0.8125rem, 0.775rem + 0.15vw, 0.875rem);
 
     /* font weights */
@@ -86,26 +102,17 @@
     --font-weight-subtle: 200;
 
     /* opacity */
+    --opacity-full: 1;
     --opacity-half: 0.5;
 
     /* radii */
-    --radius-subtle: 4px;
-    --radius-base: 8px;
-    --radius-strong: 12px;
+    --radius-subtle: 2px;
+    --radius-base: 4px;
+    --radius-strong: 8px;
 
     /* icon sizes */
     --icon-size-subtle: 0.75rem;
     --icon-size-base: 1.125rem;
     --icon-size-strong: 1.25rem;
-
-  }
-
-  /* Desktop/laptop: slightly more compact controls & typography */
-  @media (min-width: 800px) { /* --breakpoint-laptop */
-    :root {
-      --font-size-strong: clamp(1.25rem, 1rem + 0.65vw, 1.55rem);
-      --font-size-base:   clamp(0.875rem, 0.825rem + 0.15vw, 0.95rem);
-      --font-size-subtle: clamp(0.78rem, 0.75rem + 0.1vw, 0.84rem);
-    }
   }
 }

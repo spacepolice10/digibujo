@@ -4,6 +4,29 @@
 
   .button-primary {
     display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-vertical-half);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    border-radius: var(--radius-strong);
+    font-family: inherit;
+    font-size: var(--font-size-subtle);
+    background: var(--color-fg-base);
+    border: 1px solid var(--color-fg-base);
+    color: var(--color-bg-base);
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    text-decoration: none;
+    transition: background 0.1s ease;
+
+    &:hover { background: var(--color-fg-subtle); border-color: var(--color-fg-subtle); }
+  }
+
+  /* ── Accent button ────────────────────────────────── */
+
+  .button-accent {
+    display: inline-flex;
     align-items: center;
     gap: var(--spacing-vertical-half);
     background: var(--color-accent);
@@ -29,20 +52,11 @@
     }
   }
 
-  /* ── Hotkey hint ──────────────────────────────────── */
-
-  .hotkey {
-    font-family: inherit;
-    font-size: var(--font-size-subtle);
-    font-weight: var(--font-weight-base);
-    text-transform: none;
-    opacity: var(--opacity-half);
-  }
-
   /* ── Secondary button ─────────────────────────────── */
 
   .button-secondary {
     display: inline-flex;
+    justify-content: center;
     align-items: center;
     gap: var(--spacing-vertical-half);
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
@@ -61,7 +75,7 @@
     &:hover { background: var(--color-bg-base); }
   }
 
-  /* ── Secondary button — active variant ────────────────── */
+  /* ── Secondary button — active variant ────────────── */
 
   .button-secondary--active {
     color: var(--model-color-2);
@@ -71,15 +85,45 @@
     &:hover { background: var(--model-color-2-bg); }
   }
 
-  /* ── Secondary button — danger variant ────────────────── */
+  /* ── Secondary button — danger variant ────────────── */
 
   .button-secondary--danger {
     color: var(--color-fg-negative);
     border-color: var(--color-fg-negative);
 
+    &:hover { background: var(--color-bg-negative); }
+  }
+
+  /* ── Tertiary button ──────────────────────────────── */
+
+  .button-tertiary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    font-size: var(--font-size-subtle);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-base);
+    background: transparent;
+    cursor: pointer;
+    color: var(--color-fg-subtle);
+    text-decoration: none;
+
     &:hover {
-      background: var(--color-bg-negative);
+      background: var(--color-bg-subtle);
+      color: var(--color-fg-base);
     }
+  }
+
+  /* ── Hotkey hint ──────────────────────────────────── */
+
+  .hotkey {
+    font-family: inherit;
+    font-size: var(--font-size-subtle);
+    font-weight: var(--font-weight-base);
+    text-transform: none;
+    opacity: var(--opacity-half);
   }
 
 }

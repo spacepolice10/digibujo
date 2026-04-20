@@ -1,5 +1,4 @@
 @layer components {
-
   /* Drafts index page */
 
   .drafts-triage {
@@ -41,191 +40,18 @@
     padding: var(--spacing-vertical-double);
   }
 
-  /* Draft card — paper note style */
+  /* Card nav — triaging options below card */
 
-  .draft-card {
+  .card-nav {
     display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    margin-bottom: var(--spacing-vertical);
+    gap: var(--spacing-vertical);
+    padding: var(--spacing-vertical-half) 0;
   }
 
-  .draft-card-paper {
-    flex: 1;
-    min-width: 0;
-    background: #fffef5;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: var(--radius-base);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
-  }
-
-  .draft-card:nth-child(odd) .draft-card-paper  { transform: rotate(-0.15deg); }
-  .draft-card:nth-child(even) .draft-card-paper { transform: rotate(0.2deg);  }
-
-  .draft-card-body {
-    color: inherit;
-  }
-
-  /* Floating sticky toolbar — right side */
-
-  .draft-card-toolbar {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.125rem;
-    padding: 0.375rem;
-    background: var(--color-bg-base);
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    flex-shrink: 0;
-    position: sticky;
-    top: 1rem;
-  }
-
-  .draft-toolbar-divider {
-    width: 100%;
-    height: 1px;
-    background: var(--color-stroke-base);
-    margin-block: 0.125rem;
-  }
-
-  /* Toolbar buttons — icon only */
-
-  .draft-toolbar-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-family: inherit;
-    padding: 0.5rem;
-    border: none;
-    border-radius: var(--radius-base);
-    background: transparent;
-    cursor: pointer;
-    color: var(--color-fg-subtle);
-    text-decoration: none;
-
-    & .icon {
-      width: var(--icon-size-strong);
-      height: var(--icon-size-strong);
-    }
-
-    &:hover {
-      background: var(--color-bg-subtle);
-      color: var(--color-fg-base);
-    }
-  }
-
-  .draft-toolbar-btn--collect {
-    color: oklch(0.55 0.11 90);
-
-    &:hover {
-      background: var(--model-color-5-bg);
-      color: oklch(0.45 0.11 90);
-    }
-  }
-
-  .draft-toolbar-btn--schedule {
-    color: var(--model-color-2);
-
-    &:hover {
-      background: var(--model-color-2-bg);
-    }
-  }
-
-  .draft-toolbar-btn--archive {
-    color: var(--model-color-4);
-
-    &:hover {
-      background: var(--model-color-4-bg);
-    }
-  }
-
-  .draft-toolbar-btn--remove {
-    color: var(--color-fg-negative);
-
-    &:hover {
-      background: var(--color-bg-negative);
-    }
-  }
-
-  .draft-panel-submit {
-    border-radius: var(--radius-subtle);
-    border: 1px solid var(--color-stroke-base);
-    width: 100%;
-    justify-content: center;
-    gap: 0.35em;
-    padding: 0.375rem 0.625rem;
-    font-size: var(--font-size-subtle);
-
-    & .icon {
-      width: 1rem;
-      height: 1rem;
-    }
-  }
-
-  /* Expandable action dropdowns (Save / Schedule) */
-
-  .draft-action-dropdown {
-    position: relative;
-  }
-
-  .draft-action-dropdown > summary {
-    list-style: none;
-    cursor: pointer;
-    display: inline-flex;
-
-    &::-webkit-details-marker {
-      display: none;
-    }
-  }
-
-  .draft-action-panel {
-    display: none;
-    position: absolute;
-    top: 0;
-    right: calc(100% + 0.625rem);
-    left: auto;
-    bottom: auto;
-    z-index: var(--z-dropdown);
-    min-width: 200px;
-    max-width: 280px;
-    flex-direction: column;
+.drafts-postpone-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: var(--spacing-vertical-half);
-    padding: var(--spacing-vertical) var(--spacing-horizontal-half);
-    background: var(--color-bg-base);
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
-    box-shadow: var(--shadow-elevated);
-  }
-
-  .draft-action-dropdown[open] > .draft-action-panel {
-    display: flex;
-  }
-
-  .draft-action-panel-title {
-    margin: 0 0 var(--spacing-vertical-half);
-    font-size: var(--font-size-subtle);
-    font-weight: var(--font-weight-strong);
-    color: var(--color-fg-subtle);
-  }
-
-  .draft-action-panel form {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-vertical-half);
-  }
-
-  .draft-date-input {
-    width: 100%;
-    font-size: var(--font-size-subtle);
-    font-family: inherit;
-    color: inherit;
-    padding: var(--spacing-vertical-half);
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-subtle);
-    background: var(--color-bg-subtle);
   }
 
   /* Drafts section on index page */
@@ -276,10 +102,22 @@
     animation: popout 200ms ease calc(var(--i, 0) * 40ms) both;
   }
 
-  .drafts-pile-item:nth-child(1) { --i: 0; transform: rotate(-0.2deg); }
-  .drafts-pile-item:nth-child(2) { --i: 1; transform: rotate(0.2deg); }
-  .drafts-pile-item:nth-child(3) { --i: 2; transform: rotate(-0.2deg); }
-  .drafts-pile-item:nth-child(4) { --i: 3; transform: rotate(0.2deg); }
+  .drafts-pile-item:nth-child(1) {
+    --i: 0;
+    transform: rotate(-0.2deg);
+  }
+  .drafts-pile-item:nth-child(2) {
+    --i: 1;
+    transform: rotate(0.2deg);
+  }
+  .drafts-pile-item:nth-child(3) {
+    --i: 2;
+    transform: rotate(-0.2deg);
+  }
+  .drafts-pile-item:nth-child(4) {
+    --i: 3;
+    transform: rotate(0.2deg);
+  }
 
   /* Review button on timeline */
 
@@ -296,7 +134,10 @@
     color: oklch(0.18 0.02 130);
     text-decoration: none;
     box-shadow: 3px 3px 0px oklch(0.18 0.02 130);
-    transition: transform 80ms ease, box-shadow 80ms ease, background 80ms ease;
+    transition:
+      transform 80ms ease,
+      box-shadow 80ms ease,
+      background 80ms ease;
 
     &:hover {
       background: var(--color-accent-alternative);

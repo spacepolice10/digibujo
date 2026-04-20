@@ -1,5 +1,4 @@
 class StreamsController < ApplicationController
-  layout -> { request.variant.mobile? ? "mobile" : action_name.in?(%w[show edit]) ? "main-layout" : nil }
 
   def index
     @streams = Current.user.streams.ordered

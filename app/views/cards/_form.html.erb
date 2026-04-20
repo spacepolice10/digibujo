@@ -13,8 +13,10 @@
     </div>
   <% end %>
   <div>
-    <%= f.rich_text_area :content, autofocus: local_assigns.fetch(:autofocus, true), placeholder: "What's on your mind?",
-          data: { action: "trix-change->card-form#detectTypeShortcut" } %>
+    <%= f.rich_text_area :content,
+    autofocus: local_assigns.fetch(:autofocus, true),
+    placeholder: "What's on your mind?",
+    data: { action: "trix-change->card-form#detectTypeShortcut" } %>
   </div>
   <div class="card-form-actions">
     <div class="card-form-type-controls" data-action="change->card-form#loadFields">
