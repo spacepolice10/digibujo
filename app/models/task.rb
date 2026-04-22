@@ -1,7 +1,7 @@
 class Task < ApplicationRecord
   include Cardable
 
-  def self.icon   = 'circle-check'
+  def self.icon   = 'square'
   def self.colour = '2'
   def self.name   = 'Task'
   def self.marker = '•'

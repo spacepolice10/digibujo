@@ -1,7 +1,7 @@
 class Event < ApplicationRecord
   include Cardable
 
-  def self.icon   = 'calendar'
+  def self.icon   = 'circle'
   def self.colour = '6'
   def self.name   = 'Event'
   def self.marker = '○'
@@ -14,5 +14,5 @@ class Event < ApplicationRecord
     false
   end
 
-  def form_fields = %i[date_picker ends_date_picker tags_picker]
+  def form_fields = %i[date_picker tags_picker]
 end

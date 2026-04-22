@@ -24,6 +24,7 @@
     --icon-link:          url("icon-link.svg");
     --icon-strikethrough: url("icon-strikethrough.svg");
     --icon-quote:         url("icon-quote.svg");
+    --icon-heading:       url("icon-heading.svg");
     --icon-code:          url("icon-code.svg");
     --icon-list:          url("icon-list.svg");
     --icon-list-ordered:  url("icon-list-ordered.svg");
@@ -42,6 +43,13 @@
     --icon-trash:         url("icon-trash.svg");
     --icon-spinner:       url("icon-spinner.svg");
     --icon-search:        url("icon-search.svg");
+    --icon-tag:           url("icon-tag.svg");
+    --icon-check:         url("icon-check.svg");
+    --icon-chevron-down:  url("icon-chevron-down.svg");
+    --icon-face:          url("icon-face.svg");
+    --icon-square:        url("icon-square.svg");
+    --icon-circle:        url("icon-circle.svg");
+    --icon-line-dashed:   url("icon-line-dashed.svg");
   }
 
   .icon--spin {

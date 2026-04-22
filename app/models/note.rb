@@ -1,7 +1,7 @@
 class Note < ApplicationRecord
   include Cardable
 
-  def self.icon   = 'file'
+  def self.icon   = 'line-dashed'
   def self.colour = '5'
   def self.name   = 'Note'
   def self.marker = '-'
