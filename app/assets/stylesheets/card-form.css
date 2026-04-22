@@ -1,6 +1,29 @@
 @layer components {
   /* ── Compose form ─────────────────────────────────── */
 
+  .card-form-page-header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    max-width: var(--breakpoint-laptop);
+    width: 100%;
+    margin: 0 auto;
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+  }
+
+  .card-form-page-header-back {
+    justify-self: start;
+  }
+
+  .card-form-page-header-title {
+    margin: 0;
+    font-size: var(--font-size-strong);
+    font-weight: var(--font-weight-strong);
+    color: var(--color-fg-base);
+    text-align: center;
+  }
+
   [data-controller~="card-form"][data-loading] * {
     transition: none !important;
   }
@@ -11,15 +34,10 @@
     background: var(--color-bg-subtle);
     border: 1px solid var(--color-stroke-base);
     border-radius: var(--radius-base);
-    padding: var(--spacing-horizontal);
-    gap: var(--spacing-vertical);
-    --card-form-actions-height: calc(2 * var(--spacing-vertical-double));
+    position: relative;
   }
 
-  /* Hide the content field label — trix placeholder is enough */
-  [data-controller~="card-form"] label[for$="_content"] {
-    display: none;
-  }
+
 
   /* Reorder trix: editor above toolbar */
   [data-controller~="card-form"] div:has(trix-editor) {
@@ -32,10 +50,10 @@
     position: sticky;
     bottom: var(--card-form-actions-height, 0);
     z-index: var(--z-dropdown-bg);
-    background: var(--color-bg-subtle);
   }
   trix-editor {
     order: 1;
+    box-shadow: none;
   }
 
   /* ── Bottom actions bar ───────────────────────────── */
@@ -45,6 +63,7 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--spacing-horizontal-half);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     position: sticky;
     bottom: 0;
     z-index: var(--z-dropdown);
@@ -58,54 +77,158 @@
     gap: var(--spacing-horizontal-half);
     flex: 1;
     min-width: 0;
-    overflow-x: auto;
-    padding-inline: var(--spacing-horizontal-half);
     height: calc(2 * var(--spacing-vertical-double));
-  }
-
-  /* ── Back button ──────────────────────────────────── */
-
-  /* Visual style lives in .btn-ghost (button.css) */
-  .card-form-back {
-    display: none;
-  }
-
-  .card-form-type-controls:has(input[value]:not([value=""]):checked)
-    .card-form-back {
-    display: inline-flex;
-    opacity: 1;
-    transform: translateX(0);
+    overflow-x: auto;
+    overflow-y: visible;
+    padding-inline: var(--spacing-horizontal-half);
+    border-radius: var(--radius-strong);
+    border: 1px solid transparent;
+    scrollbar-width: none;
     transition:
-      opacity 0.2s ease,
-      transform 0.2s ease,
-      background 0.1s ease;
+      border-color 0.1s ease,
+      background 0.1s ease,
+      color 0.1s ease;
 
-    @starting-style {
-      opacity: 0;
-      transform: translateX(-6px);
+    &::-webkit-scrollbar {
+      display: none;
     }
   }
 
-  /* ── Type-selected state ──────────────────────────── */
+  .card-form-type-controls:has(.card-form-type-button:has(:checked)[data-value="task"]) {
+    background: var(--model-color-1-bg);
+    border-color: var(--model-color-2);
+    color: var(--model-color-2);
+  }
 
-  .card-form-type-controls:has(input[value]:not([value=""]):checked)
+  .card-form-type-controls:has(.card-form-type-button:has(:checked)[data-value="event"]) {
+    background: var(--model-color-6-bg);
+    border-color: var(--model-color-6);
+    color: var(--model-color-6);
+  }
+
+  .card-form-type-controls:has(.card-form-type-button:has(:checked)[data-value="note"]) {
+    background: var(--color-bg-warn);
+    border-color: var(--color-fg-warn);
+    color: var(--color-fg-warn);
+  }
+
+  .card-form-type-controls:has(.card-form-type-button:has(:checked)[data-value="daylog"]) {
+    background: var(--model-color-7-bg);
+    border-color: var(--model-color-7);
+    color: var(--model-color-7);
+  }
+
+  .card-form-type-button--back {
+    display: none;
+  }
+
+  .card-form-type-controls[data-mode="fields"] .card-form-type-button:has(:checked) .card-form-type-button--back {
+    display: inline-block;
+  }
+
+  .card-form-type-controls[data-mode="fields"] .card-form-type-button:has(:checked) {
+    gap: calc(var(--spacing-vertical-half) / 3);
+    padding-inline: var(--spacing-vertical-half);
+  }
+
+  .card-form-type-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-vertical-half);
+    border-radius: var(--radius-strong);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    font-family: inherit;
+    font-size: var(--font-size-subtle);
+    background: var(--color-bg-base);
+    border: 1px solid var(--color-stroke-base);
+    color: var(--color-fg-base);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.1s ease;
+
+    &:hover { background: var(--color-bg-subtle); }
+  }
+
+  .card-form-type-controls[data-mode="fields"]
     .card-form-type-button:not(:has(:checked)) {
     display: none;
   }
 
-  /* ── Inline fields frame ──────────────────────────── */
+  .card-form-type-button[data-value="task"] {
+    color: var(--model-color-2);
+  }
+
+  .card-form-type-button[data-value="event"] {
+    color: var(--model-color-6);
+  }
+
+  .card-form-type-button[data-value="note"] {
+    color: var(--color-fg-warn);
+  }
+
+  .card-form-type-button[data-value="daylog"] {
+    color: var(--model-color-7);
+  }
+
+  .card-form-type-button span {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    transition:
+      width 0.25s ease,
+      opacity 0.15s ease,
+      margin-inline-start 0.25s ease;
+  }
+
+  .card-form-type-controls[data-mode="fields"] .card-form-type-button span {
+    width: 0;
+    opacity: 0;
+    margin-inline-start: 0;
+  }
+
+  .card-form-type-controls[data-mode="types"] .card-form-type-button span {
+    width: auto;
+    opacity: 1;
+    margin-inline-start: calc(var(--spacing-vertical-half) / 2);
+  }
+
+  .card-form-type-button:has(:checked) {
+    border-color: currentColor;
+  }
+
+  .card-form-type-button:has(:checked)[data-value="task"] {
+    background: var(--model-color-1-bg);
+  }
+
+  .card-form-type-button:has(:checked)[data-value="event"] {
+    background: var(--model-color-6-bg);
+  }
+
+  .card-form-type-button:has(:checked)[data-value="note"] {
+    background: var(--color-bg-warn);
+  }
+
+  .card-form-type-button:has(:checked)[data-value="daylog"] {
+    background: var(--model-color-7-bg);
+  }
 
   turbo-frame.card-form-fields {
     display: none;
     align-items: center;
     gap: var(--spacing-horizontal-half);
-    flex: 1;
-    min-width: 0;
+    flex: 1 0 auto;
+    min-width: max-content;
   }
 
-  .card-form-type-controls:has(input[value]:not([value=""]):checked)
-    turbo-frame.card-form-fields {
+  .card-form-type-controls[data-mode="fields"] turbo-frame.card-form-fields {
     display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 
   turbo-frame.card-form-fields > * {
@@ -119,589 +242,9 @@
     }
   }
 
-  turbo-frame.card-form-fields label {
-    display: none;
-  }
-
-  /* Shared pill style for inline field controls */
-  turbo-frame.card-form-fields input[type="date"],
-  turbo-frame.card-form-fields input[type="datetime-local"],
-  turbo-frame.card-form-fields .tag-picker {
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    font-size: var(--font-size-subtle);
-    font-family: inherit;
-    background: transparent;
-  }
-
-  turbo-frame.card-form-fields input[type="date"],
-  turbo-frame.card-form-fields input[type="datetime-local"] {
-    color: inherit;
-    cursor: pointer;
-  }
-
-  turbo-frame.card-form-fields .tag-picker {
-    flex: 1;
-    min-width: 80px;
-    max-width: 200px;
-    flex-wrap: nowrap;
-    align-items: center;
-    gap: var(--spacing-vertical-half);
-    cursor: text;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    scroll-padding-inline: var(--spacing-horizontal-half);
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-
-  turbo-frame.card-form-fields .pills {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: var(--spacing-vertical-half);
-    margin-bottom: 0;
-  }
-
-  turbo-frame.card-form-fields .pill {
-    font-size: var(--font-size-subtle);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    gap: var(--spacing-vertical-half);
-    white-space: nowrap;
-  }
-
-  turbo-frame.card-form-fields .tag-picker input[type="text"] {
-    border: none;
-    background: transparent;
-    font-size: var(--font-size-subtle);
-    font-family: inherit;
-    color: var(--color-fg-base);
-    min-width: 60px;
-    flex-shrink: 0;
-    padding: 0;
-    outline: none;
-
-    &::placeholder {
-      color: var(--color-fg-subtle);
-    }
-  }
-
-  /* ── Type buttons ─────────────────────────────────── */
-
-  .card-form-type-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--radius-base);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    font-family: inherit;
-    font-size: var(--font-size-subtle);
-    cursor: pointer;
-    transition:
-      border-color 0.1s ease,
-      background 0.1s ease,
-      opacity 0.1s ease;
-    background: var(--color-bg-base);
-    border: 1px solid var(--color-stroke-base);
-    color: var(--color-fg-base);
-
-    &:hover {
-      opacity: 1;
-    }
-  }
-
-  .card-form-type-button[data-value=""] {
-    color: var(--model-color-8);
-  }
-  .card-form-type-button[data-value="task"] {
-    color: var(--model-color-2);
-  }
-  .card-form-type-button[data-value="event"] {
-    color: var(--model-color-6);
-  }
-  .card-form-type-button[data-value="note"] {
-    color: var(--color-fg-warn);
-  }
-  .card-form-type-button[data-value="daylog"] {
-    color: var(--model-color-7);
-  }
-
-  .card-form-type-button.disabled {
-    opacity: var(--opacity-half);
-    cursor: default;
-
-    &:hover {
-      opacity: var(--opacity-half);
-    }
-  }
-
-  .card-form-type-button span {
-    display: inline-block;
-    width: 0;
-    overflow: hidden;
-    opacity: 0;
-    white-space: nowrap;
-    margin-inline-start: 0;
-    transition:
-      width 0.25s ease,
-      opacity 0.15s ease,
-      margin-inline-start 0.25s ease;
-  }
-
-  .card-form-type-button:has(:checked) {
-    border-color: currentColor;
-
-    span {
-      width: auto;
-      opacity: 1;
-      margin-inline-start: var(--spacing-vertical-half);
-    }
-  }
-
-  .card-form-type-button:has(:checked)[data-value=""] {
-    background: var(--color-bg-base);
-  }
-  .card-form-type-button:has(:checked)[data-value="task"] {
-    background: var(--model-color-1-bg);
-  }
-  .card-form-type-button:has(:checked)[data-value="event"] {
-    background: var(--model-color-6-bg);
-  }
-  .card-form-type-button:has(:checked)[data-value="note"] {
-    background: var(--color-bg-warn);
-  }
-  .card-form-type-button:has(:checked)[data-value="daylog"] {
-    background: var(--model-color-7-bg);
-  }
-
-  /* ── Mood picker ──────────────────────────────────── */
-
-  .mood-picker {
-    display: flex;
-    gap: 2px;
-    align-items: center;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
-  }
-
-  turbo-frame.card-form-fields .mood-option {
-    display: inline-flex;
-  }
-
-  .mood-option input[type="radio"] {
-    display: none;
-  }
-
-  .mood-option span {
-    font-size: var(--font-size-base);
-    cursor: pointer;
-    opacity: 0.3;
-    transition:
-      opacity 0.1s,
-      transform 0.1s;
-    display: block;
-    padding: 2px 3px;
-    border-radius: var(--radius-base);
-  }
-
-  .mood-option:has(input:checked) span {
-    opacity: 1;
-    transform: scale(1.15);
-  }
-
-  .mood-option span:hover {
-    opacity: 0.65;
-  }
-
-  /* ── Field errors ─────────────────────────────────── */
-
-  .card-form-error {
-    display: flex;
-    font-size: var(--font-size-subtle);
-    color: var(--color-fg-negative);
-    text-align: center;
-    width: 100%;
-    transition:
-      opacity 0.2s ease,
-      transform 0.2s ease;
-
-    @starting-style {
-      opacity: 0;
-      transform: translateY(-4px);
-    }
-
-    ul {
-      display: flex;
-      width: 100%;
-      align-items: center;
-      justify-content: center;
-      gap: var(--spacing-vertical-half);
-      border: 1px solid var(--color-stroke-negative);
-      background-color: var(--color-bg-negative);
-      padding: var(--spacing-vertical-half);
-      list-style: none;
-      padding-inline-start: 0;
-    }
-  }
-
-  /* Submit button visual style lives in .button-primary (button.css) */
-
-  /* ── Mobile compose view ────────────────────────── */
-
-  /* Hide tab bar and FAB on compose page */
-  body:has(.compose-mobile) .tab-bar,
-  body:has(.compose-mobile) .fab {
-    display: none;
-  }
-
-  body:has(.compose-mobile) .main-content--mobile {
-    padding: 0;
-    gap: 0;
-    min-height: 100dvh;
-  }
-
-  .compose-mobile {
-    display: flex;
-    flex-direction: column;
-    min-height: 100dvh;
-  }
-
-  .compose-mobile__header {
-    display: flex;
-    align-items: center;
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
+  turbo-frame.card-form-fields .date-picker,
+  turbo-frame.card-form-fields .tags-picker,
+  turbo-frame.card-form-fields .mood-picker,
+  turbo-frame.card-form-fields > div {
     flex-shrink: 0;
   }
-
-  .compose-mobile__back {
-    display: flex;
-    align-items: center;
-    gap: 0.375rem;
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-base);
-    color: var(--color-fg-subtle);
-    text-decoration: none;
-
-    .icon {
-      width: var(--icon-size-base);
-      height: var(--icon-size-base);
-    }
-
-    &:hover {
-      color: var(--color-fg-base);
-    }
-  }
-
-  /* Form fills remaining space */
-  .compose-mobile #new_card,
-  .compose-mobile [data-controller~="card-form"] {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
-  }
-
-  .compose-mobile [data-controller~="card-form"] {
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    padding: 0;
-    gap: 0;
-  }
-
-  /* Editor area — bottom padding clears the fixed toolbar (~6rem + safe-area) */
-  .compose-mobile .compose-editor {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 0 var(--spacing-horizontal);
-    min-height: 0;
-    overflow-y: auto;
-    padding-bottom: calc(7rem + env(safe-area-inset-bottom, 0px));
-  }
-
-  .compose-mobile trix-toolbar {
-    display: none;
-  }
-
-  .compose-mobile trix-editor {
-    flex: 1;
-    min-height: 30vh;
-    order: 1;
-    border: none !important;
-    padding: 0;
-    font-size: var(--font-size-base);
-  }
-
-  /* ── Compose toolbar (above keyboard) ───────────── */
-
-  .compose-toolbar {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: var(--keyboard-offset, 0px);
-    background: var(--color-bg-subtle);
-    border-top: 1px solid var(--color-stroke-base);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
-    padding-bottom: calc(
-      var(--spacing-vertical-half) + env(safe-area-inset-bottom, 0px)
-    );
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-vertical-half);
-    z-index: var(--z-dropdown);
-  }
-
-  /* Keyboard visible: safe area is behind the keyboard */
-  [data-keyboard="visible"] .compose-toolbar {
-    padding-bottom: var(--spacing-vertical-half);
-  }
-
-  /* Type pills row */
-  .compose-toolbar__types {
-    display: flex;
-    gap: var(--spacing-horizontal-half);
-    overflow-x: auto;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-
-  .compose-toolbar__type-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.375rem 0.75rem;
-    border-radius: var(--radius-base);
-    border: 1px solid var(--color-stroke-base);
-    background: var(--color-bg-base);
-    font-size: var(--font-size-subtle);
-    color: var(--color-fg-subtle);
-    cursor: pointer;
-    white-space: nowrap;
-    flex-shrink: 0;
-    transition:
-      transform 0.15s,
-      box-shadow 0.15s,
-      border-color 0.15s,
-      background 0.15s,
-      color 0.15s;
-    box-shadow: 0 2px 0 var(--color-stroke-base);
-
-    .icon {
-      width: var(--icon-size-subtle);
-      height: var(--icon-size-subtle);
-    }
-
-    span {
-      display: inline;
-    }
-
-    &:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 3px 0 var(--color-stroke-base);
-    }
-
-    &:active {
-      transform: translateY(1px);
-      box-shadow: 0 1px 0 var(--color-stroke-base);
-    }
-  }
-
-  .compose-toolbar__type-pill:has(:checked) {
-    border-color: currentColor;
-    transform: translateY(2px);
-    box-shadow: none;
-  }
-
-  .compose-toolbar__type-pill[data-value=""] {
-    &:has(:checked) {
-      background: var(--model-color-8-bg);
-      color: var(--model-color-8);
-    }
-  }
-  .compose-toolbar__type-pill[data-value="task"] {
-    &:has(:checked) {
-      background: var(--model-color-1-bg);
-      color: var(--model-color-2);
-    }
-  }
-  .compose-toolbar__type-pill[data-value="event"] {
-    &:has(:checked) {
-      background: var(--model-color-6-bg);
-      color: var(--model-color-6);
-    }
-  }
-  .compose-toolbar__type-pill[data-value="note"] {
-    &:has(:checked) {
-      background: var(--color-bg-warn);
-      color: var(--color-fg-warn);
-    }
-  }
-  .compose-toolbar__type-pill[data-value="daylog"] {
-    &:has(:checked) {
-      background: var(--model-color-7-bg);
-      color: var(--model-color-7);
-    }
-  }
-
-  /* Fields + send row */
-  .compose-toolbar__fields-row {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
-  }
-
-  .compose-toolbar__fields {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
-    flex: 1;
-    min-width: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-  .compose-toolbar__fields label {
-    display: none;
-  }
-
-  .compose-toolbar__fields input[type="date"],
-  .compose-toolbar__fields input[type="datetime-local"],
-  .compose-toolbar__fields .tag-picker {
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    font-size: var(--font-size-subtle);
-    font-family: inherit;
-    background: transparent;
-  }
-
-  .compose-toolbar__fields input[type="date"],
-  .compose-toolbar__fields input[type="datetime-local"] {
-    color: inherit;
-    cursor: pointer;
-  }
-
-  .compose-toolbar__fields .tag-picker {
-    flex: 1;
-    min-width: 80px;
-    max-width: 200px;
-    flex-wrap: nowrap;
-    align-items: center;
-    gap: var(--spacing-vertical-half);
-    cursor: text;
-    overflow-x: auto;
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-
-  .compose-toolbar__fields .pills {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: var(--spacing-vertical-half);
-    margin-bottom: 0;
-  }
-
-  .compose-toolbar__fields .pill {
-    font-size: var(--font-size-subtle);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    gap: var(--spacing-vertical-half);
-    white-space: nowrap;
-  }
-
-  .compose-toolbar__fields .tag-picker input[type="text"] {
-    border: none;
-    background: transparent;
-    font-size: var(--font-size-subtle);
-    font-family: inherit;
-    color: var(--color-fg-base);
-    min-width: 60px;
-    flex-shrink: 0;
-    padding: 0;
-    outline: none;
-
-    &::placeholder {
-      color: var(--color-fg-subtle);
-    }
-  }
-
-  .compose-toolbar__fields .mood-picker {
-    display: flex;
-    gap: 2px;
-    align-items: center;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
-  }
-
-  .compose-toolbar__fields .mood-option {
-    display: inline-flex;
-  }
-  .compose-toolbar__fields .mood-option input[type="radio"] {
-    display: none;
-  }
-
-  .compose-toolbar__fields .mood-option span {
-    font-size: var(--font-size-base);
-    cursor: pointer;
-    opacity: 0.3;
-    transition:
-      opacity 0.1s,
-      transform 0.1s;
-    display: block;
-    padding: 2px 3px;
-    border-radius: var(--radius-base);
-  }
-
-  .compose-toolbar__fields .mood-option:has(input:checked) span {
-    opacity: 1;
-    transform: scale(1.15);
-  }
-
-  /* Send button */
-  .compose-toolbar__send {
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--color-accent);
-    color: oklch(0.18 0.02 130);
-    border: none;
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: opacity 0.1s;
-
-    .icon {
-      width: var(--icon-size-base);
-      height: var(--icon-size-base);
-    }
-
-    &:hover {
-      opacity: 0.85;
-    }
-    &:active {
-      opacity: 0.7;
-    }
-  }
-
-  /* Error block in compose */
-  .compose-mobile .card-form-error {
-    margin: 0 var(--spacing-horizontal);
-  }
-}
