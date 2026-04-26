@@ -35,74 +35,100 @@ Custom session-based auth built with an `Authentication` concern (not Devise). U
 
 | Type    | Concerns                       | Notes                              |
 |---------|--------------------------------|------------------------------------|
-| `Draft` | `Cardable`, `Schedulable`, `Collectable` | Entry point for all captures; promoted to Task or Note during triage |
-| `Task`  | `Cardable`                     | Completable, temporal; has `done`/`done_at` fields |
-| `Note`  | `Cardable`                     | Tagged permanent cards             |
+| `Task`  | `Cardable`                     | Completable + temporal; uses marker `•` |
+| `Note`  | `Cardable`                     | Taggable long-form/reference card; uses marker `-` |
+| `Event` | `Cardable`                     | Temporal (not completable); uses marker `○` |
 
-Cards have rich text `content` via Action Text (Trix). To add a new cardable type: create the model, `include Cardable`, implement `form_fields`, and register in `Card`'s `delegated_type` declaration.
+Cards have rich text `content` via Action Text (Trix). Triage intent methods live in concerns (`Collectable#collect!`, `Schedulable#schedule!`) and update card organization metadata without forcing type conversion. To add a new cardable type: create the model, `include Cardable`, implement `form_fields`, and register it in `Card`'s `delegated_type` declaration.
 
 ### Card Status
 `Card` has two independent boolean columns: `pinned` and `archived` (both `default: false, null: false`). There is no `status` enum. `Pinnable` adds a `pinned` scope and enforces a limit of 10 pinned cards per user. `Archivable` adds an `archived` scope. The `timeline` scope returns all cards (`all`) — pinned and archived cards remain visible in the Timeline and are distinguished by icons in the card partial.
 
+`Card` also tracks `triaged_at` (`datetime`): `nil` means not intentionally triaged yet; present means user has processed it via triage actions such as collect or schedule.
+
 ### Pop Mechanism
-Cards have a `pops_on` date column. A card is "popped" when `pops_on <= Date.today`. Popped drafts surface in the Drafts triage view. `Cards::PopsController#update` toggles/sets/clears `pops_on`. Drafts can also be postponed (set a future `pops_on`) via `Drafts::PostponesController`.
+Cards have a `pops_on` date column. A card is "popped" when `pops_on <= Date.today`. `Cards::PopsController#update` toggles/sets/clears `pops_on`. In triage, cards with no pop date or due pop date are eligible, and postponing moves `pops_on` forward.
 
-### Draft Promotion (Triage Workflow)
-Drafts are the raw capture state. During triage (`/drafts`), each draft can be:
-- **Scheduled** → `Drafts::SchedulesController` calls `cardable.schedule_as_task!` (promotes via `Schedulable` → `Promotable`)
-- **Collected** → `Drafts::CollectsController` calls `cardable.collect_as_note!(tag_names:)` (promotes via `Collectable` → `Promotable`)
-- **Postponed** → `Drafts::PostponesController` sets a future `pops_on`
-- **Removed** → `Drafts::RemovesController` destroys the card
+### Triage Workflow
+Triage is now card-first (`/triage`) instead of draft-first. The triage controller loads today's non-archived cards (`Current.user.cards.todays`) that are due for review (`pops_on IS NULL OR pops_on <= Date.current`).
 
-`Promotable#promote_to!` wraps the swap in a transaction: saves the new cardable, updates `card.cardable`, optionally applies tags, then destroys the old cardable.
+During triage, each card can be:
+- **Collect** → `Triage::CollectsController` calls `card.collect!(collection_name:)`
+- **Schedule** → `Triage::SchedulesController` calls `card.schedule!(collection_name:, date:)`
+- **Postpone** → `Triage::PostponesController` sets `pops_on` to tomorrow
+- **Archive** → `Triage::ArchivesController` sets `archived: true`
+
+`Collectable` and `Schedulable` are intent-focused concerns. They support triage actions without coupling triage to card type switching.
+
+### Sweep Rules
+`SweepCardsJob` enforces recycling rules:
+- completed cards remain recyclable through `archives_on` (set by `Completable#complete!`)
+- cards are auto-archived when due (`archives_on <= today`) or still untriaged after a grace window
+- pinned cards are excluded from auto-archive and deletion
+- archived cards are hard-deleted only after retention period, and pinned cards are excluded there too
+
+### Analog BuJo Alignment
+The architecture is intentionally closer to analog Bullet Journal behavior:
+- **Rapid logging markers** are first-class (`•` Task, `-` Note, `○` Event)
+- **Daily focus** is explicit (`/cards` and `/todays` operate on today's entries)
+- **Migration over rewrite** happens in triage by converting card type in place
+- **Deferred decisions** are supported via `pops_on` (postpone to revisit later)
+- **Separation of concerns** mirrors BuJo pages: today/timeline, triage, archived, pinned
 
 ### Streams
 `Stream` is a saved filtered view. It stores filter fields (`cardable_type`, `sorted_by`, `date_from`, `date_to`, `tag_names`) via `store_accessor :fields`. `Stream#cards` builds a scoped query against `user.cards`. Streams are user-owned and uniquely named.
 
 ### Turbo Streams
-All mutating actions (`create`, `update`, `destroy`) in cards and draft sub-controllers respond to `format.turbo_stream` for inline updates without page reloads. HTML fallback redirects are always provided.
+All mutating actions (`create`, `update`, `destroy`) in cards and triage sub-controllers respond to `format.turbo_stream` for inline updates without page reloads. HTML fallback redirects are always provided.
 
 ### Routes
 
 ```
-root                                        → home#index (redirects to /cards)
+root                                         → cards#index
 
 # Auth
-resource  :session                          → sessions#create/destroy
-resources :passwords, param: :token        → passwords#new/create/edit/update
+resource :session                            → sessions#new/create/show/destroy
+resource :session/code                       → sessions/codes#new/create
 
 # Cards
-GET    /cards                               → cards#index (Timeline)
-GET    /cards/:id                           → cards#show
-GET    /cards/new                           → cards#new
-POST   /cards                               → cards#create
-GET    /cards/:id/edit                      → cards#edit
-PATCH  /cards/:id                           → cards#update
-DELETE /cards/:id                           → cards#destroy
+GET    /cards                                → cards#index (today timeline)
+GET    /todays                               → cards#index (named alias)
+GET    /cards/:id                            → cards#show
+GET    /cards/new                            → cards#new
+POST   /cards                                → cards#create
+GET    /cards/:id/edit                       → cards#edit
+PATCH  /cards/:id                            → cards#update
+DELETE /cards/:id                            → cards#destroy
 
 # Card sub-resources (all Turbo Stream responses)
-PATCH  /cards/:card_id/pop                  → cards/pops#update     (toggle/set pops_on)
-PATCH  /cards/:card_id/pin                  → cards/pins#update     (toggle pinned status)
-PATCH  /cards/:card_id/archive              → cards/archives#update (toggle archived status)
-POST   /cards/:card_id/complete             → cards/completes#create  (mark done)
-DELETE /cards/:card_id/complete             → cards/completes#destroy (unmark done)
+PATCH  /cards/:card_id/pop                   → cards/pops#update (toggle/set pops_on)
+PATCH  /cards/:card_id/pin                   → cards/pins#update (toggle pinned status)
+PATCH  /cards/:card_id/archive               → cards/archives#update (toggle archived status)
+POST   /cards/:card_id/complete              → cards/completes#create (mark done)
+DELETE /cards/:card_id/complete              → cards/completes#destroy (unmark done)
+PATCH  /cards/:card_id/publish               → cards/publishes#update (toggle publish)
+GET    /cards/:card_id/playlist_picker       → cards/playlist_pickers#show
 
 # Dynamic form fields by cardable type
-GET    /cards/fields/:id                    → cards/fields#show     (?id=task|note|draft)
+GET    /cards/fields/:id                     → cards/fields#show (?id=task|note|event)
 
-# Drafts triage
-GET    /drafts                              → drafts#index
-POST   /drafts/:draft_id/schedule           → drafts/schedules#create  (promote → Task)
-POST   /drafts/:draft_id/collect            → drafts/collects#create   (promote → Note)
-POST   /drafts/:draft_id/postpone           → drafts/postpones#create  (set future pops_on)
-POST   /drafts/:draft_id/remove             → drafts/removes#create    (destroy card)
+# Triage
+GET    /triage                               → triage#show
+POST   /triage/cards/:card_id/collect        → triage/collects#create
+POST   /triage/cards/:card_id/schedule       → triage/schedules#create
+POST   /triage/cards/:card_id/postpone       → triage/postpones#create
+POST   /triage/cards/:card_id/archive        → triage/archives#create
 
 # Other resources
-resources :tags                             → tags#index/show/new/create/edit/update/destroy
-resources :streams                          → streams#index/show/new/create/edit/update/destroy
-resource  :calendar, only: :show           → calendars#show
-resources :pinned,    only: :index         → pinned#index (pinned cards list)
-resources :archived,  only: :index         → archived#index (archived cards list)
+resources :playlists, only: index/show/create/destroy (+ nested cards, reorder)
+resources :tags, only: index/destroy        (+ collection suggestions)
+resources :streams                           → streams CRUD
+resource  :history, only: :show
+resource  :upcoming, only: :show
+resource  :calendar, only: :show
+resources :pinned, only: :index
+resources :archived, only: :index
+resources :published, param: :code
 ```
 
 ### Database Strategy
