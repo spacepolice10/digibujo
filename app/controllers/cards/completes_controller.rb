@@ -1,5 +1,6 @@
 class Cards::CompletesController < ApplicationController
   before_action :set_card
+  before_action :set_render_partial
 
   def create
     @card.complete!
@@ -21,5 +22,9 @@ class Cards::CompletesController < ApplicationController
 
   def set_card
     @card = Current.user.cards.find(params[:card_id])
+  end
+
+  def set_render_partial
+    @card_partial = request.referer.to_s.include?("/triage") ? "triage/card" : "cards/card"
   end
 end

@@ -2,7 +2,7 @@ class StreamsController < ApplicationController
 
   def index
     @streams = Current.user.streams.ordered
-    @tags = Current.user.tags
+    @collections = Current.user.collections
   end
 
   def show
@@ -50,6 +50,6 @@ class StreamsController < ApplicationController
   private
 
   def stream_params
-    params.require(:stream).permit(:name, :cardable_type, :sorted_by, :date_from, :date_to, :tags, :icon, :colour)
+    params.require(:stream).permit(:name, :cardable_type, :sorted_by, :date_from, :date_to, :collections, :icon, :colour)
   end
 end

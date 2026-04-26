@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   # Card
   scope 'cards', module: :cards do
     resources :fields, only: :show
+    get "contexts", to: "contexts#index", defaults: { format: :json }
   end
   resources :cards do
     scope module: :cards do
@@ -21,13 +22,18 @@ Rails.application.routes.draw do
     end
   end
 
-  # Drafts triage
-  resources :drafts do
-    scope module: :drafts do
-      resource :schedule, only: :create
-      resource :collect,  only: :create
-      resource :postpone, only: :create
-      resource :remove,   only: :create
+  get "todays", to: "cards#index", as: :todays
+  resource :search, only: :show
+
+  # Triage
+  resource :triage, only: :show, controller: :triage do
+    scope module: :triage do
+      resources :cards, only: [], param: :card_id do
+        resource :collect,  only: :create, controller: :collects
+        resource :postpone, only: :create, controller: :postpones
+        resource :schedule, only: :create, controller: :schedules
+        resource :archive,  only: :create, controller: :archives
+      end
     end
   end
   resources :playlists, only: %i[index show create destroy] do
@@ -38,24 +44,22 @@ Rails.application.routes.draw do
   end
 
   # Organization & filtering
-  resources :tags, only: %i[index destroy]
+  get "indexing", to: "streams#index", as: :indexing
+  get "collections", to: "collections#index", defaults: { format: :json }
+  resources :collections, only: %i[show destroy]
   resources :streams
 
   # Views
-  resource  :upcoming,  only: :show
+  resource  :history,   only: :show
   resource  :calendar,  only: :show
   resources :pinned,    only: :index
   resources :archived,  only: :index
-  resources :tasks,     only: :index
-  resources :notes,     only: :index
-  resources :events,    only: :index
-  resources :daylogs,   only: :index
 
   # Publishing
-  resources :published, only: :show, param: :code
+  resources :published, param: :code
 
   # Health check
   get 'up' => 'rails/health#show', as: :rails_health_check
 
-  root 'home#index'
+  root "cards#index"
 end

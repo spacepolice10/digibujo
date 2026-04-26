@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
 class PlaylistsController < ApplicationController
-  layout -> { request.variant.mobile? ? 'mobile' : 'main-layout' }
-
   before_action :set_playlist, only: %i[show destroy]
 
   def index
-    @playlists = Current.user.playlists.includes(playlist_cards: { card: :tags }).order(created_at: :desc)
+    @playlists = Current.user.playlists.includes(playlist_cards: { card: :collection }).order(created_at: :desc)
   end
 
   def show; end
@@ -37,7 +35,7 @@ class PlaylistsController < ApplicationController
   private
 
   def set_playlist
-    @playlist = Current.user.playlists.includes(playlist_cards: { card: :tags }).find(params[:id])
+    @playlist = Current.user.playlists.includes(playlist_cards: { card: :collection }).find(params[:id])
   end
 
   def add_card_to_playlist

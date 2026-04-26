@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_29_161623) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_26_160000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -49,21 +49,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_29_161623) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "card_tags", force: :cascade do |t|
-    t.integer "card_id", null: false
-    t.datetime "created_at", null: false
-    t.integer "tag_id", null: false
-    t.datetime "updated_at", null: false
-    t.index ["card_id", "tag_id"], name: "index_card_tags_on_card_id_and_tag_id", unique: true
-    t.index ["card_id"], name: "index_card_tags_on_card_id"
-    t.index ["tag_id"], name: "index_card_tags_on_tag_id"
-  end
-
   create_table "cards", force: :cascade do |t|
     t.boolean "archived", default: false, null: false
     t.date "archives_on"
     t.integer "cardable_id", null: false
     t.string "cardable_type", null: false
+    t.integer "collection_id"
+    t.integer "context_card_id"
     t.datetime "created_at", null: false
     t.datetime "date"
     t.boolean "done", default: false, null: false
@@ -72,24 +64,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_29_161623) do
     t.boolean "pinned", default: false, null: false
     t.date "pops_on"
     t.string "public_code"
+    t.datetime "triaged_at"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["cardable_type", "cardable_id"], name: "index_cards_on_cardable"
+    t.index ["collection_id"], name: "index_cards_on_collection_id"
+    t.index ["context_card_id"], name: "index_cards_on_context_card_id"
     t.index ["public_code"], name: "index_cards_on_public_code", unique: true
     t.index ["user_id", "archived"], name: "index_cards_on_user_id_and_archived"
     t.index ["user_id", "archives_on"], name: "index_cards_on_user_id_and_archives_on"
     t.index ["user_id", "done"], name: "index_cards_on_user_id_and_done"
     t.index ["user_id", "pinned"], name: "index_cards_on_user_id_and_pinned"
     t.index ["user_id", "pops_on"], name: "index_cards_on_user_id_and_pops_on"
+    t.index ["user_id", "triaged_at"], name: "index_cards_on_user_id_and_triaged_at"
     t.index ["user_id"], name: "index_cards_on_user_id"
     t.index ["user_id"], name: "index_cards_on_user_id_and_status"
   end
 
-  create_table "daylogs", force: :cascade do |t|
-    t.integer "mood"
-  end
-
-  create_table "drafts", force: :cascade do |t|
+  create_table "collections", force: :cascade do |t|
+    t.string "colour"
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id", "name"], name: "index_collections_on_user_id_and_name", unique: true
+    t.index ["user_id"], name: "index_collections_on_user_id"
   end
 
   create_table "events", force: :cascade do |t|
@@ -146,16 +145,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_29_161623) do
     t.index ["user_id"], name: "index_streams_on_user_id"
   end
 
-  create_table "tags", force: :cascade do |t|
-    t.string "colour"
-    t.datetime "created_at", null: false
-    t.string "name", null: false
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["user_id", "name"], name: "index_tags_on_user_id_and_name", unique: true
-    t.index ["user_id"], name: "index_tags_on_user_id"
-  end
-
   create_table "tasks", force: :cascade do |t|
   end
 
@@ -168,14 +157,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_29_161623) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "card_tags", "cards"
-  add_foreign_key "card_tags", "tags"
+  add_foreign_key "cards", "cards", column: "context_card_id", on_delete: :nullify
+  add_foreign_key "cards", "collections"
   add_foreign_key "cards", "users"
+  add_foreign_key "collections", "users"
   add_foreign_key "login_codes", "users"
   add_foreign_key "playlist_cards", "cards"
   add_foreign_key "playlist_cards", "playlists"
   add_foreign_key "playlists", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "streams", "users"
-  add_foreign_key "tags", "users"
 end

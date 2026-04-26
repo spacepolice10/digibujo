@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
   def index
-    redirect_to cards_path
+    redirect_to todays_path
   end
 end

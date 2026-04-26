@@ -14,5 +14,8 @@ class Event < ApplicationRecord
     false
   end
 
-  def form_fields = %i[date_picker tags_picker]
+  def name
+    card.content.to_plain_text.lines.first&.strip&.truncate(200).presence || 'Untitled'
+  end
+
 end

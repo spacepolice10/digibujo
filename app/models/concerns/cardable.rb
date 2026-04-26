@@ -10,27 +10,31 @@ module Cardable
       @capabilities ||= new.capabilities.freeze
     end
 
-    def form_fields
-      @form_fields ||= new.form_fields.freeze
+    def icon
+      raise NotImplementedError, "#{self} must define .icon"
     end
 
-    def icon   = 'pencil'
-    def colour = '7'
-    def name   = 'Draft'
-    def marker = nil
+    def colour
+      raise NotImplementedError, "#{self} must define .colour"
+    end
+
+    def name
+      raise NotImplementedError, "#{self} must define .name"
+    end
+
+    def marker
+      raise NotImplementedError, "#{self} must define .marker"
+    end
   end
 
   def temporal?    = false
   def completable? = false
-  def taggable?    = true
-  def form_fields  = []
-
   def icon   = self.class.icon
   def colour = self.class.colour
   def name   = self.class.name
   def marker = self.class.marker
-
+  def excerpt = ""
   def capabilities
-    { temporal: temporal?, completable: completable?, taggable: taggable? }
+    { temporal: temporal?, completable: completable? }
   end
 end

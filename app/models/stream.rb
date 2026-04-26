@@ -4,7 +4,7 @@ class Stream < ApplicationRecord
 
   belongs_to :user
 
-  store_accessor :fields, :cardable_type, :sorted_by, :date_from, :date_to, :tags, :icon, :colour
+  store_accessor :fields, :cardable_type, :sorted_by, :date_from, :date_to, :collections, :icon, :colour
 
   validates :name, presence: true, uniqueness: { scope: :user_id }
 
@@ -12,16 +12,16 @@ class Stream < ApplicationRecord
 
   class << self
     def fields_keys
-      %w[cardable_type sorted_by date_from date_to tags icon colour]
+      %w[cardable_type sorted_by date_from date_to collections icon colour]
     end
   end
 
   def cards
-    scope = user.cards.includes(:tags)
+    scope = user.cards.includes(:collection)
     scope = filter_by_cardable_type(scope)
     scope = filter_by_date_from(scope)
     scope = scope.where("date <= ?", date_to) if date_to.present?
-    scope = filter_by_tags(scope)
+    scope = filter_by_collections(scope)
     scope = scope.order(created_at: sorted_by == "oldest" ? :asc : :desc)
     scope
   end
@@ -48,12 +48,12 @@ class Stream < ApplicationRecord
     scope.where("date >= ?", resolved)
   end
 
-  def filter_by_tags(scope)
-    return scope if tags.blank?
+  def filter_by_collections(scope)
+    return scope if collections.blank?
 
-    names = tags.split(",").map(&:strip).reject(&:blank?)
+    names = collections.split(",").map(&:strip).reject(&:blank?)
     return scope if names.empty?
 
-    scope.joins(:tags).where(tags: { name: names }).distinct
+    scope.joins(:collection).where(collections: { name: names }).distinct
   end
 end
