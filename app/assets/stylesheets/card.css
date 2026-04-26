@@ -1,13 +1,16 @@
 @layer components {
   .card {
-    --card-bg: var(--color-bg-subtle);
-    --card-bg-hover: var(--color-bg-base);
+    --card-bg: color-mix(in oklch, var(--color-bg-base), var(--color-bg-subtle) 35%);
+    --card-bg-hover: color-mix(in oklch, var(--color-bg-base), var(--color-bg-subtle) 55%);
     --card-border: var(--color-stroke-base);
+    --task-marker-color: var(--model-color-2);
+    --event-marker-color: var(--model-color-6);
+    --note-marker-color: var(--model-color-5);
 
     display: flex;
     align-items: center;
     border: 1px solid var(--card-border);
-    border-radius: var(--radius-base);
+    border-radius: var(--radius-strong);
     @supports (corner-shape: squircle) {
       corner-shape: squircle;
     }
@@ -15,11 +18,6 @@
     overflow: hidden;
     background: var(--card-bg);
     transition: background 0.1s ease;
-    cursor: grab;
-
-    &.dragging {
-      cursor: grabbing;
-    }
 
     /* Card type accent backgrounds */
 
@@ -79,6 +77,21 @@
     }
   }
 
+  .card--main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding: var(--spacing-vertical) var(--spacing-horizontal-half);
+  }
+
+  .card--main .card-body {
+    padding: 0;
+    flex: 1;
+    min-height: 0;
+  }
+
   .card-body {
     flex: 1;
     display: flex;
@@ -87,6 +100,14 @@
     color: inherit;
     text-decoration: none;
     overflow: hidden;
+    user-select: text;
+    -webkit-user-select: text;
+    -webkit-user-drag: none;
+  }
+
+  .card-body * {
+    user-select: text;
+    -webkit-user-select: text;
   }
 
   .card-title {
@@ -113,6 +134,16 @@
     }
   }
 
+  .card[data-card-type="task"] .card-title,
+  .card[data-card-type="event"] .card-title {
+    max-height: none;
+    overflow: visible;
+
+    &::after {
+      content: none;
+    }
+  }
+
   .card-tags {
     display: flex;
     flex-wrap: wrap;
@@ -120,11 +151,22 @@
     margin-top: var(--spacing-vertical-half);
   }
 
+  .card-tags .pill--type {
+    max-width: 100%;
+
+    span:last-child {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
   .card-action {
     display: flex;
     align-items: flex-start;
+    align-self: flex-start;
     flex-shrink: 0;
-    padding-inline-start: var(--spacing-horizontal);
+    padding: var(--spacing-vertical) 0 0 var(--spacing-horizontal);
 
     form {
       display: contents;
@@ -132,9 +174,29 @@
   }
 
   .completion-placeholder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: var(--icon-size-base);
     height: var(--icon-size-base);
     flex-shrink: 0;
+    font-size: var(--font-size-base);
+    line-height: 1;
+    font-weight: var(--font-weight-base);
+  }
+
+  .completion-marker {
+    display: inline-block;
+    width: 1ch;
+    text-align: center;
+  }
+
+  .card[data-card-type="note"] .completion-marker {
+    transform: translateY(-1px);
+  }
+
+  .card[data-card-type="event"] .completion-marker {
+    transform: translateY(-1px);
   }
 
   /* Card menu trigger */
@@ -162,7 +224,171 @@
     }
   }
 
-  /* Dropdown menu styles live in dropdown.css */
+  .card-dropdown-menu {
+    position: fixed;
+    inset: unset;
+    position-area: block-start span-inline-start;
+    margin-bottom: var(--spacing-vertical-half);
+    width: min(calc(var(--spacing-horizontal-double) * 11), calc(100vw - (2 * var(--spacing-horizontal))));
+    min-width: calc(var(--spacing-horizontal-double) * 8.5);
+    max-width: calc(100vw - (2 * var(--spacing-horizontal)));
+    max-height: min(18rem, calc(100dvh - (2 * var(--spacing-horizontal))));
+    overflow-y: auto;
+    padding: var(--spacing-vertical-half);
+    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+
+    &:popover-open {
+      animation: popout 0.1s ease-out;
+    }
+
+    form {
+      display: block;
+      margin: 0;
+    }
+
+    form + form,
+    form + a,
+    a + form {
+      border-top: 0;
+    }
+  }
+
+  .card-dropdown-item {
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: var(--spacing-horizontal-half);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+    border-radius: var(--radius-base);
+    text-align: start;
+    background: transparent;
+    border: 0;
+    color: var(--color-fg-base);
+    font: inherit;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.12s ease, transform 0.12s ease, border-color 0.12s ease;
+
+    &:hover {
+      background: var(--color-bg-base);
+      color: var(--color-accent);
+      transform: translateX(2px);
+    }
+
+    &:focus-visible {
+      background: var(--color-bg-base);
+    }
+
+    &.card-dropdown-item--danger {
+      .card-dropdown-icon {
+        border-color: color-mix(in oklch, var(--color-fg-negative) 45%, var(--color-stroke-base));
+        background: color-mix(in oklch, var(--color-bg-negative) 35%, var(--color-bg-base));
+        color: var(--color-fg-negative);
+      }
+
+      .card-dropdown-label {
+        color: var(--color-fg-negative);
+      }
+
+      &:hover {
+        background: color-mix(in oklch, var(--color-bg-negative) 35%, var(--color-bg-base));
+      }
+    }
+  }
+
+  .card-dropdown-icon {
+    width: calc(var(--spacing-horizontal-double) * 1);
+    height: calc(var(--spacing-horizontal-double) * 1);
+    margin-top: calc(var(--spacing-vertical-half) / 4);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-base);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: var(--color-bg-base);
+    color: var(--color-fg-subtle);
+
+    .icon {
+      width: var(--icon-size-base);
+      height: var(--icon-size-base);
+    }
+
+    &.card-dropdown-icon--pop {
+      color: var(--model-color-1);
+    }
+    &.card-dropdown-icon--pin {
+      color: var(--model-color-6);
+    }
+    &.card-dropdown-icon--archive {
+      color: var(--model-color-2);
+    }
+    &.card-dropdown-icon--edit {
+      color: var(--model-color-4);
+    }
+    &.card-dropdown-icon--delete {
+      color: var(--color-fg-negative);
+    }
+    &.card-dropdown-icon--chooser {
+      color: var(--model-color-5);
+    }
+  }
+
+  .card-dropdown-item:hover .card-dropdown-icon {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .card-dropdown-text {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--spacing-vertical-half) / 4);
+    min-width: 0;
+  }
+
+  .card-dropdown-label {
+    font-size: var(--font-size-subtle);
+    font-weight: var(--font-weight-strong);
+    color: var(--color-fg-base);
+    overflow-wrap: anywhere;
+  }
+
+  .card-dropdown-desc {
+    font-size: var(--font-size-subtle);
+    color: var(--color-fg-subtle);
+    font-weight: var(--font-weight-base);
+    overflow-wrap: anywhere;
+  }
+
+  .card-dropdown-item:hover .card-dropdown-desc {
+    color: var(--color-accent);
+  }
+
+  .pinned-dropdown-menu {
+    position: fixed;
+    inset: unset;
+    position-area: block-start center;
+    margin-bottom: var(--spacing-horizontal-half);
+    min-width: calc(var(--spacing-horizontal-double) * 7);
+    position-anchor: --pinned-stack-trigger;
+    position-try-fallbacks: flip-block;
+
+    &:popover-open {
+      animation: popout 0.1s ease-out;
+    }
+  }
+
+  .pinned-list-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(
+      calc(var(--spacing-horizontal-double) + var(--spacing-vertical-half)) +
+        var(--spacing-vertical-double)
+    );
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
+  }
 
   .completion-toggle {
     /* Checkbox shape */
@@ -174,7 +400,7 @@
 
     /* Button reset */
     background: transparent;
-    border: 1.5px solid var(--color-stroke-base);
+    border: 1.5px solid var(--task-marker-color);
     cursor: pointer;
     padding: 0;
 
@@ -185,9 +411,7 @@
       border-color 0.15s ease,
       background-color 0.15s ease;
 
-    &:hover {
-      border-color: var(--model-color-2);
-    }
+    &:hover { border-color: var(--task-marker-color); }
 
     /* Ghost checkmark on hover (not done) */
     &:not(.done):hover::after {
@@ -197,16 +421,16 @@
       margin: auto;
       width: 4px;
       height: 7px;
-      border-right: 1.5px solid var(--model-color-2);
-      border-bottom: 1.5px solid var(--model-color-2);
+      border-right: 1.5px solid var(--task-marker-color);
+      border-bottom: 1.5px solid var(--task-marker-color);
       transform: rotate(45deg) translate(0, -1px);
       opacity: 0.4;
     }
 
     /* Done: filled blue square with white checkmark */
     &.done {
-      background: var(--model-color-2);
-      border-color: var(--model-color-2);
+      background: var(--task-marker-color);
+      border-color: var(--task-marker-color);
 
       &::after {
         content: "";
@@ -231,5 +455,58 @@
     font-weight: var(--font-weight-strong);
     text-transform: uppercase;
     color: var(--color-fg-warn);
+  }
+
+  .card-empty {
+    display: grid;
+    justify-items: start;
+    gap: var(--spacing-vertical-half);
+    text-align: left;
+    margin-top: var(--spacing-horizontal);
+    padding: var(--spacing-horizontal) var(--spacing-horizontal-double);
+    border: 1px dashed var(--color-stroke-base);
+    border-radius: var(--radius-strong);
+    background: var(--color-bg-subtle);
+    color: var(--color-fg-base);
+  }
+
+  .card-empty-markers {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+  }
+
+  .card-empty-marker {
+    width: var(--icon-size-base);
+    height: var(--icon-size-base);
+    color: var(--color-fg-subtle);
+  }
+
+  .card-empty-marker--task {
+    color: var(--model-color-2);
+  }
+
+  .card-empty-marker--note {
+    color: var(--model-color-5);
+  }
+
+  .card-empty-marker--event {
+    color: var(--model-color-6);
+  }
+
+  .card-empty-heading {
+    margin: 0;
+    font-size: var(--font-size-base);
+    color: var(--color-fg-base);
+  }
+
+  .card-empty-copy {
+    margin: 0;
+    font-size: var(--font-size-subtle);
+    color: var(--color-fg-subtle);
+  }
+
+  .cards-list {
+    min-height: calc(var(--spacing-horizontal-double) * 9);
   }
 }

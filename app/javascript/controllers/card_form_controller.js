@@ -1,137 +1,154 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["fields", "typeControls"];
-
-  initialize() {
-    this.handleBeforeFrameRender = this.handleBeforeFrameRender.bind(this);
-  }
+  static targets = ["fields", "mobileFields", "mobileTypes", "typeIcon", "typeInput", "typeMenu"];
+  static values = { mobileMode: String, currentType: String };
 
   connect() {
-    this.element.dataset.loading = "";
-    requestAnimationFrame(() =>
-      requestAnimationFrame(() => {
-        delete this.element.dataset.loading;
-      }),
-    );
-    this.ensureSelectedType();
-    this.ensureMode();
-    this.fieldsTarget?.addEventListener("turbo:before-frame-render", this.handleBeforeFrameRender);
-  }
-
-  disconnect() {
-    this.fieldsTarget?.removeEventListener("turbo:before-frame-render", this.handleBeforeFrameRender);
+    if (!this.hasMobileModeValue) this.mobileModeValue = "types";
+    if (!this.hasCurrentTypeValue) {
+      const selectedInput = this.typeInputTargets.find((typeInput) => typeInput.checked);
+      if (selectedInput) this.currentTypeValue = selectedInput.value;
+    }
+    this.element.dataset.mobileMode = this.mobileModeValue;
+    this.element.dataset.toolbarExpanded = "false";
+    if (this.hasCurrentTypeValue) this.element.dataset.currentType = this.currentTypeValue;
+    this._editorMultilineLocked = this.element.dataset.editorMultiline == "true";
+    this.updateEditorLayout();
   }
 
   loadFields(event) {
     if (!this.hasFieldsTarget) return;
-    if (event.target.name != "cardable_type") return;
     const value = event.target.value;
     if (!value) return;
+    if (this.currentTypeValue == value) {
+      this.element.dataset.currentType = value;
+      this.updateTypeIcon(event.target);
+      return;
+    }
 
-    this.showFields();
-    this.fieldsTarget.dataset.switching = "true";
+    this.currentTypeValue = value;
+    this.element.dataset.currentType = value;
     this.fieldsTarget.src = `/cards/fields/${value}`;
-  }
-
-  ensureSelectedType() {
-    const selectedInput = this.element.querySelector('input[name="cardable_type"]:checked');
-    if (selectedInput) return;
-
-    const firstInput = this.element.querySelector('input[name="cardable_type"]');
-    if (firstInput) firstInput.checked = true;
-  }
-
-  ensureMode() {
-    if (!this.hasTypeControlsTarget) return;
-    if (this.typeControlsTarget.dataset.mode) return;
-
-    this.showFields();
-  }
-
-  showTypeSelector(event) {
-    event?.preventDefault();
-    if (!this.hasTypeControlsTarget) return;
-
-    this.typeControlsTarget.dataset.mode = "types";
-  }
-
-  showFields() {
-    if (!this.hasTypeControlsTarget) return;
-
-    this.typeControlsTarget.dataset.mode = "fields";
+    this.updateTypeIcon(event.target);
+    this.focusEditor();
   }
 
   selectType(event) {
-    const input = event.currentTarget.querySelector('input[name="cardable_type"]');
-    if (!input || !input.checked) return;
+    const value = event.params.type;
+    const input = this.typeInputTargets.find((typeInput) => typeInput.value == value);
+    if (!input) return;
 
-    if (this.typeControlsTarget.dataset.mode == "fields") {
-      this.showTypeSelector(event);
-    } else {
-      this.showFields();
-    }
+    input.checked = true;
+    this.loadFields({ target: input });
+    this.updateTypeIcon(input);
+    this.showFields();
+    event.currentTarget.closest("[popover]")?.hidePopover();
   }
 
-  switchType(event) {
-    const typeIndex = Number.parseInt(event.key, 10) - 1;
-    if (Number.isNaN(typeIndex) || typeIndex < 0) return;
+  focusTypeMenu(event) {
+    if (event.newState != "open") return;
 
-    const typeRadios = Array.from(this.element.querySelectorAll('input[name="cardable_type"]'));
-    const item = typeRadios[typeIndex];
-    if (!item || item.checked) return;
+    requestAnimationFrame(() => {
+      const selectedInput = this.typeInputTargets.find((typeInput) => typeInput.checked);
+      const selectedItem = selectedInput && this.typeMenuTarget.querySelector(
+        `[data-card-form-type-param="${selectedInput.value}"]`
+      );
+      const fallbackItem = this.typeMenuTarget.querySelector("[data-grid-navigation-target~='item']");
+      (selectedItem || fallbackItem)?.focus();
+    });
+  }
+
+  toggleToolbar(event) {
+    event.preventDefault();
+    const expanded = this.element.dataset.toolbarExpanded == "true";
+    this.element.dataset.toolbarExpanded = expanded ? "false" : "true";
+    event.currentTarget.setAttribute("aria-pressed", expanded ? "false" : "true");
+  }
+
+  focusEditor() {
+    const editor = this.element.querySelector("trix-editor");
+    if (!editor) return;
+    editor.focus();
+  }
+
+  updateEditorLayout() {
+    const editor = this.element.querySelector("trix-editor");
+    if (!editor) return;
+
+    const mutable = editor.querySelector("[data-trix-mutable]");
+    const lineHeight = this.parseLineHeight(window.getComputedStyle(editor).lineHeight);
+    if (!lineHeight) return;
+
+    const hasWrappedContent = mutable ? mutable.getClientRects().length > 1 : false;
+    const hasVisualOverflow = editor.scrollHeight > (lineHeight * 1.5);
+    const isMultiline = hasWrappedContent || hasVisualOverflow;
+
+    if (isMultiline && !this._editorMultilineLocked) {
+      this._editorMultilineLocked = true;
+      this.element.dataset.editorMultiline = "true";
+      return;
+    }
+
+    if (this._editorMultilineLocked) {
+      this.element.dataset.editorMultiline = "true";
+      return;
+    }
+
+    this.element.dataset.editorMultiline = "false";
+  }
+
+  parseLineHeight(rawLineHeight) {
+    if (!rawLineHeight || rawLineHeight == "normal") return null;
+
+    const parsed = Number.parseFloat(rawLineHeight);
+    if (Number.isNaN(parsed)) return null;
+
+    return parsed;
+  }
+
+  showFields() {
+    this.mobileModeValue = "fields";
+    this.element.dataset.mobileMode = "fields";
+  }
+
+  showTypes() {
+    this.mobileModeValue = "types";
+    this.element.dataset.mobileMode = "types";
+  }
+
+  keydown(event) {
+    if (!event.ctrlKey || !event.shiftKey || event.metaKey || event.altKey) return;
+
+    const shortcutToIndex = {
+      "1": 0,
+      "2": 1,
+      "3": 2,
+      "4": 3,
+      "5": 4
+    };
+    const typeIndex = shortcutToIndex[event.key];
+    if (typeIndex == null) return;
+
+    const input = this.typeInputTargets[typeIndex];
+    if (!input) return;
 
     event.preventDefault();
-    item.checked = true;
-    item.dispatchEvent(new Event("change", { bubbles: true }));
+    input.checked = true;
+    this.loadFields({ target: input });
+    this.updateTypeIcon(input);
+    this.showFields();
+  }
+
+  updateTypeIcon(input) {
+    if (!this.hasTypeIconTarget) return;
+    const icon = input.dataset.cardFormIconValue;
+    if (!icon) return;
+    this.typeIconTarget.style.setProperty("--icon-mask", `var(--icon-${icon})`);
   }
 
   submit(event) {
     event.preventDefault();
     this.element.requestSubmit();
-  }
-
-  async handleBeforeFrameRender(event) {
-    if (!this.hasFieldsTarget) return;
-    if (event.target != this.fieldsTarget) return;
-    if (this.fieldsTarget.dataset.switching != "true") return;
-
-    event.preventDefault();
-
-    const currentItems = Array.from(this.fieldsTarget.children);
-    await this.animateItems(currentItems, [
-      { opacity: 1, transform: "translateX(0)" },
-      { opacity: 0, transform: "translateX(6px)" },
-    ]);
-
-    event.detail.render(this.fieldsTarget, event.detail.newFrame);
-
-    requestAnimationFrame(() => {
-      const nextItems = Array.from(this.fieldsTarget.children);
-      this.animateItems(nextItems, [
-        { opacity: 0, transform: "translateX(-6px)" },
-        { opacity: 1, transform: "translateX(0)" },
-      ]);
-    });
-  }
-
-  animateItems(items, keyframes) {
-    if (items.length == 0) {
-      delete this.fieldsTarget.dataset.switching;
-      return Promise.resolve();
-    }
-
-    const animations = items.map((item, index) =>
-      item.animate(keyframes, {
-        duration: 180,
-        easing: "ease",
-        fill: "both",
-        delay: index * 24,
-      }).finished,
-    );
-
-    return Promise.allSettled(animations).finally(() => {
-      delete this.fieldsTarget.dataset.switching;
-    });
   }
 }

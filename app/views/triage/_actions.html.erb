@@ -1,0 +1,50 @@
+<nav class="triage-card-actions" data-controller="dropdown">
+  <details class="dropdown">
+    <summary class="button-secondary triage-action-button">
+      <span class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></span>
+      Collect
+    </summary>
+    <div class="dropdown-body">
+      <%= form_with url: triage_card_collect_path(card) do %>
+        <%= render "cards/fields/tags_picker", card: card, field_name: "collection_id", name_field_name: "collection_name", frame_id: "save-collection-#{card.id}" %>
+        <%= button_tag type: :submit, class: "button-secondary triage-action-button" do %>
+          <span class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></span>
+          Collect
+        <% end %>
+      <% end %>
+    </div>
+  </details>
+  <details class="dropdown">
+    <summary class="button-secondary triage-action-button">
+      <span class="icon" style="--icon-mask: var(--icon-arrow-up)" aria-hidden="true"></span>
+      Postpone
+    </summary>
+    <div class="dropdown-body triage-postpone-grid">
+      <%= button_to "Tomorrow", triage_card_postpone_path(card), class: "button-secondary triage-action-button" %>
+    </div>
+  </details>
+  <% if ["Task", "Event"].include?(card.cardable_type) %>
+    <details class="dropdown">
+      <summary class="button-secondary triage-action-button">
+        <span class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></span>
+        Schedule
+      </summary>
+      <div class="dropdown-body">
+        <%= form_with url: triage_card_schedule_path(card) do |f| %>
+          <%= f.date_field :date, class: "form-item" %>
+          <%= render "cards/fields/tags_picker", card: card, field_name: "collection_id", name_field_name: "collection_name", frame_id: "schedule-collection-#{card.id}" %>
+          <%= button_tag type: :submit, class: "button-secondary triage-action-button" do %>
+            <span class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></span>
+            Schedule
+          <% end %>
+        <% end %>
+      </div>
+    </details>
+  <% end %>
+  <%= button_to triage_card_archive_path(card),
+        class: "button-secondary triage-action-button triage-action-button--danger",
+        form: { data: { turbo_confirm: "Archive?" } } do %>
+    <span class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></span>
+    Archive
+  <% end %>
+</nav>

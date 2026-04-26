@@ -15,7 +15,8 @@
   .card-menu,
   .card-action,
   .show-navigation-actions,
-  .card-form-actions,
+  .card-form-rail,
+  .card-form-footer,
   trix-toolbar,
   .pagination-trigger {
     display: none !important;

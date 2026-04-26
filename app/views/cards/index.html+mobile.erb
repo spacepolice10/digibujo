@@ -1,15 +1,28 @@
-<% if @drafts.any? %>
+<div data-controller="hotkey" data-action="keydown@window->hotkey#keydown">
+  <%= link_to search_path,
+        class: "sr-only",
+        aria: { hidden: true },
+        tabindex: "-1",
+        data: {
+          hotkey_target: "binding",
+          hotkey_keys_value: "mod+k"
+        } do %>
+    Open search
+  <% end %>
+  <button type="button"
+          class="sr-only"
+          aria-hidden="true"
+          tabindex="-1"
+          data-hotkey-target="binding"
+          data-hotkey-keys-value="mod+e"
+          data-hotkey-action-value="focus"
+          data-hotkey-selector-value="#card_form trix-editor">
+    Focus editor
+  </button>
   <div class="sidebar-panel__section-header" style="margin-block: var(--spacing-horizontal-double);">
-    <h2 class="sidebar-panel__section-label">Your Drafts</h2>
-    <span class="sidebar-panel__section-wavy" aria-hidden="true"></span>
-    <%= link_to "Triage", drafts_path, class: "sidebar-panel__section-link", data: { turbo_frame: "_top" } %>
-  </div>
-  <div id="draft_cards">
-    <%= render @drafts %>
-  </div>
-<% end %>
-<div class="sidebar-panel__section-header" style="margin-block: var(--spacing-horizontal-double);">
-  <h2 class="sidebar-panel__section-label">Recently Sorted</h2>
+  <h2 class="sidebar-panel__section-label">recent:</h2>
   <span class="sidebar-panel__section-wavy" aria-hidden="true"></span>
+  <%= link_to "Triage", triage_path, class: "sidebar-panel__section-link", data: { turbo_frame: "_top" } %>
+  </div>
+  <%= render "cards/paginated_list", cards: @cards, page: @page, on_todays_route: @on_todays_route %>
 </div>
-<%= render "cards/paginated_list", cards: @cards, page: @page %>

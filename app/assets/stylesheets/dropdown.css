@@ -18,7 +18,7 @@
     top: 100%;
     left: 0;
     z-index: var(--z-dropdown);
-    min-width: 200px;
+    min-width: calc(var(--spacing-horizontal-double) * 5);
     padding: var(--spacing-vertical);
     background: var(--color-bg-base);
     border: 1px solid var(--color-stroke-base);
@@ -37,328 +37,33 @@
   }
 
   .dropdown-menu {
-    padding: 0;
+    padding: var(--spacing-vertical-half);
     border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
+    border-radius: var(--radius-strong);
     background: var(--color-bg-subtle);
-    box-shadow: var(--shadow-elevated);
+    box-shadow:
+      var(--shadow-elevated),
+      0 0 0 1px color-mix(in oklch, var(--color-bg-base) 35%, transparent);
     overflow: hidden;
   }
 
-  /* ── Tag suggestions popover (positioning only) ───── */
-
-  [popover]#tag-suggestions {
-    position-anchor: --tag-picker;
-    position-area: block-end span-inline-end;
-    position-try-fallbacks: flip-block;
-    margin: 0;
-    inset: auto;
-    width: anchor-size(inline);
-    max-height: 12rem;
-    overflow-y: auto;
-
-    &:popover-open {
-      animation: popout 80ms ease-out;
-    }
-  }
-
-  /* ── Tag suggestions list ─────────────────────────── */
-
-  .tag-suggestions {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-
-    li {
-      padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-      cursor: pointer;
-
-      &:hover,
-      &.active {
-        background: var(--model-color-1-bg);
-      }
-    }
-  }
-
-  .tag-create-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--spacing-horizontal-half);
-    cursor: default;
-
-    &:hover,
-    &.active {
-      background: transparent !important;
-    }
-  }
-
-  .tag-create-label {
-    font-size: var(--font-size-subtle);
-    color: var(--color-fg-subtle);
-    white-space: nowrap;
-
-    kbd {
-      display: inline-block;
-      font-family: inherit;
-      font-size: 0.75em;
-      padding: 1px 5px;
-      border: 1px solid var(--color-stroke-base);
-      border-radius: var(--radius-subtle);
-      background: var(--color-bg-subtle);
-      opacity: 0.7;
-    }
-  }
-
-  .colour-picker {
-    display: flex;
-    gap: 6px;
-  }
-
-  .colour-dot {
-    width: 18px;
-    height: 18px;
-    border-radius: var(--radius-strong);
-    border: 2px solid transparent;
-    cursor: pointer;
-    padding: 0;
+  .dropdown-menu[popover] {
+    opacity: 0;
+    transform: translateY(calc(var(--spacing-vertical-half) * -1));
     transition:
-      transform 0.1s ease,
-      border-color 0.1s ease;
+      opacity 110ms ease,
+      transform 110ms ease,
+      display 110ms allow-discrete,
+      overlay 110ms allow-discrete;
+  }
 
-    &:hover {
-      transform: scale(1.25);
-      border-color: var(--color-stroke-base);
+  .dropdown-menu[popover]:popover-open {
+    opacity: 1;
+    transform: translateY(0);
+
+    @starting-style {
+      opacity: 0;
+      transform: translateY(calc(var(--spacing-vertical-half) * -1));
     }
-  }
-
-  /* ── Icon picker (form) ──────────────────────────── */
-
-  .icon-picker {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    align-items: center;
-  }
-
-  .icon-option {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius-subtle);
-    cursor: pointer;
-    transition:
-      background 0.1s ease,
-      box-shadow 0.1s ease;
-
-    &:hover {
-      background: var(--color-bg-base);
-    }
-  }
-
-  .icon-option input[type="radio"] {
-    display: none;
-  }
-
-  .icon-option:has(input:checked) {
-    background: var(--color-bg-base);
-    box-shadow: 0 0 0 2px var(--color-stroke-strong);
-  }
-
-  .icon-option__label {
-    font-size: var(--font-size-subtle);
-    color: var(--color-fg-subtle);
-  }
-
-  /* ── Colour picker (form) ──────────────────────────── */
-
-  .colour-picker--form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    align-items: center;
-  }
-
-  .colour-option {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-  }
-
-  .colour-option input[type="radio"] {
-    display: none;
-  }
-
-  .colour-option__label {
-    font-size: var(--font-size-subtle);
-    color: var(--color-fg-subtle);
-    padding: 4px 8px;
-    border-radius: var(--radius-subtle);
-    transition:
-      background 0.1s ease,
-      box-shadow 0.1s ease;
-  }
-
-  .colour-option:has(input:checked) .colour-option__label {
-    background: var(--color-bg-base);
-    box-shadow: 0 0 0 2px var(--color-stroke-strong);
-  }
-
-  .colour-option__swatch {
-    width: 24px;
-    height: 24px;
-    border-radius: var(--radius-strong);
-    border: 2px solid transparent;
-    transition:
-      transform 0.1s ease,
-      border-color 0.1s ease;
-  }
-
-  .colour-option:hover .colour-option__swatch {
-    transform: scale(1.2);
-  }
-
-  .colour-option:has(input:checked) .colour-option__swatch {
-    border-color: var(--color-stroke-strong);
-    transform: scale(1.2);
-  }
-
-  /* ── Card dropdown menu ───────────────────────────── */
-
-  /* ── Card dropdown menu (positioning only) ───────── */
-
-  .card-dropdown-menu {
-    position: absolute;
-    inset: unset;
-    position-area: block-end center;
-    margin-top: var(--spacing-vertical-half);
-    min-width: 340px;
-    position-try-fallbacks: flip-block;
-
-    &:popover-open {
-      animation: popout 150ms ease-out;
-    }
-
-    form {
-      display: block;
-      margin: 0;
-    }
-
-    form + form,
-    form + a,
-    a + form {
-      border-top: 1px solid var(--color-stroke-base);
-    }
-  }
-
-  .card-dropdown-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    padding: 10px 12px;
-    text-align: start;
-    background: none;
-    border: none;
-    cursor: pointer;
-    text-decoration: none;
-    transition: background 0.1s ease;
-
-    &:hover {
-      background: var(--color-bg-base);
-    }
-
-    &.card-dropdown-item--danger {
-      .card-dropdown-icon {
-        background: var(--color-bg-negative);
-        color: var(--color-fg-negative);
-      }
-      .card-dropdown-label {
-        color: var(--color-fg-negative);
-      }
-
-      &:hover {
-        background: var(--color-bg-negative);
-      }
-    }
-  }
-
-  .card-dropdown-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: var(--radius-base);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-
-    .icon {
-      width: 16px;
-      height: 16px;
-    }
-
-    &.card-dropdown-icon--pop {
-      color: var(--model-color-1);
-    }
-    &.card-dropdown-icon--pin {
-      color: var(--model-color-6);
-    }
-    &.card-dropdown-icon--archive {
-      color: var(--model-color-2);
-    }
-    &.card-dropdown-icon--edit {
-      color: var(--model-color-4);
-    }
-    &.card-dropdown-icon--delete {
-      color: var(--color-fg-negative);
-    }
-    &.card-dropdown-icon--chooser {
-      color: var(--model-color-5);
-    }
-  }
-
-  .card-dropdown-text {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-  }
-
-  .card-dropdown-label {
-    font-size: var(--font-size-subtle);
-    font-weight: var(--font-weight-base);
-    color: var(--color-fg-base);
-  }
-
-  .card-dropdown-desc {
-    font-size: var(--font-size-subtle);
-    color: var(--color-fg-subtle);
-  }
-
-  .pinned-dropdown-menu {
-    position: fixed;
-    inset: unset;
-    position-area: block-start center;
-    margin-bottom: var(--spacing-horizontal-half);
-    min-width: 28rem;
-    position-anchor: --pinned-stack-trigger;
-    position-try-fallbacks: flip-block;
-
-    &:popover-open {
-      animation: popout 150ms ease-out;
-    }
-  }
-
-  .pinned-list-loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: calc(
-      calc(var(--spacing-horizontal-double) + var(--spacing-vertical-half)) +
-        var(--spacing-vertical-double)
-    );
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
   }
 }

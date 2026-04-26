@@ -1,0 +1,2 @@
+<% card_menu_id = local_assigns[:card_menu_id].presence || [local_assigns[:dom_prefix], "card-menu", card.id].compact.join("-") %>
+<%= render "cards/menu", card: card, card_menu_id: card_menu_id %>

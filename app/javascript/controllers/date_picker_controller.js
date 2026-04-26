@@ -2,19 +2,22 @@ import { Controller } from "@hotwired/stimulus"
 import { calendarDays } from "helpers/calendar"
 
 export default class extends Controller {
-  static targets = ["segment", "segmentPicker", "daysButton", "monthsButton", "yearButton", "hiddenDate", "datePickerText", "datePreview", "daysGrid"]
+  static targets = ["segment", "segmentPicker", "daysButton", "monthsButton", "yearButton", "hiddenValue", "triggerText", "preview", "daysGrid", "clearButton"]
   static values = {
     segment: { type: String, default: "day" },
     date: String
   }
 
   connect() {
-    if (!this.dateValue) this.renderDaysGrid(new Date())
+    this.reset()
   }
 
   segmentValueChanged(value) {
     this.segmentTargets.forEach(el => {
-      el.classList.toggle("is-active", el.dataset.segment == value)
+      const isActive = el.dataset.segment == value
+      el.classList.toggle("is-active", isActive)
+      el.toggleAttribute("inert", !isActive)
+      el.setAttribute("aria-hidden", String(!isActive))
     })
     this.segmentPickerTargets.forEach(el => {
       el.classList.toggle("button-secondary--active", el.dataset.datePickerSegmentParam == value)
@@ -22,7 +25,16 @@ export default class extends Controller {
   }
 
   dateValueChanged(value) {
-    if (!value) return
+    this.clearButtonTarget.disabled = !value
+    this.previewTarget.classList.remove("with-highlight")
+    if (!value) {
+      this.daysButtonTargets.forEach(el => el.classList.remove("button-secondary--active"))
+      this.monthsButtonTargets.forEach(el => el.classList.remove("button-secondary--active"))
+      this.yearButtonTargets.forEach(el => el.classList.remove("button-secondary--active"))
+      this.previewTarget.textContent = "No date"
+      this.renderDaysGrid(new Date())
+      return
+    }
     const [year, month, day] = value.split("-").map(Number)
     if (month !== this._renderedMonth || year !== this._renderedYear) {
       this.renderDaysGrid(new Date(year, month - 1, 1))
@@ -37,8 +49,10 @@ export default class extends Controller {
     this.yearButtonTargets.forEach(el => {
       el.classList.toggle("button-secondary--active", el.dataset.datePickerValueParam == year)
     })
-    this.datePreviewTarget.textContent = new Date(year, month - 1, day)
+    this.previewTarget.textContent = new Date(year, month - 1, day)
       .toLocaleDateString("en-US", { month: "short", day: "numeric", year: "2-digit" })
+    this.previewTarget.classList.add("with-highlight")
+    setTimeout(() => this.previewTarget.classList.remove("with-highlight"), 200)
   }
 
   renderDaysGrid(date) {
@@ -69,11 +83,24 @@ export default class extends Controller {
   }
 
   save() {
-    if (!this.dateValue) return
-    const [year, month, day] = this.dateValue.split("-").map(Number)
-    this.hiddenDateTarget.value = this.dateValue
-    this.datePickerTextTarget.textContent = new Date(year, month - 1, day)
-      .toLocaleDateString("en-US", { month: "short", day: "numeric", year: "2-digit" })
+    this.hiddenValueTarget.value = this.dateValue
+    this.triggerTextTarget.textContent = this.dateValue
+      ? this._formatDate(this.dateValue)
+      : "Date"
+    this.element.querySelector("dialog").close()
+  }
+
+  reset() {
+    this.segmentValue = "day"
+    this.dateValue = this.hiddenValueTarget.value || this._todayValue()
+  }
+
+  clear() {
+    this.dateValue = ""
+  }
+
+  cancel() {
+    this.reset()
     this.element.querySelector("dialog").close()
   }
 
@@ -92,5 +119,20 @@ export default class extends Controller {
     const parts = { year, month, day }
     parts[part] = String(value).padStart(part == "year" ? 4 : 2, "0")
     this.dateValue = `${parts.year}-${parts.month}-${parts.day}`
+  }
+
+  _formatDate(value) {
+    const [year, month, day] = value.split("-").map(Number)
+    return new Date(year, month - 1, day)
+      .toLocaleDateString("en-US", { month: "short", day: "numeric", year: "2-digit" })
+  }
+
+  _todayValue() {
+    const today = new Date()
+    return [
+      today.getFullYear(),
+      String(today.getMonth() + 1).padStart(2, "0"),
+      String(today.getDate()).padStart(2, "0")
+    ].join("-")
   }
 }

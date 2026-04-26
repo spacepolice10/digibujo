@@ -27,13 +27,34 @@
     }
 
     &.pill--type .icon,
-    &.pill--status .icon {
+    &.pill--status .icon,
+    .icon {
       width: var(--font-size-subtle);
       height: var(--font-size-subtle);
     }
 
+    &.pill--type[data-value="task"] { color: var(--model-color-2); }
+    &.pill--type[data-value="event"] { color: var(--model-color-6); }
+    &.pill--type[data-value="note"] { color: var(--color-fg-warn); }
+
+    &.pill--type:has(input:checked)[data-value="task"] {
+      background: color-mix(in oklch, var(--model-color-2-bg) 35%, var(--color-bg-base));
+      border-color: color-mix(in oklch, var(--model-color-2) 45%, var(--color-stroke-base));
+    }
+    &.pill--type:has(input:checked)[data-value="event"] {
+      background: color-mix(in oklch, var(--model-color-6-bg) 35%, var(--color-bg-base));
+      border-color: color-mix(in oklch, var(--model-color-6) 45%, var(--color-stroke-base));
+    }
+    &.pill--type:has(input:checked)[data-value="note"] { background: var(--color-bg-warn); border-color: var(--color-fg-warn); }
+
     &.pill--status {
       padding-inline: var(--spacing-vertical-half);
+    }
+
+    &.pill--future-scheduled {
+      color: var(--model-color-6);
+      border-color: color-mix(in oklch, var(--model-color-6) 40%, var(--color-stroke-base));
+      background: color-mix(in oklch, var(--model-color-6-bg) 35%, var(--color-bg-base));
     }
 
     button {

@@ -1,16 +1,45 @@
-<turbo-frame id="card_form">
-  <%= render "form", card: Card.new %>
-</turbo-frame>
-  <div class="flex slightly-padded slightly-gapped">
-    <h2 class="text-sm">Your Drafts</h2>
-    <span class="wavy" aria-hidden="true"></span>
-    <%= link_to "Triage", drafts_path, class: "text-sm", data: { turbo_frame: "_top" } %>
+<div class="cards-timeline" data-controller="hotkey" data-action="keydown@window->hotkey#keydown">
+  <%= link_to search_path,
+        class: "sr-only",
+        aria: { hidden: true },
+        tabindex: "-1",
+        data: {
+          hotkey_target: "binding",
+          hotkey_keys_value: "mod+k"
+        } do %>
+    Open search
+  <% end %>
+  <button type="button"
+          class="sr-only"
+          aria-hidden="true"
+          tabindex="-1"
+          data-hotkey-target="binding"
+          data-hotkey-keys-value="mod+e"
+          data-hotkey-action-value="focus"
+          data-hotkey-selector-value="#card_form trix-editor">
+    Focus editor
+  </button>
+  <div class="cards-timeline-header">
+    <div class="cards-timeline-header-group">
+      <%= link_to "History", history_path, class: "button-tertiary" %>
+    </div>
+    <h2 class="cards-timeline-header-date"><%= @selected_date.strftime("%a, %b %-d") %></h2>
+    <div class="cards-timeline-header-group">
+      <%= link_to search_path, class: "button-secondary", data: { turbo_frame: "_top" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-search)" aria-hidden="true"></i>
+        Search
+      <% end %>
+      <%= link_to triage_path, class: "button-secondary", data: { turbo_frame: "_top" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
+        Triage
+      <% end %>
+    </div>
   </div>
-  <div id="draft_cards">
-    <%= render @drafts %>
+
+  <%= render "cards/paginated_list", cards: @cards, page: @page, on_todays_route: @on_todays_route %>
+  <div class="cards-timeline-composer">
+    <turbo-frame id="card_form">
+      <%= render "form", card: Card.new %>
+    </turbo-frame>
   </div>
-<div class="flex slightly-padded slightly-gapped">
-  <h2 class="text-sm">Recently Sorted</h2>
-  <span class="wavy" aria-hidden="true"></span>
 </div>
-<%= render "cards/paginated_list", cards: @cards, page: @page %>

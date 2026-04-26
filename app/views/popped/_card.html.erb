@@ -2,18 +2,16 @@
   <div class="popped-card-content">
     <div class="card-meta">
       <% if card.cardable_type %>
-        <span class="card-type"><%= card.type_name %></span>
+        <span class="card-type"><%= card.name %></span>
       <% end %>
       <span class="pop-date">Popped <%= card.pops_on %></span>
     </div>
     <div class="card-body">
       <%= card.content %>
     </div>
-    <% if card.tags.any? %>
+    <% if card.collection.present? %>
       <div class="card-tags">
-        <% card.tags.each do |tag| %>
-          <span class="pill" style="background: <%= tag.colour_bg_variable %>"><%= tag.name %></span>
-        <% end %>
+        <span class="pill" style="background: <%= card.collection.colour_bg_variable %>"><%= card.collection.name %></span>
       </div>
     <% end %>
   </div>

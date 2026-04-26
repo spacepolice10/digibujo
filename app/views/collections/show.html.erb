@@ -1,0 +1,30 @@
+<% content_for(:title) { @collection.name } %>
+
+<div class="card-show">
+  <nav class="show-navigation">
+    <button type="button" class="button-secondary" onclick="history.back()">
+      <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+      Index
+    </button>
+  </nav>
+
+  <article class="card-show-content">
+    <header class="card-show-header">
+      <div class="card-show-meta">
+        <span class="card-type">Collection</span>
+      </div>
+      <h1 class="card-show-title"><%= @collection.name %></h1>
+
+      <div class="card-tags">
+        <%= link_to "All", collection_path(@collection), class: "pill #{"pill--status" if params[:type].blank?}" %>
+        <% Card.cardable_types.each do |type| %>
+          <%= link_to type.downcase.pluralize,
+                      collection_path(@collection, type: type.downcase),
+                      class: "pill #{"pill--status" if params[:type].to_s.classify == type}" %>
+        <% end %>
+      </div>
+    </header>
+
+    <%= render "cards/paginated_list", cards: @cards, page: @page %>
+  </article>
+</div>

@@ -34,6 +34,7 @@
     margin: 0 auto;
     padding: var(--spacing-vertical-double) var(--spacing-horizontal);
     flex: 1;
+    background: var(--color-bg-subtle);
 
     @media (width >= 900px) {
       max-width: 820px;
@@ -60,26 +61,6 @@
     font-weight: var(--font-weight-strong);
     color: var(--color-fg-base);
     margin: 0 0 var(--spacing-vertical);
-  }
-
-  /* ── Inline edit view: match read-mode appearance ────── */
-
-  [data-card-inline-edit-target="editView"] [data-controller~="card-form"] {
-    background: transparent;
-    box-shadow: none;
-    border-radius: 0;
-    padding: 0;
-  }
-
-  .card-show-content trix-editor {
-    font-size: var(--font-size-base);
-    padding: 0;
-  }
-
-  .card-show-content trix-editor img {
-    max-width: 100%;
-    height: auto;
-    border-radius: var(--radius-subtle);
   }
 
   /* ── Read body ────────────────────────────────────────── */
@@ -142,32 +123,4 @@
     }
   }
 
-  /* ── Image zoom overlay ────────────────────────────────────────────── */
-
-  [data-controller="image-zoom"] .trix-content img {
-    max-height: 400px;
-    border-radius: var(--radius-base);
-    transition: opacity 0.15s;
-  }
-
-  [data-controller="image-zoom"] .trix-content img:hover {
-    opacity: 0.85;
-  }
-
-  .image-zoom-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: calc(var(--z-dialog) + 1);
-    background: oklch(0% 0 0 / 0.8);
-    display: grid;
-    place-items: center;
-    cursor: zoom-out;
-  }
-
-  .image-zoom-overlay img {
-    max-width: 90vw;
-    max-height: 90vh;
-    object-fit: contain;
-    border-radius: var(--radius-base);
-  }
 }

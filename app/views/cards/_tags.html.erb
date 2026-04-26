@@ -1,0 +1,44 @@
+<% on_todays_route = local_assigns.fetch(:on_todays_route, false) %>
+<% future_scheduled = on_todays_route && card.date.present? && card.date.to_date > Date.current %>
+<% scheduled_return_label = card.date.strftime("%-d %b %Y") if future_scheduled %>
+<% if card.pinned? || card.archived? || card.date.present? || card.ends_date.present? || card.collection.present? || card.context_card.present? || future_scheduled %>
+  <div class="card-tags">
+    <% if card.pinned? %>
+      <span class="pill pill--status" aria-label="Pinned">
+        <span class="icon" style="--icon-mask: var(--icon-pin)"></span>
+      </span>
+    <% end %>
+    <% if card.archived? %>
+      <span class="pill pill--status" aria-label="Archived">
+        <span class="icon" style="--icon-mask: var(--icon-archive)"></span>
+      </span>
+    <% end %>
+    <% if card.date.present? %>
+      <span class="pill pill--date"><%= card.date.strftime(card.date.to_time.hour.zero? && card.date.to_time.min.zero? ? "%-d %b %Y" : "%-d %b %Y %H:%M") %><% if card.ends_date.present? %> → <%= card.ends_date.strftime(card.ends_date.to_time.hour.zero? && card.ends_date.to_time.min.zero? ? "%-d %b %Y" : "%-d %b %Y %H:%M") %><% end %></span>
+    <% elsif card.ends_date.present? %>
+      <span class="pill pill--date">→ <%= card.ends_date.strftime(card.ends_date.to_time.hour.zero? && card.ends_date.to_time.min.zero? ? "%-d %b %Y" : "%-d %b %Y %H:%M") %></span>
+    <% end %>
+    <% if future_scheduled %>
+      <span class="pill pill--date pill--future-scheduled">Leaves today, returns on <%= scheduled_return_label %></span>
+    <% end %>
+    <% if card.collection.present? %>
+      <%= link_to collection_path(card.collection),
+            class: "pill",
+            style: "background: #{card.collection.colour_bg_variable}",
+            data: { turbo_frame: "_top" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-tag)" aria-hidden="true"></i>
+        <span><%= card.collection.name %></span>
+      <% end %>
+    <% end %>
+    <% if card.context_card.present? %>
+      <% context_card = card.context_card %>
+      <% context_type = context_card.cardable_type.to_s.downcase %>
+      <%= link_to card_path(context_card),
+            class: "pill pill--type",
+            data: { value: context_type, turbo_frame: "_top" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-link)" aria-hidden="true"></i>
+        <span><%= card.context_name %></span>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

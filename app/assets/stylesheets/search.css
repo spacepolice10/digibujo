@@ -1,0 +1,31 @@
+@layer components {
+  .search {
+    display: grid;
+    gap: var(--spacing-vertical);
+  }
+
+  .search--form {
+    display: grid;
+    gap: var(--spacing-vertical-half);
+    padding: 0 var(--spacing-horizontal);
+  }
+
+  .search--label {
+    font-size: var(--font-size-sm);
+    color: var(--color-fg-subtle);
+  }
+
+  .search--input {
+    width: 100%;
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-pill);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+    background: var(--color-bg-elevated);
+    color: var(--color-fg-base);
+  }
+
+  .search--help {
+    color: var(--color-fg-subtle);
+    padding: 0 var(--spacing-horizontal);
+  }
+}

@@ -1,6 +1,11 @@
-<div id="cards" data-controller="pagination">
-  <% cards.each do |card| %>
-    <%= render card %>
+<div id="cards" class="cards-list" data-controller="pagination">
+  <% on_todays_route = local_assigns.fetch(:on_todays_route, false) %>
+  <% if cards.none? %>
+    <%= render "cards/empty_state" %>
+  <% else %>
+    <% cards.each do |card| %>
+      <%= render card, on_todays_route: on_todays_route %>
+    <% end %>
   <% end %>
   <% unless page.last? %>
     <%= link_to url_for(page: page.next_param),

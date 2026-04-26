@@ -1,5 +1,67 @@
 @layer components {
-  /* ── Compose form ─────────────────────────────────── */
+  .cards-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical);
+    min-height: 100%;
+  }
+
+  .cards-timeline-header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: var(--spacing-horizontal);
+    position: sticky;
+    top: 0;
+    z-index: var(--z-dropdown);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    border-bottom: 1px solid var(--color-stroke-base);
+    background: oklch(from var(--color-bg-base) l c h / 0.9);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-fiter: blur(8px);
+  }
+
+  .cards-timeline-header-group {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+  }
+
+  .cards-timeline-header-group:first-child {
+    justify-self: start;
+  }
+
+  .cards-timeline-header-group:last-child {
+    justify-self: end;
+  }
+
+  .cards-timeline-header-date {
+    margin: 0;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-strong);
+    color: var(--color-fg-base);
+    text-align: center;
+  }
+
+  .cards-timeline #cards {
+    width: min(100%, calc(var(--spacing-horizontal-double) * 22));
+    margin-inline: auto;
+    padding-bottom: var(--spacing-vertical-double);
+  }
+
+  .cards-timeline-composer {
+    position: sticky;
+    bottom: 0;
+    z-index: var(--z-dropdown);
+    padding-bottom: var(--spacing-vertical-half);
+    background: linear-gradient(to top, var(--color-bg-base), transparent);
+  }
+
+  .cards-timeline-composer #card_form {
+    display: flex;
+    justify-content: center;
+    padding-top: var(--spacing-vertical-half);
+  }
 
   .card-form-page-header {
     display: grid;
@@ -24,222 +86,392 @@
     text-align: center;
   }
 
-  [data-controller~="card-form"][data-loading] * {
-    transition: none !important;
-  }
-
   [data-controller~="card-form"] {
     display: flex;
     flex-direction: column;
-    background: var(--color-bg-subtle);
+    gap: var(--spacing-vertical-half);
+    width: min(100%, calc(var(--spacing-horizontal-double) * 22));
+    margin-inline: auto;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  .card-form-rail {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    padding-inline: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .card-form-rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .card-form-rail:empty {
+    display: none;
+  }
+
+  .card-form-composer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--spacing-horizontal-half);
+    padding: var(--spacing-vertical-half);
     border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
-    position: relative;
+    border-radius: var(--radius-strong);
+    background: var(--color-bg-subtle);
+    box-shadow: var(--shadow-elevated);
+    transition: border-color 0.1s ease, box-shadow 0.1s ease;
   }
 
 
 
-  /* Reorder trix: editor above toolbar */
-  [data-controller~="card-form"] div:has(trix-editor) {
+  .card-form-editor {
     display: flex;
     flex-direction: column;
+    position: relative;
+    flex: 1 1 calc(var(--spacing-horizontal-double) * 10);
+    min-width: 0;
   }
 
-  trix-toolbar {
-    order: 2;
-    position: sticky;
-    bottom: var(--card-form-actions-height, 0);
-    z-index: var(--z-dropdown-bg);
-  }
-  trix-editor {
+  [data-controller~="card-form"] trix-editor {
     order: 1;
+    min-height: calc(var(--spacing-horizontal-double) * 0.72) !important;
+    height: auto;
+    max-height: calc(var(--spacing-horizontal-double) * 3);
+    overflow-y: auto;
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half) !important;
+    border: 0 !important;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent !important;
+  }
+
+  [data-controller~="card-form"] trix-editor::-webkit-scrollbar {
+    display: none;
+  }
+
+  [data-controller~="card-form"] trix-editor#card_content:focus,
+  [data-controller~="card-form"] trix-editor#card_content:focus-visible,
+  [data-controller~="card-form"] trix-editor#card_content [data-trix-mutable]:focus,
+  [data-controller~="card-form"] trix-editor#card_content [data-trix-mutable]:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  [data-controller~="card-form"] trix-toolbar {
+    order: 2;
+    display: none !important;
+    border: 0;
+    border-top: 1px solid var(--color-stroke-base);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    background: transparent !important;
+    border-radius: 0;
     box-shadow: none;
   }
 
-  /* ── Bottom actions bar ───────────────────────────── */
-
-  .card-form-actions {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--spacing-horizontal-half);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    position: sticky;
-    bottom: 0;
-    z-index: var(--z-dropdown);
-    background: var(--color-bg-subtle);
+  [data-controller~="card-form"][data-toolbar-expanded="true"] trix-toolbar {
+    display: block !important;
   }
 
-  .card-form-type-controls {
-    display: flex;
+  [data-controller~="card-form"][data-editor-multiline="true"] .card-form-composer {
     align-items: center;
-    flex-wrap: nowrap;
-    gap: var(--spacing-horizontal-half);
-    flex: 1;
+  }
+
+  [data-controller~="card-form"][data-editor-multiline="true"] .card-form-desktop-type {
+    display: inline-flex;
+    order: 1;
+    flex: 0 0 auto;
+  }
+
+  [data-controller~="card-form"][data-editor-multiline="true"] .card-form-editor {
+    display: contents;
+  }
+
+  [data-controller~="card-form"][data-editor-multiline="true"] trix-toolbar {
+    display: block !important;
+    order: 1;
+    flex: 1 1 auto;
     min-width: 0;
-    height: calc(2 * var(--spacing-vertical-double));
-    overflow-x: auto;
-    overflow-y: visible;
-    padding-inline: var(--spacing-horizontal-half);
-    border-radius: var(--radius-strong);
-    border: 1px solid transparent;
-    scrollbar-width: none;
-    transition:
-      border-color 0.1s ease,
-      background 0.1s ease,
-      color 0.1s ease;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
+    border-top: 0;
+    padding: 0;
+    background: transparent !important;
+    border-radius: 0;
+    box-shadow: none;
   }
 
-  .card-form-type-controls:has(.card-form-type-button:has(:checked)[data-value="task"]) {
-    background: var(--model-color-1-bg);
-    border-color: var(--model-color-2);
-    color: var(--model-color-2);
+  [data-controller~="card-form"][data-editor-multiline="true"] trix-editor {
+    order: 2;
+    flex: 1 1 100%;
+    max-width: 100%;
   }
 
-  .card-form-type-controls:has(.card-form-type-button:has(:checked)[data-value="event"]) {
-    background: var(--model-color-6-bg);
-    border-color: var(--model-color-6);
-    color: var(--model-color-6);
+  [data-controller~="card-form"][data-editor-multiline="true"] .card-form-footer {
+    order: 1;
+    margin-inline-start: auto;
   }
 
-  .card-form-type-controls:has(.card-form-type-button:has(:checked)[data-value="note"]) {
-    background: var(--color-bg-warn);
-    border-color: var(--color-fg-warn);
-    color: var(--color-fg-warn);
+  .card-form-footer {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    flex: 0 0 auto;
+    white-space: nowrap;
   }
 
-  .card-form-type-controls:has(.card-form-type-button:has(:checked)[data-value="daylog"]) {
-    background: var(--model-color-7-bg);
-    border-color: var(--model-color-7);
-    color: var(--model-color-7);
+  .card-form-footer-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
   }
 
-  .card-form-type-button--back {
-    display: none;
-  }
-
-  .card-form-type-controls[data-mode="fields"] .card-form-type-button:has(:checked) .card-form-type-button--back {
-    display: inline-block;
-  }
-
-  .card-form-type-controls[data-mode="fields"] .card-form-type-button:has(:checked) {
-    gap: calc(var(--spacing-vertical-half) / 3);
-    padding-inline: var(--spacing-vertical-half);
-  }
-
-  .card-form-type-button {
+  .card-form-format-toggle {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--spacing-vertical-half);
-    border-radius: var(--radius-strong);
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    font-family: inherit;
-    font-size: var(--font-size-subtle);
-    background: var(--color-bg-base);
-    border: 1px solid var(--color-stroke-base);
-    color: var(--color-fg-base);
+    border: 1px solid transparent;
+    border-radius: var(--radius-strong);
+    background: transparent;
+    color: var(--color-fg-subtle);
     cursor: pointer;
-    flex-shrink: 0;
-    transition: background 0.1s ease;
-
-    &:hover { background: var(--color-bg-subtle); }
   }
 
-  .card-form-type-controls[data-mode="fields"]
-    .card-form-type-button:not(:has(:checked)) {
+  .card-form-format-toggle:hover,
+  .card-form-format-toggle[aria-pressed="true"] {
+    border-color: var(--color-stroke-base);
+    background: var(--color-bg-base);
+    color: var(--color-fg-base);
+  }
+
+  .card-form-desktop-type {
+    display: contents;
+  }
+
+  .card-form-type-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: calc(var(--spacing-horizontal-double) * 1);
+    padding: var(--spacing-vertical-half);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-strong);
+    background: var(--color-bg-base);
+    color: var(--color-fg-subtle);
+    cursor: pointer;
+  }
+
+  .card-form-fields-back {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    min-width: calc(var(--spacing-horizontal-double) * 1.2);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-strong);
+    background: var(--color-bg-base);
+    color: var(--color-fg-subtle);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .card-form-type-trigger:hover,
+  .card-form-fields-back:hover {
+    color: var(--color-fg-base);
+    background: var(--color-bg-base);
+  }
+
+  [data-controller~="card-form"][data-current-type="task"] .card-form-type-trigger {
+    color: var(--model-color-2);
+    border-color: color-mix(in oklch, var(--model-color-2) 40%, var(--color-stroke-base));
+    background: color-mix(in oklch, var(--model-color-2-bg) 35%, var(--color-bg-base));
+  }
+
+  [data-controller~="card-form"][data-current-type="note"] .card-form-type-trigger {
+    color: var(--model-color-5);
+    border-color: color-mix(in oklch, var(--model-color-5) 40%, var(--color-stroke-base));
+    background: color-mix(in oklch, var(--model-color-5-bg) 35%, var(--color-bg-base));
+  }
+
+  [data-controller~="card-form"][data-current-type="event"] .card-form-type-trigger {
+    color: var(--model-color-6);
+    border-color: color-mix(in oklch, var(--model-color-6) 40%, var(--color-stroke-base));
+    background: color-mix(in oklch, var(--model-color-6-bg) 35%, var(--color-bg-base));
+  }
+
+  .card-form-type-menu-item {
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: start;
+    gap: var(--spacing-horizontal-half);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+    border-radius: var(--radius-base);
+    border: 0;
+    background: transparent;
+    color: var(--color-fg-base);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+    transition: background 0.12s ease, transform 0.12s ease, border-color 0.12s ease;
+  }
+
+  .card-form-type-menu {
+    position: fixed;
+    inset: unset;
+    position-area: block-start span-inline-end;
+    margin-bottom: var(--spacing-vertical-half);
+    min-width: calc(var(--spacing-horizontal-double) * 4);
+    max-width: calc(100vw - (2 * var(--spacing-horizontal)));
+    max-height: min(16rem, calc(100dvh - (2 * var(--spacing-horizontal))));
+    overflow-y: auto;
+    padding: var(--spacing-vertical-half);
+    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+
+    &:popover-open {
+      animation: popout 0.1s ease-out;
+    }
+  }
+
+  .card-form-type-menu-item:hover {
+    background: var(--color-bg-base);
+    color: var(--color-accent);
+    transform: translateX(2px);
+  }
+
+  .card-form-type-menu-item:focus-visible {
+    background: var(--color-bg-base);
+  }
+
+  .card-form-type-menu-item .icon {
+    width: calc(var(--spacing-horizontal-double) * 1);
+    height: calc(var(--spacing-horizontal-double) * 1);
+    margin-top: calc(var(--spacing-vertical-half) / 4);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-base);
+    background: var(--color-bg-base);
+    color: var(--color-fg-subtle);
+  }
+
+  .card-form-type-menu-item:hover .icon {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .card-form-type-menu-item kbd {
+    color: var(--color-fg-subtle);
+    font: inherit;
+    font-size: var(--font-size-subtle);
+    padding: calc(var(--spacing-vertical-half) / 4) calc(var(--spacing-horizontal-half) / 1.4);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-subtle);
+    background: var(--color-bg-base);
+    white-space: nowrap;
+    line-height: 1;
+  }
+
+  .card-form-type-menu-item:hover kbd {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .card-form-type-menu-item-copy {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--spacing-vertical-half) / 4);
+    min-width: 0;
+    font-weight: var(--font-weight-strong);
+  }
+
+  .card-form-type-menu-item-note {
+    font-size: var(--font-size-subtle);
+    color: var(--color-fg-subtle);
+    font-weight: var(--font-weight-base);
+  }
+
+  .card-form-type-menu-item[data-card-form-type-param="task"] > .icon {
+    color: var(--color-bg-base);
+    border-color: var(--model-color-2);
+    background: var(--model-color-2);
+  }
+
+  .card-form-type-menu-item[data-card-form-type-param="note"] > .icon {
+    color: var(--color-bg-base);
+    border-color: var(--model-color-5);
+    background: var(--model-color-5);
+  }
+
+  .card-form-type-menu-item[data-card-form-type-param="event"] > .icon {
+    color: var(--color-bg-base);
+    border-color: var(--model-color-6);
+    background: var(--model-color-6);
+  }
+
+  .card-form-type-menu-item[data-card-form-type-param="task"]:hover {
+    background: color-mix(in oklch, var(--model-color-2-bg) 45%, var(--color-bg-base));
+  }
+
+  .card-form-type-menu-item[data-card-form-type-param="note"]:hover {
+    background: color-mix(in oklch, var(--model-color-5-bg) 45%, var(--color-bg-base));
+  }
+
+  .card-form-type-menu-item[data-card-form-type-param="event"]:hover {
+    background: color-mix(in oklch, var(--model-color-6-bg) 45%, var(--color-bg-base));
+  }
+
+  .card-form-type-menu-item:hover .card-form-type-menu-item-note {
+    color: var(--color-accent);
+  }
+
+  .card-form-mobile-types {
     display: none;
   }
 
-  .card-form-type-button[data-value="task"] {
-    color: var(--model-color-2);
+  .card-form-mobile-fields {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    min-width: 0;
+    flex: 1;
   }
 
-  .card-form-type-button[data-value="event"] {
-    color: var(--model-color-6);
+  .card-form-mobile-fields > .card-form-fields {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
   }
 
-  .card-form-type-button[data-value="note"] {
-    color: var(--color-fg-warn);
+  .card-form-mobile-fields > .card-form-fields::-webkit-scrollbar {
+    display: none;
   }
 
-  .card-form-type-button[data-value="daylog"] {
-    color: var(--model-color-7);
-  }
-
-  .card-form-type-button span {
-    display: inline-block;
-    overflow: hidden;
-    white-space: nowrap;
-    transition:
-      width 0.25s ease,
-      opacity 0.15s ease,
-      margin-inline-start 0.25s ease;
-  }
-
-  .card-form-type-controls[data-mode="fields"] .card-form-type-button span {
-    width: 0;
-    opacity: 0;
-    margin-inline-start: 0;
-  }
-
-  .card-form-type-controls[data-mode="types"] .card-form-type-button span {
-    width: auto;
-    opacity: 1;
-    margin-inline-start: calc(var(--spacing-vertical-half) / 2);
-  }
-
-  .card-form-type-button:has(:checked) {
-    border-color: currentColor;
-  }
-
-  .card-form-type-button:has(:checked)[data-value="task"] {
-    background: var(--model-color-1-bg);
-  }
-
-  .card-form-type-button:has(:checked)[data-value="event"] {
-    background: var(--model-color-6-bg);
-  }
-
-  .card-form-type-button:has(:checked)[data-value="note"] {
-    background: var(--color-bg-warn);
-  }
-
-  .card-form-type-button:has(:checked)[data-value="daylog"] {
-    background: var(--model-color-7-bg);
+  .card-form-mobile-fields > .card-form-fields .date-picker,
+  .card-form-mobile-fields > .card-form-fields .tags-picker {
+    flex-shrink: 0;
   }
 
   turbo-frame.card-form-fields {
-    display: none;
+    display: flex;
     align-items: center;
     gap: var(--spacing-horizontal-half);
-    flex: 1 0 auto;
-    min-width: max-content;
-  }
-
-  .card-form-type-controls[data-mode="fields"] turbo-frame.card-form-fields {
-    display: flex;
+    min-width: 0;
     overflow-x: auto;
     scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
   }
 
-  turbo-frame.card-form-fields > * {
-    transition:
-      opacity 0.2s ease 0.06s,
-      transform 0.2s ease 0.06s;
-
-    @starting-style {
-      opacity: 0;
-      transform: translateX(-4px);
-    }
+  turbo-frame.card-form-fields::-webkit-scrollbar {
+    display: none;
   }
 
   turbo-frame.card-form-fields .date-picker,
@@ -248,3 +480,109 @@
   turbo-frame.card-form-fields > div {
     flex-shrink: 0;
   }
+
+  .card-form-mobile-type-option {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-vertical-half);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-strong);
+    background: var(--color-bg-base);
+    color: var(--color-fg-subtle);
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .card-form-mobile-type-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .card-form-type-option-marker {
+    font-weight: var(--font-weight-strong);
+    color: currentColor;
+  }
+
+  .card-form-type-option-name {
+    font-size: var(--font-size-subtle);
+    color: var(--color-fg-base);
+  }
+
+  .card-form-mobile-type-option:has(input:checked) {
+    border-color: var(--color-stroke-strong);
+    background: var(--color-bg-subtle);
+    color: var(--color-fg-base);
+  }
+
+  @media (width < 600px) {
+    .cards-timeline-composer {
+      padding-inline: var(--spacing-horizontal-half);
+    }
+
+    [data-controller~="card-form"] {
+      border-radius: 0;
+    }
+
+    [data-controller~="card-form"] trix-toolbar {
+      display: none !important;
+    }
+
+    [data-controller~="card-form"][data-toolbar-expanded="true"] trix-toolbar {
+      display: block !important;
+    }
+
+    .card-form-composer {
+      align-items: stretch;
+    }
+
+    .card-form-footer {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .card-form-footer-actions {
+      margin-inline-start: auto;
+    }
+
+    .card-form-desktop-type {
+      display: none;
+    }
+
+    .card-form-mobile-types {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-horizontal-half);
+      margin: 0;
+      padding: 0;
+      border: 0;
+      min-width: 0;
+      flex: 1;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .card-form-mobile-types::-webkit-scrollbar {
+      display: none;
+    }
+
+    [data-controller~="card-form"][data-mobile-mode="types"] .card-form-mobile-fields {
+      display: none;
+    }
+
+    [data-controller~="card-form"][data-mobile-mode="fields"] .card-form-mobile-types {
+      display: none;
+    }
+
+    .card-form-mobile-fields {
+      flex: 1 1 auto;
+    }
+
+    .card-form-fields-back {
+      display: inline-flex;
+      flex-shrink: 0;
+    }
+  }
+}

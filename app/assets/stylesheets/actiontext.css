@@ -106,6 +106,14 @@ trix-toolbar .trix-button:not(:disabled):focus {
   background: var(--color-bg-subtle);
 }
 
+trix-toolbar .trix-button:not(:disabled):focus-visible,
+trix-editor:focus-visible,
+trix-editor [data-trix-mutable]:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px
+    color-mix(in oklch, var(--color-fg-subtle) 55%, transparent);
+}
+
 trix-toolbar .trix-button:disabled {
   opacity: 0.4;
   color: var(--color-fg-subtle);
@@ -196,6 +204,11 @@ trix-toolbar .trix-button--icon-strike::before {
 trix-toolbar .trix-button--icon-quote::before {
   -webkit-mask-image: var(--icon-quote);
   mask-image: var(--icon-quote);
+}
+
+trix-toolbar .trix-button--icon-heading-1::before {
+  -webkit-mask-image: var(--icon-heading);
+  mask-image: var(--icon-heading);
 }
 
 trix-toolbar .trix-button--icon-code::before {
@@ -345,20 +358,13 @@ trix-toolbar .trix-button--icon {
   max-width: calc(var(--spacing-horizontal) + var(--spacing-vertical));
 }
 
-/* Heading button rendered as a text chip — matches "style ▾" in Paper */
+/* Heading button rendered as an icon to match the rest of the toolbar */
 trix-toolbar .trix-button--icon-heading-1 {
-  text-indent: 0;
-  width: auto;
-  height: auto;
-  max-width: none;
-  font-size: var(--font-size-subtle);
-  padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-  border: 1px solid var(--color-stroke-base);
-  border-radius: var(--radius-base);
+  text-indent: -9999px;
 }
 
 trix-toolbar .trix-button--icon-heading-1::before {
-  display: none;
+  display: block;
 }
 
 trix-toolbar .trix-button-group-spacer {
@@ -388,6 +394,7 @@ trix-toolbar .trix-button--icon-italic::before,
 trix-toolbar .trix-button--icon-link::before,
 trix-toolbar .trix-button--icon-strike::before,
 trix-toolbar .trix-button--icon-quote::before,
+trix-toolbar .trix-button--icon-heading-1::before,
 trix-toolbar .trix-button--icon-code::before,
 trix-toolbar .trix-button--icon-bullet-list::before,
 trix-toolbar .trix-button--icon-number-list::before,
@@ -433,6 +440,11 @@ trix-toolbar .trix-button--icon-strike::before {
 trix-toolbar .trix-button--icon-quote::before {
   -webkit-mask-image: var(--icon-quote);
   mask-image: var(--icon-quote);
+}
+
+trix-toolbar .trix-button--icon-heading-1::before {
+  -webkit-mask-image: var(--icon-heading);
+  mask-image: var(--icon-heading);
 }
 
 trix-toolbar .trix-button--icon-code::before {
@@ -959,6 +971,15 @@ trix-editor .attachment__metadata .attachment__size {
   width: 100%;
   text-align: center;
 }
+
+.trix-content .attachment--preview img {
+  width: min(100%, calc(var(--spacing-horizontal) * 16));
+  height: auto;
+}
+
+.trix-content .attachment-download {
+  margin-top: var(--spacing-vertical-half);
+}
 .trix-content .attachment--preview .attachment__caption {
   color: var(--color-fg-subtle);
   font-size: 0.9em;
@@ -1102,20 +1123,13 @@ trix-toolbar .trix-button--icon {
   max-width: calc(var(--spacing-horizontal) + var(--spacing-vertical));
 }
 
-/* Heading button rendered as a text chip — matches "style ▾" in Paper */
+/* Heading button rendered as an icon to match the rest of the toolbar */
 trix-toolbar .trix-button--icon-heading-1 {
-  text-indent: 0;
-  width: auto;
-  height: auto;
-  max-width: none;
-  font-size: var(--font-size-subtle);
-  padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-  border: 1px solid var(--color-stroke-base);
-  border-radius: var(--radius-base);
+  text-indent: -9999px;
 }
 
 trix-toolbar .trix-button--icon-heading-1::before {
-  display: none;
+  display: block;
 }
 
 trix-toolbar .trix-button-group-spacer {
@@ -1145,6 +1159,7 @@ trix-toolbar .trix-button--icon-italic::before,
 trix-toolbar .trix-button--icon-link::before,
 trix-toolbar .trix-button--icon-strike::before,
 trix-toolbar .trix-button--icon-quote::before,
+trix-toolbar .trix-button--icon-heading-1::before,
 trix-toolbar .trix-button--icon-code::before,
 trix-toolbar .trix-button--icon-bullet-list::before,
 trix-toolbar .trix-button--icon-number-list::before,
@@ -1190,6 +1205,11 @@ trix-toolbar .trix-button--icon-strike::before {
 trix-toolbar .trix-button--icon-quote::before {
   -webkit-mask-image: var(--icon-quote);
   mask-image: var(--icon-quote);
+}
+
+trix-toolbar .trix-button--icon-heading-1::before {
+  -webkit-mask-image: var(--icon-heading);
+  mask-image: var(--icon-heading);
 }
 
 trix-toolbar .trix-button--icon-code::before {

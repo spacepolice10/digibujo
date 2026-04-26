@@ -73,19 +73,8 @@
   </div>
 
   <div>
-    <%= f.label :tags, "Tags" %>
-    <div class="tag-picker" data-controller="tags-picker dropdown" data-action="dropdown:select->tags-picker#onSelect" style="anchor-name: --tag-picker;">
-      <%= f.hidden_field :tags, data: { tags_picker_target: "hidden" } %>
-      <div class="pills" data-tags-picker-target="chips"></div>
-      <input type="text" placeholder="Add tags…" autocomplete="off"
-             data-tags-picker-target="input"
-             data-dropdown-target="input"
-             data-action="focus->dropdown#onFocus input->dropdown#onInput keydown->dropdown#onKeydown blur->dropdown#onBlur">
-      <%= turbo_frame_tag "tag-suggestions",
-            class: "dropdown-menu",
-            popover: "manual",
-            data: { dropdown_target: "frame" } %>
-    </div>
+    <%= f.label :collections, "Collections" %>
+    <%= f.text_field :collections, placeholder: "work, personal, ideas" %>
   </div>
 
   <div>

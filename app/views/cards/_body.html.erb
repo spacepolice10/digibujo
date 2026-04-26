@@ -1,0 +1,22 @@
+<div class="card--main">
+  <a class="card-body"
+     href="<%= card_path(card) %>"
+     data-turbo-frame="_top"
+     data-controller="card-link"
+     data-action="mousedown->card-link#mousedown mouseup->card-link#mouseup click->card-link#click"
+     draggable="false">
+    <% unless card.cardable_type == "Note" %>
+      <p class="card-title<%= " done" if card.done? %>">
+        <%= card.cardable.name %>
+      </p>
+    <% end %>
+    <% if card.cardable_type == "Note" %>
+      <%= card_rich_text_preview_trix(card) %>
+    <% else %>
+      <p>
+        <%= card.cardable.excerpt %>
+      </p>
+    <% end %>
+  </a>
+  <%= render "cards/tags", card: card, on_todays_route: local_assigns.fetch(:on_todays_route, false) %>
+</div>

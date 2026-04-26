@@ -4,7 +4,7 @@
     <%= render partial: "cards/card", locals: { card: @card } %>
   <% end %>
 <% else %>
-  <%= turbo_stream.prepend "cards" do %>
+  <%= turbo_stream.append "cards" do %>
     <%= render partial: "cards/card", locals: { card: @card } %>
   <% end %>
 <% end %>

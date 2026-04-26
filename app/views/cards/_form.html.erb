@@ -1,63 +1,127 @@
-<% type_options = Card.cardable_types - ["Draft"] %>
-<% hotkeys = type_options.each_index.map { |index| "keydown.meta+#{index + 1}->card-form#switchType" } %>
-<% actions = [
-     "keydown.meta+enter->card-form#submit",
-     "keydown.ctrl+enter->card-form#submit",
-     *hotkeys,
-     "trix-change->persist#save"
-   ] %>
+<% type_options = Card.cardable_types %>
 <% selected_type_name = card.cardable_type.presence_in(type_options) || "Task" %>
 <% selected_cardable = selected_type_name.constantize %>
-<% selected_cardable_instance = card.cardable_type == selected_type_name ? card.cardable : selected_cardable.new %>
-<% initial_type_mode = card.cardable_type.present? ? "fields" : "types" %>
+<% type_descriptions = {
+  "task" => "Track an actionable item",
+  "note" => "Capture an idea or detail",
+  "event" => "Plan something time-based"
+} %>
 <%= form_with model: card, data: {
-      controller: "card-form persist",
-      persist_key_value: dom_id(card),
-      action: actions.join(" ")
+      controller: "card-form persist hotkey",
+      card_form_mobile_mode_value: card.cardable_type.present? ? "fields" : "types",
+      card_form_current_type_value: selected_type_name.downcase,
+      action: "keydown->card-form#keydown keydown@window->hotkey#keydown keydown.meta+enter->card-form#submit keydown.ctrl+enter->card-form#submit trix-change->card-form#updateEditorLayout resize@window->card-form#updateEditorLayout"
     } do |f| %>
-  <div>
-    <%= f.rich_text_area :content,
-    autofocus: local_assigns.fetch(:autofocus, true),
-    placeholder: "What's on your mind?" %>
-  </div>
-  <div class="card-form-actions">
-    <div class="card-form-type-controls"
-         data-card-form-target="typeControls"
-         data-mode="<%= initial_type_mode %>"
-         data-action="change->card-form#loadFields">
-      <% type_options.each do |type_name| %>
-        <% cardable = type_name.constantize %>
-        <label class="card-form-type-button" data-value="<%= type_name.downcase %>" data-action="click->card-form#selectType">
-          <input type="radio"
-                 name="cardable_type"
-                 value="<%= type_name.downcase %>"
-                 id="cardable_type_<%= type_name.downcase %>"
-                 <% if selected_type_name == type_name %>checked<% end %>
-                 hidden>
-          <i class="icon card-form-type-button--back" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
-          <i class="icon" style="--icon-mask: var(--icon-<%= cardable.icon %>)" aria-hidden="true"></i>
-          <span><%= cardable.name %></span>
+  <button type="button"
+          class="sr-only"
+          aria-hidden="true"
+          tabindex="-1"
+          data-hotkey-target="binding"
+          data-hotkey-keys-value="mod+e"
+          data-hotkey-action-value="focus"
+          data-hotkey-selector-value="#card_form trix-editor">
+    Focus editor
+  </button>
+  <div class="card-form-rail">
+    <fieldset class="card-form-mobile-types" aria-label="Card type" data-card-form-target="mobileTypes">
+      <legend class="sr-only">Card type</legend>
+      <% type_options.each_with_index do |type_name, idx| %>
+        <% type_value = type_name.downcase %>
+        <% marker = type_name.constantize.marker.presence || "•" %>
+        <label class="card-form-mobile-type-option" data-value="<%= type_value %>">
+          <%= f.radio_button :cardable_type,
+            type_value,
+            checked: selected_type_name.downcase == type_value,
+            data: {
+              action: "change->card-form#loadFields change->card-form#showFields",
+              card_form_target: "typeInput",
+              card_form_icon_value: type_name.constantize.icon
+            } %>
+          <span class="card-form-type-option-marker" aria-hidden="true"><%= marker %></span>
+          <span class="card-form-type-option-name"><%= type_name.constantize.name %></span>
         </label>
       <% end %>
+    </fieldset>
+
+    <div class="card-form-mobile-fields" data-card-form-target="mobileFields">
+      <button type="button"
+              class="card-form-fields-back"
+              data-action="card-form#showTypes"
+              aria-label="Show card types">
+        <i class="icon" style="--icon-mask: var(--icon-arrow-up)" aria-hidden="true"></i>
+      </button>
+      <div class="card-form-fields">
+        <%= render "cards/fields/date_picker", card: card %>
+        <%= render "cards/fields/tags_picker", card: card %>
+        <%= render "cards/fields/context_picker", card: card %>
+      </div>
       <turbo-frame id="card_type_fields"
             class="card-form-fields"
             data-card-form-target="fields">
-        <% selected_cardable_instance.form_fields.each do |field| %>
-          <%= render "cards/fields/#{field}", card: card %>
-        <% end %>
       </turbo-frame>
     </div>
-    <% if card.errors.any? %>
-      <div class="form-errmsg">
-        <ul>
-          <% card.errors.full_messages.each do |message| %>
-            <li><%= message %></li>
-          <% end %>
-        </ul>
-      </div>
-    <% end %>
-    <%= f.button type: "submit", class: "button-primary" do %>
-      Dump
-    <% end %>
   </div>
+
+  <div class="card-form-composer">
+    <div class="card-form-desktop-type">
+      <button type="button"
+              class="card-form-type-trigger"
+              popovertarget="card-type-menu-<%= card.object_id %>"
+              style="anchor-name: --card-type-menu-<%= card.object_id %>"
+              aria-label="Choose card type">
+        <i class="icon"
+           style="--icon-mask: var(--icon-<%= selected_cardable.icon %>)"
+           data-card-form-target="typeIcon"
+           aria-hidden="true"></i>
+      </button>
+      <div id="card-type-menu-<%= card.object_id %>"
+           class="dropdown-menu card-form-type-menu"
+           data-controller="grid-navigation"
+           data-grid-navigation-columns-value="1"
+           data-card-form-target="typeMenu"
+           data-action="keydown->grid-navigation#navigate focusin->grid-navigation#syncPosition toggle->card-form#focusTypeMenu"
+           popover
+           style="position-anchor: --card-type-menu-<%= card.object_id %>">
+        <% type_options.each_with_index do |type_name, idx| %>
+          <% type_value = type_name.downcase %>
+          <% cardable = type_name.constantize %>
+          <button type="button"
+                  class="card-form-type-menu-item"
+                  data-grid-navigation-target="item"
+                  data-card-form-type-param="<%= type_value %>"
+                  data-action="card-form#selectType">
+            <i class="icon" style="--icon-mask: var(--icon-<%= cardable.icon %>)" aria-hidden="true"></i>
+            <span class="card-form-type-menu-item-copy">
+              <span><%= cardable.name %></span>
+              <span class="card-form-type-menu-item-note"><%= type_descriptions[type_value] %></span>
+            </span>
+            <kbd>Ctrl+Shift+<%= idx + 1 %></kbd>
+          </button>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="card-form-editor">
+      <%= f.rich_text_area :content,
+      autofocus: local_assigns.fetch(:autofocus, true),
+      placeholder: "What's on your mind?" %>
+    </div>
+    <div class="card-form-footer">
+      <div class="card-form-footer-actions">
+        <%= f.button type: "submit", class: "button-primary" do %>
+          Dump
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <% if card.errors.any? %>
+    <div class="form-errmsg">
+      <ul>
+        <% card.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
 <% end %>

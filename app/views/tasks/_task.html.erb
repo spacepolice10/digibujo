@@ -1,1 +1,1 @@
-<%= render "cards/card", card: task %>
+<%= render "cards/card", card: task, on_todays_route: local_assigns.fetch(:on_todays_route, false) %>

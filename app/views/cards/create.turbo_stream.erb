@@ -1,5 +1,7 @@
-<%= turbo_stream.prepend(@card.draft? ? "draft_cards" : "cards", @card) %>
-
+<%= turbo_stream.append "cards" do %>
+  <%= render @card, on_todays_route: @on_todays_route %>
+<% end %>
+<%= turbo_stream.remove("cards_empty_state") %>
 <%= turbo_stream.update "card_form" do %>
   <%= render "form", card: Card.new %>
 <% end %>

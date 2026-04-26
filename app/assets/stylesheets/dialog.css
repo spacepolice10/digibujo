@@ -1,0 +1,110 @@
+@layer components {
+
+  .dialog {
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    border: 0;
+    border-radius: var(--radius-strong);
+    background: var(--color-bg-subtle);
+    box-shadow:
+      var(--shadow-elevated),
+      0 0 0 1px color-mix(in oklch, var(--color-bg-base) 35%, transparent);
+    color: var(--color-fg-base);
+    margin: auto;
+    width: min(
+      calc(100vw - (2 * var(--spacing-horizontal))),
+      calc(var(--spacing-horizontal-double) * 13)
+    );
+    max-width: calc(100vw - (2 * var(--spacing-horizontal)));
+    overflow: hidden;
+
+    /* closed / exit state */
+    opacity: 0;
+    scale: 0.96;
+    transition:
+      opacity 120ms ease,
+      scale 120ms ease,
+      display 120ms allow-discrete,
+      overlay 120ms allow-discrete;
+
+    &[open] {
+      opacity: 1;
+      scale: 1;
+      animation: popout 160ms ease-out;
+
+      @starting-style {
+        opacity: 0;
+        scale: 0.9;
+      }
+    }
+
+    &::backdrop {
+      background: oklch(0% 0 0 / 0);
+      transition: background 140ms ease, display 140ms allow-discrete, overlay 140ms allow-discrete;
+    }
+
+    &[open]::backdrop {
+      background: oklch(0% 0 0 / 0.35);
+
+      @starting-style {
+        background: oklch(0% 0 0 / 0);
+      }
+    }
+  }
+
+  @media (width >= 600px) {
+    .dialog {
+      width: fit-content;
+      max-width: calc(var(--breakpoint-tablet) * 0.7);
+    }
+  }
+
+  .dialog--header,
+  .dialog--footer {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--spacing-horizontal-half) / 2);
+    padding: calc(var(--spacing-vertical-half) / 1.5) var(--spacing-horizontal-half);
+  }
+
+  .dialog--header > *,
+  .dialog--footer > * {
+    flex: 1;
+  }
+
+  .dialog--header {
+    position: relative;
+    justify-content: flex-start;
+    border-bottom: 0;
+  }
+
+  .dialog--header .button-tertiary {
+    flex: 0 0 auto;
+  }
+
+  .dialog--name {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    color: var(--color-fg-subtle);
+    text-align: center;
+  }
+
+  .dialog--footer {
+    justify-content: center;
+    gap: var(--spacing-horizontal-half);
+    border-top: 0;
+  }
+
+  .dialog--footer button {
+    flex: 1;
+    font-size: var(--font-size-subtle);
+  }
+
+  .dialog--footer .button-secondary,
+  .dialog--footer .button-primary {
+    justify-content: center;
+    text-align: center;
+  }
+
+}

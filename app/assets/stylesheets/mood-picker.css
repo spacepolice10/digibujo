@@ -1,0 +1,70 @@
+@layer components {
+
+  .mood-picker {
+    font-size: var(--font-size-subtle);
+
+    .dialog {
+      width: 100%;
+      padding: 0;
+    }
+  }
+
+  @media (width >= 600px) {
+    .mood-picker .dialog {
+      width: 260px;
+    }
+  }
+
+  .mood-picker--options {
+    list-style: none;
+  }
+
+  .mood-picker--option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-vertical-half);
+    width: 100%;
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: var(--font-size-subtle);
+    color: var(--color-fg-base);
+    text-align: left;
+
+    &::after {
+      content: "";
+      display: block;
+      flex-shrink: 0;
+      width: var(--icon-size-base);
+      height: var(--icon-size-base);
+      margin-left: auto;
+      opacity: 0;
+    }
+
+    &:hover {
+      background: var(--model-color-2-bg);
+    }
+
+    &.is-active {
+      &::after {
+        background: var(--model-color-2);
+        mask-image: var(--icon-check);
+        mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
+        opacity: var(--opacity-full);
+      }
+    }
+
+  }
+
+  .mood-picker--icon {
+    font-size: var(--font-size-base);
+  }
+
+  .mood-picker--name {
+    color: var(--color-fg-subtle);
+  }
+
+}

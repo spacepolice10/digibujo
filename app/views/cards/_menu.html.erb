@@ -1,0 +1,90 @@
+<div class="card-menu">
+  <button class="card-menu-trigger"
+          popovertarget="<%= card_menu_id %>"
+          style="anchor-name: --<%= card_menu_id %>">⋯</button>
+  <div id="<%= card_menu_id %>"
+       class="dropdown-menu card-dropdown-menu"
+       popover
+       style="position-anchor: --<%= card_menu_id %>">
+    <%= button_to card_pop_path(card), method: :patch, class: "card-dropdown-item" do %>
+      <span class="card-dropdown-icon card-dropdown-icon--pop">
+        <span class="icon" style="--icon-mask: var(--icon-arrow-up)"></span>
+      </span>
+      <span class="card-dropdown-text">
+        <span class="card-dropdown-label"><%= card.pops_on.present? ? "Dismiss" : "Pop" %></span>
+        <span class="card-dropdown-desc"><%= card.pops_on.present? ? "Remove from top of Timeline" : "Surface to top of Timeline" %></span>
+      </span>
+    <% end %>
+    <%= button_to card_pin_path(card), method: :patch, class: "card-dropdown-item" do %>
+      <span class="card-dropdown-icon card-dropdown-icon--pin">
+        <span class="icon" style="--icon-mask: var(--icon-pin)"></span>
+      </span>
+      <span class="card-dropdown-text">
+        <span class="card-dropdown-label"><%= card.pinned? ? "Unpin" : "Pin" %></span>
+        <span class="card-dropdown-desc"><%= card.pinned? ? "Remove from quick access" : "Keep at top for quick access" %></span>
+      </span>
+    <% end %>
+    <%= button_to card_archive_path(card), method: :patch, class: "card-dropdown-item" do %>
+      <span class="card-dropdown-icon card-dropdown-icon--archive">
+        <span class="icon" style="--icon-mask: var(--icon-archive)"></span>
+      </span>
+      <span class="card-dropdown-text">
+        <span class="card-dropdown-label"><%= card.archived? ? "Unarchive" : "Archive" %></span>
+        <span class="card-dropdown-desc"><%= card.archived? ? "Restore to Timeline" : "Stored in archive for 30 days" %></span>
+      </span>
+    <% end %>
+    <% if @latest_playlist %>
+      <% pc = @playlist_card_map[card.id] %>
+      <% if pc %>
+        <%= button_to playlist_card_path(@latest_playlist, pc), method: :delete, class: "card-dropdown-item" do %>
+          <span class="card-dropdown-icon card-dropdown-icon--playlist" style="background: <%= @latest_playlist.colour_bg_variable %>; color: <%= @latest_playlist.colour_variable %>">
+            <span class="icon" style="--icon-mask: var(--icon-<%= @latest_playlist.icon %>)"></span>
+          </span>
+          <span class="card-dropdown-text">
+            <span class="card-dropdown-label">Remove from Playlist</span>
+            <span class="card-dropdown-desc">Remove from current playlist</span>
+          </span>
+        <% end %>
+      <% else %>
+        <%= button_to playlist_cards_path(@latest_playlist), params: { card_id: card.id }, class: "card-dropdown-item" do %>
+          <span class="card-dropdown-icon card-dropdown-icon--playlist" style="background: <%= @latest_playlist.colour_bg_variable %>; color: <%= @latest_playlist.colour_variable %>">
+            <span class="icon" style="--icon-mask: var(--icon-<%= @latest_playlist.icon %>)"></span>
+          </span>
+          <span class="card-dropdown-text">
+            <span class="card-dropdown-label">Add to Playlist</span>
+            <span class="card-dropdown-desc">Add to current playlist</span>
+          </span>
+        <% end %>
+      <% end %>
+      <%= link_to card_playlist_picker_path(card),
+            data: { turbo_frame: "modal", action: "dialog#open" },
+            class: "card-dropdown-item" do %>
+        <span class="card-dropdown-icon card-dropdown-icon--chooser">
+          <span class="icon" style="--icon-mask: var(--icon-pencil)"></span>
+        </span>
+        <span class="card-dropdown-text">
+          <span class="card-dropdown-label">Choose Playlist…</span>
+          <span class="card-dropdown-desc">Pick from all playlists</span>
+        </span>
+      <% end %>
+    <% end %>
+    <%= link_to edit_card_path(card), data: { turbo_frame: "_top" }, class: "card-dropdown-item" do %>
+      <span class="card-dropdown-icon card-dropdown-icon--edit">
+        <span class="icon" style="--icon-mask: var(--icon-pencil)"></span>
+      </span>
+      <span class="card-dropdown-text">
+        <span class="card-dropdown-label">Edit</span>
+        <span class="card-dropdown-desc">Open and edit card content</span>
+      </span>
+    <% end %>
+    <%= button_to card_path(card), method: :delete, class: "card-dropdown-item card-dropdown-item--danger", form: { data: { turbo_confirm: "Are you sure?" } } do %>
+      <span class="card-dropdown-icon card-dropdown-icon--delete">
+        <span class="icon" style="--icon-mask: var(--icon-trash)"></span>
+      </span>
+      <span class="card-dropdown-text">
+        <span class="card-dropdown-label">Delete</span>
+        <span class="card-dropdown-desc">Permanently remove this card</span>
+      </span>
+    <% end %>
+  </div>
+</div>

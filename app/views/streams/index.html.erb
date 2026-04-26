@@ -2,7 +2,7 @@
     <div class="sidebar-panel__header">
       <span class="sidebar-panel__title">Index!</span>
       <div class="sidebar-panel__header-actions">
-        <%= link_to cards_path(q: ""),
+        <%= link_to search_path,
               class: "streams-panel__search-btn",
               aria: { label: "Search" } do %>
           <i class="icon" style="--icon-mask: var(--icon-search)" aria-hidden="true"></i>
@@ -20,7 +20,7 @@
         <div class="sidebar-panel__section-header">
           <h2 class="sidebar-panel__section-label">Filters</h2>
           <span class="sidebar-panel__section-wavy" aria-hidden="true"></span>
-          <%= link_to "View All", streams_path,
+          <%= link_to "View All", indexing_path,
                 class: "sidebar-panel__section-link",
                 "aria-label": "All streams" %>
         </div>
@@ -48,9 +48,9 @@
                         </span>
                       <% end %>
                     <% end %>
-                    <% if stream.tags.present? %>
-                      <% stream.tags.split(",").map(&:strip).reject(&:blank?).first(2).each do |tag| %>
-                        <span class="pill">#<%= tag %></span>
+                    <% if stream.collections.present? %>
+                      <% stream.collections.split(",").map(&:strip).reject(&:blank?).first(2).each do |collection| %>
+                        <span class="pill"><%= collection %></span>
                       <% end %>
                     <% end %>
                   </span>
@@ -61,19 +61,21 @@
         </ul>
       </section>
     <% end %>
-    <% if @tags.any? %>
+    <% if @collections.any? %>
       <section class="sidebar-panel__section">
         <div class="sidebar-panel__section-header">
-          <h2 class="sidebar-panel__section-label">Tags</h2>
+          <h2 class="sidebar-panel__section-label">Collections</h2>
           <span class="sidebar-panel__section-wavy" aria-hidden="true"></span>
-          <%= link_to "View All", tags_path,
+          <%= link_to "View All", indexing_path,
                 class: "sidebar-panel__section-link",
-                "aria-label": "All tags",
+                "aria-label": "All collections",
                 data: { turbo_frame: "_top" } %>
         </div>
         <div class="tags-panel-list">
-          <% @tags.first(8).each do |tag| %>
-            <span class="pill" style="background: <%= tag.colour_bg_variable %>"><%= tag.name %></span>
+          <% @collections.first(8).each do |collection| %>
+            <%= link_to collection_path(collection), class: "pill", style: "background: #{collection.colour_bg_variable}", data: { turbo_frame: "_top" } do %>
+              <%= collection.name %>
+            <% end %>
           <% end %>
         </div>
       </section>

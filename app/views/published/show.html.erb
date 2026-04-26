@@ -1,17 +1,12 @@
-<% content_for(:title) { @card.title } %>
+<% content_for(:title) { @card.name } %>
 <article class="card-show">
   <header class="card-show-header">
     <div class="card-show-meta">
-      <span class="card-type"><%= @card.type_name %></span>
-      <% if @card.daylog? && @card.cardable.mood_emoji %>
-        <span class="card-mood"><%= @card.cardable.mood_emoji %></span>
-      <% end %>
+      <span class="card-type"><%= @card.name %></span>
     </div>
-    <% if @card.tags.any? %>
+    <% if @card.collection.present? %>
       <div class="card-tags">
-        <% @card.tags.each do |tag| %>
-          <span class="pill" style="background: <%= tag.colour_bg_variable %>"><%= tag.name %></span>
-        <% end %>
+        <span class="pill" style="background: <%= @card.collection.colour_bg_variable %>"><%= @card.collection.name %></span>
       </div>
     <% end %>
   </header>

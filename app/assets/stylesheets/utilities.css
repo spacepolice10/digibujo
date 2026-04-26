@@ -24,7 +24,8 @@
     padding: var(--spacing-horizontal-half);
   }
 
-  .line-clamp {
+  .line-clamp,
+  .line-clamp-1 {
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -82,17 +83,6 @@
     height: 0;
     border-bottom: 1px dotted var(--model-color-2);
     opacity: var(--opacity-half);
-  }
-
-  .form-item {
-    width: 100%;
-    font-size: var(--font-size-subtle);
-    font-family: inherit;
-    color: inherit;
-    padding: var(--spacing-vertical-half);
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-subtle);
-    background: var(--color-bg-subtle);
   }
 
   /* ── Animation utilities ─────────────────────── */

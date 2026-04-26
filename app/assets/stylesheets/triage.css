@@ -1,0 +1,88 @@
+@layer components {
+  .triage-page {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: var(--spacing-horizontal);
+  }
+
+  .triage-count {
+    color: var(--color-fg-subtle);
+    font-size: var(--font-size-subtle);
+    margin: 0;
+  }
+
+  .triage-description {
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    margin: 0 auto var(--spacing-vertical);
+    width: min(100%, calc(var(--spacing-horizontal-double) * 22));
+    border: 1px dashed var(--color-stroke-base);
+    border-radius: var(--radius-base);
+    background: var(--color-bg-subtle);
+  }
+
+  .triage-description--copy {
+    color: var(--color-fg-subtle);
+    font-size: var(--font-size-subtle);
+    margin: 0;
+  }
+
+  .triage-empty {
+    color: var(--color-fg-subtle);
+    text-align: center;
+    padding: var(--spacing-vertical-double);
+  }
+
+  .triage-card-actions {
+    display: flex;
+    gap: var(--spacing-vertical-half);
+    margin: 0 0 var(--spacing-vertical);
+  }
+
+  .triage-action-button {
+    --triage-surface: color-mix(in oklch, var(--color-bg-base), var(--color-bg-subtle) 35%);
+    --triage-surface-hover: color-mix(in oklch, var(--color-bg-base), var(--color-bg-subtle) 55%);
+
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-vertical-half);
+    padding-inline: var(--spacing-horizontal-half);
+    background: var(--triage-surface);
+    border-color: var(--color-stroke-base);
+    color: var(--color-fg-subtle);
+
+    &:hover {
+      background: var(--triage-surface-hover);
+    }
+  }
+
+  .triage-action-button .icon {
+    width: var(--icon-size-base);
+    height: var(--icon-size-base);
+  }
+
+  .triage-action-button--danger {
+    border-color: var(--color-stroke-base);
+  }
+
+  .triage-postpone-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-vertical-half);
+  }
+
+  .triage-card--note {
+    --card-bg: color-mix(in oklch, var(--color-bg-base), var(--color-bg-warn) 35%);
+    --card-bg-hover: color-mix(in oklch, var(--color-bg-base), var(--color-bg-warn) 50%);
+    --card-border: color-mix(in oklch, var(--color-stroke-base), var(--color-fg-warn) 35%);
+  }
+
+  .triage-card--note .card-body,
+  .triage-card--note .card-body * {
+    color: var(--color-fg-subtle);
+    font-style: italic;
+  }
+
+  .triage-card--completed {
+    opacity: var(--opacity-half);
+  }
+}

@@ -1,0 +1,14 @@
+<ul class="streams-type-grid">
+  <% Typeable::CARD_TYPES.each do |type| %>
+    <li>
+      <%= link_to type[:href],
+            class: "streams-type-tile",
+            data: { turbo_frame: "_top", turbo_action: "advance" } do %>
+        <span class="streams-type-tile__icon">
+          <i class="icon" style="--icon-mask: var(--icon-<%= type[:icon] %>)" aria-hidden="true"></i>
+        </span>
+        <span class="streams-type-tile__name"><%= type[:title] %></span>
+      <% end %>
+    </li>
+  <% end %>
+</ul>

@@ -1,5 +1,2 @@
 <turbo-frame id="card_type_fields" class="card-form-fields">
-  <% (@card.cardable.form_fields || []).each do |field| %>
-    <%= render "cards/fields/#{field}", card: @card %>
-  <% end %>
 </turbo-frame>

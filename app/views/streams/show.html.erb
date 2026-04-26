@@ -55,9 +55,9 @@
               <% end %>
             </span>
           <% end %>
-          <% if @stream.tags.present? %>
-            <% @stream.tags.split(",").map(&:strip).reject(&:blank?).each do |tag| %>
-              <span class="pill">#<%= tag %></span>
+          <% if @stream.collections.present? %>
+            <% @stream.collections.split(",").map(&:strip).reject(&:blank?).each do |collection| %>
+              <span class="pill"><%= collection %></span>
             <% end %>
           <% end %>
         </div>

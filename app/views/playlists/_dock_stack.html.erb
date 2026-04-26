@@ -21,12 +21,12 @@
         <% stack_cards.each_with_index do |card, i| %>
           <div class="pinned-stack-card" style="--stack-i: <%= i %>; border-color: <%= playlist.colour_variable %>">
             <span class="pinned-stack-card__body">
-              <span class="pinned-stack-card__title"><%= card.title %></span>
+              <span class="pinned-stack-card__title"><%= card.name %></span>
               <span class="pinned-stack-card__meta">
                 <%= card.name %>
-                <% if card.tags.any? %>
+                <% if card.collection.present? %>
                   <span class="pinned-stack-card__sep" aria-hidden="true">&middot;</span>
-                  <%= card.tags.first(2).map(&:name).join(", ") %>
+                  <%= card.collection.name %>
                 <% end %>
               </span>
             </span>

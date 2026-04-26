@@ -1,0 +1,15 @@
+<div id="<%= dom_id(card) %>" class="card triage-card triage-card--note <%= "triage-card--completed" if card.done %>" data-card-type="note">
+  <div class="card-action">
+    <span class="completion-placeholder" aria-hidden="true" style="color: var(--model-color-5)">
+      <span class="completion-marker"><%= card.marker.presence || "-" %></span>
+    </span>
+  </div>
+  <div class="card-body">
+    <%= card.content %>
+    <% if card.collection.present? %>
+      <div class="card-tags">
+        <span class="pill" style="background: <%= card.collection.colour_bg_variable %>"><%= card.collection.name %></span>
+      </div>
+    <% end %>
+  </div>
+</div>

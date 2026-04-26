@@ -1,8 +1,9 @@
 @layer components {
-
-  /* ── Primary button ───────────────────────────────── */
-
-  .button-primary {
+  .button,
+  .button-accent,
+  .button-primary,
+  .button-secondary,
+  .button-tertiary {
     display: inline-flex;
     justify-content: center;
     align-items: center;
@@ -11,14 +12,19 @@
     border-radius: var(--radius-strong);
     font-family: inherit;
     font-size: var(--font-size-subtle);
-    background: var(--color-fg-base);
-    border: 1px solid var(--color-fg-base);
-    color: var(--color-bg-base);
     cursor: pointer;
     white-space: nowrap;
     flex-shrink: 0;
     text-decoration: none;
     transition: background 0.1s ease;
+  }
+
+  /* ── Primary button ───────────────────────────────── */
+
+  .button-primary {
+    background: var(--color-fg-base);
+    border: 1px solid var(--color-fg-base);
+    color: var(--color-bg-base);
 
     &:hover { background: var(--color-fg-subtle); border-color: var(--color-fg-subtle); }
   }
@@ -26,9 +32,7 @@
   /* ── Accent button ────────────────────────────────── */
 
   .button-accent {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--spacing-vertical-half);
+    justify-content: center;
     background: var(--color-accent);
     color: oklch(0.18 0.02 130);
     border: 2.5px solid oklch(0.18 0.02 130);
@@ -55,24 +59,20 @@
   /* ── Secondary button ─────────────────────────────── */
 
   .button-secondary {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    gap: var(--spacing-vertical-half);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    border-radius: var(--radius-strong);
-    font-family: inherit;
-    font-size: var(--font-size-subtle);
     background: transparent;
     border: 1px solid var(--color-stroke-base);
     color: var(--color-fg-subtle);
-    cursor: pointer;
-    white-space: nowrap;
-    flex-shrink: 0;
-    text-decoration: none;
-    transition: background 0.1s ease;
 
     &:hover { background: var(--color-bg-base); }
+
+    &:disabled {
+      opacity: var(--opacity-half);
+      cursor: not-allowed;
+    }
+
+    &:disabled:hover {
+      background: transparent;
+    }
   }
 
   /* ── Secondary button — active variant ────────────── */
@@ -97,22 +97,12 @@
   /* ── Tertiary button ──────────────────────────────── */
 
   .button-tertiary {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-family: inherit;
-    font-size: var(--font-size-subtle);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
+    border: 1px solid transparent;
     background: transparent;
-    cursor: pointer;
     color: var(--color-fg-subtle);
-    text-decoration: none;
 
     &:hover {
-      background: var(--color-bg-subtle);
-      color: var(--color-fg-base);
+      color: var(--model-color-2);
     }
   }
 

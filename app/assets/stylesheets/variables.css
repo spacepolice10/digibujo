@@ -1,16 +1,16 @@
 @layer variables {
   :root {
     /* backgrounds */
-    --color-bg-base: light-dark(oklch(0.97 0.004 80), oklch(0.15 0.005 260));
-    --color-bg-subtle: light-dark(oklch(0.99 0.002 80), oklch(0.2 0.005 260));
+    --color-bg-base: light-dark(oklch(0.97 0.004 80), oklch(0.19 0.007 82));
+    --color-bg-subtle: light-dark(oklch(0.99 0.002 80), oklch(0.24 0.007 82));
     --color-bg-strong: light-dark(oklch(0.18 0.005 260), oklch(0.95 0.004 80));
     --color-bg-warn: light-dark(oklch(0.96 0.07 90), oklch(0.28 0.06 90));
     --color-bg-negative: light-dark(oklch(0.95 0.07 35), oklch(0.25 0.06 35));
     --color-bg-positive: light-dark(oklch(0.95 0.05 210), oklch(0.25 0.05 210));
 
     /* foregrounds */
-    --color-fg-base: light-dark(oklch(0.35 0.01 260), oklch(0.88 0.01 80));
-    --color-fg-subtle: light-dark(oklch(0.53 0.01 260), oklch(0.65 0.01 80));
+    --color-fg-base: light-dark(oklch(0.35 0.01 260), oklch(0.87 0.013 82));
+    --color-fg-subtle: light-dark(oklch(0.53 0.01 260), oklch(0.71 0.012 82));
     --color-fg-strong: light-dark(white, oklch(0.12 0.005 260));
     --color-fg-warn: light-dark(oklch(0.68 0.15 90), oklch(0.78 0.15 90));
     --color-fg-negative: light-dark(oklch(0.65 0.16 35), oklch(0.75 0.16 35));
@@ -25,15 +25,15 @@
     /* strokes */
     --color-stroke-base: light-dark(
       oklch(0.91 0.004 80),
-      oklch(0.28 0.005 260)
+      oklch(0.33 0.006 82)
     );
     --color-stroke-subtle: light-dark(
       oklch(0.99 0.002 80),
-      oklch(0.2 0.005 260)
+      oklch(0.25 0.006 82)
     );
     --color-stroke-strong: light-dark(
       oklch(0.18 0.005 260),
-      oklch(0.85 0.004 80)
+      oklch(0.86 0.006 82)
     );
     --color-stroke-warn: light-dark(oklch(0.82 0.13 90), oklch(0.45 0.1 90));
     --color-stroke-negative: light-dark(
@@ -46,22 +46,22 @@
     );
 
     /* model colors — electric palette */
-    --model-color-1: oklch(68% 0.22 290); /* Violet */
-    --model-color-1-bg: oklch(94% 0.08 290);
-    --model-color-2: oklch(62% 0.2 260); /* Cobalt */
-    --model-color-2-bg: oklch(94% 0.07 260);
-    --model-color-3: oklch(72% 0.16 195); /* Teal */
-    --model-color-3-bg: oklch(95% 0.06 195);
-    --model-color-4: oklch(72% 0.2 155); /* Emerald */
-    --model-color-4-bg: oklch(95% 0.08 155);
-    --model-color-5: oklch(82% 0.18 90); /* Gold */
-    --model-color-5-bg: oklch(96% 0.08 90);
-    --model-color-6: oklch(68% 0.2 25); /* Vermillion */
-    --model-color-6-bg: oklch(95% 0.08 25);
-    --model-color-7: oklch(60% 0.18 340); /* Magenta */
-    --model-color-7-bg: oklch(95% 0.07 340);
-    --model-color-8: oklch(30% 0.1 260); /* Ink */
-    --model-color-8-bg: oklch(94% 0.04 260);
+    --model-color-1: light-dark(oklch(68% 0.22 290), oklch(76% 0.18 290)); /* Violet */
+    --model-color-1-bg: light-dark(oklch(94% 0.08 290), oklch(30% 0.08 290));
+    --model-color-2: light-dark(oklch(62% 0.2 260), oklch(74% 0.16 260)); /* Cobalt */
+    --model-color-2-bg: light-dark(oklch(94% 0.07 260), oklch(30% 0.07 260));
+    --model-color-3: light-dark(oklch(72% 0.16 195), oklch(78% 0.12 195)); /* Teal */
+    --model-color-3-bg: light-dark(oklch(95% 0.06 195), oklch(31% 0.06 195));
+    --model-color-4: light-dark(oklch(72% 0.2 155), oklch(80% 0.14 155)); /* Emerald */
+    --model-color-4-bg: light-dark(oklch(95% 0.08 155), oklch(31% 0.08 155));
+    --model-color-5: light-dark(oklch(82% 0.18 90), oklch(86% 0.14 90)); /* Gold */
+    --model-color-5-bg: light-dark(oklch(96% 0.08 90), oklch(34% 0.08 90));
+    --model-color-6: light-dark(oklch(68% 0.2 25), oklch(78% 0.15 25)); /* Vermillion */
+    --model-color-6-bg: light-dark(oklch(95% 0.08 25), oklch(31% 0.08 25));
+    --model-color-7: light-dark(oklch(60% 0.18 340), oklch(74% 0.14 340)); /* Magenta */
+    --model-color-7-bg: light-dark(oklch(95% 0.07 340), oklch(30% 0.07 340));
+    --model-color-8: light-dark(oklch(30% 0.1 260), oklch(78% 0.06 260)); /* Ink */
+    --model-color-8-bg: light-dark(oklch(94% 0.04 260), oklch(28% 0.04 260));
 
     /* breakpoints */
     --breakpoint-0: 0px;
@@ -86,9 +86,7 @@
 
     /* z-index */
     --z-base: 0;
-    --z-dropdown-bg: 1;
     --z-dropdown: 2;
-    --z-dialog-bg: 1;
     --z-dialog: 2;
 
     /* font sizes — fluid */

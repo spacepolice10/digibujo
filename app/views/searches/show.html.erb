@@ -1,0 +1,38 @@
+<div class="search">
+  <div class="cards-timeline-header">
+    <div class="cards-timeline-header-group">
+      <%= link_to "Today", todays_path, class: "button-tertiary", data: { turbo_frame: "_top" } %>
+    </div>
+    <h2 class="cards-timeline-header-date">Search</h2>
+    <div class="cards-timeline-header-group">
+      <%= link_to triage_path, class: "button-secondary", data: { turbo_frame: "_top" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
+        Triage
+      <% end %>
+    </div>
+  </div>
+
+  <%= form_with url: search_path,
+        method: :get,
+        local: true,
+        class: "search--form",
+        data: {
+          controller: "search",
+          search_target: "form"
+        } do |form| %>
+    <%= form.label :q, "Search cards", class: "search--label" %>
+    <%= form.search_field :q,
+          value: @query,
+          placeholder: "Search by card text or collection",
+          class: "search--input",
+          data: {
+            action: "input->search#search",
+            search_target: "input"
+          },
+          autocomplete: "off" %>
+  <% end %>
+
+  <turbo-frame id="search_results">
+    <%= render "results" %>
+  </turbo-frame>
+</div>
