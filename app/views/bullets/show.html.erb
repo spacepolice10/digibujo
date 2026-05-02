@@ -1,0 +1,40 @@
+<% content_for(:title) { "Bullet" } %>
+<div class="bullet-show">
+  <header class="show-navigation">
+    <button class="button-tertiary" onclick="history.back()">
+      <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+      Back
+    </button>
+    <div class="show-navigation-actions">
+      <%= link_to edit_bullet_path(@bullet), class: "button-secondary", data: { turbo_frame: "_top" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
+        Edit
+      <% end %>
+      <%= button_to bullet_pin_path(@bullet), method: :patch, class: "button-secondary" do %>
+        <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
+        <%= @bullet.pinned? ? "Unpin" : "Pin" %>
+      <% end %>
+      <%= button_to bullet_publish_path(@bullet), method: :patch, class: "button-secondary" do %>
+        <i class="icon" style="--icon-mask: var(--icon-link)" aria-hidden="true"></i>
+        <%= @bullet.published? ? "Unpublish" : "Publish" %>
+      <% end %>
+      <%= button_to bullet_path(@bullet), method: :delete, class: "button-secondary button-secondary--danger", form: { data: { turbo_confirm: "Are you sure?" } } do %>
+        <i class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></i>
+        Delete
+      <% end %>
+    </div>
+  </header>
+
+  <% if @bullet.published? %>
+    <div class="published-link">
+      <input type="text" value="<%= published_url(@bullet.public_code) %>" readonly onclick="this.select()">
+    </div>
+  <% end %>
+
+  <article class="bullet-show-content">
+    <div class="bullet-show-body">
+      <%= @bullet.content %>
+    </div>
+
+  </article>
+</div>

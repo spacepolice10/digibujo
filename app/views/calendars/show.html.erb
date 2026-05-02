@@ -25,10 +25,10 @@
             <% week.each do |day| %>
               <% if day %>
                 <% day_date  = Date.new(@year, month[:number], day) %>
-                <% day_cards = month[:dates_with_cards][day_date] %>
-                <% types     = day_cards&.map { |c| c.cardable_type.downcase }&.uniq&.join(" ") %>
-                <span class="future-log__day<%= " future-log__day--today" if day_date == Date.today %>"
-                      <%= "data-card-types=\"#{types}\"".html_safe if types.present? %>>
+                <% day_bullets = month[:dates_with_bullets][day_date] %>
+                <% types     = day_bullets&.map { |c| c.bulletable_type.downcase }&.uniq&.join(" ") %>
+                <span class="future-log__day<%= " future-log__day--today" if day_date == Date.current %>"
+                      <%= "data-bullet-types=\"#{types}\"".html_safe if types.present? %>>
                   <%= day %>
                 </span>
               <% else %>
@@ -38,12 +38,12 @@
           <% end %>
         </div>
 
-        <% if month[:cards].any? %>
+        <% if month[:bullets].any? %>
           <ul class="future-log__events">
-            <% month[:cards].each do |card| %>
-              <li class="future-log__event future-log__event--<%= card.cardable_type.downcase %>">
-                <span class="future-log__event-date"><%= card.date.day %></span>
-                <%= link_to card.title, card_path(card), class: "future-log__event-title", data: { turbo_frame: "_top" } %>
+            <% month[:bullets].each do |bullet| %>
+              <li class="future-log__event future-log__event--<%= bullet.bulletable_type.downcase %>">
+                <span class="future-log__event-date"><%= bullet.scheduled_on.day %></span>
+                <%= link_to bullet.title, bullet_path(bullet), class: "future-log__event-title", data: { turbo_frame: "_top" } %>
               </li>
             <% end %>
           </ul>

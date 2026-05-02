@@ -1,9 +1,9 @@
-<div id="<%= dom_id(event) %>" class="card" data-card-type="event">
-  <div class="card-action">
+<div id="<%= dom_id(event) %>" class="bullet" data-bullet-type="event">
+  <div class="bullet-action">
     <span class="completion-placeholder" aria-hidden="true" style="color: var(--model-color-6)">
       <span class="completion-marker"><%= event.marker.presence || "○" %></span>
     </span>
   </div>
-  <%= render "cards/body", card: event, on_todays_route: local_assigns.fetch(:on_todays_route, false) %>
-  <%= render "cards/with_menu", card: event, card_menu_id: "event-card-menu-#{event.id}" %>
+  <%= render "bullets/body", bullet: event %>
+  <%= render "bullets/with_menu", bullet: event, bullet_menu_id: "event-bullet-menu-#{event.id}" %>
 </div>

@@ -1,10 +1,10 @@
-<div class="cards-timeline">
-  <div class="cards-timeline-header">
-    <div class="cards-timeline-header-group">
-      <%= link_to "Today", todays_path, class: "button-tertiary" %>
+<div class="bullets-timeline">
+  <div class="bullets-timeline-header">
+    <div class="bullets-timeline-header-group">
+      <%= link_to "Today", bullets_path, class: "button-tertiary" %>
     </div>
-    <h2 class="cards-timeline-header-date">History</h2>
-    <div class="cards-timeline-header-group">
+    <h2 class="bullets-timeline-header-date">History</h2>
+    <div class="bullets-timeline-header-group">
       <%= link_to search_path, class: "button-secondary", data: { turbo_frame: "_top" } do %>
         <i class="icon" style="--icon-mask: var(--icon-search)" aria-hidden="true"></i>
         Search
@@ -16,9 +16,9 @@
     </div>
   </div>
 
-  <%= render "cards/paginated_list", cards: @cards, page: @page %>
+  <%= render "bullets/paginated_list", bullets: @bullets, page: @page %>
 
-  <div class="cards-timeline-composer">
-    <p class="cards-timeline-note text-sm">You are browsing history. Switch to Today to capture new cards.</p>
+  <div class="bullets-timeline-composer">
+    <p class="bullets-timeline-note text-sm">You are browsing history. Switch to Today to capture new bullets.</p>
   </div>
 </div>

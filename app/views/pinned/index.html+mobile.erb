@@ -1,14 +1,14 @@
 <section class="workspace">
-  <% if @pinned_cards.any? %>
+  <% if @pinned_bullets.any? %>
     <div class="workspace__section">
       <div class="workspace__group-header">
         <span class="workspace__bar" style="background: var(--color-fg-base)"></span>
         <i class="icon workspace__icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
         <span class="workspace__label">Pinned</span>
-        <span class="workspace__count"><%= pluralize(@pinned_cards.count, "card") %></span>
+        <span class="workspace__count"><%= pluralize(@pinned_bullets.count, "bullet") %></span>
       </div>
-      <% @pinned_cards.each do |card| %>
-        <%= render partial: "cards/card", locals: { card: card, dom_prefix: "workspace" } %>
+      <% @pinned_bullets.each do |bullet| %>
+        <%= render partial: "bullets/bullet", locals: { bullet: bullet, dom_prefix: "workspace" } %>
       <% end %>
     </div>
   <% end %>
@@ -19,15 +19,15 @@
         <span class="workspace__bar" style="background: <%= playlist.colour_variable %>"></span>
         <i class="icon workspace__icon" style="--icon-mask: var(--icon-<%= playlist.icon %>)" aria-hidden="true"></i>
         <span class="workspace__label">Playlist</span>
-        <span class="workspace__count"><%= pluralize(playlist.playlist_cards.size, "card") %></span>
+        <span class="workspace__count"><%= pluralize(playlist.playlist_bullets.size, "bullet") %></span>
       </div>
-      <% playlist.playlist_cards.each do |pc| %>
-        <%= render partial: "cards/card", locals: { card: pc.card, dom_prefix: "workspace_#{playlist.id}" } %>
+      <% playlist.playlist_bullets.each do |pc| %>
+        <%= render partial: "bullets/bullet", locals: { bullet: pc.bullet, dom_prefix: "workspace_#{playlist.id}" } %>
       <% end %>
     </div>
   <% end %>
 
-  <% if @pinned_cards.none? && @playlists.none? %>
+  <% if @pinned_bullets.none? && @playlists.none? %>
     <p class="workspace__empty">Nothing pinned or collected yet.</p>
   <% end %>
 </section>

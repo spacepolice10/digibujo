@@ -1,0 +1,51 @@
+<% field_name = local_assigns.fetch(:field_name, "bullet[project_id]") %>
+<% name_field_name = local_assigns.fetch(:name_field_name, "bullet[project_name]") %>
+<% initial_id = local_assigns.fetch(:initial_id, bullet.project_id) %>
+<% initial_name = local_assigns.fetch(:initial_name, bullet.project&.name.to_s) %>
+<% initial_project = { id: initial_id, name: initial_name, colour: bullet.project&.colour }.compact %>
+<% dialog_id = dom_id(bullet, :projects_picker_dialog) %>
+<% search_id = dom_id(bullet, :projects_picker_search) %>
+<div class="projects-picker"
+     data-controller="projects-picker dialog combobox"
+     data-projects-picker-project-value="<%= initial_project.to_json %>">
+  <button
+    type="button"
+    class="button-secondary projects-picker--trigger projects-picker--trigger-composer"
+    commandfor="<%= dialog_id %>"
+    command="show-modal"
+    data-action="click->projects-picker#reset"
+    >
+    <i class="icon projects-picker--trigger-icon" style="--icon-mask: var(--icon-tag)" aria-hidden="true"></i>
+    <span data-projects-picker-target="triggerText">Project</span>
+  </button>
+  <input type="hidden" name="<%= field_name %>" value="<%= initial_id %>" data-projects-picker-target="hiddenId">
+  <input type="hidden" name="<%= name_field_name %>" value="<%= initial_name %>" data-projects-picker-target="hiddenName">
+  <dialog
+    id="<%= dialog_id %>"
+    class="dialog"
+    data-dialog-target="dialog"
+    data-action="click->dialog#backdropHide"
+    >
+    <div class="projects-picker--body">
+      <p class="projects-picker--title">Project picker</p>
+      <input
+        type="search"
+        id="<%= search_id %>"
+        class="form-input"
+        autocomplete="off"
+        placeholder="Search projects"
+        data-projects-picker-target="search"
+        data-combobox-target="input"
+        data-action="input->projects-picker#search keydown->combobox#navigate keydown->projects-picker#submitOnEnter"
+        >
+      <ul class="projects-picker--suggestions"
+          role="listbox"
+          data-projects-picker-target="suggestions"></ul>
+      <button type="button"
+              class="button-secondary projects-picker--clear"
+              data-action="click->projects-picker#clear"
+              data-projects-picker-target="clearButton"
+              <%= "disabled" if initial_name.blank? %>>Clear project</button>
+    </div>
+  </dialog>
+</div>

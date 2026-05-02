@@ -1,5 +1,5 @@
 <% content_for(:title) { @stream.name } %>
-<div class="card-show">
+<div class="bullet-show">
   <nav class="show-navigation">
     <button class="button-secondary" onclick="history.back()">
       <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
@@ -8,8 +8,8 @@
     <div class="show-navigation-actions">
       <%= link_to @done_last ? stream_path(@stream) : stream_path(@stream, sort: "done_last"),
             class: "button-secondary #{"button-secondary--active" if @done_last}",
-            data: { turbo_frame: "cards_panel", turbo_action: "advance" },
-            title: @done_last ? "Restore default sort" : "Sort done cards last" do %>
+            data: { turbo_frame: "bullets_panel", turbo_action: "advance" },
+            title: @done_last ? "Restore default sort" : "Sort done bullets last" do %>
         <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
         Done last
         <i class="icon sort-direction-arrow" style="--icon-mask: var(--icon-arrow-up); transform: rotate(<%= @done_last ? "180deg" : "0deg" %>)" aria-hidden="true"></i>
@@ -24,19 +24,19 @@
       <% end %>
     </div>
   </nav>
-  <article class="card-show-content">
-    <header class="card-show-header">
-      <div class="card-show-meta">
+  <article class="bullet-show-content">
+    <header class="bullet-show-header">
+      <div class="bullet-show-meta">
         <% if @stream.icon.present? %>
           <i class="icon" style="--icon-mask: var(--icon-<%= @stream.icon %>)<% if @stream.colour.present? %>; color: var(--model-color-<%= @stream.colour %>)<% end %>" aria-hidden="true"></i>
         <% end %>
-        <span class="card-type">Stream</span>
+        <span class="bullet-type">Stream</span>
       </div>
-      <h1 class="card-show-title"><%= @stream.name %></h1>
+      <h1 class="bullet-show-title"><%= @stream.name %></h1>
       <% unless @stream.empty? %>
-        <div class="card-tags">
-          <% if @stream.cardable_type.present? %>
-            <% @stream.cardable_type.split(",").map(&:strip).reject(&:blank?).each do |type| %>
+        <div class="bullet-tags">
+          <% if @stream.bulletable_type.present? %>
+            <% @stream.bulletable_type.split(",").map(&:strip).reject(&:blank?).each do |type| %>
               <% stream_icon = type.constantize.icon rescue "menu" %>
               <span class="pill pill--type">
                 <i class="icon" style="--icon-mask: var(--icon-<%= stream_icon %>)" aria-hidden="true"></i>
@@ -55,14 +55,14 @@
               <% end %>
             </span>
           <% end %>
-          <% if @stream.collections.present? %>
-            <% @stream.collections.split(",").map(&:strip).reject(&:blank?).each do |collection| %>
-              <span class="pill"><%= collection %></span>
+          <% if @stream.projects.present? %>
+            <% @stream.projects.split(",").map(&:strip).reject(&:blank?).each do |project| %>
+              <span class="pill"><%= project %></span>
             <% end %>
           <% end %>
         </div>
       <% end %>
     </header>
-    <%= render "cards/paginated_list", cards: @cards, page: @page %>
+    <%= render "bullets/paginated_list", bullets: @bullets, page: @page %>
   </article>
 </div>

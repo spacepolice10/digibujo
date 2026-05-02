@@ -27,7 +27,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body data-controller="dialog">
+  <body data-controller="dialog timezone-cookie">
     <%= yield %>
 
     <dialog data-dialog-target="dialog" data-action="click->dialog#backdropClose turbo:submit-end->dialog#submitEnd">

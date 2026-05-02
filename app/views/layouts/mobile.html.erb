@@ -23,7 +23,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body data-controller="dialog">
+  <body data-controller="dialog timezone-cookie">
     <main class="main-content main-content--mobile">
       <%= yield %>
     </main>
@@ -35,13 +35,13 @@
       <%= link_to pinned_index_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'pinned'}", aria: { label: "Workspace" } do %>
         <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
       <% end %>
-      <%= link_to todays_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'cards'}", aria: { label: "Today" } do %>
+      <%= link_to bullets_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'bullets'}", aria: { label: "Today" } do %>
         <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
       <% end %>
     </nav>
 
-    <%= link_to new_card_path, class: "fab", aria: { label: "New card" } do %>
-      <span class="fab__plus">+</span> Card
+    <%= link_to new_bullet_path, class: "fab", aria: { label: "New bullet" } do %>
+      <span class="fab__plus">+</span> Bullet
     <% end %>
 
     <dialog data-dialog-target="dialog" data-action="click->dialog#backdropClose turbo:submit-end->dialog#submitEnd">

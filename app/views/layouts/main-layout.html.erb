@@ -23,7 +23,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body data-controller="dialog">
+  <body data-controller="dialog timezone-cookie">
     <div class="main-layout">
       <aside class="main-sidebar main-sidebar--left" id="sidebar_left" popover="auto" data-turbo-permanent>
         <turbo-frame id="streams_panel" src="<%= indexing_path %>" loading="lazy">
@@ -36,7 +36,7 @@
         <button class="sidebar-toggle" popovertarget="sidebar_left" aria-label="Open sidebar">
           <i class="icon" style="--icon-mask: var(--icon-menu)" aria-hidden="true"></i>
         </button>
-        <turbo-frame id="cards_panel">
+        <turbo-frame id="bullets_panel">
           <%= yield %>
         </turbo-frame>
         <turbo-frame id="pinned_panel" src="<%= pinned_index_path %>" loading="lazy" data-turbo-permanent></turbo-frame>

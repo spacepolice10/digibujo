@@ -1,0 +1,11 @@
+<%= turbo_stream.remove @bullet %>
+<% if @bullet.pinned? %>
+  <%= turbo_stream.append "pinned_bullets" do %>
+    <%= render partial: "bullets/bullet", locals: { bullet: @bullet } %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.append "bullets" do %>
+    <%= render partial: "bullets/bullet", locals: { bullet: @bullet } %>
+  <% end %>
+<% end %>
+<%= turbo_stream.update "pinned_number", Current.user.bullets.pinned.count.to_s %>

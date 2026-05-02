@@ -1,0 +1,117 @@
+<% type_options = Bullet.bulletable_types %>
+<% selected_type_name = bullet.bulletable_type.presence_in(type_options) || "Task" %>
+<% selected_bulletable = selected_type_name.constantize %>
+<% type_descriptions = {
+  "task" => "Track an actionable item",
+  "note" => "Capture an idea or detail",
+  "event" => "Plan something time-based"
+} %>
+<%= form_with model: bullet, data: {
+      controller: "bullet-form persist",
+      bullet_form_mobile_mode_value: bullet.bulletable_type.present? ? "fields" : "types",
+      bullet_form_current_type_value: selected_type_name.downcase,
+      action: "keydown->bullet-form#keydown keydown.meta+enter->bullet-form#submit keydown.ctrl+enter->bullet-form#submit trix-change->bullet-form#updateEditorLayout resize->bullet-form#updateEditorLayout"
+    } do |f| %>
+  <div class="bullet-form-rail">
+    <fieldset class="bullet-form-mobile-types" aria-label="Bullet type" data-bullet-form-target="mobileTypes">
+      <legend class="sr-only">Bullet type</legend>
+      <% type_options.each_with_index do |type_name, idx| %>
+        <% type_value = type_name.downcase %>
+        <% marker = type_name.constantize.marker.presence || "•" %>
+        <label class="bullet-form-mobile-type-option" data-value="<%= type_value %>">
+          <%= f.radio_button :bulletable_type,
+            type_value,
+            checked: selected_type_name.downcase == type_value,
+            data: {
+              action: "change->bullet-form#loadFields change->bullet-form#showFields",
+              bullet_form_target: "typeInput",
+              bullet_form_icon_value: type_name.constantize.icon
+            } %>
+          <span class="bullet-form-type-option-marker" aria-hidden="true"><%= marker %></span>
+          <span class="bullet-form-type-option-name"><%= type_name.constantize.name %></span>
+        </label>
+      <% end %>
+    </fieldset>
+
+    <div class="bullet-form-mobile-fields" data-bullet-form-target="mobileFields">
+      <button type="button"
+              class="bullet-form-fields-back"
+              data-action="bullet-form#showTypes"
+              aria-label="Show bullet types">
+        <i class="icon" style="--icon-mask: var(--icon-arrow-up)" aria-hidden="true"></i>
+      </button>
+      <div class="bullet-form-fields">
+        <%= render "bullets/fields/date_picker", bullet: bullet %>
+        <%= render "bullets/fields/projects_picker", bullet: bullet %>
+        <%= render "bullets/fields/context_picker", bullet: bullet %>
+      </div>
+      <turbo-frame id="bullet_type_fields"
+            class="bullet-form-fields"
+            data-bullet-form-target="fields">
+      </turbo-frame>
+    </div>
+  </div>
+
+  <div class="bullet-form-composer">
+    <div class="bullet-form-desktop-type">
+      <button type="button"
+              class="bullet-form-type-trigger"
+              popovertarget="bullet-type-menu-<%= bullet.object_id %>"
+              style="anchor-name: --bullet-type-menu-<%= bullet.object_id %>"
+              aria-label="Choose bullet type">
+        <i class="icon"
+           style="--icon-mask: var(--icon-<%= selected_bulletable.icon %>)"
+           data-bullet-form-target="typeIcon"
+           aria-hidden="true"></i>
+      </button>
+      <div id="bullet-type-menu-<%= bullet.object_id %>"
+           class="dropdown-menu bullet-form-type-menu"
+           data-controller="grid-navigation"
+           data-grid-navigation-columns-value="1"
+           data-bullet-form-target="typeMenu"
+           data-action="keydown->grid-navigation#navigate focusin->grid-navigation#syncPosition toggle->bullet-form#focusTypeMenu"
+           popover
+           style="position-anchor: --bullet-type-menu-<%= bullet.object_id %>">
+        <% type_options.each_with_index do |type_name, idx| %>
+          <% type_value = type_name.downcase %>
+          <% bulletable = type_name.constantize %>
+          <button type="button"
+                  class="bullet-form-type-menu-item"
+                  data-grid-navigation-target="item"
+                  data-bullet-form-type-param="<%= type_value %>"
+                  data-action="bullet-form#selectType">
+            <i class="icon" style="--icon-mask: var(--icon-<%= bulletable.icon %>)" aria-hidden="true"></i>
+            <span class="bullet-form-type-menu-item-copy">
+              <span><%= bulletable.name %></span>
+              <span class="bullet-form-type-menu-item-note"><%= type_descriptions[type_value] %></span>
+            </span>
+            <kbd>Ctrl+Shift+<%= idx + 1 %></kbd>
+          </button>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="bullet-form-editor">
+      <%= f.rich_text_area :content,
+      autofocus: local_assigns.fetch(:autofocus, true),
+      placeholder: "What's on your mind?" %>
+    </div>
+    <div class="bullet-form-footer">
+      <div class="bullet-form-footer-actions">
+        <%= f.button type: "submit", class: "button-primary" do %>
+          Dump
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <% if bullet.errors.any? %>
+    <div class="form-errmsg">
+      <ul>
+        <% bullet.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+<% end %>

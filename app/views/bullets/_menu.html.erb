@@ -1,0 +1,81 @@
+<div class="bullet-menu">
+  <button class="bullet-menu-trigger"
+          popovertarget="<%= bullet_menu_id %>"
+          style="anchor-name: --<%= bullet_menu_id %>">⋯</button>
+  <div id="<%= bullet_menu_id %>"
+       class="dropdown-menu bullet-dropdown-menu"
+       popover
+       style="position-anchor: --<%= bullet_menu_id %>">
+    <%= button_to bullet_pin_path(bullet), method: :patch, class: "bullet-dropdown-item" do %>
+      <span class="bullet-dropdown-icon bullet-dropdown-icon--pin">
+        <span class="icon" style="--icon-mask: var(--icon-pin)"></span>
+      </span>
+      <span class="bullet-dropdown-text">
+        <span class="bullet-dropdown-label"><%= bullet.pinned? ? "Unpin" : "Pin" %></span>
+        <span class="bullet-dropdown-desc"><%= bullet.pinned? ? "Remove from quick access" : "Keep at top for quick access" %></span>
+      </span>
+    <% end %>
+    <%= button_to bullet_archive_path(bullet), method: :patch, class: "bullet-dropdown-item" do %>
+      <span class="bullet-dropdown-icon bullet-dropdown-icon--archive">
+        <span class="icon" style="--icon-mask: var(--icon-archive)"></span>
+      </span>
+      <span class="bullet-dropdown-text">
+        <span class="bullet-dropdown-label"><%= bullet.archived? ? "Unarchive" : "Archive" %></span>
+        <span class="bullet-dropdown-desc"><%= bullet.archived? ? "Restore to Timeline" : "Stored in archive for 30 days" %></span>
+      </span>
+    <% end %>
+    <% if @latest_playlist %>
+      <% pc = @playlist_bullet_map[bullet.id] %>
+      <% if pc %>
+        <%= button_to playlist_bullet_path(@latest_playlist, pc), method: :delete, class: "bullet-dropdown-item" do %>
+          <span class="bullet-dropdown-icon bullet-dropdown-icon--playlist" style="background: <%= @latest_playlist.colour_bg_variable %>; color: <%= @latest_playlist.colour_variable %>">
+            <span class="icon" style="--icon-mask: var(--icon-<%= @latest_playlist.icon %>)"></span>
+          </span>
+          <span class="bullet-dropdown-text">
+            <span class="bullet-dropdown-label">Remove from Playlist</span>
+            <span class="bullet-dropdown-desc">Remove from current playlist</span>
+          </span>
+        <% end %>
+      <% else %>
+        <%= button_to playlist_bullets_path(@latest_playlist), params: { bullet_id: bullet.id }, class: "bullet-dropdown-item" do %>
+          <span class="bullet-dropdown-icon bullet-dropdown-icon--playlist" style="background: <%= @latest_playlist.colour_bg_variable %>; color: <%= @latest_playlist.colour_variable %>">
+            <span class="icon" style="--icon-mask: var(--icon-<%= @latest_playlist.icon %>)"></span>
+          </span>
+          <span class="bullet-dropdown-text">
+            <span class="bullet-dropdown-label">Add to Playlist</span>
+            <span class="bullet-dropdown-desc">Add to current playlist</span>
+          </span>
+        <% end %>
+      <% end %>
+      <%= link_to bullet_playlist_picker_path(bullet),
+            data: { turbo_frame: "modal", action: "dialog#open" },
+            class: "bullet-dropdown-item" do %>
+        <span class="bullet-dropdown-icon bullet-dropdown-icon--chooser">
+          <span class="icon" style="--icon-mask: var(--icon-pencil)"></span>
+        </span>
+        <span class="bullet-dropdown-text">
+          <span class="bullet-dropdown-label">Choose Playlist…</span>
+          <span class="bullet-dropdown-desc">Pick from all playlists</span>
+        </span>
+      <% end %>
+    <% end %>
+    <%= link_to edit_bullet_path(bullet), data: { turbo_frame: "_top" }, class: "bullet-dropdown-item" do %>
+      <span class="bullet-dropdown-icon bullet-dropdown-icon--edit">
+        <span class="icon" style="--icon-mask: var(--icon-pencil)"></span>
+      </span>
+      <span class="bullet-dropdown-text">
+        <span class="bullet-dropdown-label">Edit</span>
+        <span class="bullet-dropdown-desc">Open and edit bullet content</span>
+      </span>
+    <% end %>
+    <%= button_to bullet_path(bullet), method: :delete, class: "bullet-dropdown-item bullet-dropdown-item--danger", form: { data: { turbo_confirm: "Are you sure?" } } do %>
+      <span class="bullet-dropdown-icon bullet-dropdown-icon--delete">
+        <span class="icon" style="--icon-mask: var(--icon-trash)"></span>
+      </span>
+      <span class="bullet-dropdown-text">
+        <span class="bullet-dropdown-label">Delete</span>
+        <span class="bullet-dropdown-desc">Permanently remove this bullet</span>
+      </span>
+    <% end %>
+  </div>
+</div>

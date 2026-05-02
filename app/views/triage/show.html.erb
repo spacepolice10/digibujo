@@ -1,32 +1,25 @@
 <turbo-frame id="triage_preview">
-  <div class="cards-timeline triage-page">
-    <div class="cards-timeline-header">
-      <div class="cards-timeline-header-group">
-        <%= link_to todays_path, class: "button-tertiary", data: { turbo_frame: "_top" } do %>
-          <span class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></span>
-          Today
-        <% end %>
-      </div>
-      <h2 class="cards-timeline-header-date">Triage</h2>
-      <div class="cards-timeline-header-group">
-        <p class="triage-count"><%= @cards.size %> card<%= @cards.size == 1 ? "" : "s" %></p>
-      </div>
-    </div>
+  <div class="bullets-timeline triage-page">
+    <%= render "shared/timeline_header",
+               selected_date: @selected_date,
+               path_helper: :triage_path,
+               context: :triage,
+               triage_count: @bullets.size %>
 
-    <div class="triage-description" role="note" aria-label="How to triage cards">
+    <div class="triage-description" role="note" aria-label="How to triage bullets">
       <p class="triage-description--copy">
         Do not take everything forward with you. Let&apos;s clean up. Discard anything that is not necessary
-        to act on, schedule what should be done, save interesting notes and project tasks to collections,
+        to act on, schedule what should be done, save interesting notes and project tasks to projects,
         and ignore the rest.
       </p>
     </div>
 
-    <div id="triage-cards">
-      <%= render partial: "triage/card", collection: @cards, as: :card %>
+    <div id="triage-bullets">
+      <%= render partial: "triage/bullet", collection: @bullets, as: :bullet %>
     </div>
 
-    <% if @cards.empty? %>
-      <p class="triage-empty">No cards to triage right now.</p>
+    <% if @bullets.empty? %>
+      <p class="triage-empty">No bullets to triage right now.</p>
     <% end %>
   </div>
 </turbo-frame>

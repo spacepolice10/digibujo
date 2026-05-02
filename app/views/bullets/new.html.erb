@@ -1,0 +1,10 @@
+<% content_for(:title) { "New task" } %>
+<header class="bullet-form-page-header">
+  <button class="button-tertiary bullet-form-page-header-back" onclick="history.back()">
+    <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+    Back
+  </button>
+  <h1 class="bullet-form-page-header-title">New task</h1>
+  <div aria-hidden="true"></div>
+</header>
+<%= render "form", bullet: @bullet %>

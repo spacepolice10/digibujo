@@ -1,0 +1,30 @@
+<% content_for(:title) { @project.name } %>
+
+<div class="bullet-show">
+  <nav class="show-navigation">
+    <button type="button" class="button-secondary" onclick="history.back()">
+      <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+      Index
+    </button>
+  </nav>
+
+  <article class="bullet-show-content">
+    <header class="bullet-show-header">
+      <div class="bullet-show-meta">
+        <span class="bullet-type">Project</span>
+      </div>
+      <h1 class="bullet-show-title"><%= @project.name %></h1>
+
+      <div class="bullet-tags">
+        <%= link_to "All", project_path(@project), class: "pill #{"pill--status" if params[:type].blank?}" %>
+        <% Bullet.bulletable_types.each do |type| %>
+          <%= link_to type.downcase.pluralize,
+                      project_path(@project, type: type.downcase),
+                      class: "pill #{"pill--status" if params[:type].to_s.classify == type}" %>
+        <% end %>
+      </div>
+    </header>
+
+    <%= render "bullets/paginated_list", bullets: @bullets, page: @page %>
+  </article>
+</div>

@@ -1,10 +1,10 @@
 <div class="search">
-  <div class="cards-timeline-header">
-    <div class="cards-timeline-header-group">
-      <%= link_to "Today", todays_path, class: "button-tertiary", data: { turbo_frame: "_top" } %>
+  <div class="bullets-timeline-header">
+    <div class="bullets-timeline-header-group">
+      <%= link_to "Today", bullets_path, class: "button-tertiary", data: { turbo_frame: "_top" } %>
     </div>
-    <h2 class="cards-timeline-header-date">Search</h2>
-    <div class="cards-timeline-header-group">
+    <h2 class="bullets-timeline-header-date">Search</h2>
+    <div class="bullets-timeline-header-group">
       <%= link_to triage_path, class: "button-secondary", data: { turbo_frame: "_top" } do %>
         <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
         Triage
@@ -20,10 +20,10 @@
           controller: "search",
           search_target: "form"
         } do |form| %>
-    <%= form.label :q, "Search cards", class: "search--label" %>
+    <%= form.label :q, "Search bullets", class: "search--label" %>
     <%= form.search_field :q,
           value: @query,
-          placeholder: "Search by card text or collection",
+          placeholder: "Search by bullet text or project",
           class: "search--input",
           data: {
             action: "input->search#search",

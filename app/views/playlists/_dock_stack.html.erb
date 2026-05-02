@@ -1,4 +1,4 @@
-<% stack_cards = playlist.playlist_cards.first(3).map(&:card) %>
+<% stack_bullets = playlist.playlist_bullets.first(3).map(&:bullet) %>
 <% popover_id = "playlist-#{playlist.id}-dropdown" %>
 <% trigger_anchor = "--playlist-#{playlist.id}-trigger" %>
 
@@ -6,7 +6,7 @@
          class="pinned-dock__lane pinned-dock__lane--active"
          style="--lane-colour: <%= playlist.colour_variable %>"
          data-controller="playlist-drop"
-         data-playlist-drop-url-value="<%= playlist_cards_path(playlist) %>"
+         data-playlist-drop-url-value="<%= playlist_bullets_path(playlist) %>"
           data-action="dragover->playlist-drop#dragover dragenter->playlist-drop#dragenter dragleave->playlist-drop#dragleave drop->playlist-drop#drop">
   <span class="pinned-dock__icon" style="background: <%= playlist.colour_bg_variable %>; border-color: <%= playlist.colour_variable %>; color: <%= playlist.colour_variable %>">
     <span class="icon" style="--icon-mask: var(--icon-<%= playlist.icon %>)" aria-hidden="true"></span>
@@ -14,19 +14,19 @@
   <button class="pinned-stack-trigger"
           type="button"
           popovertarget="<%= popover_id %>"
-          aria-label="Show playlist cards"
+          aria-label="Show playlist bullets"
           style="anchor-name: <%= trigger_anchor %>">
-    <% if stack_cards.any? %>
-      <div class="pinned-stack" style="--stack-count: <%= stack_cards.size %>">
-        <% stack_cards.each_with_index do |card, i| %>
-          <div class="pinned-stack-card" style="--stack-i: <%= i %>; border-color: <%= playlist.colour_variable %>">
-            <span class="pinned-stack-card__body">
-              <span class="pinned-stack-card__title"><%= card.name %></span>
-              <span class="pinned-stack-card__meta">
-                <%= card.name %>
-                <% if card.collection.present? %>
-                  <span class="pinned-stack-card__sep" aria-hidden="true">&middot;</span>
-                  <%= card.collection.name %>
+    <% if stack_bullets.any? %>
+      <div class="pinned-stack" style="--stack-count: <%= stack_bullets.size %>">
+        <% stack_bullets.each_with_index do |bullet, i| %>
+          <div class="pinned-stack-bullet" style="--stack-i: <%= i %>; border-color: <%= playlist.colour_variable %>">
+            <span class="pinned-stack-bullet__body">
+              <span class="pinned-stack-bullet__title"><%= bullet.name %></span>
+              <span class="pinned-stack-bullet__meta">
+                <%= bullet.name %>
+                <% if bullet.project.present? %>
+                  <span class="pinned-stack-bullet__sep" aria-hidden="true">&middot;</span>
+                  <%= bullet.project.name %>
                 <% end %>
               </span>
             </span>
@@ -35,9 +35,9 @@
       </div>
     <% else %>
       <div class="pinned-stack" style="--stack-count: 1">
-        <div class="pinned-stack-card" style="--stack-i: 0; border-color: <%= playlist.colour_variable %>; opacity: 0.6">
-          <span class="pinned-stack-card__body">
-            <span class="pinned-stack-card__title" style="color: var(--color-fg-subtle)">Empty playlist</span>
+        <div class="pinned-stack-bullet" style="--stack-i: 0; border-color: <%= playlist.colour_variable %>; opacity: 0.6">
+          <span class="pinned-stack-bullet__body">
+            <span class="pinned-stack-bullet__title" style="color: var(--color-fg-subtle)">Empty playlist</span>
           </span>
         </div>
       </div>

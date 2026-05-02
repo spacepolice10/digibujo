@@ -1,0 +1,23 @@
+<% marker_color = case bullet.bulletable_type
+                  when "Task" then "var(--model-color-2)"
+                  when "Note" then "var(--model-color-5)"
+                  when "Event" then "var(--model-color-6)"
+                  else "var(--color-fg-subtle)"
+                  end %>
+<div class="bullet-action">
+  <% if bullet.completable? %>
+    <% if bullet.done? %>
+      <%= button_to bullet_complete_path(bullet), method: :delete, class: "completion-toggle done", aria: { label: "Mark undone" } do %>
+        &#10003;
+      <% end %>
+    <% else %>
+      <%= button_to bullet_complete_path(bullet), method: :post, class: "completion-toggle", aria: { label: "Mark done" } do %>
+        &#9675;
+      <% end %>
+    <% end %>
+  <% else %>
+    <span class="completion-placeholder" aria-hidden="true" style="color: <%= marker_color %>">
+      <span class="completion-marker"><%= bullet.marker.presence || "•" %></span>
+    </span>
+  <% end %>
+</div>

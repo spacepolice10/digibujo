@@ -1,0 +1,9 @@
+<% bullet_record = local_assigns.fetch(:bullet) %>
+<%= bullet_record.inspect %>
+<%= render partial: "bullets/card",
+           locals: {
+             bullet: bullet_record,
+             dom_prefix: local_assigns[:dom_prefix],
+             index: local_assigns[:index],
+             on_todays_route: local_assigns[:on_todays_route]
+           } %>

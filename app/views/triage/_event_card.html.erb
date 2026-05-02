@@ -1,12 +1,18 @@
-<div id="<%= dom_id(card) %>" class="card triage-card triage-card--event">
-  <%= render "cards/action", card: card %>
-  <div class="card-body">
-    <%= card.content %>
-    <% if card.collection.present? %>
-      <div class="card-tags">
-        <span class="pill" style="background: <%= card.collection.colour_bg_variable %>"><%= card.collection.name %></span>
+<div id="<%= dom_id(bullet) %>" class="bullet triage-bullet triage-bullet--event">
+  <%= render "bullets/action", bullet: bullet %>
+  <div class="bullet-body">
+    <% postponed = bullet.scheduled_on.present? && bullet.scheduled_on > (@selected_date || Date.current) %>
+    <%= bullet.content %>
+    <% if bullet.project.present? || postponed %>
+      <div class="bullet-tags">
+        <% if postponed %>
+          <span class="pill pill--date pill--migrated">Postponed to <%= bullet.scheduled_on.strftime("%-d %b %Y") %></span>
+        <% end %>
+        <% if bullet.project.present? %>
+          <span class="pill" style="background: <%= bullet.project.colour_bg_variable %>"><%= bullet.project.name %></span>
+        <% end %>
       </div>
     <% end %>
   </div>
 </div>
-<%= render "triage/actions", card: card %>
+<%= render "triage/actions", bullet: bullet %>

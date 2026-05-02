@@ -1,0 +1,61 @@
+<% field_name = local_assigns.fetch(:field_name, "bullet[context_bullet_id]") %>
+<% initial_id = local_assigns.fetch(:initial_id, bullet.context_bullet_id) %>
+<% initial_name = local_assigns.fetch(:initial_name, bullet.context_bullet&.bulletable&.name.to_s) %>
+<% initial_context = { id: initial_id, name: initial_name, icon: bullet.context_bullet&.icon }.compact %>
+<% dialog_id = dom_id(bullet, :context_picker_dialog) %>
+<% search_id = dom_id(bullet, :context_picker_search) %>
+<div class="context-picker"
+     data-controller="context-picker dialog combobox"
+     data-context-picker-context-value="<%= initial_context.to_json %>"
+     data-context-picker-exclude-id-value="<%= bullet.id %>">
+  <button
+    type="button"
+    class="button-secondary context-picker--trigger context-picker--trigger-composer"
+    commandfor="<%= dialog_id %>"
+    command="show-modal"
+    data-action="click->context-picker#reset"
+    >
+    <i class="icon context-picker--trigger-icon" style="--icon-mask: var(--icon-face)" aria-hidden="true"></i>
+    <span data-context-picker-target="triggerText"><%= initial_name.presence || "Context" %></span>
+  </button>
+  <input type="hidden" name="<%= field_name %>" value="<%= initial_id %>" data-context-picker-target="hiddenId">
+  <dialog
+    id="<%= dialog_id %>"
+    class="dialog"
+    data-dialog-target="dialog"
+    data-action="click->dialog#backdropHide"
+    >
+    <div class="context-picker--header dialog--header">
+      <button type="button" class="button-tertiary" data-action="click->context-picker#cancel">
+        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+        Back
+      </button>
+      <p class="context-picker--name dialog--name">Pick context bullet</p>
+      <span class="context-picker--header-spacer" aria-hidden="true"></span>
+    </div>
+    <div class="context-picker--body">
+      <label class="form-label" for="<%= search_id %>">Pick context bullet</label>
+      <input
+        type="search"
+        id="<%= search_id %>"
+        class="form-input"
+        autocomplete="off"
+        placeholder="Search bullets"
+        data-context-picker-target="search"
+        data-combobox-target="input"
+        data-action="input->context-picker#search keydown->combobox#navigate keydown->context-picker#submitOnEnter"
+        >
+      <ul class="context-picker--suggestions"
+          role="listbox"
+          data-context-picker-target="suggestions"></ul>
+    </div>
+    <div class="context-picker--footer dialog--footer">
+      <button type="button"
+              class="button-secondary"
+              data-action="click->context-picker#clear"
+              data-context-picker-target="clearButton"
+              <%= "disabled" if initial_name.blank? %>>Clear</button>
+      <button type="button" class="button-primary" data-action="click->context-picker#save">Save</button>
+    </div>
+  </dialog>
+</div>

@@ -1,32 +1,32 @@
 <turbo-frame id="pinned_panel">
-  <% if @pinned_cards.any? || @playlists.any? %>
+  <% if @pinned_bullets.any? || @playlists.any? %>
     <section class="pinned-dock" aria-label="Dock">
       <div class="pinned-dock__lanes" id="dock_lanes">
-        <% if @pinned_cards.any? %>
-          <% stack_cards = @pinned_cards.first(3) %>
+        <% if @pinned_bullets.any? %>
+          <% stack_bullets = @pinned_bullets.first(3) %>
           <section class="pinned-dock__lane pinned-dock__lane--active">
             <span class="pinned-dock__icon">
               <span class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></span>
             </span>
             <button class="pinned-stack-trigger"
                     type="button"
-                    popovertarget="pinned-cards-dropdown"
-                    aria-label="Show pinned cards"
+                    popovertarget="pinned-bullets-dropdown"
+                    aria-label="Show pinned bullets"
                     style="anchor-name: --pinned-stack-trigger">
-              <div class="pinned-stack" style="--stack-count: <%= stack_cards.size %>">
-                <% stack_cards.each_with_index do |card, i| %>
-                  <div class="pinned-stack-card" style="--stack-i: <%= i %>">
-                    <span class="pinned-stack-card__body">
-                      <span class="pinned-stack-card__title"><%= card.name %></span>
-                      <span class="pinned-stack-card__meta">
-                        <%= card.name %>
-                        <% if card.date.present? %>
-                          <span class="pinned-stack-card__sep" aria-hidden="true">&middot;</span>
-                          <time datetime="<%= card.date.iso8601 %>"><%= card.date.strftime("%b %-d") %></time>
+              <div class="pinned-stack" style="--stack-count: <%= stack_bullets.size %>">
+                <% stack_bullets.each_with_index do |bullet, i| %>
+                  <div class="pinned-stack-bullet" style="--stack-i: <%= i %>">
+                    <span class="pinned-stack-bullet__body">
+                      <span class="pinned-stack-bullet__title"><%= bullet.name %></span>
+                      <span class="pinned-stack-bullet__meta">
+                        <%= bullet.name %>
+                        <% if bullet.scheduled_on.present? %>
+                          <span class="pinned-stack-bullet__sep" aria-hidden="true">&middot;</span>
+                          <time datetime="<%= bullet.scheduled_on.iso8601 %>"><%= bullet.scheduled_on.strftime("%b %-d") %></time>
                         <% end %>
-                        <% if card.collection.present? %>
-                          <span class="pinned-stack-card__sep" aria-hidden="true">&middot;</span>
-                          <%= card.collection.name %>
+                        <% if bullet.project.present? %>
+                          <span class="pinned-stack-bullet__sep" aria-hidden="true">&middot;</span>
+                          <%= bullet.project.name %>
                         <% end %>
                       </span>
                     </span>
@@ -34,7 +34,7 @@
                 <% end %>
               </div>
             </button>
-            <div id="pinned-cards-dropdown"
+            <div id="pinned-bullets-dropdown"
                  class="dropdown-menu pinned-dropdown-menu"
                  style="position-anchor: --pinned-stack-trigger"
                  popover>
@@ -42,12 +42,12 @@
                 <div class="pinned-dock-list__header">
                   <div class="pinned-dock__copy">
                     <span class="pinned-dock__eyebrow">Pinned List</span>
-                    <span class="pinned-dock__caption"><%= pluralize(@pinned_cards.count, "card") %> pinned right now</span>
+                    <span class="pinned-dock__caption"><%= pluralize(@pinned_bullets.count, "bullet") %> pinned right now</span>
                   </div>
                 </div>
                 <div class="pinned-dock-list__items">
-                  <% @pinned_cards.each do |card| %>
-                    <%= render partial: "cards/card", locals: { card: card, dom_prefix: "pinned" } %>
+                  <% @pinned_bullets.each do |bullet| %>
+                    <%= render partial: "bullets/bullet", locals: { bullet: bullet, dom_prefix: "pinned" } %>
                   <% end %>
                 </div>
               </section>

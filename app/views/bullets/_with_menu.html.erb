@@ -1,0 +1,2 @@
+<% bullet_menu_id = local_assigns[:bullet_menu_id].presence || [local_assigns[:dom_prefix], "bullet-menu", bullet.id].compact.join("-") %>
+<%= render "bullets/menu", bullet: bullet, bullet_menu_id: bullet_menu_id %>

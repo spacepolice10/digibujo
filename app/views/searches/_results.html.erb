@@ -1,7 +1,7 @@
 <% if @query.blank? %>
-  <p class="search--help">Start typing to search cards.</p>
-<% elsif @cards.none? %>
-  <p class="search--help">No cards found for "<%= @query %>".</p>
+  <p class="search--help">Start typing to search bullets.</p>
+<% elsif @bullets.none? %>
+  <p class="search--help">No bullets found for "<%= @query %>".</p>
 <% else %>
-  <%= render "cards/paginated_list", cards: @cards, page: @page %>
+  <%= render "bullets/paginated_list", bullets: @bullets, page: @page %>
 <% end %>

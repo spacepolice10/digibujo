@@ -1,0 +1,10 @@
+<div data-controller="bullets-hotkeys"
+     data-bullets-hotkeys-search-path-value="<%= search_path %>"
+     data-action="keydown.meta+k@window->bullets-hotkeys#openSearch keydown.ctrl+k@window->bullets-hotkeys#openSearch keydown.meta+e@window->bullets-hotkeys#focusEditor keydown.ctrl+e@window->bullets-hotkeys#focusEditor">
+  <div class="sidebar-panel__section-header" style="margin-block: var(--spacing-horizontal-double);">
+  <h2 class="sidebar-panel__section-label">recent:</h2>
+  <span class="sidebar-panel__section-wavy" aria-hidden="true"></span>
+  <%= link_to "Triage", triage_path, class: "sidebar-panel__section-link", data: { turbo_frame: "_top" } %>
+  </div>
+  <%= render "bullets/paginated_list", bullets: @bullets, page: @page %>
+</div>

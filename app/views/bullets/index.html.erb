@@ -1,0 +1,13 @@
+<div
+     data-controller="timeline"
+     data-timeline-search-path-value="<%= search_path %>"
+     data-action="keydown.ctrl+k@window->timeline#openSearch keydown.ctrl+e@window->timeline#selectCardFormEditor">
+  <%= render "shared/timeline_header",
+             selected_date: @selected_date,
+             path_helper: :bullets_path,
+             context: :timeline %>
+  <%= render "bullets/paginated_list", bullets: @bullets, page: @page, selected_date: @selected_date %>
+  <turbo-frame id="bullet_form">
+    <%= render "form", bullet: Bullet.new %>
+  </turbo-frame>
+</div>

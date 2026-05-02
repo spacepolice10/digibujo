@@ -1,9 +1,0 @@
-<% card_dom_id = [local_assigns[:dom_prefix], dom_id(card)].compact.join("_") %>
-<div id="<%= card_dom_id %>"
-     class="card<%= " archived" if card.archived? %>"
-     style="--i: <%= local_assigns[:index] || 0 %>"
-     <%= " data-card-type=\"#{card.cardable_type.downcase}\"" if card.cardable_type.present? %>>
-  <%= render "cards/action", card: card %>
-  <%= render "cards/body", card: card, on_todays_route: local_assigns.fetch(:on_todays_route, false) %>
-  <%= render "cards/with_menu", card: card, dom_prefix: local_assigns[:dom_prefix] %>
-</div>

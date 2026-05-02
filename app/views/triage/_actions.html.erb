@@ -1,12 +1,13 @@
-<nav class="triage-card-actions" data-controller="dropdown">
+<nav class="triage-bullet-actions" data-controller="dropdown">
+  <% selected_date = @selected_date&.iso8601 %>
   <details class="dropdown">
     <summary class="button-secondary triage-action-button">
       <span class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></span>
       Collect
     </summary>
     <div class="dropdown-body">
-      <%= form_with url: triage_card_collect_path(card) do %>
-        <%= render "cards/fields/tags_picker", card: card, field_name: "collection_id", name_field_name: "collection_name", frame_id: "save-collection-#{card.id}" %>
+      <%= form_with url: triage_bullet_collect_path(bullet_bullet_id: bullet.id, date: selected_date) do %>
+        <%= render "bullets/fields/projects_picker", bullet: bullet, field_name: "project_id", name_field_name: "project_name", frame_id: "save-project-#{bullet.id}" %>
         <%= button_tag type: :submit, class: "button-secondary triage-action-button" do %>
           <span class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></span>
           Collect
@@ -14,25 +15,22 @@
       <% end %>
     </div>
   </details>
-  <details class="dropdown">
-    <summary class="button-secondary triage-action-button">
+  <%= form_with url: triage_bullet_postpone_path(bullet_bullet_id: bullet.id, date: selected_date) do %>
+    <%= button_tag type: :submit, class: "button-secondary triage-action-button" do %>
       <span class="icon" style="--icon-mask: var(--icon-arrow-up)" aria-hidden="true"></span>
       Postpone
-    </summary>
-    <div class="dropdown-body triage-postpone-grid">
-      <%= button_to "Tomorrow", triage_card_postpone_path(card), class: "button-secondary triage-action-button" %>
-    </div>
-  </details>
-  <% if ["Task", "Event"].include?(card.cardable_type) %>
+    <% end %>
+  <% end %>
+  <% if ["Task", "Event"].include?(bullet.bulletable_type) %>
     <details class="dropdown">
       <summary class="button-secondary triage-action-button">
         <span class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></span>
         Schedule
       </summary>
       <div class="dropdown-body">
-        <%= form_with url: triage_card_schedule_path(card) do |f| %>
-          <%= f.date_field :date, class: "form-item" %>
-          <%= render "cards/fields/tags_picker", card: card, field_name: "collection_id", name_field_name: "collection_name", frame_id: "schedule-collection-#{card.id}" %>
+        <%= form_with url: triage_bullet_schedule_path(bullet_bullet_id: bullet.id, date: selected_date) do |f| %>
+          <%= render "bullets/fields/date_picker", bullet: bullet, input_name: "scheduled_on", dialog_id: dom_id(bullet, :triage_date_picker_dialog) %>
+          <%= render "bullets/fields/projects_picker", bullet: bullet, field_name: "project_id", name_field_name: "project_name", frame_id: "schedule-project-#{bullet.id}" %>
           <%= button_tag type: :submit, class: "button-secondary triage-action-button" do %>
             <span class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></span>
             Schedule
@@ -41,7 +39,7 @@
       </div>
     </details>
   <% end %>
-  <%= button_to triage_card_archive_path(card),
+  <%= button_to triage_bullet_archive_path(bullet_bullet_id: bullet.id, date: selected_date),
         class: "button-secondary triage-action-button triage-action-button--danger",
         form: { data: { turbo_confirm: "Archive?" } } do %>
     <span class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></span>

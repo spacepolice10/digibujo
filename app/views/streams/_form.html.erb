@@ -47,15 +47,15 @@
   </div>
 
   <div>
-    <label>Card type</label>
+    <label>Bullet type</label>
     <div class="flex slightly-gapped" style="flex-wrap: wrap">
       <%= label_tag nil do %>
-        <%= radio_button_tag "stream[cardable_type]", "", stream.cardable_type.blank? %>
+        <%= radio_button_tag "stream[bulletable_type]", "", stream.bulletable_type.blank? %>
         All
       <% end %>
-      <% Card.cardable_types.each do |type| %>
+      <% Bullet.bulletable_types.each do |type| %>
         <%= label_tag nil do %>
-          <%= radio_button_tag "stream[cardable_type]", type, stream.cardable_type == type %>
+          <%= radio_button_tag "stream[bulletable_type]", type, stream.bulletable_type == type %>
           <%= type %>
         <% end %>
       <% end %>
@@ -73,8 +73,8 @@
   </div>
 
   <div>
-    <%= f.label :collections, "Collections" %>
-    <%= f.text_field :collections, placeholder: "work, personal, ideas" %>
+    <%= f.label :projects, "Projects" %>
+    <%= f.text_field :projects, placeholder: "work, personal, ideas" %>
   </div>
 
   <div>

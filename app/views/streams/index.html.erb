@@ -13,7 +13,7 @@
       </div>
     </div>
     <section class="sidebar-panel__section">
-      <%= render "streams/card_type" %>
+      <%= render "streams/bullet_type" %>
     </section>
     <% if @streams.any? %>
       <section class="sidebar-panel__section">
@@ -28,9 +28,9 @@
           <% @streams.first(8).each do |stream| %>
             <li>
               <%= link_to stream_path(stream),
-                    class: "streams-stream-card",
+                    class: "streams-stream-bullet",
                     data: { turbo_frame: "_top", turbo_action: "advance" } do %>
-                <span class="streams-stream-card__header"<% if stream.colour.present? %> style="color: <%= stream.colour_variable %>"<% end %>>
+                <span class="streams-stream-bullet__header"<% if stream.colour.present? %> style="color: <%= stream.colour_variable %>"<% end %>>
                   <% if stream.icon.present? %>
                     <span class="streams-stream-icon">
                       <i class="icon" style="--icon-mask: var(--icon-<%= stream.icon %>)" aria-hidden="true"></i>
@@ -40,17 +40,17 @@
                 </span>
                 <% unless stream.empty? %>
                   <span class="streams-stream-filters">
-                    <% if stream.cardable_type.present? %>
-                      <% stream.cardable_type.split(",").map(&:strip).reject(&:blank?).each do |type| %>
+                    <% if stream.bulletable_type.present? %>
+                      <% stream.bulletable_type.split(",").map(&:strip).reject(&:blank?).each do |type| %>
                         <% stream_icon = type.constantize.icon rescue "menu" %>
                         <span class="pill pill--type">
                           <i class="icon" style="--icon-mask: var(--icon-<%= stream_icon %>)" aria-hidden="true"></i>
                         </span>
                       <% end %>
                     <% end %>
-                    <% if stream.collections.present? %>
-                      <% stream.collections.split(",").map(&:strip).reject(&:blank?).first(2).each do |collection| %>
-                        <span class="pill"><%= collection %></span>
+                    <% if stream.projects.present? %>
+                      <% stream.projects.split(",").map(&:strip).reject(&:blank?).first(2).each do |project| %>
+                        <span class="pill"><%= project %></span>
                       <% end %>
                     <% end %>
                   </span>
@@ -61,20 +61,20 @@
         </ul>
       </section>
     <% end %>
-    <% if @collections.any? %>
+    <% if @projects.any? %>
       <section class="sidebar-panel__section">
         <div class="sidebar-panel__section-header">
-          <h2 class="sidebar-panel__section-label">Collections</h2>
+          <h2 class="sidebar-panel__section-label">Projects</h2>
           <span class="sidebar-panel__section-wavy" aria-hidden="true"></span>
           <%= link_to "View All", indexing_path,
                 class: "sidebar-panel__section-link",
-                "aria-label": "All collections",
+                "aria-label": "All projects",
                 data: { turbo_frame: "_top" } %>
         </div>
         <div class="tags-panel-list">
-          <% @collections.first(8).each do |collection| %>
-            <%= link_to collection_path(collection), class: "pill", style: "background: #{collection.colour_bg_variable}", data: { turbo_frame: "_top" } do %>
-              <%= collection.name %>
+          <% @projects.first(8).each do |project| %>
+            <%= link_to project_path(project), class: "pill", style: "background: #{project.colour_bg_variable}", data: { turbo_frame: "_top" } do %>
+              <%= project.name %>
             <% end %>
           <% end %>
         </div>

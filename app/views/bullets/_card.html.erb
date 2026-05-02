@@ -1,0 +1,9 @@
+<% bullet_dom_id = [local_assigns[:dom_prefix], dom_id(bullet)].compact.join("_") %>
+<div id="<%= bullet_dom_id %>"
+     class="bullet<%= " archived" if bullet.archived? %>"
+     style="--i: <%= local_assigns[:index] || 0 %>"
+     <%= " data-bullet-type=\"#{bullet.bulletable_type.downcase}\"" if bullet.bulletable_type.present? %>>
+  <%= render "bullets/action", bullet: bullet %>
+  <%= render "bullets/body", bullet: bullet %>
+  <%= render "bullets/with_menu", bullet: bullet, dom_prefix: local_assigns[:dom_prefix] %>
+</div>

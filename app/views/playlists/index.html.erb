@@ -9,7 +9,7 @@
         <div class="playlists-column__header">
           <span class="playlists-column__identity">
             <span class="icon" style="--icon-mask: var(--icon-<%= playlist.icon %>); color: <%= playlist.colour_variable %>" aria-hidden="true"></span>
-            <span class="playlists-column__count"><%= pluralize(playlist.playlist_cards.size, "card") %></span>
+            <span class="playlists-column__count"><%= pluralize(playlist.playlist_bullets.size, "bullet") %></span>
           </span>
           <%= button_to playlist_path(playlist), method: :delete,
               class: "playlists-column__delete",
@@ -18,9 +18,9 @@
             <span class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></span>
           <% end %>
         </div>
-        <div class="playlists-column__cards">
-          <% playlist.playlist_cards.each do |pc| %>
-            <%= render partial: "cards/card", locals: { card: pc.card, dom_prefix: "playlist_#{playlist.id}" } %>
+        <div class="playlists-column__bullets">
+          <% playlist.playlist_bullets.each do |pc| %>
+            <%= render partial: "bullets/bullet", locals: { bullet: pc.bullet, dom_prefix: "playlist_#{playlist.id}" } %>
           <% end %>
         </div>
       </div>

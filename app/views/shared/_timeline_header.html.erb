@@ -1,0 +1,34 @@
+<div class="flex justified slightly-padded">
+  <div class="flex slightly-gapped">
+    <%= link_to "History", history_path, class: "button-secondary" %>
+  </div>
+  <div class="flex slightly-gapped">
+    <%= link_to prev_date_href(selected_date, path_helper: path_helper), class: "button-tertiary", aria: { label: "Show previous day" } do %>
+      <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+    <% end %>
+    <h2><%= selected_date.strftime("%a, %b %-d") %></h2>
+    <%= link_to next_date_href(selected_date, path_helper: path_helper), class: "button-tertiary", aria: { label: "Show next day" } do %>
+      <i class="icon icon--flip-h" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+    <% end %>
+  </div>
+  <div class="flex slightly-gapped">
+    <% if context == :triage && local_assigns.key?(:triage_count) %>
+      <p class="triage-count"><%= pluralize(triage_count, "bullet") %></p>
+    <% end %>
+    <%= link_to search_path, class: "button-secondary", data: { turbo_frame: "_top" } do %>
+      <i class="icon" style="--icon-mask: var(--icon-search)" aria-hidden="true"></i>
+      Search
+    <% end %>
+    <% if context == :timeline %>
+      <%= link_to triage_path(date: selected_date.iso8601), class: "button-secondary", data: { turbo_frame: "_top" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
+        Triage
+      <% end %>
+    <% else %>
+      <%= link_to bullets_path(date: selected_date.iso8601), class: "button-secondary", data: { turbo_frame: "_top" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-list)" aria-hidden="true"></i>
+        Timeline
+      <% end %>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+<div class="bullet--main">
+  <a class="bullet-body"
+     href="<%= bullet_path(bullet) %>"
+     data-turbo-frame="_top"
+     data-controller="bullet-link"
+     data-action="mousedown->bullet-link#mousedown mouseup->bullet-link#mouseup click->bullet-link#click"
+     draggable="false">
+    <% unless bullet.bulletable_type == "Note" %>
+      <p class="bullet-title<%= " done" if bullet.done? %>">
+        <span class="bullet-title-id">#<%= bullet.id %></span>
+        <%= bullet.bulletable.name %>
+      </p>
+    <% end %>
+    <% if bullet.bulletable_type == "Note" %>
+      <%= bullet_rich_text_preview_trix(bullet) %>
+    <% else %>
+      <p>
+        <%= bullet.bulletable.excerpt %>
+      </p>
+    <% end %>
+  </a>
+  <%= render "bullets/tags", bullet: bullet %>
+</div>

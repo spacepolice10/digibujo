@@ -1,0 +1,7 @@
+<%= turbo_stream.append "bullets" do %>
+  <%= render @bullet %>
+<% end %>
+<%= turbo_stream.remove("bullets_empty_state") %>
+<%= turbo_stream.update "bullet_form" do %>
+  <%= render "form", bullet: Bullet.new %>
+<% end %>

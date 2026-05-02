@@ -1,0 +1,51 @@
+<turbo-frame id="modal">
+  <div class="playlist-picker">
+    <div class="playlist-picker__header">
+      <h2 class="playlist-picker__title">Add to playlist</h2>
+      <button class="playlist-picker__close" data-action="dialog#close" aria-label="Close">×</button>
+    </div>
+
+    <div class="playlist-picker__list">
+      <% @playlists.each do |playlist| %>
+        <% pc = @membership[playlist.id] %>
+        <% if pc %>
+          <%= button_to playlist_bullet_path(playlist, pc), method: :delete, class: "playlist-picker__row playlist-picker__row--added" do %>
+            <span class="playlist-picker__icon" style="background: <%= playlist.colour_bg_variable %>; color: <%= playlist.colour_variable %>">
+              <span class="icon" style="--icon-mask: var(--icon-<%= playlist.icon %>)"></span>
+            </span>
+            <span class="playlist-picker__info">
+              <span class="playlist-picker__name"><%= playlist.icon.capitalize %> playlist</span>
+              <span class="playlist-picker__meta"><%= playlist.bullets.count %> <%= "bullet".pluralize(playlist.bullets.count) %> · tap to remove</span>
+            </span>
+            <span class="playlist-picker__check playlist-picker__check--on">✓</span>
+          <% end %>
+        <% else %>
+          <%= button_to playlist_bullets_path(playlist), params: { bullet_id: @bullet.id }, class: "playlist-picker__row" do %>
+            <span class="playlist-picker__icon" style="background: <%= playlist.colour_bg_variable %>; color: <%= playlist.colour_variable %>">
+              <span class="icon" style="--icon-mask: var(--icon-<%= playlist.icon %>)"></span>
+            </span>
+            <span class="playlist-picker__info">
+              <span class="playlist-picker__name"><%= playlist.icon.capitalize %> playlist</span>
+              <span class="playlist-picker__meta"><%= playlist.bullets.count %> <%= "bullet".pluralize(playlist.bullets.count) %></span>
+            </span>
+            <span class="playlist-picker__check"></span>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <% if @playlists.empty? %>
+        <p class="playlist-picker__empty">No playlists yet.</p>
+      <% end %>
+    </div>
+
+    <div class="playlist-picker__footer">
+      <%= button_to playlists_path, params: { bullet_id: @bullet.id }, class: "playlist-picker__new" do %>
+        <span class="playlist-picker__new-icon">+</span>
+        <span class="playlist-picker__info">
+          <span class="playlist-picker__name">New playlist</span>
+          <span class="playlist-picker__meta">Create and add this bullet</span>
+        </span>
+      <% end %>
+    </div>
+  </div>
+</turbo-frame>

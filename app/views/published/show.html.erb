@@ -1,19 +1,19 @@
-<% content_for(:title) { @card.name } %>
-<article class="card-show">
-  <header class="card-show-header">
-    <div class="card-show-meta">
-      <span class="card-type"><%= @card.name %></span>
+<% content_for(:title) { @bullet.name } %>
+<article class="bullet-show">
+  <header class="bullet-show-header">
+    <div class="bullet-show-meta">
+      <span class="bullet-type"><%= @bullet.name %></span>
     </div>
-    <% if @card.collection.present? %>
-      <div class="card-tags">
-        <span class="pill" style="background: <%= @card.collection.colour_bg_variable %>"><%= @card.collection.name %></span>
+    <% if @bullet.project.present? %>
+      <div class="bullet-tags">
+        <span class="pill" style="background: <%= @bullet.project.colour_bg_variable %>"><%= @bullet.project.name %></span>
       </div>
     <% end %>
   </header>
-  <div class="card-show-body">
-    <%= @card.content %>
+  <div class="bullet-show-body">
+    <%= @bullet.content %>
   </div>
-  <footer class="card-show-footer">
-    <time class="card-show-date"><%= @card.created_at.strftime("%-d %b %Y") %></time>
+  <footer class="bullet-show-footer">
+    <time class="bullet-show-date"><%= @bullet.created_at.strftime("%-d %b %Y") %></time>
   </footer>
 </article>

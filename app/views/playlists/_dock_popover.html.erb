@@ -5,7 +5,7 @@
         <span class="icon" style="--icon-mask: var(--icon-<%= playlist.icon %>)" aria-hidden="true"></span>
         Playlist
       </span>
-      <span class="pinned-dock__caption"><%= pluralize(playlist.playlist_cards.size, "card") %></span>
+      <span class="pinned-dock__caption"><%= pluralize(playlist.playlist_bullets.size, "bullet") %></span>
     </div>
     <div style="display: flex; gap: var(--spacing-horizontal-half); align-items: center;">
       <a href="<%= playlist_path(playlist) %>" class="pill" data-turbo-frame="_top">Open</a>
@@ -16,13 +16,13 @@
       <% end %>
     </div>
   </div>
-  <div class="pinned-dock-list__items" id="<%= dom_id(playlist, :popover_cards) %>">
-    <% if playlist.playlist_cards.any? %>
-      <% playlist.playlist_cards.each do |pc| %>
-        <%= render partial: "playlists/playlist_card", locals: { playlist: playlist, pc: pc } %>
+  <div class="pinned-dock-list__items" id="<%= dom_id(playlist, :popover_bullets) %>">
+    <% if playlist.playlist_bullets.any? %>
+      <% playlist.playlist_bullets.each do |pc| %>
+        <%= render partial: "playlists/playlist_bullet", locals: { playlist: playlist, pc: pc } %>
       <% end %>
     <% else %>
-      <p class="playlist-popover-empty">Add cards using the + button in any card's menu.</p>
+      <p class="playlist-popover-empty">Add bullets using the + button in any bullet's menu.</p>
     <% end %>
   </div>
 </section>
