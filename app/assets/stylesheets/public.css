@@ -77,7 +77,7 @@
     }
   }
 
-  /* Published link on card show */
+  /* Published link on bullet show */
   .published-link {
     padding: var(--spacing-vertical) 0;
 
@@ -95,13 +95,13 @@
   }
 
   /* Footer in public view */
-  .card-show-footer {
+  .bullet-show-footer {
     padding-top: var(--spacing-vertical-double);
     border-top: 1px solid var(--color-stroke-base);
     margin-top: var(--spacing-vertical-double);
   }
 
-  .card-show-date {
+  .bullet-show-date {
     font-size: var(--font-size-subtle);
     color: var(--color-fg-subtle);
   }

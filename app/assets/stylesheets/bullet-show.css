@@ -1,5 +1,5 @@
 @layer components {
-  .card-show {
+  .bullet-show {
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
@@ -28,7 +28,7 @@
     gap: var(--spacing-horizontal-half);
   }
 
-  .card-show-content {
+  .bullet-show-content {
     max-width: 680px;
     width: 100%;
     margin: 0 auto;
@@ -45,18 +45,18 @@
     }
   }
 
-  .card-show-header {
+  .bullet-show-header {
     margin-bottom: var(--spacing-vertical-double);
   }
 
-  .card-show-meta {
+  .bullet-show-meta {
     display: flex;
     align-items: center;
     gap: var(--spacing-horizontal-half);
     margin-bottom: var(--spacing-vertical);
   }
 
-  .card-show-title {
+  .bullet-show-title {
     font-size: clamp(1.5rem, 4vw, 2rem);
     font-weight: var(--font-weight-strong);
     color: var(--color-fg-base);
@@ -65,7 +65,7 @@
 
   /* ── Read body ────────────────────────────────────────── */
 
-  .card-show-body {
+  .bullet-show-body {
     font-size: var(--font-size-base);
     color: var(--color-fg-base);
 

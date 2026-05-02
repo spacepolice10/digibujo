@@ -1,0 +1,21 @@
+@layer components {
+  /* ── Form embedded in bullet-show-content ──────────────── */
+
+  .bullet-show-content :is([data-controller~="bullet-form"], [data-controller~="bullet-form"]) {
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+  }
+
+  .bullet-show-content trix-editor {
+    font-size: var(--font-size-base);
+    padding: 0;
+  }
+
+  .bullet-show-content trix-editor img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-subtle);
+  }
+}

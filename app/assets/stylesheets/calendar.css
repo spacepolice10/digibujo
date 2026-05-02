@@ -117,17 +117,17 @@
     border-radius: var(--radius-subtle);
   }
 
-  .future-log__day[data-card-types~="task"] {
+  .future-log__day[data-bullet-types~="task"] {
     color: var(--model-color-2);
     font-weight: var(--font-weight-strong);
   }
 
-  .future-log__day[data-card-types~="event"] {
+  .future-log__day[data-bullet-types~="event"] {
     color: var(--model-color-6);
     font-weight: var(--font-weight-strong);
   }
 
-  .future-log__day[data-card-types~="note"] {
+  .future-log__day[data-bullet-types~="note"] {
     color: var(--model-color-5);
     font-weight: var(--font-weight-strong);
   }

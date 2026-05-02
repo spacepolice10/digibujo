@@ -8,8 +8,16 @@
     display: grid;
   }
 
-  .wide {
+  .w-fit {
+    width: fit-content;
+  }
+
+  .w-full {
     width: 100%;
+  }
+
+  .h-fit {
+    height: fit-content;
   }
 
   .h-screen {
@@ -18,6 +26,13 @@
 
   .slightly-gapped {
     gap: var(--spacing-horizontal);
+  }
+
+  .justified {
+    justify-content: space-between;
+    & > * {
+      flex: 1;
+    }
   }
 
   .slightly-padded {
@@ -39,10 +54,6 @@
 
   .mx-auto {
     margin-inline: auto;
-  }
-
-  .w-fit {
-    width: fit-content;
   }
 
   .hidden {

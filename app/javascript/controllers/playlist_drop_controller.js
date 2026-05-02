@@ -23,9 +23,9 @@ export default class extends Controller {
     event.preventDefault()
     this.element.classList.remove("drag-over")
 
-    const cardId = event.dataTransfer.getData("card-id")
-    console.log("[playlist-drop] drop fired, cardId:", cardId, "url:", this.urlValue)
-    if (!cardId) return
+    const bulletId = event.dataTransfer.getData("bullet-id")
+    console.log("[playlist-drop] drop fired, bulletId:", bulletId, "url:", this.urlValue)
+    if (!bulletId) return
 
     const token = document.querySelector("meta[name='csrf-token']").content
 
@@ -36,7 +36,7 @@ export default class extends Controller {
         "X-CSRF-Token": token,
         "Accept": "text/vnd.turbo-stream.html"
       },
-      body: JSON.stringify({ card_id: cardId })
+      body: JSON.stringify({ bullet_id: bulletId })
     })
 
     console.log("[playlist-drop] response status:", response.status, response.ok)

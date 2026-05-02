@@ -5,9 +5,9 @@ export default class extends Controller {
 
   dragstart(event) {
     event.dataTransfer.effectAllowed = "move"
-    event.dataTransfer.setData("card-id", this.idValue)
+    event.dataTransfer.setData("bullet-id", this.idValue)
     this.element.classList.add("dragging")
-    console.log("[card-drag] dragstart fired, card id:", this.idValue)
+    console.log("[bullet-drag] dragstart fired, bullet id:", this.idValue)
   }
 
   dragend() {

@@ -57,6 +57,12 @@
       background: color-mix(in oklch, var(--model-color-6-bg) 35%, var(--color-bg-base));
     }
 
+    &.pill--migrated {
+      color: var(--model-color-5);
+      border-color: color-mix(in oklch, var(--model-color-5) 40%, var(--color-stroke-base));
+      background: color-mix(in oklch, var(--model-color-5-bg) 35%, var(--color-bg-base));
+    }
+
     button {
       background: none;
       border: none;

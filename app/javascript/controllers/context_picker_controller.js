@@ -77,11 +77,11 @@ export default class extends Controller {
     if (event.key != "Enter") return
     if (this.suggestionsTarget.querySelector(".is-active")) return
 
-    const name = this.searchTarget.value.trim()
-    if (!name) return
+    const query = this.searchTarget.value.trim()
+    if (!query) return
 
     event.preventDefault()
-    const exact = this._suggested.find(item => item.name == name)
+    const exact = this._suggested.find(item => item.name == query || this._labelFor(item) == query)
     if (!exact) return
     this.selectedValue = this._normalizeContext(exact)
     this._applySelectionAndClose()
@@ -103,14 +103,14 @@ export default class extends Controller {
     this._searchAbortController = new AbortController()
     const params = new URLSearchParams({ q })
     if (this.hasExcludeIdValue && this.excludeIdValue) params.set("exclude_id", String(this.excludeIdValue))
-    const response = await fetch(`/cards/contexts.json?${params.toString()}`, {
+    const response = await fetch(`/bullets/contexts.json?${params.toString()}`, {
       signal: this._searchAbortController.signal
     }).catch(() => null)
 
     if (!response || !response.ok || token != this._searchToken) return
-    const data = await response.json().catch(() => ({ cards: [] }))
+    const data = await response.json().catch(() => ({ bullets: [] }))
     if (token != this._searchToken) return
-    this._suggested = Array.isArray(data.cards) ? data.cards : []
+    this._suggested = Array.isArray(data.bullets) ? data.bullets : []
     this._renderSuggestions()
   }
 
@@ -146,7 +146,9 @@ export default class extends Controller {
     fragment.appendChild(sectionName)
 
     items.forEach(item => {
-      const isChecked = item.name == this.selectedValue.name
+      const isChecked = this.selectedValue.id
+        ? this._parseId(item.id) == this.selectedValue.id
+        : item.name == this.selectedValue.name
       fragment.appendChild(this._createItem(item, isChecked))
     })
   }
@@ -168,12 +170,17 @@ export default class extends Controller {
     checkbox.checked = checked
 
     element.appendChild(checkbox)
-    element.append(` ${entry.name}`)
+    element.append(` ${this._labelFor(entry)}`)
     return element
   }
 
   _updateText() {
-    this.triggerTextTarget.textContent = this.contextValue.name ? this.contextValue.name : "Context"
+    this.triggerTextTarget.textContent = this.contextValue.name ? this._labelFor(this.contextValue) : "Context"
+  }
+
+  _labelFor(entry) {
+    const id = this._parseId(entry.id)
+    return id ? `#${id} ${entry.name}` : entry.name
   }
 
   _applySelectionAndClose() {

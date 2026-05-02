@@ -12,11 +12,11 @@
   .main-sidebar,
   .sidebar-toggle,
   #pinned_panel,
-  .card-menu,
-  .card-action,
+  .bullet-menu,
+  .bullet-action,
   .show-navigation-actions,
-  .card-form-rail,
-  .card-form-footer,
+  .bullet-form-rail,
+  .bullet-form-footer,
   trix-toolbar,
   .pagination-trigger {
     display: none !important;
@@ -27,12 +27,12 @@
     padding: 0;
   }
 
-  .card {
+  .bullet {
     break-inside: avoid;
     border: 1px solid #ddd;
   }
 
-  .card-show-content {
+  .bullet-show-content {
     max-width: 100%;
   }
 

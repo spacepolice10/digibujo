@@ -32,7 +32,7 @@
     padding: var(--spacing-vertical-double);
   }
 
-  .triage-card-actions {
+  .triage-bullet-actions {
     display: flex;
     gap: var(--spacing-vertical-half);
     margin: 0 0 var(--spacing-vertical);
@@ -64,25 +64,19 @@
     border-color: var(--color-stroke-base);
   }
 
-  .triage-postpone-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-vertical-half);
+  .triage-bullet--note {
+    --bullet-bg: color-mix(in oklch, var(--color-bg-base), var(--color-bg-warn) 35%);
+    --bullet-bg-hover: color-mix(in oklch, var(--color-bg-base), var(--color-bg-warn) 50%);
+    --bullet-border: color-mix(in oklch, var(--color-stroke-base), var(--color-fg-warn) 35%);
   }
 
-  .triage-card--note {
-    --card-bg: color-mix(in oklch, var(--color-bg-base), var(--color-bg-warn) 35%);
-    --card-bg-hover: color-mix(in oklch, var(--color-bg-base), var(--color-bg-warn) 50%);
-    --card-border: color-mix(in oklch, var(--color-stroke-base), var(--color-fg-warn) 35%);
-  }
-
-  .triage-card--note .card-body,
-  .triage-card--note .card-body * {
+  .triage-bullet--note .bullet-body,
+  .triage-bullet--note .bullet-body * {
     color: var(--color-fg-subtle);
     font-style: italic;
   }
 
-  .triage-card--completed {
+  .triage-bullet--completed {
     opacity: var(--opacity-half);
   }
 }

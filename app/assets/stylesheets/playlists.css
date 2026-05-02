@@ -83,7 +83,7 @@
     .playlists-column:hover & { opacity: 1; }
   }
 
-  .playlists-column__cards {
+  .playlists-column__bullets {
     display: grid;
     gap: var(--spacing-vertical);
   }
@@ -115,18 +115,18 @@
 
   /* Show page */
 
-  .playlists-show__cards {
+  .playlists-show__bullets {
     display: grid;
     gap: var(--spacing-vertical);
   }
 
-  .playlists-show__card {
+  .playlists-show__bullet {
     display: flex;
     align-items: center;
     gap: var(--spacing-horizontal-half);
   }
 
-  .playlists-show__card .card {
+  .playlists-show__bullet .bullet {
     flex: 1;
     min-width: 0;
   }

@@ -29,7 +29,7 @@ export default class extends Controller {
 
     this.currentTypeValue = value;
     this.element.dataset.currentType = value;
-    this.fieldsTarget.src = `/cards/fields/${value}`;
+    this.fieldsTarget.src = `/bullets/fields/${value}`;
     this.updateTypeIcon(event.target);
     this.focusEditor();
   }
@@ -52,7 +52,7 @@ export default class extends Controller {
     requestAnimationFrame(() => {
       const selectedInput = this.typeInputTargets.find((typeInput) => typeInput.checked);
       const selectedItem = selectedInput && this.typeMenuTarget.querySelector(
-        `[data-card-form-type-param="${selectedInput.value}"]`
+        `[data-bullet-form-type-param="${selectedInput.value}"]`
       );
       const fallbackItem = this.typeMenuTarget.querySelector("[data-grid-navigation-target~='item']");
       (selectedItem || fallbackItem)?.focus();
@@ -142,7 +142,7 @@ export default class extends Controller {
 
   updateTypeIcon(input) {
     if (!this.hasTypeIconTarget) return;
-    const icon = input.dataset.cardFormIconValue;
+    const icon = input.dataset.bulletFormIconValue;
     if (!icon) return;
     this.typeIconTarget.style.setProperty("--icon-mask", `var(--icon-${icon})`);
   }

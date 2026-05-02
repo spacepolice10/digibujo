@@ -1,12 +1,12 @@
 import { Controller } from "@hotwired/stimulus"
 
-const RECENT_STORAGE_KEY = "collections_picker_recent"
+const RECENT_STORAGE_KEY = "projects_picker_recent"
 const SEARCH_DEBOUNCE_MS = 180
 
 export default class extends Controller {
   static targets = ["search", "suggestions", "hiddenId", "hiddenName", "triggerText", "clearButton"]
   static values = {
-    collection: { type: Object, default: {} },
+    project: { type: Object, default: {} },
     selected: { type: Object, default: {} }
   }
 
@@ -15,12 +15,12 @@ export default class extends Controller {
     this._searchToken = 0
     this._searchDebounce = null
     this._searchAbortController = null
-    this.collectionValue = this._normalizeCollection(this.collectionValue)
+    this.projectValue = this._normalizeProject(this.projectValue)
     this.reset()
   }
 
-  collectionValueChanged() {
-    this.selectedValue = this._normalizeCollection(this.collectionValue)
+  projectValueChanged() {
+    this.selectedValue = this._normalizeProject(this.projectValue)
     this._updateText()
   }
 
@@ -30,7 +30,7 @@ export default class extends Controller {
   }
 
   reset() {
-    this.selectedValue = { ...this.collectionValue }
+    this.selectedValue = { ...this.projectValue }
     this.searchTarget.value = ""
     this._suggested = []
     this._cancelPendingSearch()
@@ -65,7 +65,7 @@ export default class extends Controller {
     this._applySelectionAndClose()
   }
 
-  createCollection(event) {
+  createProject(event) {
     const name = event.currentTarget.dataset.name
     this.selectedValue = { id: null, name, colour: null }
     this._applySelectionAndClose()
@@ -86,7 +86,7 @@ export default class extends Controller {
 
     const exact = this._suggested.find(item => item.name == name)
     if (exact) {
-      this.selectedValue = this._normalizeCollection(exact)
+      this.selectedValue = this._normalizeProject(exact)
     } else {
       this.selectedValue = { id: null, name, colour: null }
     }
@@ -97,9 +97,9 @@ export default class extends Controller {
     this._cancelPendingSearch()
   }
 
-  _normalizeCollection(collection) {
-    if (!collection || !collection.name) return {}
-    return { id: this._parseId(collection.id), name: collection.name, colour: collection.colour || null }
+  _normalizeProject(project) {
+    if (!project || !project.name) return {}
+    return { id: this._parseId(project.id), name: project.name, colour: project.colour || null }
   }
 
   _parseId(value) {
@@ -111,14 +111,14 @@ export default class extends Controller {
   async _loadSuggestions(q) {
     const token = ++this._searchToken
     this._searchAbortController = new AbortController()
-    const response = await fetch(`/collections.json?q=${encodeURIComponent(q)}`, {
+    const response = await fetch(`/projects.json?q=${encodeURIComponent(q)}`, {
       signal: this._searchAbortController.signal
     }).catch(() => null)
 
     if (!response || !response.ok || token != this._searchToken) return
-    const data = await response.json().catch(() => ({ collections: [] }))
+    const data = await response.json().catch(() => ({ projects: [] }))
     if (token != this._searchToken) return
-    this._suggested = Array.isArray(data.collections) ? data.collections : []
+    this._suggested = Array.isArray(data.projects) ? data.projects : []
     this._renderSuggestions()
   }
 
@@ -130,9 +130,9 @@ export default class extends Controller {
     this._searchAbortController = null
   }
 
-  _saveRecent(collection) {
+  _saveRecent(project) {
     try {
-      localStorage.setItem(RECENT_STORAGE_KEY, JSON.stringify(collection))
+      localStorage.setItem(RECENT_STORAGE_KEY, JSON.stringify(project))
     } catch {
       // Ignore storage failures and keep form behavior intact.
     }
@@ -144,7 +144,7 @@ export default class extends Controller {
       if (!raw) return []
       const parsed = JSON.parse(raw)
       if (!parsed || !parsed.name) return []
-      return [this._normalizeCollection(parsed)]
+      return [this._normalizeProject(parsed)]
     } catch {
       return []
     }
@@ -174,7 +174,7 @@ export default class extends Controller {
     if (!items || items.length == 0) return
 
     const sectionName = document.createElement("li")
-    sectionName.className = "tags-picker--section-name"
+    sectionName.className = "projects-picker--section-name"
     sectionName.setAttribute("aria-hidden", "true")
     sectionName.textContent = title
     fragment.appendChild(sectionName)
@@ -187,10 +187,10 @@ export default class extends Controller {
 
   _createItem(entry, checked) {
     const element = document.createElement("li")
-    element.className = "tags-picker--suggestion"
+    element.className = "projects-picker--suggestion"
     element.setAttribute("role", "option")
     element.dataset.comboboxTarget = "item"
-    element.dataset.action = "click->tags-picker#choose"
+    element.dataset.action = "click->projects-picker#choose"
     element.dataset.name = entry.name
     element.dataset.id = entry.id || ""
     element.dataset.colour = entry.colour || ""
@@ -208,21 +208,21 @@ export default class extends Controller {
 
   _createCreateItem(name) {
     const item = document.createElement("li")
-    item.className = "tags-picker--create"
+    item.className = "projects-picker--create"
     item.setAttribute("role", "option")
     item.dataset.comboboxTarget = "item"
-    item.dataset.action = "click->tags-picker#createCollection"
+    item.dataset.action = "click->projects-picker#createProject"
     item.dataset.name = name
     item.textContent = `Create "${name}"`
     return item
   }
 
   _updateText() {
-    this.triggerTextTarget.textContent = this.collectionValue.name ? this.collectionValue.name : "Collection"
+    this.triggerTextTarget.textContent = this.projectValue.name ? this.projectValue.name : "Project"
   }
 
   _applySelectionAndClose() {
-    this.collectionValue = { ...this.selectedValue }
+    this.projectValue = { ...this.selectedValue }
     this.hiddenIdTarget.value = this.selectedValue.id ? String(this.selectedValue.id) : ""
     this.hiddenNameTarget.value = this.selectedValue.name ? this.selectedValue.name : ""
     this._saveRecent(this.selectedValue)
