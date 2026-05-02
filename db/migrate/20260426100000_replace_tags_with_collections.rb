@@ -8,7 +8,7 @@ class ReplaceTagsWithCollections < ActiveRecord::Migration[8.1]
     end
     add_index :collections, [:user_id, :name], unique: true
 
-    add_reference :cards, :collection, foreign_key: true
+    add_reference :bullets, :collection, foreign_key: true
 
     execute <<~SQL
       INSERT INTO collections (user_id, name, colour, created_at, updated_at)
@@ -18,20 +18,20 @@ class ReplaceTagsWithCollections < ActiveRecord::Migration[8.1]
     SQL
 
     execute <<~SQL
-      UPDATE cards
+      UPDATE bullets
       SET collection_id = (
         SELECT collections.id
         FROM card_tags
         INNER JOIN tags ON tags.id = card_tags.tag_id
         INNER JOIN collections ON collections.user_id = tags.user_id AND collections.name = tags.name
-        WHERE card_tags.card_id = cards.id
+        WHERE card_tags.bullet_id = bullets.id
         ORDER BY card_tags.id ASC
         LIMIT 1
       )
-      WHERE EXISTS (SELECT 1 FROM card_tags WHERE card_tags.card_id = cards.id)
+      WHERE EXISTS (SELECT 1 FROM card_tags WHERE card_tags.bullet_id = bullets.id)
     SQL
 
-    remove_foreign_key :card_tags, :cards
+    remove_foreign_key :card_tags, :bullets
     remove_foreign_key :card_tags, :tags
     drop_table :card_tags
     drop_table :tags
@@ -51,9 +51,9 @@ class ReplaceTagsWithCollections < ActiveRecord::Migration[8.1]
       t.references :tag, null: false, foreign_key: true
       t.timestamps
     end
-    add_index :card_tags, [:card_id, :tag_id], unique: true
+    add_index :card_tags, [:bullet_id, :tag_id], unique: true
 
-    remove_reference :cards, :collection, foreign_key: true
+    remove_reference :bullets, :collection, foreign_key: true
     drop_table :collections
   end
 end

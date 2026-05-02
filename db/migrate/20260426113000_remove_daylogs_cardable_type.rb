@@ -1,6 +1,6 @@
 class RemoveDaylogsCardableType < ActiveRecord::Migration[8.1]
   class MigrationCard < ApplicationRecord
-    self.table_name = "cards"
+    self.table_name = "bullets"
   end
 
   class MigrationNote < ApplicationRecord
@@ -23,7 +23,7 @@ class RemoveDaylogsCardableType < ActiveRecord::Migration[8.1]
   private
 
   def migrate_daylog_cards_to_notes
-    return unless table_exists?(:cards) && table_exists?(:notes)
+    return unless table_exists?(:bullets) && table_exists?(:notes)
 
     MigrationCard.where(cardable_type: "Daylog").find_each do |card|
       note = MigrationNote.create!

@@ -8,7 +8,7 @@ class CreatePlaylistCards < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    add_index :playlist_cards, [:playlist_id, :card_id], unique: true
+    add_index :playlist_cards, [:playlist_id, :bullet_id], unique: true
     add_index :playlist_cards, [:playlist_id, :position]
   end
 end

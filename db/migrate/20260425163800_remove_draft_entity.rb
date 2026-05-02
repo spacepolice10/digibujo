@@ -1,6 +1,6 @@
 class RemoveDraftEntity < ActiveRecord::Migration[8.1]
   class MigrationCard < ApplicationRecord
-    self.table_name = "cards"
+    self.table_name = "bullets"
   end
 
   class MigrationTask < ApplicationRecord
