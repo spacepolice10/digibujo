@@ -2,31 +2,31 @@
 
 require "test_helper"
 
-class Cards::ContextsControllerTest < ActionDispatch::IntegrationTest
+class Bullets::ContextsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @user = users(:one)
     sign_in_as @user
   end
 
-  test "returns matching cards for picker" do
-    target = @user.cards.create!(cardable: Note.create!, content: '<a href="https://example.com/kickoff">Kickoff docs</a>')
-    @user.cards.create!(cardable: Task.create!, content: "Another item")
+  test "returns matching bullets for picker" do
+    target = @user.bullets.create!(bulletable: Note.create!, content: '<a href="https://example.com/kickoff">Kickoff docs</a>')
+    @user.bullets.create!(bulletable: Task.create!, content: "Another item")
 
-    get "/cards/contexts.json", params: { q: "example.com/kickoff" }
+    get "/bullets/contexts.json", params: { q: "example.com/kickoff" }
 
     assert_response :success
     data = JSON.parse(response.body)
-    assert_equal 1, data["cards"].length
-    assert_equal target.id, data["cards"][0]["id"]
+    assert_equal 1, data["bullets"].length
+    assert_equal target.id, data["bullets"][0]["id"]
   end
 
   test "exclude_id removes current card from results" do
-    card = @user.cards.create!(cardable: Task.create!, content: "Current card")
+    card = @user.bullets.create!(bulletable: Task.create!, content: "Current card")
 
-    get "/cards/contexts.json", params: { q: "current", exclude_id: card.id }
+    get "/bullets/contexts.json", params: { q: "current", exclude_id: card.id }
 
     assert_response :success
     data = JSON.parse(response.body)
-    assert_equal [], data["cards"]
+    assert_equal [], data["bullets"]
   end
 end

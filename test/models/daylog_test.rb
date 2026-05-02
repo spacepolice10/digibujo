@@ -14,8 +14,8 @@ class DaylogTest < ActiveSupport::TestCase
   end
 
   test "creates with mood from controller params" do
-    cardable_attrs = { "mood" => "excellent" }
-    daylog = Daylog.new(cardable_attrs)
+    bulletable_attrs = { "mood" => "excellent" }
+    daylog = Daylog.new(bulletable_attrs)
     assert_equal "excellent", daylog.mood
   end
 end

@@ -13,9 +13,9 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     assert_select "h2", text: "Search"
   end
 
-  test "show filters cards by query in content" do
-    matching_card = @user.cards.create!(cardable: Task.create!, content: "Buy milk today")
-    @user.cards.create!(cardable: Task.create!, content: "Call mom tonight")
+  test "show filters bullets by query in content" do
+    matching_card = @user.bullets.create!(bulletable: Task.create!, content: "Buy milk today")
+    @user.bullets.create!(bulletable: Task.create!, content: "Call mom tonight")
 
     get search_path, params: { q: "milk" }
 
@@ -25,7 +25,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "show returns turbo stream update for realtime input requests" do
-    @user.cards.create!(cardable: Task.create!, content: "Buy milk today")
+    @user.bullets.create!(bulletable: Task.create!, content: "Buy milk today")
 
     get search_path(format: :turbo_stream), params: { q: "milk" }
 
@@ -35,9 +35,9 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     assert_match "Buy milk today", response.body
   end
 
-  test "show finds cards by link text from rich content as plain text" do
-    @user.cards.create!(cardable: Note.create!, content: '<a href="https://example.com/docs">https://example.com/docs</a>')
-    @user.cards.create!(cardable: Note.create!, content: "Unrelated content")
+  test "show finds bullets by link text from rich content as plain text" do
+    @user.bullets.create!(bulletable: Note.create!, content: '<a href="https://example.com/docs">https://example.com/docs</a>')
+    @user.bullets.create!(bulletable: Note.create!, content: "Unrelated content")
 
     get search_path, params: { q: "example.com/docs" }
 

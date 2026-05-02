@@ -36,7 +36,7 @@ class PlaylistTest < ActiveSupport::TestCase
     playlist.playlist_cards.create!(card: card_b, position: 1)
     playlist.playlist_cards.create!(card: card_a, position: 0)
 
-    assert_equal [card_a, card_b], playlist.cards.to_a
+    assert_equal [card_a, card_b], playlist.bullets.to_a
   end
 
   test 'destroying playlist destroys playlist_cards' do
@@ -76,14 +76,14 @@ class PlaylistTest < ActiveSupport::TestCase
     playlist_a.playlist_cards.create!(card: card, position: 0)
     playlist_b.playlist_cards.create!(card: card, position: 0)
 
-    assert_includes playlist_a.cards, card
-    assert_includes playlist_b.cards, card
+    assert_includes playlist_a.bullets, card
+    assert_includes playlist_b.bullets, card
   end
 
   private
 
   def create_card(user)
     draft = Draft.create!
-    user.cards.create!(cardable: draft, content: "Test card #{SecureRandom.hex(4)}")
+    user.bullets.create!(bulletable: draft, content: "Test card #{SecureRandom.hex(4)}")
   end
 end

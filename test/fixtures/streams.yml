@@ -1,9 +1,9 @@
 one_custom:
   user: one
   name: Custom Stream
-  fields: { "cardable_type": "Note", "icon": "file", "colour": "5" }
+  fields: { "bulletable_type": "Note", "icon": "file", "colour": "5" }
 
 two_custom:
   user: two
   name: Custom Stream
-  fields: { "cardable_type": "Task", "icon": "circle-check", "colour": "2" }
+  fields: { "bulletable_type": "Task", "icon": "circle-check", "colour": "2" }

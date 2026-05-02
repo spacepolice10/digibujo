@@ -6,27 +6,27 @@ class StreamTest < ActiveSupport::TestCase
   end
 
   test "ordered scope sorts by created_at ascending" do
-    custom = @user.streams.create!(name: "Latest", fields: { "cardable_type" => "Note" })
+    custom = @user.streams.create!(name: "Latest", fields: { "bulletable_type" => "Note" })
     ordered = @user.streams.ordered.to_a
     assert_equal custom, ordered.last
   end
 
-  test "multi-type cardable_type filters with IN clause" do
-    stream = @user.streams.create!(name: "Multi", fields: { "cardable_type" => "Task,Event" })
-    sql = stream.cards.to_sql
-    assert_match(/cardable_type/, sql)
+  test "multi-type bulletable_type filters with IN clause" do
+    stream = @user.streams.create!(name: "Multi", fields: { "bulletable_type" => "Task,Event" })
+    sql = stream.bullets.to_sql
+    assert_match(/bulletable_type/, sql)
   end
 
   test "dynamic date_from resolves today at query time" do
     stream = @user.streams.create!(name: "Future", fields: { "date_from" => "today" })
-    sql = stream.cards.to_sql
+    sql = stream.bullets.to_sql
     assert_match(/date >= '#{Date.today}'/, sql)
   end
 
-  test "stream with no filters returns all cards" do
+  test "stream with no filters returns all bullets" do
     stream = @user.streams.create!(name: "Everything", fields: { "icon" => "menu" })
     assert stream.empty?
-    assert_equal @user.cards.count, stream.cards.count
+    assert_equal @user.bullets.count, stream.bullets.count
   end
 
   test "stream can be destroyed" do
