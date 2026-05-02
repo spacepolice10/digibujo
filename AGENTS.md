@@ -30,105 +30,118 @@ This file contains agent workflow, architecture, and implementation guidance for
 ### Authentication
 Custom session-based auth built with an `Authentication` concern (not Devise). Uses `has_secure_password`, signed httponly cookies, and `Current.user` via `ActiveSupport::CurrentAttributes`. Controllers opt out of auth with `allow_unauthenticated_access`. Rate limiting is applied to login and password reset endpoints.
 
-### Delegated Type Pattern (Cards)
-`Card` uses `delegated_type :cardable` for polymorphism. The `cards` table holds `cardable_type`/`cardable_id`. Implemented cardable types:
+### Delegated Type Pattern (Bullets)
+`Bullet` uses `delegated_type :bulletable` for polymorphism. The `bullets` table holds `bulletable_type`/`bulletable_id`. Implemented bulletable types:
 
 | Type    | Concerns                       | Notes                              |
 |---------|--------------------------------|------------------------------------|
-| `Task`  | `Cardable`                     | Completable + temporal; uses marker `•` |
-| `Note`  | `Cardable`                     | Taggable long-form/reference card; uses marker `-` |
-| `Event` | `Cardable`                     | Temporal (not completable); uses marker `○` |
+| `Task`  | `Bulletable`                   | Completable + temporal; uses marker `•` |
+| `Note`  | `Bulletable`                   | Long-form/reference entry; uses marker `-` |
+| `Event` | `Bulletable`                   | Temporal (not completable); uses marker `○` |
 
-Cards have rich text `content` via Action Text (Trix). Triage intent methods live in concerns (`Collectable#collect!`, `Schedulable#schedule!`) and update card organization metadata without forcing type conversion. To add a new cardable type: create the model, `include Cardable`, implement `form_fields`, and register it in `Card`'s `delegated_type` declaration.
+Bullets have rich text `content` via Action Text (Trix). Optional `belongs_to :project` groups work under user-owned `Project` records (replacing the old collections/tags flow). Triage intent methods live in concerns (`Collectable#collect!`, `Schedulable#schedule!`) and update organization metadata without forcing type conversion. To add a new bulletable type: create the model, `include Bulletable`, implement `form_fields`, and register it in `Bullet`'s `delegated_type` declaration.
 
-### Card Status
-`Card` has two independent boolean columns: `pinned` and `archived` (both `default: false, null: false`). There is no `status` enum. `Pinnable` adds a `pinned` scope and enforces a limit of 10 pinned cards per user. `Archivable` adds an `archived` scope. The `timeline` scope returns all cards (`all`) — pinned and archived cards remain visible in the Timeline and are distinguished by icons in the card partial.
+### Bullet Status
+`Bullet` has two independent boolean columns: `pinned` and `archived` (both `default: false, null: false`). There is no `status` enum. `Pinnable` adds a `pinned` scope and enforces a limit of 10 pinned bullets per user. `Archivable` adds an `archived` scope. The `timeline` scope returns all bullets (`all`) — pinned and archived bullets remain visible in the timeline and are distinguished by icons in the bullet partial.
 
-`Card` also tracks `triaged_at` (`datetime`): `nil` means not intentionally triaged yet; present means user has processed it via triage actions such as collect or schedule.
+`Bullet` also tracks `triaged_at` (`datetime`): `nil` means not intentionally triaged yet; present means the user has processed it via triage actions such as collect or schedule.
 
-### Pop Mechanism
-Cards have a `pops_on` date column. A card is "popped" when `pops_on <= Date.today`. `Cards::PopsController#update` toggles/sets/clears `pops_on`. In triage, cards with no pop date or due pop date are eligible, and postponing moves `pops_on` forward.
+### Scheduling and triage eligibility
+Bullets use `scheduled_on` (`date`) as the primary day bucket (replacing the older `pops_on` / separate date fields). `Bullet.scheduled_on_date(date)` matches bullets explicitly scheduled on that day or created that day when `scheduled_on` is nil. `Bullet.triage_on_date(date)` further narrows to bullets that still need triage for that day (not yet triaged with a `triaged_at` falling on that calendar day). `TriageController#show` lists non-archived bullets from `triage_on_date` for the selected date (default today).
 
 ### Triage Workflow
-Triage is now card-first (`/triage`) instead of draft-first. The triage controller loads today's non-archived cards (`Current.user.cards.todays`) that are due for review (`pops_on IS NULL OR pops_on <= Date.current`).
+Triage is bullet-first (`/triage`) with an optional `?date=` query for day navigation. During triage, each bullet can be:
 
-During triage, each card can be:
-- **Collect** → `Triage::CollectsController` calls `card.collect!(collection_name:)`
-- **Schedule** → `Triage::SchedulesController` calls `card.schedule!(collection_name:, date:)`
-- **Postpone** → `Triage::PostponesController` sets `pops_on` to tomorrow
+- **Collect** → `Triage::CollectsController` calls `bullet.collect!(project_id:, project_name:)` to attach a project and stamp `triaged_at`
+- **Schedule** → `Triage::SchedulesController` calls `bullet.schedule!(scheduled_on:)` to set the scheduled day and stamp `triaged_at`
+- **Postpone** → `Triage::PostponesController` moves `scheduled_on` to the next day (relative to the triage date) and stamps `triaged_at`
 - **Archive** → `Triage::ArchivesController` sets `archived: true`
 
-`Collectable` and `Schedulable` are intent-focused concerns. They support triage actions without coupling triage to card type switching.
+`Collectable` and `Schedulable` are intent-focused concerns. They support triage without coupling it to bullet type switching.
 
 ### Sweep Rules
-`SweepCardsJob` enforces recycling rules:
-- completed cards remain recyclable through `archives_on` (set by `Completable#complete!`)
-- cards are auto-archived when due (`archives_on <= today`) or still untriaged after a grace window
-- pinned cards are excluded from auto-archive and deletion
-- archived cards are hard-deleted only after retention period, and pinned cards are excluded there too
+`SweepCardsJob` (name unchanged) operates on `Bullet` and enforces recycling rules:
+
+- completed bullets remain recyclable through `archives_on` (set by `Completable#complete!`)
+- bullets are auto-archived when due (`archives_on <= today`) or still untriaged after a grace window
+- pinned bullets are excluded from auto-archive and deletion
+- archived bullets are hard-deleted only after a retention period, and pinned bullets are excluded there too
 
 ### Analog BuJo Alignment
 The architecture is intentionally closer to analog Bullet Journal behavior:
+
 - **Rapid logging markers** are first-class (`•` Task, `-` Note, `○` Event)
-- **Daily focus** is explicit (`/cards` and `/todays` operate on today's entries)
-- **Migration over rewrite** happens in triage by converting card type in place
-- **Deferred decisions** are supported via `pops_on` (postpone to revisit later)
+- **Daily focus** is explicit (`/bullets` shows today’s scheduled timeline; triage uses `scheduled_on` per day)
+- **Migration over rewrite** happens in triage by converting bullet type in place where needed
+- **Deferred decisions** are supported by moving `scheduled_on` forward (postpone) or collecting/scheduling into a project or date
 - **Separation of concerns** mirrors BuJo pages: today/timeline, triage, archived, pinned
 
 ### Streams
-`Stream` is a saved filtered view. It stores filter fields (`cardable_type`, `sorted_by`, `date_from`, `date_to`, `tag_names`) via `store_accessor :fields`. `Stream#cards` builds a scoped query against `user.cards`. Streams are user-owned and uniquely named.
+`Stream` is a saved filtered view. It stores filter fields (`bulletable_type`, `sorted_by`, `date_from`, `date_to`, `projects`, plus display `icon`/`colour`) via `store_accessor :fields`. `Stream#bullets` builds a scoped query against `user.bullets`. Streams are user-owned and uniquely named.
+
+### Playlists
+Playlists reference bullets through the `playlist_cards` join model (`PlaylistCard`), which uses `bullet_id` foreign keys. Nested routes use `/playlists/:playlist_id/bullets` for add/remove.
 
 ### Turbo Streams
-All mutating actions (`create`, `update`, `destroy`) in cards and triage sub-controllers respond to `format.turbo_stream` for inline updates without page reloads. HTML fallback redirects are always provided.
+All mutating actions (`create`, `update`, `destroy`) in bullets and triage sub-controllers respond to `format.turbo_stream` for inline updates without page reloads. HTML fallback redirects are always provided.
 
 ### Routes
 
 ```
-root                                         → cards#index
+root                                         → bullets#index
 
 # Auth
 resource :session                            → sessions#new/create/show/destroy
 resource :session/code                       → sessions/codes#new/create
 
-# Cards
-GET    /cards                                → cards#index (today timeline)
-GET    /todays                               → cards#index (named alias)
-GET    /cards/:id                            → cards#show
-GET    /cards/new                            → cards#new
-POST   /cards                                → cards#create
-GET    /cards/:id/edit                       → cards#edit
-PATCH  /cards/:id                            → cards#update
-DELETE /cards/:id                            → cards#destroy
+# Bullets (dynamic fields + JSON contexts under scoped module)
+GET    /bullets/fields/:id                   → bullets/fields#show (id=task|note|event)
+GET    /bullets/contexts                     → bullets/contexts#index (JSON)
 
-# Card sub-resources (all Turbo Stream responses)
-PATCH  /cards/:card_id/pop                   → cards/pops#update (toggle/set pops_on)
-PATCH  /cards/:card_id/pin                   → cards/pins#update (toggle pinned status)
-PATCH  /cards/:card_id/archive               → cards/archives#update (toggle archived status)
-POST   /cards/:card_id/complete              → cards/completes#create (mark done)
-DELETE /cards/:card_id/complete              → cards/completes#destroy (unmark done)
-PATCH  /cards/:card_id/publish               → cards/publishes#update (toggle publish)
-GET    /cards/:card_id/playlist_picker       → cards/playlist_pickers#show
+# Bullets CRUD
+GET    /bullets                              → bullets#index (today timeline)
+GET    /bullets/:id                          → bullets#show
+GET    /bullets/new                          → bullets#new
+POST   /bullets                              → bullets#create
+GET    /bullets/:id/edit                     → bullets#edit
+PATCH  /bullets/:id                          → bullets#update
+DELETE /bullets/:id                          → bullets#destroy
 
-# Dynamic form fields by cardable type
-GET    /cards/fields/:id                     → cards/fields#show (?id=task|note|event)
+# Bullet sub-resources (Turbo Stream responses)
+PATCH  /bullets/:bullet_id/pin               → bullets/pins#update
+PATCH  /bullets/:bullet_id/archive           → bullets/archives#update
+POST   /bullets/:bullet_id/complete          → bullets/completes#create
+DELETE /bullets/:bullet_id/complete          → bullets/completes#destroy
+PATCH  /bullets/:bullet_id/publish           → bullets/publishes#update
+GET    /bullets/:bullet_id/playlist_picker   → bullets/playlist_pickers#show
 
-# Triage
+# Search
+resource :search, only: :show
+
+# Triage (optional ?date=ISO8601 on GET)
 GET    /triage                               → triage#show
-POST   /triage/cards/:card_id/collect        → triage/collects#create
-POST   /triage/cards/:card_id/schedule       → triage/schedules#create
-POST   /triage/cards/:card_id/postpone       → triage/postpones#create
-POST   /triage/cards/:card_id/archive        → triage/archives#create
+POST   /triage/bullets/:bullet_id/collect    → triage/collects#create
+POST   /triage/bullets/:bullet_id/schedule   → triage/schedules#create
+POST   /triage/bullets/:bullet_id/postpone   → triage/postpones#create
+POST   /triage/bullets/:bullet_id/archive    → triage/archives#create
 
-# Other resources
-resources :playlists, only: index/show/create/destroy (+ nested cards, reorder)
-resources :tags, only: index/destroy        (+ collection suggestions)
+# Playlists
+resources :playlists, only: %i[index show create destroy]
+  (+ nested bullets POST/DELETE, reorder PATCH)
+
+# Projects & streams
+GET    /indexing                             → streams#index (alias)
+GET    /projects                             → projects#index (JSON suggestions)
+resources :projects, only: %i[show destroy]
 resources :streams                           → streams CRUD
+
+# Other pages
 resource  :history, only: :show
-resource  :upcoming, only: :show
 resource  :calendar, only: :show
 resources :pinned, only: :index
 resources :archived, only: :index
 resources :published, param: :code
+GET    /up                                   → rails/health#show
 ```
 
 ### Database Strategy
