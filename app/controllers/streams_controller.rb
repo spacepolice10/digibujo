@@ -2,14 +2,14 @@ class StreamsController < ApplicationController
 
   def index
     @streams = Current.user.streams.ordered
-    @collections = Current.user.collections
+    @projects = Current.user.projects
   end
 
   def show
     @stream    = Current.user.streams.find(params[:id])
     @done_last = params[:sort] == "done_last"
-    scope      = @done_last ? @stream.cards.reorder(done: :asc, created_at: :desc) : @stream.cards
-    @cards     = set_page_and_extract_portion_from(scope, per_page: [ 5, 15, 30, 50 ])
+    scope      = @done_last ? @stream.bullets.reorder(done: :asc, created_at: :desc) : @stream.bullets
+    @bullets     = set_page_and_extract_portion_from(scope, per_page: [ 5, 15, 30, 50 ])
   end
 
   def new
@@ -50,6 +50,6 @@ class StreamsController < ApplicationController
   private
 
   def stream_params
-    params.require(:stream).permit(:name, :cardable_type, :sorted_by, :date_from, :date_to, :collections, :icon, :colour)
+    params.require(:stream).permit(:name, :bulletable_type, :sorted_by, :date_from, :date_to, :projects, :icon, :colour)
   end
 end

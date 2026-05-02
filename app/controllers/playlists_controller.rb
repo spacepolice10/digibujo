@@ -4,7 +4,7 @@ class PlaylistsController < ApplicationController
   before_action :set_playlist, only: %i[show destroy]
 
   def index
-    @playlists = Current.user.playlists.includes(playlist_cards: { card: :collection }).order(created_at: :desc)
+    @playlists = Current.user.playlists.includes(playlist_bullets: { bullet: :project }).order(created_at: :desc)
   end
 
   def show; end
@@ -13,7 +13,7 @@ class PlaylistsController < ApplicationController
     @playlist = Current.user.playlists.new
 
     if @playlist.save
-      add_card_to_playlist if params[:card_id].present?
+      add_bullet_to_playlist if params[:bullet_id].present?
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to playlists_path }
@@ -35,12 +35,12 @@ class PlaylistsController < ApplicationController
   private
 
   def set_playlist
-    @playlist = Current.user.playlists.includes(playlist_cards: { card: :collection }).find(params[:id])
+    @playlist = Current.user.playlists.includes(playlist_bullets: { bullet: :project }).find(params[:id])
   end
 
-  def add_card_to_playlist
-    card = Current.user.cards.find_by(id: params[:card_id])
-    return unless card
-    @playlist.playlist_cards.create!(card: card, position: 1)
+  def add_bullet_to_playlist
+    bullet = Current.user.bullets.find_by(id: params[:bullet_id])
+    return unless bullet
+    @playlist.playlist_bullets.create!(bullet: bullet, position: 1)
   end
 end

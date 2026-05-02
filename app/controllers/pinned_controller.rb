@@ -1,6 +1,6 @@
 class PinnedController < ApplicationController
   def index
-    @pinned_cards = Current.user.cards.includes(:collection).pinned.order(updated_at: :desc)
-    @playlists = Current.user.playlists.includes(playlist_cards: { card: :collection }).order(created_at: :desc)
+    @pinned_bullets = Current.user.bullets.includes(:project).pinned.order(updated_at: :desc)
+    @playlists = Current.user.playlists.includes(playlist_bullets: { bullet: :project }).order(created_at: :desc)
   end
 end

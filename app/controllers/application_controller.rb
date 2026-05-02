@@ -8,8 +8,16 @@ class ApplicationController < ActionController::Base
 
   before_action :set_variant
   before_action :set_latest_playlist
+  around_action :set_timezone
 
   private
+
+  def set_timezone(&)
+    timezone_name = cookies[:timezone].presence
+    timezone = timezone_name ? ActiveSupport::TimeZone[timezone_name] : nil
+
+    Time.use_zone(timezone || Time.zone_default, &)
+  end
 
   def set_variant
     request.variant = :mobile if request.user_agent&.match?(/Mobile|Android|iPhone/i)
@@ -19,6 +27,6 @@ class ApplicationController < ActionController::Base
     return unless Current.user
 
     @latest_playlist = Current.user.playlists.order(created_at: :desc).first
-    @playlist_card_map = @latest_playlist&.playlist_cards&.index_by(&:card_id) || {}
+    @playlist_bullet_map = @latest_playlist&.playlist_bullets&.index_by(&:bullet_id) || {}
   end
 end

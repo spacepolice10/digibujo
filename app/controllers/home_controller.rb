@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
   def index
-    redirect_to todays_path
+    redirect_to bullets_path
   end
 end

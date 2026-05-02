@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-module Cards
+module Bullets
   class PlaylistPickersController < ApplicationController
     def show
-      @card = Current.user.cards.find(params[:card_id])
+      @bullet = Current.user.bullets.find(params[:bullet_id])
       @playlists = Current.user.playlists.order(created_at: :desc)
-      @membership = PlaylistCard.where(playlist: @playlists, card: @card).index_by(&:playlist_id)
+      @membership = PlaylistCard.where(playlist: @playlists, bullet: @bullet).index_by(&:playlist_id)
     end
   end
 end

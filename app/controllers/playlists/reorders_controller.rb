@@ -8,8 +8,8 @@ module Playlists
       positions = params.require(:positions)
 
       ActiveRecord::Base.transaction do
-        positions.each_with_index do |playlist_card_id, index|
-          @playlist.playlist_cards.find(playlist_card_id).update!(position: index)
+        positions.each_with_index do |playlist_bullet_id, index|
+          @playlist.playlist_bullets.find(playlist_bullet_id).update!(position: index)
         end
       end
 
