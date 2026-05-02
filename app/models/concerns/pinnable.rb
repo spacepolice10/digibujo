@@ -12,8 +12,8 @@ module Pinnable
 
   def pin_limit_not_exceeded
     return unless pinned_changed?(to: true)
-    if user.cards.pinned.where.not(id: id).count >= PIN_LIMIT
-      errors.add(:base, "Cannot pin more than #{PIN_LIMIT} cards")
+    if user.bullets.pinned.where.not(id: id).count >= PIN_LIMIT
+      errors.add(:base, "Cannot pin more than #{PIN_LIMIT} bullets")
     end
   end
 end

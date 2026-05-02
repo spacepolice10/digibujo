@@ -2,7 +2,7 @@
 
 class PlaylistCard < ApplicationRecord
   belongs_to :playlist
-  belongs_to :card
+  belongs_to :bullet
 
-  validates :card_id, uniqueness: { scope: :playlist_id }
+  validates :bullet_id, uniqueness: { scope: :playlist_id }
 end

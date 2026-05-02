@@ -4,8 +4,13 @@ class Playlist < ApplicationRecord
   include Colourable, Iconable
 
   belongs_to :user
-  has_many :playlist_cards, -> { order(:position) }, dependent: :destroy
-  has_many :cards, through: :playlist_cards
+  has_many :playlist_bullets,
+           -> { order(:position) },
+           class_name: "PlaylistCard",
+           foreign_key: :playlist_id,
+           inverse_of: :playlist,
+           dependent: :destroy
+  has_many :bullets, through: :playlist_bullets
 
   before_create :auto_assign_identity
 

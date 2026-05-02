@@ -1,5 +1,5 @@
 class Task < ApplicationRecord
-  include Cardable
+  include Bulletable
 
   def self.icon   = 'square'
   def self.colour = '2'
@@ -15,7 +15,7 @@ class Task < ApplicationRecord
   end
 
   def name
-    card.content.to_plain_text.lines.first&.strip&.truncate(200).presence || 'Untitled'
+    bullet.content.to_plain_text.strip.presence || 'Untitled'
   end
 
 end

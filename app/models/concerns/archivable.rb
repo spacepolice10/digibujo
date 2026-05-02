@@ -9,7 +9,7 @@ module Archivable
     scope :auto_archivable,  lambda {
       where(archived: false, pinned: false).where(
         "archives_on <= :today OR (triaged_at IS NULL AND created_at <= :cutoff)",
-        today: Date.today,
+        today: Date.current,
         cutoff: UNTRIAGED_ARCHIVE_DAYS.days.ago.end_of_day
       )
     }
@@ -19,7 +19,7 @@ module Archivable
   end
 
   def archive!
-    update!(archived: true, archives_on: Date.today)
+    update!(archived: true, archives_on: Date.current)
   end
 
   def unarchive!

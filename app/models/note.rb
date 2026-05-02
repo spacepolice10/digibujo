@@ -1,7 +1,5 @@
 class Note < ApplicationRecord
-  include Cardable
-
-  RICH_TEXT_PREVIEW_MAX_CHARS = 280
+  include Bulletable
 
   def self.icon   = 'line-dashed'
   def self.colour = '5'
@@ -9,6 +7,6 @@ class Note < ApplicationRecord
   def self.marker = '-'
 
   def excerpt
-    card.content.to_plain_text.strip&.truncate(RICH_TEXT_PREVIEW_MAX_CHARS).presence || ''
+    bullet.content.to_plain_text.strip.presence || ""
   end
 end
