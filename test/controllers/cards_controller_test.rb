@@ -11,10 +11,10 @@ class CardsControllerTest < ActionDispatch::IntegrationTest
   test "timeline bullets are not draggable" do
     @user.bullets.create!(bulletable: Task.create!, content: "Copy me")
     get bullets_path
-    assert_select ".card[draggable='true']", count: 0
-    assert_select ".card[data-controller~='card-drag']", count: 0
-    assert_select ".card[data-card-drag-id-value]", count: 0
-    assert_select ".card-body[data-controller~='card-link']"
+    assert_select ".bullet[draggable='true']", count: 0
+    assert_select ".bullet[data-controller~='bullet-drag']", count: 0
+    assert_select "[data-bullet-drag-id-value]", count: 0
+    assert_select ".bullet-task--marker", count: 1
   end
 
   test "create links an existing context card only" do
@@ -22,8 +22,8 @@ class CardsControllerTest < ActionDispatch::IntegrationTest
 
     assert_difference("Bullet.count", 1) do
       post bullets_path, params: {
-        card: {
-          bulletable_type: "task",
+        bullet: {
+          bulletable_type: "Task",
           content: "Task with context",
           context_bullet_id: context_bullet.id
         }
@@ -93,7 +93,8 @@ class CardsControllerTest < ActionDispatch::IntegrationTest
     selected_date = Date.current - 1.day
 
     travel_to selected_date.in_time_zone.change(hour: 10) do
-      6.times { |i| @user.bullets.create!(bulletable: Task.create!, content: "Page card #{i}") }
+      # Geared Pagination first page is 15 records — need more to surface the infinite-scroll link.
+      16.times { |i| @user.bullets.create!(bulletable: Task.create!, content: "Page card #{i}") }
     end
 
     get bullets_path(date: selected_date.iso8601)

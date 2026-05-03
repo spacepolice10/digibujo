@@ -149,24 +149,30 @@ class CardTest < ActiveSupport::TestCase
     assert_includes card.errors[:context_bullet], "can't point to itself"
   end
 
-  test "create_with_bulletable composes and persists delegated type" do
-    card = Bullet.create_with_bulletable(
-      user: @user,
-      bulletable_type: "task",
-      card_attributes: {content: "Factory card"},
-      bulletable_attributes: {}
+  test "create builds delegated type from nested attributes" do
+    card = @user.bullets.create!(
+      bulletable_type: "Task",
+      bulletable_attributes: {},
+      content: "Factory card"
     )
 
-    assert_predicate card, :persisted?
     assert_instance_of Task, card.bulletable
+    assert_equal "Task", card.bulletable_type
   end
 
-  test "create_with_bulletable returns invalid card for unknown type" do
-    card = Bullet.create_with_bulletable(
-      user: @user,
+  test "update assigns nested attributes to existing delegated type" do
+    card = @user.bullets.create!(bulletable: Task.create!, content: "Original")
+
+    assert card.update(bulletable_attributes: {}, content: "Updated")
+
+    assert_instance_of Task, card.bulletable
+    assert_equal "Updated", card.content.to_plain_text
+  end
+
+  test "create rejects unknown delegated type" do
+    card = @user.bullets.create(
       bulletable_type: "unknown",
-      card_attributes: {content: "Invalid factory card"},
-      bulletable_attributes: {}
+      content: "Invalid factory card"
     )
 
     assert_not_predicate card, :persisted?
@@ -174,7 +180,7 @@ class CardTest < ActiveSupport::TestCase
   end
 
   test "type_capabilities resolves known type safely" do
-    assert_equal({temporal: true, completable: true}, Bullet.type_capabilities("task"))
+    assert_equal({temporal: true, completable: true}, Bullet.type_capabilities("Task"))
   end
 
   test "type_capabilities falls back to defaults for unknown type" do

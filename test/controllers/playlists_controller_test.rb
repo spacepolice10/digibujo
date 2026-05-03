@@ -39,8 +39,7 @@ class PlaylistsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'create with bullet_id adds card to new playlist' do
-    draft = Draft.create!
-    card = @user.bullets.create!(bulletable: draft, content: "Test")
+    card = @user.bullets.create!(bulletable: Task.create!, content: "Test")
     assert_difference [ 'Playlist.count', 'PlaylistCard.count' ], 1 do
       post playlists_path, params: { bullet_id: card.id }
     end

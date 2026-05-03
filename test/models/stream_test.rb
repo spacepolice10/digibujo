@@ -20,7 +20,7 @@ class StreamTest < ActiveSupport::TestCase
   test "dynamic date_from resolves today at query time" do
     stream = @user.streams.create!(name: "Future", fields: { "date_from" => "today" })
     sql = stream.bullets.to_sql
-    assert_match(/date >= '#{Date.today}'/, sql)
+    assert_match(/scheduled_on >= '#{Date.current}'/, sql)
   end
 
   test "stream with no filters returns all bullets" do

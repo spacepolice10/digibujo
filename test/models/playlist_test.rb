@@ -33,8 +33,8 @@ class PlaylistTest < ActiveSupport::TestCase
     playlist = @user.playlists.create!
     card_a = create_card(@user)
     card_b = create_card(@user)
-    playlist.playlist_cards.create!(card: card_b, position: 1)
-    playlist.playlist_cards.create!(card: card_a, position: 0)
+    playlist.playlist_bullets.create!(bullet: card_b, position: 1)
+    playlist.playlist_bullets.create!(bullet: card_a, position: 0)
 
     assert_equal [card_a, card_b], playlist.bullets.to_a
   end
@@ -42,7 +42,7 @@ class PlaylistTest < ActiveSupport::TestCase
   test 'destroying playlist destroys playlist_cards' do
     playlist = @user.playlists.create!
     card = create_card(@user)
-    playlist.playlist_cards.create!(card: card, position: 0)
+    playlist.playlist_bullets.create!(bullet: card, position: 0)
 
     assert_difference 'PlaylistCard.count', -1 do
       playlist.destroy
@@ -52,7 +52,7 @@ class PlaylistTest < ActiveSupport::TestCase
   test 'destroying card destroys its playlist_cards' do
     playlist = @user.playlists.create!
     card = create_card(@user)
-    playlist.playlist_cards.create!(card: card, position: 0)
+    playlist.playlist_bullets.create!(bullet: card, position: 0)
 
     assert_difference 'PlaylistCard.count', -1 do
       card.destroy
@@ -62,9 +62,9 @@ class PlaylistTest < ActiveSupport::TestCase
   test 'card cannot be added to same playlist twice' do
     playlist = @user.playlists.create!
     card = create_card(@user)
-    playlist.playlist_cards.create!(card: card, position: 0)
+    playlist.playlist_bullets.create!(bullet: card, position: 0)
 
-    duplicate = playlist.playlist_cards.build(card: card, position: 1)
+    duplicate = playlist.playlist_bullets.build(bullet: card, position: 1)
     assert_not duplicate.valid?
   end
 
@@ -73,8 +73,8 @@ class PlaylistTest < ActiveSupport::TestCase
     playlist_b = @user.playlists.create!
     card = create_card(@user)
 
-    playlist_a.playlist_cards.create!(card: card, position: 0)
-    playlist_b.playlist_cards.create!(card: card, position: 0)
+    playlist_a.playlist_bullets.create!(bullet: card, position: 0)
+    playlist_b.playlist_bullets.create!(bullet: card, position: 0)
 
     assert_includes playlist_a.bullets, card
     assert_includes playlist_b.bullets, card
@@ -83,7 +83,6 @@ class PlaylistTest < ActiveSupport::TestCase
   private
 
   def create_card(user)
-    draft = Draft.create!
-    user.bullets.create!(bulletable: draft, content: "Test card #{SecureRandom.hex(4)}")
+    user.bullets.create!(bulletable: Task.create!, content: "Test card #{SecureRandom.hex(4)}")
   end
 end

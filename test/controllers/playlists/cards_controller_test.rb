@@ -23,29 +23,27 @@ module Playlists
       card_b = create_card(@user)
       post playlist_bullets_path(@playlist), params: { bullet_id: card_b.id }
 
-      positions = @playlist.playlist_cards.reload.pluck(:position)
+      positions = @playlist.playlist_bullets.reload.pluck(:position)
       assert_equal [1, 2], positions
     end
 
     test 'create rejects duplicate card' do
-      @playlist.playlist_cards.create!(card: @card, position: 0)
+      @playlist.playlist_bullets.create!(bullet: @card, position: 0)
       assert_no_difference 'PlaylistCard.count' do
         post playlist_bullets_path(@playlist), params: { bullet_id: @card.id }
       end
     end
 
     test 'destroy removes card from playlist' do
-      pc = @playlist.playlist_cards.create!(card: @card, position: 0)
+      pc = @playlist.playlist_bullets.create!(bullet: @card, position: 0)
       assert_difference 'PlaylistCard.count', -1 do
         delete playlist_bullet_path(@playlist, pc)
       end
       assert_redirected_to playlist_path(@playlist)
     end
 
-    test 'create responds with turbo stream when called with JSON body' do
-      post playlist_bullets_path(@playlist),
-           params: { bullet_id: @card.id }.to_json,
-           headers: { 'Content-Type' => 'application/json', 'Accept' => 'text/vnd.turbo-stream.html' }
+    test 'create responds with turbo_stream format' do
+      post playlist_bullets_path(@playlist, format: :turbo_stream), params: { bullet_id: @card.id }
       assert_response :success
       assert_equal 'text/vnd.turbo-stream.html', response.media_type
     end
@@ -53,8 +51,7 @@ module Playlists
     private
 
     def create_card(user)
-      draft = Draft.create!
-      user.bullets.create!(bulletable: draft, content: "Test card #{SecureRandom.hex(4)}")
+      user.bullets.create!(bulletable: Task.create!, content: "Test card #{SecureRandom.hex(4)}")
     end
   end
 end
