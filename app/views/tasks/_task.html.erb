@@ -1,1 +1,14 @@
-<%= render "bullets/bullet", bullet: task %>
+<div id="<%= dom_id(task) %>" class="bullet" data-bullet-type="task">
+  <%= form_with url: bullet_complete_path(task), method: task.done? ? :delete : :post, data: { turbo_stream: true } do %>
+    <button class="bullet-task--marker" data-task-done="<%= task.done? %>">
+        <% if task.done? %>
+          <i class="icon " style="--icon-mask: var(--icon-check)" aria-hidden="true"></i>
+        <% else %>
+          <i class="icon" style="--icon-mask: var(--icon-square)" aria-hidden="true"></i>
+        <% end %>
+    </button>
+  <% end %>
+  <div class="bullet-name"><%= task.name %></div>
+  <%= render "bullets/metadata", bullet: task %>
+  <%= render "bullets/menu", bullet: task %>
+</div>

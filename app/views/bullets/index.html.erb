@@ -2,12 +2,60 @@
      data-controller="timeline"
      data-timeline-search-path-value="<%= search_path %>"
      data-action="keydown.ctrl+k@window->timeline#openSearch keydown.ctrl+e@window->timeline#selectCardFormEditor">
-  <%= render "shared/timeline_header",
-             selected_date: @selected_date,
-             path_helper: :bullets_path,
-             context: :timeline %>
-  <%= render "bullets/paginated_list", bullets: @bullets, page: @page, selected_date: @selected_date %>
-  <turbo-frame id="bullet_form">
+     <turbo-frame id="bullets-timeline" >
+  <div id="bullets-header" class="flex justified slightly-padded">
+    <div class="flex slightly-gapped">
+      <%= link_to "History", history_path, class: "button-secondary" %>
+    </div>
+    <div class="flex slightly-gapped">
+      <%= link_to prev_date_href(@selected_date, path_helper: :bullets_path), data: { turbo_action: "advance" }, class: "button-tertiary", aria: { label: "Show previous day" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+      <% end %>
+      <h4><%= @selected_date.strftime("%a, %b %-d") %></h4>
+      <%= link_to next_date_href(@selected_date, path_helper: :bullets_path), data: { turbo_action: "advance" }, class: "button-tertiary", aria: { label: "Show next day" } do %>
+        <i class="icon icon--flip-h" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+      <% end %>
+    </div>
+    <div class="flex slightly-gapped">
+      <%= link_to search_path, class: "button-secondary", data: { turbo_frame: "_top" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-search)" aria-hidden="true"></i>
+        Search
+      <% end %>
+      <%= link_to triage_path(date: @selected_date.iso8601), class: "button-secondary", data: { turbo_frame: "_top" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
+        Triage
+      <% end %>
+    </div>
+  </div>
+  <% if @bullets.none? %>
+  <section
+  id="bullets_empty_state"
+  class="bullets-empty-state w-fit mx-auto"
+  aria-live="polite"
+>
+  <div class="bullets-empty-state-markers" aria-hidden="true">
+    <i class="icon bullets-empty-state-marker bullets-empty-state-marker--task" style="--icon-mask: var(--icon-square)" aria-hidden="true"></i>
+    <i class="icon bullets-empty-state-marker bullets-empty-state-marker--note" style="--icon-mask: var(--icon-line-dashed)" aria-hidden="true"></i>
+    <i class="icon bullets-empty-state-marker bullets-empty-state-marker--event" style="--icon-mask: var(--icon-circle)" aria-hidden="true"></i>
+  </div>
+  <h3 class="bullets-empty-state-heading">No bullets for today</h3>
+  <p class="bullets-empty-state-copy">
+    Start with writing down all the tasks and appointments that make sense for
+    today.
+  </p>
+  <p class="bullets-empty-state-copy">
+    Keep it simple. Add what matters now, then refine during triage.
+  </p>
+</section>
+  <% else %>
+  <div id="bullets">
+  <%= render "pagination/paginated_records",
+        page: @page,
+        pagination_link_path: ->(next_param) { bullets_path(page: next_param, date: @selected_date.iso8601) } %>
+</div>
+<% end %>
+</turbo-frame>
+  <turbo-frame id="bullet_form" data-turbo-permanent>
     <%= render "form", bullet: Bullet.new %>
   </turbo-frame>
 </div>

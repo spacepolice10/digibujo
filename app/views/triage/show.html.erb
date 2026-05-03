@@ -1,10 +1,25 @@
 <turbo-frame id="triage_preview">
   <div class="bullets-timeline triage-page">
-    <%= render "shared/timeline_header",
-               selected_date: @selected_date,
-               path_helper: :triage_path,
-               context: :triage,
-               triage_count: @bullets.size %>
+    <div class="bullets-timeline-header">
+      <div class="bullets-timeline-header-group">
+        <%= link_to bullets_path, class: "button-tertiary", data: { turbo_frame: "_top" } do %>
+          <span class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></span>
+          Today
+        <% end %>
+      </div>
+      <div class="bullets-timeline-header-date-nav">
+        <%= link_to prev_date_href(@selected_date, path_helper: :triage_path), class: "bullets-timeline-header-date-nav-link", aria: { label: "Show previous triage day" } do %>
+          <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+        <% end %>
+        <h2 class="bullets-timeline-header-date"><%= @selected_date.strftime("%a, %b %-d") %></h2>
+        <%= link_to next_date_href(@selected_date, path_helper: :triage_path), class: "bullets-timeline-header-date-nav-link", aria: { label: "Show next triage day" } do %>
+          <i class="icon icon--flip-h" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+        <% end %>
+      </div>
+      <div class="bullets-timeline-header-group">
+        <p class="triage-count"><%= @bullets.size %> bullet<%= @bullets.size == 1 ? "" : "s" %></p>
+      </div>
+    </div>
 
     <div class="triage-description" role="note" aria-label="How to triage bullets">
       <p class="triage-description--copy">

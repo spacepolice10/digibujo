@@ -16,7 +16,9 @@
     </div>
   </div>
 
-  <%= render "bullets/paginated_list", bullets: @bullets, page: @page %>
+  <%= render "pagination/paginated_records",
+        page: @page,
+        pagination_link_path: ->(next_param) { history_path(page: next_param) } %>
 
   <div class="bullets-timeline-composer">
     <p class="bullets-timeline-note text-sm">You are browsing history. Switch to Today to capture new bullets.</p>

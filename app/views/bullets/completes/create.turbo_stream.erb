@@ -1,3 +1,3 @@
 <%= turbo_stream.replace @bullet do %>
-  <%= render partial: @bullet_partial, locals: { bullet: @bullet } %>
+  <%= render "tasks/task", task: @bullet %>
 <% end %>

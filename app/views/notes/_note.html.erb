@@ -1,9 +1,11 @@
 <div id="<%= dom_id(note) %>" class="bullet" data-bullet-type="note">
-  <div class="bullet-action">
-    <span class="completion-placeholder" aria-hidden="true" style="color: var(--model-color-5)">
-      <span class="completion-marker"><%= note.marker.presence || "-" %></span>
-    </span>
-  </div>
-  <%= render "bullets/body", bullet: note %>
-  <%= render "bullets/with_menu", bullet: note, dom_prefix: local_assigns[:dom_prefix] %>
+  <span class="bullet-note--marker">
+    <i class="icon" style="--icon-mask: var(--icon-line-dashed)" aria-hidden="true"></i>
+  </span>
+
+    <div class="bullet-name">
+      <%= bullet_rich_text_preview_trix(note, max_chars: 400) %>
+    </div>
+
+  <%= render "bullets/menu", bullet: note %>
 </div>

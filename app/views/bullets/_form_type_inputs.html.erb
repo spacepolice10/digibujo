@@ -1,0 +1,13 @@
+<fieldset class="bullet-form-type-inputs" hidden>
+  <legend>Bullet type</legend>
+  <% type_options.each do |type_name| %>
+    <% type_value = type_name.downcase %>
+    <%= f.radio_button :bulletable_type,
+          type_name,
+          checked: selected_type_name.downcase == type_value,
+          data: {
+            action: "change->bullet-form#loadFields change->bullet-form#showFields",
+            bullet_form_icon_param: type_name.constantize.icon
+          } %>
+  <% end %>
+</fieldset>

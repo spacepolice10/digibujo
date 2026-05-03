@@ -9,7 +9,7 @@ class BulletsController < ApplicationController
 
     @bullets = set_page_and_extract_portion_from(
       timeline,
-      per_page: [5, 15, 30, 50]
+      per_page: [15, 30, 50]
     )
   end
 
@@ -18,13 +18,7 @@ class BulletsController < ApplicationController
   end
 
   def create
-    attrs = normalized_bullet_params
-    bulletable_attrs = attrs.delete(:bulletable_attributes) || {}
-    klass = resolved_bulletable_class(attrs.delete(:bulletable_type))
-
-    @bullet = Current.user.bullets.new(attrs)
-    @bullet.bulletable = klass.new(bulletable_attrs)
-
+    @bullet = create_bullet_from_form
     if @bullet.save
       respond_to do |format|
         format.turbo_stream
@@ -45,18 +39,7 @@ class BulletsController < ApplicationController
   def show; end
 
   def update
-    attrs = normalized_bullet_params
-    bulletable_attrs = attrs.delete(:bulletable_attributes) || {}
-    new_type = attrs.delete(:bulletable_type)
-
-    @bullet.assign_attributes(attrs)
-    if new_type.present? && new_type != @bullet.bulletable_type
-      @bullet.bulletable = resolved_bulletable_class(new_type).new(bulletable_attrs)
-    elsif bulletable_attrs.present?
-      @bullet.bulletable.assign_attributes(bulletable_attrs)
-    end
-
-    if @bullet.save
+    if @bullet.update(bullet_params)
       redirect_to bullet_path(@bullet)
     else
       render :edit, status: :unprocessable_entity
@@ -66,7 +49,7 @@ class BulletsController < ApplicationController
   def destroy
     @bullet.destroy
     respond_to do |format|
-      format.turbo_stream 
+      format.turbo_stream
       format.html { redirect_to bullets_path }
     end
   end
@@ -78,36 +61,23 @@ class BulletsController < ApplicationController
   end
 
   def bullet_params
-    params.expect(
-      bullet: [
-        :content,
-        :scheduled_on,
-        :project_id,
-        :project_name,
-        :context_bullet_id,
-        :bulletable_type,
-        { bulletable_attributes: {} }
-      ]
+    params.require(:bullet).permit(
+      :content,
+      :scheduled_on,
+      :project_id,
+      :project_name,
+      :context_bullet_id,
+      :bulletable_type,
+      bulletable_attributes: {}
     )
   end
 
-  def normalized_bullet_params
-    attrs = bullet_params.to_h.deep_symbolize_keys
-    if attrs[:bulletable_type].present?
-      attrs[:bulletable_type] = attrs[:bulletable_type].to_s.classify
-    end
-    attrs
+  def create_bullet_from_form
+    permitted = bullet_params
+    type_name = permitted[:bulletable_type].to_s
+    attributes = permitted.except(:bulletable_type, "bulletable_type")
+    Current.user.bullets.new(attributes.merge(bulletable: type_name.constantize.new))
   end
-
-  def resolved_bulletable_class(type_name)
-    type_name.to_s.classify.safe_constantize.then do |klass|
-      return klass if klass && Bullet.bulletable_types.include?(klass.name)
-
-      raise NameError, "Invalid bulletable type: #{type_name.inspect}"
-    end
-  end
-
-
 
   def selected_date_param
     return Date.current if params[:date].blank?

@@ -25,6 +25,11 @@
       </div>
     </header>
 
-    <%= render "bullets/paginated_list", bullets: @bullets, page: @page %>
+    <%= render "pagination/paginated_records",
+          page: @page,
+          pagination_link_path: lambda { |next_param|
+            type = params[:type].presence
+            type ? project_path(@project, page: next_param, type:) : project_path(@project, page: next_param)
+          } %>
   </article>
 </div>

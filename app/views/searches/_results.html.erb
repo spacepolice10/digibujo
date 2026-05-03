@@ -3,5 +3,7 @@
 <% elsif @bullets.none? %>
   <p class="search--help">No bullets found for "<%= @query %>".</p>
 <% else %>
-  <%= render "bullets/paginated_list", bullets: @bullets, page: @page %>
+  <%= render "pagination/paginated_records",
+        page: @page,
+        pagination_link_path: ->(next_param) { search_path(q: @query, page: next_param) } %>
 <% end %>

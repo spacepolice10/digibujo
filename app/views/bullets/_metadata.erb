@@ -1,0 +1,74 @@
+<% if bullet.pinned? || bullet.archived? || bullet.scheduled_on.present? || bullet.ends_date.present? || bullet.project.present? || bullet.context_bullet.present? %>
+  <div class="bullet-tags">
+    <% if bullet.pinned? %>
+      <% pinned_hint_id = dom_id(bullet, :hint_pinned) %>
+      <% pinned_anchor = "--hint-bullet-#{bullet.id}-pinned" %>
+      <span interestfor="<%= pinned_hint_id %>"
+            style="anchor-name: <%= pinned_anchor %>"
+            class="pill pill--status"
+            aria-label="Pinned">
+        <span class="icon" style="--icon-mask: var(--icon-pin)"></span>
+      </span>
+      <div id="<%= pinned_hint_id %>"
+           popover="hint"
+           class="hint"
+           style="position-anchor: <%= pinned_anchor %>">
+        Pinned — stays at the top of your timeline.
+      </div>
+    <% end %>
+    <% if bullet.archived? %>
+      <% archived_hint_id = dom_id(bullet, :hint_archived) %>
+      <% archived_anchor = "--hint-bullet-#{bullet.id}-archived" %>
+      <span interestfor="<%= archived_hint_id %>"
+            style="anchor-name: <%= archived_anchor %>"
+            class="pill pill--status"
+            aria-label="Archived">
+        <span class="icon" style="--icon-mask: var(--icon-archive)"></span>
+      </span>
+      <div id="<%= archived_hint_id %>"
+           popover="hint"
+           class="hint"
+           style="position-anchor: <%= archived_anchor %>">
+        Archived — hidden from the main timeline until restored.
+      </div>
+    <% end %>
+    <% if bullet.project.present? %>
+      <% project_hint_id = dom_id(bullet, :hint_project) %>
+      <% project_anchor = "--hint-bullet-#{bullet.id}-project" %>
+      <%= link_to project_path(bullet.project),
+            interestfor: project_hint_id,
+            class: "pill",
+            style: "anchor-name: #{project_anchor}; background: #{bullet.project.colour_bg_variable}",
+            data: { turbo_frame: "_top" },
+            aria: { label: "Project: #{bullet.project.name}" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-tag)" aria-hidden="true"></i>
+      <% end %>
+      <div id="<%= project_hint_id %>"
+           popover="hint"
+           class="hint"
+           style="position-anchor: <%= project_anchor %>">
+        <%= bullet.project.name %>
+      </div>
+    <% end %>
+    <% if bullet.context_bullet.present? %>
+      <% context_bullet = bullet.context_bullet %>
+      <% context_type = context_bullet.bulletable_type.to_s.downcase %>
+      <% context_hint_id = dom_id(bullet, :hint_context) %>
+      <% context_anchor = "--hint-bullet-#{bullet.id}-context" %>
+      <%= link_to bullet_path(context_bullet),
+            interestfor: context_hint_id,
+            class: "pill pill--type",
+            style: "anchor-name: #{context_anchor}",
+            data: { value: context_type, turbo_frame: "_top" },
+            aria: { label: "Context: #{context_bullet.name}" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-link)" aria-hidden="true"></i>
+      <% end %>
+      <div id="<%= context_hint_id %>"
+           popover="hint"
+           class="hint"
+           style="position-anchor: <%= context_anchor %>">
+        <%= context_bullet.name %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

@@ -8,7 +8,7 @@ class StreamsController < ApplicationController
   def show
     @stream    = Current.user.streams.find(params[:id])
     @done_last = params[:sort] == "done_last"
-    scope      = @done_last ? @stream.bullets.reorder(done: :asc, created_at: :desc) : @stream.bullets
+    scope      = @done_last ? @stream.bullets.includes(:project).reorder(done: :asc, created_at: :desc) : @stream.bullets.includes(:project)
     @bullets     = set_page_and_extract_portion_from(scope, per_page: [ 5, 15, 30, 50 ])
   end
 

@@ -1,0 +1,67 @@
+<% type_options = Bullet.bulletable_types %>
+<% selected_type_name = bullet.bulletable_type.presence_in(type_options) || "Task" %>
+<%= form_with model: bullet, class: "bullet-form", data: {
+      controller: "bullet-form persist",
+      bullet_form_mode_value: "type",
+      bullet_form_selected_type_value: selected_type_name.downcase,
+      action: "keydown.meta+enter->bullet-form#submit keydown.ctrl+enter->bullet-form#submit trix-change->bullet-form#updateEditorLayout resize->bullet-form#updateEditorLayout focus->bullet-form#toggleEditor blur->bullet-form#toggleEditor"
+    } do |f| %>
+
+
+  <div class="bullet-form-rail">
+<fieldset class="bullet-form-mobile-type" aria-label="Bullet type">
+  <legend class="sr-only">Bullet type</legend>
+
+  <% type_options.each do |type_name| %>
+    <% bulletable = type_name.constantize %>
+
+    <label
+      data-bullet-type="<%= type_name.downcase %>"
+      class="button-secondary bullet-form-mobile-type-option"
+    >
+      <%= f.radio_button :bulletable_type,
+            type_name,
+            checked: selected_type_name.downcase == type_name.downcase,
+            data: {
+              action: "change->bullet-form#selectType",
+              bullet_form_type_param: type_name.downcase,
+              bullet_form_bulletable_type_param: type_name
+            } %>
+
+      <span
+        class="bullet-form-type-option-marker icon bullet-<%= type_name.downcase %>--marker"
+        style="--icon-mask: var(--icon-<%= bulletable.icon %>)"
+        aria-hidden="true"
+      ></span>
+
+      <span class="bullet-form-type-option-name"><%= bulletable.name %></span>
+    </label>
+  <% end %>
+</fieldset>
+
+    <div class="bullet-form-mobile-fields">
+        <button type="button"
+                class="button-secondary bullet-form-fields-back"
+                data-action="bullet-form#returnToType"
+                aria-label="Show bullet types">
+          <i class="icon" style="--icon-mask: var(--icon-arrow-up)" aria-hidden="true"></i>
+        </button>
+      <%= render "bullets/form_fields", bullet: bullet %>
+    </div>
+  </div>
+
+  <div class="bullet-form-composer">
+<div class="bullet-form-editor">
+  <%= f.rich_text_area :content,
+        autofocus: "true",
+        placeholder: "What's on your mind?" %>
+</div>
+<div class="bullet-form-footer">
+  <%= f.button type: "submit", class: "button-primary" do %>
+    Dump
+  <% end %>
+</div>
+  </div>
+
+  <%= render "bullets/form_errors", bullet: bullet %>
+<% end %>

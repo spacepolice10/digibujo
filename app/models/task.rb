@@ -15,7 +15,6 @@ class Task < ApplicationRecord
   end
 
   def name
-    bullet.content.to_plain_text.strip.presence || 'Untitled'
+    bullet.content
   end
-
 end
