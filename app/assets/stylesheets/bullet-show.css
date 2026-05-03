@@ -1,71 +1,53 @@
 @layer components {
   .bullet-show {
-    min-height: 100dvh;
     display: flex;
     flex-direction: column;
   }
 
-  .show-navigation {
+  .bullet-show--navigation {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: var(--spacing-vertical) var(--spacing-horizontal);
-    max-width: 680px;
-    width: 100%;
-    margin: 0 auto;
-
-    @media (width >= 900px) {
-      max-width: 820px;
-    }
-
-    @media (width >= 1060px) {
-      max-width: 1024px;
-    }
   }
 
-  .show-navigation-actions {
+  .bullet-show--navigation-actions {
     display: flex;
     gap: var(--spacing-horizontal-half);
   }
 
-  .bullet-show-content {
-    max-width: 680px;
+  .bullet-show--content {
     width: 100%;
     margin: 0 auto;
     padding: var(--spacing-vertical-double) var(--spacing-horizontal);
     flex: 1;
     background: var(--color-bg-subtle);
-
-    @media (width >= 900px) {
-      max-width: 820px;
-    }
-
-    @media (width >= 1060px) {
-      max-width: 1024px;
-    }
   }
 
-  .bullet-show-header {
+  .bullet-show--header {
     margin-bottom: var(--spacing-vertical-double);
   }
 
-  .bullet-show-meta {
+  .bullet-show--meta {
     display: flex;
     align-items: center;
     gap: var(--spacing-horizontal-half);
     margin-bottom: var(--spacing-vertical);
   }
 
-  .bullet-show-title {
-    font-size: clamp(1.5rem, 4vw, 2rem);
-    font-weight: var(--font-weight-strong);
+  .bullet-show--published-link {
+    font-size: var(--font-size-base);
     color: var(--color-fg-base);
-    margin: 0 0 var(--spacing-vertical);
+    margin-bottom: var(--spacing-vertical);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-subtle);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    background: transparent;
   }
 
   /* ── Read body ────────────────────────────────────────── */
 
-  .bullet-show-body {
+  .bullet-show--body {
     font-size: var(--font-size-base);
     color: var(--color-fg-base);
 
@@ -122,5 +104,4 @@
       }
     }
   }
-
 }

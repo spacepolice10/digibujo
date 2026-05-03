@@ -8,6 +8,7 @@
   html,
   body {
     font-family: "JetBrains Mono", monospace;
+    font-size: var(--font-size-base);
     background: var(--color-bg-base);
     color: var(--color-fg-base);
   }
@@ -42,6 +43,10 @@
   h5,
   h6 {
     overflow-wrap: break-word;
+  }
+
+  * {
+    scrollbar-width: none;
   }
 
   /* Focus — instant ring, no animation */

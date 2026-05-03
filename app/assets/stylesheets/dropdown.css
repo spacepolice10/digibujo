@@ -66,4 +66,86 @@
       transform: translateY(calc(var(--spacing-vertical-half) * -1));
     }
   }
+
+  /*
+   * Anchor-backed popovers: trigger sets anchor-name (inline); menu sets position-anchor (inline).
+   * Modifiers pick position-area and width; inner rows stay in bullet.css / bullet-form.css.
+   */
+  .dropdown-menu[popover].dropdown-menu--anchor {
+    position: fixed;
+    inset: unset;
+    margin-block-end: var(--spacing-vertical-half);
+    overflow-x: hidden;
+    overflow-y: auto;
+    position-try-fallbacks:
+      flip-block,
+      flip-inline,
+      flip-block flip-inline;
+
+    &:popover-open {
+      animation: popout 0.1s ease-out;
+    }
+  }
+
+  .dropdown-menu--anchor-inline-start {
+    position-area: block-start span-inline-start;
+  }
+
+  .dropdown-menu--anchor-inline-end {
+    position-area: block-start span-inline-end;
+  }
+
+  /* ⋯ bullet menu — wider context panel */
+  .dropdown-menu--anchor-wide {
+    width: min(
+      calc(var(--spacing-horizontal-double) * 11),
+      calc(100vw - (2 * var(--spacing-horizontal)))
+    );
+    min-width: calc(var(--spacing-horizontal-double) * 8.5);
+    max-width: calc(100vw - (2 * var(--spacing-horizontal)));
+  }
+
+  /* Form type picker — narrower min width */
+  .dropdown-menu--anchor-compact {
+    min-width: calc(var(--spacing-horizontal-double) * 4);
+  }
+
+  .dropdown-menu--anchor-short {
+    max-height: min(16rem, calc(100dvh - (2 * var(--spacing-horizontal))));
+  }
+
+  /* Below --breakpoint-tablet (600px): anchor popovers center via position-area */
+  @media (width < 600px) {
+    .dropdown-body {
+      box-sizing: border-box;
+      width: 90%;
+      min-width: unset;
+      left: 0;
+      right: 0;
+      margin-inline: auto;
+    }
+
+    /*
+     * Center in the viewport horizontally (not relative to the anchor box): fixed
+     * inset gutters + anchor only for vertical placement below the trigger.
+     */
+    .dropdown-menu[popover].dropdown-menu--anchor,
+    .dropdown-menu[popover].pinned-dropdown-menu {
+      box-sizing: border-box;
+      position-area: initial;
+      position-try-fallbacks: none;
+
+      top: calc(anchor(bottom) + var(--spacing-vertical-half));
+      left: var(--spacing-horizontal);
+      right: var(--spacing-horizontal);
+      bottom: auto;
+
+      width: auto;
+      max-width: none;
+      min-width: unset;
+
+      margin-inline: 0;
+      margin-block-end: 0;
+    }
+  }
 }

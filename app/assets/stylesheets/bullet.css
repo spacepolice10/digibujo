@@ -1,20 +1,29 @@
 @layer components {
   .bullet {
-    --bullet-bg: color-mix(in oklch, var(--color-bg-base), var(--color-bg-subtle) 35%);
-    --bullet-bg-hover: color-mix(in oklch, var(--color-bg-base), var(--color-bg-subtle) 55%);
-    --bullet-border: var(--color-stroke-base);
+    --bullet-bg: color-mix(
+      in oklch,
+      var(--color-bg-base),
+      var(--color-bg-subtle) 35%
+    );
+    --bullet-bg-hover: color-mix(
+      in oklch,
+      var(--color-bg-base),
+      var(--color-bg-subtle) 55%
+    );
+    --bullet-border: var(--color-bg-subtle);
     --task-marker-color: var(--model-color-2);
     --event-marker-color: var(--model-color-6);
     --note-marker-color: var(--model-color-5);
 
     display: flex;
-    align-items: center;
-    border: 1px solid var(--bullet-border);
-    border-radius: var(--radius-strong);
+
+    justify-content: space-between;
+    gap: var(--spacing-horizontal-half);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+
     @supports (corner-shape: squircle) {
       corner-shape: squircle;
     }
-    margin-bottom: var(--spacing-vertical-half);
     overflow: hidden;
     background: var(--bullet-bg);
     transition: background 0.1s ease;
@@ -57,95 +66,71 @@
       --bullet-border: var(--color-stroke-warn);
     }
 
-    &.archived .bullet-title {
+    &.archived .bullet-name {
       text-decoration: line-through;
       color: var(--color-fg-subtle);
     }
-
-    /* Whole-bullet hover via the clickable body */
-
-    &:has(.bullet-body:hover) {
-      background: var(--bullet-bg-hover);
-
-      .bullet-title::after {
-        background: linear-gradient(
-          to right,
-          transparent,
-          var(--bullet-bg-hover)
-        );
-      }
-    }
   }
 
-  .bullet--main {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    padding: var(--spacing-vertical) var(--spacing-horizontal-half);
-  }
-
-  .bullet--main .bullet-body {
-    padding: 0;
-    flex: 1;
-    min-height: 0;
-  }
-
-  .bullet-body {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: var(--spacing-vertical) var(--spacing-horizontal-half);
-    color: inherit;
-    text-decoration: none;
-    overflow: hidden;
-    user-select: text;
-    -webkit-user-select: text;
-    -webkit-user-drag: none;
-  }
-
-  .bullet-body * {
-    user-select: text;
-    -webkit-user-select: text;
-  }
-
-  .bullet-title {
+  .bullet-name {
     margin: 0;
     font-size: var(--font-size-base);
-    position: relative;
-
-    &::after {
-      content: none;
-    }
-
-    &.done {
-      text-decoration: line-through;
-      color: var(--color-fg-subtle);
-    }
-  }
-
-  .bullet-title-id {
-    color: var(--color-fg-subtle);
-    font-size: var(--font-size-subtle);
     font-weight: var(--font-weight-base);
+    color: var(--color-fg-base);
+    text-align: left;
+    width: 100%;
+  }
+  .bullet-name > * {
+    margin: 0;
+    padding: 0;
+  }
+  
+  form:has(.bullet-task--marker) {
+    display: contents;
   }
 
-  .bullet[data-bullet-type="task"] .bullet-title,
-  .bullet[data-bullet-type="event"] .bullet-title {
-    max-height: none;
+  .bullet-task--marker {
+    width: var(--icon-size-base);
+    height: var(--icon-size-base);
+    color: var(--model-color-2);
+    appearance: none;
+    border: transparent;
+    background: none;;
+  }
+
+  .bullet:has(.bullet-task--marker[data-task-done="true"]) .bullet-name {
+    text-decoration: line-through;
+    color: var(--color-fg-subtle);
+  }
+
+  .bullet-note--marker {  
+    width: var(--icon-size-base);
+    height: var(--icon-size-base);
+    color: var(--model-color-5);
+  }
+
+  .bullet-event--marker {
+    width: var(--icon-size-base);
+    height: var(--icon-size-base);
+    color: var(--model-color-6);
+  }
+
+  .bullet-link {
+    text-decoration: none;
+    color: inherit;
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   .bullet-tags {
     display: flex;
     flex-wrap: wrap;
     gap: var(--spacing-vertical-half);
-    margin-top: var(--spacing-vertical-half);
   }
 
   .bullet-tags .pill--type {
     max-width: 100%;
-
     span:last-child {
       overflow: hidden;
       text-overflow: ellipsis;
@@ -158,7 +143,6 @@
     align-items: flex-start;
     align-self: flex-start;
     flex-shrink: 0;
-    padding: var(--spacing-vertical) 0 0 var(--spacing-horizontal);
 
     form {
       display: contents;
@@ -197,42 +181,18 @@
     display: flex;
     align-items: flex-start;
     align-self: flex-start;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half) 0 0;
     flex-shrink: 0;
   }
 
   .bullet-menu-trigger {
-    background: var(--color-bg-subtle);
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-subtle);
-    cursor: pointer;
+    width: var(--icon-size-base);
+    height: var(--icon-size-base);
     color: var(--color-fg-subtle);
-    font-size: var(--font-size-base);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-
-    &:hover {
-      color: var(--color-fg-base);
-      background: var(--color-bg-base);
-    }
+    cursor: pointer;
   }
 
+  /* Shell: dropdown.css (.dropdown-menu--anchor*); here only bullet-row layout tweaks */
   .bullet-dropdown-menu {
-    position: fixed;
-    inset: unset;
-    position-area: block-start span-inline-start;
-    margin-bottom: var(--spacing-vertical-half);
-    width: min(calc(var(--spacing-horizontal-double) * 11), calc(100vw - (2 * var(--spacing-horizontal))));
-    min-width: calc(var(--spacing-horizontal-double) * 8.5);
-    max-width: calc(100vw - (2 * var(--spacing-horizontal)));
-    max-height: min(18rem, calc(100dvh - (2 * var(--spacing-horizontal))));
-    overflow-y: auto;
-    padding: var(--spacing-vertical-half);
-    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
-
-    &:popover-open {
-      animation: popout 0.1s ease-out;
-    }
-
     form {
       display: block;
       margin: 0;
@@ -260,7 +220,10 @@
     font: inherit;
     cursor: pointer;
     text-decoration: none;
-    transition: background 0.12s ease, transform 0.12s ease, border-color 0.12s ease;
+    transition:
+      background 0.12s ease,
+      transform 0.12s ease,
+      border-color 0.12s ease;
 
     &:hover {
       background: var(--color-bg-base);
@@ -274,8 +237,16 @@
 
     &.bullet-dropdown-item--danger {
       .bullet-dropdown-icon {
-        border-color: color-mix(in oklch, var(--color-fg-negative) 45%, var(--color-stroke-base));
-        background: color-mix(in oklch, var(--color-bg-negative) 35%, var(--color-bg-base));
+        border-color: color-mix(
+          in oklch,
+          var(--color-fg-negative) 45%,
+          var(--color-stroke-base)
+        );
+        background: color-mix(
+          in oklch,
+          var(--color-bg-negative) 35%,
+          var(--color-bg-base)
+        );
         color: var(--color-fg-negative);
       }
 
@@ -284,7 +255,11 @@
       }
 
       &:hover {
-        background: color-mix(in oklch, var(--color-bg-negative) 35%, var(--color-bg-base));
+        background: color-mix(
+          in oklch,
+          var(--color-bg-negative) 35%,
+          var(--color-bg-base)
+        );
       }
     }
   }
@@ -381,61 +356,6 @@
     );
     padding: var(--spacing-vertical) var(--spacing-horizontal);
   }
-
-  .completion-toggle {
-    /* Checkbox shape */
-    width: var(--icon-size-base);
-    height: var(--icon-size-base);
-    border-radius: var(--radius-subtle);
-    flex-shrink: 0;
-    position: relative;
-
-    /* Button reset */
-    background: transparent;
-    border: 1.5px solid var(--task-marker-color);
-    cursor: pointer;
-    padding: 0;
-
-    /* Hide unicode content characters */
-    font-size: 0;
-
-    transition:
-      border-color 0.15s ease,
-      background-color 0.15s ease;
-
-    &:hover { border-color: var(--task-marker-color); }
-
-    /* Ghost checkmark on hover (not done) */
-    &:not(.done):hover::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      margin: auto;
-      width: 4px;
-      height: 7px;
-      border-right: 1.5px solid var(--task-marker-color);
-      border-bottom: 1.5px solid var(--task-marker-color);
-      transform: rotate(45deg) translate(0, -1px);
-      opacity: 0.4;
-    }
-
-    /* Done: filled blue square with white checkmark */
-    &.done {
-      background: var(--task-marker-color);
-      border-color: var(--task-marker-color);
-
-      &::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        margin: auto;
-        width: 4px;
-        height: 7px;
-        border-right: 1.5px solid var(--color-fg-strong);
-        border-bottom: 1.5px solid var(--color-fg-strong);
-        transform: rotate(45deg) translate(0, -1px);
-      }
-    }
   }
 
   .calendar-bullet-title {
@@ -449,7 +369,7 @@
     color: var(--color-fg-warn);
   }
 
-  .bullet-empty {
+  .bullets-empty-state {
     display: grid;
     justify-items: start;
     gap: var(--spacing-vertical-half);
@@ -462,37 +382,37 @@
     color: var(--color-fg-base);
   }
 
-  .bullet-empty-markers {
+  .bullet-empty-state--markers {
     display: flex;
     align-items: center;
     gap: var(--spacing-horizontal-half);
   }
 
-  .bullet-empty-marker {
+  .bullets-empty-state-marker {
     width: var(--icon-size-base);
     height: var(--icon-size-base);
     color: var(--color-fg-subtle);
   }
 
-  .bullet-empty-marker--task {
+  .bullets-empty-state-marker--task {
     color: var(--model-color-2);
   }
 
-  .bullet-empty-marker--note {
+  .bullets-empty-state-marker--note {
     color: var(--model-color-5);
   }
 
-  .bullet-empty-marker--event {
+  .bullets-empty-state-marker--event {
     color: var(--model-color-6);
   }
 
-  .bullet-empty-heading {
+  .bullets-empty-state-heading {
     margin: 0;
     font-size: var(--font-size-base);
     color: var(--color-fg-base);
   }
 
-  .bullet-empty-copy {
+  .bullets-empty-state-copy {
     margin: 0;
     font-size: var(--font-size-subtle);
     color: var(--color-fg-subtle);

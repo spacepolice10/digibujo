@@ -28,13 +28,6 @@
     gap: var(--spacing-horizontal);
   }
 
-  .justified {
-    justify-content: space-between;
-    & > * {
-      flex: 1;
-    }
-  }
-
   .slightly-padded {
     padding: var(--spacing-horizontal-half);
   }

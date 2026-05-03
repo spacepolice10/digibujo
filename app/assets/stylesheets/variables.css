@@ -23,10 +23,7 @@
     --color-accent-alternative-bg: oklch(0.95 0.06 195);
 
     /* strokes */
-    --color-stroke-base: light-dark(
-      oklch(0.91 0.004 80),
-      oklch(0.33 0.006 82)
-    );
+    --color-stroke-base: light-dark(oklch(0.91 0.004 80), oklch(0.33 0.006 82));
     --color-stroke-subtle: light-dark(
       oklch(0.99 0.002 80),
       oklch(0.25 0.006 82)
@@ -46,21 +43,45 @@
     );
 
     /* model colors — electric palette */
-    --model-color-1: light-dark(oklch(68% 0.22 290), oklch(76% 0.18 290)); /* Violet */
+    --model-color-1: light-dark(
+      oklch(68% 0.22 290),
+      oklch(76% 0.18 290)
+    ); /* Violet */
     --model-color-1-bg: light-dark(oklch(94% 0.08 290), oklch(30% 0.08 290));
-    --model-color-2: light-dark(oklch(62% 0.2 260), oklch(74% 0.16 260)); /* Cobalt */
+    --model-color-2: light-dark(
+      oklch(62% 0.2 260),
+      oklch(74% 0.16 260)
+    ); /* Cobalt */
     --model-color-2-bg: light-dark(oklch(94% 0.07 260), oklch(30% 0.07 260));
-    --model-color-3: light-dark(oklch(72% 0.16 195), oklch(78% 0.12 195)); /* Teal */
+    --model-color-3: light-dark(
+      oklch(72% 0.16 195),
+      oklch(78% 0.12 195)
+    ); /* Teal */
     --model-color-3-bg: light-dark(oklch(95% 0.06 195), oklch(31% 0.06 195));
-    --model-color-4: light-dark(oklch(72% 0.2 155), oklch(80% 0.14 155)); /* Emerald */
+    --model-color-4: light-dark(
+      oklch(72% 0.2 155),
+      oklch(80% 0.14 155)
+    ); /* Emerald */
     --model-color-4-bg: light-dark(oklch(95% 0.08 155), oklch(31% 0.08 155));
-    --model-color-5: light-dark(oklch(82% 0.18 90), oklch(86% 0.14 90)); /* Gold */
+    --model-color-5: light-dark(
+      oklch(82% 0.18 90),
+      oklch(86% 0.14 90)
+    ); /* Gold */
     --model-color-5-bg: light-dark(oklch(96% 0.08 90), oklch(34% 0.08 90));
-    --model-color-6: light-dark(oklch(68% 0.2 25), oklch(78% 0.15 25)); /* Vermillion */
+    --model-color-6: light-dark(
+      oklch(68% 0.2 25),
+      oklch(78% 0.15 25)
+    ); /* Vermillion */
     --model-color-6-bg: light-dark(oklch(95% 0.08 25), oklch(31% 0.08 25));
-    --model-color-7: light-dark(oklch(60% 0.18 340), oklch(74% 0.14 340)); /* Magenta */
+    --model-color-7: light-dark(
+      oklch(60% 0.18 340),
+      oklch(74% 0.14 340)
+    ); /* Magenta */
     --model-color-7-bg: light-dark(oklch(95% 0.07 340), oklch(30% 0.07 340));
-    --model-color-8: light-dark(oklch(30% 0.1 260), oklch(78% 0.06 260)); /* Ink */
+    --model-color-8: light-dark(
+      oklch(30% 0.1 260),
+      oklch(78% 0.06 260)
+    ); /* Ink */
     --model-color-8-bg: light-dark(oklch(94% 0.04 260), oklch(28% 0.04 260));
 
     /* breakpoints */
@@ -88,6 +109,7 @@
     --z-base: 0;
     --z-dropdown: 2;
     --z-dialog: 2;
+    --z-dialog-backdrop: 1;
 
     /* font sizes — fluid */
     --font-size-strong: clamp(1.375rem, 1.1rem + 0.85vw, 1.75rem);
@@ -95,6 +117,7 @@
     --font-size-subtle: clamp(0.8125rem, 0.775rem + 0.15vw, 0.875rem);
 
     /* font weights */
+
     --font-weight-strong: 800;
     --font-weight-base: 400;
     --font-weight-subtle: 200;
