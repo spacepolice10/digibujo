@@ -23,16 +23,14 @@ Rails.application.routes.draw do
 
   resource :search, only: :show
 
-  # Triage
-  resource :triage, only: :show, controller: :triage do
-    scope module: :triage do
-      resources :bullets, only: [], param: :bullet_id do
-        resource :collect,  only: :create, controller: :collects
-        resource :postpone, only: :create, controller: :postpones
-        resource :schedule, only: :create, controller: :schedules
-        resource :archive,  only: :create, controller: :archives
-      end
-    end
+  # Triage (`resources :bullets` under `/triage` encodes `:bullet_id` as `:bullet_bullet_id`; use explicit paths)
+  get "triage", to: "triage#show", as: :triage
+
+  scope module: :triage do
+    post "triage/bullets/:bullet_id/collect",  to: "collects#create",  as: :triage_bullet_collect
+    post "triage/bullets/:bullet_id/postpone", to: "postpones#create", as: :triage_bullet_postpone
+    post "triage/bullets/:bullet_id/schedule", to: "schedules#create", as: :triage_bullet_schedule
+    post "triage/bullets/:bullet_id/archive",  to: "archives#create",  as: :triage_bullet_archive
   end
   resources :playlists, only: %i[index show create destroy] do
     scope module: :playlists do
@@ -55,6 +53,10 @@ Rails.application.routes.draw do
 
   # Publishing
   resources :published, param: :code
+
+  # Progressive Web App (manifest + scaffolded worker from app/views/pwa/*)
+  get "manifest", to: "rails/pwa#manifest", as: :pwa_manifest
+  get "service-worker", to: "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Health check
   get 'up' => 'rails/health#show', as: :rails_health_check

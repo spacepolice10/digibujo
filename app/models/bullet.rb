@@ -9,14 +9,20 @@ class Bullet < ApplicationRecord
       .distinct
   }
   scope :triage_on_date, lambda { |date|
-    scheduled_on_date(date).where.not(triaged_at: date.beginning_of_day..date.end_of_day)
+    start_t = date.beginning_of_day
+    end_t   = date.end_of_day
+    scheduled_on_date(date).where(
+      "triaged_at IS NULL OR triaged_at < ? OR triaged_at > ?",
+      start_t,
+      end_t
+    )
   }
   scope :todays, -> { scheduled_on_date(Date.current) }
   scope :temporal, -> { timeline.where.not(scheduled_on: nil) }
 
   belongs_to :user
   belongs_to :project, optional: true
-  delegated_type :bulletable, types: %w[Task Note Event], dependent: :destroy
+  delegated_type :bulletable, types: %w[Task Note Event], dependent: :destroy, optional: true
   delegate :completable?, :temporal?, :icon, :colour, :name, :marker, to: :bulletable
   accepts_nested_attributes_for :bulletable
 
@@ -29,24 +35,20 @@ class Bullet < ApplicationRecord
   has_rich_text :content
 
   validates :content, presence: true
+  validates :bulletable_type, inclusion: { in: ->(bullet) { bullet.class.bulletable_types } }
+  validates :bulletable, presence: true, if: :known_bulletable_type?
 
   def to_partial_path = bulletable.to_partial_path
 
-  def self.create_with_bulletable(user:, bulletable_type:, bullet_attributes:, bulletable_attributes:)
-    klass = bulletable_type.to_s.classify.safe_constantize
-    unless klass && bulletable_types.include?(klass.name)
-      bullet = user.bullets.new(bullet_attributes)
-      bullet.errors.add(:bulletable_type, 'is not included in the list')
-      return bullet
-    end
+  def self.type_capabilities(type_name)
+    return Bulletable::DEFAULT_CAPABILITIES unless bulletable_types.include?(type_name)
 
-    bullet = user.bullets.new(bullet_attributes)
-    bullet.bulletable = klass.new(bulletable_attributes || {})
-    bullet.save
-    bullet
+    type_name.constantize.capabilities
   end
 
-  def self.type_capabilities(type_name)
-    type_name.to_s.classify.safe_constantize&.capabilities || Bulletable::DEFAULT_CAPABILITIES
+  private
+
+  def known_bulletable_type?
+    bulletable_type.present? && self.class.bulletable_types.include?(bulletable_type.to_s)
   end
 end

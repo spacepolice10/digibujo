@@ -42,10 +42,17 @@ class Bullets::ContextsController < ApplicationController
   end
 
   def searchable_text(bullet)
-    [
-      bullet.id,
-      bullet.bulletable.name,
-      bullet.content.to_plain_text
-    ].join(" ").downcase
+    fragments = [
+      bullet.id.to_s,
+      bullet.bulletable.name.to_s,
+      bullet.content.to_plain_text.to_s
+    ]
+    if bullet.content&.body&.present?
+      html = ActionText::Content.new(bullet.content.body).to_html.downcase
+      fragments.concat(html.scan(/href="([^"]*)"/).flatten)
+    end
+    fragments.join(" ").downcase
+  rescue StandardError
+    [bullet.id, bullet.bulletable.name, bullet.content.to_plain_text].join(" ").downcase
   end
 end
