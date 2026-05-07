@@ -40,22 +40,6 @@ class Bullet < ApplicationRecord
 
   def to_partial_path = bulletable.to_partial_path
 
-  def done?
-    completable? && bulletable.done?
-  end
-
-  def complete!
-    return false unless completable?
-
-    bulletable.complete!
-  end
-
-  def uncomplete!
-    return false unless completable?
-
-    bulletable.uncomplete!
-  end
-
   def self.type_capabilities(type_name)
     return Bulletable::DEFAULT_CAPABILITIES unless bulletable_types.include?(type_name)
 

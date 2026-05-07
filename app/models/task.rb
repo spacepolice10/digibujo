@@ -1,6 +1,5 @@
 class Task < ApplicationRecord
   include Bulletable
-  ARCHIVE_IN_DAYS = 7
 
   def self.icon   = 'square'
   def self.colour = '2'
@@ -20,15 +19,11 @@ class Task < ApplicationRecord
   end
 
   def complete!
-    update!(
-      done: true,
-      done_at: Time.current,
-      archived_at: ARCHIVE_IN_DAYS.days.from_now
-    )
+    update!(done: true, done_at: Time.current)
   end
 
   def uncomplete!
-    update!(done: false, done_at: nil, archived_at: nil)
+    update!(done: false, done_at: nil)
   end
 
   def name

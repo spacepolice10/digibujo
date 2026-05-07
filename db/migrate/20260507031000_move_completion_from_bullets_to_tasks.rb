@@ -2,17 +2,12 @@ class MoveCompletionFromBulletsToTasks < ActiveRecord::Migration[8.1]
   def up
     add_column :tasks, :done, :boolean, default: false, null: false
     add_column :tasks, :done_at, :datetime
-    add_column :tasks, :archived_at, :datetime
 
     execute <<~SQL.squish
       UPDATE tasks
       SET
         done = bullets.done,
-        done_at = bullets.done_at,
-        archived_at = CASE
-          WHEN bullets.archives_on IS NULL THEN NULL
-          ELSE datetime(bullets.archives_on)
-        END
+        done_at = bullets.done_at
       FROM bullets
       WHERE bullets.bulletable_type = 'Task'
         AND bullets.bulletable_id = tasks.id
@@ -40,6 +35,5 @@ class MoveCompletionFromBulletsToTasks < ActiveRecord::Migration[8.1]
 
     remove_column :tasks, :done, :boolean, default: false, null: false
     remove_column :tasks, :done_at, :datetime
-    remove_column :tasks, :archived_at, :datetime
   end
 end
