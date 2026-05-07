@@ -1,5 +1,5 @@
 class Bullet < ApplicationRecord
-  include ProjectAssignable, Contextable, Completable, Collectable, Schedulable, Archivable, Pinnable, Publishable
+  include ProjectAssignable, Contextable, Collectable, Schedulable, Archivable, Pinnable, Publishable
 
   scope :timeline,               -> { all }
   scope :timeline_chronological, -> { timeline.order(created_at: :desc) }
@@ -39,6 +39,22 @@ class Bullet < ApplicationRecord
   validates :bulletable, presence: true, if: :known_bulletable_type?
 
   def to_partial_path = bulletable.to_partial_path
+
+  def done?
+    completable? && bulletable.done?
+  end
+
+  def complete!
+    return false unless completable?
+
+    bulletable.complete!
+  end
+
+  def uncomplete!
+    return false unless completable?
+
+    bulletable.uncomplete!
+  end
 
   def self.type_capabilities(type_name)
     return Bulletable::DEFAULT_CAPABILITIES unless bulletable_types.include?(type_name)

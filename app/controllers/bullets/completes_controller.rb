@@ -2,6 +2,8 @@ class Bullets::CompletesController < ApplicationController
   before_action :set_bullet
 
   def create
+    return head :unprocessable_entity unless @bullet.completable?
+
     @bullet.complete!
     respond_to do |format|
       format.turbo_stream
@@ -10,6 +12,8 @@ class Bullets::CompletesController < ApplicationController
   end
 
   def destroy
+    return head :unprocessable_entity unless @bullet.completable?
+
     @bullet.uncomplete!
     respond_to do |format|
       format.turbo_stream

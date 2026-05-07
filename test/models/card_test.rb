@@ -52,6 +52,30 @@ class CardTest < ActiveSupport::TestCase
     assert_nil card.reload.project
   end
 
+  test "complete and uncomplete update delegated task state" do
+    card = @user.bullets.create!(bulletable: Task.create!, content: "Finish me")
+
+    card.complete!
+
+    assert_predicate card.reload, :done?
+    assert_not_nil card.bulletable.done_at
+    assert_not_nil card.bulletable.archived_at
+
+    card.uncomplete!
+
+    assert_not_predicate card.reload, :done?
+    assert_nil card.bulletable.done_at
+    assert_nil card.bulletable.archived_at
+  end
+
+  test "non-completable bullet ignores completion calls" do
+    card = @user.bullets.create!(bulletable: Note.create!, content: "Reference")
+
+    refute card.complete!
+    refute card.uncomplete!
+    assert_not_predicate card, :done?
+  end
+
   test "auto_archivable excludes pinned bullets" do
     due_unpinned = @user.bullets.create!(bulletable: Task.create!, content: "Due", archives_on: Date.yesterday)
     due_pinned = @user.bullets.create!(bulletable: Task.create!, content: "Pinned due", archives_on: Date.yesterday, pinned: true)

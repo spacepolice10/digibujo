@@ -1,4 +1,7 @@
 class StreamsController < ApplicationController
+  TASK_DONE_JOIN_SQL = <<~SQL.squish.freeze
+    LEFT JOIN tasks ON bullets.bulletable_type = 'Task' AND bullets.bulletable_id = tasks.id
+  SQL
 
   def index
     @streams = Current.user.streams.ordered
@@ -8,7 +11,14 @@ class StreamsController < ApplicationController
   def show
     @stream    = Current.user.streams.find(params[:id])
     @done_last = params[:sort] == "done_last"
-    scope      = @done_last ? @stream.bullets.includes(:project).reorder(done: :asc, created_at: :desc) : @stream.bullets.includes(:project)
+    scope      = if @done_last
+      @stream.bullets
+        .includes(:project)
+        .joins(TASK_DONE_JOIN_SQL)
+        .reorder(Arel.sql("COALESCE(tasks.done, 0) ASC"), created_at: :desc)
+    else
+      @stream.bullets.includes(:project)
+    end
     @bullets     = set_page_and_extract_portion_from(scope, per_page: [ 5, 15, 30, 50 ])
   end
 
