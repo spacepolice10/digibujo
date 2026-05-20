@@ -1,0 +1,16 @@
+<div
+  id="<%= dom_id(bullet, :pinned_dock) %>"
+  class="pinned--dock-item"
+  data-dock-index="<%= position %>"
+  data-bullet-type="<%= bullet.bulletable_type.downcase %>"
+>
+  <%= link_to bullet_path(bullet), class: "pinned--dock-item-link", data: { turbo_frame: "_top" } do %>
+    <span class="pinned--dock-item-marker" aria-hidden="true">
+      <%= bullet.marker %>
+    </span>
+
+    <span class="pinned--dock-item-text">
+      <%= bullet.content.to_plain_text.truncate(80) %>
+    </span>
+  <% end %>
+</div>

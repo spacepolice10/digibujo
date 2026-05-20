@@ -16,17 +16,13 @@
     --note-marker-color: var(--model-color-5);
 
     display: flex;
-
     justify-content: space-between;
+    width: 100%;
     gap: var(--spacing-horizontal-half);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-
+    margin-block: var(--spacing-vertical-half);
     @supports (corner-shape: squircle) {
       corner-shape: squircle;
     }
-    overflow: hidden;
-    background: var(--bullet-bg);
-    transition: background 0.1s ease;
 
     /* Bullet type accent backgrounds */
 
@@ -72,24 +68,55 @@
     }
   }
 
-  .bullet-name {
+  .bullet--inline-edit {
+    display: contents;
+  }
+
+  .bullet--name {
     margin: 0;
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-base);
     color: var(--color-fg-base);
     text-align: left;
     width: 100%;
+    min-width: 0;
+    text-decoration: none;
+    color: inherit;
+    cursor: text;
+    .bullet-preview--link {
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      text-decoration: none;
+      color: inherit;
+      .trix-content {
+        flex: 1 1 auto;
+        min-width: 0;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
   }
-  .bullet-name > * {
+
+  .bullet--name-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical-half);
+    width: 100%;
+  }
+
+  .bullet--name > * {
     margin: 0;
     padding: 0;
   }
   
-  form:has(.bullet-task--marker) {
+  form:has(.bullet--task-marker) {
     display: contents;
   }
 
-  .bullet-task--marker {
+  .bullet--task-marker {
     width: var(--icon-size-base);
     height: var(--icon-size-base);
     color: var(--model-color-2);
@@ -98,24 +125,24 @@
     background: none;;
   }
 
-  .bullet:has(.bullet-task--marker[data-task-done="true"]) .bullet-name {
+  .bullet:has(.bullet--task-marker[data-task-done="true"]) .bullet--name {
     text-decoration: line-through;
     color: var(--color-fg-subtle);
   }
 
-  .bullet-note--marker {  
+  .bullet--note-marker {  
     width: var(--icon-size-base);
     height: var(--icon-size-base);
     color: var(--model-color-5);
   }
 
-  .bullet-event--marker {
+  .bullet--event-marker {
     width: var(--icon-size-base);
     height: var(--icon-size-base);
     color: var(--model-color-6);
   }
 
-  .bullet-link {
+  .bullet--link {
     text-decoration: none;
     color: inherit;
     &:hover {
@@ -123,13 +150,13 @@
     }
   }
 
-  .bullet-tags {
+  .bullet--tags {
     display: flex;
     flex-wrap: wrap;
     gap: var(--spacing-vertical-half);
   }
 
-  .bullet-tags .pill--type {
+  .bullet--tags .pill--type {
     max-width: 100%;
     span:last-child {
       overflow: hidden;
@@ -138,7 +165,7 @@
     }
   }
 
-  .bullet-action {
+  .bullet--action {
     display: flex;
     align-items: flex-start;
     align-self: flex-start;
@@ -300,6 +327,47 @@
     &.bullet-dropdown-icon--chooser {
       color: var(--model-color-5);
     }
+
+    &.bullet-dropdown-icon--collect {
+      color: var(--model-color-4);
+    }
+
+    &.bullet-dropdown-icon--schedule {
+      color: var(--model-color-6);
+    }
+  }
+
+  .bullet-menu--intent {
+    position: relative;
+  }
+
+  .bullet-menu--intent > summary.bullet-dropdown-item {
+    list-style: none;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+  }
+
+  .bullet-dropdown-menu .bullet-menu--intent .dropdown-body {
+    position: static;
+    margin-top: var(--spacing-vertical-half);
+    padding: 0;
+    min-width: 0;
+    border: 0;
+    border-radius: var(--radius-base);
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .bullet-menu--intent-panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical-half);
+  }
+
+  .bullet-menu--intent-submit {
+    width: 100%;
   }
 
   .bullet-dropdown-item:hover .bullet-dropdown-icon {
@@ -367,55 +435,6 @@
     font-weight: var(--font-weight-strong);
     text-transform: uppercase;
     color: var(--color-fg-warn);
-  }
-
-  .bullets-empty-state {
-    display: grid;
-    justify-items: start;
-    gap: var(--spacing-vertical-half);
-    text-align: left;
-    margin-top: var(--spacing-horizontal);
-    padding: var(--spacing-horizontal) var(--spacing-horizontal-double);
-    border: 1px dashed var(--color-stroke-base);
-    border-radius: var(--radius-strong);
-    background: var(--color-bg-subtle);
-    color: var(--color-fg-base);
-  }
-
-  .bullet-empty-state--markers {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
-  }
-
-  .bullets-empty-state-marker {
-    width: var(--icon-size-base);
-    height: var(--icon-size-base);
-    color: var(--color-fg-subtle);
-  }
-
-  .bullets-empty-state-marker--task {
-    color: var(--model-color-2);
-  }
-
-  .bullets-empty-state-marker--note {
-    color: var(--model-color-5);
-  }
-
-  .bullets-empty-state-marker--event {
-    color: var(--model-color-6);
-  }
-
-  .bullets-empty-state-heading {
-    margin: 0;
-    font-size: var(--font-size-base);
-    color: var(--color-fg-base);
-  }
-
-  .bullets-empty-state-copy {
-    margin: 0;
-    font-size: var(--font-size-subtle);
-    color: var(--color-fg-subtle);
   }
 
   .bullets-list {

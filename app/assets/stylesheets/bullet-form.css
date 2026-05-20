@@ -1,22 +1,26 @@
 @layer components {
   .bullet-form {
+    position: relative;
     display: flex;
     flex-direction: column;
-    margin-inline: auto;
-    background: transparent;
-    border: 0;
-    border-radius: 0;
+    width: 102%;
+    left: -8px;
+    top: -2px;
+    background: var(--color-bg-subtle);
     box-shadow: none;
     overflow: visible;
+    border-radius: var(--radius-strong);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    border: 1px solid var(--color-stroke-base);
   }
 
   .bullet-form-rail {
     display: flex;
     align-items: center;
     gap: var(--spacing-horizontal-half);
-    padding-inline: 0;
     overflow-x: auto;
     scrollbar-width: none;
+    margin-block: var(--spacing-vertical-half);
   }
 
   .bullet-form-rail::-webkit-scrollbar {
@@ -30,14 +34,9 @@
   .bullet-form-composer {
     display: flex;
     flex-wrap: wrap;
-    align-items: flex-end;
+    align-items: center;
     gap: var(--spacing-horizontal-half);
-    padding: var(--spacing-vertical-half);
-    margin-top: var(--spacing-vertical-half);
-    border: 1px solid var(--color-stroke-base);
     border-radius: var(--radius-strong);
-    background: var(--color-bg-subtle);
-    box-shadow: var(--shadow-elevated);
     transition:
       border-color 0.1s ease,
       box-shadow 0.1s ease;
@@ -71,13 +70,12 @@
     min-width: 0;
   }
 
-  [data-controller~="bullet-form"] trix-editor {
+  .bullet-form trix-editor {
     order: 1;
     min-height: calc(var(--spacing-horizontal-double) * 0.72) !important;
     height: auto;
-    max-height: calc(var(--spacing-horizontal-double) * 3);
     overflow-y: auto;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half) !important;
+    padding: 0 !important;
     border: 0 !important;
     border-radius: 0;
     box-shadow: none;
@@ -115,21 +113,23 @@
     display: block !important;
   }
 
-  .bullet-form:has([data-editor-multiline="true"]) .bullet-form-composer {
-    align-items: center;
+  .bullet-form[data-multiline="true"] .bullet-form-composer {
+    position: sticky;
+    top: 0;
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
   }
 
-  .bullet-form:has([data-editor-multiline="true"]) .bullet-form-desktop-type {
+  .bullet-form[data-multiline="true"] .bullet-form-desktop-type {
     display: inline-flex;
     order: 1;
     flex: 0 0 auto;
   }
 
-  .bullet-form:has([data-editor-multiline="true"]) .bullet-form-editor {
+  .bullet-form[data-multiline="true"] .bullet-form-editor {
     display: contents;
   }
 
-  .bullet-form:has([data-editor-multiline="true"]) trix-toolbar {
+  .bullet-form[data-multiline="true"] trix-toolbar {
     display: block !important;
     order: 1;
     flex: 1 1 auto;
@@ -141,13 +141,13 @@
     box-shadow: none;
   }
 
-  .bullet-form:has([data-editor-multiline="true"]) trix-editor {
+  .bullet-form[data-multiline="true"] trix-editor {
     order: 2;
     flex: 1 1 100%;
     max-width: 100%;
   }
 
-  .bullet-form:has([data-editor-multiline="true"]) .bullet-form-footer {
+  .bullet-form[data-multiline="true"] .bullet-form-footer {
     order: 1;
     margin-inline-start: auto;
   }
@@ -155,6 +155,7 @@
   .bullet-form-footer {
     flex: 0 0 auto;
     margin-inline-start: auto;
+    align-self: flex-start;
   }
 
   .bullet-form-desktop-type {
@@ -162,23 +163,20 @@
   }
 
   .bullet-form-type-trigger {
-    display: inline-flex;
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-width: calc(var(--spacing-horizontal-double) * 1);
-    padding: var(--spacing-vertical-half);
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-strong);
-    background: var(--color-bg-base);
     color: var(--color-fg-subtle);
     cursor: pointer;
+    border: none;
+    background: transparent;
   }
 
   .bullet-form-fields-back {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: calc(var(--spacing-horizontal-double) * 1.2);
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     border: 1px solid var(--color-stroke-base);
     border-radius: var(--radius-strong);
@@ -387,14 +385,6 @@
     flex: 1;
   }
 
-  .bullet-form[data-bullet-form-mode-value="type"] .bullet-form-mobile-fields {
-    display: none;
-  }
-
-  .bullet-form[data-bullet-form-mode-value="picker"] .bullet-form-mobile-type {
-    display: none;
-  }
-
   .bullet-form-mobile-type-option {
     display: inline-flex;
     align-items: center;
@@ -455,10 +445,6 @@
     [data-controller~="bullet-form"][data-toolbar-expanded="true"]
       trix-toolbar {
       display: block !important;
-    }
-
-    .bullet-form-composer {
-      align-items: stretch;
     }
   }
 }

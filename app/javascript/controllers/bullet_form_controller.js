@@ -1,112 +1,137 @@
 import { Controller } from "@hotwired/stimulus";
 
+const DEFAULT_TYPE = "note";
+
 export default class extends Controller {
-  static targets = ["fields", "typeIcon", "typeMenu", "typeForm"];
+  static targets = ["typeIcon", "typeMenu", "typeForm"];
   static values = {
-    mode: String,
-    type: {
-      type: String,
-      default: "task",
-    },
-    icon: {
-      type: String,
-      default: "square",
-    },
-    colour: {
-      type: String,
-      default: "2",
-    },
+    type: { type: String, default: DEFAULT_TYPE },
+    types: Object,
   };
 
-  typeValueChanged() {
-    this.typeIconTarget.style.setProperty(
-      "--icon-mask",
-      `var(--icon-${this.iconValue})`,
-    );
-    this.typeIconTarget.style.setProperty(
-      "color",
-      `var(--model-color-${this.colourValue})`,
-    );
-  }
-
   connect() {
-    this.typeValueChanged();
-    this.updateEditorLayout();
+    this.hadContent = false;
+    this.renderType();
+    this._onSubmit = this.prepareSubmit.bind(this);
+    this.element.addEventListener("submit", this._onSubmit);
   }
 
-  loadFields(event) {
-    const value = event.target.value;
-    if (!value) return;
-    this.fieldsTarget.src = `/bullets/fields/${value.toLowerCase()}`;
+  disconnect() {
+    this.element.removeEventListener("submit", this._onSubmit);
+  }
+
+  typeValueChanged() {
+    this.renderType();
+  }
+
+  detectType() {
+    if (this._strippingMarker) return;
+    this.syncTypeFromText();
   }
 
   selectType(event) {
-    this.modeValue = "picker";
-    this.iconValue = event.params.icon;
-    this.colourValue = event.params.colour;
-    this.typeValue = event.params.type;
+    const { type } = event.params;
+    if (type) this.typeValue = type;
     event.currentTarget.closest("[popover]")?.hidePopover();
-    if (this.hasTypeFormTarget) {
-      const bulletableType = event.params.bulletableType;
-      this.typeFormTarget.value = bulletableType || event.params.type;
-    }
-    this.toggleEditor();
-  }
-
-  returnToType() {
-    this.modeValue = "type";
+    this.focusEditor();
   }
 
   toggleTypeMenu() {
-    this.typeMenuTarget.focus();
+    this.typeMenuTarget?.focus();
   }
 
-  toggleEditor() {
-    const editor = this.element.querySelector("trix-editor");
-    if (!editor) return;
-    editor.focus();
-  }
-
-  updateEditorLayout() {
-    const editor = this.element.querySelector("trix-editor");
-    if (!editor) return;
-
-    let lineHeight = null;
-    const parsedLineHeight = Number.parseFloat(
-      window.getComputedStyle(editor).lineHeight,
-    );
-
-    if (!Number.isNaN(parsedLineHeight)) {
-      lineHeight = null;
-    }
-    lineHeight = parsedLineHeight;
-    console.log(lineHeight, parsedLineHeight);
-    if (!lineHeight) return;
-    const withWrappedContent = editor
-      ? editor.getClientRects().length > 1
-      : false;
-    const withVisualOverflow = editor.scrollHeight > lineHeight * 1.5;
-    const isMultiline = withWrappedContent || withVisualOverflow;
-
-    if (isMultiline && !this._editorMultilineLocked) {
-      this._editorMultilineLocked = true;
-      this.element.dataset.editorMultiline = "true";
-      console.log(this.element.dataset);
-      console.log(this.element);
-      console.log("locking");
-      return;
-    }
-
-    if (this._editorMultilineLocked) {
-      this.element.dataset.editorMultiline = "true";
-      return;
-    }
-
-    this.element.dataset.editorMultiline = "false";
-  }
-
-  submit(event) {
+  submitByReturn(event) {
     event.preventDefault();
     this.element.requestSubmit();
+  }
+
+  prepareSubmit() {
+    this.syncTypeFromText();
+  }
+
+  plainText() {
+    const editor = this.element.querySelector("trix-editor");
+    if (!editor?.editor) return "";
+    return editor.editor.getDocument().toString();
+  }
+
+  syncTypeFromText() {
+    const text = this.plainText();
+    const match = this.leadingMarkerMatch(text);
+
+    if (match) {
+      const typeChanged = match.key != this.typeValue;
+      if (typeChanged) this.typeValue = match.key;
+      if (typeChanged) {
+        this._strippingMarker = true;
+        this.stripLeadingMarker(match.removeCount);
+        this._strippingMarker = false;
+      }
+      return;
+    }
+
+    const trimmed = text.trim();
+    if (!trimmed) {
+      if (this.hadContent && this.typeValue != DEFAULT_TYPE) {
+        this.typeValue = DEFAULT_TYPE;
+      }
+      this.hadContent = false;
+      return;
+    }
+
+    this.hadContent = true;
+  }
+
+  leadingMarkerMatch(text) {
+    const trimmed = text.trimStart();
+    const entry = this.markerEntries().find((e) => trimmed.startsWith(e.marker));
+    if (!entry) return null;
+
+    const leadingWhitespace = text.length - trimmed.length;
+    return { key: entry.key, removeCount: leadingWhitespace + entry.marker.length };
+  }
+
+  markerEntries() {
+    return Object.entries(this.typesValue)
+      .map(([key, config]) => ({ key, marker: config.marker }))
+      .filter((entry) => entry.marker)
+      .sort((a, b) => b.marker.length - a.marker.length || b.marker.localeCompare(a.marker));
+  }
+
+  stripLeadingMarker(removeCount) {
+    const editor = this.element.querySelector("trix-editor");
+    if (!editor?.editor || !removeCount) return;
+
+    editor.editor.setSelectedRange([0, removeCount]);
+    editor.editor.deleteInDirection("forward");
+  }
+
+  renderType() {
+    const config = this.typesValue[this.typeValue];
+    if (!config) return;
+
+    if (this.hasTypeFormTarget) {
+      this.typeFormTarget.value = config.bulletableType;
+    }
+
+    if (this.hasTypeIconTarget) {
+      this.typeIconTarget.style.setProperty(
+        "--icon-mask",
+        `var(--icon-${config.icon})`,
+      );
+      this.typeIconTarget.style.setProperty(
+        "color",
+        `var(--model-color-${config.colour})`,
+      );
+    }
+
+    const radio = this.element.querySelector(
+      `input[name="bullet[bulletable_type]"][value="${config.bulletableType}"]`,
+    );
+    if (radio) radio.checked = true;
+  }
+
+  focusEditor() {
+    this.element.querySelector("trix-editor")?.focus();
   }
 }

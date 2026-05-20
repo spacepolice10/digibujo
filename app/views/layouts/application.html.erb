@@ -29,7 +29,13 @@
   </head>
 
   <body data-controller="dialog timezone-cookie">
+    <%= render "shared/header" %>
+
     <%= yield %>
+
+    <footer class="footer">
+  <turbo-frame id="pinned_bullets_dock" src="<%= pinned_index_path %>" loading="lazy" data-turbo-permanent></turbo-frame>
+    </footer>
 
     <dialog data-dialog-target="dialog" data-action="click->dialog#backdropClose turbo:submit-end->dialog#submitEnd">
       <%= turbo_frame_tag "modal" %>

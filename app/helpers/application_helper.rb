@@ -1,12 +1,14 @@
-module ApplicationHelper
-  def bullet_rich_text_preview_trix(bullet, max_chars: nil)
-    body = bullet.content.body.to_s
-    if body.empty?
-      return "".html_safe
-    end
+# frozen_string_literal: true
 
-    tag.div class: "trix-content" do
-      max_chars.present? ? HtmlTruncation.truncate_html(body, max_chars).html_safe : body.html_safe
-    end
+module ApplicationHelper
+  def bucket_icon_mask(bucket)
+    key = bucket&.icon.presence || "tag"
+    "var(--icon-#{key})"
+  end
+
+  def bucket_link_style(record)
+    return {} unless record.colour.present?
+
+    { style: "background: #{record.colour_bg_variable}" }
   end
 end

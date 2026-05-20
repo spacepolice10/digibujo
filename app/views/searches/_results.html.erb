@@ -1,9 +1,10 @@
-<% if @query.blank? %>
-  <p class="search--help">Start typing to search bullets.</p>
-<% elsif @bullets.none? %>
-  <p class="search--help">No bullets found for "<%= @query %>".</p>
-<% else %>
-  <%= render "pagination/paginated_records",
-        page: @page,
-        pagination_link_path: ->(next_param) { search_path(q: @query, page: next_param) } %>
-<% end %>
+<turbo-frame id="search_results">
+<div class="search--results">
+    <% if q.present? && bullets.any? %>
+      <h3>Results for "<%= q %>"</h3>
+      <%= render "pagination/paginated_records",
+        page: page,
+        pagination_link_path: ->(next_param) { search_path(q: q, page: next_param) } %>
+    <% end %>
+  </div>
+</turbo-frame>

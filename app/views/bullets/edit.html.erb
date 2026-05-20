@@ -9,4 +9,10 @@
     Delete
   <% end %>
 </header>
-<%= render "form", bullet: @bullet %>
+<turbo-frame id="<%= dom_id(@bullet) %>"
+             class="bullet"
+             data-bullet-type="<%= @bullet.bulletable_type.downcase %>">
+  <div class="bullet--inline-edit" data-controller="bullet-inline-edit">
+    <%= render "form", bullet: @bullet %>
+  </div>
+</turbo-frame>

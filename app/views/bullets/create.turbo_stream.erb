@@ -1,7 +1,5 @@
-<%= turbo_stream.append "bullets" do %>
-  <%= render @bullet %>
-<% end %>
-<%= turbo_stream.remove("bullets_empty_state") %>
-<%= turbo_stream.update "bullet_form" do %>
-  <%= render "form", bullet: Bullet.new %>
-<% end %>
+<%= turbo_stream.append "bullets", @bullet %>
+
+<%= turbo_stream.remove "bullet_form" %>
+
+<%= turbo_stream.after dom_id(@bullet), partial: "form", locals: { bullet: Bullet.new(scheduled_on: @selected_date) } %>

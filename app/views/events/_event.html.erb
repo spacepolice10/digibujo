@@ -1,7 +1,7 @@
 <div id="<%= dom_id(event) %>" class="bullet" data-bullet-type="event">
-  <span class="bullet-event--marker">
+  <span class="bullet--event--marker">
     <i class="icon" style="--icon-mask: var(--icon-circle)" aria-hidden="true"></i>
   </span>
-  <p class="bullet-name"><%= event.name %></p>
+  <div class="bullet--name"><%= event.name %></div>
   <%= render "bullets/menu", bullet: event %>
 </div>

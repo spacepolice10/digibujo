@@ -1,15 +1,6 @@
-<div class="search">
-  <div class="bullets-timeline-header">
-    <div class="bullets-timeline-header-group">
-      <%= link_to "Today", bullets_path, class: "button-tertiary", data: { turbo_frame: "_top" } %>
-    </div>
-    <h2 class="bullets-timeline-header-date">Search</h2>
-    <div class="bullets-timeline-header-group">
-      <%= link_to triage_path, class: "button-secondary", data: { turbo_frame: "_top" } do %>
-        <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
-        Triage
-      <% end %>
-    </div>
+<div class="search--layout">
+  <div class="search--header">
+    <h2>Search</h2>
   </div>
 
   <%= form_with url: search_path,
@@ -20,19 +11,17 @@
           controller: "search",
           search_target: "form"
         } do |form| %>
-    <%= form.label :q, "Search bullets", class: "search--label" %>
     <%= form.search_field :q,
-          value: @query,
+          value: @q,
+          autofocus: true,
           placeholder: "Search by bullet text or project",
-          class: "search--input",
+          class: "search--textform",
           data: {
             action: "input->search#search",
-            search_target: "input"
+            search_target: "textform"
           },
           autocomplete: "off" %>
   <% end %>
 
-  <turbo-frame id="search_results">
-    <%= render "results" %>
-  </turbo-frame>
+<%= render "results", q: @q, bullets: @bullets, page: @page %>
 </div>

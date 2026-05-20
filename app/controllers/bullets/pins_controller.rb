@@ -8,7 +8,10 @@ class Bullets::PinsController < ApplicationController
         format.html { redirect_to bullets_path }
       end
     else
-      redirect_to bullets_path, alert: @bullet.errors.full_messages.to_sentence
+      respond_to do |format|
+        format.turbo_stream { render :update, status: :unprocessable_entity }
+        format.html { redirect_to bullets_path, alert: @bullet.errors.full_messages.to_sentence }
+      end
     end
   end
 

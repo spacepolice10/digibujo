@@ -29,7 +29,7 @@
     </main>
 
     <nav class="tab-bar">
-      <%= link_to indexing_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'streams'}", aria: { label: "Index" } do %>
+      <%= link_to buckets_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'buckets'}", aria: { label: "Index" } do %>
         <i class="icon" style="--icon-mask: var(--icon-list)" aria-hidden="true"></i>
       <% end %>
       <%= link_to pinned_index_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'pinned'}", aria: { label: "Workspace" } do %>
@@ -40,7 +40,7 @@
       <% end %>
     </nav>
 
-    <%= link_to new_bullet_path, class: "fab", aria: { label: "New bullet" } do %>
+    <%= link_to new_bullet_path(date: Date.current.iso8601), class: "fab", aria: { label: "New bullet" } do %>
       <span class="fab__plus">+</span> Bullet
     <% end %>
 

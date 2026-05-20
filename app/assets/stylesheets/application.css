@@ -15,7 +15,6 @@
 @import "variables.css";
 @import "base.css";
 @import "utilities.css";
-
 @import "icons.css";
 @import "button.css";
 @import "form.css";
@@ -29,9 +28,9 @@
 @import "date-picker.css";
 @import "projects-picker.css";
 @import "context-picker.css";
-@import "triage.css";
 @import "calendar.css";
-@import "public.css";
-@import "playlists.css";
+@import "pinned.css";
 @import "search.css";
+@import "activity.css";
+@import "public.css";
 @import "print.css";

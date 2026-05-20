@@ -1,0 +1,14 @@
+<% if bullets.any? %>
+  <div class="pinned--footer">
+    <div class="pinned--footer-name">
+      <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
+      <span>Pinned</span>
+    </div>
+
+    <div id="pinned_bullets" class="pinned--dock" style="anchor-name: --pinned-dock-trigger">
+      <% bullets.each_with_index do |bullet, position| %>
+        <%= render partial: "pinned/bullet", locals: { bullet: bullet, position: position } %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

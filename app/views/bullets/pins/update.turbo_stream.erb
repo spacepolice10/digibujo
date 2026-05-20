@@ -1,11 +1,7 @@
-<%= turbo_stream.remove @bullet %>
-<% if @bullet.pinned? %>
-  <%= turbo_stream.append "pinned_bullets" do %>
-    <%= render partial: "bullets/bullet", locals: { bullet: @bullet } %>
-  <% end %>
-<% else %>
-  <%= turbo_stream.append "bullets" do %>
-    <%= render partial: "bullets/bullet", locals: { bullet: @bullet } %>
-  <% end %>
+<%= turbo_stream.replace @bullet do %>
+  <%= render partial: "/bullets/bullet", locals: { bullet: @bullet } %>
 <% end %>
-<%= turbo_stream.update "pinned_number", Current.user.bullets.pinned.count.to_s %>
+
+<%= turbo_stream.update "pinned_bullets_dock",
+      partial: "/pinned/dock",
+      locals: { bullets: Current.user.bullets.includes(bucket: :bucketable).pinned.order(updated_at: :desc) } %>

@@ -1,11 +1,14 @@
-<div id="<%= dom_id(note) %>" class="bullet" data-bullet-type="note">
-  <span class="bullet-note--marker">
-    <i class="icon" style="--icon-mask: var(--icon-line-dashed)" aria-hidden="true"></i>
-  </span>
-
-    <div class="bullet-name">
-      <%= bullet_rich_text_preview_trix(note, max_chars: 400) %>
-    </div>
-
-  <%= render "bullets/menu", bullet: note %>
+<turbo-frame id="<%= dom_id(note) %>" class="bullet" data-bullet-type="note">
+  <div class="bullet--note-marker">
+  <i
+    class="icon"
+    style="--icon-mask: var(--icon-line-dashed)"
+    aria-hidden="true"
+  ></i>
 </div>
+    <%= link_to edit_bullet_path(note), class: "bullet--name" do %>
+      <%= bullet_preview_trix(note) %>
+    <% end %>
+    <%= render "bullets/metadata", bullet: note %>
+    <%= render "bullets/menu", bullet: note %>
+  </turbo-frame>

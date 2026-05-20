@@ -6,6 +6,10 @@
       Back
     </button>
     <div class="bullet-show--navigation-actions">
+      <%= link_to activities_path(bullet_id: @bullet.id), class: "button-secondary", data: { turbo_frame: "_top" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-book)" aria-hidden="true"></i>
+        Activity
+      <% end %>
       <%= link_to edit_bullet_path(@bullet), class: "button-secondary", data: { turbo_frame: "_top" } do %>
         <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
         Edit

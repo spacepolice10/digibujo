@@ -1,0 +1,7 @@
+@layer components {
+  .dailies--layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical);
+  }
+}

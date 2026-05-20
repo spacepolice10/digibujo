@@ -4,9 +4,17 @@
     <div class="bullet-show-meta">
       <span class="bullet-type"><%= @bullet.name %></span>
     </div>
-    <% if @bullet.project.present? %>
+    <% if @bullet.bucket.present? %>
       <div class="bullet-tags">
-        <span class="pill" style="background: <%= @bullet.project.colour_bg_variable %>"><%= @bullet.project.name %></span>
+        <% bucket = @bullet.bucket %>
+          <% b = bucket.bucketable %>
+          <% if b %>
+          <% if b.colour.present? %>
+            <span class="pill" style="background: <%= b.colour_bg_variable %>"><%= b.name %></span>
+          <% else %>
+            <span class="pill"><%= b.name %></span>
+          <% end %>
+          <% end %>
       </div>
     <% end %>
   </header>
