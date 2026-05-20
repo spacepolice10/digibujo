@@ -1,0 +1,61 @@
+@layer components {
+  .activity {
+    max-width: var(--breakpoint-pc);
+    margin: 0 auto;
+    padding: 0 var(--spacing-horizontal);
+  }
+
+  .activity--filter-note {
+    color: var(--color-fg-subtle);
+    margin: 0 0 var(--spacing-vertical-double);
+  }
+
+  .activity--filter-link {
+    color: var(--model-color-2);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .activity--row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--spacing-horizontal-half) var(--spacing-horizontal);
+    padding: var(--spacing-vertical) var(--spacing-horizontal-half);
+    border-bottom: 1px solid var(--color-stroke-base);
+    background: var(--color-bg-subtle);
+  }
+
+  .activity--row-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical-half);
+    min-width: min(100%, 12rem);
+    flex: 1;
+  }
+
+  .activity--action {
+    font-weight: var(--font-weight-strong);
+    font-size: var(--font-size-subtle);
+    color: var(--color-fg-base);
+  }
+
+  .activity--bullet-link {
+    font-size: var(--font-size-base);
+    color: var(--model-color-2);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+    word-break: break-word;
+  }
+
+  .activity--bullet-missing {
+    color: var(--color-fg-subtle);
+    font-style: italic;
+  }
+
+  .activity--time {
+    color: var(--color-fg-subtle);
+    white-space: nowrap;
+  }
+}

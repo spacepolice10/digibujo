@@ -1,0 +1,14 @@
+<% bullet = @bullets_by_id&.[](bullet_activity.bullet_id) %>
+<div id="<%= dom_id(bullet_activity) %>" class="activity--row">
+  <div class="activity--row-main">
+    <span class="activity--action"><%= bullet_activity.action_label %></span>
+    <% if bullet %>
+      <%= link_to bullet.content.to_plain_text.truncate(100), bullet_path(bullet), class: "activity--bullet-link", data: { turbo_frame: "_top" } %>
+    <% else %>
+      <span class="activity--bullet-missing text-sm">Bullet removed</span>
+    <% end %>
+  </div>
+  <time class="activity--time text-sm" datetime="<%= bullet_activity.created_at.iso8601 %>">
+    <%= l(bullet_activity.created_at, format: :short) %>
+  </time>
+</div>

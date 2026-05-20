@@ -4,5 +4,5 @@ class Note < ApplicationRecord
   def self.icon   = 'line-dashed'
   def self.colour = '5'
   def self.name   = 'Note'
-  def self.marker = '-'
+  def self.marker = ''
 end

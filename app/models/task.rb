@@ -1,10 +1,10 @@
 class Task < ApplicationRecord
-  include Bulletable
+  include TracksBulletActivity, Bulletable
 
   def self.icon   = 'square'
   def self.colour = '2'
   def self.name   = 'Task'
-  def self.marker = '•'
+  def self.marker = '-'
 
   def temporal?
     true
