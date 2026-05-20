@@ -1,4 +1,0 @@
-<%= turbo_stream.remove dom_id(@playlist_bullet) %>
-<%= turbo_stream.replace dom_id(@playlist_bullet.playlist, :dock) do %>
-  <%= render partial: "playlists/dock_stack", locals: { playlist: @playlist_bullet.playlist } %>
-<% end %>

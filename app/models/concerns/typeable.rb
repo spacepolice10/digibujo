@@ -3,7 +3,7 @@ module Typeable
 
   CARD_TYPES = [
     { title: 'All Bullets', href: '/bullets', icon: 'menu' },
-    { title: 'Triage', href: '/triage', icon: 'sparkles' },
+    { title: 'Pinned', href: '/pinned', icon: 'pin' },
     { title: 'Archived', href: '/archived', icon: 'archive' }
   ].freeze
 end

@@ -14,6 +14,6 @@ class TimelineHelperTest < ActionView::TestCase
 
   test "next_date_href builds next day path for helper" do
     date = Date.new(2026, 4, 15)
-    assert_equal triage_path(date: "2026-04-16"), next_date_href(date, path_helper: :triage_path)
+    assert_equal bullets_path(date: "2026-04-16"), next_date_href(date, path_helper: :bullets_path)
   end
 end

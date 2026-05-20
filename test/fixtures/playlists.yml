@@ -1,9 +1,0 @@
-one_playlist:
-  user: one
-  colour: "1"
-  icon: pencil
-
-two_playlist:
-  user: two
-  colour: "3"
-  icon: calendar

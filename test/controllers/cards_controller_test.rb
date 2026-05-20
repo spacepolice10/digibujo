@@ -110,7 +110,6 @@ class CardsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "a[href='#{bullets_path(date: (selected_date - 1.day).iso8601)}']"
     assert_select "a[href='#{bullets_path(date: (selected_date + 1.day).iso8601)}']"
-    assert_select "a[href='#{triage_path(date: selected_date.iso8601)}']"
   end
 
   test "bullet form prefills scheduled_on from date query param" do
