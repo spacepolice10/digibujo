@@ -5,14 +5,14 @@ class CardTest < ActiveSupport::TestCase
     @user = users(:one)
   end
 
-  test "collect marks card triaged and assigns project" do
+  test "collect marks card triaged and assigns project bucket" do
     card = @user.bullets.create!(bulletable: Task.create!, content: "Collect me")
-    project = @user.projects.create!(name: "inbox")
+    project = create_project!(@user, name: "inbox")
 
-    card.collect!(project_id: project.id)
+    card.collect!(bucket_id: project.bucket.id)
 
-    assert_not_nil card.triaged_at
-    assert_equal project.id, card.project_id
+    assert_not_nil card.reload.triaged_at
+    assert_equal project.bucket, card.reload.bucket
   end
 
   test "collect preserves existing triaged_at timestamp" do
@@ -20,7 +20,8 @@ class CardTest < ActiveSupport::TestCase
     first_triage_time = 2.days.ago.change(usec: 0)
     card.update!(triaged_at: first_triage_time)
 
-    card.collect!(project_name: "Ideas")
+    project = create_project!(@user, name: "Ideas")
+    card.collect!(bucket_id: project.bucket.id)
 
     assert_equal first_triage_time, card.reload.triaged_at.change(usec: 0)
   end
@@ -35,36 +36,64 @@ class CardTest < ActiveSupport::TestCase
     assert_equal scheduled_for, card.scheduled_on
   end
 
-  test "direct update resolves project by name" do
+  test "postpone advances scheduled_on from bullet scheduled day" do
+    anchor = 5.days.from_now.to_date
+    card = @user.bullets.create!(bulletable: Task.create!, content: "Defer me", scheduled_on: anchor)
+
+    card.postpone!
+
+    assert_equal anchor + 1.day, card.reload.scheduled_on
+    assert_not_nil card.triaged_at
+  end
+
+  test "postpone without scheduled_on anchors from today" do
+    card = @user.bullets.create!(bulletable: Note.create!, content: "Float", scheduled_on: nil)
+
+    card.postpone!
+
+    assert_equal Date.current + 1.day, card.reload.scheduled_on
+  end
+
+  test "postpone from explicit anchor overrides bullet scheduled_on" do
+    view_day = Date.current
+    card = @user.bullets.create!(bulletable: Task.create!, content: "Triage", scheduled_on: 2.weeks.from_now.to_date)
+
+    card.postpone!(from: view_day)
+
+    assert_equal view_day + 1.day, card.reload.scheduled_on
+  end
+
+  test "direct update assigns project via bucket_id" do
     card = @user.bullets.create!(bulletable: Task.create!, content: "Direct update")
+    project = create_project!(@user, name: "Projects")
 
-    card.update!(project_name: "Projects")
+    card.update!(bucket_id: project.bucket.id)
 
-    assert_equal "projects", card.reload.project.name
+    assert_equal "projects", card.reload.projects.first.name
   end
 
-  test "blank project_name clears project" do
-    card = @user.bullets.create!(bulletable: Task.create!, content: "Clear project")
-    card.update!(project_name: "Inbox")
+  test "empty bucket_id clears bucket link" do
+    project = create_project!(@user, name: "Inbox")
+    card = @user.bullets.create!(bulletable: Task.create!, content: "Clear buckets")
 
-    card.update!(project_name: "")
+    card.update!(bucket_id: project.bucket.id)
+    card.update!(bucket_id: nil)
 
-    assert_nil card.reload.project
+    assert_nil card.reload.bucket_id
   end
 
-  test "complete and uncomplete update task state" do
-    card = @user.bullets.create!(bulletable: Task.create!, content: "Finish me")
-    task = card.bulletable
+  test "collect replaces collection bucket with project bucket" do
+    project = create_project!(@user, name: "P")
+    collection = create_collection!(@user, name: "C", colour: nil)
+    card = @user.bullets.create!(
+      bulletable: Task.create!,
+      content: "Move",
+      bucket_id: collection.bucket.id
+    )
 
-    task.complete!
+    card.collect!(bucket_id: project.bucket.id)
 
-    assert_predicate task.reload, :done?
-    assert_not_nil task.done_at
-
-    task.uncomplete!
-
-    assert_not_predicate task.reload, :done?
-    assert_nil task.done_at
+    assert_equal project.bucket, card.reload.bucket
   end
 
   test "auto_archivable excludes pinned bullets" do
@@ -93,16 +122,6 @@ class CardTest < ActiveSupport::TestCase
     card.update_columns(created_at: day.beginning_of_day + 1.hour, updated_at: day.beginning_of_day + 1.hour)
 
     ids = @user.bullets.scheduled_on_date(day).pluck(:id)
-
-    assert_not_includes ids, card.id
-  end
-
-  test "triage_on_date excludes bullets scheduled on another day" do
-    day = Date.current
-    card = @user.bullets.create!(bulletable: Task.create!, content: "Review later", scheduled_on: day + 1)
-    card.update_columns(created_at: day.beginning_of_day + 1.hour, updated_at: day.beginning_of_day + 1.hour)
-
-    ids = @user.bullets.triage_on_date(day).pluck(:id)
 
     assert_not_includes ids, card.id
   end

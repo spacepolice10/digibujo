@@ -14,7 +14,7 @@ class CardsControllerTest < ActionDispatch::IntegrationTest
     assert_select ".bullet[draggable='true']", count: 0
     assert_select ".bullet[data-controller~='bullet-drag']", count: 0
     assert_select "[data-bullet-drag-id-value]", count: 0
-    assert_select ".bullet-task--marker", count: 1
+    assert_select ".bullet--task-marker", count: 1
   end
 
   test "create links an existing context card only" do
@@ -32,6 +32,30 @@ class CardsControllerTest < ActionDispatch::IntegrationTest
 
     created_card = @user.bullets.order(:created_at).last
     assert_equal context_bullet.id, created_card.context_bullet_id
+    assert_equal Date.current, created_card.scheduled_on
+  end
+
+  test "create assigns scheduled_on from date query param" do
+    selected_date = Date.current - 2.days
+
+    assert_difference("Bullet.count", 1) do
+      post bullets_path(date: selected_date.iso8601), params: {
+        date: selected_date.iso8601,
+        bullet: {
+          bulletable_type: "Note",
+          content: "Logged on that day",
+          scheduled_on: selected_date.iso8601
+        }
+      }
+    end
+
+    created = @user.bullets.order(:created_at).last
+    assert_equal selected_date, created.scheduled_on
+
+    get bullets_path(date: selected_date.iso8601)
+
+    assert_response :success
+    assert_match "Logged on that day", response.body
   end
 
   test "bullets view hides archived bullets" do
@@ -87,6 +111,16 @@ class CardsControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{bullets_path(date: (selected_date - 1.day).iso8601)}']"
     assert_select "a[href='#{bullets_path(date: (selected_date + 1.day).iso8601)}']"
     assert_select "a[href='#{triage_path(date: selected_date.iso8601)}']"
+  end
+
+  test "bullet form prefills scheduled_on from date query param" do
+    selected_date = Date.current - 3.days
+
+    get new_bullet_path(date: selected_date.iso8601)
+
+    assert_response :success
+    assert_select "input[name='bullet[scheduled_on]'][value='#{selected_date.iso8601}']"
+    assert_select "input[name='date'][value='#{selected_date.iso8601}']"
   end
 
   test "bullets pagination keeps selected date on bullets route" do

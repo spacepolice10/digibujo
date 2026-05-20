@@ -14,19 +14,21 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
     assert_select ".workspace"
   end
 
-  # No mobile User-Agent → desktop layout. Turbo-Frame header is incidental here —
-  # used so the frame element appears in the response for assertion.
   test "index renders dock on desktop (turbo-frame request)" do
-    get pinned_index_path, headers: { "Turbo-Frame" => "pinned_panel" }
+    get pinned_index_path, headers: { "Turbo-Frame" => "pinned_bullets_dock" }
     assert_response :success
-    assert_select "turbo-frame#pinned_panel"
+    assert_select "turbo-frame#pinned_bullets_dock"
     assert_select ".workspace", count: 0
   end
 
-  test "dock playlist lanes have playlist-drop controller attributes" do
-    @user.playlists.create!
-    get pinned_index_path, headers: { "Turbo-Frame" => "pinned_panel" }
-    assert_select "[data-controller~='playlist-drop']"
-    assert_select "[data-playlist-drop-url-value]"
+  test "dock renders pinned bullets list" do
+    @user.bullets.create!(
+      bulletable: Task.create!,
+      content: "Pinned bullet",
+      pinned: true
+    )
+
+    get pinned_index_path, headers: { "Turbo-Frame" => "pinned_bullets_dock" }
+    assert_select ".pinned--dock-item-link", text: /Pinned bullet/, count: 1
   end
 end
