@@ -35,29 +35,24 @@ Custom session-based auth built with an `Authentication` concern (not Devise). U
 
 | Type    | Concerns                       | Notes                              |
 |---------|--------------------------------|------------------------------------|
-| `Task`  | `Bulletable`                   | Completable + temporal; uses marker `•` |
-| `Note`  | `Bulletable`                   | Long-form/reference entry; uses marker `-` |
-| `Event` | `Bulletable`                   | Temporal (not completable); uses marker `○` |
+| `Task`  | `Bulletable`                   | Completable + temporal; composer leading `-` |
+| `Note`  | `Bulletable`                   | Long-form/reference entry; no prefix (plain line) |
+| `Event` | `Bulletable`                   | Temporal (not completable); composer leading `>` |
 
-Bullets have rich text `content` via Action Text (Trix). Optional `belongs_to :project` groups work under user-owned `Project` records (replacing the old collections/tags flow). Triage intent methods live in concerns (`Collectable#collect!`, `Schedulable#schedule!`) and update organization metadata without forcing type conversion. To add a new bulletable type: create the model, `include Bulletable`, implement `form_fields`, and register it in `Bullet`'s `delegated_type` declaration.
+Bullets have rich text `content` via Action Text (Trix). **Organization:** `Bullet` **optionally** `belongs_to :bucket` (`bullets.bucket_id` → `buckets`). A bullet is in **at most one** bucket (either a project bucket or a collection bucket), not several. There is **no** `bullets.project_id` and no virtual `project_id` on `Bullet`. A `Bucket` is a `delegated_type :bucketable` whose types include `Project` and `Collection` (each owns exactly one `Bucket`). The composer posts **`bucket_id`** for the project picker (or prefills when composing from a project/collection page). **Collect** and **schedule** intents accept **`bucket_id`**. **Destroying** a bucket **nullifies** `bullets.bucket_id` for linked bullets (`dependent: :nullify`). Intent methods in concerns (`Collectable#collect!`, `Schedulable#schedule!`, etc.) update organization metadata (`triaged_at`, `scheduled_on`, `bucket`) without forcing bullet type conversion. To add a new bulletable type: create the model, `include Bulletable`, implement `form_fields`, and register it in `Bullet`'s `delegated_type` declaration.
 
 ### Bullet Status
 `Bullet` has two independent boolean columns: `pinned` and `archived` (both `default: false, null: false`). There is no `status` enum. `Pinnable` adds a `pinned` scope and enforces a limit of 10 pinned bullets per user. `Archivable` adds an `archived` scope. The `timeline` scope returns all bullets (`all`) — pinned and archived bullets remain visible in the timeline and are distinguished by icons in the bullet partial.
 
-`Bullet` also tracks `triaged_at` (`datetime`): `nil` means not intentionally triaged yet; present means the user has processed it via triage actions such as collect or schedule.
+`Bullet` also tracks `triaged_at` (`datetime`): `nil` means no organizing intent has stamped disposition yet; present means the user applied an action (e.g. collect or schedule) that sets this timestamp.
 
-### Scheduling and triage eligibility
-Bullets use `scheduled_on` (`date`) as the primary day bucket (replacing the older `pops_on` / separate date fields). `Bullet.scheduled_on_date(date)` matches bullets explicitly scheduled on that day or created that day when `scheduled_on` is nil. `Bullet.triage_on_date(date)` further narrows to bullets that still need triage for that day (not yet triaged with a `triaged_at` falling on that calendar day). `TriageController#show` lists non-archived bullets from `triage_on_date` for the selected date (default today).
+### Scheduling and day buckets
+Bullets use `scheduled_on` (`date`) as the primary day bucket (replacing the older `pops_on` / separate date fields). `Bullet.scheduled_on_date(date)` matches bullets for that calendar day per the model rules. The timeline at `/bullets` uses this scope for the selected day (`?date=`).
 
-### Triage Workflow
-Triage is bullet-first (`/triage`) with an optional `?date=` query for day navigation. During triage, each bullet can be:
+### Organizing from the timeline
+From each bullet row (⋯ menu), users can **collect** (`POST /bullets/:bullet_id/collect` with `bucket_id`), **schedule** (`POST /bullets/:bullet_id/schedule` with `bucket_id`), **postpone** (`POST /bullets/:bullet_id/postpone`), and **archive** (`PATCH /bullets/:bullet_id/archive`). Responses use Turbo Streams where applicable, with HTML fallbacks (typically redirect to `/bullets`).
 
-- **Collect** → `Triage::CollectsController` calls `bullet.collect!(project_id:, project_name:)` to attach a project and stamp `triaged_at`
-- **Schedule** → `Triage::SchedulesController` calls `bullet.schedule!(scheduled_on:)` to set the scheduled day and stamp `triaged_at`
-- **Postpone** → `Triage::PostponesController` moves `scheduled_on` to the next day (relative to the triage date) and stamps `triaged_at`
-- **Archive** → `Triage::ArchivesController` sets `archived: true`
-
-`Collectable` and `Schedulable` are intent-focused concerns. They support triage without coupling it to bullet type switching.
+`Collectable` and `Schedulable` are intent-focused concerns; they do not force bullet type conversion.
 
 ### Sweep Rules
 `SweepCardsJob` (name unchanged) operates on `Bullet` and enforces recycling rules:
@@ -70,20 +65,17 @@ Triage is bullet-first (`/triage`) with an optional `?date=` query for day navig
 ### Analog BuJo Alignment
 The architecture is intentionally closer to analog Bullet Journal behavior:
 
-- **Rapid logging markers** are first-class (`•` Task, `-` Note, `○` Event)
-- **Daily focus** is explicit (`/bullets` shows today’s scheduled timeline; triage uses `scheduled_on` per day)
-- **Migration over rewrite** happens in triage by converting bullet type in place where needed
+- **Rapid logging markers** in the composer: leading `-` switches to Task, leading `>` to Event (stripped only when the type changes; plain line is Note)
+- **Daily focus** is explicit (`/bullets` shows the scheduled timeline for the selected day)
+- **Migration over rewrite** happens where needed by editing or changing bullet type
 - **Deferred decisions** are supported by moving `scheduled_on` forward (postpone) or collecting/scheduling into a project or date
-- **Separation of concerns** mirrors BuJo pages: today/timeline, triage, archived, pinned
+- **Separation of concerns** mirrors BuJo pages: today/timeline, archived, pinned
 
-### Streams
-`Stream` is a saved filtered view. It stores filter fields (`bulletable_type`, `sorted_by`, `date_from`, `date_to`, `projects`, plus display `icon`/`colour`) via `store_accessor :fields`. `Stream#bullets` builds a scoped query against `user.bullets`. Streams are user-owned and uniquely named.
-
-### Playlists
-Playlists reference bullets through the `playlist_cards` join model (`PlaylistCard`), which uses `bullet_id` foreign keys. Nested routes use `/playlists/:playlist_id/bullets` for add/remove.
+### Buckets and memberships
+`Bucket` belongs to a user and uses `delegated_type :bucketable` (`Project`, `Collection`). Each bullet has **zero or one** bucket via `bullets.bucket_id` (no `bullet_buckets` join table). `Project` / `Collection` rows do not store `user_id`; ownership is the bucket’s `user_id`, with `creation_user_id` on the bucketable for attribution where needed. Bucket **identity** (`name`, `colour`, `icon`) is stored on `buckets` (`name` required; `colour` / `icon` optional via `Colourable` and `Iconable`; no auto-assign). Collection bucket names are unique per user; project names may repeat. `Project` and `Collection` are thin delegated types (no identity columns); they delegate `name`, `colour`, `icon`, and colour CSS helpers to `bucket` for display. Create forms pass identity fields on the bucketable param object; controllers persist them on the bucket row. The index hub is at `GET /buckets` (linked from the app header). **Streams** (saved filtered views) were removed; use projects, collections, and timeline filters instead.
 
 ### Turbo Streams
-All mutating actions (`create`, `update`, `destroy`) in bullets and triage sub-controllers respond to `format.turbo_stream` for inline updates without page reloads. HTML fallback redirects are always provided.
+Mutating bullet actions (`create`, `update`, `destroy`, and bullet sub-resources) respond to `format.turbo_stream` for inline updates where applicable. HTML fallback redirects are provided.
 
 ### Routes
 
@@ -110,33 +102,32 @@ DELETE /bullets/:id                          → bullets#destroy
 # Bullet sub-resources (Turbo Stream responses)
 PATCH  /bullets/:bullet_id/pin               → bullets/pins#update
 PATCH  /bullets/:bullet_id/archive           → bullets/archives#update
+POST   /bullets/:bullet_id/postpone          → bullets/postpones#create
+POST   /bullets/:bullet_id/collect           → bullets/collects#create
+POST   /bullets/:bullet_id/schedule          → bullets/schedules#create
 POST   /bullets/:bullet_id/complete          → bullets/completes#create
 DELETE /bullets/:bullet_id/complete          → bullets/completes#destroy
 PATCH  /bullets/:bullet_id/publish           → bullets/publishes#update
-GET    /bullets/:bullet_id/playlist_picker   → bullets/playlist_pickers#show
 
 # Search
 resource :search, only: :show
 
-# Triage (optional ?date=ISO8601 on GET)
-GET    /triage                               → triage#show
-POST   /triage/bullets/:bullet_id/collect    → triage/collects#create
-POST   /triage/bullets/:bullet_id/schedule   → triage/schedules#create
-POST   /triage/bullets/:bullet_id/postpone   → triage/postpones#create
-POST   /triage/bullets/:bullet_id/archive    → triage/archives#create
-
-# Playlists
-resources :playlists, only: %i[index show create destroy]
-  (+ nested bullets POST/DELETE, reorder PATCH)
-
-# Projects & streams
-GET    /indexing                             → streams#index (alias)
-GET    /projects                             → projects#index (JSON suggestions)
-resources :projects, only: %i[show destroy]
-resources :streams                           → streams CRUD
+# Buckets, projects, collections
+GET    /buckets                              → buckets#show (sidebar shell; turbo-frame target)
+GET    /projects                             → projects#index (HTML + JSON picker; JSON includes `bucket_id`)
+GET    /projects/new                         → projects#new
+POST   /projects                             → projects#create (creates project + bucket; JSON returns `bucket_id`)
+GET    /projects/:id                         → projects#show
+DELETE /projects/:id                         → projects#destroy
+GET    /collections                          → collections#index
+GET    /collections/new                      → collections#new
+POST   /collections                          → collections#create
+GET    /collections/:id                      → collections#show
+DELETE /collections/:id                      → collections#destroy
 
 # Other pages
 resource  :history, only: :show
+GET    /activities                           → activities#index (?bullet_id= optional)
 resource  :calendar, only: :show
 resources :pinned, only: :index
 resources :archived, only: :index
