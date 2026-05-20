@@ -1,28 +1,56 @@
+# frozen_string_literal: true
+
 class ProjectsController < ApplicationController
   before_action :set_project, only: %i[show destroy]
 
   def index
-    @query = params[:q].to_s.strip.downcase
-    @projects = if @query.present?
-                     Current.user.projects.where("name LIKE ?", "#{@query}%").limit(10)
+    respond_to do |format|
+      format.html { @projects = Current.user.projects.order(created_at: :desc) }
+      format.json do
+        query = params[:q].to_s.strip.downcase
+        projects = if query.present?
+                     Current.user.projects.where("buckets.name LIKE ?", "#{query}%")
                    else
                      Current.user.projects
                    end
-    @exact_match = @projects.any? { |project| project.name == @query }
-    render json: { projects: @projects.map { |project| { id: project.id, name: project.name, colour: project.colour } } }
+        render json: { projects: projects.map { |p| project_json(p) } }
+      end
+    end
+  end
+
+  def new
+    @project = Project.new
+  end
+
+  def create
+    @project = Project.new
+    if save_project_with_bucket(@project)
+      respond_to do |format|
+        format.html { redirect_to project_path(@project) }
+        format.json { render json: { project: project_json(@project.reload) }, status: :created }
+      end
+    else
+      @project.name = project_params[:name]
+      respond_to do |format|
+        format.html { render :new, status: :unprocessable_entity }
+        format.json { render json: { errors: @project.errors.full_messages }, status: :unprocessable_entity }
+      end
+    end
   end
 
   def show
-    scope = Current.user.bullets.includes(:project).where(project: @project)
+    scope = Current.user.bullets.where(bucket_id: @project.bucket.id)
+      .where(archived: false).distinct
     scope = scope.where(bulletable_type: selected_type) if selected_type.present?
-    @bullets = set_page_and_extract_portion_from(scope.order(created_at: :desc), per_page: [5, 15, 30, 50])
+    @bullets = set_page_and_extract_portion_from(scope, per_page: [5, 15, 30, 50])
   end
 
   def destroy
-    @project.destroy
+    dom = helpers.dom_id(@project)
+    @project.bucket.destroy
     respond_to do |format|
-      format.turbo_stream { render turbo_stream: turbo_stream.remove(@project) }
-      format.html { redirect_to indexing_path }
+      format.turbo_stream { render turbo_stream: turbo_stream.remove(dom) }
+      format.html { redirect_to buckets_path }
     end
   end
 
@@ -34,5 +62,35 @@ class ProjectsController < ApplicationController
 
   def selected_type
     @selected_type ||= params[:type].to_s.classify.presence_in(Bullet.bulletable_types)
+  end
+
+  def project_params
+    params.require(:project).permit(:name, :colour, :icon)
+  end
+
+  def save_project_with_bucket(project)
+    ActiveRecord::Base.transaction do
+      project.save!
+      Current.user.buckets.create!(
+        bucketable: project,
+        name: project_params[:name],
+        colour: project_params[:colour],
+        icon: project_params[:icon]
+      )
+    end
+    true
+  rescue ActiveRecord::RecordInvalid => e
+    project.errors.merge!(e.record.errors) if e.record.is_a?(Bucket)
+    false
+  end 
+
+  def project_json(project)
+    {
+      id: project.id,
+      bucket_id: project.bucket.id,
+      name: project.name,
+      colour: project.colour,
+      icon: project.icon
+    }
   end
 end

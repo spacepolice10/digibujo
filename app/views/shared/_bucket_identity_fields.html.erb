@@ -1,0 +1,35 @@
+<%# locals: (form:, name_hint: nil) %>
+<div class="form-group">
+  <%= form.label :name, class: "form-label" %>
+  <% if name_hint.present? %>
+    <small class="form-hint"><%= name_hint %></small>
+  <% end %>
+  <%= form.text_field :name, class: "form-input", required: true %>
+</div>
+<div class="form-group">
+  <span class="form-label">Colour</span>
+  <small class="form-hint">Choose a colour and icon for your bucket to help you identify it.</small>
+  <div class="colour-picker--form" role="radiogroup" aria-label="Bucket colour">
+    <% Colourable::COLOUR_KEYS.each do |key| %>
+      <label class="colour-option">
+        <%= form.radio_button :colour, key %>
+        <span class="colour-option__label">
+          <span class="colour-option__swatch" style="background: var(--model-color-<%= key %>-bg)"></span>
+        </span>
+      </label>
+    <% end %>
+  </div>
+</div>
+<div class="form-group">
+  <span class="form-label">Icon</span>
+  <div class="icon-picker" role="radiogroup" aria-label="Bucket icon">
+    <% Iconable::ICON_KEYS.each do |key| %>
+      <label class="icon-option">
+        <%= form.radio_button :icon, key %>
+        <span class="icon-option__label">
+          <i class="icon" style="--icon-mask: var(--icon-<%= key %>)" aria-hidden="true"></i>
+        </span>
+      </label>
+    <% end %>
+  </div>
+</div>

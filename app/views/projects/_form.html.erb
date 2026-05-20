@@ -1,0 +1,6 @@
+<%= form_with model: project, class: "form" do |f| %>
+  <%= render "shared/bucket_identity_fields",
+        form: f,
+        name_hint: "This is the name of the project. It could be a product, service, complex idea or anything that takes series of actions to complete." %>
+  <%= f.submit class: "button-primary" %>
+<% end %>

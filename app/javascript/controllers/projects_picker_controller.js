@@ -4,7 +4,7 @@ const RECENT_STORAGE_KEY = "projects_picker_recent"
 const SEARCH_DEBOUNCE_MS = 180
 
 export default class extends Controller {
-  static targets = ["search", "suggestions", "hiddenId", "hiddenName", "triggerText", "clearButton"]
+  static targets = ["search", "suggestions", "hiddenBucketId", "triggerText", "triggerIcon", "clearButton"]
   static values = {
     project: { type: Object, default: {} },
     selected: { type: Object, default: {} }
@@ -60,14 +60,40 @@ export default class extends Controller {
   }
 
   choose(event) {
-    const { id, name, colour } = event.currentTarget.dataset
-    this.selectedValue = { id: this._parseId(id), name, colour: colour || null }
+    const { id, name, colour, icon, bucketId } = event.currentTarget.dataset
+    this.selectedValue = {
+      id: this._parseId(id),
+      bucketId: this._parseId(bucketId),
+      name,
+      colour: colour || null,
+      icon: icon || null
+    }
     this._applySelectionAndClose()
   }
 
-  createProject(event) {
+  async createProject(event) {
     const name = event.currentTarget.dataset.name
-    this.selectedValue = { id: null, name, colour: null }
+    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute("content")
+    const response = await fetch("/projects", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        ...(token ? { "X-CSRF-Token": token } : {})
+      },
+      body: JSON.stringify({ project: { name } })
+    }).catch(() => null)
+    if (!response || !response.ok) return
+    const data = await response.json().catch(() => null)
+    if (!data?.project) return
+    const p = data.project
+    this.selectedValue = {
+      id: this._parseId(p.id),
+      bucketId: this._parseId(p.bucket_id),
+      name: p.name,
+      colour: p.colour || null,
+      icon: p.icon || null
+    }
     this._applySelectionAndClose()
   }
 
@@ -75,7 +101,7 @@ export default class extends Controller {
     this._applySelectionAndClose()
   }
 
-  submitOnEnter(event) {
+  async submitOnEnter(event) {
     if (event.key != "Enter") return
     if (this.suggestionsTarget.querySelector(".is-active")) return
 
@@ -87,8 +113,29 @@ export default class extends Controller {
     const exact = this._suggested.find(item => item.name == name)
     if (exact) {
       this.selectedValue = this._normalizeProject(exact)
-    } else {
-      this.selectedValue = { id: null, name, colour: null }
+      this._applySelectionAndClose()
+      return
+    }
+    const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute("content")
+    const response = await fetch("/projects", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        ...(token ? { "X-CSRF-Token": token } : {})
+      },
+      body: JSON.stringify({ project: { name } })
+    }).catch(() => null)
+    if (!response || !response.ok) return
+    const data = await response.json().catch(() => null)
+    if (!data?.project) return
+    const p = data.project
+    this.selectedValue = {
+      id: this._parseId(p.id),
+      bucketId: this._parseId(p.bucket_id),
+      name: p.name,
+      colour: p.colour || null,
+      icon: p.icon || null
     }
     this._applySelectionAndClose()
   }
@@ -99,7 +146,13 @@ export default class extends Controller {
 
   _normalizeProject(project) {
     if (!project || !project.name) return {}
-    return { id: this._parseId(project.id), name: project.name, colour: project.colour || null }
+    return {
+      id: this._parseId(project.id),
+      bucketId: this._parseId(project.bucketId),
+      name: project.name,
+      colour: project.colour || null,
+      icon: project.icon || null
+    }
   }
 
   _parseId(value) {
@@ -141,27 +194,33 @@ export default class extends Controller {
   _loadRecent() {
     try {
       const raw = localStorage.getItem(RECENT_STORAGE_KEY)
-      if (!raw) return []
+      if (!raw) return { item: null, list: [] }
       const parsed = JSON.parse(raw)
-      if (!parsed || !parsed.name) return []
-      return [this._normalizeProject(parsed)]
+      if (!parsed || !parsed.name) return { item: null, list: [] }
+      const normalized = this._normalizeProject(parsed)
+      return { item: normalized, list: [normalized] }
     } catch {
-      return []
+      return { item: null, list: [] }
     }
   }
 
   _renderSuggestions() {
     const fragment = document.createDocumentFragment()
-    const selected = this.selectedValue.name ? [this.selectedValue] : []
+    const { item: recentItem, list: recentList } = this._loadRecent()
     const q = this.searchTarget.value.trim()
 
     if (!q) {
-      this._appendSection(fragment, "selected:", selected, true)
-      const recent = this._loadRecent().filter(item => item.name != this.selectedValue.name)
-      this._appendSection(fragment, "recent:", recent, false)
+      if (this.selectedValue.name) {
+        this._appendSection(fragment, "selected:", [this.selectedValue])
+      }
+      const recentFiltered = recentList.filter(
+        item => item.name != this.selectedValue.name
+      )
+      this._appendSection(fragment, "recent:", recentFiltered)
     } else {
       this._appendSection(fragment, "suggested:", this._suggested)
-      const hasExactMatch = this.selectedValue.name == q || this._suggested.some(item => item.name == q)
+      const hasExactMatch =
+        this.selectedValue.name == q || this._suggested.some(item => item.name == q)
       if (!hasExactMatch) {
         fragment.appendChild(this._createCreateItem(q))
       }
@@ -193,7 +252,9 @@ export default class extends Controller {
     element.dataset.action = "click->projects-picker#choose"
     element.dataset.name = entry.name
     element.dataset.id = entry.id || ""
+    element.dataset.bucketId = entry.bucketId || entry.bucket_id || ""
     element.dataset.colour = entry.colour || ""
+    element.dataset.icon = entry.icon || ""
 
     const checkbox = document.createElement("input")
     checkbox.type = "checkbox"
@@ -219,12 +280,15 @@ export default class extends Controller {
 
   _updateText() {
     this.triggerTextTarget.textContent = this.projectValue.name ? this.projectValue.name : "Project"
+    if (this.hasTriggerIconTarget) {
+      const icon = this.projectValue.icon || "tag"
+      this.triggerIconTarget.style.setProperty("--icon-mask", `var(--icon-${icon})`)
+    }
   }
 
   _applySelectionAndClose() {
     this.projectValue = { ...this.selectedValue }
-    this.hiddenIdTarget.value = this.selectedValue.id ? String(this.selectedValue.id) : ""
-    this.hiddenNameTarget.value = this.selectedValue.name ? this.selectedValue.name : ""
+    this.hiddenBucketIdTarget.value = this.selectedValue.bucketId ? String(this.selectedValue.bucketId) : ""
     this._saveRecent(this.selectedValue)
     this.searchTarget.value = ""
     this._suggested = []

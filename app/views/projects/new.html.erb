@@ -1,0 +1,18 @@
+<div class="bucket--layout">
+
+
+  <div class="bucket--header">
+    <div class="bucket--header-actions">
+      <%= link_to projects_path, class: "button-secondary" do %>
+    <i
+      class="icon"
+      style="--icon-mask: var(--icon-arrow-left)"
+      aria-hidden="true"
+    ></i>
+Projects
+  <% end %>
+  </div>
+    <h2>New project</h2>
+  </div>
+  <%= render "form", project: @project %>
+</div>

@@ -1,0 +1,12 @@
+<li class="bucket--list-item">
+  <%= link_to collection_path(collection), class: "button-secondary", data: { turbo_frame: "_top" }, **bucket_link_style(collection) do %>
+    <% if collection.icon.present? %>
+      <i
+        class="icon"
+        style="--icon-mask: <%= bucket_icon_mask(collection.bucket) %>"
+        aria-hidden="true"
+      ></i>
+    <% end %>
+    <%= collection.name %>
+  <% end %>
+</li>

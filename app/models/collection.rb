@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class Project < ApplicationRecord
+class Collection < ApplicationRecord
   include Bucketable
 end

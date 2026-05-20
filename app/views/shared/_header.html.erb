@@ -1,0 +1,24 @@
+<header class="header">
+  <%= link_to "Index", buckets_path, class: "button-secondary" %>
+  <%= link_to "Daily log", bullets_path,
+        class: "button-secondary",
+        data: {
+          controller: "hotkey",
+          hotkey: "Ctrl+D",
+          action: "keydown.ctrl+d@document->hotkey#click keydown.meta+d@document->hotkey#click"
+        },
+        aria: { label: "Daily log (Ctrl + D)" } %>
+  <%= link_to "Monthly log", monthly_log_path,
+        class: "button-secondary" %>
+  <%= link_to search_path,
+        class: "button-secondary",
+        data: {
+          controller: "hotkey",
+          hotkey: "Ctrl+K",
+          action: "keydown.ctrl+k@document->hotkey#click keydown.meta+k@document->hotkey#click"
+        },
+        aria: { label: "Search (Ctrl + K)" } do %>
+    <i class="icon" style="--icon-mask: var(--icon-search)" aria-hidden="true"></i>
+    Search (Ctrl + K)
+  <% end %>
+</header>

@@ -1,0 +1,12 @@
+<div class="bucket--layout">
+  <div class="bucket--header">
+    <div class="bucket--header-actions">
+      <%= link_to buckets_path, class: "button-secondary" do %>
+        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+        Collections
+      <% end %>
+    </div>
+    <h2 class="collection">New collection</h2>
+  </div>
+  <%= render "form", collection: @collection %>
+</div>

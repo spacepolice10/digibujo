@@ -1,0 +1,4 @@
+<%= form_with model: collection, class: "form" do |f| %>
+  <%= render "shared/bucket_identity_fields", form: f, name_hint: "This is the name of the collection. It could be a collection of tasks, notes, events or anything that should be grouped together and stored for a longer period of time." %>
+  <%= f.submit class: "button-primary" %>
+<% end %>

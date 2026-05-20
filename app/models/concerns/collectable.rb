@@ -1,10 +1,26 @@
+# frozen_string_literal: true
+
 module Collectable
   extend ActiveSupport::Concern
 
-  def collect!(project_id: nil, project_name: nil)
+  def collect!(bucket_id: nil)
     attrs = { triaged_at: triaged_at || Time.current }
-    attrs[:project_id] = project_id unless project_id.nil?
-    attrs[:project_name] = project_name unless project_name.nil?
-    update!(attrs)
+    transaction do
+      if bucket_id.present?
+        bucket = user.buckets.find(bucket_id)
+        update!(attrs.merge(bucket: bucket))
+      else
+        update!(attrs)
+        purge_project_bucket_links!
+      end
+    end
+  end
+
+  private
+
+  def purge_project_bucket_links!
+    return unless bucket&.bucketable_type == 'Project'
+
+    update!(bucket_id: nil)
   end
 end
