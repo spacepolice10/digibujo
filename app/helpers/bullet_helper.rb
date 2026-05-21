@@ -1,4 +1,8 @@
 module BulletHelper
+  def bullet_type_label(bullet)
+    bullet.bulletable_type
+  end
+
   def bullet_preview_trix(bullet)
     body = bullet.content.body.to_s
     return "".html_safe if body.empty?

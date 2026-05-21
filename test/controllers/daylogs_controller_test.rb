@@ -1,0 +1,58 @@
+# frozen_string_literal: true
+
+require "test_helper"
+
+class DaylogsControllerTest < ActionDispatch::IntegrationTest
+  setup do
+    @user = users(:one)
+    sign_in_as @user
+  end
+
+  test "daylog without date shows today" do
+    card = @user.bullets.create!(bulletable: Task.create!, content: "Today card")
+
+    get daylog_path
+
+    assert_response :success
+    assert_match card.content.to_plain_text, response.body
+  end
+
+  test "daylog with year month day shows that day" do
+    selected_date = Date.current - 2.days
+    travel_to selected_date.in_time_zone.change(hour: 10) do
+      @user.bullets.create!(bulletable: Task.create!, content: "That day")
+    end
+    @user.bullets.create!(bulletable: Task.create!, content: "Today noise")
+
+    get daylog_on_path(year: selected_date.year, month: selected_date.month, day: selected_date.day)
+
+    assert_response :success
+    assert_match "That day", response.body
+    assert_no_match "Today noise", response.body
+  end
+
+  test "invalid calendar date returns not found" do
+    get daylog_on_path(year: Date.current.year, month: 2, day: 30)
+
+    assert_response :not_found
+  end
+
+  test "daylog renders date navigation links" do
+    selected_date = Date.current - 2.days
+
+    get daylog_on_path(year: selected_date.year, month: selected_date.month, day: selected_date.day)
+
+    assert_response :success
+    assert_select "a[href='#{daylog_path_to(selected_date - 1.day)}']"
+    assert_select "a[href='#{daylog_path_to(selected_date + 1.day)}']"
+  end
+
+  test "root shows today daylog" do
+    card = @user.bullets.create!(bulletable: Task.create!, content: "Root today")
+
+    get root_path
+
+    assert_response :success
+    assert_match card.content.to_plain_text, response.body
+  end
+end

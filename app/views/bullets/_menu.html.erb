@@ -19,14 +19,19 @@
         <span class="bullet-dropdown-desc"><%= bullet.pinned? ? "Remove from quick access" : "Keep at top for quick access" %></span>
       </span>
     <% end %>
-    <%= button_to bullet_postpone_path(bullet), class: "bullet-dropdown-item", data: { "grid-navigation-target" => "item" } do %>
+    <% if ["Task", "Event"].include?(bullet.bulletable_type) %>
+    <%= button_to postpone_next_day_bullet_pop_path(bullet),
+          params: (defined?(@selected_date) && @selected_date) ? { display_on: @selected_date.iso8601 } : {},
+          class: "bullet-dropdown-item",
+          data: { "grid-navigation-target" => "item" } do %>
       <span class="bullet-dropdown-icon bullet-dropdown-icon--postpone">
         <span class="icon" style="--icon-mask: var(--icon-arrow-up)"></span>
       </span>
       <span class="bullet-dropdown-text">
         <span class="bullet-dropdown-label">Postpone</span>
-        <span class="bullet-dropdown-desc">Move to the next day</span>
-      </span>
+          <span class="bullet-dropdown-desc">Move to the next day</span>
+        </span>
+      <% end %>
     <% end %>
     <details class="dropdown bullet-menu--intent">
       <summary class="bullet-dropdown-item" data-grid-navigation-target="item">
@@ -55,36 +60,6 @@
         <% end %>
       </div>
     </details>
-    <% if ["Task", "Event"].include?(bullet.bulletable_type) %>
-      <details class="dropdown bullet-menu--intent">
-        <summary class="bullet-dropdown-item" data-grid-navigation-target="item">
-          <span class="bullet-dropdown-icon bullet-dropdown-icon--schedule">
-            <span class="icon" style="--icon-mask: var(--icon-calendar)"></span>
-          </span>
-          <span class="bullet-dropdown-text">
-            <span class="bullet-dropdown-label">Schedule</span>
-            <span class="bullet-dropdown-desc">Pick a day (and optional project)</span>
-          </span>
-        </summary>
-        <div class="dropdown-body bullet-menu--intent-panel">
-          <%= form_with url: bullet_schedule_path(bullet) do %>
-            <% if defined?(@selected_date) && @selected_date %>
-              <%= hidden_field_tag :display_on, @selected_date.iso8601 %>
-            <% end %>
-            <%= render "bullets/fields/date_picker", bullet: bullet, input_name: "scheduled_on", dialog_id: dom_id(bullet, :menu_schedule_date_picker) %>
-            <%= render "bullets/fields/projects_picker",
-                  bullet: bullet,
-                  field_name: "bucket_id",
-                  dialog_id: dom_id(bullet, :menu_schedule_projects_picker),
-                  search_id: dom_id(bullet, :menu_schedule_projects_search) %>
-            <%= button_tag type: :submit, class: "button-secondary bullet-menu--intent-submit" do %>
-              <span class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></span>
-              Schedule
-            <% end %>
-          <% end %>
-        </div>
-      </details>
-    <% end %>
     <%= button_to bullet_archive_path(bullet), method: :patch, class: "bullet-dropdown-item", data: { "grid-navigation-target" => "item" } do %>
       <span class="bullet-dropdown-icon bullet-dropdown-icon--archive">
         <span class="icon" style="--icon-mask: var(--icon-archive)"></span>
@@ -92,24 +67,6 @@
       <span class="bullet-dropdown-text">
         <span class="bullet-dropdown-label"><%= bullet.archived? ? "Unarchive" : "Archive" %></span>
         <span class="bullet-dropdown-desc"><%= bullet.archived? ? "Restore to Timeline" : "Stored in archive for 30 days" %></span>
-      </span>
-    <% end %>
-    <%= link_to edit_bullet_path(bullet), data: { turbo_frame: "_top", "grid-navigation-target" => "item" }, class: "bullet-dropdown-item" do %>
-      <span class="bullet-dropdown-icon bullet-dropdown-icon--edit">
-        <span class="icon" style="--icon-mask: var(--icon-pencil)"></span>
-      </span>
-      <span class="bullet-dropdown-text">
-        <span class="bullet-dropdown-label">Edit</span>
-        <span class="bullet-dropdown-desc">Open and edit bullet content</span>
-      </span>
-    <% end %>
-    <%= button_to bullet_path(bullet), method: :delete, class: "bullet-dropdown-item bullet-dropdown-item--danger", data: { "grid-navigation-target" => "item" }, form: { data: { turbo_confirm: "Are you sure?" } } do %>
-      <span class="bullet-dropdown-icon bullet-dropdown-icon--delete">
-        <span class="icon" style="--icon-mask: var(--icon-trash)"></span>
-      </span>
-      <span class="bullet-dropdown-text">
-        <span class="bullet-dropdown-label">Delete</span>
-        <span class="bullet-dropdown-desc">Permanently remove this bullet</span>
       </span>
     <% end %>
   </div>

@@ -1,8 +1,15 @@
 class Note < ApplicationRecord
   include Bulletable
 
-  def self.icon   = 'line-dashed'
-  def self.colour = '5'
-  def self.name   = 'Note'
-  def self.marker = ''
+  def temporal?
+    false
+  end
+
+  def completable?
+    false
+  end
+
+  def name
+    bullet.content.to_plain_text.strip.presence || "Untitled"
+  end
 end

@@ -2,11 +2,16 @@ import { Controller } from "@hotwired/stimulus";
 
 const DEFAULT_TYPE = "note";
 
+const BULLET_TYPES = {
+  task: { bulletableType: "Task", marker: "-" },
+  note: { bulletableType: "Note", marker: "" },
+  event: { bulletableType: "Event", marker: ">" },
+};
+
 export default class extends Controller {
-  static targets = ["typeIcon", "typeMenu", "typeForm"];
+  static targets = ["typeMenu", "typeForm"];
   static values = {
     type: { type: String, default: DEFAULT_TYPE },
-    types: Object,
   };
 
   connect() {
@@ -92,7 +97,7 @@ export default class extends Controller {
   }
 
   markerEntries() {
-    return Object.entries(this.typesValue)
+    return Object.entries(BULLET_TYPES)
       .map(([key, config]) => ({ key, marker: config.marker }))
       .filter((entry) => entry.marker)
       .sort((a, b) => b.marker.length - a.marker.length || b.marker.localeCompare(a.marker));
@@ -107,22 +112,12 @@ export default class extends Controller {
   }
 
   renderType() {
-    const config = this.typesValue[this.typeValue];
+    const config = BULLET_TYPES[this.typeValue];
     if (!config) return;
 
     if (this.hasTypeFormTarget) {
       this.typeFormTarget.value = config.bulletableType;
-    }
-
-    if (this.hasTypeIconTarget) {
-      this.typeIconTarget.style.setProperty(
-        "--icon-mask",
-        `var(--icon-${config.icon})`,
-      );
-      this.typeIconTarget.style.setProperty(
-        "color",
-        `var(--model-color-${config.colour})`,
-      );
+      this.typeFormTarget.dataset.currentType = this.typeValue;
     }
 
     const radio = this.element.querySelector(

@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   include Authentication
+  include LogPathHelper
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
@@ -10,6 +11,14 @@ class ApplicationController < ActionController::Base
   around_action :set_timezone
 
   private
+
+  def daylog_redirect_date
+    return Date.current if params[:display_on].blank?
+
+    Date.iso8601(params[:display_on].to_s)
+  rescue ArgumentError
+    Date.current
+  end
 
   def set_timezone(&)
     timezone_name = cookies[:timezone].presence

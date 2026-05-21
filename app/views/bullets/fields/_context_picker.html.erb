@@ -1,7 +1,7 @@
 <% field_name = local_assigns.fetch(:field_name, "bullet[context_bullet_id]") %>
 <% initial_id = local_assigns.fetch(:initial_id, bullet.context_bullet_id) %>
 <% initial_name = local_assigns.fetch(:initial_name, bullet.context_bullet&.bulletable&.name.to_s) %>
-<% initial_context = { id: initial_id, name: initial_name, icon: bullet.context_bullet&.icon }.compact %>
+<% initial_context = { id: initial_id, name: initial_name, type: bullet.context_bullet&.bulletable_type&.downcase }.compact %>
 <% dialog_id = dom_id(bullet, :context_picker_dialog) %>
 <% search_id = dom_id(bullet, :context_picker_search) %>
 <div class="context-picker"

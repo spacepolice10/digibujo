@@ -1,5 +1,5 @@
 <li class="bucket--list-item">
-  <%= link_to collection_path(collection), class: "button-secondary", data: { turbo_frame: "_top" }, **bucket_link_style(collection) do %>
+  <%= link_to collection_path(collection), class: "button-secondary", **bucket_link_attributes(collection) do %>
     <% if collection.icon.present? %>
       <i
         class="icon"

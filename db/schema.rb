@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_16_143000) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_21_120000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -83,8 +83,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_16_143000) do
     t.datetime "created_at", null: false
     t.date "ends_date"
     t.boolean "pinned", default: false, null: false
+    t.date "pops_on"
     t.string "public_code"
-    t.date "scheduled_on"
     t.datetime "triaged_at"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
@@ -95,7 +95,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_16_143000) do
     t.index ["user_id", "archived"], name: "index_bullets_on_user_id_and_archived"
     t.index ["user_id", "archives_on"], name: "index_bullets_on_user_id_and_archives_on"
     t.index ["user_id", "pinned"], name: "index_bullets_on_user_id_and_pinned"
-    t.index ["user_id", "scheduled_on"], name: "index_bullets_on_user_id_and_scheduled_on"
+    t.index ["user_id", "pops_on"], name: "index_bullets_on_user_id_and_pops_on"
     t.index ["user_id", "triaged_at"], name: "index_bullets_on_user_id_and_triaged_at"
     t.index ["user_id"], name: "index_bullets_on_user_id"
     t.index ["user_id"], name: "index_bullets_on_user_id_and_status"

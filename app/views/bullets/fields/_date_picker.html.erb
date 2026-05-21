@@ -1,5 +1,5 @@
-<% base_date = local_assigns.fetch(:base_date, bullet.scheduled_on) %>
-<% input_name = local_assigns.fetch(:input_name, "bullet[scheduled_on]") %>
+<% base_date = local_assigns.fetch(:base_date, bullet.pops_on) %>
+<% input_name = local_assigns.fetch(:input_name, "bullet[pops_on]") %>
 <% days_labels = Date::ABBR_DAYNAMES.map { |d| d[0] } %>
 <% month_names = Date::ABBR_MONTHNAMES.compact %>
 <% dialog_id = local_assigns.fetch(:dialog_id, dom_id(bullet, :date_picker_dialog)) %>

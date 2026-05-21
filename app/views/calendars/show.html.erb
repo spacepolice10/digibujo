@@ -42,7 +42,7 @@
           <ul class="future-log__events">
             <% month[:bullets].each do |bullet| %>
               <li class="future-log__event future-log__event--<%= bullet.bulletable_type.downcase %>">
-                <span class="future-log__event-date"><%= bullet.scheduled_on.day %></span>
+                <span class="future-log__event-date"><%= bullet.pops_on.day %></span>
                 <%= link_to bullet.title, bullet_path(bullet), class: "future-log__event-title", data: { turbo_frame: "_top" } %>
               </li>
             <% end %>

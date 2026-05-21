@@ -14,11 +14,8 @@ module Bulletable
 
   def temporal?    = false
   def completable? = false
-  def icon   = self.class.icon
-  def colour = self.class.colour
-  def marker = self.class.marker
-  def name   = self.class.name
   def excerpt = ''
+  def name = ''
 
   def capabilities
     { temporal: temporal?, completable: completable? }

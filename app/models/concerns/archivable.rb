@@ -1,18 +1,11 @@
 module Archivable
   extend ActiveSupport::Concern
 
-  ARCHIVE_RETENTION_DAYS = 14
-  UNTRIAGED_ARCHIVE_DAYS = 7
+  ARCHIVE_RETENTION_DAYS = 30
+  UNTRIAGED_ARCHIVE_DAYS = 30
 
   included do
     scope :archived,         -> { where(archived: true) }
-    scope :auto_archivable,  lambda {
-      where(archived: false, pinned: false).where(
-        "archives_on <= :today OR (triaged_at IS NULL AND created_at <= :cutoff)",
-        today: Date.current,
-        cutoff: UNTRIAGED_ARCHIVE_DAYS.days.ago.end_of_day
-      )
-    }
     scope :expired_archived, lambda {
       archived.where(pinned: false).where("archives_on <= ?", ARCHIVE_RETENTION_DAYS.days.ago.to_date)
     }
@@ -20,6 +13,7 @@ module Archivable
 
   def archive!
     update!(archived: true, archives_on: Date.current)
+    BulletActivityRecorder.record_archived!(bullet: self)
   end
 
   def unarchive!

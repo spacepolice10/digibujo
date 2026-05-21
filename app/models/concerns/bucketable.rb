@@ -7,7 +7,7 @@ module Bucketable
     has_one :bucket, as: :bucketable, inverse_of: :bucketable, touch: true
     has_many :bullets, through: :bucket
 
-    delegate :colour, :icon, :colour_variable, :colour_bg_variable, to: :bucket, allow_nil: true
+    delegate :colour, :icon, to: :bucket, allow_nil: true
   end
 
   def name

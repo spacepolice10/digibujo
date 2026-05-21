@@ -1,19 +1,15 @@
-<% content_for(:title) { @bullet.name } %>
+<% content_for(:title) { @bullet.bulletable.name } %>
 <article class="bullet-show">
   <header class="bullet-show-header">
     <div class="bullet-show-meta">
-      <span class="bullet-type"><%= @bullet.name %></span>
+      <span class="bullet-type" data-bullet-type="<%= @bullet.bulletable_type.downcase %>"><%= bullet_type_label(@bullet) %></span>
     </div>
     <% if @bullet.bucket.present? %>
       <div class="bullet-tags">
         <% bucket = @bullet.bucket %>
           <% b = bucket.bucketable %>
           <% if b %>
-          <% if b.colour.present? %>
-            <span class="pill" style="background: <%= b.colour_bg_variable %>"><%= b.name %></span>
-          <% else %>
-            <span class="pill"><%= b.name %></span>
-          <% end %>
+          <span class="pill"<% if bucket.colour.present? %> data-bucket-colour="<%= bucket.colour %>"<% end %>><%= b.name %></span>
           <% end %>
       </div>
     <% end %>

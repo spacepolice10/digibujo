@@ -42,4 +42,37 @@
     position: sticky;
     bottom: 8px;
   }
+
+  .button-secondary[data-bucket-colour="1"] {
+    background: var(--model-color-1-bg);
+    border-color: color-mix(in oklch, var(--model-color-1) 40%, var(--color-stroke-base));
+  }
+  .button-secondary[data-bucket-colour="2"] {
+    background: var(--model-color-2-bg);
+    border-color: color-mix(in oklch, var(--model-color-2) 40%, var(--color-stroke-base));
+  }
+  .button-secondary[data-bucket-colour="3"] {
+    background: var(--model-color-3-bg);
+    border-color: color-mix(in oklch, var(--model-color-3) 40%, var(--color-stroke-base));
+  }
+  .button-secondary[data-bucket-colour="4"] {
+    background: var(--model-color-4-bg);
+    border-color: color-mix(in oklch, var(--model-color-4) 40%, var(--color-stroke-base));
+  }
+  .button-secondary[data-bucket-colour="5"] {
+    background: var(--model-color-5-bg);
+    border-color: color-mix(in oklch, var(--model-color-5) 40%, var(--color-stroke-base));
+  }
+  .button-secondary[data-bucket-colour="6"] {
+    background: var(--model-color-6-bg);
+    border-color: color-mix(in oklch, var(--model-color-6) 40%, var(--color-stroke-base));
+  }
+  .button-secondary[data-bucket-colour="7"] {
+    background: var(--model-color-7-bg);
+    border-color: color-mix(in oklch, var(--model-color-7) 40%, var(--color-stroke-base));
+  }
+  .button-secondary[data-bucket-colour="8"] {
+    background: var(--model-color-8-bg);
+    border-color: color-mix(in oklch, var(--model-color-8) 40%, var(--color-stroke-base));
+  }
 }

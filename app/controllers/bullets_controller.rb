@@ -1,18 +1,9 @@
 class BulletsController < ApplicationController
   before_action :set_bullet, only: %i[show edit update destroy]
-  before_action :set_selected_date, only: %i[index new create]
-
-  def index
-    daily_log = Current.user.bullets.daily_log(@selected_date)
-
-    @bullets = set_page_and_extract_portion_from(
-      daily_log,
-      per_page: [15, 30, 50]
-    )
-  end
+  before_action :set_selected_date, only: %i[new create]
 
   def new
-    @bullet = Bullet.new(scheduled_on: @selected_date)
+    @bullet = Bullet.new(pops_on: @selected_date)
   end
 
   def create
@@ -38,6 +29,7 @@ class BulletsController < ApplicationController
 
   def update
     if @bullet.update(bullet_params)
+      BulletActivityRecorder.record_updated!(bullet: @bullet)
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to bullet_path(@bullet) }
@@ -60,7 +52,7 @@ class BulletsController < ApplicationController
     @bullet.destroy
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_to bullets_path }
+      format.html { redirect_to daylog_path_to(@bullet.pops_on || Date.current) }
     end
   end
 
@@ -77,7 +69,7 @@ class BulletsController < ApplicationController
   def bullet_params
     params.require(:bullet).permit(
       :content,
-      :scheduled_on,
+      :pops_on,
       :context_bullet_id,
       :bulletable_type,
       :bucket_id,
@@ -89,11 +81,11 @@ class BulletsController < ApplicationController
     permitted = bullet_params
     type_name = permitted[:bulletable_type].to_s
     attributes = permitted.except(:bulletable_type, 'bulletable_type')
-    attributes[:scheduled_on] = resolve_scheduled_on(attributes[:scheduled_on])
+    attributes[:pops_on] = resolve_pops_on(attributes[:pops_on])
     Current.user.bullets.new(attributes.merge(bulletable: type_name.constantize.new))
   end
 
-  def resolve_scheduled_on(explicit)
+  def resolve_pops_on(explicit)
     return parse_date_param(explicit) if explicit.present?
     return parse_date_param(params[:date]) if params[:date].present?
 

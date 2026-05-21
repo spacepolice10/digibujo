@@ -1,10 +1,5 @@
 class Task < ApplicationRecord
-  include TracksBulletActivity, Bulletable
-
-  def self.icon   = 'square'
-  def self.colour = '2'
-  def self.name   = 'Task'
-  def self.marker = '-'
+  include Bulletable
 
   def temporal?
     true
@@ -14,16 +9,14 @@ class Task < ApplicationRecord
     true
   end
 
-  def done?
-    done
-  end
-
   def complete!
     update!(done: true, done_at: Time.current)
+    BulletActivityRecorder.record_completed!(bullet: bullet)
   end
 
   def uncomplete!
     update!(done: false, done_at: nil)
+    BulletActivityRecorder.record_uncompleted!(bullet: bullet)
   end
 
   def name

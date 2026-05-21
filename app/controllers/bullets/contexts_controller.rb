@@ -24,8 +24,7 @@ class Bullets::ContextsController < ApplicationController
     {
       id: bullet.id,
       name: bullet.bulletable.name,
-      type: bullet.bulletable_type.downcase,
-      icon: bullet.icon
+      type: bullet.bulletable_type.downcase
     }
   end
 

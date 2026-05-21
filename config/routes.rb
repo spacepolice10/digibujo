@@ -6,8 +6,15 @@ Rails.application.routes.draw do
     end
   end
 
+  # Logs
+  resource :daylog, only: :show, controller: "daylogs"
+  get "daylog/:year/:month/:day", to: "daylogs#show", as: :daylog_on
+
+  resource :monthlylog, only: :show, controller: "monthlylogs"
+  get "monthlylog/:year/:month", to: "monthlylogs#show", as: :monthlylog_on
+
   # Bullet
-  scope 'bullets', module: :bullets do
+  scope "bullets", module: :bullets do
     resources :fields, only: :show
     resources :contexts, only: :index
   end
@@ -17,25 +24,25 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :bullets, concerns: %i[completable] do
+  resources :bullets, except: :index, concerns: %i[completable] do
     scope module: :bullets do
       resource :pin,             only: :update
       resource :archive,         only: :update
-      resource :postpone,        only: :create
-      resource :collect,         only: :create
-      resource :schedule,        only: :create
+      resource :collect,         only: %i[create destroy]
+      resource :pop, only: %i[create destroy] do
+        post :postpone_next_day
+        post :postpone_next_week
+      end
       resource :publish,         only: :update
     end
   end
 
   resource :search, only: :show
-
   resource :buckets
   resources :projects
   resources :collections
 
   # Views
-  resource  :monthly_log, only: :show
   resource  :history, only: :show
   resources :activities, only: :index
   resource  :calendar,  only: :show
@@ -46,11 +53,11 @@ Rails.application.routes.draw do
   resources :published, param: :code
 
   # Progressive Web App (manifest + scaffolded worker from app/views/pwa/*)
-  get 'manifest', to: 'rails/pwa#manifest', as: :pwa_manifest
-  get 'service-worker', to: 'rails/pwa#service_worker', as: :pwa_service_worker
+  get "manifest", to: "rails/pwa#manifest", as: :pwa_manifest
+  get "service-worker", to: "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Health check
-  get 'up' => 'rails/health#show', as: :rails_health_check
+  get "up" => "rails/health#show", as: :rails_health_check
 
-  root 'bullets#index'
+  root "daylogs#show"
 end

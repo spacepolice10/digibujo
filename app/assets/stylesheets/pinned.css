@@ -1,6 +1,6 @@
 @layer components {
   .pinned--footer {
-    position: fixed;
+    position: relative;
     bottom: 0;
     display: flex;
     align-items: flex-end;
@@ -118,8 +118,17 @@
 
   .pinned--dock-item-marker {
     flex-shrink: 0;
+    min-width: 1ch;
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-strong);
+  }
+
+  .pinned--dock-item[data-bullet-type="task"] .pinned--dock-item-marker::before {
+    content: "-";
+  }
+
+  .pinned--dock-item[data-bullet-type="event"] .pinned--dock-item-marker::before {
+    content: ">";
   }
 
   .pinned--dock-item-text {

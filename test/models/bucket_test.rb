@@ -23,14 +23,12 @@ class BucketTest < ActiveSupport::TestCase
     @bucket.update!(colour: "3", icon: "calendar")
     assert_equal "3", @bucket.colour
     assert_equal "calendar", @bucket.icon
-    assert_equal "var(--model-color-3-bg)", @bucket.colour_bg_variable
   end
 
   test "allows nil colour and icon" do
     @bucket.update!(colour: nil, icon: nil)
     assert_nil @bucket.colour
     assert_nil @bucket.icon
-    assert_nil @bucket.colour_bg_variable
   end
 
   test "rejects invalid colour" do
@@ -48,7 +46,6 @@ class BucketTest < ActiveSupport::TestCase
     assert_equal "alpha", @project.name
     assert_equal "2", @project.colour
     assert_equal "pin", @project.icon
-    assert_equal @bucket.colour_bg_variable, @project.colour_bg_variable
   end
 
   test "collection names are unique per user" do

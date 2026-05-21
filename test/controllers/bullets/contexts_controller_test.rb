@@ -20,10 +20,10 @@ class Bullets::ContextsControllerTest < ActionDispatch::IntegrationTest
     assert_equal target.id, data["bullets"][0]["id"]
   end
 
-  test "exclude_id removes current card from results" do
-    card = @user.bullets.create!(bulletable: Task.create!, content: "Current card")
+  test "exclude_id removes current bullet from results" do
+    bullet = @user.bullets.create!(bulletable: Task.create!, content: "Current bullet")
 
-    get "/bullets/contexts.json", params: { q: "current", exclude_id: card.id }
+    get "/bullets/contexts.json", params: { q: "current", exclude_id: bullet.id }
 
     assert_response :success
     data = JSON.parse(response.body)

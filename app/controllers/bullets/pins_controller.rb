@@ -5,12 +5,12 @@ class Bullets::PinsController < ApplicationController
     if @bullet.update(pinned: !@bullet.pinned?)
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to bullets_path }
+        format.html { redirect_to daylog_path_to(daylog_redirect_date) }
       end
     else
       respond_to do |format|
         format.turbo_stream { render :update, status: :unprocessable_entity }
-        format.html { redirect_to bullets_path, alert: @bullet.errors.full_messages.to_sentence }
+        format.html { redirect_to daylog_path_to(daylog_redirect_date), alert: @bullet.errors.full_messages.to_sentence }
       end
     end
   end

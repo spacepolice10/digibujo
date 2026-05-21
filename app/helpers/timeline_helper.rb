@@ -7,11 +7,11 @@ module TimelineHelper
     date + 1.day
   end
 
-  def prev_date_href(date, path_helper:)
-    public_send(path_helper, date: prev_date(date).iso8601)
+  def prev_date_href(date)
+    daylog_path_to(prev_date(date))
   end
 
-  def next_date_href(date, path_helper:)
-    public_send(path_helper, date: next_date(date).iso8601)
+  def next_date_href(date)
+    daylog_path_to(next_date(date))
   end
 end

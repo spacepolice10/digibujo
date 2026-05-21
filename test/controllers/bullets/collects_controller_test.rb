@@ -14,7 +14,7 @@ class Bullets::CollectsControllerTest < ActionDispatch::IntegrationTest
 
     post bullet_collect_path(card), params: { bucket_id: project.bucket.id }
 
-    assert_redirected_to bullets_path
+    assert_redirected_to daylog_path
     assert_equal project.bucket, card.reload.bucket
   end
 
@@ -30,7 +30,7 @@ class Bullets::CollectsControllerTest < ActionDispatch::IntegrationTest
 
     post bullet_collect_path(card), params: { bucket_id: bucket_id }
 
-    assert_redirected_to bullets_path
-    assert_equal "scratchpad", card.reload.projects.first.name
+    assert_redirected_to daylog_path
+    assert_equal "scratchpad", card.reload.bucket.name
   end
 end

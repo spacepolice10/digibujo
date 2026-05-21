@@ -1,15 +1,5 @@
 <% type_options = Bullet.bulletable_types %>
 <% selected_type_name = bullet.bulletable_type.presence_in(type_options) || "Note" %>
-<% selected_bulletable = selected_type_name.constantize %>
-<% bullet_types = type_options.index_with { |name|
-  klass = name.constantize
-  {
-    bulletableType: name,
-    icon: klass.icon,
-    colour: klass.colour,
-    marker: klass.marker
-  }
-}.transform_keys(&:downcase) %>
 <% type_descriptions = {
   "Note" => "Capture an idea or detail",
   "Task" => "Track an actionable item",
@@ -18,12 +8,16 @@
 <turbo-frame id="bullet_form" class="w-full">
 <%= form_with model: bullet, class: "bullet-form", data: {
       controller: "bullet-form persist",
-      bullet_form_types_value: bullet_types.to_json,
       bullet_form_type_value: selected_type_name.downcase,
       action: "keydown.enter->bullet-form#submitByReturn keydown.ctrl+enter->bullet-form#submitByReturn trix-change->bullet-form#detectType trix-initialize->bullet-form#detectType"
     } do |f| %>
-<%= f.hidden_field :bulletable_type, value: selected_type_name, data: {bullet_form_target: "typeForm"} %>
-<% form_date = bullet.scheduled_on.presence || (defined?(@selected_date) && @selected_date) %>
+<%= f.hidden_field :bulletable_type,
+      value: selected_type_name,
+      data: {
+        bullet_form_target: "typeForm",
+        current_type: selected_type_name.downcase
+      } %>
+<% form_date = bullet.pops_on.presence || (defined?(@selected_date) && @selected_date) %>
 <% if form_date %>
   <%= hidden_field_tag :date, form_date.iso8601 %>
 <% end %>
@@ -31,7 +25,6 @@
   <div class="bullet-form-composer">
       <%= render "bullets/form_type_menu",
             bullet: bullet,
-            selected_bulletable: selected_bulletable,
             type_descriptions: type_descriptions,
             type_options: type_options %>
 <div class="bullet-form-editor">
@@ -42,6 +35,7 @@
 <div class="bullet-form-footer">
   <%= f.button type: "submit", class: "button-primary dump-button" do %>
     <i class="icon" style="--icon-mask: var(--icon-arrow-up)" aria-hidden="true"></i>
+    Dump
   <% end %>
 </div>
   </div>

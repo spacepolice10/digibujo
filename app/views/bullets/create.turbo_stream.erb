@@ -2,4 +2,4 @@
 
 <%= turbo_stream.remove "bullet_form" %>
 
-<%= turbo_stream.after dom_id(@bullet), partial: "form", locals: { bullet: Bullet.new(scheduled_on: @selected_date) } %>
+<%= turbo_stream.after dom_id(@bullet), partial: "form", locals: { bullet: Bullet.new(pops_on: @selected_date) } %>

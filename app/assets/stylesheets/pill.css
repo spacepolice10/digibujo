@@ -113,5 +113,38 @@
       font-size: var(--font-size-base);
       color: inherit;
     }
+
+    &[data-bucket-colour="1"] {
+      background: var(--model-color-1-bg);
+      color: var(--model-color-1);
+    }
+    &[data-bucket-colour="2"] {
+      background: var(--model-color-2-bg);
+      color: var(--model-color-2);
+    }
+    &[data-bucket-colour="3"] {
+      background: var(--model-color-3-bg);
+      color: var(--model-color-3);
+    }
+    &[data-bucket-colour="4"] {
+      background: var(--model-color-4-bg);
+      color: var(--model-color-4);
+    }
+    &[data-bucket-colour="5"] {
+      background: var(--model-color-5-bg);
+      color: var(--model-color-5);
+    }
+    &[data-bucket-colour="6"] {
+      background: var(--model-color-6-bg);
+      color: var(--model-color-6);
+    }
+    &[data-bucket-colour="7"] {
+      background: var(--model-color-7-bg);
+      color: var(--model-color-7);
+    }
+    &[data-bucket-colour="8"] {
+      background: var(--model-color-8-bg);
+      color: var(--model-color-8);
+    }
   }
 }

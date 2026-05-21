@@ -4,10 +4,7 @@
           popovertarget="bullet-type-menu-<%= bullet.object_id %>"
           style="anchor-name: --bullet-type-menu-<%= bullet.object_id %>"
           aria-label="Choose bullet type">
-    <i class="icon"
-       style="--icon-mask: var(--icon-<%= selected_bulletable.icon %>)"
-       data-bullet-form-target="typeIcon"
-       aria-hidden="true"></i>
+    <i class="icon bullet-form-type-trigger-icon" aria-hidden="true"></i>
   </button>
 
   <div id="bullet-type-menu-<%= bullet.object_id %>"
@@ -20,15 +17,14 @@
        popover
        style="position-anchor: --bullet-type-menu-<%= bullet.object_id %>">
     <% type_options.each do |type_name| %>
-      <% bulletable = type_name.constantize %>
       <button type="button"
               class="bullet-form-type-menu-item"
               data-grid-navigation-target="item"
               data-bullet-form-type-param="<%= type_name.downcase %>"
               data-action="bullet-form#selectType">
-        <i class="icon" style="--icon-mask: var(--icon-<%= bulletable.icon %>)" aria-hidden="true"></i>
+        <i class="icon bullet-form-type-menu-item-icon" aria-hidden="true"></i>
         <span>
-          <span><%= bulletable.name %></span>
+          <span><%= type_name %></span>
           <span class="bullet-form-type-menu-note"><%= type_descriptions[type_name] %></span>
         </span>
       </button>

@@ -1,17 +1,7 @@
 <% type_options = Bullet.bulletable_types %>
 <% selected_type_name = bullet.bulletable_type.presence_in(type_options) || "Note" %>
-<% bullet_types = type_options.index_with { |name|
-  klass = name.constantize
-  {
-    bulletableType: name,
-    icon: klass.icon,
-    colour: klass.colour,
-    marker: klass.marker
-  }
-}.transform_keys(&:downcase) %>
 <%= form_with model: bullet, class: "bullet-form", data: {
       controller: "bullet-form persist",
-      bullet_form_types_value: bullet_types.to_json,
       bullet_form_type_value: selected_type_name.downcase,
       action: "keydown.enter->bullet-form#submitByReturn keydown.meta+enter->bullet-form#submitByReturn keydown.ctrl+enter->bullet-form#submitByReturn trix-change->bullet-form#detectType trix-initialize->bullet-form#detectType"
     } do |f| %>
@@ -21,8 +11,6 @@
   <legend class="sr-only">Bullet type</legend>
 
   <% type_options.each do |type_name| %>
-    <% bulletable = type_name.constantize %>
-
     <label
       data-bullet-type="<%= type_name.downcase %>"
       class="button-secondary bullet-form-mobile-type-option"
@@ -35,13 +23,9 @@
               bullet_form_type_param: type_name.downcase
             } %>
 
-      <span
-        class="bullet-form-type-option-marker icon bullet-<%= type_name.downcase %>--marker"
-        style="--icon-mask: var(--icon-<%= bulletable.icon %>)"
-        aria-hidden="true"
-      ></span>
+      <span class="bullet-form-type-option-marker icon" aria-hidden="true"></span>
 
-      <span class="bullet-form-type-option-name"><%= bulletable.name %></span>
+      <span class="bullet-form-type-option-name"><%= type_name %></span>
     </label>
   <% end %>
 </fieldset>

@@ -7,6 +7,10 @@
 @layer base {
   html,
   body {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
     font-family: "JetBrains Mono", monospace;
     font-size: var(--font-size-base);
     background: var(--color-bg-base);
@@ -87,10 +91,11 @@
       border-radius: var(--radius-strong);
     }
   }
+
   footer {
-    @media (width >= 800px) {
-      position: fixed;
-      bottom: 0;
-    }
+    margin-top: auto;
+    position: sticky;
+    bottom: var(--spacing-vertical);
+    width: 100%;
   }
 }

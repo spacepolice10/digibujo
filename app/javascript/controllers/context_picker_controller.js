@@ -89,7 +89,11 @@ export default class extends Controller {
 
   _normalizeContext(context) {
     if (!context || !context.name) return {}
-    return { id: this._parseId(context.id), name: context.name, icon: context.icon || "line-dashed" }
+    return {
+      id: this._parseId(context.id),
+      name: context.name,
+      type: context.type || "note"
+    }
   }
 
   _parseId(value) {
@@ -161,7 +165,7 @@ export default class extends Controller {
     element.dataset.action = "click->context-picker#choose"
     element.dataset.name = entry.name
     element.dataset.id = entry.id || ""
-    element.dataset.icon = entry.icon || "line-dashed"
+    element.dataset.bulletType = entry.type || "note"
 
     const checkbox = document.createElement("input")
     checkbox.type = "checkbox"

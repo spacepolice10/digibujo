@@ -9,10 +9,10 @@ class Bullets::ArchivesController < ApplicationController
     end
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_to bullets_path }
+      format.html { redirect_to daylog_path_to(daylog_redirect_date) }
     end
   rescue ActiveRecord::RecordInvalid
-    redirect_to bullets_path, alert: @bullet.errors.full_messages.to_sentence
+    redirect_to daylog_path_to(daylog_redirect_date), alert: @bullet.errors.full_messages.to_sentence
   end
 
   private

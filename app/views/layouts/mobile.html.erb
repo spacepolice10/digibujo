@@ -35,7 +35,7 @@
       <%= link_to pinned_index_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'pinned'}", aria: { label: "Workspace" } do %>
         <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
       <% end %>
-      <%= link_to bullets_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'bullets'}", aria: { label: "Today" } do %>
+      <%= link_to daylog_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'daylogs'}", aria: { label: "Today" } do %>
         <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
       <% end %>
     </nav>
