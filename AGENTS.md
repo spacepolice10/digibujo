@@ -39,7 +39,7 @@ Custom session-based auth built with an `Authentication` concern (not Devise). U
 | `Note`  | `Bulletable`                   | Long-form/reference entry; no prefix (plain line) |
 | `Event` | `Bulletable`                   | Temporal (not completable); composer leading `>` |
 
-Bullets have rich text `content` via Action Text (Trix). **Organization:** `Bullet` **optionally** `belongs_to :bucket` (`bullets.bucket_id` → `buckets`). A bullet is in **at most one** bucket (either a project bucket or a collection bucket), not several. There is **no** `bullets.project_id` and no virtual `project_id` on `Bullet`. A `Bucket` is a `delegated_type :bucketable` whose types include `Project` and `Collection` (each owns exactly one `Bucket`). The composer posts **`bucket_id`** for the project picker (or prefills when composing from a project/collection page). The **collect** intent accepts **`bucket_id`** (`POST` to attach, `DELETE` to detach). **Destroying** a bucket **nullifies** `bullets.bucket_id` for linked bullets (`dependent: :nullify`). Intent methods in concerns (`Collectable#collect!` / `#uncollect!`, `Poppable#pop!` / `#unpop!` / `#postpone_next_day!` / `#postpone_next_week!`, etc.) update organization metadata (`triaged_at`, `pops_on`, `bucket`) without forcing bullet type conversion. To add a new bulletable type: create the model, `include Bulletable`, implement `form_fields`, and register it in `Bullet`'s `delegated_type` declaration.
+Bullets have rich text `content` via Action Text (Trix). **Organization:** `Bullet` **optionally** `belongs_to :bucket` (`bullets.bucket_id` → `buckets`). A bullet is in **at most one** bucket (either a project bucket or a collection bucket), not several. There is **no** `bullets.project_id` and no virtual `project_id` on `Bullet`. A `Bucket` is a `delegated_type :bucketable` whose types include `Project` and `Collection` (each owns exactly one `Bucket`). The composer posts **`bucket_id`** for the project picker (or prefills when composing from a project/collection page). The **collect** intent accepts **`bucket_id`** (`POST` to attach, `DELETE` to detach). **Destroying** a bucket **nullifies** `bullets.bucket_id` for linked bullets (`dependent: :nullify`). Intent methods in concerns (`Collectable#collect!` / `#uncollect!`, `Poppable#pop!` / `#unpop!`, etc.) update organization metadata (`triaged_at`, `pops_on`, `bucket`) without forcing bullet type conversion. To add a new bulletable type: create the model, `include Bulletable`, implement `form_fields`, and register it in `Bullet`'s `delegated_type` declaration.
 
 ### Bullet Status
 `Bullet` has two independent boolean columns: `pinned` and `archived` (both `default: false, null: false`). There is no `status` enum. `Pinnable` adds a `pinned` scope and enforces a limit of 10 pinned bullets per user. `Archivable` adds an `archived` scope. The `timeline` scope returns all bullets (`all`) — pinned and archived bullets remain visible in the timeline and are distinguished by icons in the bullet partial.
@@ -50,7 +50,7 @@ Bullets have rich text `content` via Action Text (Trix). **Organization:** `Bull
 Bullets use `pops_on` (`date`) as the primary day bucket: which daily log page the bullet appears on. `Bullet.pops_on_date(date)` matches bullets for that calendar day per the model rules. The daily log is at `/daylog` (today) or `/daylog/:year/:month/:day`; use `daylog_path_to(date)` in views and controllers.
 
 ### Organizing from the timeline
-From each bullet row (⋯ menu), users can **collect** (`POST /bullets/:bullet_id/collect` with `bucket_id`, `DELETE` to detach), **pop** (`POST /bullets/:bullet_id/pop` with `pops_on`, `DELETE` to clear), **postpone** (`POST .../pop/postpone_next_day` or `postpone_next_week`, optional `display_on` anchor), and **archive** (`PATCH /bullets/:bullet_id/archive`). Responses use Turbo Streams where applicable, with HTML fallbacks (typically redirect to the daylog for `display_on`, the bullet’s `pops_on`, or today).
+From each bullet row (⋯ menu), users can **collect** (`POST /bullets/:bullet_id/collect` with `bucket_id`, `DELETE` to detach), **pop** (`POST /bullets/:bullet_id/pop` with `pops_on`, `DELETE` to clear), and **archive** (`PATCH /bullets/:bullet_id/archive`). **Postpone** in the UI sends the same `POST /pop` with a client-computed `pops_on` (e.g. viewing day + 1). Activity records `popped` only; reports infer moves from `pops_on` changes. Responses use Turbo Streams where applicable, with HTML fallbacks (typically redirect to the daylog for the new `pops_on` or today).
 
 `Collectable` and `Poppable` are intent-focused concerns; they do not force bullet type conversion.
 
@@ -111,8 +111,6 @@ POST   /bullets/:bullet_id/collect           → bullets/collects#create
 DELETE /bullets/:bullet_id/collect           → bullets/collects#destroy
 POST   /bullets/:bullet_id/pop               → bullets/pops#create
 DELETE /bullets/:bullet_id/pop               → bullets/pops#destroy
-POST   /bullets/:bullet_id/pop/postpone_next_day  → bullets/pops#postpone_next_day
-POST   /bullets/:bullet_id/pop/postpone_next_week → bullets/pops#postpone_next_week
 POST   /bullets/:bullet_id/complete          → bullets/completes#create
 DELETE /bullets/:bullet_id/complete          → bullets/completes#destroy
 PATCH  /bullets/:bullet_id/publish           → bullets/publishes#update

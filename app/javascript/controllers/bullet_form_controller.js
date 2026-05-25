@@ -3,8 +3,8 @@ import { Controller } from "@hotwired/stimulus";
 const DEFAULT_TYPE = "note";
 
 const BULLET_TYPES = {
-  task: { bulletableType: "Task", marker: "-" },
-  note: { bulletableType: "Note", marker: "" },
+  task: { bulletableType: "Task", marker: "." },
+  note: { bulletableType: "Note", marker: "-" },
   event: { bulletableType: "Event", marker: ">" },
 };
 
@@ -15,7 +15,6 @@ export default class extends Controller {
   };
 
   connect() {
-    this.hadContent = false;
     this.renderType();
     this._onSubmit = this.prepareSubmit.bind(this);
     this.element.addEventListener("submit", this._onSubmit);
@@ -74,33 +73,30 @@ export default class extends Controller {
       }
       return;
     }
-
-    const trimmed = text.trim();
-    if (!trimmed) {
-      if (this.hadContent && this.typeValue != DEFAULT_TYPE) {
-        this.typeValue = DEFAULT_TYPE;
-      }
-      this.hadContent = false;
-      return;
-    }
-
-    this.hadContent = true;
   }
 
   leadingMarkerMatch(text) {
     const trimmed = text.trimStart();
-    const entry = this.markerEntries().find((e) => trimmed.startsWith(e.marker));
+    const entry = this.markerEntries().find((e) =>
+      trimmed.startsWith(e.marker),
+    );
     if (!entry) return null;
 
     const leadingWhitespace = text.length - trimmed.length;
-    return { key: entry.key, removeCount: leadingWhitespace + entry.marker.length };
+    return {
+      key: entry.key,
+      removeCount: leadingWhitespace + entry.marker.length,
+    };
   }
 
   markerEntries() {
     return Object.entries(BULLET_TYPES)
       .map(([key, config]) => ({ key, marker: config.marker }))
       .filter((entry) => entry.marker)
-      .sort((a, b) => b.marker.length - a.marker.length || b.marker.localeCompare(a.marker));
+      .sort(
+        (a, b) =>
+          b.marker.length - a.marker.length || b.marker.localeCompare(a.marker),
+      );
   }
 
   stripLeadingMarker(removeCount) {

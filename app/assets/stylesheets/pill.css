@@ -6,145 +6,82 @@
     margin-bottom: var(--spacing-vertical-half);
   }
 
-  .pill {
+  .pill,
+  .pill--1,
+  .pill--2,
+  .pill--3,
+  .pill--4,
+  .pill--5,
+  .pill--6,
+  .pill--7,
+  .pill--8 {
     display: inline-flex;
+    justify-content: center;
     align-items: center;
-    height: var(--icon-size-base);
     gap: var(--spacing-vertical-half);
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    background: var(--model-color-1-bg);
-    color: var(--model-color-1);
-    border: 1px solid;
-    border-radius: var(--radius-base);
+    border-radius: var(--radius-strong);
+    font-family: inherit;
     font-size: var(--font-size-subtle);
-    font-weight: var(--font-weight-base);
+    white-space: nowrap;
+    flex-shrink: 0;
+    text-decoration: none;
+    cursor: default;
+    border: 1px solid var(--color-stroke-base);
+    background: transparent;
+    color: var(--color-fg-subtle);
+  }
 
-    &.pill--date,
-    &.pill--type,
-    &.pill--status {
-      background: var(--color-bg-subtle);
-      border: 1px solid var(--color-stroke-base);
-      font-weight: var(--font-weight-base);
-    }
+  .pill--1 {
+    color: var(--model-color-1);
+    border-color: var(--model-color-1);
+    background: var(--model-color-1-bg);
+  }
 
-    &.pill--type .icon,
-    &.pill--status .icon,
-    .icon {
-      width: var(--font-size-subtle);
-      height: var(--font-size-subtle);
-    }
+  .pill--2 {
+    color: var(--model-color-2);
+    border-color: var(--model-color-2);
+    background: var(--model-color-2-bg);
+  }
 
-    &.pill--type[data-value="task"] {
-      color: var(--model-color-2);
-    }
-    &.pill--type[data-value="event"] {
-      color: var(--model-color-6);
-    }
-    &.pill--type[data-value="note"] {
-      color: var(--color-fg-warn);
-    }
+  .pill--3 {
+    color: var(--model-color-3);
+    border-color: var(--model-color-3);
+    background: var(--model-color-3-bg);
+  }
 
-    &.pill--type:has(input:checked)[data-value="task"] {
-      background: color-mix(
-        in oklch,
-        var(--model-color-2-bg) 35%,
-        var(--color-bg-base)
-      );
-      border-color: color-mix(
-        in oklch,
-        var(--model-color-2) 45%,
-        var(--color-stroke-base)
-      );
-    }
-    &.pill--type:has(input:checked)[data-value="event"] {
-      background: color-mix(
-        in oklch,
-        var(--model-color-6-bg) 35%,
-        var(--color-bg-base)
-      );
-      border-color: color-mix(
-        in oklch,
-        var(--model-color-6) 45%,
-        var(--color-stroke-base)
-      );
-    }
-    &.pill--type:has(input:checked)[data-value="note"] {
-      background: var(--color-bg-warn);
-      border-color: var(--color-fg-warn);
-    }
+  .pill--4 {
+    color: var(--model-color-4);
+    border-color: var(--model-color-4);
+    background: var(--model-color-4-bg);
+  }
 
-    &.pill--status {
-      padding-inline: var(--spacing-vertical-half);
-    }
+  .pill--5 {
+    color: var(--model-color-5);
+    border-color: var(--model-color-5);
+    background: var(--model-color-5-bg);
+  }
 
-    &.pill--future-scheduled {
-      color: var(--model-color-6);
-      border-color: color-mix(
-        in oklch,
-        var(--model-color-6) 40%,
-        var(--color-stroke-base)
-      );
-      background: color-mix(
-        in oklch,
-        var(--model-color-6-bg) 35%,
-        var(--color-bg-base)
-      );
-    }
+  .pill--6 {
+    color: var(--model-color-6);
+    border-color: var(--model-color-6);
+    background: var(--model-color-6-bg);
+  }
 
-    &.pill--migrated {
-      color: var(--model-color-5);
-      border-color: color-mix(
-        in oklch,
-        var(--model-color-5) 40%,
-        var(--color-stroke-base)
-      );
-      background: color-mix(
-        in oklch,
-        var(--model-color-5-bg) 35%,
-        var(--color-bg-base)
-      );
-    }
+  .pill--7 {
+    color: var(--model-color-7);
+    border-color: var(--model-color-7);
+    background: var(--model-color-7-bg);
+  }
 
-    button {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0;
-      font-size: var(--font-size-base);
-      color: inherit;
-    }
+  .pill--8 {
+    color: var(--model-color-8);
+    border-color: var(--model-color-8);
+    background: var(--model-color-8-bg);
+  }
 
-    &[data-bucket-colour="1"] {
-      background: var(--model-color-1-bg);
-      color: var(--model-color-1);
-    }
-    &[data-bucket-colour="2"] {
-      background: var(--model-color-2-bg);
-      color: var(--model-color-2);
-    }
-    &[data-bucket-colour="3"] {
-      background: var(--model-color-3-bg);
-      color: var(--model-color-3);
-    }
-    &[data-bucket-colour="4"] {
-      background: var(--model-color-4-bg);
-      color: var(--model-color-4);
-    }
-    &[data-bucket-colour="5"] {
-      background: var(--model-color-5-bg);
-      color: var(--model-color-5);
-    }
-    &[data-bucket-colour="6"] {
-      background: var(--model-color-6-bg);
-      color: var(--model-color-6);
-    }
-    &[data-bucket-colour="7"] {
-      background: var(--model-color-7-bg);
-      color: var(--model-color-7);
-    }
-    &[data-bucket-colour="8"] {
-      background: var(--model-color-8-bg);
-      color: var(--model-color-8);
-    }
+  .pill .icon {
+    width: var(--icon-size-subtle);
+    height: var(--icon-size-subtle);
   }
 }

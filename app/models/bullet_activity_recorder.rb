@@ -2,10 +2,6 @@
 
 class BulletActivityRecorder
   class << self
-    def record_postponed!(bullet:)
-      record!(bullet:, action: "postponed")
-    end
-
     def record_updated!(bullet:)
       record!(bullet:, action: "updated")
     end

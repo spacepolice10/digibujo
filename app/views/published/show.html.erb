@@ -9,7 +9,7 @@
         <% bucket = @bullet.bucket %>
           <% b = bucket.bucketable %>
           <% if b %>
-          <span class="pill"<% if bucket.colour.present? %> data-bucket-colour="<%= bucket.colour %>"<% end %>><%= b.name %></span>
+          <span class="<%= ["pill", bucket.colour.present? ? "pill--#{bucket.colour}" : nil].compact.join(" ") %>"><%= b.name %></span>
           <% end %>
       </div>
     <% end %>

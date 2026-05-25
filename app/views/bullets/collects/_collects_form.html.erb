@@ -1,0 +1,35 @@
+    <details class="dropdown bullet-menu--intent">
+      <summary class="bullet-dropdown-item" data-grid-navigation-target="item">
+        <span class="bullet-dropdown-icon bullet-dropdown-icon--collect">
+          <span class="icon" style="--icon-mask: var(--icon-arrow-left)"></span>
+        </span>
+
+        <span class="bullet-dropdown-text">
+          <span class="bullet-dropdown-label">Save to project</span>
+          <span class="bullet-dropdown-desc">Attach a project without leaving</span>
+        </span>
+      </summary>
+
+      <div class="dropdown-body bullet-menu--intent-panel">
+        <%= form_with url: bullet_collect_path(bullet) do %>
+          <% if defined?(selected_date) && selected_date %>
+            <%= hidden_field_tag :display_on, selected_date.iso8601 %>
+          <% end %>
+
+          <%= render "bullets/fields/projects_picker",
+                bullet: bullet,
+                field_name: "bucket_id",
+                dialog_id: dom_id(bullet, :menu_collect_projects_picker),
+                search_id: dom_id(bullet, :menu_collect_projects_search) %>
+
+          <%= button_tag type: :submit, class: "button-secondary bullet-menu--intent-submit" do %>
+            <span
+              class="icon"
+              style="--icon-mask: var(--icon-arrow-left)"
+              aria-hidden="true"
+            ></span>
+            Save to project
+          <% end %>
+        <% end %>
+      </div>
+    </details>

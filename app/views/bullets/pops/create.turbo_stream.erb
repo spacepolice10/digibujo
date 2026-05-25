@@ -1,0 +1,3 @@
+<%= turbo_stream.append @bullet do %>
+  <%= render "pops_notice", bullet: @bullet, previous_pops_on: @previous_pops_on, pops_on: @bullet.pops_on %>
+<% end %>

@@ -6,7 +6,7 @@ class MonthlylogsController < ApplicationController
     return unless @anchor
 
     @bullets = set_page_and_extract_portion_from(
-      Current.user.bullets.monthly_log(@anchor),
+      Current.user.bullets.monthlylog(@anchor),
       per_page: [5, 15, 30, 50]
     )
   end

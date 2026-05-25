@@ -1,19 +1,19 @@
 module Pinnable
   extend ActiveSupport::Concern
 
-  PIN_LIMIT = 10
+  MAXIMUM_PINNED_BULLETS = 10
 
   included do
     scope :pinned, -> { where(pinned: true) }
-    validate :pin_limit_not_exceeded, if: :pinned?
+    validate :less_than_maximum_pinned_bullets, if: :pinned?
   end
 
   private
 
-  def pin_limit_not_exceeded
+  def less_than_maximum_pinned_bullets
     return unless pinned_changed?(to: true)
-    if user.bullets.pinned.where.not(id: id).count >= PIN_LIMIT
-      errors.add(:base, "Cannot pin more than #{PIN_LIMIT} bullets")
+    if Current.user.bullets.pinned.where.not(id: id).count >= MAXIMUM_PINNED_BULLETS
+      errors.add(:base, "Cannot pin more than #{MAXIMUM_PINNED_BULLETS} bullets")
     end
   end
 end

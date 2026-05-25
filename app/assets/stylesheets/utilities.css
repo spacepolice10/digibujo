@@ -1,4 +1,18 @@
 @layer utilities {
+  *:has(.covering) {
+    position: relative;
+    pointer-events: none;
+    & > .covering {
+      pointer-events: auto;
+    }
+  }
+  .covering {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
   .flex {
     display: flex;
     align-items: center;
@@ -89,6 +103,10 @@
     opacity: var(--opacity-half);
   }
 
+  .fade-side-in {
+    animation: fade-side-in 0.15s ease-in-out;
+  }
+
   /* ── Animation utilities ─────────────────────── */
 
   @keyframes spin {
@@ -108,6 +126,20 @@
     to {
       opacity: 1;
       scale: 1;
+    }
+  }
+  @keyframes fade-side-in {
+    0% {
+      opacity: 0;
+      transform: translateX(-2vw);
+    }
+    75% {
+      opacity: 1;
+      transform: translateX(0.5vw);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
     }
   }
 }

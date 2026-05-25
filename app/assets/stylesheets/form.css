@@ -183,7 +183,7 @@
     top: 2px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: var(--z-dropdown);
+    z-index: var(--z-dialog);
     background: var(--color-bg-negative);
     border: 1px solid var(--color-stroke-negative);
     border-radius: var(--radius-strong);

@@ -3,6 +3,7 @@
   class="pinned--dock-item"
   data-dock-index="<%= position %>"
   data-bullet-type="<%= bullet.bulletable_type.downcase %>"
+  style="--dock-position: <%= position %>"
 >
   <%= link_to bullet_path(bullet), class: "pinned--dock-item-link", data: { turbo_frame: "_top" } do %>
     <span class="pinned--dock-item-marker" aria-hidden="true"></span>
@@ -10,5 +11,10 @@
     <span class="pinned--dock-item-text">
       <%= bullet.content.to_plain_text.truncate(80) %>
     </span>
+  <% end %>
+  <%= form_with url: bullet_pin_path(bullet), method: :patch, data: { turbo_stream: true } do %>
+    <%= button_tag type: :submit, class: "button button-tertiary button-icon", data: { "grid-navigation-target" => "item" } do %>
+      <span class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></span>
+    <% end %>
   <% end %>
 </div>

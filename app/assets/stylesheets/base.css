@@ -71,7 +71,7 @@
     position: sticky;
     top: 8px;
     margin-top: 8px;
-    z-index: var(--z-dialog);
+    z-index: var(--z-dialog-backdrop);
     display: flex;
     justify-content: center;
     align-items: center;

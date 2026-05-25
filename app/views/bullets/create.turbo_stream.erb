@@ -3,3 +3,9 @@
 <%= turbo_stream.remove "bullet_form" %>
 
 <%= turbo_stream.after dom_id(@bullet), partial: "form", locals: { bullet: Bullet.new(pops_on: @selected_date) } %>
+
+<% if @bullet.pops_on.present? && @bullet.pops_on > @selected_date %>
+<%= turbo_stream.update "toasts" do %>
+    <%= render "shared/toasts", type: "notify", messages: ["Bullet created and scheduled for #{@bullet.pops_on.strftime("%B %d")}"] %>
+<% end %>
+<% end %>

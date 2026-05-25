@@ -1,0 +1,9 @@
+<div id="<%= dom_id(bullet, :pops_notice) %>" class="covering flex slightly-gapped fade-side-in">
+<p class="pill pill--2">Scheduled on <%= pops_on.strftime("%B %d") %></p>
+<%= form_with url: bullet_pop_path(bullet), method: :delete, data: { turbo_stream: true } do %>
+    <%= hidden_field_tag :pops_on, previous_pops_on.iso8601 %>
+    <button type="submit" class="button-secondary">
+        <i class="icon" style="--icon-mask: var(--icon-undo)" aria-hidden="true"></i>
+      </button>
+  <% end %>
+</div>

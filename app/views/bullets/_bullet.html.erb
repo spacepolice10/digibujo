@@ -1,3 +1,0 @@
-<% bullet_record = local_assigns.fetch(:bullet) %>
-<%= render bullet_record.to_partial_path,
-           "#{bullet_record.bulletable_type.downcase}".to_sym => bullet_record %>

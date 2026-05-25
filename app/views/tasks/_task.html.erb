@@ -1,5 +1,4 @@
 <turbo-frame id="<%= dom_id(task) %>" class="bullet" data-bullet-type="task">
-
   <%= form_with url: bullet_complete_path(task), method: task.bulletable.done? ? :delete : :post, data: { turbo_stream: true } do %>
     <button class="bullet--task-marker" data-task-done="<%= task.bulletable.done? %>">
         <% if task.bulletable.done? %>

@@ -5,10 +5,16 @@
       <span>Pinned</span>
     </div>
 
-    <div id="pinned_bullets" class="pinned--dock" style="anchor-name: --pinned-dock-trigger">
-      <% bullets.each_with_index do |bullet, position| %>
-        <%= render partial: "pinned/bullet", locals: { bullet: bullet, position: position } %>
-      <% end %>
-    </div>
+    <details
+      id="pinned_bullets"
+      class="pinned--dock"
+      style="anchor-name: --pinned-dock-trigger; --dock-count: <%= bullets.size %>"
+    >
+      <summary class="pinned--dock-summary" aria-label="Unstack pinned bullets">
+        <% bullets.each_with_index do |bullet, position| %>
+          <%= render partial: "pinned/bullet", locals: { bullet: bullet, position: position } %>
+        <% end %>
+      </summary>
+    </details>
   </div>
 <% end %>

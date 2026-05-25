@@ -72,14 +72,14 @@ class BulletActivityRecorderTest < ActiveSupport::TestCase
     end
   end
 
-  test "postpone records postponed" do
+  test "pop records popped when moving to another day" do
     bullet = @user.bullets.create!(bulletable: Event.create!, content: "Event", pops_on: Date.current)
 
     assert_difference -> { BulletActivity.count }, 1 do
-      bullet.postpone_next_day!
+      bullet.pop!(pops_on: Date.current + 1)
     end
 
-    assert_equal 'postponed', BulletActivity.order(:created_at).last.action
+    assert_equal "popped", BulletActivity.order(:created_at).last.action
   end
 
   test "pop records popped" do

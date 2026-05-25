@@ -156,7 +156,7 @@
     gap: var(--spacing-vertical-half);
   }
 
-  .bullet--tags .pill--type {
+  .bullet--tags .pill {
     max-width: 100%;
     span:last-child {
       overflow: hidden;
@@ -441,3 +441,5 @@
     min-height: calc(var(--spacing-horizontal-double) * 9);
   }
 }
+
+

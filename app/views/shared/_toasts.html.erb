@@ -1,0 +1,15 @@
+<div id="toasts" data-controller="toasts">
+  <% if type == "errmsg" %>
+  <div class="message errmsg" data-toasts-target="errmsg">
+    <ul>
+      <% messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+  <% elsif type == "notify" %>
+  <div class="message notify" data-toasts-target="notify">
+    <%= messages.first %>
+  </div>
+  <% end %>
+</div>

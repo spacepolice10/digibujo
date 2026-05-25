@@ -10,64 +10,11 @@
        data-action="keydown->grid-navigation#navigate focusin->grid-navigation#syncPosition"
        popover
        style="position-anchor: --<%= dom_id(bullet, :menu) %>">
-    <%= button_to bullet_pin_path(bullet), method: :patch, class: "bullet-dropdown-item", data: { "grid-navigation-target" => "item" } do %>
-      <span class="bullet-dropdown-icon bullet-dropdown-icon--pin">
-        <span class="icon" style="--icon-mask: var(--icon-pin)"></span>
-      </span>
-      <span class="bullet-dropdown-text">
-        <span class="bullet-dropdown-label"><%= bullet.pinned? ? "Unpin" : "Pin" %></span>
-        <span class="bullet-dropdown-desc"><%= bullet.pinned? ? "Remove from quick access" : "Keep at top for quick access" %></span>
-      </span>
+<%= render "bullets/pins/pins_form", bullet: bullet %>
+    <% if bullet.temporal? %>
+ <%= render "bullets/pops/pops_form", bullet: bullet, selected_date: @selected_date %>
     <% end %>
-    <% if ["Task", "Event"].include?(bullet.bulletable_type) %>
-    <%= button_to postpone_next_day_bullet_pop_path(bullet),
-          params: (defined?(@selected_date) && @selected_date) ? { display_on: @selected_date.iso8601 } : {},
-          class: "bullet-dropdown-item",
-          data: { "grid-navigation-target" => "item" } do %>
-      <span class="bullet-dropdown-icon bullet-dropdown-icon--postpone">
-        <span class="icon" style="--icon-mask: var(--icon-arrow-up)"></span>
-      </span>
-      <span class="bullet-dropdown-text">
-        <span class="bullet-dropdown-label">Postpone</span>
-          <span class="bullet-dropdown-desc">Move to the next day</span>
-        </span>
-      <% end %>
-    <% end %>
-    <details class="dropdown bullet-menu--intent">
-      <summary class="bullet-dropdown-item" data-grid-navigation-target="item">
-        <span class="bullet-dropdown-icon bullet-dropdown-icon--collect">
-          <span class="icon" style="--icon-mask: var(--icon-arrow-left)"></span>
-        </span>
-        <span class="bullet-dropdown-text">
-          <span class="bullet-dropdown-label">Save to project</span>
-          <span class="bullet-dropdown-desc">Attach a project without leaving</span>
-        </span>
-      </summary>
-      <div class="dropdown-body bullet-menu--intent-panel">
-        <%= form_with url: bullet_collect_path(bullet) do %>
-          <% if defined?(@selected_date) && @selected_date %>
-            <%= hidden_field_tag :display_on, @selected_date.iso8601 %>
-          <% end %>
-          <%= render "bullets/fields/projects_picker",
-                bullet: bullet,
-                field_name: "bucket_id",
-                dialog_id: dom_id(bullet, :menu_collect_projects_picker),
-                search_id: dom_id(bullet, :menu_collect_projects_search) %>
-          <%= button_tag type: :submit, class: "button-secondary bullet-menu--intent-submit" do %>
-            <span class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></span>
-            Save to project
-          <% end %>
-        <% end %>
-      </div>
-    </details>
-    <%= button_to bullet_archive_path(bullet), method: :patch, class: "bullet-dropdown-item", data: { "grid-navigation-target" => "item" } do %>
-      <span class="bullet-dropdown-icon bullet-dropdown-icon--archive">
-        <span class="icon" style="--icon-mask: var(--icon-archive)"></span>
-      </span>
-      <span class="bullet-dropdown-text">
-        <span class="bullet-dropdown-label"><%= bullet.archived? ? "Unarchive" : "Archive" %></span>
-        <span class="bullet-dropdown-desc"><%= bullet.archived? ? "Restore to Timeline" : "Stored in archive for 30 days" %></span>
-      </span>
-    <% end %>
+    <%= render "bullets/collects/collects_form", bullet: bullet, selected_date: @selected_date %>
+    <%= render "archives/archives_form", bullet: bullet %>
   </div>
 </div>

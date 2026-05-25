@@ -1,5 +1,4 @@
 @layer components {
-
   .dialog {
     padding: var(--spacing-vertical) var(--spacing-horizontal);
     border: 0;
@@ -39,7 +38,10 @@
 
     &::backdrop {
       background: oklch(0% 0 0 / 0);
-      transition: background 140ms ease, display 140ms allow-discrete, overlay 140ms allow-discrete;
+      transition:
+        background 140ms ease,
+        display 140ms allow-discrete,
+        overlay 140ms allow-discrete;
     }
 
     &[open]::backdrop {
@@ -63,7 +65,8 @@
     display: flex;
     align-items: center;
     gap: calc(var(--spacing-horizontal-half) / 2);
-    padding: calc(var(--spacing-vertical-half) / 1.5) var(--spacing-horizontal-half);
+    padding: calc(var(--spacing-vertical-half) / 1.5)
+      var(--spacing-horizontal-half);
   }
 
   .dialog--header > *,
@@ -106,5 +109,4 @@
     justify-content: center;
     text-align: center;
   }
-
 }

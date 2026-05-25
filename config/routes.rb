@@ -29,10 +29,7 @@ Rails.application.routes.draw do
       resource :pin,             only: :update
       resource :archive,         only: :update
       resource :collect,         only: %i[create destroy]
-      resource :pop, only: %i[create destroy] do
-        post :postpone_next_day
-        post :postpone_next_week
-      end
+      resource :pop, only: %i[create destroy]
       resource :publish,         only: :update
     end
   end

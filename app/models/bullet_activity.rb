@@ -3,7 +3,6 @@
 class BulletActivity < ApplicationRecord
   ACTIONS = %w[
     updated
-    postponed
     collected
     popped
     archived
