@@ -28,18 +28,18 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body data-controller="dialog timezone-cookie">
+  <body data-controller="dialog timezone-cookie bullets-bulk">
 <div id="toasts"></div>
     <%= render "shared/header" %>
 
     <%= yield %>
 
-    <footer class="footer">
-  <turbo-frame id="pinned_bullets_dock" src="<%= pinned_index_path %>" loading="lazy" data-turbo-permanent></turbo-frame>
-    </footer>
+    <%= render "bullets/bulk_menu" %>
 
-    <dialog data-dialog-target="dialog" data-action="click->dialog#backdropClose turbo:submit-end->dialog#submitEnd">
+    <%= render "shared/footer" %>
+
+    <%= render "shared/dialog", data_action: "turbo:submit-end->dialog#submitEnd" do %>
       <%= turbo_frame_tag "modal" %>
-    </dialog>
+    <% end %>
   </body>
 </html>

@@ -1,0 +1,13 @@
+<% dialog_id = local_assigns[:id] %>
+<% dialog_classes = ["dialog", local_assigns[:class]].compact.join(" ") %>
+<% dialog_actions = ["click->dialog#backdropHide", local_assigns[:data_action]].compact.join(" ") %>
+<% hide_label = local_assigns.fetch(:hide_label, "Hide dialog") %>
+
+<%= tag.dialog id: dialog_id, class: dialog_classes, data: { dialog_target: "dialog", action: dialog_actions } do %>
+  <div class="dialog--body">
+    <button type="button" class="dialog--hide" data-action="dialog#hide">
+      <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
+    </button>
+    <%= yield %>
+  </div>
+<% end %>

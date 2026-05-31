@@ -14,9 +14,16 @@
         <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
         Edit
       <% end %>
-      <%= button_to bullet_pin_path(@bullet), method: :patch, class: "button-secondary" do %>
-        <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
-        <%= @bullet.pinned? ? "Unpin" : "Pin" %>
+      <% if @bullet.pinned? %>
+        <%= button_to pin_path, method: :delete, params: { bullet_ids: @bullet.id }, class: "button-secondary" do %>
+          <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
+          Unpin
+        <% end %>
+      <% else %>
+        <%= button_to pin_path, method: :post, params: { bullet_ids: @bullet.id }, class: "button-secondary" do %>
+          <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
+          Pin
+        <% end %>
       <% end %>
       <%= button_to bullet_publish_path(@bullet), method: :patch, class: "button-secondary" do %>
         <i class="icon" style="--icon-mask: var(--icon-link)" aria-hidden="true"></i>

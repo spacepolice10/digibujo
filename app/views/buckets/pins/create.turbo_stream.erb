@@ -1,0 +1,11 @@
+<% if @failed_bucket&.errors&.any? %>
+  <%= turbo_stream.update "toasts" do %>
+    <%= render "shared/toasts", type: "errmsg", messages: @failed_bucket.errors.full_messages %>
+  <% end %>
+<% else %>
+  <% @buckets.each do |bucket| %>
+    <%= turbo_stream.replace dom_id(bucket, :list_item) do %>
+      <%= render bucket_list_item_partial(bucket) %>
+    <% end %>
+  <% end %>
+<% end %>

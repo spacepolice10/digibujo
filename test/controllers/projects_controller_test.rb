@@ -1,0 +1,41 @@
+# frozen_string_literal: true
+
+require "test_helper"
+
+class ProjectsControllerTest < ActionDispatch::IntegrationTest
+  setup do
+    @user = users(:one)
+    sign_in_as @user
+  end
+
+  test "index renders search form targeting project results" do
+    get projects_path
+
+    assert_response :success
+    assert_select "form.search-form[data-turbo-frame=?]", "projects"
+    assert_select "turbo-frame#projects"
+  end
+
+  test "index filters projects by search query" do
+    create_project!(@user, name: "alpha")
+    create_project!(@user, name: "beta")
+
+    get projects_path, params: { q: "alp" }
+
+    assert_response :success
+    assert_match "alpha", response.body
+    assert_no_match "beta", response.body
+  end
+
+  test "show renders simple editor with project bucket as submitted attribute" do
+    project = create_project!(@user, name: "alpha")
+
+    get project_path(project)
+
+    assert_response :success
+    assert_select "turbo-frame#new_bullet_form form.bullet-form"
+    assert_select "select[name=?][required]", "bullet[bulletable_type]"
+    assert_select "input[type=hidden][name=?][value=?]", "bullet[bucket_id]", project.bucket.id.to_s
+    assert_select ".bullet-form-fields", 0
+  end
+end

@@ -1,20 +1,21 @@
 <% if bullets.any? %>
-  <div class="pinned--footer">
-    <div class="pinned--footer-name">
-      <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
-      <span>Pinned</span>
-    </div>
-
-    <details
-      id="pinned_bullets"
-      class="pinned--dock"
-      style="anchor-name: --pinned-dock-trigger; --dock-count: <%= bullets.size %>"
+  <div class="pinned--dock">
+    <button
+      type="button"
+      class="button-secondary pinned--summary"
+      popovertarget="pinned_bullets"
     >
-      <summary class="pinned--dock-summary" aria-label="Unstack pinned bullets">
-        <% bullets.each_with_index do |bullet, position| %>
-          <%= render partial: "pinned/bullet", locals: { bullet: bullet, position: position } %>
-        <% end %>
-      </summary>
-    </details>
+      Pinned
+    </button>
+    <turbo-frame
+      id="pinned_bullets"
+      class="pinned--list"
+      src="<%= pinned_index_path %>"
+      loading="lazy"
+      popover
+    ></turbo-frame>
   </div>
+  <% @buckets.each do |bucket| %>
+    <%= bucket.name %>
+  <% end %>
 <% end %>

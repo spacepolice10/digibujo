@@ -4,18 +4,9 @@ class ProjectsController < ApplicationController
   before_action :set_project, only: %i[show destroy]
 
   def index
-    respond_to do |format|
-      format.html { @projects = Current.user.projects.order(created_at: :desc) }
-      format.json do
-        query = params[:q].to_s.strip.downcase
-        projects = if query.present?
-                     Current.user.projects.where("buckets.name LIKE ?", "#{query}%")
-                   else
-                     Current.user.projects
-                   end
-        render json: { projects: projects.map { |p| project_json(p) } }
-      end
-    end
+    @projects = Current.user.projects.order(created_at: :desc)
+    query = sanitized_query
+    @projects = @projects.where("buckets.name LIKE ?", "%#{query}%") if query.present?
   end
 
   def new
@@ -58,6 +49,10 @@ class ProjectsController < ApplicationController
 
   def set_project
     @project = Current.user.projects.find(params[:id])
+  end
+
+  def sanitized_query
+    @sanitized_query ||= ActiveRecord::Base.sanitize_sql_like(params[:q].to_s.strip.downcase)
   end
 
   def selected_type

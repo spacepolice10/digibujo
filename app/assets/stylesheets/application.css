@@ -14,6 +14,7 @@
 @import "_reset.css";
 @import "variables.css";
 @import "base.css";
+@import "footer.css";
 @import "utilities.css";
 @import "icons.css";
 @import "button.css";
@@ -26,10 +27,11 @@
 @import "bullet-show.css";
 @import "bullet-form.css";
 @import "date-picker.css";
-@import "projects-picker.css";
+@import "bucket-picker.css";
 @import "context-picker.css";
 @import "calendar.css";
 @import "pinned.css";
+@import "bulk-menu.css";
 @import "toasts.css";
 @import "search.css";
 @import "activity.css";

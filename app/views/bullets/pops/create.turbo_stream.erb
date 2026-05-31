@@ -1,3 +1,15 @@
-<%= turbo_stream.append @bullet do %>
-  <%= render "pops_notice", bullet: @bullet, previous_pops_on: @previous_pops_on, pops_on: @bullet.pops_on %>
+<% if @failed_bullet %>
+  <%= turbo_stream.update "toasts" do %>
+    <% messages = @failed_bullet.respond_to?(:errors) && @failed_bullet.errors.any? ? @failed_bullet.errors.full_messages : ["Invalid date"] %>
+    <%= render "shared/toasts", type: "errmsg", messages: messages %>
+  <% end %>
+<% else %>
+  <% @bullets.each do |bullet| %>
+    <%= turbo_stream.append bullet do %>
+      <%= render "bullets/pops/pops_notice",
+            bullet: bullet,
+            previous_pops_on: @pops_previous_by_bullet_id[bullet.id],
+            pops_on: bullet.pops_on %>
+    <% end %>
+  <% end %>
 <% end %>

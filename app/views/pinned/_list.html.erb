@@ -1,0 +1,16 @@
+<div class="pinned--list-header">
+  <h2>Pinned bullets</h2>
+  <button
+    type="button"
+    class="button-secondary button-icon"
+    popovertarget="pinned_bullets"
+    popovertargetaction="hide"
+    aria-label="Close pinned bullets"
+  >
+    <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
+  </button>
+</div>
+<% bullets.each do |bullet| %>
+  <%= render partial: bullet.to_partial_path,
+        locals: { bullet.bulletable_type.downcase.to_sym => bullet } %>
+<% end %>

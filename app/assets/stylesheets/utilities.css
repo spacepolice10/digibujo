@@ -30,6 +30,15 @@
     width: 100%;
   }
 
+  .w-mobile {
+    max-width: var(--breakpoint-mobile);
+    width: 100%;
+  }
+  .w-tablet {
+    max-width: var(--breakpoint-tablet);
+    width: 100%;
+  }
+  
   .h-fit {
     height: fit-content;
   }

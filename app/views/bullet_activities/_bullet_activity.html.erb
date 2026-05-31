@@ -8,7 +8,7 @@
       <span class="activity--bullet-missing text-sm">Bullet removed</span>
     <% end %>
   </div>
-  <time class="activity--time text-sm" datetime="<%= bullet_activity.created_at.iso8601 %>">
+  <time class="activity--time text-sm" datetime="<%= bullet_activity.created_at.to_fs(:db) %>">
     <%= l(bullet_activity.created_at, format: :short) %>
   </time>
 </div>

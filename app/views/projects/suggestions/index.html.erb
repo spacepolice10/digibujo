@@ -1,0 +1,22 @@
+<turbo-frame id="<%= @frame_id %>"
+             data-project-picker-target="suggestions">
+  <% if @projects.any? %>
+    <ul class="bucket--list" role="listbox">
+      <% @projects.each do |project| %>
+        <li class="bucket--list-item" role="option">
+          <button type="button"
+                  class="button-secondary bucket--list-item-link"
+                  data-combobox-target="item"
+                  data-action="click->project-picker#choose"
+                  data-bucket-id="<%= project.bucket.id %>"
+                  data-project-name="<%= project.name %>"
+                  data-project-icon="<%= project.icon %>">
+            <%= render "projects/pickers/project", project: project %>
+          </button>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p>No projects found.</p>
+  <% end %>
+</turbo-frame>

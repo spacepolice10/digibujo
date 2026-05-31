@@ -23,16 +23,37 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'updated', BulletActivity.order(:created_at).last.action
   end
 
-  test "create turbo stream appends bullet and inserts form after" do
+  test "create turbo stream appends bullet and resets editor frame" do
+    project = create_project!(@user, name: "Fresh project")
+
     post bullets_path,
          params: {
-           bullet: { bulletable_type: "Task", content: "Fresh task" },
-           date: Date.current.iso8601
+           bullet: {
+             bulletable_type: "Task",
+             content: "Fresh task",
+             pops_on: Date.current.iso8601,
+             bucket_id: project.bucket.id
+           }
          },
          as: :turbo_stream
 
     assert_response :success
     assert_match(/turbo-stream action="append"/, response.body)
-    assert_match(/turbo-stream action="after"/, response.body)
+    assert_match(/turbo-stream action="update" target="new_bullet_form"/, response.body)
+    assert_select "input[name=?][value=?]", "bullet[pops_on]", Date.current.iso8601
+    assert_select "input[name=?][value=?]", "bullet[bucket_id]", project.bucket.id.to_s
+  end
+
+  test "create turbo stream renders validation errors in toasts" do
+    post bullets_path,
+         params: {
+           bullet: { bulletable_type: "Task", content: "" }
+         },
+         as: :turbo_stream
+
+    assert_response :success
+    assert_select 'turbo-stream[action="update"][target="toasts"]'
+    assert_select ".message.errmsg", text: /Content can't be blank/
+    assert_select ".form-errmsg", 0
   end
 end

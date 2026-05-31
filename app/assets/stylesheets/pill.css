@@ -19,65 +19,46 @@
     justify-content: center;
     align-items: center;
     gap: var(--spacing-vertical-half);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    border-radius: var(--radius-strong);
     font-family: inherit;
     font-size: var(--font-size-subtle);
     white-space: nowrap;
     flex-shrink: 0;
     text-decoration: none;
     cursor: default;
-    border: 1px solid var(--color-stroke-base);
     background: transparent;
     color: var(--color-fg-subtle);
   }
 
   .pill--1 {
     color: var(--model-color-1);
-    border-color: var(--model-color-1);
-    background: var(--model-color-1-bg);
   }
 
   .pill--2 {
     color: var(--model-color-2);
-    border-color: var(--model-color-2);
-    background: var(--model-color-2-bg);
   }
 
   .pill--3 {
     color: var(--model-color-3);
-    border-color: var(--model-color-3);
-    background: var(--model-color-3-bg);
   }
 
   .pill--4 {
     color: var(--model-color-4);
-    border-color: var(--model-color-4);
-    background: var(--model-color-4-bg);
   }
 
   .pill--5 {
     color: var(--model-color-5);
-    border-color: var(--model-color-5);
-    background: var(--model-color-5-bg);
   }
 
   .pill--6 {
     color: var(--model-color-6);
-    border-color: var(--model-color-6);
-    background: var(--model-color-6-bg);
   }
 
   .pill--7 {
     color: var(--model-color-7);
-    border-color: var(--model-color-7);
-    background: var(--model-color-7-bg);
   }
 
   .pill--8 {
     color: var(--model-color-8);
-    border-color: var(--model-color-8);
-    background: var(--model-color-8-bg);
   }
 
   .pill .icon {

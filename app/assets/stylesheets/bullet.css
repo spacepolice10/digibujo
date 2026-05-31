@@ -16,9 +16,11 @@
     --note-marker-color: var(--model-color-5);
 
     display: flex;
+    align-items: flex-start;
     justify-content: space-between;
     width: 100%;
     gap: var(--spacing-horizontal-half);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     margin-block: var(--spacing-vertical-half);
     @supports (corner-shape: squircle) {
       corner-shape: squircle;
@@ -72,57 +74,62 @@
     display: contents;
   }
 
+  .bullet--body {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .bullet--body .bullet--name,
+  .bullet--body .bullet--metadata,
+  .bullet--body .bullet--tags {
+    display: inline-flex;
+    vertical-align: middle;
+  }
+
+  .bullet--body .bullet--name .trix-content,
+  .bullet--body .bullet--name .trix-content > * {
+    text-wrap: auto;
+  }
+
+  .bullet--body .bullet--tags .pill {
+    display: inline-flex;
+    vertical-align: middle;
+  }
+
   .bullet--name {
     margin: 0;
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-base);
     color: var(--color-fg-base);
-    text-align: left;
-    width: 100%;
-    min-width: 0;
     text-decoration: none;
     color: inherit;
     cursor: text;
-    .bullet-preview--link {
-      display: flex;
-      width: 100%;
-      min-width: 0;
-      text-decoration: none;
-      color: inherit;
-      .trix-content {
-        flex: 1 1 auto;
-        min-width: 0;
-        width: 100%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-    }
   }
 
-  .bullet--name-wrap {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-vertical-half);
-    width: 100%;
+  .bullet--metadata {
+    display: contents;
   }
 
   .bullet--name > * {
     margin: 0;
     padding: 0;
   }
-  
+
   form:has(.bullet--task-marker) {
     display: contents;
   }
 
   .bullet--task-marker {
-    width: var(--icon-size-base);
-    height: var(--icon-size-base);
+    width: var(--icon-size-subtle);
+    height: var(--icon-size-subtle);
     color: var(--model-color-2);
     appearance: none;
     border: transparent;
-    background: none;;
+    background: none;
+    margin-top: 2px;
   }
 
   .bullet:has(.bullet--task-marker[data-task-done="true"]) .bullet--name {
@@ -131,15 +138,17 @@
   }
 
   .bullet--note-marker {  
-    width: var(--icon-size-base);
-    height: var(--icon-size-base);
+    width: var(--icon-size-subtle);
+    height: var(--icon-size-subtle);
     color: var(--model-color-5);
+    margin-top: 2px;
   }
 
   .bullet--event-marker {
-    width: var(--icon-size-base);
-    height: var(--icon-size-base);
+    width: var(--icon-size-subtle);
+    height: var(--icon-size-subtle);
     color: var(--model-color-6);
+    margin-top: 2px;
   }
 
   .bullet--link {
@@ -150,10 +159,15 @@
     }
   }
 
-  .bullet--tags {
-    display: flex;
+  .bullet--tags:has(*) {
+    display: inline-flex;
+    flex: 0 0 auto;
     flex-wrap: wrap;
-    gap: var(--spacing-vertical-half);
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    padding: 2px;
+    background-color: var(--color-bg-strong);
+    border-radius: var(--radius-base)
   }
 
   .bullet--tags .pill {
@@ -202,239 +216,8 @@
     transform: translateY(-1px);
   }
 
-  /* Bullet menu trigger */
-
-  .bullet-menu {
-    display: flex;
-    align-items: flex-start;
-    align-self: flex-start;
-    flex-shrink: 0;
-  }
-
-  .bullet-menu-trigger {
-    width: var(--icon-size-base);
-    height: var(--icon-size-base);
-    color: var(--color-fg-subtle);
-    cursor: pointer;
-  }
-
-  /* Shell: dropdown.css (.dropdown-menu--anchor*); here only bullet-row layout tweaks */
-  .bullet-dropdown-menu {
-    form {
-      display: block;
-      margin: 0;
-    }
-
-    form + form,
-    form + a,
-    a + form {
-      border-top: 0;
-    }
-  }
-
-  .bullet-dropdown-item {
-    width: 100%;
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    align-items: start;
-    gap: var(--spacing-horizontal-half);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
-    border-radius: var(--radius-base);
-    text-align: start;
-    background: transparent;
-    border: 0;
-    color: var(--color-fg-base);
-    font: inherit;
-    cursor: pointer;
-    text-decoration: none;
-    transition:
-      background 0.12s ease,
-      transform 0.12s ease,
-      border-color 0.12s ease;
-
-    &:hover {
-      background: var(--color-bg-base);
-      color: var(--color-accent);
-      transform: translateX(2px);
-    }
-
-    &:focus-visible {
-      background: var(--color-bg-base);
-    }
-
-    &.bullet-dropdown-item--danger {
-      .bullet-dropdown-icon {
-        border-color: color-mix(
-          in oklch,
-          var(--color-fg-negative) 45%,
-          var(--color-stroke-base)
-        );
-        background: color-mix(
-          in oklch,
-          var(--color-bg-negative) 35%,
-          var(--color-bg-base)
-        );
-        color: var(--color-fg-negative);
-      }
-
-      .bullet-dropdown-label {
-        color: var(--color-fg-negative);
-      }
-
-      &:hover {
-        background: color-mix(
-          in oklch,
-          var(--color-bg-negative) 35%,
-          var(--color-bg-base)
-        );
-      }
-    }
-  }
-
-  .bullet-dropdown-icon {
-    width: calc(var(--spacing-horizontal-double) * 1);
-    height: calc(var(--spacing-horizontal-double) * 1);
-    margin-top: calc(var(--spacing-vertical-half) / 4);
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    background: var(--color-bg-base);
-    color: var(--color-fg-subtle);
-
-    .icon {
-      width: var(--icon-size-base);
-      height: var(--icon-size-base);
-    }
-
-    &.bullet-dropdown-icon--pop {
-      color: var(--model-color-1);
-    }
-    &.bullet-dropdown-icon--pin {
-      color: var(--model-color-6);
-    }
-    &.bullet-dropdown-icon--archive {
-      color: var(--model-color-2);
-    }
-    &.bullet-dropdown-icon--edit {
-      color: var(--model-color-4);
-    }
-    &.bullet-dropdown-icon--delete {
-      color: var(--color-fg-negative);
-    }
-    &.bullet-dropdown-icon--chooser {
-      color: var(--model-color-5);
-    }
-
-    &.bullet-dropdown-icon--collect {
-      color: var(--model-color-4);
-    }
-
-    &.bullet-dropdown-icon--schedule {
-      color: var(--model-color-6);
-    }
-  }
-
-  .bullet-menu--intent {
-    position: relative;
-  }
-
-  .bullet-menu--intent > summary.bullet-dropdown-item {
-    list-style: none;
-
-    &::-webkit-details-marker {
-      display: none;
-    }
-  }
-
-  .bullet-dropdown-menu .bullet-menu--intent .dropdown-body {
-    position: static;
-    margin-top: var(--spacing-vertical-half);
-    padding: 0;
-    min-width: 0;
-    border: 0;
-    border-radius: var(--radius-base);
-    background: transparent;
-    box-shadow: none;
-  }
-
-  .bullet-menu--intent-panel {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-vertical-half);
-  }
-
-  .bullet-menu--intent-submit {
-    width: 100%;
-  }
-
-  .bullet-dropdown-item:hover .bullet-dropdown-icon {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
-  }
-
-  .bullet-dropdown-text {
-    display: flex;
-    flex-direction: column;
-    gap: calc(var(--spacing-vertical-half) / 4);
-    min-width: 0;
-  }
-
-  .bullet-dropdown-label {
-    font-size: var(--font-size-subtle);
-    font-weight: var(--font-weight-strong);
-    color: var(--color-fg-base);
-    overflow-wrap: anywhere;
-  }
-
-  .bullet-dropdown-desc {
-    font-size: var(--font-size-subtle);
-    color: var(--color-fg-subtle);
-    font-weight: var(--font-weight-base);
-    overflow-wrap: anywhere;
-  }
-
-  .bullet-dropdown-item:hover .bullet-dropdown-desc {
-    color: var(--color-accent);
-  }
-
-  .pinned-dropdown-menu {
-    position: fixed;
-    inset: unset;
-    position-area: block-start center;
-    margin-bottom: var(--spacing-horizontal-half);
-    min-width: calc(var(--spacing-horizontal-double) * 7);
-    position-anchor: --pinned-stack-trigger;
-    position-try-fallbacks: flip-block;
-
-    &:popover-open {
-      animation: popout 0.1s ease-out;
-    }
-  }
-
-  .pinned-list-loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: calc(
-      calc(var(--spacing-horizontal-double) + var(--spacing-vertical-half)) +
-        var(--spacing-vertical-double)
-    );
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
-  }
-  }
-
   .calendar-bullet-title {
     min-width: 0;
-  }
-
-  .pinned-badge {
-    font-size: var(--font-size-subtle);
-    font-weight: var(--font-weight-strong);
-    text-transform: uppercase;
-    color: var(--color-fg-warn);
   }
 
   .bullets-list {

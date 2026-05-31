@@ -1,10 +1,13 @@
 <%= turbo_stream.append "bullets", @bullet %>
 
-<%= turbo_stream.remove "bullet_form" %>
+<%= turbo_stream.update "new_bullet_form" do %>
+  <%= render "bullets/editor",
+        bullet: Current.user.bullets.build,
+        bulletable_type: "Note",
+        attributes: { pops_on: @bullet.pops_on, bucket_id: @bullet.bucket_id, context_bullet_id: @bullet.context_bullet_id } %>
+<% end %>
 
-<%= turbo_stream.after dom_id(@bullet), partial: "form", locals: { bullet: Bullet.new(pops_on: @selected_date) } %>
-
-<% if @bullet.pops_on.present? && @bullet.pops_on > @selected_date %>
+<% if @bullet.pops_on.present? && @bullet.pops_on > Date.current %>
 <%= turbo_stream.update "toasts" do %>
     <%= render "shared/toasts", type: "notify", messages: ["Bullet created and scheduled for #{@bullet.pops_on.strftime("%B %d")}"] %>
 <% end %>

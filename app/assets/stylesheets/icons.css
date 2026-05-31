@@ -52,6 +52,7 @@
     --icon-plus: url("icon-plus.svg");
     --icon-line-dashed: url("icon-line-dashed.svg");
     --icon-expand: url("icon-expand.svg");
+    --icon-x: url("icon-x.svg");
   }
 
   .icon--spin {

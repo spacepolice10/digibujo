@@ -1,0 +1,15 @@
+<% if @failed_bullet&.errors&.any? %>
+  <%= turbo_stream.update "toasts" do %>
+    <%= render "shared/toasts", type: "errmsg", messages: @failed_bullet.errors.full_messages %>
+  <% end %>
+<% else %>
+  <% @bullets.each do |bullet| %>
+    <%= turbo_stream.replace_all bullet do %>
+      <%= render partial: bullet.to_partial_path, locals: { bullet.bulletable_type.downcase.to_sym => bullet } %>
+    <% end %>
+  <% end %>
+
+  <%= turbo_stream.update "pinned_bullets_dock",
+        partial: "pinned/dock",
+        locals: { bullets: pinned_bullets } %>
+<% end %>

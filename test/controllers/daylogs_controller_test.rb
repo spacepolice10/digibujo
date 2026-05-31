@@ -47,6 +47,24 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{daylog_path_to(selected_date + 1.day)}']"
   end
 
+  test "daylog renders simple editor with selected day as submitted attribute" do
+    selected_date = Date.current - 2.days
+
+    get daylog_on_path(year: selected_date.year, month: selected_date.month, day: selected_date.day)
+
+    assert_response :success
+    assert_select "turbo-frame#new_bullet_form form.bullet-form[data-controller~=?]", "editor"
+    assert_select ".bullet-form-type-picker[data-editor-target=?]", "typePicker"
+    assert_select ".bullet-form-type-marker[data-editor-target=?]", "typeMarker"
+    assert_select "select.bullet-form-type-select[name=?][required][data-editor-target=?]", "bullet[bulletable_type]", "typeSelect" do
+      assert_select "option", text: "Task"
+      assert_select "option[selected]", text: "Note"
+      assert_select "option", text: "Event"
+    end
+    assert_select "input[type=hidden][name=?][value=?]", "bullet[pops_on]", selected_date.iso8601
+    assert_select ".bullet-form-fields", 0
+  end
+
   test "root shows today daylog" do
     card = @user.bullets.create!(bulletable: Task.create!, content: "Root today")
 

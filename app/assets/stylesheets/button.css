@@ -8,7 +8,7 @@
     justify-content: center;
     align-items: center;
     gap: var(--spacing-vertical-half);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
     border-radius: var(--radius-strong);
     font-family: inherit;
     font-size: var(--font-size-subtle);
@@ -28,7 +28,6 @@
 
   .button-icon {
     padding: 0;
-    border-radius: 50%;
     width: var(--icon-size-base);
     height: var(--icon-size-base);
   }

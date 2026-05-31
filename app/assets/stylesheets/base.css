@@ -56,8 +56,6 @@
   /* Focus — instant ring, no animation */
   *:focus-visible {
     outline: none;
-    box-shadow: inset 0 0 0 2px
-      color-mix(in oklch, var(--color-fg-subtle) 55%, transparent);
     transition: none;
   }
 
@@ -82,20 +80,10 @@
     h1 {
       font-size: var(--font-size-h1);
       font-weight: var(--font-weight-bold);
-      color: var(--model-color-4);
-      font-style: italic;
-      text-transform: uppercase;
     }
     @media (width >= 800px) {
       border: 1px solid var(--color-stroke-base);
       border-radius: var(--radius-strong);
     }
-  }
-
-  footer {
-    margin-top: auto;
-    position: sticky;
-    bottom: var(--spacing-vertical);
-    width: 100%;
   }
 }

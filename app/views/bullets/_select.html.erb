@@ -1,0 +1,6 @@
+<input type="checkbox"
+       value="<%= bullet.id %>"
+       data-bullets-bulk-target="checkbox"
+       <% if bullet.pinned? %>data-pinned<% end %>
+       data-action="bullets-bulk#toggle"
+       aria-label="Select bullet" />

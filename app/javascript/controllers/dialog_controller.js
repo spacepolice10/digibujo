@@ -41,6 +41,10 @@ export default class extends Controller {
     this.dialogTarget.close()
   }
 
+  hide() {
+    this.close()
+  }
+
   backdropHide(event) {
     if (event.target === this.dialogTarget) {
       this.dialogTarget.close()

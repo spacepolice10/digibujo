@@ -40,12 +40,12 @@
       <% end %>
     </nav>
 
-    <%= link_to new_bullet_path(date: Date.current.iso8601), class: "fab", aria: { label: "New bullet" } do %>
+    <%= link_to new_bullet_path(pops_on: Date.current), class: "fab", aria: { label: "New bullet" } do %>
       <span class="fab__plus">+</span> Bullet
     <% end %>
 
-    <dialog data-dialog-target="dialog" data-action="click->dialog#backdropClose turbo:submit-end->dialog#submitEnd">
+    <%= render "shared/dialog", data_action: "turbo:submit-end->dialog#submitEnd" do %>
       <%= turbo_frame_tag "modal" %>
-    </dialog>
+    <% end %>
   </body>
 </html>

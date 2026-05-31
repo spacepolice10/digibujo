@@ -99,6 +99,8 @@
     --spacing-horizontal-half: calc(var(--spacing-horizontal) / 2);
     --spacing-vertical-double: calc(var(--spacing-vertical) * 2);
     --spacing-horizontal-double: calc(var(--spacing-horizontal) * 2);
+    --spacing-vertical-quad: calc(var(--spacing-vertical) * 4);
+    --spacing-horizontal-quad: calc(var(--spacing-horizontal) * 4);
 
     /* shadows */
     --shadow-elevated:
@@ -132,8 +134,8 @@
     --radius-strong: 8px;
 
     /* icon sizes */
-    --icon-size-subtle: 0.75rem;
-    --icon-size-base: 1.125rem;
-    --icon-size-strong: 1.25rem;
+    --icon-size-subtle: 1rem;
+    --icon-size-base: 1.5rem;
+    --icon-size-strong: 2rem;
   }
 }

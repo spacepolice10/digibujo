@@ -11,7 +11,12 @@
     <h2 class="project"><%= @project.name %></h2>
   </div>
   <div class="bucket--footer">
-    <%= render "bullets/form", bullet: Current.user.bullets.build(bucket_id: @project.bucket.id) %>
+    <turbo-frame id="new_bullet_form">
+      <%= render "bullets/editor",
+            bullet: Current.user.bullets.build,
+            bulletable_type: "Note",
+            attributes: { bucket_id: @project.bucket.id } %>
+    </turbo-frame>
   </div>
   <article class="bucket--list">
       <div class="bucket--header-actions">

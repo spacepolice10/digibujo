@@ -1,12 +1,19 @@
-<li class="bucket--list-item">
-  <%= link_to collection_path(collection), class: "button-secondary", **bucket_link_attributes(collection) do %>
-    <% if collection.icon.present? %>
-      <i
-        class="icon"
-        style="--icon-mask: <%= bucket_icon_mask(collection.bucket) %>"
-        aria-hidden="true"
-      ></i>
-    <% end %>
-    <%= collection.name %>
+<li id="<%= dom_id(collection.bucket, :list_item) %>" class="bucket--list-item">
+  <%= link_to collection_path(collection), class: "bucket--list-item-link", **bucket_link_attributes(collection) do %>
+    <div class="bucket--list-item-name">
+      <% if collection.icon.present? %>
+        <i
+          class="icon"
+          style="--icon-mask: <%= bucket_icon_mask(collection.bucket) %>"
+          aria-hidden="true"
+        ></i>
+      <% end %>
+      <span class="line-clamp-1"><%= collection.name %></span>
+    </div>
+    <div class="line-clamp-1">
+      <span><%= collection.bullets.count %> <%= "bullet".pluralize(collection.bullets.count) %></span>,
+      <span><%= collection.created_at.strftime("%b %d") %></span>
+    </div>
   <% end %>
+  <%= render "buckets/pin_button", bucket: collection.bucket %>
 </li>

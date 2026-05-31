@@ -13,7 +13,14 @@ module ApplicationHelper
     { data: data }
   end
 
-  def hint_anchor_style(anchor_name)
-    "anchor-name: #{anchor_name}"
+  def bucket_list_item_partial(bucket)
+    bucketable = bucket.bucketable
+    case bucketable
+    when Project
+      { partial: "projects/project", locals: { project: bucketable } }
+    when Collection
+      { partial: "collections/collection", locals: { collection: bucketable } }
+    end
   end
+
 end

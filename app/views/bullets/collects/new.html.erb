@@ -1,0 +1,37 @@
+<turbo-frame id="modal">
+  <div class="bucket--layout">
+    <div class="dialog--header">
+      <button type="button" class="button-tertiary" data-action="dialog#close">
+        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+        Close
+      </button>
+      <p class="dialog--name">Collect to project</p>
+      <span aria-hidden="true"></span>
+    </div>
+
+    <%= form_with url: new_collect_path,
+          method: :get,
+          class: "search-form",
+          data: { turbo_frame: "modal" } do %>
+      <%= hidden_field_tag :bullet_ids, params[:bullet_ids] %>
+      <%= search_field_tag :q,
+            params[:q],
+            class: "form-input",
+            placeholder: "Search projects",
+            autofocus: true,
+            autocomplete: "off" %>
+    <% end %>
+
+    <% if @projects.any? %>
+      <ul class="bucket--list">
+        <%= render partial: "bullets/collects/project", collection: @projects, locals: { bullet_ids: params[:bullet_ids] } %>
+      </ul>
+    <% else %>
+      <p>No projects found.</p>
+    <% end %>
+
+    <div class="dialog--footer">
+      <%= link_to "New project", new_project_path, class: "button-secondary", data: { turbo_frame: "_top" } %>
+    </div>
+  </div>
+</turbo-frame>

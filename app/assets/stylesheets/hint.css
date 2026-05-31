@@ -4,7 +4,7 @@
    * Trigger carries anchor-name; panel carries matching position-anchor (inline).
    */
 
-  .bullet-tags [interestfor] {
+  .bullet--metadata [interestfor] {
     interest-delay: 0.2s;
   }
 

@@ -129,8 +129,7 @@
      * Center in the viewport horizontally (not relative to the anchor box): fixed
      * inset gutters + anchor only for vertical placement below the trigger.
      */
-    .dropdown-menu[popover].dropdown-menu--anchor,
-    .dropdown-menu[popover].pinned-dropdown-menu {
+    .dropdown-menu[popover].dropdown-menu--anchor {
       box-sizing: border-box;
       position-area: initial;
       position-try-fallbacks: none;

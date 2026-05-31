@@ -1,10 +1,18 @@
 <turbo-frame id="<%= dom_id(event) %>" class="bullet" data-bullet-type="event">
-  <span class="bullet--event--marker">
+  <span class="bullet--event-marker">
     <i class="icon" style="--icon-mask: var(--icon-circle)" aria-hidden="true"></i>
   </span>
-  <%= link_to edit_bullet_path(event), class: "bullet--name" do %>
-    <%= event.bulletable.name %>
+  <%= content_tag :div,
+        class: "bullet--body",
+        data: {
+          controller: "bullet-navigation",
+          action: "mouseup->bullet-navigation#rememberSelection click->bullet-navigation#navigate",
+          bullet_navigation_href_value: edit_bullet_path(event)
+        } do %>
+    <div class="bullet--name">
+      <%= event.content %>
+    </div>
+    <%= render "bullets/metadata", bullet: event %>
   <% end %>
-  <%= render "bullets/metadata", bullet: event %>
-  <%= render "bullets/menu", bullet: event %>
+  <%= render "bullets/select", bullet: event %>
 </turbo-frame>

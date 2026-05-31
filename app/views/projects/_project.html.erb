@@ -1,13 +1,21 @@
-      <li class="bucket--list-item">
-        <%= link_to project_path(project), class: "button-secondary", **bucket_link_attributes(project) do %>
-          <% if project.icon.present? %>
-            <i
-              class="icon"
-              style="--icon-mask: <%= bucket_icon_mask(project.bucket) %>"
-              aria-hidden="true"
-            ></i>
-          <% end %>
-
-          <%= project.name %>
+<li id="<%= dom_id(project.bucket, :list_item) %>" class="bucket--list-item">
+  <%= link_to project_path(project), class: "bucket--list-item-link", **bucket_link_attributes(project) do %>
+    <div class="bucket--list-item-name">
+      <div class="bucket--list-item-marker" data-bucket-colour="<%= project.bucket.colour %>" aria-hidden="true">
+        <% if project.icon.present? %>
+          <i
+            class="icon"
+            style="--icon-mask: <%= bucket_icon_mask(project.bucket) %>"
+            aria-hidden="true"
+          ></i>
         <% end %>
-      </li>
+      </div>
+      <span class="line-clamp-1"><%= project.name %></span>
+    </div>
+    <div class="line-clamp-1">
+      <span><%= project.bullets.count %> <%= "bullet".pluralize(project.bullets.count) %></span>,
+      <span><%= project.created_at.strftime("%b %d") %></span>
+    </div>
+  <% end %>
+  <%= render "buckets/pin_button", bucket: project.bucket %>
+</li>

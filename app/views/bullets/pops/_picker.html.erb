@@ -1,0 +1,44 @@
+<div class="bulk-menu--pops-header">
+  <p class="bulk-menu--pops-title">Schedule</p>
+  <button type="button"
+          class="button-secondary button-icon"
+          popovertarget="pop_picker"
+          popovertargetaction="hide"
+          aria-label="Close schedule picker">
+    <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
+  </button>
+</div>
+
+<div class="bulk-menu--pops-options">
+  <%= form_with url: pop_path, method: :post, data: { turbo_stream: true } do %>
+    <%= hidden_field_tag :bullet_ids, params[:bullet_ids] %>
+    <%= hidden_field_tag :pops_on, @pop_asap %>
+    <%= button_tag type: :submit, class: "button-secondary bulk-menu--pops-option" do %>
+      ASAP · <%= @pop_asap.strftime("%a, %b %-d") %>
+    <% end %>
+  <% end %>
+
+  <%= form_with url: pop_path, method: :post, data: { turbo_stream: true } do %>
+    <%= hidden_field_tag :bullet_ids, params[:bullet_ids] %>
+    <%= hidden_field_tag :pops_on, @pop_tomorrow %>
+    <%= button_tag type: :submit, class: "button-secondary bulk-menu--pops-option" do %>
+      Tomorrow · <%= @pop_tomorrow.strftime("%a, %b %-d") %>
+    <% end %>
+  <% end %>
+
+  <%= form_with url: pop_path, method: :post, data: { turbo_stream: true } do %>
+    <%= hidden_field_tag :bullet_ids, params[:bullet_ids] %>
+    <%= hidden_field_tag :pops_on, @pop_next_monday %>
+    <%= button_tag type: :submit, class: "button-secondary bulk-menu--pops-option" do %>
+      Next week · <%= @pop_next_monday.strftime("%a, %b %-d") %>
+    <% end %>
+  <% end %>
+</div>
+
+<%= form_with url: pop_path, method: :post, class: "bulk-menu--pops-date-form", data: { turbo_stream: true } do %>
+  <%= hidden_field_tag :bullet_ids, params[:bullet_ids] %>
+  <%= date_field_tag :pops_on, @pop_asap, class: "form-input" %>
+  <%= button_tag type: :submit, class: "button-secondary" do %>
+    Pick a date
+  <% end %>
+<% end %>

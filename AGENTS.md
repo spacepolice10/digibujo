@@ -35,14 +35,14 @@ Custom session-based auth built with an `Authentication` concern (not Devise). U
 
 | Type    | Concerns                       | Notes                              |
 |---------|--------------------------------|------------------------------------|
-| `Task`  | `Bulletable`                   | Completable + temporal; composer leading `-` |
-| `Note`  | `Bulletable`                   | Long-form/reference entry; no prefix (plain line) |
-| `Event` | `Bulletable`                   | Temporal (not completable); composer leading `>` |
+| `Task`  | `Bulletable`                   | Completable + temporal |
+| `Note`  | `Bulletable`                   | Long-form/reference entry |
+| `Event` | `Bulletable`                   | Temporal (not completable) |
 
-Bullets have rich text `content` via Action Text (Trix). **Organization:** `Bullet` **optionally** `belongs_to :bucket` (`bullets.bucket_id` → `buckets`). A bullet is in **at most one** bucket (either a project bucket or a collection bucket), not several. There is **no** `bullets.project_id` and no virtual `project_id` on `Bullet`. A `Bucket` is a `delegated_type :bucketable` whose types include `Project` and `Collection` (each owns exactly one `Bucket`). The composer posts **`bucket_id`** for the project picker (or prefills when composing from a project/collection page). The **collect** intent accepts **`bucket_id`** (`POST` to attach, `DELETE` to detach). **Destroying** a bucket **nullifies** `bullets.bucket_id` for linked bullets (`dependent: :nullify`). Intent methods in concerns (`Collectable#collect!` / `#uncollect!`, `Poppable#pop!` / `#unpop!`, etc.) update organization metadata (`triaged_at`, `pops_on`, `bucket`) without forcing bullet type conversion. To add a new bulletable type: create the model, `include Bulletable`, implement `form_fields`, and register it in `Bullet`'s `delegated_type` declaration.
+Bullets have rich text `content` via Action Text (Trix). **Organization:** `Bullet` **optionally** `belongs_to :bucket` (`bullets.bucket_id` → `buckets`). A bullet is in **at most one** bucket (either a project bucket or a collection bucket), not several. There is **no** `bullets.project_id` and no virtual `project_id` on `Bullet`. A `Bucket` is a `delegated_type :bucketable` whose types include `Project` and `Collection` (each owns exactly one `Bucket`). The composer posts **`bucket_id`** when it is configured with a bucket context (for example, from a project/collection page). The **collect** intent accepts **`bucket_id`** (`POST` to attach, `DELETE` to detach). **Destroying** a bucket **nullifies** `bullets.bucket_id` for linked bullets (`dependent: :nullify`). Intent methods in concerns (`Collectable#collect!` / `#uncollect!`, `Poppable#pop!` / `#unpop!`, etc.) update organization metadata (`triaged_at`, `pops_on`, `bucket`) without forcing bullet type conversion. To add a new bulletable type: create the model, `include Bulletable`, and register it in `Bullet`'s `delegated_type` declaration.
 
 ### Bullet Status
-`Bullet` has two independent boolean columns: `pinned` and `archived` (both `default: false, null: false`). There is no `status` enum. `Pinnable` adds a `pinned` scope and enforces a limit of 10 pinned bullets per user. `Archivable` adds an `archived` scope. The `timeline` scope returns all bullets (`all`) — pinned and archived bullets remain visible in the timeline and are distinguished by icons in the bullet partial.
+`Bullet` has two independent boolean columns: `pinned` and `archived` (both `default: false, null: false`). There is no `status` enum. `Pinnable` adds a `pinned` scope and `pin!` / `unpin!` helpers (used by bullets and buckets; no pin count limit). `Archivable` adds an `archived` scope. The `timeline` scope returns all bullets (`all`) — pinned and archived bullets remain visible in the timeline and are distinguished by icons in the bullet partial.
 
 `Bullet` also tracks `triaged_at` (`datetime`): `nil` means no organizing intent has stamped disposition yet; present means the user applied an action (e.g. collect or pop) that sets this timestamp.
 
@@ -50,7 +50,7 @@ Bullets have rich text `content` via Action Text (Trix). **Organization:** `Bull
 Bullets use `pops_on` (`date`) as the primary day bucket: which daily log page the bullet appears on. `Bullet.pops_on_date(date)` matches bullets for that calendar day per the model rules. The daily log is at `/daylog` (today) or `/daylog/:year/:month/:day`; use `daylog_path_to(date)` in views and controllers.
 
 ### Organizing from the timeline
-From each bullet row (⋯ menu), users can **collect** (`POST /bullets/:bullet_id/collect` with `bucket_id`, `DELETE` to detach), **pop** (`POST /bullets/:bullet_id/pop` with `pops_on`, `DELETE` to clear), and **archive** (`PATCH /bullets/:bullet_id/archive`). **Postpone** in the UI sends the same `POST /pop` with a client-computed `pops_on` (e.g. viewing day + 1). Activity records `popped` only; reports infer moves from `pops_on` changes. Responses use Turbo Streams where applicable, with HTML fallbacks (typically redirect to the daylog for the new `pops_on` or today).
+Select bullets via row checkboxes; the sticky **`_bulk_menu`** (styled in `bulk-menu.css`, driven by `bullets-bulk` Stimulus) syncs comma-separated `bullet_ids` into collection intent forms. Actions: **collect** (`POST /bullets/collect` with `bucket_id`, `DELETE` to detach), **pop** (`POST /bullets/pop` with `pops_on`, `DELETE` to restore previous day), **pin**, **archive** (create/destroy). **Postpone** on the daylog sends `POST /pop` with `pops_on` = viewing day + 1. Pin/Unpin buttons hide when the selection includes a pinned or unpinned bullet respectively (`data-pinned` on checkboxes). Activity records `popped` only; reports infer moves from `pops_on` changes. Responses use Turbo Streams where applicable, with HTML fallbacks.
 
 `Collectable` and `Poppable` are intent-focused concerns; they do not force bullet type conversion.
 
@@ -65,7 +65,7 @@ From each bullet row (⋯ menu), users can **collect** (`POST /bullets/:bullet_i
 ### Analog BuJo Alignment
 The architecture is intentionally closer to analog Bullet Journal behavior:
 
-- **Rapid logging markers** in the composer: leading `-` switches to Task, leading `>` to Event (stripped only when the type changes; plain line is Note)
+- **Rapid logging** uses a native composer type select for Task, Note, and Event
 - **Daily focus** is explicit (`/daylog` and dated daylog paths show the daily log)
 - **Migration over rewrite** happens where needed by editing or changing bullet type
 - **Deferred decisions** are supported by moving `pops_on` forward (postpone) or collecting into a project
@@ -75,7 +75,7 @@ The architecture is intentionally closer to analog Bullet Journal behavior:
 `Bucket` belongs to a user and uses `delegated_type :bucketable` (`Project`, `Collection`). Each bullet has **zero or one** bucket via `bullets.bucket_id` (no `bullet_buckets` join table). `Project` / `Collection` rows do not store `user_id`; ownership is the bucket’s `user_id`, with `creation_user_id` on the bucketable for attribution where needed. Bucket **identity** (`name`, `colour`, `icon`) is stored on `buckets` (`name` required; `colour` / `icon` optional via `Colourable` and `Iconable`; no auto-assign). Collection bucket names are unique per user; project names may repeat. `Project` and `Collection` are thin delegated types (no identity columns); they delegate `name`, `colour`, `icon`, and colour CSS helpers to `bucket` for display. Create forms pass identity fields on the bucketable param object; controllers persist them on the bucket row. The index hub is at `GET /buckets` (linked from the app header). **Streams** (saved filtered views) were removed; use projects, collections, and timeline filters instead.
 
 ### Turbo Streams
-Mutating bullet actions (`create`, `update`, `destroy`, and bullet sub-resources) respond to `format.turbo_stream` for inline updates where applicable. HTML fallback redirects are provided.
+Mutating bullet actions (`create`, `update`, `destroy`, and bullet sub-resources) respond to `format.turbo_stream` for inline updates where applicable. HTML fallback redirects are provided. Bulk intents use the shared `_bulk_menu` forms; row checkboxes are unstyled (native inputs).
 
 ### Routes
 
@@ -92,8 +92,7 @@ GET    /daylog/:year/:month/:day             → daylogs#show
 GET    /monthlylog                           → monthlylogs#show (current month)
 GET    /monthlylog/:year/:month              → monthlylogs#show
 
-# Bullets (dynamic fields + JSON contexts under scoped module)
-GET    /bullets/fields/:id                   → bullets/fields#show (id=task|note|event)
+# Bullets (JSON contexts under scoped module)
 GET    /bullets/contexts                     → bullets/contexts#index (JSON)
 
 # Bullets CRUD (no index — daily log is /daylog)
@@ -104,13 +103,15 @@ GET    /bullets/:id/edit                     → bullets#edit
 PATCH  /bullets/:id                          → bullets#update
 DELETE /bullets/:id                          → bullets#destroy
 
-# Bullet sub-resources (Turbo Stream responses)
-PATCH  /bullets/:bullet_id/pin               → bullets/pins#update
-PATCH  /bullets/:bullet_id/archive           → bullets/archives#update
-POST   /bullets/:bullet_id/collect           → bullets/collects#create
-DELETE /bullets/:bullet_id/collect           → bullets/collects#destroy
-POST   /bullets/:bullet_id/pop               → bullets/pops#create
-DELETE /bullets/:bullet_id/pop               → bullets/pops#destroy
+# Bullet bulk intents (collection; `bullet_ids` comma-separated)
+POST   /bullets/pin                          → bullets/pins#create
+DELETE /bullets/pin                          → bullets/pins#destroy
+POST   /bullets/archive                      → bullets/archives#create
+DELETE /bullets/archive                      → bullets/archives#destroy
+POST   /bullets/collect                      → bullets/collects#create
+DELETE /bullets/collect                      → bullets/collects#destroy
+POST   /bullets/pop                          → bullets/pops#create
+DELETE /bullets/pop                          → bullets/pops#destroy
 POST   /bullets/:bullet_id/complete          → bullets/completes#create
 DELETE /bullets/:bullet_id/complete          → bullets/completes#destroy
 PATCH  /bullets/:bullet_id/publish           → bullets/publishes#update

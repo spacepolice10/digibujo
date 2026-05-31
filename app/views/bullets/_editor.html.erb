@@ -1,0 +1,49 @@
+<% type_options = bullet_type_options %>
+<% selected_type_name = local_assigns.fetch(:bulletable_type).presence_in(type_options) || "Note" %>
+<% submitted_attributes = local_assigns.fetch(:attributes, {}).compact %>
+<% editor_id = local_assigns.fetch(:editor_id) { "bullet_editor_#{bullet.object_id}" } %>
+
+<%= form_with model: bullet,
+      namespace: editor_id,
+      class: "bullet-form",
+      data: {
+        controller: "editor",
+        action: "keydown->editor#handleKeydown"
+      } do |f| %>
+  <div class="bullet-form-composer">
+    <label class="bullet-form-type-picker"
+           data-editor-target="typePicker"
+           data-bullet-type="<%= selected_type_name.downcase %>"
+           aria-label="Bullet type">
+      <span class="bullet-form-type-marker icon"
+            data-editor-target="typeMarker"
+            aria-hidden="true"></span>
+      <%= select_tag "bullet[bulletable_type]",
+            options_for_select(type_options, selected_type_name),
+            id: "#{editor_id}_bulletable_type",
+            class: "bullet-form-type-select",
+            required: true,
+            data: {
+              editor_target: "typeSelect",
+              action: "editor#syncType"
+            } %>
+    </label>
+
+    <% submitted_attributes.each do |name, value| %>
+      <%= f.hidden_field name, value: value %>
+    <% end %>
+
+    <div class="bullet-form-editor">
+      <%= f.rich_text_area :content,
+            autofocus: "true",
+            placeholder: "What's on your mind?" %>
+    </div>
+
+    <div class="bullet-form-footer">
+      <%= f.button type: "submit", class: "button-primary button-icon" do %>
+        <i class="icon" style="--icon-mask: var(--icon-arrow-up)" aria-hidden="true"></i>
+      <% end %>
+    </div>
+  </div>
+
+<% end %>

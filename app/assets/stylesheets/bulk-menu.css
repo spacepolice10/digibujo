@@ -1,0 +1,135 @@
+@layer components {
+  .bulk-menu {
+    position: fixed;
+    inset-inline: 0;
+    bottom: calc(var(--spacing-vertical-double) * 5);
+    z-index: 20;
+    anchor-name: --bulk-menu;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    width: fit-content;
+    max-width: min(100%, calc(var(--spacing-horizontal-double) * 20));
+    margin-inline: auto;
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+    background: color-mix(
+      in oklch,
+      var(--color-bg-base),
+      var(--color-bg-subtle) 40%
+    );
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-strong);
+    box-shadow: var(--shadow-elevated);
+    transition:
+      opacity 0.12s ease,
+      translate 0.12s ease;
+
+    &[hidden] {
+      opacity: 0;
+      pointer-events: none;
+      translate: 0 var(--spacing-vertical);
+    }
+
+    form {
+      display: inline-flex;
+      margin: 0;
+    }
+  }
+
+  .bulk-menu--count {
+    margin: 0;
+    font-size: var(--font-size-subtle);
+    font-weight: var(--font-weight-strong);
+    color: var(--color-fg-base);
+  }
+
+  .bulk-menu--actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+  }
+
+  .bulk-menu--clear {
+    margin-inline-start: auto;
+  }
+
+  .bulk-menu--pops-dock {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .bulk-menu--pops-menu {
+    display: flex;
+    position: fixed;
+    inset: unset;
+    position-anchor: --bulk-menu;
+    position-area: block-start center;
+    margin: 0;
+    margin-bottom: var(--spacing-vertical-half);
+    position-try-fallbacks:
+      flip-block,
+      flip-inline,
+      flip-block flip-inline;
+    width: min(calc(var(--spacing-horizontal-double) * 12), calc(100dvw - var(--spacing-horizontal-double)));
+    max-height: min(calc(var(--spacing-horizontal-double) * 14), calc(100dvh - var(--spacing-horizontal-double) * 5));
+    overflow: auto;
+    padding: var(--spacing-vertical-half);
+    background: color-mix(
+      in oklch,
+      var(--color-bg-base),
+      var(--color-bg-subtle) 40%
+    );
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-strong);
+    box-shadow: var(--shadow-elevated);
+  }
+
+  .bulk-menu--pops-menu:popover-open {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bulk-menu--pops-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-horizontal);
+    padding-bottom: var(--spacing-vertical-half);
+    margin-bottom: var(--spacing-vertical-half);
+    border-bottom: 1px solid var(--color-stroke-base);
+  }
+
+  .bulk-menu--pops-title {
+    margin: 0;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-strong);
+  }
+
+  .bulk-menu--pops-options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical-half);
+    margin-bottom: var(--spacing-vertical-half);
+  }
+
+  .bulk-menu--pops-option {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .bulk-menu--pops-date-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    padding-top: var(--spacing-vertical-half);
+    border-top: 1px solid var(--color-stroke-base);
+
+    .form-input {
+      flex: 1 1 auto;
+      min-width: calc(var(--spacing-horizontal-double) * 5);
+    }
+  }
+}

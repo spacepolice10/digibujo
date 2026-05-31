@@ -1,171 +1,38 @@
 @layer components {
-  .pinned--footer {
-    position: relative;
-    bottom: 0;
-    display: flex;
-    align-items: flex-end;
-    gap: var(--spacing-horizontal-half);
-    width: fit-content;
-    max-width: min(100%, calc(var(--spacing-horizontal-double) * 14));
-    margin: var(--spacing-vertical) auto;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
-    background: color-mix(
-      in oklch,
-      var(--color-bg-base),
-      var(--color-bg-subtle) 40%
-    );
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-strong);
-    box-shadow: var(--shadow-elevated);
-  }
-
-  .pinned--footer-name {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--spacing-vertical-half);
-    flex-shrink: 0;
-    padding: var(--spacing-vertical-half) 0;
-    font-size: var(--font-size-subtle);
-    font-weight: var(--font-weight-strong);
-    text-transform: uppercase;
-    color: var(--color-fg-warn);
-
-    .icon {
-      width: var(--icon-size-base);
-      height: var(--icon-size-base);
-    }
-  }
-
   .pinned--dock {
     position: relative;
-    flex: 1 1 auto;
-    min-width: calc(var(--spacing-horizontal-double) * 8);
-    --stack-step: var(--spacing-vertical-half);
+    width: fit-content;
+    margin: var(--spacing-vertical) auto;
   }
 
-  .pinned--dock:not([open]) {
-    height: calc(
-      var(--spacing-vertical-double) + var(--stack-step) *
-        (var(--dock-count) - 1)
-    );
-  }
-
-  .pinned--dock[open] {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-vertical-half);
-  }
-
-  .pinned--dock-summary {
-    position: absolute;
-    bottom: 0;
-    list-style: none;
-    cursor: pointer;
-
-    &::-webkit-details-marker {
-      display: none;
-    }
-  }
-
-  .pinned--dock:not([open]) .pinned--dock-summary {
-    position: absolute;
-    inset-inline: 0;
-    bottom: 0;
-    z-index: calc(var(--dock-count) + 1);
-    height: var(--spacing-vertical-double);
-  }
-
-  .pinned--dock[open] .pinned--dock-summary {
-    order: -1;
-    align-self: flex-end;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    font-size: var(--font-size-subtle);
-    color: var(--color-fg-subtle);
-  }
-
-  .pinned--dock-item {
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    border: 1px solid var(--color-stroke-warn);
+  .pinned--list {
+    position: fixed;
+    inset: unset;
+    position-anchor: --footer;
+    position-area: block-start center;
+    width: min(calc(var(--spacing-horizontal-double) * 16), calc(100dvw - var(--spacing-horizontal-double)));
+    max-height: min(calc(var(--spacing-horizontal-double) * 14), calc(100dvh - var(--spacing-horizontal-double) * 5));
+    margin-bottom: var(--spacing-vertical-half);
+    overflow: auto;
+    background-color: var(--color-bg-base);
+    border: 1px solid var(--color-stroke-base);
     border-radius: var(--radius-base);
-    background: var(--color-bg-warn);
-    box-shadow: var(--shadow-elevated);
-    transition:
-      transform 0.15s ease,
-      opacity 0.15s ease;
-
-    &[data-bullet-type="task"] .pinned--dock-item-marker {
-      background-color: var(--model-color-2);
-    }
-
-    &[data-bullet-type="note"] .pinned--dock-item-marker {
-      background-color: var(--model-color-5);
-    }
-
-    &[data-bullet-type="event"] .pinned--dock-item-marker {
-      background-color: var(--model-color-6);
-    }
-  }
-
-  .pinned--dock:not([open]) .pinned--dock-item {
-    position: absolute;
-    inset-inline: 0;
-    bottom: 0;
-    z-index: calc(var(--dock-count) - var(--dock-position));
-    transform: translateY(calc(-2 * var(--dock-position) * var(--stack-step)));
-    width: calc(100% - var(--dock-position) * var(--spacing-horizontal-half));
-    margin-inline: auto;
-    pointer-events: none;
-  }
-
-  .pinned--dock[open] .pinned--dock-item {
-    transform: none;
-    opacity: var(--opacity-full);
-    z-index: auto;
-    margin-bottom: var(--spacing-vertical);
     box-shadow: var(--shadow-elevated);
   }
 
-  .pinned--dock-item-link {
+  .pinned--list-header {
+    position: sticky;
+    top: 0px;
+    z-index: var(--z-dialog-backdrop);
     display: flex;
     align-items: center;
-    gap: var(--spacing-horizontal-half);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    min-width: 0;
-    text-decoration: none;
-    color: inherit;
-  }
-
-  .pinned--dock-item-marker {
-    position: absolute;
-    top: -1ch;
-    left: calc(--dock-position * var(--spacing-horizontal));
-    flex-shrink: 0;
-    width: var(--spacing-vertical);
-    height: var(--spacing-vertical-double);
-
-    border-radius: var(--radius-subtle);
-    box-shadow: var(--shadow-elevated);
-  }
-
-  .pinned--dock-item-text {
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: var(--font-size-subtle);
-    color: var(--color-fg-base);
-  }
-
-  .pinned--dock[open] .pinned--dock-item-text {
-    white-space: normal;
-    overflow: visible;
-  }
-
-  .pinned--dock-item-link:hover .pinned--dock-item-text,
-  .pinned--dock-item-link:focus-visible .pinned--dock-item-text {
-    color: var(--color-fg-warn);
+    justify-content: space-between;
+    background-color: var(--color-bg-base);
+    gap: var(--spacing-horizontal);
+    padding: var(--spacing-horizontal-half);
+    border-bottom: 1px solid var(--color-stroke-base);
+    & h2 {
+      font-size: var(--font-size-base);
+    }
   }
 }

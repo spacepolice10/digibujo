@@ -62,4 +62,20 @@ class BucketTest < ActiveSupport::TestCase
     bucket = @user.buckets.build(bucketable: other, name: "alpha")
     assert bucket.valid?
   end
+
+  test "pin! marks bucket pinned" do
+    assert_not @bucket.pinned?
+
+    assert @bucket.pin!
+
+    assert @bucket.reload.pinned?
+  end
+
+  test "unpin! clears pinned state" do
+    @bucket.update!(pinned: true)
+
+    @bucket.unpin!
+
+    assert_not @bucket.reload.pinned?
+  end
 end

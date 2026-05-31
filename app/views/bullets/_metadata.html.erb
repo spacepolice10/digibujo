@@ -1,22 +1,80 @@
 <% bucket_tags = bullet.bucket.present? ? [bullet.bucket] : [] %>
 <% if bullet.pinned? || bullet.archived? || bullet.pops_on.present? || bullet.ends_date.present? || bucket_tags.any? || bullet.context_bullet.present? %>
-  <div class="bullet-tags">
-    <% if bullet.pops_on && @selected_date && bullet.pops_on > @selected_date %>
-      <span class="pill pill--4">
-        <p>Scheduled on <%= bullet.pops_on.strftime("%B %d") %></p>
-      </span>
-    <% end %>
+  <div class="bullet--metadata">
+    <span class="bullet--tags">
+      <% if bullet.pops_on && @selected_date && bullet.pops_on > @selected_date %>
+        <span class="pill pill--4">
+          <p>Scheduled on <%= bullet.pops_on.strftime("%B %d") %></p>
+        </span>
+      <% end %>
+      <% if bullet.pinned? %>
+        <% pinned_hint_id = dom_id(bullet, :hint_pinned) %>
+        <% pinned_anchor = "--hint-#{bullet.id}-pinned" %>
+        <span
+          class="pill"
+          interestfor="<%= pinned_hint_id %>"
+          style="anchor-name: <%= pinned_anchor %>"
+          aria-label="Pinned"
+        >
+          <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
+        </span>
+      <% end %>
+      <% if bullet.archived? %>
+        <% archived_hint_id = dom_id(bullet, :hint_archived) %>
+        <% archived_anchor = "--hint-#{bullet.id}-archived" %>
+        <span
+          class="pill"
+          interestfor="<%= archived_hint_id %>"
+          style="anchor-name: <%= archived_anchor %>"
+          aria-label="Archived"
+        >
+          <i class="icon" style="--icon-mask: var(--icon-archive)" aria-hidden="true"></i>
+        </span>
+      <% end %>
+      <% bucket_tags.each do |bucket| %>
+        <% bucketable = bucket.bucketable %>
+        <% next unless bucketable %>
+        <% if bucket.bucketable_type == "Project" %>
+          <% project_hint_id = dom_id(bullet, "hint_project_#{bucket.id}") %>
+          <% project_anchor = "--hint-#{bullet.id}-project-#{bucket.id}" %>
+          <%= link_to project_path(bucketable),
+                class: ["pill", bucket.colour.present? ? "pill--#{bucket.colour}" : nil].compact.join(" "),
+                interestfor: project_hint_id,
+                style: "anchor-name: #{project_anchor}",
+                data: { turbo_frame: "_top" },
+                aria: { label: "Project: #{bucket.name}" } do %>
+            <i class="icon" style="--icon-mask: <%= bucket_icon_mask(bucket) %>" aria-hidden="true"></i>
+          <% end %>
+        <% elsif bucket.bucketable_type == "Collection" %>
+          <% coll_hint_id = dom_id(bullet, "hint_collection_#{bucket.id}") %>
+          <% coll_anchor = "--hint-#{bullet.id}-collection-#{bucket.id}" %>
+          <%= link_to collection_path(bucketable),
+                class: ["pill", bucket.colour.present? ? "pill--#{bucket.colour}" : nil].compact.join(" "),
+                interestfor: coll_hint_id,
+                style: "anchor-name: #{coll_anchor}",
+                data: { turbo_frame: "_top" },
+                aria: { label: "Collection: #{bucket.name}" } do %>
+            <i class="icon" style="--icon-mask: <%= bucket_icon_mask(bucket) %>" aria-hidden="true"></i>
+          <% end %>
+        <% end %>
+      <% end %>
+      <% if bullet.context_bullet.present? %>
+        <% context_bullet = bullet.context_bullet %>
+        <% context_hint_id = dom_id(bullet, :hint_context) %>
+        <% context_anchor = "--hint-#{bullet.id}-context" %>
+        <%= link_to bullet_path(context_bullet),
+              class: "pill",
+              interestfor: context_hint_id,
+              style: "anchor-name: #{context_anchor}",
+              data: { turbo_frame: "_top" },
+              aria: { label: "Context: #{context_bullet.bulletable.name}" } do %>
+          <i class="icon" style="--icon-mask: var(--icon-link)" aria-hidden="true"></i>
+        <% end %>
+      <% end %>
+    </span>
     <% if bullet.pinned? %>
       <% pinned_hint_id = dom_id(bullet, :hint_pinned) %>
-      <% pinned_anchor = "--hint-bullet-#{bullet.id}-pinned" %>
-      <span
-        class="pill"
-        interestfor="<%= pinned_hint_id %>"
-        style="<%= hint_anchor_style(pinned_anchor) %>"
-        aria-label="Pinned"
-      >
-        <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
-      </span>
+      <% pinned_anchor = "--hint-#{bullet.id}-pinned" %>
       <div
         id="<%= pinned_hint_id %>"
         class="hint"
@@ -26,18 +84,9 @@
         Pinned — stays at the top of your timeline.
       </div>
     <% end %>
-
     <% if bullet.archived? %>
       <% archived_hint_id = dom_id(bullet, :hint_archived) %>
-      <% archived_anchor = "--hint-bullet-#{bullet.id}-archived" %>
-      <span
-        class="pill"
-        interestfor="<%= archived_hint_id %>"
-        style="<%= hint_anchor_style(archived_anchor) %>"
-        aria-label="Archived"
-      >
-        <i class="icon" style="--icon-mask: var(--icon-archive)" aria-hidden="true"></i>
-      </span>
+      <% archived_anchor = "--hint-#{bullet.id}-archived" %>
       <div
         id="<%= archived_hint_id %>"
         class="hint"
@@ -47,21 +96,12 @@
         Archived — hidden from the main timeline until restored.
       </div>
     <% end %>
-
     <% bucket_tags.each do |bucket| %>
       <% bucketable = bucket.bucketable %>
       <% next unless bucketable %>
       <% if bucket.bucketable_type == "Project" %>
         <% project_hint_id = dom_id(bullet, "hint_project_#{bucket.id}") %>
-        <% project_anchor = "--hint-bullet-#{bullet.id}-project-#{bucket.id}" %>
-        <%= link_to project_path(bucketable),
-              class: ["pill", bucket.colour.present? ? "pill--#{bucket.colour}" : nil].compact.join(" "),
-              interestfor: project_hint_id,
-              style: hint_anchor_style(project_anchor),
-              data: { turbo_frame: "_top" },
-              aria: { label: "Project: #{bucket.name}" } do %>
-          <i class="icon" style="--icon-mask: <%= bucket_icon_mask(bucket) %>" aria-hidden="true"></i>
-        <% end %>
+        <% project_anchor = "--hint-#{bullet.id}-project-#{bucket.id}" %>
         <div
           id="<%= project_hint_id %>"
           class="hint"
@@ -72,15 +112,7 @@
         </div>
       <% elsif bucket.bucketable_type == "Collection" %>
         <% coll_hint_id = dom_id(bullet, "hint_collection_#{bucket.id}") %>
-        <% coll_anchor = "--hint-bullet-#{bullet.id}-collection-#{bucket.id}" %>
-        <%= link_to collection_path(bucketable),
-              class: ["pill", bucket.colour.present? ? "pill--#{bucket.colour}" : nil].compact.join(" "),
-              interestfor: coll_hint_id,
-              style: hint_anchor_style(coll_anchor),
-              data: { turbo_frame: "_top" },
-              aria: { label: "Collection: #{bucket.name}" } do %>
-          <i class="icon" style="--icon-mask: <%= bucket_icon_mask(bucket) %>" aria-hidden="true"></i>
-        <% end %>
+        <% coll_anchor = "--hint-#{bullet.id}-collection-#{bucket.id}" %>
         <div
           id="<%= coll_hint_id %>"
           class="hint"
@@ -91,26 +123,16 @@
         </div>
       <% end %>
     <% end %>
-
     <% if bullet.context_bullet.present? %>
-      <% context_bullet = bullet.context_bullet %>
       <% context_hint_id = dom_id(bullet, :hint_context) %>
-      <% context_anchor = "--hint-bullet-#{bullet.id}-context" %>
-      <%= link_to bullet_path(context_bullet),
-            class: "pill",
-            interestfor: context_hint_id,
-            style: hint_anchor_style(context_anchor),
-            data: { turbo_frame: "_top" },
-            aria: { label: "Context: #{context_bullet.bulletable.name}" } do %>
-        <i class="icon" style="--icon-mask: var(--icon-link)" aria-hidden="true"></i>
-      <% end %>
+      <% context_anchor = "--hint-#{bullet.id}-context" %>
       <div
         id="<%= context_hint_id %>"
         class="hint"
         popover="hint"
         style="position-anchor: <%= context_anchor %>"
       >
-        <%= context_bullet.bulletable.name %>
+        <%= bullet.context_bullet.bulletable.name %>
       </div>
     <% end %>
   </div>

@@ -1,0 +1,19 @@
+<% if bucket.pinned? %>
+  <%= button_to buckets_pin_path,
+        method: :delete,
+        params: { bucket_ids: bucket.id },
+        class: "button-secondary button-icon bucket--list-item-pin",
+        form: { data: { turbo_stream: true } },
+        aria: { label: "Unpin #{bucket.name}" } do %>
+    <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
+  <% end %>
+<% else %>
+  <%= button_to buckets_pin_path,
+        method: :post,
+        params: { bucket_ids: bucket.id },
+        class: "button-secondary button-icon bucket--list-item-pin",
+        form: { data: { turbo_stream: true } },
+        aria: { label: "Pin #{bucket.name}" } do %>
+    <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
+  <% end %>
+<% end %>

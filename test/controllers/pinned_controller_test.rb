@@ -21,7 +21,7 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
     assert_select ".workspace", count: 0
   end
 
-  test "dock renders pinned bullets list" do
+  test "dock renders lazy pinned bullets list frame" do
     @user.bullets.create!(
       bulletable: Task.create!,
       content: "Pinned bullet",
@@ -29,6 +29,30 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
     )
 
     get pinned_index_path, headers: { "Turbo-Frame" => "pinned_bullets_dock" }
-    assert_select ".pinned--dock-item-link", text: /Pinned bullet/, count: 1
+    assert_select ".pinned--dock" do
+      assert_select "button[popovertarget='pinned_bullets']", text: "Pinned"
+      assert_select "turbo-frame#pinned_bullets[popover].pinned--list[src][loading='lazy']"
+      assert_select "details", count: 0
+      assert_select ".bullet", count: 0
+      assert_select ".pinned--dock-item-link", count: 0
+    end
+  end
+
+  test "list frame renders pinned bullets" do
+    @user.bullets.create!(
+      bulletable: Task.create!,
+      content: "Pinned bullet",
+      pinned: true
+    )
+
+    get pinned_index_path, headers: { "Turbo-Frame" => "pinned_bullets" }
+    assert_select "turbo-frame#pinned_bullets[popover].pinned--list" do
+      assert_select ".pinned--list-header" do
+        assert_select ".pinned--list-title", text: "Pinned bullets"
+        assert_select "button[popovertarget='pinned_bullets'][popovertargetaction='hide'][aria-label='Close pinned bullets']"
+      end
+      assert_select ".bullet", text: /Pinned bullet/, count: 1
+      assert_select ".pinned--dock-item-link", count: 0
+    end
   end
 end

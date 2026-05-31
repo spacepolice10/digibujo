@@ -1,9 +1,8 @@
 class BulletsController < ApplicationController
   before_action :set_bullet, only: %i[show edit update destroy]
-  before_action :set_selected_date, only: %i[new create]
 
   def new
-    @bullet = Bullet.new(pops_on: @selected_date)
+    @bullet = Current.user.bullets.build(pops_on: pops_on_param)
   end
 
   def create
@@ -16,7 +15,22 @@ class BulletsController < ApplicationController
     else
       respond_to do |format|
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update("new_bullet_form", partial: "form", locals: { bullet: @bullet })
+          render turbo_stream: [
+            turbo_stream.update(
+              "new_bullet_form",
+              partial: "editor",
+              locals: {
+                bullet: @bullet,
+                bulletable_type: @bullet.bulletable_type,
+                attributes: editor_attributes_for(@bullet)
+              }
+            ),
+            turbo_stream.update(
+              "toasts",
+              partial: "shared/toasts",
+              locals: { type: "errmsg", messages: @bullet.errors.full_messages }
+            )
+          ]
         end
         format.html { render :new, status: :unprocessable_entity }
       end
@@ -37,11 +51,22 @@ class BulletsController < ApplicationController
     else
       respond_to do |format|
         format.turbo_stream do
-          render turbo_stream: turbo_stream.update(
-            dom_id(@bullet),
-            partial: "form",
-            locals: { bullet: @bullet }
-          )
+          render turbo_stream: [
+            turbo_stream.update(
+              dom_id(@bullet),
+              partial: "editor",
+              locals: {
+                bullet: @bullet,
+                bulletable_type: @bullet.bulletable_type,
+                attributes: {}
+              }
+            ),
+            turbo_stream.update(
+              "toasts",
+              partial: "shared/toasts",
+              locals: { type: "errmsg", messages: @bullet.errors.full_messages }
+            )
+          ]
         end
         format.html { render :edit, status: :unprocessable_entity }
       end
@@ -62,10 +87,6 @@ class BulletsController < ApplicationController
     @bullet = Current.user.bullets.find(params[:id])
   end
 
-  def set_selected_date
-    @selected_date = selected_date_param
-  end
-
   def bullet_params
     params.require(:bullet).permit(
       :content,
@@ -80,31 +101,23 @@ class BulletsController < ApplicationController
   def create_bullet_from
     permitted = bullet_params
     type_name = permitted[:bulletable_type].to_s
-    attributes = permitted.except(:bulletable_type, 'bulletable_type')
-    attributes[:pops_on] = resolve_pops_on(attributes[:pops_on])
+    attributes = permitted.except(:bulletable_type, "bulletable_type")
     Current.user.bullets.new(attributes.merge(bulletable: type_name.constantize.new))
   end
 
-  def resolve_pops_on(explicit)
-    return parse_date_param(explicit) if explicit.present?
-    return parse_date_param(params[:date]) if params[:date].present?
+  def pops_on_param
+    return if params[:pops_on].blank?
 
-    @selected_date
+    Date.iso8601(params[:pops_on])
+  rescue ArgumentError
+    nil
   end
 
-  def parse_date_param(value)
-    return value if value.is_a?(Date)
-
-    Date.iso8601(value.to_s)
-  rescue ArgumentError
-    @selected_date
-  end
-
-  def selected_date_param
-    return Date.current if params[:date].blank?
-
-    Date.iso8601(params[:date])
-  rescue ArgumentError
-    Date.current
+  def editor_attributes_for(bullet)
+    {
+      pops_on: bullet.pops_on,
+      bucket_id: bullet.bucket_id,
+      context_bullet_id: bullet.context_bullet_id
+    }
   end
 end

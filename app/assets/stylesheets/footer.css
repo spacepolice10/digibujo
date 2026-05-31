@@ -1,0 +1,15 @@
+@layer components {
+  .footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    anchor-name: --footer;
+    background-color: var(--color-bg-base);
+    border-top: 1px solid var(--color-stroke-base);
+  }
+
+  .footer--dock {
+    display: block;
+    width: 100%;
+  }
+}

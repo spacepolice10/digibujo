@@ -15,8 +15,11 @@ Rails.application.routes.draw do
 
   # Bullet
   scope "bullets", module: :bullets do
-    resources :fields, only: :show
     resources :contexts, only: :index
+    resource :pin,     only: %i[create destroy]
+    resource :archive,  only: %i[create destroy]
+    resource :collect,  only: %i[new create destroy]
+    resource :pop,      only: %i[new create destroy]
   end
   concern :completable do
     scope module: :bullets do
@@ -26,16 +29,19 @@ Rails.application.routes.draw do
 
   resources :bullets, except: :index, concerns: %i[completable] do
     scope module: :bullets do
-      resource :pin,             only: :update
-      resource :archive,         only: :update
-      resource :collect,         only: %i[create destroy]
-      resource :pop, only: %i[create destroy]
-      resource :publish,         only: :update
+      resource :publish, only: :update
     end
   end
 
   resource :search, only: :show
-  resource :buckets
+  resource :buckets do
+    scope module: :buckets do
+      resource :picker, only: :show
+      resource :picker_choice, only: :create
+      resource :pin, only: %i[create destroy]
+    end
+  end
+  get "projects/suggestions", to: "projects/suggestions#index", as: :project_suggestions
   resources :projects
   resources :collections
 

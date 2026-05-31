@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Bucket < ApplicationRecord
-  include Colourable, Iconable
+  include Colourable, Iconable, Pinnable
 
   belongs_to :user
   delegated_type :bucketable, types: %w[Project Collection], dependent: :destroy

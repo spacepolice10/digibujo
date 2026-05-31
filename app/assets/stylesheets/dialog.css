@@ -60,6 +60,22 @@
     }
   }
 
+  .dialog--body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .dialog--hide {
+    position: relative;
+    z-index: var(--z-dialog);
+    appearance: none;
+    background-color: transparent;
+    border: 0;
+    align-self: flex-end;
+  }
+
   .dialog--header,
   .dialog--footer {
     display: flex;

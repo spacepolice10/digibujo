@@ -1,14 +1,22 @@
 <turbo-frame id="<%= dom_id(note) %>" class="bullet" data-bullet-type="note">
   <div class="bullet--note-marker">
-  <i
-    class="icon"
-    style="--icon-mask: var(--icon-line-dashed)"
-    aria-hidden="true"
-  ></i>
-</div>
-    <%= link_to edit_bullet_path(note), class: "bullet--name" do %>
-      <%= bullet_preview_trix(note) %>
-    <% end %>
+    <i
+      class="icon"
+      style="--icon-mask: var(--icon-line-dashed)"
+      aria-hidden="true"
+    ></i>
+  </div>
+  <%= content_tag :div,
+        class: "bullet--body",
+        data: {
+          controller: "bullet-navigation",
+          action: "mouseup->bullet-navigation#rememberSelection click->bullet-navigation#navigate",
+          bullet_navigation_href_value: edit_bullet_path(note)
+        } do %>
+    <div class="bullet--name">
+      <%= note.content %>
+    </div>
     <%= render "bullets/metadata", bullet: note %>
-    <%= render "bullets/menu", bullet: note %>
-  </turbo-frame>
+  <% end %>
+  <%= render "bullets/select", bullet: note %>
+</turbo-frame>

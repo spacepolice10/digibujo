@@ -4,6 +4,9 @@
     flex-direction: column;
     gap: var(--spacing-vertical-double);
     padding: var(--spacing-vertical) var(--spacing-horizontal);
+    max-width: var(--breakpoint-tablet);
+    width: 100%;
+    margin-inline: auto;
   }
   .bucket--header {
     display: flex;
@@ -12,10 +15,7 @@
     width: 100%;
     h2 {
       font-size: var(--font-size-h2);
-      font-weight: var(--font-weight-bold);
-
-      font-style: italic;
-      text-transform: uppercase;
+      font-weight: var(--font-weight-strong);
       & .project {
         color: var(--model-color-3);
       }
@@ -31,48 +31,112 @@
   .bucket--list {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-vertical);
+    background: var(--color-bg-subtle);
+    border-radius: var(--radius-strong);
   }
   .bucket--list-item {
     display: flex;
     align-items: center;
     gap: var(--spacing-horizontal-half);
+    width: 100%;
   }
-  .bucket--footer {
-    position: sticky;
-    bottom: 8px;
+  .bucket--list-item-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    padding: var(--spacing-vertical) var(--spacing-horizontal-half);
+    flex: 1;
+    min-width: 0;
+    text-decoration: none;
+    color: inherit;
+    &:hover {
+      background-color: var(--color-accent-bg);
+    }
+  }
+  .bucket--list-item-name {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
   }
 
-  .button-secondary[data-bucket-colour="1"] {
+  .bucket--list-item-marker {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-strong);
+    border: 1px solid var(--color-stroke-base);
+  }
+  .bucket--list-item-marker[data-bucket-colour="1"] {
     background: var(--model-color-1-bg);
-    border-color: color-mix(in oklch, var(--model-color-1) 40%, var(--color-stroke-base));
+    border-color: color-mix(
+      in oklch,
+      var(--model-color-1) 40%,
+      var(--color-stroke-base)
+    );
   }
-  .button-secondary[data-bucket-colour="2"] {
+  .bucket--list-item-marker[data-bucket-colour="2"] {
     background: var(--model-color-2-bg);
-    border-color: color-mix(in oklch, var(--model-color-2) 40%, var(--color-stroke-base));
+    border-color: color-mix(
+      in oklch,
+      var(--model-color-2) 40%,
+      var(--color-stroke-base)
+    );
   }
-  .button-secondary[data-bucket-colour="3"] {
+  .bucket--list-item-marker[data-bucket-colour="3"] {
     background: var(--model-color-3-bg);
-    border-color: color-mix(in oklch, var(--model-color-3) 40%, var(--color-stroke-base));
+    border-color: color-mix(
+      in oklch,
+      var(--model-color-3) 40%,
+      var(--color-stroke-base)
+    );
   }
-  .button-secondary[data-bucket-colour="4"] {
+  .bucket--list-item-marker[data-bucket-colour="4"] {
     background: var(--model-color-4-bg);
-    border-color: color-mix(in oklch, var(--model-color-4) 40%, var(--color-stroke-base));
+    border-color: color-mix(
+      in oklch,
+      var(--model-color-4) 40%,
+      var(--color-stroke-base)
+    );
   }
-  .button-secondary[data-bucket-colour="5"] {
+  .bucket--list-item-marker[data-bucket-colour="5"] {
     background: var(--model-color-5-bg);
-    border-color: color-mix(in oklch, var(--model-color-5) 40%, var(--color-stroke-base));
+    border-color: color-mix(
+      in oklch,
+      var(--model-color-5) 40%,
+      var(--color-stroke-base)
+    );
   }
-  .button-secondary[data-bucket-colour="6"] {
+  .bucket--list-item-marker[data-bucket-colour="6"] {
     background: var(--model-color-6-bg);
-    border-color: color-mix(in oklch, var(--model-color-6) 40%, var(--color-stroke-base));
+    border-color: color-mix(
+      in oklch,
+      var(--model-color-6) 40%,
+      var(--color-stroke-base)
+    );
   }
-  .button-secondary[data-bucket-colour="7"] {
+  .bucket--list-item-marker[data-bucket-colour="7"] {
     background: var(--model-color-7-bg);
-    border-color: color-mix(in oklch, var(--model-color-7) 40%, var(--color-stroke-base));
+    border-color: color-mix(
+      in oklch,
+      var(--model-color-7) 40%,
+      var(--color-stroke-base)
+    );
   }
-  .button-secondary[data-bucket-colour="8"] {
+  .bucket--list-item-marker[data-bucket-colour="8"] {
     background: var(--model-color-8-bg);
-    border-color: color-mix(in oklch, var(--model-color-8) 40%, var(--color-stroke-base));
+    border-color: color-mix(
+      in oklch,
+      var(--model-color-8) 40%,
+      var(--color-stroke-base)
+    );
   }
+  .bucket--list-item-pin {
+    flex-shrink: 0;
+    margin-inline-end: var(--spacing-horizontal-half);
+  }
+}
+
+.bucket--footer {
+  position: sticky;
+  bottom: 8px;
 }
