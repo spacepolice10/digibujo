@@ -118,7 +118,6 @@
 
   .bullet-form-fields .date-picker,
   .bullet-form-fields .bucket-picker,
-  .bullet-form-fields .context-picker,
   .bullet-form-fields > div {
     flex-shrink: 0;
   }

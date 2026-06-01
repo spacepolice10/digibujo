@@ -91,7 +91,6 @@ class BulletsController < ApplicationController
     params.require(:bullet).permit(
       :content,
       :pops_on,
-      :context_bullet_id,
       :bulletable_type,
       :bucket_id,
       bulletable_attributes: {}
@@ -116,8 +115,7 @@ class BulletsController < ApplicationController
   def editor_attributes_for(bullet)
     {
       pops_on: bullet.pops_on,
-      bucket_id: bullet.bucket_id,
-      context_bullet_id: bullet.context_bullet_id
+      bucket_id: bullet.bucket_id
     }
   end
 end

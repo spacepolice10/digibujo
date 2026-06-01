@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_30_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_01_120000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -81,7 +81,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_30_120000) do
     t.integer "bucket_id"
     t.integer "bulletable_id", null: false
     t.string "bulletable_type", null: false
-    t.integer "context_bullet_id"
     t.datetime "created_at", null: false
     t.date "ends_date"
     t.boolean "pinned", default: false, null: false
@@ -92,7 +91,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_30_120000) do
     t.integer "user_id", null: false
     t.index ["bucket_id"], name: "index_bullets_on_bucket_id"
     t.index ["bulletable_type", "bulletable_id"], name: "index_bullets_on_bulletable"
-    t.index ["context_bullet_id"], name: "index_bullets_on_context_bullet_id"
     t.index ["public_code"], name: "index_bullets_on_public_code", unique: true
     t.index ["user_id", "archived"], name: "index_bullets_on_user_id_and_archived"
     t.index ["user_id", "archives_on"], name: "index_bullets_on_user_id_and_archives_on"
@@ -154,7 +152,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_30_120000) do
   add_foreign_key "buckets", "users"
   add_foreign_key "bullet_activities", "users"
   add_foreign_key "bullets", "buckets"
-  add_foreign_key "bullets", "bullets", column: "context_bullet_id", on_delete: :nullify
   add_foreign_key "bullets", "users"
   add_foreign_key "login_codes", "users"
   add_foreign_key "sessions", "users"

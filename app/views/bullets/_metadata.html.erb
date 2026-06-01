@@ -1,5 +1,5 @@
 <% bucket_tags = bullet.bucket.present? ? [bullet.bucket] : [] %>
-<% if bullet.pinned? || bullet.archived? || bullet.pops_on.present? || bullet.ends_date.present? || bucket_tags.any? || bullet.context_bullet.present? %>
+<% if bullet.pinned? || bullet.archived? || bullet.pops_on.present? || bullet.ends_date.present? || bucket_tags.any? %>
   <div class="bullet--metadata">
     <span class="bullet--tags">
       <% if bullet.pops_on && @selected_date && bullet.pops_on > @selected_date %>
@@ -58,19 +58,6 @@
           <% end %>
         <% end %>
       <% end %>
-      <% if bullet.context_bullet.present? %>
-        <% context_bullet = bullet.context_bullet %>
-        <% context_hint_id = dom_id(bullet, :hint_context) %>
-        <% context_anchor = "--hint-#{bullet.id}-context" %>
-        <%= link_to bullet_path(context_bullet),
-              class: "pill",
-              interestfor: context_hint_id,
-              style: "anchor-name: #{context_anchor}",
-              data: { turbo_frame: "_top" },
-              aria: { label: "Context: #{context_bullet.bulletable.name}" } do %>
-          <i class="icon" style="--icon-mask: var(--icon-link)" aria-hidden="true"></i>
-        <% end %>
-      <% end %>
     </span>
     <% if bullet.pinned? %>
       <% pinned_hint_id = dom_id(bullet, :hint_pinned) %>
@@ -122,18 +109,6 @@
           <%= bucket.name %>
         </div>
       <% end %>
-    <% end %>
-    <% if bullet.context_bullet.present? %>
-      <% context_hint_id = dom_id(bullet, :hint_context) %>
-      <% context_anchor = "--hint-#{bullet.id}-context" %>
-      <div
-        id="<%= context_hint_id %>"
-        class="hint"
-        popover="hint"
-        style="position-anchor: <%= context_anchor %>"
-      >
-        <%= bullet.context_bullet.bulletable.name %>
-      </div>
     <% end %>
   </div>
 <% end %>

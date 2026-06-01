@@ -15,7 +15,6 @@ Rails.application.routes.draw do
 
   # Bullet
   scope "bullets", module: :bullets do
-    resources :contexts, only: :index
     resource :pin,     only: %i[create destroy]
     resource :archive,  only: %i[create destroy]
     resource :collect,  only: %i[new create destroy]

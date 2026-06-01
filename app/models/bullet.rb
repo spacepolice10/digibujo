@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Bullet < ApplicationRecord
-  include Contextable, Collectable, Poppable, Archivable, Pinnable, Publishable
+  include Collectable, Poppable, Archivable, Pinnable, Publishable
 
   scope :chronological, -> { order(created_at: :asc) }
   scope :pops_on_date, lambda { |date|

@@ -2,7 +2,6 @@ module Archivable
   extend ActiveSupport::Concern
 
   ARCHIVE_RETENTION_DAYS = 30
-  UNTRIAGED_ARCHIVE_DAYS = 30
 
   included do
     scope :archived,         -> { where(archived: true) }

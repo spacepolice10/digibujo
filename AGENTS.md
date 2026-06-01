@@ -92,9 +92,6 @@ GET    /daylog/:year/:month/:day             → daylogs#show
 GET    /monthlylog                           → monthlylogs#show (current month)
 GET    /monthlylog/:year/:month              → monthlylogs#show
 
-# Bullets (JSON contexts under scoped module)
-GET    /bullets/contexts                     → bullets/contexts#index (JSON)
-
 # Bullets CRUD (no index — daily log is /daylog)
 GET    /bullets/:id                          → bullets#show
 GET    /bullets/new                          → bullets#new

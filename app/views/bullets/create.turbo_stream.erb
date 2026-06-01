@@ -4,7 +4,7 @@
   <%= render "bullets/editor",
         bullet: Current.user.bullets.build,
         bulletable_type: "Note",
-        attributes: { pops_on: @bullet.pops_on, bucket_id: @bullet.bucket_id, context_bullet_id: @bullet.context_bullet_id } %>
+        attributes: { pops_on: @bullet.pops_on, bucket_id: @bullet.bucket_id } %>
 <% end %>
 
 <% if @bullet.pops_on.present? && @bullet.pops_on > Date.current %>
