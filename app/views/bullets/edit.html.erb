@@ -1,10 +1,10 @@
 <% content_for(:title) { "Edit bullet" } %>
 <header class="bullet-show--navigation">
-  <%= link_to bullet_path(@bullet), class: "button-tertiary", data: { turbo_frame: "_top" } do %>
+  <%= link_to bullet_path(@bullet), class: "button--tertiary", data: { turbo_frame: "_top" } do %>
     <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
     Back
   <% end %>
-  <%= button_to bullet_path(@bullet), method: :delete, class: "button-secondary button-secondary--danger", form: { data: { turbo_confirm: "Are you sure?" } } do %>
+  <%= button_to bullet_path(@bullet), method: :delete, class: "button--secondary button--danger", form: { data: { turbo_confirm: "Are you sure?" } } do %>
     <i class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></i>
     Delete
   <% end %>

@@ -1,5 +1,15 @@
+/*
+ * Dropdown shell + anchor-backed popover menus.
+ *
+ * Markup patterns:
+ *   <details class="dropdown"> … <div class="dropdown-body">
+ *   <turbo-frame class="dropdown pinned--list" popover> … footer bullet lists
+ *   <div class="dropdown-menu" popover class="dropdown-menu--anchor …">
+ * Trigger: anchor-name (inline). Menu: position-anchor (inline).
+ */
+
 @layer components {
-  /* ── Shared dropdown shell ────────────────────────── */
+  /* ── <details> dropdown ─────────────────────────── */
 
   .dropdown {
     position: relative;
@@ -21,9 +31,10 @@
     min-width: calc(var(--spacing-horizontal-double) * 5);
     padding: var(--spacing-vertical);
     background: var(--color-bg-base);
+    /* 1px hairline — no stroke-width token in the design system */
     border: 1px solid var(--color-stroke-base);
     border-radius: var(--radius-base);
-    box-shadow: var(--shadow-elevated);
+    box-shadow: var(--shadow-base);
   }
 
   .dropdown[open] > .dropdown-body {
@@ -32,17 +43,42 @@
     gap: var(--spacing-vertical-half);
   }
 
-  .dropdown-body .button-tertiary {
+  .dropdown-body .button--tertiary {
     width: 100%;
   }
 
+  /* ── Popover panel header (sticky, slight lift over scrolling body) ── */
+
+  .dropdown--header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-dialog-backdrop);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-horizontal);
+    padding: var(--spacing-horizontal-half);
+    background: var(--color-bg-base);
+    /* 1px hairline — no stroke-width token in the design system */
+    border-bottom: 1px solid var(--color-stroke-base);
+    box-shadow: var(--shadow-subtle), var(--shadow-base);
+
+    & h2 {
+      font-size: var(--font-size-base);
+    }
+  }
+
+  /* ── Popover menu panel ─────────────────────────── */
+
   .dropdown-menu {
     padding: var(--spacing-vertical-half);
+    /* 1px hairline — no stroke-width token in the design system */
     border: 1px solid var(--color-stroke-base);
     border-radius: var(--radius-strong);
     background: var(--color-bg-subtle);
     box-shadow:
-      var(--shadow-elevated),
+      var(--shadow-base),
+      /* 1px hairline — no stroke-width token in the design system */
       0 0 0 1px color-mix(in oklch, var(--color-bg-base) 35%, transparent);
     overflow: hidden;
   }
@@ -67,10 +103,8 @@
     }
   }
 
-  /*
-   * Anchor-backed popovers: trigger sets anchor-name (inline); menu sets position-anchor (inline).
-   * Modifiers pick position-area and width; inner rows stay in bullet.css / bullet-form.css.
-   */
+  /* ── Anchor positioning ───────────────────────────── */
+
   .dropdown-menu[popover].dropdown-menu--anchor {
     position: fixed;
     inset: unset;
@@ -83,8 +117,12 @@
       flip-block flip-inline;
 
     &:popover-open {
-      animation: popout 0.1s ease-out;
+      animation: popout 110ms ease-out;
     }
+  }
+
+  .pinned--list[popover] {
+    z-index: var(--z-dropdown);
   }
 
   .dropdown-menu--anchor-inline-start {
@@ -95,7 +133,7 @@
     position-area: block-start span-inline-end;
   }
 
-  /* ⋯ bullet menu — wider context panel */
+  /* ⋯ bullet context menu */
   .dropdown-menu--anchor-wide {
     width: min(
       calc(var(--spacing-horizontal-double) * 11),
@@ -105,16 +143,20 @@
     max-width: calc(100vw - (2 * var(--spacing-horizontal)));
   }
 
-  /* Form type picker — narrower min width */
+  /* Type picker / compact lists */
   .dropdown-menu--anchor-compact {
     min-width: calc(var(--spacing-horizontal-double) * 4);
   }
 
   .dropdown-menu--anchor-short {
-    max-height: min(16rem, calc(100dvh - (2 * var(--spacing-horizontal))));
+    max-height: min(
+      calc(var(--spacing-horizontal-double) * 8),
+      calc(100dvh - (2 * var(--spacing-horizontal)))
+    );
   }
 
-  /* Below --breakpoint-tablet (600px): anchor popovers center via position-area */
+  /* ── Narrow viewport (--breakpoint-tablet is 600px; var() invalid in @media) ── */
+
   @media (width < 600px) {
     .dropdown-body {
       box-sizing: border-box;
@@ -125,10 +167,6 @@
       margin-inline: auto;
     }
 
-    /*
-     * Center in the viewport horizontally (not relative to the anchor box): fixed
-     * inset gutters + anchor only for vertical placement below the trigger.
-     */
     .dropdown-menu[popover].dropdown-menu--anchor {
       box-sizing: border-box;
       position-area: initial;

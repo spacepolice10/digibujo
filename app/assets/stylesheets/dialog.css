@@ -5,7 +5,8 @@
     border-radius: var(--radius-strong);
     background: var(--color-bg-subtle);
     box-shadow:
-      var(--shadow-elevated),
+      var(--shadow-base),
+      /* 1px hairline — no stroke-width token in the design system */
       0 0 0 1px color-mix(in oklch, var(--color-bg-base) 35%, transparent);
     color: var(--color-fg-base);
     margin: auto;
@@ -53,6 +54,7 @@
     }
   }
 
+  /* matches --breakpoint-tablet (600px); var() not valid in @media width */
   @media (width >= 600px) {
     .dialog {
       width: fit-content;
@@ -96,7 +98,7 @@
     border-bottom: 0;
   }
 
-  .dialog--header .button-tertiary {
+  .dialog--header .button--tertiary {
     flex: 0 0 auto;
   }
 
@@ -120,8 +122,8 @@
     font-size: var(--font-size-subtle);
   }
 
-  .dialog--footer .button-secondary,
-  .dialog--footer .button-primary {
+  .dialog--footer .button--secondary,
+  .dialog--footer .button--primary {
     justify-content: center;
     text-align: center;
   }

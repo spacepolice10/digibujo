@@ -7,6 +7,7 @@
     anchor-name: --footer;
     position-area: block-start center;
     background-color: var(--color-bg-base);
+    /* 1px hairline — no stroke-width token in the design system */
     border-top: 1px solid var(--color-stroke-base);
   }
 

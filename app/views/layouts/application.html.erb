@@ -29,7 +29,7 @@
   </head>
 
   <body data-controller="dialog timezone-cookie">
-<div id="toasts"></div>
+<div id="toasts" class="toasts" data-controller="toasts" aria-live="polite"></div>
     <%= render "shared/header" %>
     <%= yield %>
     <%= render "shared/footer" %>

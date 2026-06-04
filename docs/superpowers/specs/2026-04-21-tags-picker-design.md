@@ -37,7 +37,7 @@ No new routes or controllers needed.
 
 ```
 div.tags-picker [data-controller="tags-picker dialog"]
-  button.button-secondary [commandfor="tags-picker-dialog" command="show-modal"]
+  button.button--secondary [commandfor="tags-picker-dialog" command="show-modal"]
     i.icon (tag icon)
     span [data-tags-picker-target="label"]  ← "Tags" or "2 tags" after save
   input[type=hidden name="card[tags_string]" data-tags-picker-target="hiddenField"]
@@ -46,7 +46,7 @@ div.tags-picker [data-controller="tags-picker dialog"]
     ul.tags-picker--suggestions [data-tags-picker-target="suggestions" role="listbox"]
     div.tags-picker--preview [data-tags-picker-target="preview"]
     div.tags-picker--footer
-      button.button-primary [data-action="click->tags-picker#save"]  Save
+      button.button--primary [data-action="click->tags-picker#save"]  Save
 ```
 
 The component reuses the existing `dialog` Stimulus controller for open/close behavior (same as `_date_picker.html.erb`).

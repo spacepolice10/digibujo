@@ -1,7 +1,7 @@
 <div class="pinned--dock">
   <button
     type="button"
-    class="button-secondary pinned--summary pinned--bucket-summary"
+    class="button--secondary pinned--summary pinned--bucket-summary"
     popovertarget="<%= dom_id(bucket, :footer_bullets) %>"
   >
     <span class="bucket--list-item-marker" data-bucket-colour="<%= bucket.colour %>" aria-hidden="true">
@@ -13,7 +13,7 @@
         ></i>
       <% end %>
     </span>
-    <span class="line-clamp-1"><%= bucket.name %></span>
+    <span class="utilities--line-clamp-1"><%= bucket.name %></span>
   </button>
   <turbo-frame
     id="<%= dom_id(bucket, :footer_bullets) %>"

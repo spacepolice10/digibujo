@@ -1,82 +1,5 @@
 @layer utilities {
-  *:has(.covering) {
-    position: relative;
-    pointer-events: none;
-    & > .covering {
-      pointer-events: auto;
-    }
-  }
-  .covering {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-  }
-
-  .flex {
-    display: flex;
-    align-items: center;
-  }
-
-  .grid {
-    display: grid;
-  }
-
-  .w-fit {
-    width: fit-content;
-  }
-
-  .w-full {
-    width: 100%;
-  }
-
-  .w-mobile {
-    max-width: var(--breakpoint-mobile);
-    width: 100%;
-  }
-  .w-tablet {
-    max-width: var(--breakpoint-tablet);
-    width: 100%;
-  }
-
-  .h-fit {
-    height: fit-content;
-  }
-
-  .h-screen {
-    height: 100dvh;
-  }
-
-  .slightly-gapped {
-    gap: var(--spacing-horizontal);
-  }
-
-  .slightly-padded {
-    padding: var(--spacing-horizontal-half);
-  }
-
-  .line-clamp,
-  .line-clamp-1 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-  }
-
-  .no-underline {
-    text-decoration: none;
-    color: inherit;
-  }
-
-  .mx-auto {
-    margin-inline: auto;
-  }
-
-  .hidden {
-    display: none;
-  }
-
-  .sr-only {
+  .utilities--sr-only {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -86,37 +9,16 @@
     clip: rect(0, 0, 0, 0);
   }
 
-  .visible-when-parent-checked {
-    display: none;
+  .utilities--line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
   }
 
-  input:checked ~ .visible-when-parent-checked {
-    display: inherit;
-  }
-
-  .text-sm {
+  .utilities--text-sm {
     font-size: var(--font-size-subtle);
   }
-  .text-base {
-    font-size: var(--font-size-base);
-  }
-  .text-lg {
-    font-size: var(--font-size-strong);
-  }
-
-  .wavy {
-    flex: 1;
-    min-width: 1rem;
-    height: 0;
-    border-bottom: 1px dotted var(--model-color-2);
-    opacity: var(--opacity-half);
-  }
-
-  .fade-side-in {
-    animation: fade-side-in 0.15s ease-in-out;
-  }
-
-  /* ── Animation utilities ─────────────────────── */
 
   @keyframes spin {
     to {
@@ -135,20 +37,6 @@
     to {
       opacity: 1;
       scale: 1;
-    }
-  }
-  @keyframes fade-side-in {
-    0% {
-      opacity: 0;
-      transform: translateX(-2vw);
-    }
-    75% {
-      opacity: 1;
-      transform: translateX(0.5vw);
-    }
-    100% {
-      opacity: 1;
-      transform: translateX(0);
     }
   }
 }

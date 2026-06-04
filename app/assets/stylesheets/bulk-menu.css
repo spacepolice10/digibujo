@@ -20,7 +20,7 @@
     );
     border: 1px solid var(--color-stroke-base);
     border-radius: var(--radius-strong);
-    box-shadow: var(--shadow-elevated);
+    box-shadow: var(--shadow-base);
     transition:
       opacity 0.12s ease,
       translate 0.12s ease;
@@ -88,7 +88,7 @@
     );
     border: 1px solid var(--color-stroke-base);
     border-radius: var(--radius-strong);
-    box-shadow: var(--shadow-elevated);
+    box-shadow: var(--shadow-base);
   }
 
   .bulk-menu--pops-frame:popover-open {

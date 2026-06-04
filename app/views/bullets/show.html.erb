@@ -1,35 +1,35 @@
 <% content_for(:title) { "Bullet #{@bullet.bulletable.name}" } %>
 <div class="bullet-show">
   <header class="bullet-show--navigation">
-    <button class="button-tertiary" onclick="history.back()">
+    <button class="button--tertiary" onclick="history.back()">
       <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
       Back
     </button>
     <div class="bullet-show--navigation-actions">
-      <%= link_to activities_path(bullet_id: @bullet.id), class: "button-secondary", data: { turbo_frame: "_top" } do %>
+      <%= link_to activities_path(bullet_id: @bullet.id), class: "button--secondary", data: { turbo_frame: "_top" } do %>
         <i class="icon" style="--icon-mask: var(--icon-book)" aria-hidden="true"></i>
         Activity
       <% end %>
-      <%= link_to edit_bullet_path(@bullet), class: "button-secondary", data: { turbo_frame: "_top" } do %>
+      <%= link_to edit_bullet_path(@bullet), class: "button--secondary", data: { turbo_frame: "_top" } do %>
         <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
         Edit
       <% end %>
       <% if @bullet.pinned? %>
-        <%= button_to pin_path, method: :delete, params: { bullet_ids: @bullet.id }, class: "button-secondary" do %>
+        <%= button_to pin_path, method: :delete, params: { bullet_ids: @bullet.id }, class: "button--secondary" do %>
           <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
           Unpin
         <% end %>
       <% else %>
-        <%= button_to pin_path, method: :post, params: { bullet_ids: @bullet.id }, class: "button-secondary" do %>
+        <%= button_to pin_path, method: :post, params: { bullet_ids: @bullet.id }, class: "button--secondary" do %>
           <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
           Pin
         <% end %>
       <% end %>
-      <%= button_to bullet_publish_path(@bullet), method: :patch, class: "button-secondary" do %>
+      <%= button_to bullet_publish_path(@bullet), method: :patch, class: "button--secondary" do %>
         <i class="icon" style="--icon-mask: var(--icon-link)" aria-hidden="true"></i>
         <%= @bullet.published? ? "Unpublish" : "Publish" %>
       <% end %>
-      <%= button_to bullet_path(@bullet), method: :delete, class: "button-secondary button-secondary--danger", form: { data: { turbo_confirm: "Are you sure?" } } do %>
+      <%= button_to bullet_path(@bullet), method: :delete, class: "button--secondary button--danger", form: { data: { turbo_confirm: "Are you sure?" } } do %>
         <i class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></i>
         Delete
       <% end %>

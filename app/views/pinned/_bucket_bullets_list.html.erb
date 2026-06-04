@@ -1,4 +1,4 @@
-<div class="pinned--list-header">
+<div class="dropdown--header">
   <div class="bucket--list-item-name">
     <span class="bucket--list-item-marker" data-bucket-colour="<%= bucket.colour %>" aria-hidden="true">
       <% if bucket.icon.present? %>
@@ -13,7 +13,7 @@
   </div>
   <button
     type="button"
-    class="button-secondary button-icon"
+    class="button--secondary button--icon"
     popovertarget="<%= dom_id(bucket, :footer_bullets) %>"
     popovertargetaction="hide"
     aria-label="Close <%= bucket.name %>"
@@ -21,7 +21,9 @@
     <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
   </button>
 </div>
+<div class="bucket--list">
 <% bullets.each do |bullet| %>
   <%= render partial: bullet.to_partial_path,
         locals: { bullet.bulletable_type.downcase.to_sym => bullet } %>
 <% end %>
+</div>

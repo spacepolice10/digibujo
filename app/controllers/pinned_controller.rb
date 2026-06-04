@@ -1,13 +1,11 @@
 # frozen_string_literal: true
 
 class PinnedController < ApplicationController
-  include PreparePinned
 
   before_action :ensure_turbo_frame_request, only: :index, if: :turbo_frame_request?
 
   def index
-    @bullets = pinned_bullets
-    @buckets = pinned_buckets
+    @bullets = Current.user.bullets.includes(bucket: :bucketable).pinned.order(updated_at: :desc)
   end
 
   private

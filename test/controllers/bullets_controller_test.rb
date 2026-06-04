@@ -53,7 +53,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select 'turbo-stream[action="update"][target="toasts"]'
-    assert_select ".message.errmsg", text: /Content can't be blank/
+    assert_select ".toasts--errmsg", text: /Content can't be blank/
     assert_select ".form-errmsg", 0
   end
 end

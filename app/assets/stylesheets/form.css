@@ -188,7 +188,7 @@
     border: 1px solid var(--color-stroke-negative);
     border-radius: var(--radius-strong);
     padding: var(--spacing-vertical) var(--spacing-horizontal-double);
-    box-shadow: var(--shadow-elevated);
+    box-shadow: var(--shadow-base);
     white-space: nowrap;
     color: var(--color-fg-negative);
     font-size: var(--font-size-subtle);

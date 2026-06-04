@@ -1,7 +1,7 @@
 <header class="header">
-  <%= link_to "Index", buckets_path, class: "button-secondary" %>
+  <%= link_to "Index", buckets_path, class: "button--secondary" %>
   <%= link_to "Daily log", daylog_path,
-        class: "button-secondary",
+        class: "button--secondary",
         data: {
           controller: "hotkey",
           hotkey: "Ctrl+D",
@@ -9,9 +9,9 @@
         },
         aria: { label: "Daily log (Ctrl + D)" } %>
   <%= link_to "Monthly log", monthlylog_path,
-        class: "button-secondary" %>
+        class: "button--secondary" %>
   <%= link_to search_path,
-        class: "button-secondary",
+        class: "button--secondary",
         data: {
           controller: "hotkey",
           hotkey: "Ctrl+K",

@@ -24,6 +24,51 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     assert_no_match "Call mom tonight", response.body
   end
 
+  test "show filters project buckets by name" do
+    create_project!(@user, name: "alpha")
+    create_project!(@user, name: "beta")
+
+    get search_path, params: { q: "alp" }
+
+    assert_response :success
+    assert_select "h4", text: "Buckets"
+    assert_match "alpha", response.body
+    assert_no_match "beta", response.body
+  end
+
+  test "show filters collection buckets by name" do
+    create_collection!(@user, name: "reading list")
+    create_collection!(@user, name: "inbox")
+
+    get search_path, params: { q: "read" }
+
+    assert_response :success
+    assert_match "reading list", response.body
+    assert_no_match "inbox", response.body
+  end
+
+  test "show returns buckets and bullets for the same query" do
+    project = create_project!(@user, name: "groceries")
+    @user.bullets.create!(bulletable: Task.create!, content: "Buy groceries")
+
+    get search_path, params: { q: "grocer" }
+
+    assert_response :success
+    assert_select "h4", text: "Buckets"
+    assert_select "h4", text: "Bullets"
+    assert_match project.name, response.body
+    assert_match "Buy groceries", response.body
+  end
+
+  test "show reports empty results when nothing matches" do
+    create_project!(@user, name: "alpha")
+
+    get search_path, params: { q: "zzz" }
+
+    assert_response :success
+    assert_match 'No results for "zzz"', response.body
+  end
+
   test "show returns turbo stream update for realtime input requests" do
     @user.bullets.create!(bulletable: Task.create!, content: "Buy milk today")
 
@@ -33,6 +78,15 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     assert_equal "text/vnd.turbo-stream.html", response.media_type
     assert_match 'turbo-stream action="update" target="search_results"', response.body
     assert_match "Buy milk today", response.body
+  end
+
+  test "show turbo stream includes matching bucket names" do
+    create_project!(@user, name: "alpha")
+
+    get search_path(format: :turbo_stream), params: { q: "alp" }
+
+    assert_response :success
+    assert_match "alpha", response.body
   end
 
   test "show finds bullets by link text from rich content as plain text" do

@@ -18,9 +18,12 @@
     margin-bottom: calc(var(--spacing-vertical-double) * 6);
   }
 
+  /* Named container: body width is the centered page column (up to --breakpoint-laptop). */
   body {
     margin-inline: auto;
     max-width: var(--breakpoint-laptop);
+    container-type: inline-size;
+    container-name: page-column;
   }
 
   /* Typography */
@@ -54,9 +57,16 @@
     scrollbar-width: none;
   }
 
-  /* Focus — instant ring, no animation */
+  /* Focus — thin soft ring, offset outward; follows border-radius on controls */
   *:focus-visible {
-    outline: none;
+    border-radius: var(--radius-base);
+    outline: var(--radius-subtle) solid color-mix(
+      in oklch,
+      var(--color-stroke-base) 40%,
+      transparent
+    );
+    outline-offset: var(--radius-subtle);
+    box-shadow: none;
     transition: none;
   }
 
@@ -64,27 +74,5 @@
   a:not([class]) {
     text-decoration-skip-ink: auto;
     color: currentColor;
-  }
-
-  header {
-    position: sticky;
-    top: 8px;
-    margin-top: 8px;
-    z-index: var(--z-dialog-backdrop);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
-    gap: var(--spacing-horizontal-half);
-    background: var(--color-bg-base);
-    border-bottom: 1px solid var(--color-stroke-base);
-    h1 {
-      font-size: var(--font-size-h1);
-      font-weight: var(--font-weight-bold);
-    }
-    @media (width >= 800px) {
-      border: 1px solid var(--color-stroke-base);
-      border-radius: var(--radius-strong);
-    }
   }
 }

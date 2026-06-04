@@ -21,9 +21,31 @@
   .search--textform {
     width: 100%;
     border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-pill);
-    background: var(--color-bg-elevated);
+    border-radius: var(--radius-full);
+    background: var(--color-bg-subtle);
     color: var(--color-fg-base);
     padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+  }
+
+  .search--results {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical);
+  }
+
+  .search--section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical-half);
+  }
+
+  .search--section-heading {
+    font-size: var(--font-size-subtle);
+    font-weight: var(--font-weight-base);
+    color: var(--color-fg-subtle);
+  }
+
+  .search--empty {
+    color: var(--color-fg-subtle);
   }
 }

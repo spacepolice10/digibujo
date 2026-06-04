@@ -14,7 +14,7 @@ Remove the `cards#show` route and view entirely. The inline edit toggle (click-t
 
 Replace the current minimal edit page (Back link + form) with an expanded layout:
 
-- **Nav**: Back button — replace the current `link_to card_path(@card)` with `<button class="button-tertiary" onclick="history.back()">` (same pattern as show), plus Delete, Pin, and Publish action buttons moved from the show nav.
+- **Nav**: Back button — replace the current `link_to card_path(@card)` with `<button class="button--tertiary" onclick="history.back()">` (same pattern as show), plus Delete, Pin, and Publish action buttons moved from the show nav.
 - **Body**: The `render "form"` stays as-is.
 - **Footer**: `<% if @card.popped? %> <%= render "cards/triage", card: @card %> <% end %>` moved from show.
 

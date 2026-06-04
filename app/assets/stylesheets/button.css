@@ -1,9 +1,7 @@
 @layer components {
-  .button,
-  .button-accent,
-  .button-primary,
-  .button-secondary,
-  .button-tertiary {
+  .button--primary,
+  .button--secondary,
+  .button--tertiary {
     display: inline-flex;
     justify-content: center;
     align-items: center;
@@ -16,144 +14,130 @@
     white-space: nowrap;
     flex-shrink: 0;
     text-decoration: none;
-    transition: background 0.1s ease;
-    & :focus {
-      outline: 2px solid var(--color-fg-base);
-      outline-offset: 2px;
-    }
-  }
-
-  .button:disabled {
-    opacity: var(--opacity-half);
-    cursor: not-allowed;
-  }
-
-  /* ── Button — size variants ────────────────────── */
-
-  .button-icon {
-    padding: 0;
-    width: var(--icon-size-base);
-    height: var(--icon-size-base);
-  }
-  .button-circle {
-    border-radius: var(--radius-full);
-  }
-
-  .button-sm {
-    padding: var(--spacing-vertical-quarter) var(--spacing-horizontal-quarter);
-    font-size: var(--font-size-subtle);
-  }
-
-  .button-lg {
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
-  }
-
-  /* ── Primary button ───────────────────────────────── */
-
-  .button-primary {
-    background: var(--color-fg-base);
-    border: 1px solid var(--color-fg-base);
-    color: var(--color-bg-base);
-
-    &:hover {
-      background: var(--color-fg-subtle);
-      border-color: var(--color-fg-subtle);
-    }
-  }
-
-  /* ── Accent button ────────────────────────────────── */
-
-  .button-accent {
-    justify-content: center;
-    background: var(--color-accent);
-    color: oklch(0.18 0.02 130);
-    border: 2.5px solid oklch(0.18 0.02 130);
-    border-radius: var(--radius-base);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-strong);
-    cursor: pointer;
-    box-shadow: 3px 3px 0px oklch(0.18 0.02 130);
     transition:
-      transform 80ms ease,
-      box-shadow 80ms ease,
-      background 80ms ease;
-
-    &:hover {
-      background: oklch(0.88 0.24 130);
-      transform: translate(-1px, -1px);
-      box-shadow: 4px 4px 0px oklch(0.18 0.02 130);
-    }
-
-    &:active {
-      transform: translate(2px, 2px);
-      box-shadow: 1px 1px 0px oklch(0.18 0.02 130);
-    }
-  }
-
-  /* ── Secondary button ─────────────────────────────── */
-
-  .button-secondary {
-    background: transparent;
-    border: 1px solid var(--color-stroke-base);
-    color: var(--color-fg-subtle);
-
-    &:hover {
-      background: var(--color-bg-base);
-    }
+      background 0.1s ease,
+      color 0.1s ease,
+      border-color 0.1s ease;
 
     &:disabled {
       opacity: var(--opacity-half);
       cursor: not-allowed;
     }
+  }
+
+  .button--icon {
+    padding: 0;
+    width: var(--icon-size-base);
+    height: var(--icon-size-base);
+  }
+
+  .button--circle {
+    border-radius: var(--radius-full);
+  }
+
+  /* ── Primary ──────────────────────────────────────── */
+
+  .button--primary {
+    background: var(--color-fg-base);
+    border: 1px solid var(--color-fg-base);
+    color: var(--color-bg-base);
+
+    @media (hover: hover) {
+      &:hover:not(:disabled) {
+        background: var(--color-fg-subtle);
+        border-color: var(--color-fg-subtle);
+      }
+    }
+
+    &:active:not(:disabled) {
+      background: color-mix(in oklch, var(--color-fg-base) 88%, var(--color-bg-base));
+      border-color: color-mix(in oklch, var(--color-fg-base) 88%, var(--color-bg-base));
+    }
+  }
+
+  /* ── Secondary ────────────────────────────────────── */
+
+  .button--secondary {
+    background: transparent;
+    border: 1px solid var(--color-stroke-base);
+    color: var(--color-fg-subtle);
+
+    @media (hover: hover) {
+      &:hover:not(:disabled) {
+        background: var(--color-bg-subtle);
+        border-color: var(--color-stroke-strong);
+        color: var(--color-fg-base);
+      }
+    }
+
+    &:active:not(:disabled) {
+      background: color-mix(
+        in oklch,
+        var(--color-bg-subtle) 80%,
+        var(--color-stroke-base)
+      );
+      border-color: var(--color-stroke-strong);
+      color: var(--color-fg-base);
+    }
 
     &:disabled:hover {
       background: transparent;
+      border-color: var(--color-stroke-base);
+      color: var(--color-fg-subtle);
     }
   }
 
-  /* ── Secondary button — active variant ────────────── */
-
-  .button-secondary--active {
-    color: var(--model-color-2);
-    border-color: var(--model-color-2);
-    background: var(--model-color-2-bg);
-
-    &:hover {
-      background: var(--model-color-2-bg);
-    }
-  }
-
-  /* ── Secondary button — danger variant ────────────── */
-
-  .button-secondary--danger {
+  .button--secondary.button--danger {
     color: var(--color-fg-negative);
     border-color: var(--color-fg-negative);
 
-    &:hover {
-      background: var(--color-bg-negative);
+    @media (hover: hover) {
+      &:hover:not(:disabled) {
+        background: var(--color-bg-negative);
+        color: var(--color-fg-negative);
+      }
+    }
+
+    &:active:not(:disabled) {
+      background: color-mix(
+        in oklch,
+        var(--color-bg-negative) 75%,
+        var(--color-fg-negative)
+      );
+      border-color: var(--color-fg-negative);
+      color: var(--color-fg-negative);
+    }
+
+    &:disabled:hover {
+      background: transparent;
+      border-color: var(--color-fg-negative);
+      color: var(--color-fg-negative);
     }
   }
 
-  /* ── Tertiary button ──────────────────────────────── */
+  /* ── Tertiary ─────────────────────────────────────── */
 
-  .button-tertiary {
+  .button--tertiary {
     border: 1px solid transparent;
     background: transparent;
     color: var(--color-fg-subtle);
 
-    &:hover {
-      color: var(--model-color-2);
+    @media (hover: hover) {
+      &:hover:not(:disabled) {
+        color: var(--model-color-2);
+        background: var(--color-bg-subtle);
+        border-color: var(--color-stroke-base);
+      }
     }
-  }
 
-  /* ── Hotkey hint ──────────────────────────────────── */
-
-  .hotkey {
-    font-family: inherit;
-    font-size: var(--font-size-subtle);
-    font-weight: var(--font-weight-base);
-    text-transform: none;
-    opacity: var(--opacity-half);
+    &:active:not(:disabled) {
+      color: var(--model-color-2);
+      background: color-mix(
+        in oklch,
+        var(--color-bg-subtle) 80%,
+        var(--color-stroke-base)
+      );
+      border-color: var(--color-stroke-strong);
+    }
   }
 }

@@ -16,10 +16,6 @@
     );
   }
 
-  .pinned--list-header .bucket--list-item-name h2 {
-    font-size: var(--font-size-base);
-  }
-
   .pinned--list {
     position: fixed;
     inset: unset;
@@ -38,22 +34,7 @@
     background-color: var(--color-bg-base);
     border: 1px solid var(--color-stroke-base);
     border-radius: var(--radius-base);
-    box-shadow: var(--shadow-elevated);
+    box-shadow: var(--shadow-base);
   }
 
-  .pinned--list-header {
-    position: sticky;
-    top: 0px;
-    z-index: var(--z-dialog-backdrop);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: var(--color-bg-base);
-    gap: var(--spacing-horizontal);
-    padding: var(--spacing-horizontal-half);
-    border-bottom: 1px solid var(--color-stroke-base);
-    & h2 {
-      font-size: var(--font-size-base);
-    }
-  }
 }

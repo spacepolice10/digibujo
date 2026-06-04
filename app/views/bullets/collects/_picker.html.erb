@@ -1,7 +1,7 @@
 <div class="bulk-menu--pops-header">
   <p class="bulk-menu--pops-title">Collect to project</p>
   <button type="button"
-          class="button-secondary button-icon"
+          class="button--secondary button--icon"
           popovertarget="collects_picker_frame"
           popovertargetaction="hide"
           aria-label="Close project picker">
@@ -31,5 +31,5 @@
 <% end %>
 
 <div class="bulk-menu--collects-footer">
-  <%= link_to "New project", new_project_path, class: "button-secondary", data: { turbo_frame: "_top" } %>
+  <%= link_to "New project", new_project_path, class: "button--secondary", data: { turbo_frame: "_top" } %>
 </div>

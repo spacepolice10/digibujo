@@ -1,13 +1,34 @@
 <turbo-frame id="search_results">
-<div class="search--results" data-controller="bulk-menu">
-    <% if q.present? && bullets.any? %>
-      <h3>Results for "<%= q %>"</h3>
-      <div data-bulk-menu-target="list">
-      <%= render "pagination/paginated_records",
-        page: page,
-        pagination_link_path: ->(next_param) { search_path(q: q, page: next_param) } %>
-      </div>
-      <%= render "bullets/bulk_menu" %>
+  <div class="search--results" data-controller="bulk-menu">
+    <% if q.present? %>
+      <% if buckets.any? || bullets.any? %>
+        <h3>Results for "<%= q %>"</h3>
+
+        <% if buckets.any? %>
+          <section class="search--section">
+            <h4 class="search--section-heading">Buckets</h4>
+            <ul class="bucket--list">
+              <% buckets.each do |bucket| %>
+                <%= render bucket.bucketable %>
+              <% end %>
+            </ul>
+          </section>
+        <% end %>
+
+        <% if bullets.any? %>
+          <section class="search--section">
+            <h4 class="search--section-heading">Bullets</h4>
+            <div data-bulk-menu-target="list">
+              <%= render "pagination/paginated_records",
+                page: page,
+                pagination_link_path: ->(next_param) { search_path(q: q, page: next_param) } %>
+            </div>
+            <%= render "bullets/bulk_menu" %>
+          </section>
+        <% end %>
+      <% else %>
+        <p class="search--empty">No results for "<%= q %>"</p>
+      <% end %>
     <% end %>
   </div>
 </turbo-frame>

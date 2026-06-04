@@ -1,5 +1,5 @@
 <li id="<%= dom_id(project.bucket, :list_item) %>" class="bucket--list-item">
-  <%= link_to project_path(project), class: "bucket--list-item-link" do %>
+  <%= link_to project_path(project), { data: { turbo_frame: "_top" }, class: "bucket--list-item-link" } do %>
     <div class="bucket--list-item-name">
       <div class="bucket--list-item-marker" data-bucket-colour="<%= project.bucket.colour %>" aria-hidden="true">
         <% if project.icon.present? %>
@@ -10,9 +10,9 @@
           ></i>
         <% end %>
       </div>
-      <span class="line-clamp-1"><%= project.name %></span>
+      <span class="utilities--line-clamp-1"><%= project.name %></span>
     </div>
-    <div class="line-clamp-1">
+    <div class="utilities--line-clamp-1">
       <span><%= project.bullets.count %> <%= "bullet".pluralize(project.bullets.count) %></span>,
       <span><%= project.created_at.strftime("%b %d") %></span>
     </div>

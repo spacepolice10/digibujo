@@ -13,7 +13,8 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    h2 {
+    h2,
+    h4 {
       font-size: var(--font-size-base);
       font-weight: var(--font-weight-strong);
       & .project {
@@ -31,8 +32,8 @@
   .bucket--list {
     display: flex;
     flex-direction: column;
-    background: var(--color-bg-subtle);
     border-radius: var(--radius-strong);
+    padding-inline: var(--spacing-horizontal-half);
   }
   .bucket--list-item {
     display: flex;
@@ -142,5 +143,5 @@
 
 .bucket--footer {
   position: sticky;
-  bottom: 8px;
+  bottom: var(--radius-strong);
 }

@@ -9,7 +9,7 @@
     <div data-bulk-menu-target="pinAction" hidden>
       <%= form_with url: pin_path, method: :post, data: { turbo_stream: true } do %>
         <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
-        <%= button_tag type: :submit, class: "button-secondary" do %>
+        <%= button_tag type: :submit, class: "button--secondary" do %>
           <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
           Pin
         <% end %>
@@ -19,7 +19,7 @@
     <div data-bulk-menu-target="unpinAction" hidden>
       <%= form_with url: pin_path, method: :delete, data: { turbo_stream: true } do %>
         <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
-        <%= button_tag type: :submit, class: "button-secondary" do %>
+        <%= button_tag type: :submit, class: "button--secondary" do %>
           <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
           Unpin
         <% end %>
@@ -28,7 +28,7 @@
 
     <%= form_with url: archive_path, method: :post, data: { turbo_stream: true } do %>
       <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
-      <%= button_tag type: :submit, class: "button-secondary" do %>
+      <%= button_tag type: :submit, class: "button--secondary" do %>
         <i class="icon" style="--icon-mask: var(--icon-archive)" aria-hidden="true"></i>
         Archive
       <% end %>
@@ -36,7 +36,7 @@
 
     <%= form_with url: archive_path, method: :delete, data: { turbo_stream: true } do %>
       <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
-      <%= button_tag type: :submit, class: "button-secondary" do %>
+      <%= button_tag type: :submit, class: "button--secondary" do %>
         <i class="icon" style="--icon-mask: var(--icon-archive)" aria-hidden="true"></i>
         Unarchive
       <% end %>
@@ -44,7 +44,7 @@
 
     <div class="bulk-menu--pops-dock">
       <button type="button"
-              class="button-secondary"
+              class="button--secondary"
               data-action="bulk-menu#openPopsPicker">
         <i class="icon" style="--icon-mask: var(--icon-arrow-up)" aria-hidden="true"></i>
         Pop
@@ -58,7 +58,7 @@
 
     <div class="bulk-menu--pops-dock">
       <button type="button"
-              class="button-secondary"
+              class="button--secondary"
               data-action="bulk-menu#openCollectsPicker">
         <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
         Collect
@@ -71,7 +71,7 @@
     </div>
       <button
     type="button"
-    class="button-primary button-icon button-circle bulk-menu--hide"
+    class="button--primary button--icon button--circle bulk-menu--hide"
     data-action="bulk-menu#clear"
   >
     <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>

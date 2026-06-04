@@ -3,7 +3,7 @@
 <div class="bucket--layout" data-controller="bulk-menu">
   <div class="bucket--header">
     <div class="bucket--header-actions">
-      <%= link_to buckets_path, class: "button-secondary" do %>
+      <%= link_to buckets_path, class: "button--secondary" do %>
         <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
         Collections
       <% end %>
@@ -14,11 +14,11 @@
 
   <article class="bucket--list">
     <div class="bucket--header-actions">
-        <%= link_to "All", collection_path(@collection), class: "button-secondary" %>
+        <%= link_to "All", collection_path(@collection), class: "button--secondary" %>
         <% Bullet.bulletable_types.each do |type| %>
           <%= link_to type.pluralize,
                       collection_path(@collection, type: type.downcase),
-                      class: "button-secondary" %>
+                      class: "button--secondary" %>
         <% end %>
     </div>
 

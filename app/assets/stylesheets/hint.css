@@ -21,9 +21,10 @@
     );
     background: var(--color-bg-strong);
     color: var(--color-fg-strong);
+    /* 1px hairline — no stroke-width token in the design system */
     border: 1px solid var(--color-stroke-strong);
     border-radius: var(--radius-base);
-    box-shadow: var(--shadow-elevated);
+    box-shadow: var(--shadow-base);
     font-size: var(--font-size-subtle);
     font-weight: var(--font-weight-base);
     pointer-events: none;
@@ -36,10 +37,10 @@
     opacity: 0;
     transform: translateY(var(--spacing-vertical-half));
     transition:
-      opacity 110ms ease,
-      transform 110ms ease,
-      display 110ms allow-discrete,
-      overlay 110ms allow-discrete;
+      opacity 80ms ease,
+      transform 80ms ease,
+      display 80ms allow-discrete,
+      overlay 80ms allow-discrete;
   }
 
   .hint[popover="hint"]:popover-open {

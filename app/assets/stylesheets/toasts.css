@@ -1,23 +1,32 @@
-#toasts {
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: max-content;
-  z-index: var(--z-dialog);
-  .message {
+/* Toast host: empty shell in layout; turbo-stream updates inject .toasts--message. */
+
+@layer components {
+  #toasts.toasts {
+    position: fixed;
+    top: calc(var(--spacing-horizontal) + env(safe-area-inset-top, 0px));
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: calc(100vw - (2 * var(--spacing-horizontal)));
+    z-index: var(--z-toast);
+    pointer-events: none;
+  }
+
+  .toasts--message {
+    pointer-events: auto;
     width: 100%;
     text-align: center;
     padding: var(--spacing-vertical) var(--spacing-horizontal-double);
     border-radius: var(--radius-strong);
     font-size: var(--font-size-subtle);
     animation:
-      shaking 0.1s ease-in-out,
-      fade-away 0.1s ease-in-out 3s;
+      toasts--shaking 0.1s ease-in-out,
+      toasts--fade-away 0.1s ease-in-out 3s;
     animation-fill-mode: forwards;
     transition:
       opacity 0.2s allow-discrete,
       display 0.2s allow-discrete;
+
     ul {
       list-style: none;
       margin: 0;
@@ -26,40 +35,45 @@
       flex-direction: column;
       gap: var(--spacing-vertical-half);
     }
-    &.errmsg {
-      background: var(--color-bg-negative);
-      border: 1px solid var(--color-stroke-negative);
-      box-shadow: var(--shadow-elevated);
-      color: var(--color-fg-negative);
-    }
-    &.notify {
-      background: var(--color-bg-positive);
-      border: 1px solid var(--color-stroke-positive);
-      box-shadow: var(--shadow-elevated);
-      color: var(--color-fg-positive);
-    }
   }
-}
 
-@keyframes shaking {
-  0% {
-    opacity: 0.5;
-    transform: rotate(-2deg);
+  .toasts--errmsg {
+    background: var(--color-bg-negative);
+    /* 1px hairline — no stroke-width token in the design system */
+    border: 1px solid var(--color-stroke-negative);
+    box-shadow: var(--shadow-base);
+    color: var(--color-fg-negative);
   }
-  50% {
-    opacity: 1;
-    transform: rotate(2deg);
+
+  .toasts--notify {
+    background: var(--color-bg-positive);
+    /* 1px hairline — no stroke-width token in the design system */
+    border: 1px solid var(--color-stroke-positive);
+    box-shadow: var(--shadow-base);
+    color: var(--color-fg-positive);
   }
-  100% {
-    opacity: 1;
-    transform: rotate(0deg);
+
+  @keyframes toasts--shaking {
+    0% {
+      opacity: var(--opacity-half);
+      transform: rotate(-2deg);
+    }
+    50% {
+      opacity: 1;
+      transform: rotate(2deg);
+    }
+    100% {
+      opacity: 1;
+      transform: rotate(0deg);
+    }
   }
-}
-@keyframes fade-away {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
+
+  @keyframes toasts--fade-away {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
   }
 }

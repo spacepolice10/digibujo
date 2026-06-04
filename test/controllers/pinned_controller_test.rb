@@ -38,7 +38,7 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
 
     get pinned_index_path, headers: { "Turbo-Frame" => "pinned_bullets" }
     assert_select "turbo-frame#pinned_bullets[popover].pinned--list" do
-      assert_select ".pinned--list-header h2", text: "Pinned bullets"
+      assert_select ".dropdown--header h2", text: "Pinned bullets"
       assert_select "button[popovertarget='pinned_bullets'][popovertargetaction='hide'][aria-label='Close pinned bullets']"
       assert_select ".bullet", text: /Pinned bullet/, count: 1
     end

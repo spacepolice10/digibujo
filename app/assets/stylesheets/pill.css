@@ -1,11 +1,4 @@
 @layer components {
-  .pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-vertical-half);
-    margin-bottom: var(--spacing-vertical-half);
-  }
-
   .pill,
   .pill--violet,
   .pill--cobalt,

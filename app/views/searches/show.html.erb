@@ -14,7 +14,7 @@
     <%= form.search_field :q,
           value: @q,
           autofocus: true,
-          placeholder: "Search by bullet text or project",
+          placeholder: "Search by bullet text or bucket name",
           class: "search--textform",
           data: {
             action: "input->search#search",
@@ -23,5 +23,5 @@
           autocomplete: "off" %>
   <% end %>
 
-<%= render "results", q: @q, bullets: @bullets, page: @page %>
+<%= render "results", q: @q, buckets: @buckets, bullets: @bullets, page: @page %>
 </div>

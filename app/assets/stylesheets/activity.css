@@ -14,7 +14,7 @@
     align-items: center;
     width: 100%;
     h2 {
-      font-size: var(--font-size-h2);
+      font-size: var(--font-size-strong);
       font-weight: var(--font-weight-strong);
       & .project {
         color: var(--model-color-3);
