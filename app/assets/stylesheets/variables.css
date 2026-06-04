@@ -128,10 +128,11 @@
     --opacity-full: 1;
     --opacity-half: 0.5;
 
-    /* radii */
+    /* radius */
     --radius-subtle: 2px;
     --radius-base: 4px;
     --radius-strong: 8px;
+    --radius-full: 9999px;
 
     /* icon sizes */
     --icon-size-subtle: 1rem;

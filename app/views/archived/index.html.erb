@@ -1,12 +1,13 @@
 <% content_for(:title) { "Archived" } %>
-<div class="bucket--layout">
+<div class="bucket--layout" data-controller="bulk-menu">
 <div class="bucket--header">
   <h2>Archived</h2>
   <span><strong><%= @amount_of_archived %></strong> total</span>
 </div>
-  <article class="bucket--list">
+  <article class="bucket--list" data-bulk-menu-target="list">
     <%= render "pagination/paginated_records",
           page: @page,
           pagination_link_path: ->(next_param) { archived_index_path(page: next_param) } %>
   </article>
+  <%= render "bullets/bulk_menu" %>
 </div>

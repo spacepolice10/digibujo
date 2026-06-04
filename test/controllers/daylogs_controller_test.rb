@@ -47,6 +47,20 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select "a[href='#{daylog_path(date: (selected_date + 1.day).iso8601)}']"
   end
 
+  test "daylog scopes bulk menu controls to the bullets list" do
+    @user.bullets.create!(bulletable: Task.create!, content: "Selectable card", pops_on: Date.current)
+
+    get daylog_path
+
+    assert_response :success
+    assert_select "[data-controller~=?]", "bullets-bulk", 0
+    assert_select "[data-controller~=?]", "bulk-menu" do
+      assert_select "#bullets[data-bulk-menu-target=?]", "list"
+      assert_select ".bulk-menu[data-bulk-menu-target=?]", "menu"
+      assert_select "input[type=checkbox][data-bulk-menu-target=?]", "checkbox"
+    end
+  end
+
   test "daylog renders simple editor with selected day as submitted attribute" do
     selected_date = Date.current - 2.days
 

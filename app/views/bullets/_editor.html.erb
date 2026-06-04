@@ -1,4 +1,4 @@
-<% type_options = bullet_type_options %>
+<% type_options = Bullet.bulletable_types %>
 <% selected_type_name = local_assigns.fetch(:bulletable_type).presence_in(type_options) || "Note" %>
 <% submitted_attributes = local_assigns.fetch(:attributes, {}).compact %>
 <% editor_id = local_assigns.fetch(:editor_id) { "bullet_editor_#{bullet.object_id}" } %>

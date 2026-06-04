@@ -15,12 +15,12 @@
     --event-marker-color: var(--model-color-6);
     --note-marker-color: var(--model-color-5);
 
+    position: relative;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     width: 100%;
     gap: var(--spacing-horizontal-half);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     margin-block: var(--spacing-vertical-half);
     @supports (corner-shape: squircle) {
       corner-shape: squircle;
@@ -64,14 +64,6 @@
       padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     }
 
-    &[data-bullet-type="event"] {
-      --bullet-border: color-mix(
-        in oklch,
-        var(--color-stroke-base),
-        var(--model-color-6) 20%
-      );
-    }
-
     /* Pinned variant overrides type color */
 
     &.pinned {
@@ -100,6 +92,12 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    margin-top: 2px;
+  }
+
+  .bullet--name > .trix-content {
+    flex: 1 1 auto;
+    word-break: break-word;
   }
 
   .bullet--body .bullet--name,
@@ -168,18 +166,22 @@
     color: var(--color-fg-subtle);
   }
 
+  .bullet--marker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--icon-size-base);
+    height: var(--icon-size-base);
+    border: 1px solid var(--color-stroke-base);
+    flex-shrink: 0;
+  }
+
   .bullet--note-marker {
-    width: var(--icon-size-subtle);
-    height: var(--icon-size-subtle);
     color: var(--model-color-5);
-    margin-top: 2px;
   }
 
   .bullet--event-marker {
-    width: var(--icon-size-subtle);
-    height: var(--icon-size-subtle);
     color: var(--model-color-6);
-    margin-top: 2px;
   }
 
   .bullet--link {

@@ -1,6 +1,6 @@
 <li class="bucket--list-item">
   <%= form_with url: collect_path, method: :post, data: { turbo_stream: true } do %>
-    <%= hidden_field_tag :bullet_ids, bullet_ids %>
+    <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
     <%= hidden_field_tag :project_id, project.id %>
     <%= button_tag type: :submit, class: "button-secondary bucket--list-item-link" do %>
       <%= render "projects/pickers/project", project: project %>

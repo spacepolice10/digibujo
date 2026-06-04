@@ -21,4 +21,9 @@ module Iconable
   def icon_variable
     ICON_MAPPINGS[icon]
   end
+
+  def icon_mask
+    key = icon.presence || "tag"
+    "var(--icon-#{key})"
+  end
 end

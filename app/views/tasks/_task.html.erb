@@ -1,6 +1,6 @@
 <turbo-frame id="<%= dom_id(task) %>" class="bullet" data-bullet-type="task">
   <%= form_with url: bullet_complete_path(task), method: task.bulletable.done? ? :delete : :post, data: { turbo_stream: true } do %>
-    <button class="bullet--task-marker" data-task-done="<%= task.bulletable.done? %>">
+    <button class="bullet--marker bullet--task-marker" data-task-done="<%= task.bulletable.done? %>">
         <% if task.bulletable.done? %>
           <i class="icon " style="--icon-mask: var(--icon-check)" aria-hidden="true"></i>
         <% else %>
@@ -8,17 +8,11 @@
         <% end %>
     </button>
   <% end %>
-  <%= content_tag :div,
-        class: "bullet--body",
-        data: {
-          controller: "bullet-navigation",
-          action: "mouseup->bullet-navigation#rememberSelection click->bullet-navigation#navigate",
-          bullet_navigation_href_value: edit_bullet_path(task)
-        } do %>
+  <div class="bullet--body" data-controller="bullet-navigation" data-action="mouseup->bullet-navigation#rememberSelection click->bullet-navigation#navigate" data-bullet-navigation-href-value="<%= edit_bullet_path(task) %>">
     <div class="bullet--name">
       <%= task.content %>
     </div>
     <%= render "bullets/metadata", bullet: task %>
-  <% end %>
+  </div>
   <%= render "bullets/select", bullet: task %>
 </turbo-frame>

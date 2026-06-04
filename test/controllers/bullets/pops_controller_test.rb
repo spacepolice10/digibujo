@@ -14,8 +14,8 @@ class Bullets::PopsControllerTest < ActionDispatch::IntegrationTest
     get new_pop_path, params: { bullet_ids: card.id.to_s }
 
     assert_response :success
-    assert_select "turbo-frame#pop_picker"
-    assert_select "input[name=bullet_ids][value=?]", card.id.to_s
+    assert_select "turbo-frame#pops_picker_frame"
+    assert_select 'input[name="bullet_ids"][data-bulk-menu-target="idList"]', count: 4
     assert_select "input[type=date][name=pops_on]"
     assert_match "ASAP", response.body
     assert_match "Tomorrow", response.body
@@ -28,12 +28,11 @@ class Bullets::PopsControllerTest < ActionDispatch::IntegrationTest
 
     get new_pop_path,
         params: { bullet_ids: card.id.to_s },
-        headers: { "Turbo-Frame" => "pop_picker" }
+        headers: { "Turbo-Frame" => "pops_picker_frame" }
 
     assert_response :success
-    assert_select "turbo-frame#pop_picker", count: 0
-    assert_select ".bulk-menu--pops-header"
-    assert_select "input[name=bullet_ids][value=?]", card.id.to_s
+    assert_select "turbo-frame#pops_picker_frame .bulk-menu--pops-header"
+    assert_select 'input[name="bullet_ids"][data-bulk-menu-target="idList"]', count: 4
   end
 
   test "new without bullet_ids returns not found" do
@@ -48,7 +47,7 @@ class Bullets::PopsControllerTest < ActionDispatch::IntegrationTest
 
     post pop_path, params: { bullet_ids: card.id.to_s, pops_on: target.iso8601 }
 
-    assert_redirected_to daylog_path
+    assert_redirected_to daylog_path(date: Date.current.iso8601)
     assert_equal target, card.reload.pops_on
   end
 
@@ -60,7 +59,7 @@ class Bullets::PopsControllerTest < ActionDispatch::IntegrationTest
     post pop_path,
          params: { bullet_ids: card.id.to_s, pops_on: target.iso8601, bucket_id: project.bucket.id }
 
-    assert_redirected_to daylog_path
+    assert_redirected_to daylog_path(date: Date.current.iso8601)
     assert_equal target, card.reload.pops_on
     assert_nil card.bucket_id
   end
@@ -75,7 +74,7 @@ class Bullets::PopsControllerTest < ActionDispatch::IntegrationTest
 
     post pop_path, params: { bullet_ids: card.id.to_s, pops_on: (anchor + 1.day).iso8601 }
 
-    assert_redirected_to daylog_path
+    assert_redirected_to daylog_path(date: Date.current.iso8601)
     assert_equal anchor + 1.day, card.reload.pops_on
   end
 
@@ -89,7 +88,7 @@ class Bullets::PopsControllerTest < ActionDispatch::IntegrationTest
 
     post pop_path, params: { bullet_ids: card.id.to_s, pops_on: (view_day + 1.day).iso8601 }
 
-    assert_redirected_to daylog_path
+    assert_redirected_to daylog_path(date: Date.current.iso8601)
     assert_equal view_day + 1.day, card.reload.pops_on
   end
 
@@ -99,7 +98,7 @@ class Bullets::PopsControllerTest < ActionDispatch::IntegrationTest
 
     post pop_path, params: { bullet_ids: card.id.to_s, pops_on: (view_day + 1.week).iso8601 }
 
-    assert_redirected_to daylog_path
+    assert_redirected_to daylog_path(date: Date.current.iso8601)
     assert_equal view_day + 1.week, card.reload.pops_on
   end
 
@@ -110,9 +109,25 @@ class Bullets::PopsControllerTest < ActionDispatch::IntegrationTest
 
     post pop_path, params: { bullet_ids: "#{first.id},#{second.id}", pops_on: target.iso8601 }
 
-    assert_redirected_to daylog_path
+    assert_redirected_to daylog_path(date: Date.current.iso8601)
     assert_equal target, first.reload.pops_on
     assert_equal target, second.reload.pops_on
+  end
+
+  test "create turbo stream removes popped bullets and shows scheduled notice" do
+    card = @user.bullets.create!(bulletable: Task.create!, content: "Plan me")
+    target = 3.days.from_now.to_date
+
+    post pop_path,
+         params: { bullet_ids: card.id.to_s, pops_on: target.iso8601 },
+         headers: { "Accept" => "text/vnd.turbo-stream.html" }
+
+    assert_response :success
+    assert_equal target, card.reload.pops_on
+    assert_match %(turbo-stream action="update" target="toasts"), response.body
+    assert_match "Bullet scheduled for #{target.strftime("%B %d")}", response.body
+    assert_match %(turbo-stream action="remove" targets="#bullet_#{card.id}"), response.body
+    assert_no_match "pops_notice", response.body
   end
 
   test "destroy clears pops_on" do
@@ -125,7 +140,7 @@ class Bullets::PopsControllerTest < ActionDispatch::IntegrationTest
 
     delete pop_path, params: { bullet_ids: card.id.to_s, pops_on: "" }
 
-    assert_redirected_to daylog_path
+    assert_redirected_to daylog_path(date: Date.current.iso8601)
     assert_nil card.reload.pops_on
   end
 

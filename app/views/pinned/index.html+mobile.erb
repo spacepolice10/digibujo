@@ -21,7 +21,7 @@
       <div class="workspace__group-header">
         <span class="workspace__bar" data-bucket-colour="<%= bucket.colour %>" aria-hidden="true"></span>
         <% if bucket.icon.present? %>
-          <i class="icon workspace__icon" style="--icon-mask: <%= bucket_icon_mask(bucket) %>" aria-hidden="true"></i>
+          <i class="icon workspace__icon" style="--icon-mask: <%= bucket.icon_mask %>" aria-hidden="true"></i>
         <% end %>
         <span class="workspace__label"><%= bucket.name %></span>
         <span class="workspace__count"><%= pluralize(bucket_bullets.count, "bullet") %></span>

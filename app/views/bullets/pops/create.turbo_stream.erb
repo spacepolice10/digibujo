@@ -4,12 +4,13 @@
     <%= render "shared/toasts", type: "errmsg", messages: messages %>
   <% end %>
 <% else %>
+  <%= turbo_stream.update "toasts" do %>
+    <% scheduled_on = @bullets.first.pops_on.strftime("%B %d") %>
+    <% message = @bullets.size == 1 ? "Bullet scheduled for #{scheduled_on}" : "#{@bullets.size} bullets scheduled for #{scheduled_on}" %>
+    <%= render "shared/toasts", type: "notify", messages: [message] %>
+  <% end %>
+
   <% @bullets.each do |bullet| %>
-    <%= turbo_stream.append bullet do %>
-      <%= render "bullets/pops/pops_notice",
-            bullet: bullet,
-            previous_pops_on: @pops_previous_by_bullet_id[bullet.id],
-            pops_on: bullet.pops_on %>
-    <% end %>
+    <%= turbo_stream.remove_all bullet %>
   <% end %>
 <% end %>

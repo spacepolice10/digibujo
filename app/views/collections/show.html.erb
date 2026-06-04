@@ -1,6 +1,6 @@
 <% content_for(:title) { @collection.name } %>
 
-<div class="bucket--layout">
+<div class="bucket--layout" data-controller="bulk-menu">
   <div class="bucket--header">
     <div class="bucket--header-actions">
       <%= link_to buckets_path, class: "button-secondary" do %>
@@ -22,7 +22,7 @@
         <% end %>
     </div>
 
-    <div id="bullets">
+    <div id="bullets" data-bulk-menu-target="list">
     <%= render "pagination/paginated_records",
           page: @page,
           pagination_link_path: lambda { |next_param|
@@ -30,6 +30,7 @@
             type ? collection_path(@collection, page: next_param, type:) : collection_path(@collection, page: next_param)
           } %>
     </div>
+    <%= render "bullets/bulk_menu" %>
     </article>
       <div>
     <turbo-frame id="new_bullet_form">

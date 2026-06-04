@@ -17,6 +17,10 @@
     flex-shrink: 0;
     text-decoration: none;
     transition: background 0.1s ease;
+    & :focus {
+      outline: 2px solid var(--color-fg-base);
+      outline-offset: 2px;
+    }
   }
 
   .button:disabled {
@@ -30,6 +34,9 @@
     padding: 0;
     width: var(--icon-size-base);
     height: var(--icon-size-base);
+  }
+  .button-circle {
+    border-radius: var(--radius-full);
   }
 
   .button-sm {

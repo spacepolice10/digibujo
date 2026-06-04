@@ -1,7 +1,10 @@
-<div class="bullets-timeline">
+<div class="bullets-timeline" data-controller="bulk-menu">
+  <div data-bulk-menu-target="list">
   <%= render "pagination/paginated_records",
         page: @page,
         pagination_link_path: ->(next_param) { monthlylog_path(date: @anchor.iso8601, page: next_param) } %>
+  </div>
+  <%= render "bullets/bulk_menu" %>
   <div class="bullets-timeline-composer">
     <p class="bullets-timeline-note text-sm">You are browsing the monthly log. Switch to Today to capture new bullets.</p>
     <%= link_to "Today", daylog_path, class: "button-tertiary" %>

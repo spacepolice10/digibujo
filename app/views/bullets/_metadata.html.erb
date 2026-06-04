@@ -43,7 +43,7 @@
                 style: "anchor-name: #{project_anchor}",
                 data: { turbo_frame: "_top" },
                 aria: { label: "Project: #{bucket.name}" } do %>
-            <i class="icon" style="--icon-mask: <%= bucket_icon_mask(bucket) %>" aria-hidden="true"></i>
+            <i class="icon" style="--icon-mask: <%= bucket.icon_mask %>" aria-hidden="true"></i>
           <% end %>
         <% elsif bucket.bucketable_type == "Collection" %>
           <% coll_hint_id = dom_id(bullet, "hint_collection_#{bucket.id}") %>
@@ -54,7 +54,7 @@
                 style: "anchor-name: #{coll_anchor}",
                 data: { turbo_frame: "_top" },
                 aria: { label: "Collection: #{bucket.name}" } do %>
-            <i class="icon" style="--icon-mask: <%= bucket_icon_mask(bucket) %>" aria-hidden="true"></i>
+            <i class="icon" style="--icon-mask: <%= bucket.icon_mask %>" aria-hidden="true"></i>
           <% end %>
         <% end %>
       <% end %>

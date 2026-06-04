@@ -1,4 +1,4 @@
-<div class="w-tablet mx-auto">
+<div class="w-tablet mx-auto" data-controller="bulk-menu">
 <turbo-frame id="bullets-timeline">
   <div id="bullets-header" class="flex justified slightly-padded w-tablet mx-auto">
     <div class="flex slightly-gapped">
@@ -19,11 +19,12 @@
       <% end %>
     </div>
   </div>
-  <div id="bullets" class="w-tablet mx-auto">
+  <div id="bullets" class="w-tablet mx-auto" data-bulk-menu-target="list">
     <%= render "pagination/paginated_records",
           page: @page,
           pagination_link_path: ->(next_param) { daylog_path(date: @selected_date.iso8601, page: next_param) } %>
   </div>
+  <%= render "bullets/bulk_menu" %>
 
   <turbo-frame id="new_bullet_form">
     <%= render "bullets/editor",

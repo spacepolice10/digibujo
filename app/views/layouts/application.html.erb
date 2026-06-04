@@ -28,16 +28,11 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body data-controller="dialog timezone-cookie bullets-bulk">
+  <body data-controller="dialog timezone-cookie">
 <div id="toasts"></div>
     <%= render "shared/header" %>
-
     <%= yield %>
-
-    <%= render "bullets/bulk_menu" %>
-
     <%= render "shared/footer" %>
-
     <%= render "shared/dialog", data_action: "turbo:submit-end->dialog#submitEnd" do %>
       <%= turbo_frame_tag "modal" %>
     <% end %>

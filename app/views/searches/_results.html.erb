@@ -1,10 +1,13 @@
 <turbo-frame id="search_results">
-<div class="search--results">
+<div class="search--results" data-controller="bulk-menu">
     <% if q.present? && bullets.any? %>
       <h3>Results for "<%= q %>"</h3>
+      <div data-bulk-menu-target="list">
       <%= render "pagination/paginated_records",
         page: page,
         pagination_link_path: ->(next_param) { search_path(q: q, page: next_param) } %>
+      </div>
+      <%= render "bullets/bulk_menu" %>
     <% end %>
   </div>
 </turbo-frame>

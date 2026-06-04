@@ -13,4 +13,10 @@ module Bucketable
   def name
     bucket&.name
   end
+  def icon_mask
+    bucket&.icon_mask
+  end
+  def colour_variable
+    bucket&.colour_variable
+  end
 end
