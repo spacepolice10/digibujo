@@ -1,7 +1,11 @@
 <footer class="footer">
-  <turbo-frame id="pinned_bullets_dock"
-               class="footer--dock"
-               src="<%= pinned_index_path %>"
-               loading="lazy"
-               data-turbo-permanent></turbo-frame>
+  <div class="footer--dock">
+    <div id="pinned_bullets_dock" data-turbo-permanent>
+      <%= render "pinned/pinned_bullets_shell" %>
+    </div>
+    <div id="pinned_buckets_footer" data-turbo-permanent>
+      <%= render "pinned/pinned_buckets_footer",
+            buckets: Current.user.buckets.pinned.order(updated_at: :desc).includes(:bucketable) %>
+    </div>
+  </div>
 </footer>

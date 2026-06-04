@@ -8,10 +8,10 @@ module TimelineHelper
   end
 
   def prev_date_href(date)
-    daylog_path_to(prev_date(date))
+    daylog_path(date: prev_date(date).iso8601)
   end
 
   def next_date_href(date)
-    daylog_path_to(next_date(date))
+    daylog_path(date: next_date(date).iso8601)
   end
 end

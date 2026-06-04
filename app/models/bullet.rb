@@ -14,8 +14,8 @@ class Bullet < ApplicationRecord
   belongs_to :bucket, optional: true, inverse_of: :bullets
 
   delegated_type :bulletable, types: %w[Task Note Event Group], dependent: :destroy, optional: true
-  delegate :completable?, :temporal?, to: :bulletable
-  
+  delegate :completable?, :temporal?, :name, :excerpt, to: :bulletable
+
   accepts_nested_attributes_for :bulletable
   
   has_many :bullet_activities, foreign_key: :bullet_id, inverse_of: false

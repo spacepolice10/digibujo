@@ -24,7 +24,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     end
     @user.bullets.create!(bulletable: Task.create!, content: "Today noise")
 
-    get daylog_on_path(year: selected_date.year, month: selected_date.month, day: selected_date.day)
+    get daylog_path(date: selected_date.iso8601)
 
     assert_response :success
     assert_match "That day", response.body
@@ -32,7 +32,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "invalid calendar date returns not found" do
-    get daylog_on_path(year: Date.current.year, month: 2, day: 30)
+    get daylog_path(date: "#{Date.current.year}-02-30")
 
     assert_response :not_found
   end
@@ -40,17 +40,17 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
   test "daylog renders date navigation links" do
     selected_date = Date.current - 2.days
 
-    get daylog_on_path(year: selected_date.year, month: selected_date.month, day: selected_date.day)
+    get daylog_path(date: selected_date.iso8601)
 
     assert_response :success
-    assert_select "a[href='#{daylog_path_to(selected_date - 1.day)}']"
-    assert_select "a[href='#{daylog_path_to(selected_date + 1.day)}']"
+    assert_select "a[href='#{daylog_path(date: (selected_date - 1.day).iso8601)}']"
+    assert_select "a[href='#{daylog_path(date: (selected_date + 1.day).iso8601)}']"
   end
 
   test "daylog renders simple editor with selected day as submitted attribute" do
     selected_date = Date.current - 2.days
 
-    get daylog_on_path(year: selected_date.year, month: selected_date.month, day: selected_date.day)
+    get daylog_path(date: selected_date.iso8601)
 
     assert_response :success
     assert_select "turbo-frame#new_bullet_form form.bullet-form[data-controller~=?]", "editor"

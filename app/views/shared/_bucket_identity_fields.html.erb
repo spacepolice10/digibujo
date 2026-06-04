@@ -10,11 +10,11 @@
   <span class="form-label">Colour</span>
   <small class="form-hint">Choose a colour and icon for your bucket to help you identify it.</small>
   <div class="colour-picker--form" role="radiogroup" aria-label="Bucket colour">
-    <% Colourable::COLOUR_KEYS.each do |key| %>
+    <% Colourable::COLOUR_MAPPINGS.each_key do |name| %>
       <label class="colour-option">
-        <%= form.radio_button :colour, key %>
+        <%= form.radio_button :colour, name %>
         <span class="colour-option__label">
-          <span class="colour-option__swatch" style="background: var(--model-color-<%= key %>-bg)"></span>
+          <span class="colour-option__swatch" style="background: <%= Colourable.colour_bg_variable_for(name) %>"></span>
         </span>
       </label>
     <% end %>

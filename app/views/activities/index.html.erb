@@ -1,29 +1,10 @@
-<% content_for(:title) { @bullet ? "Activity — #{@bullet.content.to_plain_text.truncate(40)}" : "Activity" } %>
-<div class="activity">
-  <div class="bullets-timeline-header">
-    <div class="bullets-timeline-header-group">
-      <%= link_to "Today", daylog_path, class: "button-tertiary", data: { turbo_frame: "_top" } %>
-    </div>
-    <h2 class="bullets-timeline-header-date"><%= @bullet ? "This bullet" : "Activity" %></h2>
-    <div class="bullets-timeline-header-group">
-      <% if @bullet %>
-        <%= link_to "All activity", activities_path, class: "button-secondary", data: { turbo_frame: "_top" } %>
-      <% else %>
-        <%= link_to "History", history_path, class: "button-secondary", data: { turbo_frame: "_top" } %>
-      <% end %>
-    </div>
+<% content_for(:title, "Activity") %>
+<div class="bucket--layout">
+
+  <div class="bucket--header">
+    <h2>Activity</h2>
   </div>
-
-  <% if @bullet %>
-    <p class="activity--filter-note text-sm">
-      Showing activity for
-      <%= link_to @bullet.content.to_plain_text.truncate(120), bullet_path(@bullet), class: "activity--filter-link", data: { turbo_frame: "_top" } %>.
-    </p>
-  <% end %>
-
-  <%= render "pagination/paginated_records",
-        page: @page,
-        pagination_link_path: lambda { |next_param|
-          @bullet ? activities_path(page: next_param, bullet_id: @bullet.id) : activities_path(page: next_param)
-        } %>
+  <article class="bucket--list">
+    <%= render @activities %>
+  </article>
 </div>

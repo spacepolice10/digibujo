@@ -5,8 +5,8 @@ class ProjectsController < ApplicationController
 
   def index
     @projects = Current.user.projects.order(created_at: :desc)
-    query = sanitized_query
-    @projects = @projects.where("buckets.name LIKE ?", "%#{query}%") if query.present?
+
+    @projects = @projects.where("buckets.name LIKE ?", "%#{sanitized_string}%") if sanitized_string.present?
   end
 
   def new
@@ -16,33 +16,23 @@ class ProjectsController < ApplicationController
   def create
     @project = Project.new
     if save_project_with_bucket(@project)
-      respond_to do |format|
-        format.html { redirect_to project_path(@project) }
-        format.json { render json: { project: project_json(@project.reload) }, status: :created }
-      end
+      redirect_back fallback_location: projects_path, notice: "Project created"
     else
       @project.name = project_params[:name]
-      respond_to do |format|
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: { errors: @project.errors.full_messages }, status: :unprocessable_entity }
-      end
+      render :new, status: :unprocessable_entity
     end
   end
 
   def show
-    scope = Current.user.bullets.where(bucket_id: @project.bucket.id)
+    scoped_bullets = Current.user.bullets.where(bucket_id: @project.bucket.id)
       .where(archived: false).distinct
-    scope = scope.where(bulletable_type: selected_type) if selected_type.present?
-    @bullets = set_page_and_extract_portion_from(scope, per_page: [5, 15, 30, 50])
+    scoped_bullets = scoped_bullets.where(bulletable_type: selected_type) if selected_type.present?
+    @bullets = set_page_and_extract_portion_from(scoped_bullets, per_page: [5, 15, 30, 50])
   end
 
   def destroy
-    dom = helpers.dom_id(@project)
     @project.bucket.destroy
-    respond_to do |format|
-      format.turbo_stream { render turbo_stream: turbo_stream.remove(dom) }
-      format.html { redirect_to buckets_path }
-    end
+    redirect_back fallback_location: projects_path, notice: "Project deleted"
   end
 
   private
@@ -51,8 +41,8 @@ class ProjectsController < ApplicationController
     @project = Current.user.projects.find(params[:id])
   end
 
-  def sanitized_query
-    @sanitized_query ||= ActiveRecord::Base.sanitize_sql_like(params[:q].to_s.strip.downcase)
+  def sanitized_string
+    @sanitized_string ||= ActiveRecord::Base.sanitize_sql_like(params[:q].to_s.strip.downcase)
   end
 
   def selected_type
@@ -73,19 +63,5 @@ class ProjectsController < ApplicationController
         icon: project_params[:icon]
       )
     end
-    true
-  rescue ActiveRecord::RecordInvalid => e
-    project.errors.merge!(e.record.errors) if e.record.is_a?(Bucket)
-    false
-  end 
-
-  def project_json(project)
-    {
-      id: project.id,
-      bucket_id: project.bucket.id,
-      name: project.name,
-      colour: project.colour,
-      icon: project.icon
-    }
   end
 end

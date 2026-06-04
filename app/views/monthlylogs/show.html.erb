@@ -1,9 +1,9 @@
 <div class="bullets-timeline">
   <%= render "pagination/paginated_records",
         page: @page,
-        pagination_link_path: ->(next_param) { monthlylog_path_to(@anchor, page: next_param) } %>
+        pagination_link_path: ->(next_param) { monthlylog_path(date: @anchor.iso8601, page: next_param) } %>
   <div class="bullets-timeline-composer">
     <p class="bullets-timeline-note text-sm">You are browsing the monthly log. Switch to Today to capture new bullets.</p>
-    <%= link_to "Today", daylog_path_to(Date.current), class: "button-tertiary" %>
+    <%= link_to "Today", daylog_path, class: "button-tertiary" %>
   </div>
 </div>

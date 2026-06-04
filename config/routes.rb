@@ -6,12 +6,9 @@ Rails.application.routes.draw do
     end
   end
 
-  # Logs
+  # Logs (?date=YYYY-MM-DD for a specific day or month anchor)
   resource :daylog, only: :show, controller: "daylogs"
-  get "daylog/:year/:month/:day", to: "daylogs#show", as: :daylog_on
-
   resource :monthlylog, only: :show, controller: "monthlylogs"
-  get "monthlylog/:year/:month", to: "monthlylogs#show", as: :monthlylog_on
 
   # Bullet
   scope "bullets", module: :bullets do
@@ -33,21 +30,16 @@ Rails.application.routes.draw do
   end
 
   resource :search, only: :show
-  resource :buckets do
-    scope module: :buckets do
-      resource :picker, only: :show
-      resource :picker_choice, only: :create
-      resource :pin, only: %i[create destroy]
-    end
+  resources :buckets, only: %i[index show]
+  scope "buckets", module: :buckets, as: "buckets" do
+    resource :pin, only: %i[create destroy]
   end
   get "projects/suggestions", to: "projects/suggestions#index", as: :project_suggestions
   resources :projects
   resources :collections
 
   # Views
-  resource  :history, only: :show
   resources :activities, only: :index
-  resource  :calendar,  only: :show
   resources :pinned,    only: :index
   resources :archived,  only: :index
 

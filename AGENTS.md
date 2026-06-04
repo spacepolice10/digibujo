@@ -47,7 +47,7 @@ Bullets have rich text `content` via Action Text (Trix). **Organization:** `Bull
 `Bullet` also tracks `triaged_at` (`datetime`): `nil` means no organizing intent has stamped disposition yet; present means the user applied an action (e.g. collect or pop) that sets this timestamp.
 
 ### Daily log and `pops_on`
-Bullets use `pops_on` (`date`) as the primary day bucket: which daily log page the bullet appears on. `Bullet.pops_on_date(date)` matches bullets for that calendar day per the model rules. The daily log is at `/daylog` (today) or `/daylog/:year/:month/:day`; use `daylog_path_to(date)` in views and controllers.
+Bullets use `pops_on` (`date`) as the primary day bucket: which daily log page the bullet appears on. `Bullet.pops_on_date(date)` matches bullets for that calendar day per the model rules. The daily log is at `/daylog` (today) or `/daylog?date=YYYY-MM-DD`; pass `date:` to `daylog_path` / `monthlylog_path` when linking to another day or month.
 
 ### Organizing from the timeline
 Select bullets via row checkboxes; the sticky **`_bulk_menu`** (styled in `bulk-menu.css`, driven by `bullets-bulk` Stimulus) syncs comma-separated `bullet_ids` into collection intent forms. Actions: **collect** (`POST /bullets/collect` with `bucket_id`, `DELETE` to detach), **pop** (`POST /bullets/pop` with `pops_on`, `DELETE` to restore previous day), **pin**, **archive** (create/destroy). **Postpone** on the daylog sends `POST /pop` with `pops_on` = viewing day + 1. Pin/Unpin buttons hide when the selection includes a pinned or unpinned bullet respectively (`data-pinned` on checkboxes). Activity records `popped` only; reports infer moves from `pops_on` changes. Responses use Turbo Streams where applicable, with HTML fallbacks.
@@ -74,6 +74,9 @@ The architecture is intentionally closer to analog Bullet Journal behavior:
 ### Buckets and memberships
 `Bucket` belongs to a user and uses `delegated_type :bucketable` (`Project`, `Collection`). Each bullet has **zero or one** bucket via `bullets.bucket_id` (no `bullet_buckets` join table). `Project` / `Collection` rows do not store `user_id`; ownership is the bucket’s `user_id`, with `creation_user_id` on the bucketable for attribution where needed. Bucket **identity** (`name`, `colour`, `icon`) is stored on `buckets` (`name` required; `colour` / `icon` optional via `Colourable` and `Iconable`; no auto-assign). Collection bucket names are unique per user; project names may repeat. `Project` and `Collection` are thin delegated types (no identity columns); they delegate `name`, `colour`, `icon`, and colour CSS helpers to `bucket` for display. Create forms pass identity fields on the bucketable param object; controllers persist them on the bucket row. The index hub is at `GET /buckets` (linked from the app header). **Streams** (saved filtered views) were removed; use projects, collections, and timeline filters instead.
 
+### Desktop footer docks
+[`shared/_footer.html.erb`](app/views/shared/_footer.html.erb) renders pinned bucket docks in `#pinned_buckets_footer` (name/icon/colour only) and a static **Pinned** bullets control in `#pinned_bullets_dock`. Bullet lists load lazily when a popover opens (`pinned_bullets` via [`pinned#index`](app/controllers/pinned_controller.rb), or `footer_bullets_bucket_<id>` via [`buckets#show`](app/controllers/buckets_controller.rb)). Pin/unpin Turbo Streams update `pinned_bullets_dock` or `pinned_buckets_footer`. Mobile workspace uses the same data at `GET /pinned`.
+
 ### Turbo Streams
 Mutating bullet actions (`create`, `update`, `destroy`, and bullet sub-resources) respond to `format.turbo_stream` for inline updates where applicable. HTML fallback redirects are provided. Bulk intents use the shared `_bulk_menu` forms; row checkboxes are unstyled (native inputs).
 
@@ -87,10 +90,8 @@ resource :session                            → sessions#new/create/show/destro
 resource :session/code                       → sessions/codes#new/create
 
 # Logs
-GET    /daylog                               → daylogs#show (today)
-GET    /daylog/:year/:month/:day             → daylogs#show
-GET    /monthlylog                           → monthlylogs#show (current month)
-GET    /monthlylog/:year/:month              → monthlylogs#show
+GET    /daylog                               → daylogs#show (today; ?date= for another day)
+GET    /monthlylog                           → monthlylogs#show (current month; ?date= for another month)
 
 # Bullets CRUD (no index — daily log is /daylog)
 GET    /bullets/:id                          → bullets#show
@@ -117,7 +118,8 @@ PATCH  /bullets/:bullet_id/publish           → bullets/publishes#update
 resource :search, only: :show
 
 # Buckets, projects, collections
-GET    /buckets                              → buckets#show (sidebar shell; turbo-frame target)
+GET    /buckets                              → buckets#index (sidebar shell)
+GET    /buckets/:id                          → buckets#show (footer popover bullet list)
 GET    /projects                             → projects#index (HTML + JSON picker; JSON includes `bucket_id`)
 GET    /projects/new                         → projects#new
 POST   /projects                             → projects#create (creates project + bucket; JSON returns `bucket_id`)
@@ -130,9 +132,7 @@ GET    /collections/:id                      → collections#show
 DELETE /collections/:id                      → collections#destroy
 
 # Other pages
-resource  :history, only: :show
 GET    /activities                           → activities#index (?bullet_id= optional)
-resource  :calendar, only: :show
 resources :pinned, only: :index
 resources :archived, only: :index
 resources :published, param: :code

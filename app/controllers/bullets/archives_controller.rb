@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class Bullets::ArchivesController < ApplicationController
-  MAX_BULK_BULLET_IDS = 200
+  include PrepareBullets
 
-  before_action :set_bullets
+  before_action :prepare_bullets
 
   def create
     Bullet.transaction do
@@ -11,14 +11,14 @@ class Bullets::ArchivesController < ApplicationController
     end
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_back fallback_location: daylog_path_to(daylog_redirect_date) }
+      format.html { redirect_back fallback_location: daylog_path(date: daylog_redirect_date.iso8601) }
     end
   rescue ActiveRecord::RecordInvalid => e
     @failed_bullet = e.record
     respond_to do |format|
       format.turbo_stream { render :create, status: :unprocessable_entity }
       format.html do
-        redirect_back fallback_location: daylog_path_to(daylog_redirect_date),
+        redirect_back fallback_location: daylog_path(date: daylog_redirect_date.iso8601),
                       alert: e.record.errors.full_messages.to_sentence
       end
     end
@@ -30,26 +30,17 @@ class Bullets::ArchivesController < ApplicationController
     end
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_back fallback_location: daylog_path_to(daylog_redirect_date) }
+      format.html { redirect_back fallback_location: daylog_path(date: daylog_redirect_date.iso8601) }
     end
   rescue ActiveRecord::RecordInvalid => e
     @failed_bullet = e.record
     respond_to do |format|
       format.turbo_stream { render :destroy, status: :unprocessable_entity }
       format.html do
-        redirect_back fallback_location: daylog_path_to(daylog_redirect_date),
+        redirect_back fallback_location: daylog_path(date: daylog_redirect_date.iso8601),
                       alert: e.record.errors.full_messages.to_sentence
       end
     end
   end
 
-  private
-
-  def set_bullets
-    ids = params.fetch(:bullet_ids, "").split(",").map(&:strip).grep(/\A\d+\z/).map(&:to_i).uniq
-    raise ActiveRecord::RecordNotFound if ids.empty? || ids.size > MAX_BULK_BULLET_IDS
-
-    @bullets = Current.user.bullets.where(id: ids).order(:id)
-    raise ActiveRecord::RecordNotFound if @bullets.count != ids.size
-  end
 end

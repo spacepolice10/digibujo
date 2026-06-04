@@ -11,12 +11,12 @@ class SearchesController < ApplicationController
 
   private
 
-  def search_scope
-    scope = Current.user.bullets.includes(bucket: :bucketable)
-    return scope if @q.blank?
+  def scoped_bullets
+    Current.user.bullets.includes(bucket: :bucketable)
+    return scoped_bullets if @q.blank?
 
-    matching_ids = scope.select { |bullet| searchable_text(bullet).include?(@q.downcase) }.map(&:id)
-    scope.where(id: matching_ids)
+    matching_bullets = scoped_bullets.select { |bullet| searchable_text(bullet).include?(@q.downcase) }
+    scoped_bullets.where(id: matching_bullets.map(&:id))
   end
 
   def searchable_text(bullet)

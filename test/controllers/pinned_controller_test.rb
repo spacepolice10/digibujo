@@ -14,31 +14,22 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
     assert_select ".workspace"
   end
 
-  test "index renders dock on desktop (turbo-frame request)" do
-    get pinned_index_path, headers: { "Turbo-Frame" => "pinned_bullets_dock" }
-    assert_response :success
-    assert_select "turbo-frame#pinned_bullets_dock"
-    assert_select ".workspace", count: 0
-  end
-
-  test "dock renders lazy pinned bullets list frame" do
+  test "footer renders pinned bullets shell without preloading bullets" do
     @user.bullets.create!(
       bulletable: Task.create!,
       content: "Pinned bullet",
       pinned: true
     )
 
-    get pinned_index_path, headers: { "Turbo-Frame" => "pinned_bullets_dock" }
-    assert_select ".pinned--dock" do
+    get daylog_path
+    assert_select "#pinned_bullets_dock .pinned--dock" do
       assert_select "button[popovertarget='pinned_bullets']", text: "Pinned"
       assert_select "turbo-frame#pinned_bullets[popover].pinned--list[src][loading='lazy']"
-      assert_select "details", count: 0
       assert_select ".bullet", count: 0
-      assert_select ".pinned--dock-item-link", count: 0
     end
   end
 
-  test "list frame renders pinned bullets" do
+  test "pinned bullets popover loads bullets on request" do
     @user.bullets.create!(
       bulletable: Task.create!,
       content: "Pinned bullet",
@@ -47,12 +38,21 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
 
     get pinned_index_path, headers: { "Turbo-Frame" => "pinned_bullets" }
     assert_select "turbo-frame#pinned_bullets[popover].pinned--list" do
-      assert_select ".pinned--list-header" do
-        assert_select ".pinned--list-title", text: "Pinned bullets"
-        assert_select "button[popovertarget='pinned_bullets'][popovertargetaction='hide'][aria-label='Close pinned bullets']"
-      end
+      assert_select ".pinned--list-header h2", text: "Pinned bullets"
+      assert_select "button[popovertarget='pinned_bullets'][popovertargetaction='hide'][aria-label='Close pinned bullets']"
       assert_select ".bullet", text: /Pinned bullet/, count: 1
-      assert_select ".pinned--dock-item-link", count: 0
+    end
+  end
+
+  test "footer renders dock per pinned bucket without preloading bullets" do
+    project = create_project!(@user, name: "footer project")
+    project.bucket.update!(pinned: true)
+
+    get daylog_path
+    assert_select "#pinned_buckets_footer .pinned--dock" do
+      assert_select "button[popovertarget='#{dom_id(project.bucket, :footer_bullets)}']", text: /footer project/
+      assert_select "turbo-frame##{dom_id(project.bucket, :footer_bullets)}[popover][src='#{bucket_path(project.bucket)}'][loading='lazy']"
+      assert_select ".bullet", count: 0
     end
   end
 end

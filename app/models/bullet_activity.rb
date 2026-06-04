@@ -12,9 +12,10 @@ class BulletActivity < ApplicationRecord
   ].freeze
 
   belongs_to :user
+  belongs_to :bullet
 
   validates :action, inclusion: { in: ACTIONS }
-  validates :bullet_id, presence: true
+  validates :bullet, presence: true
 
   def action_name
     action.humanize

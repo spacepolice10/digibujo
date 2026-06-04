@@ -10,31 +10,35 @@ class Buckets::PinsControllerTest < ActionDispatch::IntegrationTest
     @bucket = @project.bucket
   end
 
-  test "create pins bucket and updates list item via turbo stream" do
+  test "create pins bucket and updates pin button via turbo stream" do
     post buckets_pin_path,
-         params: { bucket_ids: @bucket.id.to_s },
+         params: { bucket_id: @bucket.id },
          headers: { "Accept" => "text/vnd.turbo-stream.html" }
 
     assert_response :success
     assert @bucket.reload.pinned?
     assert_match "turbo-stream", response.media_type
-    assert_match dom_id(@bucket, :list_item), response.body
+    assert_match dom_id(@bucket, :pin_button), response.body
+    assert_match "pinned_buckets_footer", response.body
+    assert_match dom_id(@bucket, :footer_bullets), response.body
   end
 
-  test "destroy unpins bucket and updates list item via turbo stream" do
+  test "destroy unpins bucket and updates pin button via turbo stream" do
     @bucket.update!(pinned: true)
 
     delete buckets_pin_path,
-           params: { bucket_ids: @bucket.id.to_s },
+           params: { bucket_id: @bucket.id },
            headers: { "Accept" => "text/vnd.turbo-stream.html" }
 
     assert_response :success
     assert_not @bucket.reload.pinned?
-    assert_match dom_id(@bucket, :list_item), response.body
+    assert_match dom_id(@bucket, :pin_button), response.body
+    assert_match "pinned_buckets_footer", response.body
+    assert_no_match dom_id(@bucket, :footer_bullets), response.body
   end
 
   test "create redirects html requests back to buckets index" do
-    post buckets_pin_path, params: { bucket_ids: @bucket.id.to_s }
+    post buckets_pin_path, params: { bucket_id: @bucket.id }
 
     assert_redirected_to buckets_path
     assert @bucket.reload.pinned?

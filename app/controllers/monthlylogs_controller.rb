@@ -14,8 +14,8 @@ class MonthlylogsController < ApplicationController
   private
 
   def monthlylog_anchor_from_params
-    if params[:year].present?
-      Date.new(params[:year].to_i, params[:month].to_i, 1)
+    if params[:date].present?
+      Date.iso8601(params[:date].to_s).beginning_of_month
     else
       Date.current.beginning_of_month
     end

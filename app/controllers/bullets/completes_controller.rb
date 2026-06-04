@@ -7,7 +7,7 @@ class Bullets::CompletesController < ApplicationController
     @task.complete!
     respond_to do |format|
       format.turbo_stream { render "bullets/completes/create" }
-      format.html { redirect_to daylog_path_to(daylog_redirect_date) }
+      format.html { redirect_to daylog_path(date: daylog_redirect_date.iso8601) }
     end
   end
 
@@ -17,7 +17,7 @@ class Bullets::CompletesController < ApplicationController
     @task.uncomplete!
     respond_to do |format|
       format.turbo_stream { render "bullets/completes/destroy" }
-      format.html { redirect_to daylog_path_to(daylog_redirect_date) }
+      format.html { redirect_to daylog_path(date: daylog_redirect_date.iso8601) }
     end
   end
 

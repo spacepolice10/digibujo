@@ -1,8 +1,23 @@
 @layer components {
   .pinned--dock {
+    display: flex;
     position: relative;
     width: fit-content;
-    margin: var(--spacing-vertical) auto;
+    margin: var(--spacing-vertical) 0;
+  }
+
+  .pinned--bucket-summary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    max-width: min(
+      calc(var(--spacing-horizontal-double) * 8),
+      calc(50dvw - var(--spacing-horizontal-double))
+    );
+  }
+
+  .pinned--list-header .bucket--list-item-name h2 {
+    font-size: var(--font-size-base);
   }
 
   .pinned--list {
@@ -10,8 +25,14 @@
     inset: unset;
     position-anchor: --footer;
     position-area: block-start center;
-    width: min(calc(var(--spacing-horizontal-double) * 16), calc(100dvw - var(--spacing-horizontal-double)));
-    max-height: min(calc(var(--spacing-horizontal-double) * 14), calc(100dvh - var(--spacing-horizontal-double) * 5));
+    width: min(
+      calc(var(--spacing-horizontal-double) * 16),
+      calc(100dvw - var(--spacing-horizontal-double))
+    );
+    max-height: min(
+      calc(var(--spacing-horizontal-double) * 14),
+      calc(100dvh - var(--spacing-horizontal-double) * 5)
+    );
     margin-bottom: var(--spacing-vertical-half);
     overflow: auto;
     background-color: var(--color-bg-base);

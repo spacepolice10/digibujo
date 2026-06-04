@@ -14,8 +14,8 @@ class DaylogsController < ApplicationController
   private
 
   def daylog_date_from_params
-    if params[:year].present?
-      Date.new(params[:year].to_i, params[:month].to_i, params[:day].to_i)
+    if params[:date].present?
+      Date.iso8601(params[:date].to_s)
     else
       Date.current
     end

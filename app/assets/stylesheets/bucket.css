@@ -14,7 +14,7 @@
     align-items: center;
     width: 100%;
     h2 {
-      font-size: var(--font-size-h2);
+      font-size: var(--font-size-base);
       font-weight: var(--font-weight-strong);
       & .project {
         color: var(--model-color-3);
@@ -61,12 +61,16 @@
   }
 
   .bucket--list-item-marker {
-    width: 24px;
-    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: var(--icon-size-subtle);
+    height: var(--icon-size-subtle);
     border-radius: var(--radius-strong);
     border: 1px solid var(--color-stroke-base);
   }
-  .bucket--list-item-marker[data-bucket-colour="1"] {
+  .bucket--list-item-marker[data-bucket-colour="violet"] {
     background: var(--model-color-1-bg);
     border-color: color-mix(
       in oklch,
@@ -74,7 +78,7 @@
       var(--color-stroke-base)
     );
   }
-  .bucket--list-item-marker[data-bucket-colour="2"] {
+  .bucket--list-item-marker[data-bucket-colour="cobalt"] {
     background: var(--model-color-2-bg);
     border-color: color-mix(
       in oklch,
@@ -82,7 +86,7 @@
       var(--color-stroke-base)
     );
   }
-  .bucket--list-item-marker[data-bucket-colour="3"] {
+  .bucket--list-item-marker[data-bucket-colour="teal"] {
     background: var(--model-color-3-bg);
     border-color: color-mix(
       in oklch,
@@ -90,7 +94,7 @@
       var(--color-stroke-base)
     );
   }
-  .bucket--list-item-marker[data-bucket-colour="4"] {
+  .bucket--list-item-marker[data-bucket-colour="emerald"] {
     background: var(--model-color-4-bg);
     border-color: color-mix(
       in oklch,
@@ -98,7 +102,7 @@
       var(--color-stroke-base)
     );
   }
-  .bucket--list-item-marker[data-bucket-colour="5"] {
+  .bucket--list-item-marker[data-bucket-colour="gold"] {
     background: var(--model-color-5-bg);
     border-color: color-mix(
       in oklch,
@@ -106,7 +110,7 @@
       var(--color-stroke-base)
     );
   }
-  .bucket--list-item-marker[data-bucket-colour="6"] {
+  .bucket--list-item-marker[data-bucket-colour="vermillion"] {
     background: var(--model-color-6-bg);
     border-color: color-mix(
       in oklch,
@@ -114,7 +118,7 @@
       var(--color-stroke-base)
     );
   }
-  .bucket--list-item-marker[data-bucket-colour="7"] {
+  .bucket--list-item-marker[data-bucket-colour="magenta"] {
     background: var(--model-color-7-bg);
     border-color: color-mix(
       in oklch,
@@ -122,7 +126,7 @@
       var(--color-stroke-base)
     );
   }
-  .bucket--list-item-marker[data-bucket-colour="8"] {
+  .bucket--list-item-marker[data-bucket-colour="inks"] {
     background: var(--model-color-8-bg);
     border-color: color-mix(
       in oklch,

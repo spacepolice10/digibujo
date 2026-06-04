@@ -1,0 +1,29 @@
+<nav class="bucket--layout">
+<div class="bucket--header">
+        <h2 class="project">Projects</h2>
+        <div class="bucket--header-actions">
+          <%= link_to "+ New", new_project_path, class: "button-primary", data: { turbo_frame: "_top" } %>
+        </div>
+      </div>
+      <ul class="bucket--list">
+        <%= render @projects %>
+      </ul>
+      <% if @projects.count >= 8 %>
+        <%= link_to "Show more", projects_path, class: "button-secondary", "aria-label": "All projects", data: { turbo_frame: "_top" } %>
+      <% end %>
+
+
+<div class="bucket--header">
+        <h2 class="collection">Collections</h2>
+        <div class="bucket--header-actions">
+
+        <%= link_to "+ New", new_collection_path, class: "button-primary", data: { turbo_frame: "_top" } %>
+        </div>
+      </div>
+      <ul class="bucket--list">
+        <%= render @collections %>
+      </ul>
+      <% if @collections.count >= 8 %>
+        <%= link_to "Show more", collections_path, class: "button-secondary", "aria-label": "All collections", data: { turbo_frame: "_top" } %>
+      <% end %>
+</nav>

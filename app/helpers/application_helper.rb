@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module ApplicationHelper
-  include LogPathHelper
   def bucket_icon_mask(bucket)
     key = bucket&.icon.presence || "tag"
     "var(--icon-#{key})"

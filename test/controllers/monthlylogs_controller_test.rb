@@ -30,7 +30,7 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
       pops_on: Date.current.beginning_of_month + 1.day
     )
 
-    get monthlylog_on_path(year: anchor.year, month: anchor.month)
+    get monthlylog_path(date: anchor.iso8601)
 
     assert_response :success
     assert_match "Last month", response.body

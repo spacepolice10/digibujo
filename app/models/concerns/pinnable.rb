@@ -12,4 +12,8 @@ module Pinnable
   def unpin!
     update!(pinned: false)
   end
+
+  def pinned?
+    pinned.present?
+  end
 end

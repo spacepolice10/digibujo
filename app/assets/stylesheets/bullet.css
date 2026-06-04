@@ -36,12 +36,32 @@
       );
     }
 
-    &[data-bullet-type="note"] {
-      --bullet-border: color-mix(
+    &[data-bullet-type="note"] .bullet--body {
+      font-size: var(--font-size-base);
+      position: relative;
+      overflow: visible;
+      border: 1px solid var(--model-color-5);
+      border-radius: var(--radius-strong);
+      background-color: color-mix(
         in oklch,
-        var(--color-stroke-base),
-        var(--model-color-5) 20%
+        var(--model-color-5),
+        var(--color-bg-base) 90%
       );
+      color: var(--color-fg-base);
+      padding-block: var(--spacing-vertical-half);
+      padding-inline: var(--spacing-horizontal-half);
+      &:has(.bullet--tags) {
+        padding-bottom: var(--spacing-vertical-double);
+      }
+    }
+    &[data-bullet-type="note"] .bullet--tags {
+      position: absolute;
+      z-index: 10;
+      bottom: -10px;
+      left: 0;
+      background-color: var(--color-bg-base);
+      border-radius: var(--radius-strong);
+      padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     }
 
     &[data-bullet-type="event"] {
@@ -83,6 +103,7 @@
   }
 
   .bullet--body .bullet--name,
+  .bullet--body .bullet--excerpt,
   .bullet--body .bullet--metadata,
   .bullet--body .bullet--tags {
     display: inline-flex;
@@ -90,7 +111,12 @@
   }
 
   .bullet--body .bullet--name .trix-content,
-  .bullet--body .bullet--name .trix-content > * {
+  .bullet--body .bullet--name .trix-content,
+  .bullet--body .bullet--excerpt .trix-content,
+  .bullet--body .bullet--excerpt > * {
+    text-wrap: auto;
+  }
+  .bullet--excerpt {
     text-wrap: auto;
   }
 
@@ -107,6 +133,11 @@
     text-decoration: none;
     color: inherit;
     cursor: text;
+  }
+
+  .bullet--excerpt {
+    font-size: var(--font-size-subtle);
+    font-family: Arial, Helvetica, sans-serif;
   }
 
   .bullet--metadata {
@@ -137,7 +168,7 @@
     color: var(--color-fg-subtle);
   }
 
-  .bullet--note-marker {  
+  .bullet--note-marker {
     width: var(--icon-size-subtle);
     height: var(--icon-size-subtle);
     color: var(--model-color-5);
@@ -167,7 +198,7 @@
     gap: var(--spacing-horizontal-half);
     padding: 2px;
     background-color: var(--color-bg-strong);
-    border-radius: var(--radius-base)
+    border-radius: var(--radius-base);
   }
 
   .bullet--tags .pill {
@@ -216,13 +247,7 @@
     transform: translateY(-1px);
   }
 
-  .calendar-bullet-title {
-    min-width: 0;
-  }
-
   .bullets-list {
     min-height: calc(var(--spacing-horizontal-double) * 9);
   }
 }
-
-

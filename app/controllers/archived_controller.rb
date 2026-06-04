@@ -4,6 +4,6 @@ class ArchivedController < ApplicationController
       Current.user.bullets.includes(bucket: :bucketable).archived.order(updated_at: :desc),
       per_page: [15, 30, 50]
     )
-    @total = Current.user.bullets.archived.count
+    @amount_of_archived = Current.user.bullets.archived.count
   end
 end

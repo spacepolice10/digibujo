@@ -2,7 +2,7 @@ class BulletsController < ApplicationController
   before_action :set_bullet, only: %i[show edit update destroy]
 
   def new
-    @bullet = Current.user.bullets.build(pops_on: pops_on_param)
+    @bullet = Current.user.bullets.build(pops_on: params[:pops_on])
   end
 
   def create
@@ -13,27 +13,7 @@ class BulletsController < ApplicationController
         format.html { redirect_to bullet_path(@bullet) }
       end
     else
-      respond_to do |format|
-        format.turbo_stream do
-          render turbo_stream: [
-            turbo_stream.update(
-              "new_bullet_form",
-              partial: "editor",
-              locals: {
-                bullet: @bullet,
-                bulletable_type: @bullet.bulletable_type,
-                attributes: editor_attributes_for(@bullet)
-              }
-            ),
-            turbo_stream.update(
-              "toasts",
-              partial: "shared/toasts",
-              locals: { type: "errmsg", messages: @bullet.errors.full_messages }
-            )
-          ]
-        end
-        format.html { render :new, status: :unprocessable_entity }
-      end
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -49,27 +29,7 @@ class BulletsController < ApplicationController
         format.html { redirect_to bullet_path(@bullet) }
       end
     else
-      respond_to do |format|
-        format.turbo_stream do
-          render turbo_stream: [
-            turbo_stream.update(
-              dom_id(@bullet),
-              partial: "editor",
-              locals: {
-                bullet: @bullet,
-                bulletable_type: @bullet.bulletable_type,
-                attributes: {}
-              }
-            ),
-            turbo_stream.update(
-              "toasts",
-              partial: "shared/toasts",
-              locals: { type: "errmsg", messages: @bullet.errors.full_messages }
-            )
-          ]
-        end
-        format.html { render :edit, status: :unprocessable_entity }
-      end
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -77,7 +37,7 @@ class BulletsController < ApplicationController
     @bullet.destroy
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_to daylog_path_to(@bullet.pops_on || Date.current) }
+      format.html { redirect_to daylog_path(date: (@bullet.pops_on || Date.current).iso8601) }
     end
   end
 
@@ -102,14 +62,6 @@ class BulletsController < ApplicationController
     type_name = permitted[:bulletable_type].to_s
     attributes = permitted.except(:bulletable_type, "bulletable_type")
     Current.user.bullets.new(attributes.merge(bulletable: type_name.constantize.new))
-  end
-
-  def pops_on_param
-    return if params[:pops_on].blank?
-
-    Date.iso8601(params[:pops_on])
-  rescue ArgumentError
-    nil
   end
 
   def editor_attributes_for(bullet)

@@ -1,6 +1,6 @@
 <div class="w-tablet mx-auto">
 <turbo-frame id="bullets-timeline">
-  <div id="bullets-header" class="flex justified slightly-padded w-mobile mx-auto">
+  <div id="bullets-header" class="flex justified slightly-padded w-tablet mx-auto">
     <div class="flex slightly-gapped">
       <%= link_to "Activity", activities_path, data: { turbo_frame: "_top" }, class: "button-secondary" %>
     </div>
@@ -15,14 +15,14 @@
     </div>
     <div class="flex slightly-gapped">
       <% unless @selected_date == Date.current %>
-        <%= link_to "Today", daylog_path_to(Date.current), data: { turbo_action: "advance" }, class: "button-tertiary" %>
+        <%= link_to "Today", daylog_path, data: { turbo_action: "advance" }, class: "button-tertiary" %>
       <% end %>
     </div>
   </div>
   <div id="bullets" class="w-tablet mx-auto">
     <%= render "pagination/paginated_records",
           page: @page,
-          pagination_link_path: ->(next_param) { daylog_path_to(@selected_date, page: next_param) } %>
+          pagination_link_path: ->(next_param) { daylog_path(date: @selected_date.iso8601, page: next_param) } %>
   </div>
 
   <turbo-frame id="new_bullet_form">

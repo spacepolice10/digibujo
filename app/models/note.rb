@@ -14,6 +14,11 @@ class Note < ApplicationRecord
   end
 
   def excerpt
-    bullet.content.to_plain_text.strip.presence || "Untitled"
+    text = bullet.content.to_plain_text
+    if text.length > 400
+     text.truncate(400) || "Untitled"
+    else 
+      bullet.content
+    end
   end
 end

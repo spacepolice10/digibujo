@@ -1,9 +1,9 @@
 <% bucket_tags = bullet.bucket.present? ? [bullet.bucket] : [] %>
-<% if bullet.pinned? || bullet.archived? || bullet.pops_on.present? || bullet.ends_date.present? || bucket_tags.any? %>
+<% if bullet.pinned? || bullet.archived? || bullet.ends_date.present? || bucket_tags.any? %>
   <div class="bullet--metadata">
     <span class="bullet--tags">
       <% if bullet.pops_on && @selected_date && bullet.pops_on > @selected_date %>
-        <span class="pill pill--4">
+        <span class="pill pill--emerald">
           <p>Scheduled on <%= bullet.pops_on.strftime("%B %d") %></p>
         </span>
       <% end %>

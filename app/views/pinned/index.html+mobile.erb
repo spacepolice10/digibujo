@@ -13,7 +13,26 @@
     </div>
   <% end %>
 
-  <% if @bullets.none? %>
+  <% @buckets.each do |bucket| %>
+    <% bucket_bullets = Current.user.bullets.where(bucket_id: bucket.id).includes(bucket: :bucketable).order(updated_at: :desc) %>
+    <% next if bucket_bullets.none? %>
+
+    <div class="workspace__section">
+      <div class="workspace__group-header">
+        <span class="workspace__bar" data-bucket-colour="<%= bucket.colour %>" aria-hidden="true"></span>
+        <% if bucket.icon.present? %>
+          <i class="icon workspace__icon" style="--icon-mask: <%= bucket_icon_mask(bucket) %>" aria-hidden="true"></i>
+        <% end %>
+        <span class="workspace__label"><%= bucket.name %></span>
+        <span class="workspace__count"><%= pluralize(bucket_bullets.count, "bullet") %></span>
+      </div>
+      <% bucket_bullets.each do |bullet| %>
+        <%= render partial: "bullets/bullet", locals: { bullet: bullet, dom_prefix: "workspace" } %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if @bullets.none? && @buckets.none? %>
     <p class="workspace__empty">Nothing pinned yet.</p>
   <% end %>
 </section>

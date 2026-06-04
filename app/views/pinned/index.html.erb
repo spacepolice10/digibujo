@@ -1,9 +1,5 @@
 <% if request.headers["Turbo-Frame"] == "pinned_bullets" %>
   <turbo-frame id="pinned_bullets" class="pinned--list" popover>
-    <%= render "pinned/list", bullets: @bullets %>
-  </turbo-frame>
-<% else %>
-  <turbo-frame id="pinned_bullets_dock">
-    <%= render "pinned/dock", bullets: @bullets %>
+    <%= render "pinned/bullets_list", bullets: @bullets %>
   </turbo-frame>
 <% end %>

@@ -20,8 +20,8 @@ class BucketTest < ActiveSupport::TestCase
   end
 
   test "accepts valid colour and icon" do
-    @bucket.update!(colour: "3", icon: "calendar")
-    assert_equal "3", @bucket.colour
+    @bucket.update!(colour: "teal", icon: "calendar")
+    assert_equal "teal", @bucket.colour
     assert_equal "calendar", @bucket.icon
   end
 
@@ -32,7 +32,12 @@ class BucketTest < ActiveSupport::TestCase
   end
 
   test "rejects invalid colour" do
-    @bucket.colour = "9"
+    @bucket.colour = "crimson"
+    assert_not @bucket.valid?
+  end
+
+  test "rejects legacy numeric colour keys" do
+    @bucket.colour = "3"
     assert_not @bucket.valid?
   end
 
@@ -42,9 +47,9 @@ class BucketTest < ActiveSupport::TestCase
   end
 
   test "bucketable delegates identity" do
-    @bucket.update!(colour: "2", icon: "pin")
+    @bucket.update!(colour: "cobalt", icon: "pin")
     assert_equal "alpha", @project.name
-    assert_equal "2", @project.colour
+    assert_equal "cobalt", @project.colour
     assert_equal "pin", @project.icon
   end
 

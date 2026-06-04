@@ -15,10 +15,11 @@
     font-size: var(--font-size-base);
     background: var(--color-bg-base);
     color: var(--color-fg-base);
+    margin-bottom: calc(var(--spacing-vertical-double) * 6);
   }
 
   body {
-    margin: auto;
+    margin-inline: auto;
     max-width: var(--breakpoint-laptop);
   }
 
