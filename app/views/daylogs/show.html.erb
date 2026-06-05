@@ -1,19 +1,19 @@
-<div class="bucket--layout" data-controller="bulk-menu">
+<div class="layout--page" data-controller="daylog bulk-menu">
 <turbo-frame id="bullets-timeline">
-  <div id="bullets-header" class="bucket--header">
-    <div class="bucket--header-actions">
-      <%= link_to "Activity", activities_path, data: { turbo_frame: "_top" }, class: "button--secondary" %>
+  <div id="bullets-header" class="layout--header">
+    <div class="layout--header-actions">
+
     </div>
-    <div class="bucket--header-actions">
+    <div class="layout--header-actions">
       <%= link_to prev_date_href(@selected_date), data: { turbo_action: "advance" }, class: "button--tertiary", aria: { label: "Show previous day" } do %>
         <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
       <% end %>
-      <h4><%= @selected_date.strftime("%a, %b %-d") %></h4>
+      <input type="date" value="<%= @selected_date.iso8601 %>" data-daylog-target="dateForm" data-action="change->daylog#switchDate" class="button--tertiary">
       <%= link_to next_date_href(@selected_date), data: { turbo_action: "advance" }, class: "button--tertiary", aria: { label: "Show next day" } do %>
-        <i class="icon icon--flip-h" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+        <i class="icon icon--flip-h" style="--icon-mask: var(--icon-arrow-right)" aria-hidden="true"></i>
       <% end %>
     </div>
-    <div class="bucket--header-actions">
+    <div style="justify-content: flex-end;" class="layout--header-actions">
       <% unless @selected_date == Date.current %>
         <%= link_to "Today", daylog_path, data: { turbo_action: "advance" }, class: "button--tertiary" %>
       <% end %>

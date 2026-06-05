@@ -1,13 +1,13 @@
 <% content_for(:title) { "Collections" } %>
 
-<div class="bucket--layout">
-  <div class="bucket--header">
+<div class="layout--page">
+  <div class="layout--header">
     <h2 class="collection">Collections</h2>
-    <div class="bucket--header-actions">
+    <div class="layout--header-actions">
       <%= link_to "New collection", new_collection_path, class: "button--primary" %>
     </div>
   </div>
-  <ul class="bucket--list">
+  <ul class="layout--list bucket--list">
     <%= render @collections %>
   </ul>
 </div>

@@ -1,9 +1,9 @@
 <turbo-frame id="<%= @frame_id %>"
              data-project-picker-target="suggestions">
   <% if @projects.any? %>
-    <ul class="bucket--list" role="listbox">
+    <ul class="layout--list bucket--list" role="listbox">
       <% @projects.each do |project| %>
-        <li class="bucket--list-item" role="option">
+        <li class="layout--list-item" role="option">
           <button type="button"
                   class="button--secondary bucket--list-item-link"
                   data-combobox-target="item"

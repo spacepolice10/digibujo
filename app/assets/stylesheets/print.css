@@ -13,8 +13,7 @@
   .footer,
   #pinned_bullets,
   .bulk-menu,
-  .bullet-action,
-  .show-navigation-actions,
+  .layout--header-actions,
   .bullet-form-rail,
   .bullet-form-footer,
   trix-toolbar,
@@ -32,7 +31,7 @@
     border: 1px solid #ddd;
   }
 
-  .bullet-show-content {
+  .layout--main {
     max-width: 100%;
   }
 

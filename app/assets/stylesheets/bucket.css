@@ -1,46 +1,17 @@
 @layer components {
-  .bucket--layout {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-vertical-double);
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
-    max-width: var(--breakpoint-tablet);
-    width: 100%;
-    margin-inline: auto;
+  .layout--header h2.project {
+    color: var(--model-color-3);
   }
-  .bucket--header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    h2,
-    h4 {
-      font-size: var(--font-size-base);
-      font-weight: var(--font-weight-strong);
-      & .project {
-        color: var(--model-color-3);
-      }
-      & .collection {
-        color: var(--model-color-4);
-      }
-    }
+
+  .layout--header h2.collection {
+    color: var(--model-color-4);
   }
-  .bucket--header-actions {
-    display: flex;
-    gap: var(--spacing-horizontal-half);
-  }
+
   .bucket--list {
-    display: flex;
-    flex-direction: column;
     border-radius: var(--radius-strong);
     padding-inline: var(--spacing-horizontal-half);
   }
-  .bucket--list-item {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
-    width: 100%;
-  }
+
   .bucket--list-item-link {
     display: flex;
     justify-content: space-between;

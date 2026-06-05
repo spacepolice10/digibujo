@@ -1,33 +1,4 @@
 @layer components {
-  .activity--layout {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-vertical-double);
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
-    max-width: var(--breakpoint-tablet);
-    width: 100%;
-    margin-inline: auto;
-  }
-  .activity--header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    h2 {
-      font-size: var(--font-size-strong);
-      font-weight: var(--font-weight-strong);
-      & .project {
-        color: var(--model-color-3);
-      }
-      & .collection {
-        color: var(--model-color-4);
-      }
-    }
-  }
-  .activity--list {
-    display: flex;
-    flex-direction: column;
-  }
   .activity--item {
     gap: var(--spacing-horizontal-half);
     padding: var(--spacing-vertical) var(--spacing-horizontal-half);

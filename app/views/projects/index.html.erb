@@ -1,17 +1,17 @@
 <% content_for(:title) { "Projects" } %>
 
-<div class="bucket--layout">
-<div class="bucket--header">
+<div class="layout--page">
+<div class="layout--header">
   <h2>Projects</h2>
   <%= render "projects/search" %>
-  <div class="bucket--header-actions">
+  <div class="layout--header-actions">
     <%= link_to "New project", new_project_path, class: "button--primary" %>
   </div>
 </div>
 
   <turbo-frame id="projects">
     <% if @projects.any? %>
-      <ul class="bucket--list">
+      <ul class="layout--list bucket--list">
         <%= render @projects %>
       </ul>
     <% else %>

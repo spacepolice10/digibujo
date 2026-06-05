@@ -9,13 +9,12 @@
  * Consider organizing styles into separate files for maintainability.
  */
 
-@layer reset, variables, base, utilities, components;
+@layer reset, variables, base, layout, utilities, components;
 
 @import "_reset.css";
 @import "variables.css";
 @import "base.css";
-@import "header.css";
-@import "footer.css";
+@import "layout.css";
 @import "utilities.css";
 @import "icons.css";
 @import "button.css";
@@ -25,7 +24,6 @@
 @import "dropdown.css";
 @import "dialog.css";
 @import "bullet.css";
-@import "bullet-show.css";
 @import "bullet-form.css";
 @import "date-picker.css";
 @import "bucket.css";

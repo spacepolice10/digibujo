@@ -1,11 +1,11 @@
 <% content_for(:title) { "Bullet #{@bullet.bulletable.name}" } %>
-<div class="bullet-show">
-  <header class="bullet-show--navigation">
+<div class="layout--column">
+  <header class="layout--header">
     <button class="button--tertiary" onclick="history.back()">
       <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
       Back
     </button>
-    <div class="bullet-show--navigation-actions">
+    <div class="layout--header-actions">
       <%= link_to activities_path(bullet_id: @bullet.id), class: "button--secondary", data: { turbo_frame: "_top" } do %>
         <i class="icon" style="--icon-mask: var(--icon-book)" aria-hidden="true"></i>
         Activity
@@ -36,15 +36,13 @@
     </div>
   </header>
 
-  <% if @bullet.published? %>
-      <input type="text" class="bullet-show--published-link" value="<%= published_url(@bullet.public_code) %>" readonly onclick="this.select()"> <%# herb:disable html-input-require-autocomplete %>
+  <article class="layout--main">
+    <% if @bullet.published? %>
+      <input type="text" class="bullet--published-link" value="<%= published_url(@bullet.public_code) %>" readonly onclick="this.select()"> <%# herb:disable html-input-require-autocomplete %>
+    <% end %>
 
-  <% end %>
-
-  <article class="bullet-show--content">
-    <div class="bullet-show--body">
+    <div class="bullet--read-body">
       <%= @bullet.content %>
     </div>
-
   </article>
 </div>

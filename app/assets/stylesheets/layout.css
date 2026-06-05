@@ -1,0 +1,115 @@
+@layer layout {
+  /* App shell */
+  .header {
+    position: sticky;
+    top: var(--radius-strong);
+    margin-top: var(--radius-strong);
+    z-index: var(--z-dialog-backdrop);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    gap: var(--spacing-horizontal-half);
+    background: var(--color-bg-base);
+    /* 1px hairline — no stroke-width token in the design system */
+    border-bottom: 1px solid var(--color-stroke-base);
+
+    @container page-column (min-width: var(--breakpoint-laptop)) {
+      border: 1px solid var(--color-stroke-base);
+      border-radius: var(--radius-strong);
+    }
+  }
+
+  .footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    anchor-name: --footer;
+    position-area: block-start center;
+    background-color: var(--color-bg-base);
+    /* 1px hairline — no stroke-width token in the design system */
+    border-top: 1px solid var(--color-stroke-base);
+  }
+
+  .footer--dock {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    width: 100%;
+  }
+
+  /* Wrappers are block-level; let dock buttons join the footer flex row. */
+  .footer--dock > #pinned_bullets_dock,
+  .footer--dock > #pinned_buckets_footer {
+    display: contents;
+  }
+
+  /* Page structure */
+  .layout--page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical-double);
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    max-width: var(--breakpoint-laptop);
+    width: 100%;
+    margin-inline: auto;
+  }
+
+  .layout--column {
+    display: flex;
+    flex-direction: column;
+  }
+
+  body > .layout--column {
+    flex: 1;
+  }
+
+  .layout--header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding-inline: var(--spacing-horizontal);
+    padding-block: var(--spacing-vertical);
+
+    h2,
+    h4 {
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-strong);
+    }
+  }
+
+  .layout--page > .layout--header {
+    padding-inline: 0;
+    padding-block: 0;
+  }
+
+  .layout--header-actions {
+    display: flex;
+    gap: var(--spacing-horizontal-half);
+    flex-shrink: 0;
+    flex: 1;
+  }
+
+  .layout--list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .layout--list-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    width: 100%;
+  }
+
+  .layout--main {
+    width: 100%;
+    flex: 1;
+    padding: var(--spacing-vertical-double) var(--spacing-horizontal);
+    background: var(--color-bg-subtle);
+  }
+}

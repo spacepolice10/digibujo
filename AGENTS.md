@@ -176,10 +176,10 @@ Common blocks (use these class names in markup — not legacy `button-primary`-s
 |------------|----------------|-------|
 | `button.css` | `button--primary`, `button--secondary`, `button--tertiary`, `button--icon`, `button--circle`, `button--danger` (with `button--secondary`) | Shared chrome for links and `<button>`; hover/active in `button.css` |
 | `utilities.css` | `utilities--sr-only`, `utilities--line-clamp-1`, `utilities--text-sm` | Small cross-page helpers only; prefer component/layout classes when possible |
-| `header.css` / `footer.css` | `header`, `footer`, `footer--dock` | App shell chrome (`shared/_header`, `shared/_footer`) |
-| `bucket.css` | `bucket--layout`, `bucket--header`, `bucket--header-actions`, … | Bucket index/show and **daylog** page shell (`daylogs/show` uses `bucket--layout`) |
+| `layout.css` | `layout--page`, `layout--column`, `layout--header`, `layout--header-actions`, `layout--list`, `layout--list-item`, `layout--main`, `header`, `footer`, `footer--dock` | Page structure and app shell chrome (`shared/_header`, `shared/_footer`; daylog and bucket pages use `layout--page`) |
+| `bucket.css` | `bucket--list`, `bucket--list-item-link`, `bucket--list-item-marker`, … | Bucket list chrome and item styling (pair with `layout--list` / `layout--list-item`) |
 
-Styles are layered in `application.css`: `reset` → `variables` → `base` → `utilities` → `components`. Tokens live in `variables.css` (`--color-*`, `--shadow-subtle` / `--shadow-base` / `--shadow-strong`, `--z-dialog-backdrop` → `--z-dropdown` → `--z-dialog` → `--z-toast`). Element defaults and keyboard focus rings live in `base.css`; `_reset.css` is browser normalization only.
+Styles are layered in `application.css`: `reset` → `variables` → `base` → `layout` → `utilities` → `components`. Tokens live in `variables.css` (`--color-*`, `--shadow-subtle` / `--shadow-base` / `--shadow-strong`, `--z-dialog-backdrop` → `--z-dropdown` → `--z-dialog` → `--z-toast`). Element defaults and keyboard focus rings live in `base.css`; `_reset.css` is browser normalization only.
 
 **CSS: pick the closest existing variable — never add new ones.** When a hardcoded CSS value (font-size, border-radius, font-weight, opacity, icon size, etc.) doesn't exactly match an existing variable, map it to the nearest one from `variables.css` rather than creating a new variable. The variable set is intentionally small and should stay that way. A 1–2px difference is acceptable — consistency across the system matters more than pixel-perfect fidelity to the original arbitrary value. Do not add `line-height` or `letter-spacing` declarations — the reset handles base values.
 
