@@ -1,6 +1,4 @@
 @layer components {
-  /* ── Row shell ─────────────────────────────────────────── */
-
   .bullet {
     position: relative;
     display: flex;
@@ -17,7 +15,7 @@
     &[data-bullet-type="note"] .bullet--body {
       position: relative;
       overflow: visible;
-      border: 1px solid var(--model-color-5);
+      box-shadow: 0 0 2px var(--model-color-5);
       border-radius: var(--radius-strong);
       background-color: color-mix(
         in oklch,
@@ -78,8 +76,8 @@
       vertical-align: middle;
     }
 
-    .bullet--name .trix-content,
-    .bullet--excerpt .trix-content,
+    .bullet--name .rich-text-content,
+    .bullet--excerpt .rich-text-content,
     .bullet--excerpt > * {
       text-wrap: auto;
     }
@@ -103,7 +101,7 @@
       padding: 0;
     }
 
-    > .trix-content {
+    > .rich-text-content {
       flex: 1 1 auto;
       word-break: break-word;
     }
@@ -143,6 +141,9 @@
 
   .bullet--event-marker {
     color: var(--model-color-6);
+  }
+  .bullet--group-marker {
+    color: var(--model-color-3);
   }
 
   /* ── Tags ──────────────────────────────────────────────── */

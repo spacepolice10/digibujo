@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
   connect() {
-    this.element.querySelectorAll(".trix-content img").forEach((img) => {
+    this.element.querySelectorAll(".rich-text-content img").forEach((img) => {
       img.style.cursor = "zoom-in";
     });
   }
@@ -13,7 +13,12 @@ export default class extends Controller {
 
     const overlay = document.createElement("div");
     overlay.className = "image-zoom-overlay";
-    overlay.innerHTML = `<img src="${img.src}" alt="${img.alt || ""}">`;
+
+    const zoomedImage = document.createElement("img");
+    zoomedImage.src = img.src;
+    zoomedImage.alt = img.alt || "";
+    overlay.append(zoomedImage);
+
     overlay.addEventListener("click", () => overlay.remove());
     document.addEventListener(
       "keydown",

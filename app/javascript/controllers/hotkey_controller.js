@@ -10,7 +10,7 @@ export default class extends Controller {
 
   #shouldIgnore(event) {
     return event.defaultPrevented ||
-      event.target.closest("input, textarea, [contenteditable], trix-editor");
+      event.target.closest("input, textarea, [contenteditable], lexxy-editor, .lexxy-editor__content");
   }
 
   get #isClickable() {

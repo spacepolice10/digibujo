@@ -17,7 +17,7 @@ class Bullet < ApplicationRecord
   delegate :completable?, :temporal?, :name, :excerpt, to: :bulletable
 
   accepts_nested_attributes_for :bulletable
-  
+
   has_many :bullet_activities, foreign_key: :bullet_id, inverse_of: false
   has_rich_text :content
 

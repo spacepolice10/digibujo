@@ -44,6 +44,18 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_select "input[name=?][value=?]", "bullet[bucket_id]", project.bucket.id.to_s
   end
 
+  test "show renders action text file attachments" do
+    blob = create_blob!(filename: "reference.txt", content_type: "text/plain")
+    @bullet.content.body = @bullet.content.body.append_attachables(blob)
+    @bullet.save!
+
+    get bullet_path(@bullet)
+
+    assert_response :success
+    assert_select ".attachment.attachment--file.attachment--inline", count: 1
+    assert_select "a.attachment--name", text: "reference.txt"
+  end
+
   test "create turbo stream renders validation errors in toasts" do
     post bullets_path,
          params: {
@@ -55,5 +67,15 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'turbo-stream[action="update"][target="toasts"]'
     assert_select ".toasts--errmsg", text: /Content can't be blank/
     assert_select ".form-errmsg", 0
+  end
+
+  private
+
+  def create_blob!(filename:, content_type:)
+    ActiveStorage::Blob.create_and_upload!(
+      io: StringIO.new("file contents"),
+      filename: filename,
+      content_type: content_type
+    )
   end
 end

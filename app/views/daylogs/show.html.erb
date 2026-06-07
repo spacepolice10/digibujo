@@ -8,7 +8,11 @@
       <%= link_to prev_date_href(@selected_date), data: { turbo_action: "advance" }, class: "button--tertiary", aria: { label: "Show previous day" } do %>
         <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
       <% end %>
-      <input type="date" value="<%= @selected_date.iso8601 %>" data-daylog-target="dateForm" data-action="change->daylog#switchDate" class="button--tertiary">
+      <button type="button" class="button--tertiary" data-action="daylog#openDatePicker" aria-label="Pick a date">
+        <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
+        <%= @selected_date.strftime("%a, %b %-d") %>
+      </button>
+      <input type="date" value="<%= @selected_date.iso8601 %>" data-daylog-target="dateForm" data-action="change->daylog#switchDate" class="utilities--sr-only" tabindex="-1">
       <%= link_to next_date_href(@selected_date), data: { turbo_action: "advance" }, class: "button--tertiary", aria: { label: "Show next day" } do %>
         <i class="icon icon--flip-h" style="--icon-mask: var(--icon-arrow-right)" aria-hidden="true"></i>
       <% end %>
@@ -24,6 +28,7 @@
           page: @page,
           pagination_link_path: ->(next_param) { daylog_path(date: @selected_date.iso8601, page: next_param) } %>
   </div>
+
   <%= render "bullets/bulk_menu" %>
 
   <turbo-frame id="new_bullet_form">

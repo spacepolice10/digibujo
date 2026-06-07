@@ -1,0 +1,42 @@
+@layer components {
+  .attachment--preview {
+    display: block;
+    inline-size: fit-content;
+    max-inline-size: 100%;
+    margin-block: var(--spacing-vertical-half);
+  }
+
+  .attachment--preview-image {
+    display: block;
+    border-radius: var(--radius-base);
+    max-inline-size: 100%;
+    block-size: auto;
+  }
+
+  .attachment--file.attachment--inline {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    vertical-align: baseline;
+  }
+
+  .attachment--inline .attachment--name {
+    color: var(--color-accent-alternative);
+    font-size: inherit;
+    font-weight: inherit;
+    text-decoration: underline;
+    white-space: nowrap;
+  }
+
+  .attachment--inline .attachment--name:hover {
+    color: var(--color-fg-base);
+  }
+
+  .lexxy-editor__content .attachment--inline,
+  .lexxy-content .attachment--inline,
+  .rich-text-content .attachment--inline {
+    max-inline-size: 100%;
+  }
+}

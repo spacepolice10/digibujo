@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class BulletsController < ApplicationController
   before_action :set_bullet, only: %i[show edit update destroy]
 
@@ -13,7 +15,10 @@ class BulletsController < ApplicationController
         format.html { redirect_to bullet_path(@bullet) }
       end
     else
-      render :new, status: :unprocessable_entity
+      respond_to do |format|
+        format.turbo_stream { render_invalid_create }
+        format.html { render :new, status: :unprocessable_entity }
+      end
     end
   end
 
@@ -60,7 +65,7 @@ class BulletsController < ApplicationController
   def create_bullet_from
     permitted = bullet_params
     type_name = permitted[:bulletable_type].to_s
-    attributes = permitted.except(:bulletable_type, "bulletable_type")
+    attributes = permitted.except(:bulletable_type, 'bulletable_type')
     Current.user.bullets.new(attributes.merge(bulletable: type_name.constantize.new))
   end
 
@@ -69,5 +74,13 @@ class BulletsController < ApplicationController
       pops_on: bullet.pops_on,
       bucket_id: bullet.bucket_id
     }
+  end
+
+  def render_invalid_create
+    render turbo_stream: turbo_stream.update(
+      'toasts',
+      partial: 'shared/toasts',
+      locals: { type: 'errmsg', messages: @bullet.errors.full_messages }
+    )
   end
 end

@@ -16,7 +16,10 @@
   .layout--header-actions,
   .bullet-form-rail,
   .bullet-form-footer,
-  trix-toolbar,
+  lexxy-toolbar,
+  .lexxy-floating-controls,
+  lexxy-table-tools,
+  lexxy-code-language-picker,
   .pagination-trigger {
     display: none !important;
   }

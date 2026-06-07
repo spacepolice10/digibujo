@@ -1,6 +1,8 @@
 class Note < ApplicationRecord
   include Bulletable
 
+  enum :mood, { positive: 0, negative: 1, inspired: 2, pain: 3 }
+
   def temporal?
     false
   end
