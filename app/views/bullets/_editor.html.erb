@@ -33,12 +33,13 @@
       <%= f.hidden_field name, value: value %>
     <% end %>
 
-    <div class="bullet-form-editor">
+
       <%= f.rich_text_area :content,
             autofocus: "true",
             placeholder: "What's on your mind?",
+            multiline: false,
             preset: "inline" %>
-    </div>
+
 
     <div class="bullet-form-footer">
       <%= f.button type: "submit", class: "button--primary button--icon" do %>
@@ -46,5 +47,10 @@
       <% end %>
     </div>
   </div>
+
+  <div class="attachment--previews"
+       data-editor-target="previews"
+       data-action="click->editor#removePreview"
+       hidden></div>
 
 <% end %>

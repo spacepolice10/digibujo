@@ -86,6 +86,16 @@
       display: inline-flex;
       vertical-align: middle;
     }
+
+    &:has(.attachment--gallery) {
+      white-space: normal;
+      overflow: visible;
+    }
+
+    .attachment--gallery {
+      flex: 1 1 100%;
+      white-space: normal;
+    }
   }
 
   .bullet--name {

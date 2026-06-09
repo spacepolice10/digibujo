@@ -23,7 +23,7 @@
 <div class="form-group">
   <span class="form-label">Icon</span>
   <div class="icon-picker" role="radiogroup" aria-label="Bucket icon">
-    <% Iconable::ICON_KEYS.each do |key| %>
+    <% Iconable::ICON_MAPPINGS.each_key do |key| %>
       <label class="icon-option">
         <%= form.radio_button :icon, key %>
         <span class="icon-option__label">

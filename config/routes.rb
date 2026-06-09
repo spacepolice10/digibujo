@@ -53,5 +53,9 @@ Rails.application.routes.draw do
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 
+  namespace :active_storage do
+    get "blobs/:signed_id/inline", to: "inline_blobs#show", as: :inline_blob
+  end
+
   root "daylogs#show"
 end

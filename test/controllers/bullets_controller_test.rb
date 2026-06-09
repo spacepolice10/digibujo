@@ -56,6 +56,22 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_select "a.attachment--name", text: "reference.txt"
   end
 
+  test "show renders action text preview attachments inline" do
+    blob = create_blob!(
+      filename: "photo.png",
+      content_type: "image/png",
+      io: StringIO.new(Base64.decode64("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="))
+    )
+    @bullet.content.body = @bullet.content.body.append_attachables(blob)
+    @bullet.save!
+
+    get bullet_path(@bullet)
+
+    assert_response :success
+    assert_select "span.attachment.attachment--preview.attachment--inline", count: 1
+    assert_select "img.attachment--preview-image", count: 1
+  end
+
   test "create turbo stream renders validation errors in toasts" do
     post bullets_path,
          params: {
@@ -71,9 +87,9 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
   private
 
-  def create_blob!(filename:, content_type:)
+  def create_blob!(filename:, content_type:, io: StringIO.new("file contents"))
     ActiveStorage::Blob.create_and_upload!(
-      io: StringIO.new("file contents"),
+      io: io,
       filename: filename,
       content_type: content_type
     )

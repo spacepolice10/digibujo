@@ -8,5 +8,7 @@ Lexxy.configure({
   inline: {
     toolbar: false,
     multiline: false,
+    richText: true,
+    markdown: true,
   },
 });

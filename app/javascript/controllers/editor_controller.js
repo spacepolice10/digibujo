@@ -1,10 +1,14 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["typePicker", "typeSelect"];
+  static targets = ["typePicker", "typeSelect", "previews"];
 
   connect() {
     this.syncType();
+  }
+
+  disconnect() {
+    console.log("disconnect");
   }
 
   handleKeydown(event) {

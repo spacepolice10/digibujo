@@ -7,6 +7,6 @@ module Bulletable
 
   def temporal?    = false
   def completable? = false
-  def excerpt = ""
-  def name = ""
+  def excerpt = ''
+  def name = ''
 end

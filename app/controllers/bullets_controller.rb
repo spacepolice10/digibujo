@@ -65,7 +65,7 @@ class BulletsController < ApplicationController
   def create_bullet_from
     permitted = bullet_params
     type_name = permitted[:bulletable_type].to_s
-    attributes = permitted.except(:bulletable_type, 'bulletable_type')
+    attributes = permitted.except(:bulletable_type, "bulletable_type")
     Current.user.bullets.new(attributes.merge(bulletable: type_name.constantize.new))
   end
 
