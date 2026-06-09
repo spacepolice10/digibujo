@@ -1,0 +1,10 @@
+<% attachables = bullet.content&.embeds.to_a.select { |attachable| attachable.is_a?(ActiveStorage::Blob) } %>
+<% if attachables.any? %>
+  <div class="attachment--gallery">
+    <% attachables.each do |blob| %>
+      <div class="attachment--gallery-item">
+        <%= render "active_storage/blobs/blob", blob: blob, in_gallery: true %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
