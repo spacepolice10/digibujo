@@ -69,6 +69,14 @@
                    loading="lazy"
                    data-bulk-menu-target="collectsFrame"></turbo-frame>
     </div>
+
+    <%= form_with url: export_path, method: :get, data: { turbo: false } do %>
+      <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
+      <%= button_tag type: :submit, class: "button--secondary" do %>
+        <i class="icon" style="--icon-mask: var(--icon-file)" aria-hidden="true"></i>
+        Export
+      <% end %>
+    <% end %>
       <button
     type="button"
     class="button--primary button--icon button--circle bulk-menu--hide"
