@@ -12,7 +12,7 @@ class Bullets::ArchivesControllerTest < ActionDispatch::IntegrationTest
   test "create archives bullet via collection path" do
     post archive_path, params: { bullet_ids: @bullet.id.to_s }
 
-    assert_redirected_to daylog_path
+    assert_redirected_to daylog_path(date: Date.current.iso8601)
     assert @bullet.reload.archived?
   end
 
@@ -20,7 +20,7 @@ class Bullets::ArchivesControllerTest < ActionDispatch::IntegrationTest
     other = @user.bullets.create!(bulletable: Note.create!, content: "Also")
     post archive_path, params: { bullet_ids: "#{@bullet.id},#{other.id}" }
 
-    assert_redirected_to daylog_path
+    assert_redirected_to daylog_path(date: Date.current.iso8601)
     assert @bullet.reload.archived?
     assert other.reload.archived?
   end
@@ -29,7 +29,7 @@ class Bullets::ArchivesControllerTest < ActionDispatch::IntegrationTest
     @bullet.archive!
     delete archive_path, params: { bullet_ids: @bullet.id.to_s }
 
-    assert_redirected_to daylog_path
+    assert_redirected_to daylog_path(date: Date.current.iso8601)
     assert_not @bullet.reload.archived?
   end
 

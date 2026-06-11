@@ -8,7 +8,8 @@
         <span class="workspace__count"><%= pluralize(@bullets.count, "bullet") %></span>
       </div>
       <% @bullets.each do |bullet| %>
-        <%= render partial: "bullets/bullet", locals: { bullet: bullet, dom_prefix: "workspace" } %>
+        <%= render partial: bullet.to_partial_path,
+              locals: { bullet.bulletable_type.downcase.to_sym => bullet } %>
       <% end %>
     </div>
   <% end %>
@@ -27,7 +28,8 @@
         <span class="workspace__count"><%= pluralize(bucket_bullets.count, "bullet") %></span>
       </div>
       <% bucket_bullets.each do |bullet| %>
-        <%= render partial: "bullets/bullet", locals: { bullet: bullet, dom_prefix: "workspace" } %>
+        <%= render partial: bullet.to_partial_path,
+              locals: { bullet.bulletable_type.downcase.to_sym => bullet } %>
       <% end %>
     </div>
   <% end %>

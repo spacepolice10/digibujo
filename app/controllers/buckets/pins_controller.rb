@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Buckets::PinsController < ApplicationController
+  include PreparePinned
+
   before_action :set_bucket
 
   def create

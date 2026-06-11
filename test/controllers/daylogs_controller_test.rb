@@ -9,7 +9,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "daylog without date shows today" do
-    card = @user.bullets.create!(bulletable: Task.create!, content: "Today card")
+    card = @user.bullets.create!(bulletable: Task.create!, content: "Today card", pops_on: Date.current)
 
     get daylog_path
 
@@ -20,9 +20,9 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
   test "daylog with year month day shows that day" do
     selected_date = Date.current - 2.days
     travel_to selected_date.in_time_zone.change(hour: 10) do
-      @user.bullets.create!(bulletable: Task.create!, content: "That day")
+      @user.bullets.create!(bulletable: Task.create!, content: "That day", pops_on: selected_date)
     end
-    @user.bullets.create!(bulletable: Task.create!, content: "Today noise")
+    @user.bullets.create!(bulletable: Task.create!, content: "Today noise", pops_on: Date.current)
 
     get daylog_path(date: selected_date.iso8601)
 
@@ -80,11 +80,32 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "root shows today daylog" do
-    card = @user.bullets.create!(bulletable: Task.create!, content: "Root today")
+    card = @user.bullets.create!(bulletable: Task.create!, content: "Root today", pops_on: Date.current)
 
     get root_path
 
     assert_response :success
     assert_match card.content.to_plain_text, response.body
+  end
+
+  test "desktop daylog renders digibujo menu in header" do
+    get daylog_path
+
+    assert_response :success
+    assert_select "header.header details.dropdown.header--menu" do
+      assert_select "summary.header--summary", text: "Digibujo"
+      assert_select "form.search--form[action=?]", search_palette_path
+      assert_select "turbo-frame#menu_palette_results"
+    end
+  end
+
+  test "mobile daylog omits header and renders tab bar" do
+    get daylog_path, headers: { "User-Agent" => "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)" }
+
+    assert_response :success
+    assert_select "header.header", count: 0
+    assert_select "nav.tab-bar a[href=?]", menu_path
+    assert_select "nav.tab-bar a[href=?]", daylog_path
+    assert_select "nav.tab-bar a[href=?]", pinned_index_path
   end
 end

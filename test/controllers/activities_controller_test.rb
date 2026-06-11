@@ -11,8 +11,8 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
   test 'index shows activities newest first' do
     a = @user.bullets.create!(bulletable: Task.create!, content: 'One')
     b = @user.bullets.create!(bulletable: Note.create!, content: 'Two')
-    BulletActivity.record(user: @user, bullet: a, action: 'updated')
-    BulletActivity.record(user: @user, bullet: b, action: 'archived')
+    BulletActivityRecorder.record_updated!(bullet: a)
+    BulletActivityRecorder.record_archived!(bullet: b)
 
     get activities_path
 
@@ -24,8 +24,8 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
   test 'index filters by bullet_id' do
     keep = @user.bullets.create!(bulletable: Task.create!, content: 'Keep me visible')
     other = @user.bullets.create!(bulletable: Note.create!, content: 'Hidden from filter qxz')
-    BulletActivity.record(user: @user, bullet: keep, action: 'completed')
-    BulletActivity.record(user: @user, bullet: other, action: 'updated')
+    BulletActivityRecorder.record_completed!(bullet: keep)
+    BulletActivityRecorder.record_updated!(bullet: other)
 
     get activities_path(bullet_id: keep.id)
 

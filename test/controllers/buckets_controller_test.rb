@@ -13,18 +13,20 @@ class BucketsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "index renders pin button for each bucket" do
-    project = create_project!(@user, name: "alpha")
-    collection = create_collection!(@user, name: "reading")
+  test "index lists projects collections and monthly logs" do
+    create_project!(@user, name: "alpha")
+    create_collection!(@user, name: "reading")
+    create_monthlylog!(@user, name: "june")
 
     get buckets_path
 
-    assert_select "form[action=?][method=post]", buckets_pin_path do
-      assert_select "input[name=bucket_id][value=?]", project.bucket.id.to_s
-    end
-    assert_select "form[action=?][method=post]", buckets_pin_path do
-      assert_select "input[name=bucket_id][value=?]", collection.bucket.id.to_s
-    end
+    assert_response :success
+    assert_select "h2.project", text: "Projects"
+    assert_select "h2.collection", text: "Collections"
+    assert_select "h2.monthlylog", text: "Monthly logs"
+    assert_match "alpha", response.body
+    assert_match "reading", response.body
+    assert_match "june", response.body
   end
 
   test "show loads bucket bullets for footer popover" do
