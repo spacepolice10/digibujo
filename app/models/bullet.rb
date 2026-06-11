@@ -8,7 +8,6 @@ class Bullet < ApplicationRecord
     where(pops_on: date).distinct
   }
   scope :dailylog, ->(date) { pops_on_date(date).where(archived: false) }
-  scope :monthlylog, ->(date) { where(pops_on: date.beginning_of_month..date.end_of_month).where(archived: false) }
 
   belongs_to :user
   belongs_to :bucket, optional: true, inverse_of: :bullets

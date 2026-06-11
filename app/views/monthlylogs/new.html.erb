@@ -1,0 +1,12 @@
+<div class="layout--page">
+  <div class="layout--header">
+    <div class="layout--header-actions">
+      <%= link_to buckets_path, class: "button--secondary" do %>
+        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+        Index
+      <% end %>
+    </div>
+    <h2>New monthly log</h2>
+  </div>
+  <%= render "form", monthlylog: @monthlylog, bucket: @bucket %>
+</div>

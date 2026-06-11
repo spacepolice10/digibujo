@@ -4,6 +4,7 @@ class BucketsController < ApplicationController
   def index
     @projects = Current.user.projects.first(8)
     @collections = Current.user.collections.first(8)
+    @monthlylogs = Current.user.monthlylogs.first(8)
   end
 
   def show

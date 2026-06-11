@@ -28,11 +28,13 @@
 @import "bullet-form.css";
 @import "date-picker.css";
 @import "bucket.css";
+@import "monthlylog.css";
 @import "bucket-picker.css";
 @import "pinned.css";
 @import "bulk-menu.css";
 @import "toasts.css";
 @import "search.css";
+@import "menu.css";
 @import "activity.css";
 @import "public.css";
 @import "print.css";

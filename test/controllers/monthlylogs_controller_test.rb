@@ -8,32 +8,67 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     sign_in_as @user
   end
 
-  test "monthlylog without date shows current month" do
+  test "monthlylog shows empty when no spread covers current month" do
+    get monthlylog_path
+
+    assert_response :success
+    assert_match "No monthly log covers", response.body
+  end
+
+  test "monthlylog shows spread when current monthlylog exists" do
+    monthlylog = create_monthlylog!(@user, name: "june")
     @user.bullets.create!(
       bulletable: Task.create!,
-      content: "This month",
-      pops_on: Date.current.beginning_of_month + 2.days
+      content: "Unplanned task",
+      bucket_id: monthlylog.bucket.id
     )
 
     get monthlylog_path
 
     assert_response :success
-    assert_match "This month", response.body
+    assert_match "Unplanned task", response.body
+    assert_match "Unplanned", response.body
   end
 
-  test "monthlylog with year and month shows that month" do
-    anchor = Date.current.beginning_of_month.prev_month
-    @user.bullets.create!(bulletable: Task.create!, content: "Last month", pops_on: anchor + 1.day)
+  test "show by id lists dated bullets in by_date column" do
+    monthlylog = create_monthlylog!(@user, name: "june")
+    day = Date.current.beginning_of_month + 2.days
     @user.bullets.create!(
-      bulletable: Task.create!,
-      content: "This month",
-      pops_on: Date.current.beginning_of_month + 1.day
+      bulletable: Event.create!,
+      content: "Dentist",
+      bucket_id: monthlylog.bucket.id,
+      pops_on: day
     )
 
-    get monthlylog_path(date: anchor.iso8601)
+    get monthlylog_path(monthlylog)
 
     assert_response :success
-    assert_match "Last month", response.body
-    assert_no_match "This month", response.body
+    assert_match "Dentist", response.body
+  end
+
+  test "create duplicate month returns unprocessable entity" do
+    create_monthlylog!(@user, name: "june")
+    period = Bucket.monthlylog_period
+
+    assert_no_difference "Monthlylog.count" do
+      post monthlylogs_path, params: {
+        monthlylog: {
+          name: "june again",
+          period_from: period[:period_from].iso8601,
+          period_to: period[:period_to].iso8601
+        }
+      }
+    end
+
+    assert_response :unprocessable_entity
+    assert_match "already exists", response.body
+  end
+
+  test "new form defaults to current month period" do
+    get new_monthlylog_path
+
+    assert_response :success
+    assert_select "input[name='monthlylog[period_from]'][value=?]", Date.current.beginning_of_month.iso8601
+    assert_select "input[name='monthlylog[period_to]'][value=?]", Date.current.end_of_month.iso8601
   end
 end

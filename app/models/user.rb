@@ -18,4 +18,8 @@ class User < ApplicationRecord
   def collections
     Collection.joins(:bucket).where(buckets: { user_id: id }).order("buckets.name")
   end
+
+  def monthlylogs
+    Monthlylog.joins(:bucket).where(buckets: { user_id: id }).order("buckets.name")
+  end
 end

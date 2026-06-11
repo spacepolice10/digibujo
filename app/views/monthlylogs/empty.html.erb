@@ -1,0 +1,7 @@
+<div class="layout--page">
+  <div class="layout--header">
+    <h2>Monthly log</h2>
+  </div>
+  <p>No monthly log covers <%= Date.current.strftime("%B %Y") %> yet.</p>
+  <%= link_to "Create monthly log", new_monthlylog_path, class: "button--primary" %>
+</div>

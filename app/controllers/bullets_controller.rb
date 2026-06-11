@@ -4,14 +4,24 @@ class BulletsController < ApplicationController
   before_action :set_bullet, only: %i[show edit update destroy]
 
   def new
-    @bullet = Current.user.bullets.build(pops_on: params[:pops_on])
+    @bullet = Current.user.bullets.build(
+      pops_on: params[:pops_on],
+      bucket_id: params[:bucket_id]
+    )
+    @bulletable_type = params[:bulletable_type].presence || "Note"
+    @composer_frame_id = params[:composer_frame_id]
+    @render_context = params[:render_context]
+    @monthlylog_id = params[:monthlylog_id]
   end
 
   def create
+    @render_context = params.dig(:bullet, :render_context)
+    @monthlylog_id = params.dig(:bullet, :monthlylog_id)
+    @composer_frame_id = params[:composer_frame_id]
     @bullet = create_bullet_from
     if @bullet.save
       respond_to do |format|
-        format.turbo_stream
+        format.turbo_stream { render_create_turbo_stream }
         format.html { redirect_to bullet_path(@bullet) }
       end
     else
@@ -67,6 +77,19 @@ class BulletsController < ApplicationController
     type_name = permitted[:bulletable_type].to_s
     attributes = permitted.except(:bulletable_type, "bulletable_type")
     Current.user.bullets.new(attributes.merge(bulletable: type_name.constantize.new))
+  end
+
+  def render_create_turbo_stream
+    template = if @render_context.present? && create_turbo_stream_variant?(@render_context)
+      "bullets/create.#{@render_context}"
+    else
+      "bullets/create"
+    end
+    render template
+  end
+
+  def create_turbo_stream_variant?(render_context)
+    lookup_context.exists?("bullets/create.#{render_context}", [], false, [], formats: [:turbo_stream])
   end
 
   def editor_attributes_for(bullet)

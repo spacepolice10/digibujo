@@ -26,4 +26,14 @@
       <% if @collections.count >= 8 %>
         <%= link_to "Show more", collections_path, class: "button--secondary", "aria-label": "All collections", data: { turbo_frame: "_top" } %>
       <% end %>
+
+<div class="layout--header">
+        <h2 class="monthlylog">Monthly logs</h2>
+        <div class="layout--header-actions">
+          <%= link_to "+ New", new_monthlylog_path, class: "button--primary", data: { turbo_frame: "_top" } %>
+        </div>
+      </div>
+      <ul class="layout--list bucket--list">
+        <%= render partial: "monthlylogs/monthlylog", collection: @monthlylogs, as: :monthlylog %>
+      </ul>
 </nav>

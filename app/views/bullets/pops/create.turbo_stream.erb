@@ -11,6 +11,21 @@
   <% end %>
 
   <% @bullets.each do |bullet| %>
-    <%= turbo_stream.remove_all bullet %>
+    <% bucket = bullet.bucket %>
+    <% if bucket&.monthlylog? %>
+      <% monthlylog = bucket.bucketable %>
+      <%= turbo_stream.remove dom_id(bullet) %>
+      <% if bullet.pops_on.present? %>
+        <%= turbo_stream.append dom_id(monthlylog, "date_#{bullet.pops_on}_bullets") do %>
+          <%= render_bullet_compact(bullet) %>
+        <% end %>
+      <% else %>
+        <%= turbo_stream.append dom_id(monthlylog, :unplanned_bullets) do %>
+          <%= render_bullet_compact(bullet) %>
+        <% end %>
+      <% end %>
+    <% else %>
+      <%= turbo_stream.remove_all bullet %>
+    <% end %>
   <% end %>
 <% end %>

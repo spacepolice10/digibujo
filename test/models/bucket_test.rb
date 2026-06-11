@@ -83,4 +83,36 @@ class BucketTest < ActiveSupport::TestCase
 
     assert_not @bucket.reload.pinned?
   end
+
+  test "monthlylog_period_unique rejects second spread for same month" do
+    create_monthlylog!(@user, name: "june")
+    other = Monthlylog.create!
+    bucket = @user.buckets.build(
+      bucketable: other,
+      name: "june duplicate",
+      **Bucket.monthlylog_period
+    )
+
+    assert_not bucket.valid?
+    assert_match "already exists", bucket.errors[:base].first
+  end
+
+  test "monthlylog_period_unique allows different months" do
+    create_monthlylog!(@user, name: "june")
+    other = Monthlylog.create!
+    bucket = @user.buckets.build(
+      bucketable: other,
+      name: "july",
+      period_from: Date.current.next_month.beginning_of_month,
+      period_to: Date.current.next_month.end_of_month
+    )
+
+    assert bucket.valid?
+  end
+
+  test "project bucket allows nil period" do
+    assert_nil @bucket.period_from
+    assert_nil @bucket.period_to
+    assert @bucket.valid?
+  end
 end

@@ -1,0 +1,23 @@
+<%# locals: (bullet:) %>
+<turbo-frame id="<%= dom_id(bullet) %>" class="bullet-compact bullet" data-bullet-type="<%= bullet.bulletable_type.downcase %>">
+  <%= render "bullets/select", bullet: bullet %>
+  <a href="<%= edit_bullet_path(bullet) %>"
+     class="bullet-compact--link"
+     data-turbo-frame="_top"
+     data-controller="bullet-navigation"
+     data-action="mouseup->bullet-navigation#rememberSelection">
+    <span class="bullet-compact--marker bullet--<%= bullet.bulletable_type.downcase %>-marker" aria-hidden="true">
+      <% case bullet.bulletable_type %>
+      <% when "Task" %>
+        <i class="icon" style="--icon-mask: var(--icon-<%= bullet.bulletable.done? ? "check" : "square" %>)" aria-hidden="true"></i>
+      <% when "Event" %>
+        <i class="icon" style="--icon-mask: var(--icon-circle)" aria-hidden="true"></i>
+      <% when "Note" %>
+        <i class="icon" style="--icon-mask: var(--icon-book)" aria-hidden="true"></i>
+      <% when "Group" %>
+        <i class="icon" style="--icon-mask: var(--icon-line-dashed)" aria-hidden="true"></i>
+      <% end %>
+    </span>
+    <span class="bullet-compact--name utilities--line-clamp-1"><%= bullet.excerpt %></span>
+  </a>
+</turbo-frame>

@@ -8,6 +8,7 @@ module Bucketable
     has_many :bullets, through: :bucket
 
     delegate :colour, :icon, to: :bucket, allow_nil: true
+    delegate :period_from, :period_to, :period?, :period_days, :covers?, to: :bucket, allow_nil: true
   end
 
   def name

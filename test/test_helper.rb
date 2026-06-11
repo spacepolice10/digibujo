@@ -23,5 +23,19 @@ module ActiveSupport
       user.buckets.create!(bucketable: collection, name: name, colour: colour, icon: icon)
       collection
     end
+
+    def create_monthlylog!(user, name:, period_from: nil, period_to: nil, colour: nil, icon: nil)
+      period = Bucket.monthlylog_period
+      monthlylog = Monthlylog.create!
+      user.buckets.create!(
+        bucketable: monthlylog,
+        name: name,
+        period_from: period_from || period[:period_from],
+        period_to: period_to || period[:period_to],
+        colour: colour,
+        icon: icon
+      )
+      monthlylog
+    end
   end
 end
