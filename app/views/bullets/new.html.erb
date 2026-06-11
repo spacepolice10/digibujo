@@ -1,6 +1,11 @@
-<turbo-frame id="new_bullet_form">
+<turbo-frame id="<%= @composer_frame_id.presence || "new_bullet_form" %>">
   <%= render "editor",
         bullet: @bullet,
-        bulletable_type: "Note",
-        attributes: { pops_on: @bullet.pops_on, bucket_id: @bullet.bucket_id } %>
+        bulletable_type: @bulletable_type,
+        attributes: {
+          pops_on: @bullet.pops_on,
+          bucket_id: @bullet.bucket_id,
+          render_context: @render_context,
+          monthlylog_id: @monthlylog_id
+        }.compact %>
 </turbo-frame>

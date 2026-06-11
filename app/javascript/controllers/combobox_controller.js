@@ -2,10 +2,10 @@ import { Controller } from "@hotwired/stimulus";
 import { navigateCombobox } from "helpers/combobox";
 
 export default class extends Controller {
-  static targets = ["textform", "item"];
+  static targets = ["item"];
 
   connect() {
-    this.currentPosition = 0;
+    this.currentPosition = -1;
   }
 
   navigate(event) {
@@ -15,25 +15,39 @@ export default class extends Controller {
     } else if (event.key == "ArrowUp") {
       event.preventDefault();
       this._move("up");
-    } else if (event.key == "Enter" && this.currentPosition > 0) {
-      event.preventDefault();
-      this.textformTarget.value =
-        this.itemTargets[this.currentPosition]?.textContent.trim();
-      this.textformTarget.dispatchEvent(new Event("input", { bubbles: true }));
+    } else if (event.key == "Enter" || event.key == " ") {
+      this._activate(event);
     } else if (event.key == "Escape") {
-      this.currentPosition = 0;
+      this.currentPosition = -1;
       this._updateItems();
     }
   }
 
   itemTargetConnected() {
-    this.currentPosition = 0;
+    this.currentPosition = -1;
     this._updateItems();
   }
 
   itemTargetDisconnected() {
-    this.currentPosition = 0;
+    this.currentPosition = -1;
     this._updateItems();
+  }
+
+  _activate(event) {
+    if (this.currentPosition < 0) return;
+
+    const item = this.itemTargets[this.currentPosition];
+    const activatable = this._activatable(item);
+    if (!activatable) return;
+
+    event.preventDefault();
+    activatable.click();
+  }
+
+  _activatable(item) {
+    if (!item) return null;
+    if (item.matches("a, button")) return item;
+    return item.querySelector("a, button");
   }
 
   _move(direction) {

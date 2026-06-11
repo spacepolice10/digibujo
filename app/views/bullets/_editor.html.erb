@@ -29,8 +29,13 @@
             } %>
     </label>
 
+    <% bullet_column_names = %w[pops_on bucket_id] %>
     <% submitted_attributes.each do |name, value| %>
-      <%= f.hidden_field name, value: value %>
+      <% if bullet_column_names.include?(name.to_s) %>
+        <%= f.hidden_field name, value: value %>
+      <% else %>
+        <%= hidden_field_tag "bullet[#{name}]", value %>
+      <% end %>
     <% end %>
 
 

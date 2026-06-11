@@ -20,6 +20,15 @@
     }
   }
 
+  .header--menu {
+    position: relative;
+  }
+
+  .header--summary {
+    cursor: pointer;
+    font-weight: var(--font-weight-strong);
+  }
+
   .footer {
     position: fixed;
     bottom: 0;

@@ -9,6 +9,6 @@ Lexxy.configure({
     toolbar: false,
     multiline: false,
     richText: true,
-    markdown: true,
+    markdown: false,
   },
 });

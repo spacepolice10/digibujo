@@ -1,0 +1,17 @@
+<li class="layout--list-item" role="option">
+  <%= link_to bullet_path(bullet),
+        class: "menu--palette-item",
+        data: { turbo_frame: "_top", combobox_target: "item" } do %>
+    <span class="menu--palette-marker" data-bullet-type="<%= bullet.bulletable_type.downcase %>" aria-hidden="true">
+      <% case bullet.bulletable_type %>
+      <% when "Task" %>
+        <i class="icon" style="--icon-mask: var(--icon-square)" aria-hidden="true"></i>
+      <% when "Event" %>
+        <i class="icon" style="--icon-mask: var(--icon-circle)" aria-hidden="true"></i>
+      <% when "Note" %>
+        <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
+      <% end %>
+    </span>
+    <span class="utilities--line-clamp-1"><%= bullet.content.to_plain_text %></span>
+  <% end %>
+</li>

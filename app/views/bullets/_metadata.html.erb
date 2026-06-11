@@ -45,6 +45,17 @@
                 aria: { label: "Project: #{bucket.name}" } do %>
             <i class="icon" style="--icon-mask: <%= bucket.icon_mask %>" aria-hidden="true"></i>
           <% end %>
+        <% elsif bucket.bucketable_type == "Monthlylog" %>
+          <% monthlylog_hint_id = dom_id(bullet, "hint_monthlylog_#{bucket.id}") %>
+          <% monthlylog_anchor = "--hint-#{bullet.id}-monthlylog-#{bucket.id}" %>
+          <%= link_to monthlylog_path(bucketable),
+                class: ["pill", bucket.colour.present? ? "pill--#{bucket.colour}" : nil].compact.join(" "),
+                interestfor: monthlylog_hint_id,
+                style: "anchor-name: #{monthlylog_anchor}",
+                data: { turbo_frame: "_top" },
+                aria: { label: "Monthly log: #{bucket.name}" } do %>
+            <i class="icon" style="--icon-mask: <%= bucket.icon_mask %>" aria-hidden="true"></i>
+          <% end %>
         <% elsif bucket.bucketable_type == "Collection" %>
           <% coll_hint_id = dom_id(bullet, "hint_collection_#{bucket.id}") %>
           <% coll_anchor = "--hint-#{bullet.id}-collection-#{bucket.id}" %>
@@ -94,6 +105,17 @@
           class="hint"
           popover="hint"
           style="position-anchor: <%= project_anchor %>"
+        >
+          <%= bucket.name %>
+        </div>
+      <% elsif bucket.bucketable_type == "Monthlylog" %>
+        <% monthlylog_hint_id = dom_id(bullet, "hint_monthlylog_#{bucket.id}") %>
+        <% monthlylog_anchor = "--hint-#{bullet.id}-monthlylog-#{bucket.id}" %>
+        <div
+          id="<%= monthlylog_hint_id %>"
+          class="hint"
+          popover="hint"
+          style="position-anchor: <%= monthlylog_anchor %>"
         >
           <%= bucket.name %>
         </div>

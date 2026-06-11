@@ -1,24 +1,10 @@
 <header class="header">
-  <%= link_to "Index", buckets_path, class: "button--secondary" %>
-  <%= link_to "Daily log", daylog_path,
-        class: "button--secondary",
-        data: {
-          controller: "hotkey",
-          hotkey: "Ctrl+D",
-          action: "keydown.ctrl+d@document->hotkey#click keydown.meta+d@document->hotkey#click"
-        },
-        aria: { label: "Daily log (Ctrl + D)" } %>
-  <%= link_to "Monthly log", monthlylog_path,
-        class: "button--secondary" %>
-  <%= link_to search_path,
-        class: "button--secondary",
-        data: {
-          controller: "hotkey",
-          hotkey: "Ctrl+K",
-          action: "keydown.ctrl+k@document->hotkey#click keydown.meta+k@document->hotkey#click"
-        },
-        aria: { label: "Search (Ctrl + K)" } do %>
-    <i class="icon" style="--icon-mask: var(--icon-search)" aria-hidden="true"></i>
-    Search (Ctrl + K)
-  <% end %>
+  <details class="dropdown header--menu"
+           data-controller="dropdown menu"
+           data-action="toggle->menu#focusOnOpen keydown.ctrl+k@document->menu#open keydown.meta+k@document->menu#open">
+    <summary class="header--summary">Digibujo</summary>
+    <div class="dropdown-body menu--wrap">
+      <%= render "menu/menu", replace_link: false %>
+    </div>
+  </details>
 </header>

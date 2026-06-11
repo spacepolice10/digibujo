@@ -1,0 +1,11 @@
+<nav class="tab-bar">
+  <%= link_to menu_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'menu'}", aria: { label: "Menu" } do %>
+    <i class="icon" style="--icon-mask: var(--icon-list)" aria-hidden="true"></i>
+  <% end %>
+  <%= link_to daylog_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'daylogs'}", aria: { label: "Timeline" } do %>
+    <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
+  <% end %>
+  <%= link_to pinned_index_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'pinned'}", aria: { label: "Pinned" } do %>
+    <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
+  <% end %>
+</nav>

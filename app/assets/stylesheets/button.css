@@ -35,6 +35,19 @@
     border-radius: var(--radius-full);
   }
 
+  .button--primary.button--hotkey[data-hotkey]::after,
+  .button--secondary.button--hotkey[data-hotkey]::after,
+  .button--tertiary.button--hotkey[data-hotkey]::after {
+    content: attr(data-hotkey);
+    margin-inline-start: auto;
+    padding: 0 var(--spacing-horizontal-half);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-subtle);
+    color: var(--color-fg-subtle);
+    font-size: var(--font-size-subtle);
+    opacity: var(--opacity-half);
+  }
+
   /* ── Primary ──────────────────────────────────────── */
 
   .button--primary {
@@ -68,6 +81,12 @@
         border-color: var(--color-stroke-strong);
         color: var(--color-fg-base);
       }
+    }
+
+    &:focus-visible {
+      background: var(--color-bg-subtle);
+      border-color: var(--color-stroke-strong);
+      color: var(--color-fg-base);
     }
 
     &:active:not(:disabled) {

@@ -5,6 +5,7 @@ const SEARCH_DEBOUNCE_MS = 20;
 
 export default class extends Controller {
   static targets = ["form", "textform"];
+  static values = { replaceLink: { type: Boolean, default: true } };
 
   connect() {
     this.abortController = null;
@@ -43,7 +44,9 @@ export default class extends Controller {
     if (!turboStreamHtml) return;
     if (!window.Turbo) return;
     window.Turbo.renderStreamMessage(turboStreamHtml);
-    history.replaceState({}, "", url.toString());
+    if (this.replaceLinkValue) {
+      history.replaceState({}, "", url.toString());
+    }
   }
 
   cancelPendingRequest() {

@@ -31,9 +31,14 @@
 
   <body data-controller="dialog timezone-cookie">
 <div id="toasts" class="toasts" data-controller="toasts" aria-live="polite"></div>
-    <%= render "shared/header" %>
+    <% unless request.variant.include?(:mobile) %>
+      <%= render "shared/header" %>
+    <% end %>
     <%= yield %>
-    <%= render "shared/footer" %>
+    <% if request.variant.include?(:mobile) %>
+      <%= render "shared/mobile_tab_bar" %>
+    <% end %>
+    <%#= render "shared/footer" %>
     <%= render "shared/dialog", data_action: "turbo:submit-end->dialog#submitEnd" do %>
       <%= turbo_frame_tag "modal" %>
     <% end %>

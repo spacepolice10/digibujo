@@ -7,8 +7,6 @@ This file contains agent workflow, architecture, and implementation guidance for
 ### Development
 - `bin/setup` — install deps, prepare DB, start server (`--reset` to reset DB, `--skip-server` to skip)
 - `bin/dev` — start dev server
-- `server` — Nix convenience: runs Rails server with tspin for colored output
-- `logs` — Nix convenience: tails development.log with tspin
 
 ### Testing
 - `bin/rails test` — run all unit/integration tests (Minitest)
@@ -47,7 +45,10 @@ Bullets have rich text `content` via Action Text with Lexxy as the editor; rende
 `Bullet` also tracks `triaged_at` (`datetime`): `nil` means no organizing intent has stamped disposition yet; present means the user applied an action (e.g. collect or pop) that sets this timestamp.
 
 ### Daily log and `pops_on`
-Bullets use `pops_on` (`date`) as the primary day bucket: which daily log page the bullet appears on. `Bullet.pops_on_date(date)` matches bullets for that calendar day per the model rules. The daily log is at `/daylog` (today) or `/daylog?date=YYYY-MM-DD`; pass `date:` to `daylog_path` / `monthlylog_path` when linking to another day or month.
+Bullets use `pops_on` (`date`) as the primary day bucket: which daily log page the bullet appears on. `Bullet.pops_on_date(date)` matches bullets for that calendar day per the model rules. The daily log is at `/daylog` (today) or `/daylog?date=YYYY-MM-DD`; pass `date:` to `daylog_path` when linking to another day.
+
+### Monthly log spread
+`Monthlylog` is a `bucketable` type (thin model + `Bucketable`). Spread period lives on the bucket via **`Periodable`** (`period_from`, `period_to`, `period_days`, `period_ranges_correct`). For monthlylog buckets, `period_from` is always the 1st of the month (month identity). **`Monthlylog.current(user)`** returns the spread whose `period_from` is this month, or `nil` (no auto-create). **`GET /monthlylog`** renders that spread or an empty state. Other spreads: **`GET /monthlylogs/:id`**. One monthlylog per `period_from` month per user (`Bucket#monthlylog_period_unique`). Left column: bullets in the bucket with `pops_on` in `period_days`; right column: unplanned (`pops_on` nil). `pops_on` still places bullets on the daily log when set.
 
 ### Organizing from the timeline
 Select bullets via row checkboxes; the sticky **`_bulk_menu`** (styled in `bulk-menu.css`, driven by `bulk-menu` Stimulus on the page wrapper) keeps selection in **`idListValue`** and syncs a comma-separated `bullet_ids` CSV into every `data-bulk-menu-target="idList"` hidden field.
@@ -78,10 +79,10 @@ The architecture is intentionally closer to analog Bullet Journal behavior:
 - **Separation of concerns** mirrors BuJo pages: today/timeline, archived, pinned
 
 ### Buckets and memberships
-`Bucket` belongs to a user and uses `delegated_type :bucketable` (`Project`, `Collection`). Each bullet has **zero or one** bucket via `bullets.bucket_id` (no `bullet_buckets` join table). `Project` / `Collection` rows do not store `user_id`; ownership is the bucket’s `user_id`, with `creation_user_id` on the bucketable for attribution where needed. Bucket **identity** (`name`, `colour`, `icon`) is stored on `buckets` (`name` required; `colour` / `icon` optional via `Colourable` and `Iconable`; no auto-assign). Collection bucket names are unique per user; project names may repeat. `Project` and `Collection` are thin delegated types (no identity columns); they delegate `name`, `colour`, `icon`, and colour CSS helpers to `bucket` for display. Create forms pass identity fields on the bucketable param object; controllers persist them on the bucket row. The index hub is at `GET /buckets` (linked from the app header). **Streams** (saved filtered views) were removed; use projects, collections, and timeline filters instead.
+`Bucket` belongs to a user and uses `delegated_type :bucketable` (`Project`, `Collection`, `Monthlylog`). Optional **`Periodable`** time restrictions (`period_from` / `period_to`) on any bucket; monthlylog spreads use them for the `by_date` column. Each bullet has **zero or one** bucket via `bullets.bucket_id` (no `bullet_buckets` join table). `Project` / `Collection` rows do not store `user_id`; ownership is the bucket’s `user_id`, with `creation_user_id` on the bucketable for attribution where needed. Bucket **identity** (`name`, `colour`, `icon`) is stored on `buckets` (`name` required; `colour` / `icon` optional via `Colourable` and `Iconable`; no auto-assign). Collection bucket names are unique per user; project names may repeat. `Project` and `Collection` are thin delegated types (no identity columns); they delegate `name`, `colour`, `icon`, and colour CSS helpers to `bucket` for display. Create forms pass identity fields on the bucketable param object; controllers persist them on the bucket row. The index hub is at `GET /buckets` (linked from the app header). **Streams** (saved filtered views) were removed; use projects, collections, and timeline filters instead.
 
-### Desktop footer docks
-[`shared/_footer.html.erb`](app/views/shared/_footer.html.erb) renders pinned bucket docks in `#pinned_buckets_footer` (name/icon/colour only) and a static **Pinned** bullets control in `#pinned_bullets_dock`. Bullet lists load lazily when a popover opens (`pinned_bullets` via [`pinned#index`](app/controllers/pinned_controller.rb), or `footer_bullets_bucket_<id>` via [`buckets#show`](app/controllers/buckets_controller.rb)). Pin/unpin Turbo Streams update `pinned_bullets_dock` or `pinned_buckets_footer`. Mobile workspace uses the same data at `GET /pinned`.
+### Pinned workspace
+Desktop footer docks live in [`shared/_footer.html.erb`](app/views/shared/_footer.html.erb) (`#pinned_buckets_footer`, `#pinned_bullets_dock`) but are not mounted in the default layout while navigation is in flux. Pin/unpin Turbo Streams still target those frame ids when present. Mobile uses the bottom tab bar (`shared/_mobile_tab_bar`) and **`GET /pinned`** workspace (`pinned/index.html+mobile.erb`) for pinned bullets and pinned bucket groups. Lazy popover lists still load via [`pinned#index`](app/controllers/pinned_controller.rb) (`Turbo-Frame: pinned_bullets`) or [`buckets#show`](app/controllers/buckets_controller.rb) for footer bucket frames.
 
 ### Turbo Streams
 Mutating bullet actions (`create`, `update`, `destroy`, and bullet sub-resources) respond to `format.turbo_stream` for inline updates where applicable. HTML fallback redirects are provided. Bulk intents use the shared `_bulk_menu` forms; row checkboxes are unstyled (native inputs).
@@ -97,7 +98,10 @@ resource :session/code                       → sessions/codes#new/create
 
 # Logs
 GET    /daylog                               → daylogs#show (today; ?date= for another day)
-GET    /monthlylog                           → monthlylogs#show (current month; ?date= for another month)
+GET    /monthlylog                           → monthlylogs#current (spread for this month, or empty)
+GET    /monthlylogs/new                      → monthlylogs#new
+POST   /monthlylogs                          → monthlylogs#create
+GET    /monthlylogs/:id                      → monthlylogs#show
 
 # Bullets CRUD (no index — daily log is /daylog)
 GET    /bullets/:id                          → bullets#show
@@ -157,7 +161,6 @@ Propshaft (no Sprockets). JavaScript via Importmap (no Node build step). No CSS 
 - Ruby 3.4.8, Rails 8.1.2
 - Minitest for testing with parallel execution and fixtures
 - RuboCop with `rubocop-rails-omakase` defaults
-- Nix flake for reproducible dev environment (Ruby, Node 24, Docker/Colima)
 - Kamal for deployment with Thruster for HTTP acceleration
 - Solid Queue runs in-process with Puma (`SOLID_QUEUE_IN_PUMA=true`)
 

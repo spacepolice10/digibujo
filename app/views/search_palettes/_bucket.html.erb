@@ -1,0 +1,14 @@
+<li class="layout--list-item" role="option">
+  <%= link_to bucket_palette_path(bucket),
+        class: "bucket--list-item-link",
+        data: { turbo_frame: "_top", combobox_target: "item" } do %>
+    <div class="bucket--list-item-name">
+      <div class="bucket--list-item-marker" data-bucket-colour="<%= bucket.colour %>" aria-hidden="true">
+        <% if bucket.icon.present? %>
+          <i class="icon" style="--icon-mask: <%= bucket.icon_mask %>" aria-hidden="true"></i>
+        <% end %>
+      </div>
+      <span class="utilities--line-clamp-1"><%= bucket.name %></span>
+    </div>
+  <% end %>
+</li>

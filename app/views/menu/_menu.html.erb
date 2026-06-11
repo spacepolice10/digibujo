@@ -1,0 +1,72 @@
+<% replace_link = local_assigns.fetch(:replace_link, true) %>
+
+<nav data-controller="grid-navigation"
+     data-grid-navigation-columns-value="1"
+     data-action="keydown->grid-navigation#navigate">
+  <%= link_to "Index", buckets_path,
+        class: "button--secondary button--hotkey",
+        data: {
+          turbo_frame: "_top",
+          controller: "hotkey",
+          hotkey: "Shift+1",
+          grid_navigation_target: "item",
+          action: "focus->grid-navigation#syncPosition"
+        },
+        aria: { keyshortcuts: "Shift+1" } %>
+  <%= link_to "Daily log", daylog_path,
+        class: "button--secondary button--hotkey",
+        data: {
+          turbo_frame: "_top",
+          controller: "hotkey",
+          hotkey: "Shift+2",
+          hotkey_bindings: "Shift+2 Ctrl+D Meta+D",
+          grid_navigation_target: "item",
+          action: "focus->grid-navigation#syncPosition"
+        },
+        aria: { keyshortcuts: "Shift+2" } %>
+  <%= link_to "Monthly log", monthlylog_path,
+        class: "button--secondary button--hotkey",
+        data: {
+          turbo_frame: "_top",
+          controller: "hotkey",
+          hotkey: "Shift+3",
+          grid_navigation_target: "item",
+          action: "focus->grid-navigation#syncPosition"
+        },
+        aria: { keyshortcuts: "Shift+3" } %>
+  <%= link_to "Activity", activities_path,
+        class: "button--secondary button--hotkey",
+        data: {
+          turbo_frame: "_top",
+          controller: "hotkey",
+          hotkey: "Shift+4",
+          grid_navigation_target: "item",
+          action: "focus->grid-navigation#syncPosition"
+        },
+        aria: { keyshortcuts: "Shift+4" } %>
+</nav>
+
+<div class="menu--search"
+     data-controller="combobox search"
+     data-search-replace-link-value="<%= replace_link %>">
+  <%= form_with url: search_palette_path,
+        method: :get,
+        local: true,
+        class: "search--form",
+        data: { search_target: "form" } do |form| %>
+    <%= form.search_field :q,
+          value: @q,
+          placeholder: "Search by bullet text or bucket name",
+          class: "search--textform",
+          data: {
+            menu_target: "focus",
+            search_target: "textform",
+            action: "input->search#search keydown->combobox#navigate"
+          },
+          autocomplete: "off",
+          aria: { label: "Search" } %>
+  <% end %>
+
+  <turbo-frame id="menu_palette_results" class="menu--palette">
+  </turbo-frame>
+</div>

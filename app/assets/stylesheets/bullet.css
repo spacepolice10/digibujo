@@ -179,6 +179,54 @@
     }
   }
 
+  /* ── Compact (monthlylog spread) ───────────────────────── */
+
+  .bullet-compact {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    min-width: 0;
+    margin-block: var(--radius-subtle);
+
+  }
+
+  .bullet-compact--link {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    flex: 1;
+    min-width: 0;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .bullet-compact--marker {
+    display: inline-flex;
+    flex-shrink: 0;
+    width: var(--icon-size-subtle);
+    height: var(--icon-size-subtle);
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bullet-compact--name {
+    flex: 1;
+    min-width: 0;
+    font-size: var(--font-size-subtle);
+  }
+
+  .bullet-compact[data-bullet-type="task"] .bullet-compact--marker {
+    color: var(--model-color-2);
+  }
+
+  .bullet-compact[data-bullet-type="event"] .bullet-compact--marker {
+    color: var(--model-color-6);
+  }
+
+  .bullet-compact[data-bullet-type="group"] .bullet-compact--marker {
+    color: var(--model-color-3);
+  }
+
   /* ── Edit & overlays ───────────────────────────────────── */
 
   .bullet--inline-edit {
