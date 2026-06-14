@@ -9,7 +9,7 @@
 
 <div class="export--list">
   <% @bullets.each do |bullet| %>
-    <% task_done = bullet.bulletable_type == "Task" && bullet.bulletable.done? %>
+    <% task_done = bullet.completed? %>
     <article class="export--bullet">
       <header class="export--bullet-header">
         <span class="export--bullet-type"><%= bullet.bulletable_type %></span>

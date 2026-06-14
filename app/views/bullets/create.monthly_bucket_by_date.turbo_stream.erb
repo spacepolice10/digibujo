@@ -1,0 +1,10 @@
+<% monthly_bucket = MonthlyBucket.find(@monthly_bucket_id) %>
+<% date = @bullet.pops_on %>
+
+<%= turbo_stream.append dom_id(monthly_bucket, "date_#{date}_bullets") do %>
+  <%= render_monthly_bucket_bullet(@bullet) %>
+<% end %>
+
+<%= turbo_stream.update dom_id(monthly_bucket, "date_#{date}_composer") do %>
+  <%= render "monthly_buckets/day_composer", monthly_bucket: monthly_bucket, date: date, bucket: @bullet.bucket %>
+<% end %>

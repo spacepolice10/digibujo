@@ -1,0 +1,29 @@
+<%= form_with model: person, class: "form" do |f| %>
+  <div class="form-group">
+    <%= f.label :name, class: "form-label" %>
+    <small class="form-hint">Name of the person.</small>
+    <%= f.text_field :name, class: "form-input", required: true %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :email, class: "form-label" %>
+    <%= f.email_field :email, class: "form-input" %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :number, class: "form-label" %>
+    <small class="form-hint">Phone number.</small>
+    <%= f.telephone_field :number, class: "form-input" %>
+  </div>
+
+  <%= render "shared/bucket_identity_fields",
+        form: f,
+        name_hint: false %>
+
+  <div class="form-group">
+    <%= f.label :avatar, class: "form-label" %>
+    <%= f.file_field :avatar, class: "form-input", accept: "image/*" %>
+  </div>
+
+  <%= f.submit class: "button--primary" %>
+<% end %>

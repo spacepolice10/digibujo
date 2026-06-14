@@ -4,24 +4,26 @@
     <%= render "shared/toasts", type: "errmsg", messages: messages %>
   <% end %>
 <% else %>
-  <%= turbo_stream.update "toasts" do %>
-    <% scheduled_on = @bullets.first.pops_on.strftime("%B %d") %>
-    <% message = @bullets.size == 1 ? "Bullet scheduled for #{scheduled_on}" : "#{@bullets.size} bullets scheduled for #{scheduled_on}" %>
-    <%= render "shared/toasts", type: "notify", messages: [message] %>
+  <% unless @bullets.all? { |bullet| bullet.bucket&.monthly_bucket? } %>
+    <%= turbo_stream.update "toasts" do %>
+      <% scheduled_on = @bullets.first.pops_on.strftime("%B %d") %>
+      <% message = @bullets.size == 1 ? "Bullet scheduled for #{scheduled_on}" : "#{@bullets.size} bullets scheduled for #{scheduled_on}" %>
+      <%= render "shared/toasts", type: "notify", messages: [message] %>
+    <% end %>
   <% end %>
 
   <% @bullets.each do |bullet| %>
     <% bucket = bullet.bucket %>
-    <% if bucket&.monthlylog? %>
-      <% monthlylog = bucket.bucketable %>
+    <% if bucket&.monthly_bucket? %>
+      <% monthly_bucket = bucket.bucketable %>
       <%= turbo_stream.remove dom_id(bullet) %>
       <% if bullet.pops_on.present? %>
-        <%= turbo_stream.append dom_id(monthlylog, "date_#{bullet.pops_on}_bullets") do %>
-          <%= render_bullet_compact(bullet) %>
+        <%= turbo_stream.append dom_id(monthly_bucket, "date_#{bullet.pops_on}_bullets") do %>
+          <%= render_monthly_bucket_bullet(bullet) %>
         <% end %>
       <% else %>
-        <%= turbo_stream.append dom_id(monthlylog, :unplanned_bullets) do %>
-          <%= render_bullet_compact(bullet) %>
+        <%= turbo_stream.append dom_id(monthly_bucket, :unplanned_bullets) do %>
+          <%= render_monthly_bucket_bullet(bullet) %>
         <% end %>
       <% end %>
     <% else %>

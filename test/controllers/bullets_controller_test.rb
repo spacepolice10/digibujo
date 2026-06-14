@@ -24,7 +24,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create turbo stream appends bullet and resets editor frame" do
-    project = create_project!(@user, name: "Fresh project")
+    collection = create_collection!(@user, name: "Fresh collection")
 
     post bullets_path,
          params: {
@@ -32,7 +32,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
              bulletable_type: "Task",
              content: "Fresh task",
              pops_on: Date.current.iso8601,
-             bucket_id: project.bucket.id
+             bucket_id: collection.bucket.id
            }
          },
          as: :turbo_stream
@@ -40,8 +40,31 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match(/turbo-stream action="append"/, response.body)
     assert_match(/turbo-stream action="update" target="new_bullet_form"/, response.body)
-    assert_select "input[name=?][value=?]", "bullet[pops_on]", Date.current.iso8601
-    assert_select "input[name=?][value=?]", "bullet[bucket_id]", project.bucket.id.to_s
+    assert_match %r{bulletable_type=Task}, response.body
+    assert_match %r{bulletable_type=Note}, response.body
+    assert_match %r{bulletable_type=Event}, response.body
+    assert_match %r{bucket_id=#{collection.bucket.id}}, response.body
+    assert_match %r{pops_on=#{Date.current.iso8601}}, response.body
+  end
+
+  test "create tags bullet from project attachment in content" do
+    project = create_project!(@user, name: "Tagged")
+    content = ActionText::Content.new("").append_attachables(project).to_html
+
+    post bullets_path,
+         params: {
+           bullet: {
+             bulletable_type: "Task",
+             content: content,
+             pops_on: Date.current.iso8601
+           }
+         },
+         as: :turbo_stream
+
+    assert_response :success
+    bullet = @user.bullets.order(:created_at).last
+    assert_not_equal @bullet, bullet
+    assert_includes bullet.projects, project
   end
 
   test "show renders action text file attachments" do

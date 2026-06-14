@@ -1,0 +1,9 @@
+<%= link_to person_path(person),
+      class: ["pill", person.colour.present? ? "pill--#{person.colour}" : nil].compact.join(" "),
+      data: { turbo_frame: "_top" },
+      aria: { label: "Person: #{person.name}" } do %>
+  <% if person.icon.present? %>
+    <i class="icon" style="--icon-mask: <%= person.icon_mask %>" aria-hidden="true"></i>
+  <% end %>
+  <span><%= person.name %></span>
+<% end %>

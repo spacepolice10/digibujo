@@ -1,0 +1,35 @@
+<div class="bulk-menu--pops-header">
+  <p class="bulk-menu--pops-title">Tag person</p>
+  <button type="button"
+          class="button--secondary button--icon"
+          popovertarget="people_picker_frame"
+          popovertargetaction="hide"
+          aria-label="Close person picker">
+    <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
+  </button>
+</div>
+
+<%= form_with url: new_person_path,
+      method: :get,
+      class: "search-form",
+      data: { turbo_frame: "people_picker_frame" } do %>
+  <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
+  <%= search_field_tag :q,
+        q,
+        class: "form-input",
+        placeholder: "Search people",
+        autofocus: true,
+        autocomplete: "off" %>
+<% end %>
+
+<% if people.any? %>
+  <ul class="layout--list bucket--list">
+    <%= render partial: "bullets/people/person", collection: people %>
+  </ul>
+<% else %>
+  <p>No people found.</p>
+<% end %>
+
+<div class="bulk-menu--collects-footer">
+  <%= link_to "New person", new_person_path, class: "button--secondary", data: { turbo_frame: "_top" } %>
+</div>

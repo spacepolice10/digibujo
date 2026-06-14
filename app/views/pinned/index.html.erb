@@ -1,5 +1,5 @@
 <% if request.headers["Turbo-Frame"] == "pinned_bullets" %>
   <turbo-frame id="pinned_bullets" class="dropdown pinned--list" popover>
-    <%= render "pinned/bullets_list", bullets: @bullets %>
+    <%= render "pinned/bullets_list", bullets: @items.select { |pe| pe.pinnable_type == "Bullet" }.map(&:pinnable) %>
   </turbo-frame>
 <% end %>

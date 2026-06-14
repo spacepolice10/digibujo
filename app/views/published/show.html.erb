@@ -2,7 +2,7 @@
 <article class="bullet-show">
   <header class="bullet-show-header">
     <div class="bullet-show-meta">
-      <span class="bullet-type" data-bullet-type="<%= @bullet.bulletable_type.downcase %>"><%= bullet_type_label(@bullet) %></span>
+      <span class="bullet-type" data-bullet-type="<%= @bullet.bulletable_type.downcase %>"><%= @bullet.name %></span>
     </div>
     <% if @bullet.bucket.present? %>
       <div class="bullet-tags">

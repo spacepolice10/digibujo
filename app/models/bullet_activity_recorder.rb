@@ -14,6 +14,22 @@ class BulletActivityRecorder
       record!(bullet:, action: "collected")
     end
 
+    def record_project_tagged!(bullet:)
+      record!(bullet:, action: "project_tagged")
+    end
+
+    def record_project_untagged!(bullet:)
+      record!(bullet:, action: "project_untagged")
+    end
+
+    def record_person_tagged!(bullet:)
+      record!(bullet:, action: "person_tagged")
+    end
+
+    def record_person_untagged!(bullet:)
+      record!(bullet:, action: "person_untagged")
+    end
+
     def record_popped!(bullet:)
       record!(bullet:, action: "popped")
     end

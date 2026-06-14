@@ -13,9 +13,7 @@ module ActiveSupport
 
     # Add more helper methods to be used by all tests here...
     def create_project!(user, name:, colour: nil, icon: nil)
-      project = Project.create!
-      user.buckets.create!(bucketable: project, name: name, colour: colour, icon: icon)
-      project
+      user.projects.create!(name: name, colour: colour, icon: icon)
     end
 
     def create_collection!(user, name:, colour: nil, icon: nil)
@@ -24,18 +22,21 @@ module ActiveSupport
       collection
     end
 
-    def create_monthlylog!(user, name:, period_from: nil, period_to: nil, colour: nil, icon: nil)
-      period = Bucket.monthlylog_period
-      monthlylog = Monthlylog.create!
-      user.buckets.create!(
-        bucketable: monthlylog,
-        name: name,
+    def create_monthly_bucket!(user, name:, period_from: nil, period_to: nil, colour: nil, icon: nil)
+      period = MonthlyBucket.default_period
+      monthly_bucket = MonthlyBucket.create!(
+        user: user,
         period_from: period_from || period[:period_from],
-        period_to: period_to || period[:period_to],
+        period_to: period_to || period[:period_to]
+      )
+      user.buckets.create!(
+        bucketable: monthly_bucket,
+        name: name,
         colour: colour,
         icon: icon
       )
-      monthlylog
+      monthly_bucket
     end
+
   end
 end

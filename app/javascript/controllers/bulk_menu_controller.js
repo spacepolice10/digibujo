@@ -9,8 +9,11 @@ export default class extends Controller {
     "amount",
     "pinAction",
     "unpinAction",
+    "completeAction",
+    "uncompleteAction",
     "popsFrame",
     "collectsFrame",
+    "peopleFrame",
   ];
 
   static values = {
@@ -18,6 +21,7 @@ export default class extends Controller {
     selectMode: { type: Boolean, default: false },
     popsPickerUrl: { type: String, default: "/bullets/pop/new" },
     collectsPickerUrl: { type: String, default: "/bullets/collect/new" },
+    peoplePickerUrl: { type: String, default: "/bullets/person/new" },
   };
 
   connect() {
@@ -45,6 +49,16 @@ export default class extends Controller {
     };
     document.addEventListener("turbo:submit-end", this.popSubmitHandler);
 
+    this.personSubmitHandler = (event) => {
+      if (!event.detail.success) return;
+      const form = event.target;
+      if (!form?.action?.includes("/bullets/person")) return;
+
+      if (this.hasPeopleFrameTarget) this.peopleFrameTarget.hidePopover();
+      this.clearSelection();
+    };
+    document.addEventListener("turbo:submit-end", this.personSubmitHandler);
+
     this.syncSelectMode();
   }
 
@@ -52,6 +66,7 @@ export default class extends Controller {
     document.removeEventListener("turbo:before-visit", this.beforeVisitHandler);
     document.removeEventListener("turbo:submit-end", this.collectSubmitHandler);
     document.removeEventListener("turbo:submit-end", this.popSubmitHandler);
+    document.removeEventListener("turbo:submit-end", this.personSubmitHandler);
   }
 
   toggle(event) {
@@ -83,6 +98,7 @@ export default class extends Controller {
 
     this.selectModeValue = this.idListValue.length > 0;
     this.updatePinActions();
+    this.updateCompleteActions();
   }
 
   selectModeValueChanged() {
@@ -93,6 +109,7 @@ export default class extends Controller {
   checkboxTargetConnected(checkbox) {
     checkbox.checked = this.idListValue.includes(checkbox.value);
     this.updatePinActions();
+    this.updateCompleteActions();
   }
 
   idListTargetConnected(input) {
@@ -105,6 +122,10 @@ export default class extends Controller {
 
   openCollectsPicker() {
     this.openPickerFrame(this.collectsFrameTarget, this.collectsPickerUrlValue);
+  }
+
+  openPeoplePicker() {
+    this.openPickerFrame(this.peopleFrameTarget, this.peoplePickerUrlValue);
   }
 
   openPickerFrame(frame, baseUrl) {
@@ -146,6 +167,31 @@ export default class extends Controller {
 
     if (this.hasUnpinActionTarget) {
       this.unpinActionTarget.hidden = anyUnpinned || checked.length == 0;
+    }
+  }
+
+  updateCompleteActions() {
+    const checked = this.checkboxTargets.filter((checkbox) => checkbox.checked);
+    const anyNonCompletable = checked.some(
+      (checkbox) => !checkbox.hasAttribute("data-completable"),
+    );
+    const anyDone = checked.some((checkbox) =>
+      checkbox.hasAttribute("data-done"),
+    );
+    const anyUndone = checked.some(
+      (checkbox) =>
+        checkbox.hasAttribute("data-completable") &&
+        !checkbox.hasAttribute("data-done"),
+    );
+
+    if (this.hasCompleteActionTarget) {
+      this.completeActionTarget.hidden =
+        checked.length == 0 || anyNonCompletable || anyDone;
+    }
+
+    if (this.hasUncompleteActionTarget) {
+      this.uncompleteActionTarget.hidden =
+        checked.length == 0 || anyNonCompletable || anyUndone;
     }
   }
 

@@ -21,7 +21,8 @@ class Bullets::PinsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create updates dock frame when dock already has pins" do
-    @user.bullets.create!(bulletable: Task.create!, content: "Already pinned", pinned: true)
+    existing = @user.bullets.create!(bulletable: Task.create!, content: "Already pinned")
+    PinnedEntity.create!(user: @user, pinnable: existing)
 
     post pin_path,
          params: { bullet_ids: @bullet.id.to_s },
@@ -47,8 +48,8 @@ class Bullets::PinsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "destroy unpins bullet and updates dock frame via turbo stream" do
-    @user.bullets.create!(bulletable: Task.create!, content: "Still pinned", pinned: true)
-    @bullet.update!(pinned: true)
+    @user.bullets.create!(bulletable: Task.create!, content: "Still pinned")
+    @bullet.pin!
 
     delete pin_path,
            params: { bullet_ids: @bullet.id.to_s },
@@ -63,8 +64,28 @@ class Bullets::PinsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match "pinned--dock-item", response.body
   end
 
+  test "create turbo stream replaces monthly bucket bullet with unified row" do
+    monthly_bucket = create_monthly_bucket!(@user, name: "june")
+    bullet = @user.bullets.create!(
+      bulletable: Task.create!,
+      content: "Spread task",
+      bucket_id: monthly_bucket.bucket.id
+    )
+
+    post pin_path,
+         params: { bullet_ids: bullet.id.to_s },
+         headers: { "Accept" => "text/vnd.turbo-stream.html" }
+
+    assert_response :success
+    assert bullet.reload.pinned?
+    assert_match %(turbo-stream action="replace" target="bullet_#{bullet.id}"), response.body
+    assert_match "bullet--marker-slot", response.body
+    assert_match "bullet--body", response.body
+    assert_no_match "bullet-compact", response.body
+  end
+
   test "destroy clears dock when last pin is removed" do
-    @bullet.update!(pinned: true)
+    @bullet.pin!
 
     delete pin_path,
            params: { bullet_ids: @bullet.id.to_s },

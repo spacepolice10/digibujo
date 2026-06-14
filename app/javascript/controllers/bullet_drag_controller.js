@@ -6,8 +6,12 @@ export default class extends Controller {
   dragstart(event) {
     event.dataTransfer.effectAllowed = "move"
     event.dataTransfer.setData("bullet-id", this.idValue)
+
+    const zone = this.element.closest("[data-monthly-bucket-drop-pops-on-value]")
+    const sourcePopsOn = zone?.dataset.monthlyBucketDropPopsOnValue ?? ""
+    event.dataTransfer.setData("source-pops-on", sourcePopsOn)
+
     this.element.classList.add("dragging")
-    console.log("[bullet-drag] dragstart fired, bullet id:", this.idValue)
   }
 
   dragend() {

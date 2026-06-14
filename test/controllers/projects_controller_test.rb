@@ -27,15 +27,16 @@ class ProjectsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match "beta", response.body
   end
 
-  test "show renders simple editor with project bucket as submitted attribute" do
+  test "show renders composer with type buttons and lexxy project prompt" do
     project = create_project!(@user, name: "alpha")
 
     get project_path(project)
 
     assert_response :success
-    assert_select "turbo-frame#new_bullet_form form.bullet-form"
-    assert_select "select[name=?][required]", "bullet[bulletable_type]"
-    assert_select "input[type=hidden][name=?][value=?]", "bullet[bucket_id]", project.bucket.id.to_s
-    assert_select ".bullet-form-fields", 0
+    assert_select "turbo-frame#new_bullet_form" do
+      assert_select "a[href=?]", new_bullet_path(bulletable_type: "Task", render_context: "project", default_project_id: project.id)
+      assert_select "a[href=?]", new_bullet_path(bulletable_type: "Note", render_context: "project", default_project_id: project.id)
+      assert_select "a[href=?]", new_bullet_path(bulletable_type: "Event", render_context: "project", default_project_id: project.id)
+    end
   end
 end

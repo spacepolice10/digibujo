@@ -1,0 +1,27 @@
+<%# locals: (bullet:, attributes: {}, default_project: nil, default_person: nil) %>
+<% editor_value = bullet.editor_content(default_projects: Array(default_project).compact, default_people: Array(default_person).compact) %>
+
+<%= render "bullets/editors/form", bullet: bullet, type_name: "Task", attributes: attributes do |f| %>
+  <span class="bullet--marker bullet--task-marker" aria-hidden="true">
+    <i class="icon" style="--icon-mask: var(--icon-square)" aria-hidden="true"></i>
+  </span>
+  <%= f.rich_text_area :content,
+        value: editor_value,
+        autofocus: true,
+        placeholder: "What needs doing?",
+        multiline: false,
+        preset: "inline" do %>
+    <lexxy-prompt trigger="#"
+                  name="project"
+                  src="<%= project_suggestions_path %>"
+                  remote-filtering
+                  supports-space-in-searches>
+    </lexxy-prompt>
+    <lexxy-prompt trigger="@"
+                  name="person"
+                  src="<%= person_suggestions_path %>"
+                  remote-filtering
+                  supports-space-in-searches>
+    </lexxy-prompt>
+  <% end %>
+<% end %>

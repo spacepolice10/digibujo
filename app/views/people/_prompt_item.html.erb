@@ -1,0 +1,8 @@
+<lexxy-prompt-item search="<%= person.name %>" sgid="<%= person.attachable_sgid %>">
+  <template type="menu">
+    <%= render "people/pickers/person", person: person %>
+  </template>
+  <template type="editor" content-type="application/vnd.actiontext.person">
+    <%= render "people/attachable_editor", person: person %>
+  </template>
+</lexxy-prompt-item>

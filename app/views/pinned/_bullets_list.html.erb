@@ -12,7 +12,6 @@
 </div>
 <div class="layout--list bucket--list">
 <% bullets.each do |bullet| %>
-  <%= render partial: bullet.to_partial_path,
-        locals: { bullet.bulletable_type.downcase.to_sym => bullet } %>
+  <%= render_bullet(bullet) %>
 <% end %>
 </div>

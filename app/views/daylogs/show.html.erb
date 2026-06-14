@@ -1,4 +1,4 @@
-<div class="layout--page" data-controller="daylog bulk-menu">
+<div class="layout--page daylog--page" data-controller="daylog bulk-menu">
   <turbo-frame id="bullets-timeline">
     <div id="bullets-header" class="layout--header">
       <div class="layout--header-actions"></div>
@@ -61,9 +61,7 @@
     <%= render "bullets/bulk_menu" %>
 
     <turbo-frame id="new_bullet_form">
-      <%= render "bullets/editor",
-          bullet: Current.user.bullets.build,
-          bulletable_type: "Note",
+      <%= render "bullets/composer",
           attributes: { pops_on: @selected_date } %>
     </turbo-frame>
   </turbo-frame>

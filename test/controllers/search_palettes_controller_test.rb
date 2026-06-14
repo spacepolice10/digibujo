@@ -58,6 +58,16 @@ class SearchPalettesControllerTest < ActionDispatch::IntegrationTest
     assert_select "[data-combobox-target=?]", "item"
   end
 
+  test "show lists collections when query is blank" do
+    create_collection!(@user, name: "reading list")
+
+    get search_palette_path(format: :turbo_stream)
+
+    assert_response :success
+    assert_match "reading list", response.body
+    assert_match "Collections", response.body
+  end
+
   test "show filters collection buckets by name" do
     create_collection!(@user, name: "reading list")
 

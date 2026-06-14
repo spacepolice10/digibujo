@@ -9,6 +9,10 @@ class BulletActivity < ApplicationRecord
     completed
     uncompleted
     edited
+    project_tagged
+    project_untagged
+    person_tagged
+    person_untagged
   ].freeze
 
   belongs_to :user

@@ -1,0 +1,23 @@
+@layer components {
+  .session-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: var(--spacing-horizontal-double);
+    gap: var(--spacing-vertical-double);
+  }
+
+  .session-layout--header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+  }
+
+  .session-layout--main {
+    width: 100%;
+    max-width: 24rem;
+  }
+}

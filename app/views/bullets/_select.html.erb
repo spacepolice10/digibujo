@@ -1,15 +1,20 @@
-<label for="<%= dom_id(bullet, :select_checkbox) %>" class="select-checkbox">
-       <i class="icon" style="--icon-mask: var(--icon-check)" aria-hidden="true"></i>
-       <input
-       type="checkbox"
-       id="<%= dom_id(bullet, :select_checkbox) %>"
-       value="<%= bullet.id %>"
-       data-bulk-menu-target="checkbox"
-       <% if bullet.pinned? %>
-       data-pinned
-       <% end %>
-       data-action="bulk-menu#toggle"
-       aria-label="Select bullet"
-       class="utilities--sr-only"
-       >
+<label for="<%= dom_id(bullet, :select_checkbox) %>" class="select-checkbox" aria-label="Select bullet">
+  <span class="select-checkbox--indicator" aria-hidden="true"></span>
+  <input
+    type="checkbox"
+    id="<%= dom_id(bullet, :select_checkbox) %>"
+    value="<%= bullet.id %>"
+    data-bulk-menu-target="checkbox"
+    <% if bullet.pinned? %>
+    data-pinned
+    <% end %>
+    <% if bullet.completable? %>
+    data-completable
+    <% if bullet.completed? %>
+    data-done
+    <% end %>
+    <% end %>
+    data-action="bulk-menu#toggle"
+    class="utilities--sr-only"
+  >
 </label>

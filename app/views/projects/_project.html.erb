@@ -1,7 +1,7 @@
-<li id="<%= dom_id(project.bucket, :list_item) %>" class="layout--list-item">
+<li id="<%= dom_id(project, :list_item) %>" class="layout--list-item">
   <%= link_to project_path(project), { data: { turbo_frame: "_top" }, class: "bucket--list-item-link" } do %>
     <div class="bucket--list-item-name">
-      <div class="bucket--list-item-marker" data-bucket-colour="<%= project.bucket.colour %>" aria-hidden="true">
+      <div class="bucket--list-item-marker" data-bucket-colour="<%= project.colour %>" aria-hidden="true">
         <% if project.icon.present? %>
           <i
             class="icon"

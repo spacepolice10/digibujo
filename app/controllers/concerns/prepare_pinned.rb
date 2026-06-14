@@ -6,10 +6,16 @@ module PreparePinned
   private
 
   def pinned_bullets
-    Current.user.bullets.includes(bucket: :bucketable).pinned.order(updated_at: :desc)
+    Current.user.pinned_entities.where(pinnable_type: "Bullet")
+            .includes(pinnable: { bucket: :bucketable })
+            .order(created_at: :desc)
+            .map(&:pinnable)
   end
 
   def pinned_buckets
-    Current.user.buckets.includes(:bucketable).pinned.order(updated_at: :desc)
+    Current.user.pinned_entities.where(pinnable_type: "Bucket")
+            .includes(pinnable: :bucketable)
+            .order(created_at: :desc)
+            .map(&:pinnable)
   end
 end

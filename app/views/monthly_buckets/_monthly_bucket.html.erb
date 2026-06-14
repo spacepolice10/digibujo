@@ -1,0 +1,18 @@
+<%# locals: (monthly_bucket:) %>
+<li id="<%= dom_id(monthly_bucket.bucket, :list_item) %>" class="layout--list-item">
+  <%= link_to monthly_bucket_path(monthly_bucket), data: { turbo_frame: "_top" }, class: "bucket--list-item-link" do %>
+    <div class="bucket--list-item-name">
+      <div class="bucket--list-item-marker" data-bucket-colour="<%= monthly_bucket.colour %>" aria-hidden="true">
+        <% if monthly_bucket.icon.present? %>
+          <i class="icon" style="--icon-mask: <%= monthly_bucket.icon_mask %>" aria-hidden="true"></i>
+        <% end %>
+      </div>
+      <span class="utilities--line-clamp-1"><%= monthly_bucket.name %></span>
+    </div>
+    <div class="utilities--line-clamp-1 utilities--text-sm">
+      <% if monthly_bucket.period? %>
+        <span><%= monthly_bucket.period_from.strftime("%b %-d") %> – <%= monthly_bucket.period_to.strftime("%b %-d") %></span>
+      <% end %>
+    </div>
+  <% end %>
+</li>

@@ -1,4 +1,9 @@
 @layer components {
+  .header--menu .dropdown-body {
+    left: 50%;
+    translate: -50% 0;
+  }
+
   .menu--wrap {
     display: flex;
     flex-direction: column;

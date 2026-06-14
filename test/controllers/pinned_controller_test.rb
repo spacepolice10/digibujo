@@ -16,11 +16,11 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "mobile workspace lists pinned bullets" do
-    @user.bullets.create!(
+    bullet = @user.bullets.create!(
       bulletable: Task.create!,
-      content: "Pinned bullet",
-      pinned: true
+      content: "Pinned bullet"
     )
+    PinnedEntity.create!(user: @user, pinnable: bullet)
 
     get pinned_index_path, headers: { "User-Agent" => "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)" }
 
@@ -28,28 +28,28 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
     assert_select ".workspace .bullet", text: /Pinned bullet/, count: 1
   end
 
-  test "mobile workspace lists pinned bucket bullets" do
+  test "mobile workspace lists pinned project bullets" do
     project = create_project!(@user, name: "footer project")
-    project.bucket.update!(pinned: true)
-    @user.bullets.create!(
+    project.pin!
+    bullet = @user.bullets.create!(
       bulletable: Task.create!,
-      content: "Bucket bullet",
-      bucket: project.bucket,
+      content: "Project bullet",
       pops_on: Date.current
     )
+    bullet.tag_project!(project_id: project.id)
 
     get pinned_index_path, headers: { "User-Agent" => "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)" }
 
     assert_response :success
-    assert_select ".workspace .bullet", text: /Bucket bullet/, count: 1
+    assert_select ".workspace .bullet", text: /Project bullet/, count: 1
   end
 
   test "pinned bullets popover loads bullets on request" do
-    @user.bullets.create!(
+    bullet = @user.bullets.create!(
       bulletable: Task.create!,
-      content: "Pinned bullet",
-      pinned: true
+      content: "Pinned bullet"
     )
+    PinnedEntity.create!(user: @user, pinnable: bullet)
 
     get pinned_index_path, headers: { "Turbo-Frame" => "pinned_bullets" }
 

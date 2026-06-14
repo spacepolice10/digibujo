@@ -11,6 +11,8 @@ class Sessions::CodesControllerTest < ActionDispatch::IntegrationTest
     get new_session_code_path
 
     assert_response :success
+    assert_select "header.header", count: 0
+    assert_select ".session-layout--main form[action=?]", session_code_path
   end
 
   test "new without login_email redirects to login" do

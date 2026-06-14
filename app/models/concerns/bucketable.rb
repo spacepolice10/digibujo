@@ -4,11 +4,10 @@ module Bucketable
   extend ActiveSupport::Concern
 
   included do
-    has_one :bucket, as: :bucketable, inverse_of: :bucketable, touch: true
+    has_one :bucket, as: :bucketable, inverse_of: :bucketable, touch: true, autosave: true
     has_many :bullets, through: :bucket
 
     delegate :colour, :icon, to: :bucket, allow_nil: true
-    delegate :period_from, :period_to, :period?, :period_days, :covers?, to: :bucket, allow_nil: true
   end
 
   def name

@@ -6,8 +6,8 @@ class Buckets::PinsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @user = users(:one)
     sign_in_as @user
-    @project = create_project!(@user, name: "alpha")
-    @bucket = @project.bucket
+    @collection = create_collection!(@user, name: "alpha")
+    @bucket = @collection.bucket
   end
 
   test "create pins bucket and updates pin button via turbo stream" do
@@ -20,11 +20,11 @@ class Buckets::PinsControllerTest < ActionDispatch::IntegrationTest
     assert_match "turbo-stream", response.media_type
     assert_match dom_id(@bucket, :pin_button), response.body
     assert_match "pinned_buckets_footer", response.body
-    assert_match dom_id(@bucket, :footer_bullets), response.body
+    assert_match collection_path(@collection), response.body
   end
 
   test "destroy unpins bucket and updates pin button via turbo stream" do
-    @bucket.update!(pinned: true)
+    @bucket.pin!
 
     delete buckets_pin_path,
            params: { bucket_id: @bucket.id },

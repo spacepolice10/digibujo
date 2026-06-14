@@ -38,7 +38,7 @@
     <% if request.variant.include?(:mobile) %>
       <%= render "shared/mobile_tab_bar" %>
     <% end %>
-    <%#= render "shared/footer" %>
+    <%= render "shared/footer" %>
     <%= render "shared/dialog", data_action: "turbo:submit-end->dialog#submitEnd" do %>
       <%= turbo_frame_tag "modal" %>
     <% end %>

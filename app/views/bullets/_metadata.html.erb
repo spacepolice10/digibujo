@@ -34,26 +34,15 @@
       <% bucket_tags.each do |bucket| %>
         <% bucketable = bucket.bucketable %>
         <% next unless bucketable %>
-        <% if bucket.bucketable_type == "Project" %>
-          <% project_hint_id = dom_id(bullet, "hint_project_#{bucket.id}") %>
-          <% project_anchor = "--hint-#{bullet.id}-project-#{bucket.id}" %>
-          <%= link_to project_path(bucketable),
+        <% if bucket.bucketable_type == "MonthlyBucket" %>
+          <% monthly_bucket_hint_id = dom_id(bullet, "hint_monthly_bucket_#{bucket.id}") %>
+          <% monthly_bucket_anchor = "--hint-#{bullet.id}-monthly_bucket-#{bucket.id}" %>
+          <%= link_to monthly_bucket_path(bucketable),
                 class: ["pill", bucket.colour.present? ? "pill--#{bucket.colour}" : nil].compact.join(" "),
-                interestfor: project_hint_id,
-                style: "anchor-name: #{project_anchor}",
+                interestfor: monthly_bucket_hint_id,
+                style: "anchor-name: #{monthly_bucket_anchor}",
                 data: { turbo_frame: "_top" },
-                aria: { label: "Project: #{bucket.name}" } do %>
-            <i class="icon" style="--icon-mask: <%= bucket.icon_mask %>" aria-hidden="true"></i>
-          <% end %>
-        <% elsif bucket.bucketable_type == "Monthlylog" %>
-          <% monthlylog_hint_id = dom_id(bullet, "hint_monthlylog_#{bucket.id}") %>
-          <% monthlylog_anchor = "--hint-#{bullet.id}-monthlylog-#{bucket.id}" %>
-          <%= link_to monthlylog_path(bucketable),
-                class: ["pill", bucket.colour.present? ? "pill--#{bucket.colour}" : nil].compact.join(" "),
-                interestfor: monthlylog_hint_id,
-                style: "anchor-name: #{monthlylog_anchor}",
-                data: { turbo_frame: "_top" },
-                aria: { label: "Monthly log: #{bucket.name}" } do %>
+                aria: { label: "Monthly spread: #{bucket.name}" } do %>
             <i class="icon" style="--icon-mask: <%= bucket.icon_mask %>" aria-hidden="true"></i>
           <% end %>
         <% elsif bucket.bucketable_type == "Collection" %>
@@ -97,25 +86,14 @@
     <% bucket_tags.each do |bucket| %>
       <% bucketable = bucket.bucketable %>
       <% next unless bucketable %>
-      <% if bucket.bucketable_type == "Project" %>
-        <% project_hint_id = dom_id(bullet, "hint_project_#{bucket.id}") %>
-        <% project_anchor = "--hint-#{bullet.id}-project-#{bucket.id}" %>
+      <% if bucket.bucketable_type == "MonthlyBucket" %>
+        <% monthly_bucket_hint_id = dom_id(bullet, "hint_monthly_bucket_#{bucket.id}") %>
+        <% monthly_bucket_anchor = "--hint-#{bullet.id}-monthly_bucket-#{bucket.id}" %>
         <div
-          id="<%= project_hint_id %>"
+          id="<%= monthly_bucket_hint_id %>"
           class="hint"
           popover="hint"
-          style="position-anchor: <%= project_anchor %>"
-        >
-          <%= bucket.name %>
-        </div>
-      <% elsif bucket.bucketable_type == "Monthlylog" %>
-        <% monthlylog_hint_id = dom_id(bullet, "hint_monthlylog_#{bucket.id}") %>
-        <% monthlylog_anchor = "--hint-#{bullet.id}-monthlylog-#{bucket.id}" %>
-        <div
-          id="<%= monthlylog_hint_id %>"
-          class="hint"
-          popover="hint"
-          style="position-anchor: <%= monthlylog_anchor %>"
+          style="position-anchor: <%= monthly_bucket_anchor %>"
         >
           <%= bucket.name %>
         </div>

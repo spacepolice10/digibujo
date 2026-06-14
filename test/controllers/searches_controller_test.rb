@@ -24,14 +24,14 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     assert_no_match "Call mom tonight", response.body
   end
 
-  test "show filters project buckets by name" do
+  test "show filters projects by name" do
     create_project!(@user, name: "alpha")
     create_project!(@user, name: "beta")
 
     get search_path, params: { q: "alp" }
 
     assert_response :success
-    assert_select "h4", text: "Buckets"
+    assert_select "h4", text: "Projects"
     assert_match "alpha", response.body
     assert_no_match "beta", response.body
   end
@@ -54,7 +54,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_path, params: { q: "grocer" }
 
     assert_response :success
-    assert_select "h4", text: "Buckets"
+    assert_select "h4", text: "Projects"
     assert_select "h4", text: "Bullets"
     assert_match project.name, response.body
     assert_match "Buy groceries", response.body

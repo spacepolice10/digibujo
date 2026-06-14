@@ -5,7 +5,10 @@
     </div>
     <div id="pinned_buckets_footer" data-turbo-permanent>
       <%= render "pinned/pinned_buckets_footer",
-            buckets: Current.user.buckets.pinned.order(updated_at: :desc).includes(:bucketable) %>
+            buckets: Current.user.pinned_entities.where(pinnable_type: "Bucket")
+                       .includes(pinnable: :bucketable)
+                       .order(created_at: :desc)
+                       .map(&:pinnable) %>
     </div>
   </div>
 </footer>

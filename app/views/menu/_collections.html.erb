@@ -1,0 +1,14 @@
+<% if collections.any? %>
+  <section class="menu--palette-section">
+    <h4 class="search--section-heading">Collections</h4>
+    <ul class="layout--list bucket--list menu--palette-list" role="listbox">
+      <%= render partial: "menu/collection", collection: collections, as: :collection %>
+    </ul>
+    <% if collections.size >= MenuHelper::COLLECTION_LIMIT %>
+      <%= link_to "View all collections",
+            collections_path,
+            class: "button--tertiary menu--palette-view-all",
+            data: { turbo_frame: "_top" } %>
+    <% end %>
+  </section>
+<% end %>

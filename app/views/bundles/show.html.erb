@@ -1,0 +1,19 @@
+<% content_for(:title) { @bundle.name } %>
+
+<div class="layout--page">
+  <div class="layout--header">
+    <div class="layout--header-actions">
+      <%= link_to collection_path(@collection), class: "button--secondary" do %>
+        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+        <%= @collection.name %>
+      <% end %>
+    </div>
+    <h2><%= @bundle.name %></h2>
+  </div>
+
+  <article class="layout--column">
+    <div id="bullets">
+      <%= render partial: "bullets/bullet", collection: @bullets, as: :bullet %>
+    </div>
+  </article>
+</div>

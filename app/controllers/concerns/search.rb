@@ -13,6 +13,13 @@ module Search
     @sanitized_q ||= ActiveRecord::Base.sanitize_sql_like(q.downcase)
   end
 
+  def search_projects
+    projects = Current.user.projects
+    return projects.order(:name) if q.blank?
+
+    projects.where("name LIKE ?", "%#{sanitized_q}%").order(:name)
+  end
+
   def search_buckets
     buckets = Current.user.buckets.includes(:bucketable, :bullets)
     return buckets.order(:name) if q.blank?
@@ -21,7 +28,7 @@ module Search
   end
 
   def search_bullets
-    bullets = Current.user.bullets.includes(bucket: :bucketable)
+    bullets = Current.user.bullets.includes(:projects, bucket: :bucketable)
     return bullets if q.blank?
 
     matching_bullets = bullets.select { |bullet| searchable_text(bullet).include?(q.downcase) }
@@ -30,6 +37,7 @@ module Search
 
   def searchable_text(bullet)
     bucket_names = [bullet.bucket&.name].compact
-    [bullet.content.to_plain_text, *bucket_names].join(" ").downcase
+    project_names = bullet.projects.map(&:name)
+    [bullet.content.to_plain_text, *bucket_names, *project_names].join(" ").downcase
   end
 end

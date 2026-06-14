@@ -1,9 +1,7 @@
 <div class="pinned--dock">
-  <button
-    type="button"
-    class="button--secondary pinned--summary pinned--bucket-summary"
-    popovertarget="<%= dom_id(bucket, :footer_bullets) %>"
-  >
+  <%= link_to bucket_palette_path(bucket),
+        class: "button--secondary pinned--summary pinned--bucket-summary",
+        data: { turbo_frame: "_top" } do %>
     <span class="bucket--list-item-marker" data-bucket-colour="<%= bucket.colour %>" aria-hidden="true">
       <% if bucket.icon.present? %>
         <i
@@ -14,12 +12,5 @@
       <% end %>
     </span>
     <span class="utilities--line-clamp-1"><%= bucket.name %></span>
-  </button>
-  <turbo-frame
-    id="<%= dom_id(bucket, :footer_bullets) %>"
-    class="pinned--list"
-    src="<%= bucket_path(bucket) %>"
-    loading="lazy"
-    popover
-  ></turbo-frame>
+  <% end %>
 </div>

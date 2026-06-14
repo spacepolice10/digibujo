@@ -61,22 +61,17 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "daylog renders simple editor with selected day as submitted attribute" do
+  test "daylog renders composer with type buttons and selected day as attribute" do
     selected_date = Date.current - 2.days
 
     get daylog_path(date: selected_date.iso8601)
 
     assert_response :success
-    assert_select "turbo-frame#new_bullet_form form.bullet-form[data-controller~=?]", "editor"
-    assert_select ".bullet-form-type-picker[data-editor-target=?]", "typePicker"
-    assert_select ".bullet-form-type-marker[data-editor-target=?]", "typeMarker"
-    assert_select "select.bullet-form-type-select[name=?][required][data-editor-target=?]", "bullet[bulletable_type]", "typeSelect" do
-      assert_select "option", text: "Task"
-      assert_select "option[selected]", text: "Note"
-      assert_select "option", text: "Event"
+    assert_select "turbo-frame#new_bullet_form" do
+      assert_select "a[href=?]", new_bullet_path(bulletable_type: "Task", pops_on: selected_date.iso8601)
+      assert_select "a[href=?]", new_bullet_path(bulletable_type: "Note", pops_on: selected_date.iso8601)
+      assert_select "a[href=?]", new_bullet_path(bulletable_type: "Event", pops_on: selected_date.iso8601)
     end
-    assert_select "input[type=hidden][name=?][value=?]", "bullet[pops_on]", selected_date.iso8601
-    assert_select ".bullet-form-fields", 0
   end
 
   test "root shows today daylog" do
@@ -96,7 +91,18 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
       assert_select "summary.header--summary", text: "Digibujo"
       assert_select "form.search--form[action=?]", search_palette_path
       assert_select "turbo-frame#menu_palette_results"
+      assert_select "turbo-frame#menu_palette_results h4.search--section-heading", text: "Collections", count: 0
     end
+  end
+
+  test "desktop daylog menu lists collections in palette" do
+    create_collection!(@user, name: "menu collection")
+
+    get daylog_path
+
+    assert_response :success
+    assert_select "turbo-frame#menu_palette_results h4.search--section-heading", text: "Collections"
+    assert_match "menu collection", response.body
   end
 
   test "mobile daylog omits header and renders tab bar" do

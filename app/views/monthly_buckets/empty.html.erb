@@ -1,0 +1,7 @@
+<div class="layout--page">
+  <div class="layout--header">
+    <h2>Monthly spread</h2>
+  </div>
+  <p>No monthly spread covers <%= Date.current.strftime("%B %Y") %> yet.</p>
+  <%= link_to "Create monthly spread", new_monthly_bucket_path, class: "button--primary" %>
+</div>

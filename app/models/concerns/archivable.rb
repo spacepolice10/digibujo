@@ -6,7 +6,8 @@ module Archivable
   included do
     scope :archived,         -> { where(archived: true) }
     scope :expired_archived, lambda {
-      archived.where(pinned: false).where("archives_on <= ?", ARCHIVE_RETENTION_DAYS.days.ago.to_date)
+      archived.where.not(id: PinnedEntity.where(pinnable_type: "Bullet").select(:pinnable_id))
+              .where("archives_on <= ?", ARCHIVE_RETENTION_DAYS.days.ago.to_date)
     }
   end
 

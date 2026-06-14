@@ -1,0 +1,46 @@
+<% content_for(:title) { "Future Log" } %>
+
+<div class="layout--page future--page" data-controller="bulk-menu">
+  <div class="layout--header">
+    <div class="layout--header-actions">
+      <%= link_to buckets_path, class: "button--secondary" do %>
+        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+        Index
+      <% end %>
+    </div>
+    <h2><%= @future.name %></h2>
+  </div>
+
+  <div class="future--grid" data-bulk-menu-target="list">
+    <% @children.each do |monthly_bucket| %>
+      <% bucket = monthly_bucket.bucket %>
+      <div class="future--card">
+        <div class="future--card-header">
+          <%= link_to monthly_bucket.name, monthly_bucket_path(monthly_bucket) %>
+        </div>
+        <div id="<%= dom_id(bucket, :unplanned) %>">
+          <% unplanned = monthly_bucket.bullets.where(pops_on: nil).chronological.includes(:bucketable) %>
+          <%= render partial: "bullets/bullet", collection: unplanned, as: :bullet %>
+        </div>
+        <turbo-frame id="<%= dom_id(bucket, :composer) %>">
+          <%= link_to new_bullet_path(
+                bucket_id: bucket.id,
+                bulletable_type: "Task",
+                composer_frame_id: dom_id(bucket, :composer),
+                render_context: "future"
+              ),
+              class: "button--tertiary button--icon",
+              aria: { label: "Add bullet" } do %>
+            <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
+          <% end %>
+        </turbo-frame>
+      </div>
+    <% end %>
+
+    <div class="future--add-month">
+      <%= button_to "+ Add month", months_future_path, method: :post, class: "button--primary" %>
+    </div>
+  </div>
+
+  <%= render "bullets/bulk_menu" %>
+</div>

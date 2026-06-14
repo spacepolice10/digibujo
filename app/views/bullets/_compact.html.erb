@@ -1,23 +1,34 @@
 <%# locals: (bullet:) %>
-<turbo-frame id="<%= dom_id(bullet) %>" class="bullet-compact bullet" data-bullet-type="<%= bullet.bulletable_type.downcase %>">
-  <%= render "bullets/select", bullet: bullet %>
+<turbo-frame id="<%= dom_id(bullet) %>"
+             class="bullet-compact bullet"
+             data-bullet-type="<%= bullet.bulletable_type.downcase %>"
+             <% if bullet.completed? %>
+             data-bullet-completed
+             <% end %>
+             draggable="true"
+             data-controller="bullet-drag"
+             data-bullet-drag-id-value="<%= bullet.id %>"
+             data-action="dragstart->bullet-drag#dragstart dragend->bullet-drag#dragend">
   <a href="<%= edit_bullet_path(bullet) %>"
      class="bullet-compact--link"
+     draggable="false"
      data-turbo-frame="_top"
      data-controller="bullet-navigation"
      data-action="mouseup->bullet-navigation#rememberSelection">
-    <span class="bullet-compact--marker bullet--<%= bullet.bulletable_type.downcase %>-marker" aria-hidden="true">
-      <% case bullet.bulletable_type %>
-      <% when "Task" %>
-        <i class="icon" style="--icon-mask: var(--icon-<%= bullet.bulletable.done? ? "check" : "square" %>)" aria-hidden="true"></i>
-      <% when "Event" %>
-        <i class="icon" style="--icon-mask: var(--icon-circle)" aria-hidden="true"></i>
-      <% when "Note" %>
-        <i class="icon" style="--icon-mask: var(--icon-book)" aria-hidden="true"></i>
-      <% when "Group" %>
-        <i class="icon" style="--icon-mask: var(--icon-line-dashed)" aria-hidden="true"></i>
+    <span class="bullet--marker bullet-compact--marker <%= bullet.marker_styles %>" aria-hidden="true">
+      <i class="icon" style="--icon-mask: var(--icon-<%= bullet.marker_icon %>)" aria-hidden="true"></i>
+      <% if bullet.mood_marker.present? %>
+        <span class="bullet--mood-emoji"><%= bullet.mood_marker %></span>
       <% end %>
     </span>
     <span class="bullet-compact--name utilities--line-clamp-1"><%= bullet.excerpt %></span>
+    <% if bullet.meta_labels.any? %>
+      <span class="bullet--flags">
+        <% bullet.meta_labels.each do |label| %>
+          <span class="pill pill--<%= label[:colour] %>"><%= label[:emoji] %></span>
+        <% end %>
+      </span>
+    <% end %>
   </a>
+  <%= render "bullets/select", bullet: bullet %>
 </turbo-frame>

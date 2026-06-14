@@ -53,22 +53,33 @@ class BulletActivityRecorderTest < ActiveSupport::TestCase
   end
 
   test "collect records collected" do
+    collection = create_collection!(@user, name: "Inbox")
+    bullet = @user.bullets.create!(bulletable: Task.create!, content: "Move")
+
+    assert_difference -> { BulletActivity.count }, 1 do
+      bullet.collect!(bucket_id: collection.bucket.id)
+    end
+
+    assert_equal "collected", BulletActivity.order(:created_at).last.action
+  end
+
+  test "tag project records project_tagged" do
     project = create_project!(@user, name: "Inbox")
     bullet = @user.bullets.create!(bulletable: Task.create!, content: "Move")
 
     assert_difference -> { BulletActivity.count }, 1 do
-      bullet.collect!(bucket_id: project.bucket.id)
+      bullet.tag_project!(project_id: project.id)
     end
 
-    assert_equal 'collected', BulletActivity.order(:created_at).last.action
+    assert_equal "project_tagged", BulletActivity.order(:created_at).last.action
   end
 
   test "pin toggle does not record activity" do
     bullet = @user.bullets.create!(bulletable: Task.create!, content: "Pin me")
 
     assert_no_difference -> { BulletActivity.count } do
-      bullet.update!(pinned: true)
-      bullet.update!(pinned: false)
+      bullet.pin!
+      bullet.unpin!
     end
   end
 

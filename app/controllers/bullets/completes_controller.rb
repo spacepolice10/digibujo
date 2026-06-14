@@ -1,30 +1,41 @@
+# frozen_string_literal: true
+
 class Bullets::CompletesController < ApplicationController
-  before_action :set_bullet_and_task
+  include PrepareBullets
+
+  before_action :prepare_bullets
 
   def create
-    return head :unprocessable_entity unless @task
+    Bullet.transaction do
+      @bullets.lock.find_each do |bullet|
+        raise ActiveRecord::RecordNotFound unless bullet.completable?
 
-    @task.complete!
+        bullet.bulletable.complete!
+      end
+    end
+
     respond_to do |format|
-      format.turbo_stream { render "bullets/completes/create" }
+      format.turbo_stream
       format.html { redirect_to daylog_path(date: daylog_redirect_date.iso8601) }
     end
+  rescue ActiveRecord::RecordNotFound
+    head :unprocessable_entity
   end
 
   def destroy
-    return head :unprocessable_entity unless @task
+    Bullet.transaction do
+      @bullets.lock.find_each do |bullet|
+        raise ActiveRecord::RecordNotFound unless bullet.completable?
 
-    @task.uncomplete!
+        bullet.bulletable.uncomplete!
+      end
+    end
+
     respond_to do |format|
-      format.turbo_stream { render "bullets/completes/destroy" }
+      format.turbo_stream
       format.html { redirect_to daylog_path(date: daylog_redirect_date.iso8601) }
     end
-  end
-
-  private
-
-  def set_bullet_and_task
-    @bullet = Current.user.bullets.find(params[:bullet_id])
-    @task = @bullet.bulletable if @bullet.bulletable.is_a?(Task)
+  rescue ActiveRecord::RecordNotFound
+    head :unprocessable_entity
   end
 end

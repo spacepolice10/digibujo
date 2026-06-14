@@ -1,0 +1,12 @@
+<%# locals: (bullet:, source_bucket: nil) %>
+<% if source_bucket&.monthly_bucket? && bullet.bucket_id != source_bucket.id %>
+  <%= turbo_stream.remove dom_id(bullet) %>
+<% elsif bullet.bucket&.monthly_bucket? %>
+  <%= turbo_stream.replace dom_id(bullet) do %>
+    <%= render_monthly_bucket_bullet(bullet) %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.replace_all bullet do %>
+    <%= render_bullet(bullet) %>
+  <% end %>
+<% end %>

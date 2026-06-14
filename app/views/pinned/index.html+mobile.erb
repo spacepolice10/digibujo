@@ -1,20 +1,69 @@
+<% pinned_bullets = @items.select { |pe| pe.pinnable_type == "Bullet" }.map(&:pinnable) %>
+<% pinned_projects = @items.select { |pe| pe.pinnable_type == "Project" }.map(&:pinnable) %>
+<% pinned_people = @items.select { |pe| pe.pinnable_type == "Person" }.map(&:pinnable) %>
+
 <section class="workspace">
-  <% if @bullets.any? %>
+  <% if pinned_bullets.any? %>
     <div class="workspace__section">
       <div class="workspace__group-header">
         <span class="workspace__bar" style="background: var(--color-fg-base)"></span>
         <i class="icon workspace__icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
         <span class="workspace__label">Pinned</span>
-        <span class="workspace__count"><%= pluralize(@bullets.count, "bullet") %></span>
+        <span class="workspace__count"><%= pluralize(pinned_bullets.count, "bullet") %></span>
       </div>
-      <% @bullets.each do |bullet| %>
-        <%= render partial: bullet.to_partial_path,
-              locals: { bullet.bulletable_type.downcase.to_sym => bullet } %>
+      <% pinned_bullets.each do |bullet| %>
+        <%= render_bullet(bullet) %>
       <% end %>
     </div>
   <% end %>
 
-  <% @buckets.each do |bucket| %>
+  <% pinned_projects.each do |project| %>
+    <% project_bullets = project.bullets.includes(:projects).order(updated_at: :desc) %>
+    <% next if project_bullets.none? %>
+
+    <div class="workspace__section">
+      <div class="workspace__group-header">
+        <span class="workspace__bar" data-bucket-colour="<%= project.colour %>" aria-hidden="true"></span>
+        <% if project.icon.present? %>
+          <i class="icon workspace__icon" style="--icon-mask: <%= project.icon_mask %>" aria-hidden="true"></i>
+        <% end %>
+        <%= link_to project.name,
+              project_path(project),
+              class: "workspace__label",
+              data: { turbo_frame: "_top" } %>
+        <span class="workspace__count"><%= pluralize(project_bullets.count, "bullet") %></span>
+      </div>
+      <% project_bullets.each do |bullet| %>
+        <%= render_bullet(bullet) %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% pinned_people.each do |person| %>
+    <% person_bullets = person.bullets.includes(:people).order(updated_at: :desc) %>
+    <% next if person_bullets.none? %>
+
+    <div class="workspace__section">
+      <div class="workspace__group-header">
+        <span class="workspace__bar" data-bucket-colour="<%= person.colour %>" aria-hidden="true"></span>
+        <% if person.icon.present? %>
+          <i class="icon workspace__icon" style="--icon-mask: <%= person.icon_mask %>" aria-hidden="true"></i>
+        <% end %>
+        <%= link_to person.name,
+              person_path(person),
+              class: "workspace__label",
+              data: { turbo_frame: "_top" } %>
+        <span class="workspace__count"><%= pluralize(person_bullets.count, "bullet") %></span>
+      </div>
+      <% person_bullets.each do |bullet| %>
+        <%= render_bullet(bullet) %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% @buckets.each do |pe| %>
+    <% bucket = pe.pinnable %>
+    <% next unless bucket %>
     <% bucket_bullets = Current.user.bullets.where(bucket_id: bucket.id).includes(bucket: :bucketable).order(updated_at: :desc) %>
     <% next if bucket_bullets.none? %>
 
@@ -24,17 +73,19 @@
         <% if bucket.icon.present? %>
           <i class="icon workspace__icon" style="--icon-mask: <%= bucket.icon_mask %>" aria-hidden="true"></i>
         <% end %>
-        <span class="workspace__label"><%= bucket.name %></span>
+        <%= link_to bucket.name,
+              bucket_palette_path(bucket),
+              class: "workspace__label",
+              data: { turbo_frame: "_top" } %>
         <span class="workspace__count"><%= pluralize(bucket_bullets.count, "bullet") %></span>
       </div>
       <% bucket_bullets.each do |bullet| %>
-        <%= render partial: bullet.to_partial_path,
-              locals: { bullet.bulletable_type.downcase.to_sym => bullet } %>
+        <%= render_bullet(bullet) %>
       <% end %>
     </div>
   <% end %>
 
-  <% if @bullets.none? && @buckets.none? %>
+  <% if pinned_bullets.none? && pinned_projects.none? && pinned_people.none? && @buckets.none? %>
     <p class="workspace__empty">Nothing pinned yet.</p>
   <% end %>
 </section>

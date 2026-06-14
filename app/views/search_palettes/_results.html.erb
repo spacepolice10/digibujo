@@ -1,5 +1,17 @@
-<% if q.present? %>
-  <% if buckets.any? || bullets.any? %>
+<% if q.blank? %>
+  <%= render "menu/collections", collections: menu_collections %>
+<% elsif projects.any? || buckets.any? || bullets.any? %>
+    <% if projects.any? %>
+      <section class="menu--palette-section">
+        <h4 class="search--section-heading">Projects</h4>
+        <ul class="layout--list bucket--list" role="listbox">
+          <% projects.each do |project| %>
+            <%= render "project", project: project %>
+          <% end %>
+        </ul>
+      </section>
+    <% end %>
+
     <% if buckets.any? %>
       <section class="menu--palette-section">
         <h4 class="search--section-heading">Buckets</h4>
@@ -22,13 +34,12 @@
       </section>
     <% end %>
 
-    <% if buckets_overflow || bullets_overflow %>
+    <% if projects_overflow || buckets_overflow || bullets_overflow %>
       <%= link_to "View all results",
             search_path(q: q),
             class: "button--tertiary menu--palette-view-all",
             data: { turbo_frame: "_top", combobox_target: "item" } %>
     <% end %>
-  <% else %>
-    <p class="search--empty">No results for "<%= q %>"</p>
-  <% end %>
+<% else %>
+  <p class="search--empty">No results for "<%= q %>"</p>
 <% end %>

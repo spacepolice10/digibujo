@@ -1,0 +1,17 @@
+<div class="layout--page">
+
+  <div class="layout--header">
+    <div class="layout--header-actions">
+      <%= link_to people_path, class: "button--secondary" do %>
+    <i
+      class="icon"
+      style="--icon-mask: var(--icon-arrow-left)"
+      aria-hidden="true"
+    ></i>
+People
+  <% end %>
+  </div>
+    <h2>New person</h2>
+  </div>
+  <%= render "form", person: @person %>
+</div>

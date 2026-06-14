@@ -8,15 +8,14 @@ class Projects::SuggestionsControllerTest < ActionDispatch::IntegrationTest
     sign_in_as @user
   end
 
-  test "index renders current user project suggestions as picker rows" do
+  test "index renders current user project suggestions as lexxy prompt items" do
     project = create_project!(@user, name: "alpha", icon: "book")
     other_user_project = create_project!(users(:two), name: "other")
 
     get project_suggestions_path
 
     assert_response :success
-    assert_select "turbo-frame#project_suggestions"
-    assert_select "[data-bucket-id=?]", project.bucket.id.to_s
+    assert_select "lexxy-prompt-item[search=?]", project.name
     assert_select ".bucket--list-item-name", text: project.name
     assert_no_match other_user_project.name, response.body
   end
@@ -32,13 +31,14 @@ class Projects::SuggestionsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match "beta", response.body
   end
 
-  test "index uses requested turbo frame id" do
-    project = create_project!(@user, name: "alpha")
+  test "index filters project suggestions by lexxy filter param" do
+    create_project!(@user, name: "alpha")
+    create_project!(@user, name: "beta")
 
-    get project_suggestions_path, params: { frame_id: "custom_project_suggestions" }
+    get project_suggestions_path, params: { filter: "alp" }
 
     assert_response :success
-    assert_select "turbo-frame#custom_project_suggestions"
-    assert_select "[data-bucket-id=?]", project.bucket.id.to_s
+    assert_match "alpha", response.body
+    assert_no_match "beta", response.body
   end
 end

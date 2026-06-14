@@ -1,0 +1,53 @@
+.future--page {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.future--grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.future--card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.future--card-header {
+  font-weight: 600;
+  font-size: 14px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+
+.future--card-header a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.future--card-header a:hover {
+  color: var(--color-accent);
+}
+
+.future--add-month {
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+}
+
+.future--empty {
+  text-align: center;
+  padding: 48px 16px;
+}
+
+.future--empty p {
+  color: var(--color-text-muted);
+  margin-bottom: 16px;
+}

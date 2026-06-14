@@ -5,8 +5,8 @@
     align-items: flex-start;
     justify-content: space-between;
     width: 100%;
-    gap: var(--spacing-horizontal-half);
-    margin-block: var(--spacing-vertical-half);
+    gap: var(--radius-subtle);
+    margin-block: var(--radius-subtle);
 
     @supports (corner-shape: squircle) {
       corner-shape: squircle;
@@ -23,26 +23,36 @@
         var(--color-bg-base) 90%
       );
       color: var(--color-fg-base);
-      padding-block: var(--spacing-vertical-half);
-      padding-inline: var(--spacing-horizontal-half);
+      padding-block: var(--radius-subtle);
+      padding-inline: var(--radius-subtle);
 
       &:has(.bullet--tags) {
-        padding-bottom: var(--spacing-vertical-double);
+        padding-bottom: var(--spacing-vertical-half);
       }
     }
 
     &[data-bullet-type="note"] .bullet--tags {
       position: absolute;
-      bottom: calc(-1 * var(--spacing-vertical));
+      bottom: calc(-1 * var(--spacing-vertical-half));
       left: 0;
-      background-color: var(--color-bg-base);
+      background-color: var(--color-bg-subtle);
       border-radius: var(--radius-strong);
-      padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+      padding: var(--radius-subtle) var(--radius-subtle);
     }
 
+    &[data-bullet-completed] .bullet--name,
     &:has(.bullet--task-marker[data-task-done="true"]) .bullet--name {
       text-decoration: line-through;
       color: var(--color-fg-subtle);
+    }
+
+    &[draggable="true"] {
+      cursor: grab;
+    }
+
+    &.dragging {
+      opacity: 0.35;
+      cursor: grabbing;
     }
 
     &:has(.bullet--pops-notice) {
@@ -58,6 +68,32 @@
     }
   }
 
+  .bullet--monthly-bucket {
+    &[data-bullet-type="note"] .bullet--body {
+      position: static;
+      overflow: hidden;
+      box-shadow: none;
+      border-radius: 0;
+      background: none;
+      padding: 0;
+      color: inherit;
+    }
+
+    .bullet--body {
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .bullet--line {
+      display: block;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: var(--font-size-subtle);
+    }
+  }
+
   /* ── Body & inline text flow ───────────────────────────── */
 
   .bullet--body {
@@ -66,7 +102,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    margin-top: var(--radius-subtle);
 
     .bullet--name,
     .bullet--excerpt,
@@ -80,6 +115,16 @@
     .bullet--excerpt .rich-text-content,
     .bullet--excerpt > * {
       text-wrap: auto;
+    }
+
+    .bullet--name action-text-attachment,
+    .bullet--name .rich-text-content .pill {
+      display: inline-flex;
+      vertical-align: middle;
+    }
+
+    .bullet--name action-text-attachment[content-type*="project"] a.pill {
+      cursor: pointer;
     }
 
     .bullet--tags .pill {
@@ -129,31 +174,55 @@
 
   /* ── Markers ───────────────────────────────────────────── */
 
-  .bullet--marker {
+  .bullet--marker-slot {
+    position: relative;
+    flex-shrink: 0;
+    width: var(--icon-size-subtle);
+    height: var(--icon-size-subtle);
+    margin-top: var(--radius-subtle);
+  }
+
+  .bullet > .bullet--marker,
+  .bullet > .bullet--task-marker {
+    margin-top: var(--radius-subtle);
+  }
+
+  .bullet--marker-slot .bullet--marker {
+    margin-top: 0;
+  }
+
+  .bullet--marker,
+  .bullet-compact--marker {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    width: var(--icon-size-base);
-    height: var(--icon-size-base);
+    width: var(--icon-size-subtle);
+    height: var(--icon-size-subtle);
+    padding: 0;
     border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-subtle);
+    background: none;
+    color: var(--color-fg-base);
+
+    .icon {
+      width: 100%;
+      height: 100%;
+    }
   }
 
   .bullet--task-marker {
-    width: var(--icon-size-subtle);
-    height: var(--icon-size-subtle);
     color: var(--model-color-2);
     appearance: none;
-    border-color: transparent;
-    background: none;
-    margin-top: var(--radius-subtle);
+    cursor: pointer;
   }
 
   .bullet--event-marker {
     color: var(--model-color-6);
   }
-  .bullet--group-marker {
-    color: var(--model-color-3);
+
+  .bullet--note-marker {
+    color: var(--model-color-5);
   }
 
   /* ── Tags ──────────────────────────────────────────────── */
@@ -163,9 +232,9 @@
     flex: 0 0 auto;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--spacing-horizontal-half);
+    gap: var(--radius-subtle);
     padding: var(--radius-subtle);
-    background-color: var(--color-bg-strong);
+    background-color: var(--color-bg-subtle);
     border-radius: var(--radius-base);
 
     .pill {
@@ -179,52 +248,39 @@
     }
   }
 
-  /* ── Compact (monthlylog spread) ───────────────────────── */
+  /* ── Compact (monthly bucket spread) ───────────────────── */
 
   .bullet-compact {
     display: flex;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
+    align-items: flex-start;
+    gap: var(--radius-subtle);
     min-width: 0;
     margin-block: var(--radius-subtle);
 
+    &[draggable="true"] {
+      cursor: grab;
+    }
+
+    &.dragging {
+      opacity: 0.35;
+      cursor: grabbing;
+    }
   }
 
   .bullet-compact--link {
     display: flex;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
+    align-items: flex-start;
+    gap: var(--radius-subtle);
     flex: 1;
     min-width: 0;
     color: inherit;
     text-decoration: none;
   }
 
-  .bullet-compact--marker {
-    display: inline-flex;
-    flex-shrink: 0;
-    width: var(--icon-size-subtle);
-    height: var(--icon-size-subtle);
-    align-items: center;
-    justify-content: center;
-  }
-
   .bullet-compact--name {
     flex: 1;
     min-width: 0;
     font-size: var(--font-size-subtle);
-  }
-
-  .bullet-compact[data-bullet-type="task"] .bullet-compact--marker {
-    color: var(--model-color-2);
-  }
-
-  .bullet-compact[data-bullet-type="event"] .bullet-compact--marker {
-    color: var(--model-color-6);
-  }
-
-  .bullet-compact[data-bullet-type="group"] .bullet-compact--marker {
-    color: var(--model-color-3);
   }
 
   /* ── Edit & overlays ───────────────────────────────────── */
@@ -239,7 +295,7 @@
     z-index: var(--z-dropdown);
     display: flex;
     align-items: center;
-    gap: var(--spacing-horizontal-half);
+    gap: var(--radius-subtle);
     animation: bullet--pops-notice-in 0.15s ease-in-out;
   }
 

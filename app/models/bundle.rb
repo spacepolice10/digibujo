@@ -1,0 +1,5 @@
+class Bundle < ApplicationRecord
+  include Bucketable
+  belongs_to :user
+  belongs_to :collection
+end

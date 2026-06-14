@@ -1,8 +1,10 @@
 <%= turbo_stream.update "menu_palette_results" do %>
   <%= render "results",
         q: @q,
+        projects: @projects,
         buckets: @buckets,
         bullets: @bullets,
+        projects_overflow: @projects_overflow,
         buckets_overflow: @buckets_overflow,
         bullets_overflow: @bullets_overflow %>
 <% end %>

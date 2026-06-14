@@ -1,0 +1,6 @@
+@layer components {
+  .daylog--page .bullet {
+    gap: var(--spacing-horizontal-half);
+    margin-block: var(--spacing-vertical-half);
+  }
+}

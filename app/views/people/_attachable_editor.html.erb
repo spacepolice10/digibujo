@@ -1,0 +1,6 @@
+<span class="pill<%= person.colour.present? ? " pill--#{person.colour}" : "" %>">
+  <% if person.icon.present? %>
+    <i class="icon" style="--icon-mask: <%= person.icon_mask %>" aria-hidden="true"></i>
+  <% end %>
+  <span><%= person.name %></span>
+</span>

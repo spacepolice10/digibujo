@@ -34,9 +34,7 @@
     </article>
       <div>
     <turbo-frame id="new_bullet_form">
-      <%= render "bullets/editor",
-            bullet: Current.user.bullets.build,
-            bulletable_type: "Note",
+      <%= render "bullets/composer",
             attributes: { bucket_id: @collection.bucket.id } %>
     </turbo-frame>
     </div>

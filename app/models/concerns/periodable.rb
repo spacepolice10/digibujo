@@ -8,7 +8,7 @@ module Periodable
   end
 
   class_methods do
-    def monthlylog_period
+    def default_period
       {
         period_from: Date.current.beginning_of_month,
         period_to: Date.current.end_of_month

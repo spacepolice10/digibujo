@@ -8,8 +8,9 @@ Rails.application.routes.draw do
 
   # Logs (?date=YYYY-MM-DD for a specific day)
   resource :daylog, only: :show, controller: 'daylogs'
-  get 'monthlylog', to: 'monthlylogs#current', as: :monthlylog
-  resources :monthlylogs, only: %i[show new create]
+  get 'monthly_bucket', to: 'monthly_buckets#current', as: :monthly_bucket
+  resources :monthly_buckets, only: %i[show new create]
+  resources :bundles, only: %i[show new create destroy]
 
   # Bullet
   scope 'bullets', module: :bullets do
@@ -17,15 +18,11 @@ Rails.application.routes.draw do
     resource :archive,  only: %i[create destroy]
     resource :collect,  only: %i[new create destroy]
     resource :pop,      only: %i[new create destroy]
+    resource :complete, only: %i[create destroy]
+    resource :person,   only: %i[new create destroy]
     resource :export,   only: :show
   end
-  concern :completable do
-    scope module: :bullets do
-      resource :complete, only: %i[create destroy]
-    end
-  end
-
-  resources :bullets, except: :index, concerns: %i[completable] do
+  resources :bullets, except: :index do
     scope module: :bullets do
       resource :publish, only: :update
     end
@@ -35,12 +32,20 @@ Rails.application.routes.draw do
   resource :search_palette, only: :show, path: 'search/palette'
   resource :menu, only: :show, controller: 'menu'
   resources :buckets, only: %i[index show]
+  resource :future, only: %i[show create], controller: 'futures' do
+    post :months, on: :collection
+  end
   scope 'buckets', module: :buckets, as: 'buckets' do
     resource :pin, only: %i[create destroy]
   end
   get 'projects/suggestions', to: 'projects/suggestions#index', as: :project_suggestions
+  scope 'projects', module: :projects, as: 'projects' do
+    resource :pin, only: %i[create destroy]
+  end
   resources :projects
   resources :collections
+  get 'people/suggestions', to: 'people/suggestions#index', as: :person_suggestions
+  resources :people, only: %i[index new create show destroy]
 
   # Views
   resources :activities, only: :index

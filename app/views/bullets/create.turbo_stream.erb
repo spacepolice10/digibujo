@@ -1,9 +1,7 @@
 <%= turbo_stream.append "bullets", @bullet %>
 
 <%= turbo_stream.update "new_bullet_form" do %>
-  <%= render "bullets/editor",
-        bullet: Current.user.bullets.build,
-        bulletable_type: "Note",
+  <%= render "bullets/composer",
         attributes: { pops_on: @bullet.pops_on, bucket_id: @bullet.bucket_id } %>
 <% end %>
 

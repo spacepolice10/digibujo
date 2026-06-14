@@ -1,0 +1,47 @@
+<% content_for(:title) { @person.name } %>
+
+<div class="layout--page" data-controller="bulk-menu">
+  <div class="layout--header">
+    <div class="layout--header-actions">
+      <%= link_to people_path, class: "button--secondary" do %>
+        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+        People
+      <% end %>
+      <%= button_to @person, method: :delete, class: "button--secondary button--danger", form: { data: { turbo_confirm: "Delete this person and remove them from all bullets?" } } do %>
+        <i class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></i>
+        Delete
+      <% end %>
+    </div>
+    <h2><%= @person.name %></h2>
+  </div>
+  <div class="bucket--footer">
+    <turbo-frame id="new_bullet_form">
+      <%= render "bullets/composer",
+            attributes: {
+              render_context: "project",
+              default_person_id: @person.id
+            } %>
+    </turbo-frame>
+  </div>
+  <article class="layout--column bucket--list">
+      <div class="layout--header-actions">
+        <%= link_to "All", person_path(@person), class: "button--secondary" %>
+        <% Bullet.bulletable_types.each do |type| %>
+          <%= link_to type.pluralize,
+                      person_path(@person, type: type.downcase),
+                      class: "button--secondary" %>
+        <% end %>
+      </div>
+    <div id="bullets" data-bulk-menu-target="list">
+    <%= render "pagination/paginated_records",
+          page: @page,
+          pagination_link_path: lambda { |next_param|
+            type = params[:type].presence
+            type ? person_path(@person, page: next_param, type:) : person_path(@person, page: next_param)
+          } %>
+    </div>
+    <%= render "bullets/bulk_menu" %>
+
+  </article>
+
+</div>

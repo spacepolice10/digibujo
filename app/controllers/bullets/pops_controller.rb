@@ -38,7 +38,10 @@ class Bullets::PopsController < ApplicationController
     Bullet.transaction do
       @bullets.lock.find_each { |bullet| bullet.unpop!(previous_pops_on: previous_pops_on) }
     end
-    redirect_back fallback_location: daylog_path(date: daylog_redirect_date.iso8601)
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_back fallback_location: daylog_path(date: daylog_redirect_date.iso8601) }
+    end
   rescue ArgumentError
     @failed_bullet = @bullets.first
     respond_to do |format|

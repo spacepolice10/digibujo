@@ -40,10 +40,11 @@
     <% if @bullet.published? %>
       <input type="text" class="bullet--published-link" value="<%= published_url(@bullet.public_code) %>" readonly onclick="this.select()"> <%# herb:disable html-input-require-autocomplete %>
     <% end %>
-
+<turbo-frame id="<%= dom_id(@bullet, :content) %>">
     <div class="bullet--read-body">
       <%= @bullet.content %>
-      <%= render "attachments_gallery", bullet: @bullet %>
-    </div>
+        <%= render "attachments_gallery", bullet: @bullet %>
+      </div>
+    </turbo-frame>
   </article>
 </div>

@@ -1,0 +1,25 @@
+<%# locals: (attributes: {}) %>
+<div class="bullet-composer">
+  <turbo-frame id="new_bullet_form">
+    <div class="bullet-composer--buttons">
+      <%= link_to new_bullet_path(bulletable_type: "Task", **attributes),
+            class: "button--secondary",
+            data: { turbo_frame: "new_bullet_form" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-square)" aria-hidden="true"></i>
+        Task
+      <% end %>
+      <%= link_to new_bullet_path(bulletable_type: "Note", **attributes),
+            class: "button--secondary",
+            data: { turbo_frame: "new_bullet_form" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-line-dashed)" aria-hidden="true"></i>
+        Note
+      <% end %>
+      <%= link_to new_bullet_path(bulletable_type: "Event", **attributes),
+            class: "button--secondary",
+            data: { turbo_frame: "new_bullet_form" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-circle)" aria-hidden="true"></i>
+        Event
+      <% end %>
+    </div>
+  </turbo-frame>
+</div>

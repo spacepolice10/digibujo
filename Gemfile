@@ -11,7 +11,7 @@ gem "puma", ">= 5.0"
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
 gem "importmap-rails"
 # Use Lexxy as the Action Text editor
-gem "lexxy", "~> 0.9.14.beta"
+gem "lexxy", "~> 0.9.18"
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "turbo-rails"
 # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]

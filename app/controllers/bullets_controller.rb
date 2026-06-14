@@ -11,15 +11,19 @@ class BulletsController < ApplicationController
     @bulletable_type = params[:bulletable_type].presence || "Note"
     @composer_frame_id = params[:composer_frame_id]
     @render_context = params[:render_context]
-    @monthlylog_id = params[:monthlylog_id]
+    @monthly_bucket_id = params[:monthly_bucket_id]
+    @default_project_id = params[:default_project_id]
+    @default_person_id = params[:default_person_id]
   end
 
   def create
     @render_context = params.dig(:bullet, :render_context)
-    @monthlylog_id = params.dig(:bullet, :monthlylog_id)
+    @monthly_bucket_id = params.dig(:bullet, :monthly_bucket_id)
     @composer_frame_id = params[:composer_frame_id]
     @bullet = create_bullet_from
     if @bullet.save
+      @bullet.apply_project_tags_from_content!
+      @bullet.reload
       respond_to do |format|
         format.turbo_stream { render_create_turbo_stream }
         format.html { redirect_to bullet_path(@bullet) }

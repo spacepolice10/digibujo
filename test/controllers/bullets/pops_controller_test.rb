@@ -52,12 +52,12 @@ class Bullets::PopsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create ignores bucket_id" do
-    project = create_project!(@user, name: "Deep work")
+    collection = create_collection!(@user, name: "Deep work")
     card = @user.bullets.create!(bulletable: Event.create!, content: "Workshop")
     target = 1.week.from_now.to_date
 
     post pop_path,
-         params: { bullet_ids: card.id.to_s, pops_on: target.iso8601, bucket_id: project.bucket.id }
+         params: { bullet_ids: card.id.to_s, pops_on: target.iso8601, bucket_id: collection.bucket.id }
 
     assert_redirected_to daylog_path(date: Date.current.iso8601)
     assert_equal target, card.reload.pops_on
@@ -153,5 +153,47 @@ class Bullets::PopsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :unprocessable_entity
     assert_nil card.reload.pops_on
+  end
+
+  test "create turbo stream moves unplanned monthly bucket bullet to date row without toast" do
+    monthly_bucket = create_monthly_bucket!(@user, name: "june")
+    day = Date.current.beginning_of_month + 2.days
+    card = @user.bullets.create!(
+      bulletable: Task.create!,
+      content: "Plan in spread",
+      bucket_id: monthly_bucket.bucket.id
+    )
+
+    post pop_path,
+         params: { bullet_ids: card.id.to_s, pops_on: day.iso8601 },
+         headers: { "Accept" => "text/vnd.turbo-stream.html" }
+
+    assert_response :success
+    assert_equal day, card.reload.pops_on
+    assert_equal monthly_bucket.bucket.id, card.bucket_id
+    assert_match %(turbo-stream action="remove" target="#{dom_id(card)}"), response.body
+    assert_match %(turbo-stream action="append" target="#{dom_id(monthly_bucket, "date_#{day}_bullets")}"), response.body
+    assert_no_match %(turbo-stream action="update" target="toasts"), response.body
+  end
+
+  test "destroy turbo stream moves monthly bucket bullet to unplanned" do
+    monthly_bucket = create_monthly_bucket!(@user, name: "june")
+    day = Date.current.beginning_of_month + 2.days
+    card = @user.bullets.create!(
+      bulletable: Event.create!,
+      content: "Unplan me",
+      bucket_id: monthly_bucket.bucket.id,
+      pops_on: day
+    )
+
+    delete pop_path,
+           params: { bullet_ids: card.id.to_s, pops_on: "" },
+           headers: { "Accept" => "text/vnd.turbo-stream.html" }
+
+    assert_response :success
+    assert_nil card.reload.pops_on
+    assert_equal monthly_bucket.bucket.id, card.bucket_id
+    assert_match %(turbo-stream action="remove" target="#{dom_id(card)}"), response.body
+    assert_match %(turbo-stream action="append" target="#{dom_id(monthly_bucket, :unplanned_bullets)}"), response.body
   end
 end

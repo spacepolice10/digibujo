@@ -7,16 +7,17 @@
         <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
         Projects
       <% end %>
-      <%= render "buckets/pins_button", bucket: @project.bucket %>
+      <%= render "projects/pins_button", project: @project %>
     </div>
     <h2 class="project"><%= @project.name %></h2>
   </div>
   <div class="bucket--footer">
     <turbo-frame id="new_bullet_form">
-      <%= render "bullets/editor",
-            bullet: Current.user.bullets.build,
-            bulletable_type: "Note",
-            attributes: { bucket_id: @project.bucket.id } %>
+      <%= render "bullets/composer",
+            attributes: {
+              render_context: "project",
+              default_project_id: @project.id
+            } %>
     </turbo-frame>
   </div>
   <article class="layout--column bucket--list">

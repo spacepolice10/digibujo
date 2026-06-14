@@ -2,7 +2,7 @@
   <details class="dropdown header--menu"
            data-controller="dropdown menu"
            data-action="toggle->menu#focusOnOpen keydown.ctrl+k@document->menu#open keydown.meta+k@document->menu#open">
-    <summary class="header--summary">Digibujo</summary>
+    <summary class="header--summary" aria-haspopup="menu">Digibujo</summary>
     <div class="dropdown-body menu--wrap">
       <%= render "menu/menu", replace_link: false %>
     </div>

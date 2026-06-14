@@ -6,6 +6,8 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
   test "new" do
     get new_session_path
     assert_response :success
+    assert_select "header.header", count: 0
+    assert_select ".session-layout--main form[action=?]", session_path
   end
 
   test "create with known email sends code and redirects to code page" do

@@ -6,9 +6,17 @@ import * as Lexxy from "lexxy";
 
 Lexxy.configure({
   inline: {
+    attachments: true,
     toolbar: false,
-    multiline: false,
+    multiLine: false,
     richText: true,
     markdown: false,
+  },
+  note: {
+    attachments: true,
+    toolbar: true,
+    multiLine: true,
+    richText: true,
+    markdown: true,
   },
 });

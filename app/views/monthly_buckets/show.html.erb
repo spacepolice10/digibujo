@@ -1,0 +1,71 @@
+<% content_for(:title) { @monthly_bucket.name } %>
+
+<div class="layout--page monthly-bucket--page" data-controller="bulk-menu">
+  <div class="layout--header">
+    <div class="layout--header-actions">
+      <%= link_to buckets_path, class: "button--secondary" do %>
+        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+        Index
+      <% end %>
+    </div>
+    <h2 class="monthly-bucket"><%= @monthly_bucket.name %></h2>
+    <% if @monthly_bucket.period? %>
+      <p class="utilities--text-sm">
+        <%= @monthly_bucket.period_from.strftime("%b %-d") %> – <%= @monthly_bucket.period_to.strftime("%b %-d, %Y") %>
+      </p>
+    <% end %>
+  </div>
+
+  <div class="monthly-bucket--spread" data-bulk-menu-target="list">
+    <section class="monthly-bucket--by-date" aria-label="Planned by date" data-controller="scroll">
+      <% if @period_days %>
+        <% @period_days.each do |date| %>
+          <div class="monthly-bucket--date-row"<% if date == Date.current %> data-scroll-target="current"<% end %>>
+            <div class="monthly-bucket--date-label">
+              <span><%= date.day %></span>
+              <span><%= date.strftime("%a")[0] %></span>
+            </div>
+            <div id="<%= dom_id(@monthly_bucket, "date_#{date}_bullets") %>"
+                 class="monthly-bucket--date-entries"
+                 data-controller="monthly-bucket-drop"
+                 data-monthly-bucket-drop-pop-url-value="<%= pop_path %>"
+                 data-monthly-bucket-drop-pops-on-value="<%= date.iso8601 %>"
+                 data-action="dragover->monthly-bucket-drop#dragover dragleave->monthly-bucket-drop#dragleave drop->monthly-bucket-drop#drop">
+              <% (@bullets_by_date[date] || []).each do |bullet| %>
+                <%= render_monthly_bucket_bullet(bullet) %>
+              <% end %>
+            </div>
+            <turbo-frame id="<%= dom_id(@monthly_bucket, "date_#{date}_composer") %>">
+              <%= render "monthly_buckets/day_composer", monthly_bucket: @monthly_bucket, date: date, bucket: @bucket %>
+            </turbo-frame>
+          </div>
+        <% end %>
+      <% else %>
+        <p class="monthly-bucket--by-date-empty">No period set for this spread.</p>
+      <% end %>
+    </section>
+
+    <section class="monthly-bucket--unplanned" aria-label="Unplanned">
+      <h3 class="utilities--text-sm">Unplanned</h3>
+      <div id="<%= dom_id(@monthly_bucket, :unplanned_bullets) %>"
+           class="monthly-bucket--unplanned-entries"
+           data-controller="monthly-bucket-drop"
+           data-monthly-bucket-drop-pop-url-value="<%= pop_path %>"
+           data-action="dragover->monthly-bucket-drop#dragover dragleave->monthly-bucket-drop#dragleave drop->monthly-bucket-drop#drop">
+        <% @unplanned_bullets.each do |bullet| %>
+          <%= render_monthly_bucket_bullet(bullet) %>
+        <% end %>
+      </div>
+      <turbo-frame id="<%= dom_id(@monthly_bucket, :unplanned_composer) %>">
+        <%= render "bullets/composer",
+              attributes: {
+                bucket_id: @bucket.id,
+                render_context: "monthly_bucket_unplanned",
+                monthly_bucket_id: @monthly_bucket.id
+              } %>
+      </turbo-frame>
+    </section>
+  </div>
+
+  <%= render "bullets/bulk_menu" %>
+</div>

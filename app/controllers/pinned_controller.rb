@@ -5,8 +5,9 @@ class PinnedController < ApplicationController
   before_action :ensure_turbo_frame_request, only: :index, if: :turbo_frame_request?
 
   def index
-    @bullets = Current.user.bullets.includes(bucket: :bucketable).pinned.order(updated_at: :desc)
-    @buckets = Current.user.buckets.includes(:bucketable).pinned.order(updated_at: :desc)
+    pinned = Current.user.pinned_entities.includes(:pinnable).order(created_at: :desc)
+    @items = pinned.where.not(pinnable_type: "Bucket")
+    @buckets = pinned.where(pinnable_type: "Bucket")
   end
 
   private

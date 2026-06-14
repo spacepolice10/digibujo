@@ -1,0 +1,64 @@
+@layer components {
+  .monthly-bucket--page {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .monthly-bucket--spread {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: var(--spacing-horizontal-double);
+    align-items: start;
+  }
+
+  .monthly-bucket--by-date {
+    min-width: 0;
+    overflow-y: auto;
+    max-height: calc(100vh - 120px);
+  }
+
+  .monthly-bucket--by-date-empty {
+    color: var(--color-text-muted);
+    text-align: center;
+    padding: 48px 16px;
+  }
+
+  .monthly-bucket--date-row {
+    display: flex;
+    gap: var(--spacing-horizontal);
+    padding-block: var(--spacing-vertical);
+  }
+
+  .monthly-bucket--date-label {
+    flex-shrink: 0;
+    width: 32px;
+    text-align: center;
+    font-size: var(--font-size-subtle);
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--color-text-muted);
+  }
+
+  .monthly-bucket--date-entries {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .monthly-bucket--unplanned {
+    border-left: 1px solid var(--color-stroke-subtle);
+    padding-left: var(--spacing-horizontal-double);
+    min-width: 0;
+  }
+
+  .monthly-bucket--unplanned-entries {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical);
+  }
+
+  .monthly-bucket--drop-over {
+    outline: 2px dashed var(--color-accent);
+    outline-offset: -2px;
+    border-radius: var(--border-radius);
+  }
+}

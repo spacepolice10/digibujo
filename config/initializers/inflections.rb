@@ -17,5 +17,4 @@
 
 ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.uncountable "daylog"
-  inflect.uncountable "monthlylog"
 end

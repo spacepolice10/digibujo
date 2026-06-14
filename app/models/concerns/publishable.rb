@@ -1,19 +1,25 @@
+# frozen_string_literal: true
+
 module Publishable
   extend ActiveSupport::Concern
 
   included do
-    scope :published, -> { where.not(public_code: nil) }
-  end
-
-  def published?
-    public_code.present?
+    has_one :published_entity, as: :publishable, dependent: :destroy
   end
 
   def publish!
-    update!(public_code: SecureRandom.urlsafe_base64(16))
+    user.published_entities.create!(publishable: self)
   end
 
   def unpublish!
-    update!(public_code: nil)
+    user.published_entities.where(publishable: self).destroy_all
+  end
+
+  def published?
+    published_entity.present?
+  end
+
+  def public_code
+    published_entity&.code
   end
 end

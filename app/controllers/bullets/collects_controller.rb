@@ -7,15 +7,17 @@ class Bullets::CollectsController < ApplicationController
 
   def new
     @q = sanitized_query
-    @projects = Current.user.projects.includes(:bucket)
-    @projects = @projects.where("buckets.name LIKE ?", "#{@q}%") if @q.present?
+    @projects = Current.user.projects.order(:name)
+    @projects = @projects.where("name LIKE ?", "#{@q}%") if @q.present?
   end
 
   def create
-    bucket_id = collect_bucket_id
+    @source_buckets = @bullets.to_h { |bullet| [bullet.id, bullet.bucket] }
+    project_id = params.require(:project_id)
     Bullet.transaction do
-      @bullets.lock.find_each { |bullet| bullet.collect!(bucket_id: bucket_id) }
+      @bullets.lock.find_each { |bullet| bullet.tag_project!(project_id: project_id) }
     end
+    @bullets.each(&:reload)
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_back fallback_location: daylog_path(date: daylog_redirect_date.iso8601) }
@@ -32,9 +34,11 @@ class Bullets::CollectsController < ApplicationController
   end
 
   def destroy
+    @source_buckets = @bullets.to_h { |bullet| [bullet.id, bullet.bucket] }
     Bullet.transaction do
-      @bullets.lock.find_each(&:uncollect!)
+      @bullets.lock.find_each(&:untag_all_projects!)
     end
+    @bullets.each(&:reload)
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_back fallback_location: daylog_path(date: daylog_redirect_date.iso8601) }
@@ -51,12 +55,6 @@ class Bullets::CollectsController < ApplicationController
   end
 
   private
-
-  def collect_bucket_id
-    return params.require(:bucket_id) if params[:project_id].blank?
-
-    Current.user.projects.find(params.require(:project_id)).bucket.id
-  end
 
   def sanitized_query
     @sanitized_query ||= ActiveRecord::Base.sanitize_sql_like(params[:q].to_s.strip.downcase)

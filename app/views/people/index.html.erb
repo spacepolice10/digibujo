@@ -1,0 +1,21 @@
+<% content_for(:title) { "People" } %>
+
+<div class="layout--page">
+<div class="layout--header">
+  <h2>People</h2>
+  <%= render "people/search" %>
+  <div class="layout--header-actions">
+    <%= link_to "New person", new_person_path, class: "button--primary" %>
+  </div>
+</div>
+
+  <turbo-frame id="people">
+    <% if @people.any? %>
+      <ul class="layout--list bucket--list">
+        <%= render @people %>
+      </ul>
+    <% else %>
+      <p>No people yet. Add people to tag them in your bullets.</p>
+    <% end %>
+  </turbo-frame>
+</div>

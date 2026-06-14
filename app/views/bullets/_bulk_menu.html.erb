@@ -26,6 +26,26 @@
       <% end %>
     </div>
 
+    <div data-bulk-menu-target="completeAction" hidden>
+      <%= form_with url: complete_path, method: :post, data: { turbo_stream: true } do %>
+        <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
+        <%= button_tag type: :submit, class: "button--secondary" do %>
+          <i class="icon" style="--icon-mask: var(--icon-check)" aria-hidden="true"></i>
+          Complete
+        <% end %>
+      <% end %>
+    </div>
+
+    <div data-bulk-menu-target="uncompleteAction" hidden>
+      <%= form_with url: complete_path, method: :delete, data: { turbo_stream: true } do %>
+        <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
+        <%= button_tag type: :submit, class: "button--secondary" do %>
+          <i class="icon" style="--icon-mask: var(--icon-square)" aria-hidden="true"></i>
+          Uncomplete
+        <% end %>
+      <% end %>
+    </div>
+
     <%= form_with url: archive_path, method: :post, data: { turbo_stream: true } do %>
       <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
       <%= button_tag type: :submit, class: "button--secondary" do %>
@@ -61,13 +81,27 @@
               class="button--secondary"
               data-action="bulk-menu#openCollectsPicker">
         <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
-        Collect
+        Tag
       </button>
       <turbo-frame id="collects_picker_frame"
                    class="bulk-menu--pops-menu bulk-menu--pops-frame"
                    popover
                    loading="lazy"
                    data-bulk-menu-target="collectsFrame"></turbo-frame>
+    </div>
+
+    <div class="bulk-menu--pops-dock">
+      <button type="button"
+              class="button--secondary"
+              data-action="bulk-menu#openPeoplePicker">
+        <i class="icon" style="--icon-mask: var(--icon-face)" aria-hidden="true"></i>
+        Person
+      </button>
+      <turbo-frame id="people_picker_frame"
+                   class="bulk-menu--pops-menu bulk-menu--pops-frame"
+                   popover
+                   loading="lazy"
+                   data-bulk-menu-target="peopleFrame"></turbo-frame>
     </div>
 
     <%= form_with url: export_path, method: :get, data: { turbo: false } do %>

@@ -1,0 +1,7 @@
+<li class="layout--list-item" role="option">
+  <%= link_to project_path(project),
+        class: "bucket--list-item-link",
+        data: { turbo_frame: "_top", combobox_target: "item" } do %>
+    <%= render "projects/pickers/project", project: project %>
+  <% end %>
+</li>

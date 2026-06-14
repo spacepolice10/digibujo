@@ -9,25 +9,58 @@ class Bullets::CompletesControllerTest < ActionDispatch::IntegrationTest
     @bullet = @user.bullets.create!(bulletable: Task.create!, content: "Finish me")
   end
 
-  test "create replaces every bullet instance via turbo stream" do
-    post bullet_complete_path(@bullet),
+  test "bulk create completes selected tasks via turbo stream" do
+    second = @user.bullets.create!(bulletable: Task.create!, content: "Also finish")
+
+    post complete_path,
+         params: { bullet_ids: "#{@bullet.id},#{second.id}" },
          headers: { "Accept" => "text/vnd.turbo-stream.html" }
 
     assert_response :success
     assert @bullet.reload.bulletable.done?
-    assert_match "targets=\"##{dom_id(@bullet)}\"", response.body
-    assert_match 'data-task-done="true"', response.body
+    assert second.reload.bulletable.done?
+    assert_match %(turbo-stream action="replace" targets="#bullet_#{@bullet.id}"), response.body
+    assert_match %(turbo-stream action="replace" targets="#bullet_#{second.id}"), response.body
   end
 
-  test "destroy replaces every bullet instance via turbo stream" do
+  test "bulk create rejects non-task bullets" do
+    note = @user.bullets.create!(bulletable: Note.create!, content: "Just a note")
+
+    post complete_path,
+         params: { bullet_ids: "#{@bullet.id},#{note.id}" },
+         headers: { "Accept" => "text/vnd.turbo-stream.html" }
+
+    assert_response :unprocessable_entity
+    assert_not @bullet.reload.bulletable.done?
+  end
+
+  test "bulk destroy uncompletes selected tasks" do
     @bullet.bulletable.complete!
 
-    delete bullet_complete_path(@bullet),
+    delete complete_path,
+           params: { bullet_ids: @bullet.id.to_s },
            headers: { "Accept" => "text/vnd.turbo-stream.html" }
 
     assert_response :success
     assert_not @bullet.reload.bulletable.done?
-    assert_match "targets=\"##{dom_id(@bullet)}\"", response.body
-    assert_match 'data-task-done="false"', response.body
+    assert_match %(turbo-stream action="replace" targets="#bullet_#{@bullet.id}"), response.body
+  end
+
+  test "bulk complete replaces monthly bucket bullet with unified row" do
+    monthly_bucket = create_monthly_bucket!(@user, name: "june")
+    bullet = @user.bullets.create!(
+      bulletable: Task.create!,
+      content: "Spread task",
+      bucket_id: monthly_bucket.bucket.id
+    )
+
+    post complete_path,
+         params: { bullet_ids: bullet.id.to_s },
+         headers: { "Accept" => "text/vnd.turbo-stream.html" }
+
+    assert_response :success
+    assert bullet.reload.bulletable.done?
+    assert_match "data-bullet-completed", response.body
+    assert_match "bullet--marker-slot", response.body
   end
 end

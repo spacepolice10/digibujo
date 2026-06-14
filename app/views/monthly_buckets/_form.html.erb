@@ -1,0 +1,33 @@
+<%# locals: (monthly_bucket:) %>
+<%= form_with url: monthly_buckets_path, scope: :monthly_bucket, class: "form" do |f| %>
+  <% errors = (monthly_bucket.errors.any? ? monthly_bucket.errors.full_messages : []) +
+              (monthly_bucket.bucket&.errors&.any? ? monthly_bucket.bucket.errors.full_messages : []) %>
+  <% if errors.any? %>
+    <div class="form-errors" role="alert">
+      <% errors.each do |message| %>
+        <p><%= message %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= render "shared/bucket_identity_fields",
+        form: f,
+        name_hint: "Name for this monthly spread, e.g. June 2026." %>
+
+  <div class="form-group">
+    <%= f.label :period_from, "From", class: "form-label" %>
+    <%= f.date_field :period_from,
+          value: monthly_bucket.period_from&.iso8601,
+          class: "form-input",
+          required: true %>
+  </div>
+  <div class="form-group">
+    <%= f.label :period_to, "To", class: "form-label" %>
+    <%= f.date_field :period_to,
+          value: monthly_bucket.period_to&.iso8601,
+          class: "form-input",
+          required: true %>
+  </div>
+
+  <%= f.submit "Create monthly spread", class: "button--primary" %>
+<% end %>

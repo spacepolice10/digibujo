@@ -24,7 +24,7 @@
           action: "focus->grid-navigation#syncPosition"
         },
         aria: { keyshortcuts: "Shift+2" } %>
-  <%= link_to "Monthly log", monthlylog_path,
+  <%= link_to "Monthly spread", monthly_bucket_path,
         class: "button--secondary button--hotkey",
         data: {
           turbo_frame: "_top",
@@ -34,7 +34,7 @@
           action: "focus->grid-navigation#syncPosition"
         },
         aria: { keyshortcuts: "Shift+3" } %>
-  <%= link_to "Activity", activities_path,
+  <%= link_to "Future", future_path,
         class: "button--secondary button--hotkey",
         data: {
           turbo_frame: "_top",
@@ -44,6 +44,16 @@
           action: "focus->grid-navigation#syncPosition"
         },
         aria: { keyshortcuts: "Shift+4" } %>
+  <%= link_to "Activity", activities_path,
+        class: "button--secondary button--hotkey",
+        data: {
+          turbo_frame: "_top",
+          controller: "hotkey",
+          hotkey: "Shift+5",
+          grid_navigation_target: "item",
+          action: "focus->grid-navigation#syncPosition"
+        },
+        aria: { keyshortcuts: "Shift+5" } %>
 </nav>
 
 <div class="menu--search"
@@ -68,5 +78,8 @@
   <% end %>
 
   <turbo-frame id="menu_palette_results" class="menu--palette">
+    <% if @q.to_s.strip.blank? %>
+      <%= render "menu/collections", collections: menu_collections %>
+    <% end %>
   </turbo-frame>
 </div>
