@@ -1,9 +1,0 @@
-<li class="layout--list-item">
-  <%= form_with url: person_path, method: :post, data: { turbo_stream: true } do %>
-    <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
-    <%= hidden_field_tag :person_id, person.id %>
-    <%= button_tag type: :submit, class: "button--secondary bucket--list-item-link" do %>
-      <%= render "people/pickers/person", person: person %>
-    <% end %>
-  <% end %>
-</li>

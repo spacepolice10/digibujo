@@ -12,7 +12,7 @@ Lexxy.configure({
     richText: true,
     markdown: false,
   },
-  note: {
+  expand: {
     attachments: true,
     toolbar: true,
     multiLine: true,

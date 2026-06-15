@@ -1,4 +1,8 @@
+# frozen_string_literal: true
+
 class BundlesController < ApplicationController
+  include UserCollections
+
   before_action :set_collection
   before_action :set_bundle, only: %i[show destroy]
 
@@ -17,21 +21,21 @@ class BundlesController < ApplicationController
   def create
     @bundle = @collection.bundles.new
     if save_bundle_with_bucket(@bundle)
-      redirect_back fallback_location: collection_path(@collection), notice: "Bundle created"
+      redirect_back fallback_location: collection_path(@collection), notice: 'Bundle created'
     else
-      redirect_back fallback_location: collection_path(@collection), alert: "Could not create bundle"
+      redirect_back fallback_location: collection_path(@collection), alert: 'Could not create bundle'
     end
   end
 
   def destroy
     @bundle.bucket.destroy
-    redirect_back fallback_location: collection_path(@collection), notice: "Bundle deleted"
+    redirect_back fallback_location: collection_path(@collection), notice: 'Bundle deleted'
   end
 
   private
 
   def set_collection
-    @collection = Current.user.collections.find(params[:collection_id])
+    @collection = user_collections.find(params[:collection_id])
   end
 
   def set_bundle

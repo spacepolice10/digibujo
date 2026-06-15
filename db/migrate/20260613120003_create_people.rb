@@ -17,7 +17,7 @@ class CreatePeople < ActiveRecord::Migration[8.1]
     create_table :bullet_people do |t|
       t.references :bullet, null: false, foreign_key: true
       t.references :person, null: false, foreign_key: true
-      t.timestamp :created_at, null: false, default: -> { "CURRENT_TIMESTAMP" }
+      t.timestamp :created_at, null: false, default: -> { 'CURRENT_TIMESTAMP' }
     end
 
     add_index :bullet_people, %i[bullet_id person_id], unique: true

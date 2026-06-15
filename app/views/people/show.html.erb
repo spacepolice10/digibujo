@@ -7,6 +7,7 @@
         <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
         People
       <% end %>
+      <%= render "people/pins_button", person: @person %>
       <%= button_to @person, method: :delete, class: "button--secondary button--danger", form: { data: { turbo_confirm: "Delete this person and remove them from all bullets?" } } do %>
         <i class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></i>
         Delete

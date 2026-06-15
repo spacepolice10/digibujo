@@ -1,11 +1,12 @@
 <% dialog_id = local_assigns[:id] %>
 <% dialog_classes = ["dialog", local_assigns[:class]].compact.join(" ") %>
 <% dialog_actions = ["click->dialog#backdropHide", local_assigns[:data_action]].compact.join(" ") %>
-<% hide_label = local_assigns.fetch(:hide_label, "Hide dialog") %>
+<% dialog_data = { dialog_target: "dialog", action: dialog_actions } %>
+<% dialog_data[:bullet_composer_target] = local_assigns[:data_target] if local_assigns[:data_target].present? %>
 
-<%= tag.dialog id: dialog_id, class: dialog_classes, data: { dialog_target: "dialog", action: dialog_actions } do %>
+<%= tag.dialog id: dialog_id, class: dialog_classes, data: dialog_data do %>
   <div class="dialog--body">
-    <button type="button" class="dialog--hide" data-action="dialog#hide">
+    <button type="button" class="dialog--hide" commandfor="<%= dialog_id %>" command="close">
       <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
     </button>
     <%= yield %>

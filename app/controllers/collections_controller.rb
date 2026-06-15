@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 class CollectionsController < ApplicationController
+  include UserCollections
   before_action :set_collection, only: %i[show destroy]
 
   def index
-    @collections = Current.user.collections
+    @collections = user_collections
   end
 
   def new
@@ -14,7 +15,7 @@ class CollectionsController < ApplicationController
   def create
     @collection = Collection.new
     if save_collection_with_bucket(@collection)
-      redirect_back fallback_location: buckets_path, notice: "Collection created"
+      redirect_back fallback_location: buckets_path, notice: 'Collection created'
     else
       @collection.name = collection_params[:name]
       render :new, status: :unprocessable_entity
@@ -23,20 +24,20 @@ class CollectionsController < ApplicationController
 
   def show
     scoped_bullets = Current.user.bullets.where(bucket_id: @collection.bucket.id)
-                   .where(archived: false).distinct
+                            .where(archived: false).distinct
     scoped_bullets = scoped_bullets.where(bulletable_type: selected_type) if selected_type.present?
     @bullets = set_page_and_extract_portion_from(scoped_bullets, per_page: [5, 15, 30, 50])
   end
 
-  def destroy 
-    @collection.bucket.destroy  
-    redirect_back fallback_location: buckets_path, notice: "Collection deleted"
+  def destroy
+    @collection.bucket.destroy
+    redirect_back fallback_location: buckets_path, notice: 'Collection deleted'
   end
 
   private
 
   def set_collection
-    @collection = Current.user.collections.find(params[:id])
+    @collection = user_collections.find(params[:id])
   end
 
   def selected_type

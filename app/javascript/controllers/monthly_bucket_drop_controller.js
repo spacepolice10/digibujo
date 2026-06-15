@@ -45,15 +45,21 @@ export default class extends Controller {
       method,
       headers: {
         Accept: "text/vnd.turbo-stream.html",
-        "X-CSRF-Token": token
+        "X-CSRF-Token": token,
+        "X-Requested-With": "monthly-bucket-drop"
       },
       body
     }).catch(() => null)
 
-    if (!response || !response.ok) return
+    if (!response) return
+
+    if (response.ok) {
+      const frame = document.getElementById(`bullet_${bulletId}`)
+      if (frame) this.element.appendChild(frame)
+      return
+    }
 
     const html = await response.text().catch(() => "")
-    if (!html || !window.Turbo) return
-    window.Turbo.renderStreamMessage(html)
+    if (html && window.Turbo) window.Turbo.renderStreamMessage(html)
   }
 }

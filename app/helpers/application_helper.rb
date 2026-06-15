@@ -13,7 +13,7 @@ module ApplicationHelper
   end
 
   def render_bullet(bullet, draggable: false, monthly_bucket: false)
-    render "bullets/bullet", bullet: bullet, draggable: draggable, monthly_bucket: monthly_bucket
+    render 'bullets/bullet', bullet: bullet, draggable: draggable, monthly_bucket: monthly_bucket
   end
 
   def render_monthly_bucket_bullet(bullet)
@@ -21,6 +21,6 @@ module ApplicationHelper
   end
 
   def render_bullet_compact(bullet)
-    render "bullets/compact", bullet: bullet
+    render 'bullets/compact', bullet: bullet
   end
 end

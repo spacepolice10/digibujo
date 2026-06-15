@@ -1,22 +1,26 @@
-class Bullets::PublishesController < ApplicationController
-  before_action :set_bullet
+# frozen_string_literal: true
 
-  def update
-    if @bullet.published?
-      @bullet.unpublish!
-    else
-      @bullet.publish!
+module Bullets
+  class PublishesController < ApplicationController
+    before_action :set_bullet
+
+    def update
+      if @bullet.published?
+        @bullet.unpublish!
+      else
+        @bullet.publish!
+      end
+
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to @bullet }
+      end
     end
 
-    respond_to do |format|
-      format.turbo_stream
-      format.html { redirect_to @bullet }
+    private
+
+    def set_bullet
+      @bullet = Current.user.bullets.find(params[:bullet_id])
     end
-  end
-
-  private
-
-  def set_bullet
-    @bullet = Current.user.bullets.find(params[:bullet_id])
   end
 end

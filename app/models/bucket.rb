@@ -9,9 +9,5 @@ class Bucket < ApplicationRecord
 
   validates :name, presence: true
 
-  def monthly_bucket?
-    bucketable_type == 'MonthlyBucket'
-  end
-
   normalizes :name, with: ->(name) { name.strip.downcase }
 end

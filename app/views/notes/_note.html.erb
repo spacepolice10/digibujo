@@ -1,5 +1,5 @@
 <turbo-frame id="<%= dom_id(note) %>" class="bullet" data-bullet-type="note">
-        <div class="bullet--body" data-controller="bullet-navigation" data-action="mouseup->bullet-navigation#rememberSelection click->bullet-navigation#navigate" data-bullet-navigation-href-value="<%= edit_bullet_path(note) %>">
+  <div class="bullet--body">
     <div class="bullet--excerpt">
       <%= note.excerpt %>
     </div>

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ArchivedController < ApplicationController
   def index
     @bullets = set_page_and_extract_portion_from(

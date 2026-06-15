@@ -15,9 +15,4 @@ class User < ApplicationRecord
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
   validates :email_address, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
-
-  def collections
-    Collection.joins(:bucket).where(buckets: { user_id: id }).order('buckets.name')
-  end
-
 end

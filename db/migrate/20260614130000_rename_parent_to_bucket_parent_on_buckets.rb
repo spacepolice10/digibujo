@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RenameParentToBucketParentOnBuckets < ActiveRecord::Migration[8.1]
   def change
     rename_column :buckets, :parent_id, :bucket_parent_id

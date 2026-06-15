@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MigrateToNewTypes < ActiveRecord::Migration[8.1]
   def up
     # 1. Find the "Future Log" root Collection bucket

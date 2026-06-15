@@ -17,14 +17,14 @@ module Search
     projects = Current.user.projects
     return projects.order(:name) if q.blank?
 
-    projects.where("name LIKE ?", "%#{sanitized_q}%").order(:name)
+    projects.where('name LIKE ?', "%#{sanitized_q}%").order(:name)
   end
 
   def search_buckets
     buckets = Current.user.buckets.includes(:bucketable, :bullets)
     return buckets.order(:name) if q.blank?
 
-    buckets.where("name LIKE ?", "%#{sanitized_q}%").order(:name)
+    buckets.where('name LIKE ?', "%#{sanitized_q}%").order(:name)
   end
 
   def search_bullets
@@ -38,6 +38,6 @@ module Search
   def searchable_text(bullet)
     bucket_names = [bullet.bucket&.name].compact
     project_names = bullet.projects.map(&:name)
-    [bullet.content.to_plain_text, *bucket_names, *project_names].join(" ").downcase
+    [bullet.body.to_plain_text, bullet.rich_body&.to_plain_text.to_s, *bucket_names, *project_names].join(' ').downcase
   end
 end

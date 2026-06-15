@@ -9,8 +9,8 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'index shows activities newest first' do
-    a = @user.bullets.create!(bulletable: Task.create!, content: 'One')
-    b = @user.bullets.create!(bulletable: Note.create!, content: 'Two')
+    a = @user.bullets.create!(bulletable: Task.create!, body: 'One')
+    b = @user.bullets.create!(bulletable: Note.create!, body: 'Two')
     BulletActivityRecorder.record_updated!(bullet: a)
     BulletActivityRecorder.record_archived!(bullet: b)
 
@@ -22,8 +22,8 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'index filters by bullet_id' do
-    keep = @user.bullets.create!(bulletable: Task.create!, content: 'Keep me visible')
-    other = @user.bullets.create!(bulletable: Note.create!, content: 'Hidden from filter qxz')
+    keep = @user.bullets.create!(bulletable: Task.create!, body: 'Keep me visible')
+    other = @user.bullets.create!(bulletable: Note.create!, body: 'Hidden from filter qxz')
     BulletActivityRecorder.record_completed!(bullet: keep)
     BulletActivityRecorder.record_updated!(bullet: other)
 
@@ -36,7 +36,7 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
 
   test 'index returns not found for another users bullet' do
     other = users(:two)
-    foreign = other.bullets.create!(bulletable: Task.create!, content: 'Foreign')
+    foreign = other.bullets.create!(bulletable: Task.create!, body: 'Foreign')
 
     get activities_path(bullet_id: foreign.id)
 

@@ -1,0 +1,21 @@
+<turbo-frame id="<%= dom_id(person, :pin_button) %>">
+  <% if person.pinned? %>
+    <%= button_to people_pin_path,
+          method: :delete,
+          params: { person_id: person.id },
+          class: "button--secondary button--icon bucket--list-item-pin",
+          form: { data: { turbo_stream: true } },
+          aria: { label: "Unpin #{person.name}" } do %>
+      <i class="icon" style="--icon-mask: var(--icon-unpin)" aria-hidden="true"></i>
+    <% end %>
+  <% else %>
+    <%= button_to people_pin_path,
+          method: :post,
+          params: { person_id: person.id },
+          class: "button--secondary button--icon",
+          form: { data: { turbo_stream: true } },
+          aria: { label: "Pin #{person.name}" } do %>
+      <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
+    <% end %>
+  <% end %>
+</turbo-frame>

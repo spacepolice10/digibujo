@@ -8,7 +8,7 @@ module PrepareBullets
   private
 
   def prepare_bullets
-    ids = params.fetch(:bullet_ids, "").split(",").map(&:strip).grep(/\A\d+\z/).map(&:to_i).uniq
+    ids = params.fetch(:bullet_ids, '').split(',').map(&:strip).grep(/\A\d+\z/).map(&:to_i).uniq
     raise ActiveRecord::RecordNotFound if ids.empty? || ids.size > MAX_BULK_BULLET_IDS
 
     @bullets = Current.user.bullets.where(id: ids).order(:id)

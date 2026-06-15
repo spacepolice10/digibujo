@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class LoginCode < ApplicationRecord
   EXPIRY = 15.minutes
   CODE_LENGTH = 6
@@ -17,7 +19,7 @@ class LoginCode < ApplicationRecord
   def self.create_for(user)
     code = generate_code
     record = user.login_codes.create!(code_digest: digest(code))
-    [ record, code ]
+    [record, code]
   end
 
   def code_matches?(submitted)

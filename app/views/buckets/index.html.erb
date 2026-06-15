@@ -42,7 +42,7 @@
     <ul class="layout--list bucket--list">
       <%= render @collections.select { |c| c.bucket != @future } %>
     </ul>
-    <% if @collections.count >= 8 %>
+    <% if @collections.size >= BucketsController::COLLECTIONS_LIMIT %>
       <%= link_to "Show more", collections_path, class: "button--secondary", "aria-label": "All collections", data: { turbo_frame: "_top" } %>
     <% end %>
 

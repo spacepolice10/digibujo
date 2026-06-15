@@ -16,25 +16,8 @@ class MenuControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "nav[data-controller=?][data-grid-navigation-columns-value=?]", "grid-navigation", "1"
     assert_select "nav a.button--secondary.button--hotkey[data-grid-navigation-target=?]", "item", count: 5
-    assert_select "nav a[data-hotkey=?]", "Shift+1"
-    assert_select "nav a[data-hotkey=?]", "Shift+5"
-    assert_select "nav a[data-controller=?]", "hotkey", count: 5
-    assert_select "nav a[href=?][data-hotkey-bindings=?]", daylog_path, "Shift+2 Ctrl+D Meta+D"
-    assert_select "nav a[href=?]", monthly_bucket_path
-    assert_select ".menu--search[data-controller~=?]", "combobox"
-    assert_select "form.search--form[action=?]", search_palette_path
-    assert_select "input.search--textform[data-search-target=?]", "textform"
-    assert_select "turbo-frame#menu_palette_results"
-  end
-
-  test "show lists collections in menu palette" do
-    create_collection!(@user, name: "reading list")
-
-    get menu_path
-
-    assert_response :success
-    assert_select "turbo-frame#menu_palette_results h4.search--section-heading", text: "Collections"
-    assert_match "reading list", response.body
+    assert_select "form.search--form[action=?]", search_path
+    assert_select "turbo-frame#menu_search"
   end
 
   test "show renders menu page on desktop" do
@@ -42,7 +25,7 @@ class MenuControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "nav[data-controller=?]", "grid-navigation"
-    assert_select "form.search--form[action=?]", search_palette_path
+    assert_select "form.search--form[action=?]", search_path
   end
 
   test "show pre-fills search field from q param" do
@@ -50,5 +33,6 @@ class MenuControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "input.search--textform[value=?]", "hello"
+    assert_select "turbo-frame#menu_search[src=?]", search_path(q: "hello")
   end
 end

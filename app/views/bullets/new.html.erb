@@ -1,19 +1,14 @@
 <turbo-frame id="<%= @composer_frame_id.presence || "new_bullet_form" %>">
-  <% if @bulletable_type.presence_in(Bullet.bulletable_types) %>
-    <% default_project = @default_project_id.present? ? Current.user.projects.find(@default_project_id) : nil %>
-    <% default_person = @default_person_id.present? ? Current.user.people.find(@default_person_id) : nil %>
-    <%= render "bullets/editors/#{@bulletable_type.downcase}",
-          bullet: @bullet,
-          default_project: default_project,
-          default_person: default_person,
-          attributes: {
-            pops_on: @bullet.pops_on,
-            bucket_id: @bullet.bucket_id,
-            render_context: @render_context,
-            monthly_bucket_id: @monthly_bucket_id
-          }.compact %>
-  <% else %>
-    <%= render "bullets/composer",
-          attributes: { pops_on: @bullet.pops_on, bucket_id: @bullet.bucket_id } %>
-  <% end %>
+  <% default_project = @default_project_id.present? ? Current.user.projects.find(@default_project_id) : nil %>
+  <% default_person = @default_person_id.present? ? Current.user.people.find(@default_person_id) : nil %>
+  <%= render "bullets/bulletable_form",
+        bullet: @bullet,
+        default_project: default_project,
+        default_person: default_person,
+        attributes: {
+          pops_on: @bullet.pops_on,
+          bucket_id: @bullet.bucket_id,
+          render_context: @render_context,
+          monthly_bucket_id: @monthly_bucket_id
+        }.compact %>
 </turbo-frame>

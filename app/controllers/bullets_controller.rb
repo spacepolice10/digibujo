@@ -8,7 +8,9 @@ class BulletsController < ApplicationController
       pops_on: params[:pops_on],
       bucket_id: params[:bucket_id]
     )
-    @bulletable_type = params[:bulletable_type].presence || "Note"
+    type_name = params[:bulletable_type].presence || 'Task'
+    @bullet.bulletable_type = type_name
+    @bullet.bulletable = type_name.constantize.new
     @composer_frame_id = params[:composer_frame_id]
     @render_context = params[:render_context]
     @monthly_bucket_id = params[:monthly_bucket_id]
@@ -21,8 +23,11 @@ class BulletsController < ApplicationController
     @monthly_bucket_id = params.dig(:bullet, :monthly_bucket_id)
     @composer_frame_id = params[:composer_frame_id]
     @bullet = create_bullet_from
+    @bullet.pending_attachment_count = Array(params.dig(:bullet, :attachments)).compact_blank.size
     if @bullet.save
-      @bullet.apply_project_tags_from_content!
+      attach_pending_files!(@bullet)
+      update_bulletable!(@bullet)
+      finalize_bullet_content!(@bullet)
       @bullet.reload
       respond_to do |format|
         format.turbo_stream { render_create_turbo_stream }
@@ -41,7 +46,10 @@ class BulletsController < ApplicationController
   def show; end
 
   def update
-    if @bullet.update(bullet_params)
+    if @bullet.update(bullet_params.except(:attachments, :bulletable_attributes))
+      attach_pending_files!(@bullet)
+      update_bulletable!(@bullet)
+      finalize_bullet_content!(@bullet)
       BulletActivityRecorder.record_updated!(bullet: @bullet)
       respond_to do |format|
         format.turbo_stream
@@ -68,39 +76,62 @@ class BulletsController < ApplicationController
 
   def bullet_params
     params.require(:bullet).permit(
-      :content,
+      :body,
+      :rich_body,
       :pops_on,
       :bulletable_type,
       :bucket_id,
-      bulletable_attributes: {}
+      attachments: [],
+      bulletable_attributes: %i[mood awaits_research idea]
     )
   end
 
   def create_bullet_from
     permitted = bullet_params
-    type_name = permitted[:bulletable_type].to_s
-    attributes = permitted.except(:bulletable_type, "bulletable_type")
+    type_name = permitted[:bulletable_type].presence || 'Task'
+    attributes = permitted.except(:bulletable_type, :attachments, :bulletable_attributes)
     Current.user.bullets.new(attributes.merge(bulletable: type_name.constantize.new))
+  end
+
+  def attach_pending_files!(bullet)
+    signed_ids = Array(params.dig(:bullet, :attachments)).compact_blank
+    return if signed_ids.empty?
+
+    bullet.attachments.attach(signed_ids)
+  end
+
+  def update_bulletable!(bullet)
+    attrs = params.dig(:bullet, :bulletable_attributes)
+    return unless attrs.present? && bullet.bulletable.is_a?(Note)
+
+    bullet.bulletable.update!(attrs.permit(:mood, :awaits_research, :idea))
+  end
+
+  def finalize_bullet_content!(bullet)
+    body_record = ActionText::RichText.find_by(record: bullet, name: 'body')
+    bullet.apply_project_tags_from_content!(rich_text_record: body_record) if body_record
+    bullet.apply_people_tags_from_content!(rich_text_record: body_record) if body_record
+    bullet.sanitize_rich_body_tag_attachables!
+    purge_blank_rich_body!(bullet)
+  end
+
+  def purge_blank_rich_body!(bullet)
+    return unless bullet.rich_body.blank?
+
+    ActionText::RichText.find_by(record: bullet, name: 'rich_body')&.destroy
   end
 
   def render_create_turbo_stream
     template = if @render_context.present? && create_turbo_stream_variant?(@render_context)
-      "bullets/create.#{@render_context}"
-    else
-      "bullets/create"
-    end
+                 "bullets/create.#{@render_context}"
+               else
+                 'bullets/create'
+               end
     render template
   end
 
   def create_turbo_stream_variant?(render_context)
     lookup_context.exists?("bullets/create.#{render_context}", [], false, [], formats: [:turbo_stream])
-  end
-
-  def editor_attributes_for(bullet)
-    {
-      pops_on: bullet.pops_on,
-      bucket_id: bullet.bucket_id
-    }
   end
 
   def render_invalid_create

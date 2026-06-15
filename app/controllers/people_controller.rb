@@ -5,7 +5,7 @@ class PeopleController < ApplicationController
 
   def index
     @people = Current.user.people.order(created_at: :desc)
-    @people = @people.where("name LIKE ?", "%#{sanitized_string}%") if sanitized_string.present?
+    @people = @people.where('name LIKE ?', "%#{sanitized_string}%") if sanitized_string.present?
   end
 
   def new
@@ -15,7 +15,7 @@ class PeopleController < ApplicationController
   def create
     @person = Current.user.people.build(person_params)
     if @person.save
-      redirect_back fallback_location: people_path, notice: "Person created"
+      redirect_back fallback_location: people_path, notice: 'Person created'
     else
       render :new, status: :unprocessable_entity
     end
@@ -23,16 +23,16 @@ class PeopleController < ApplicationController
 
   def show
     scoped_bullets = Current.user.bullets.joins(:people)
-      .where(people: { id: @person.id })
-      .where(archived: false)
-      .distinct
+                            .where(people: { id: @person.id })
+                            .where(archived: false)
+                            .distinct
     scoped_bullets = scoped_bullets.where(bulletable_type: selected_type) if selected_type.present?
     @bullets = set_page_and_extract_portion_from(scoped_bullets, per_page: [5, 15, 30, 50])
   end
 
   def destroy
     @person.destroy
-    redirect_back fallback_location: people_path, notice: "Person deleted"
+    redirect_back fallback_location: people_path, notice: 'Person deleted'
   end
 
   private

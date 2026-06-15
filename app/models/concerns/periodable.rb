@@ -34,12 +34,12 @@ module Periodable
     return if period_from.blank? && period_to.blank?
 
     if period_from.present? ^ period_to.present?
-      errors.add(:base, "From and To must both be set or both be blank")
+      errors.add(:base, 'From and To must both be set or both be blank')
       return
     end
 
     return unless period_from.present? && period_to.present? && period_to < period_from
 
-    errors.add(:period_to, "must be on or after From")
+    errors.add(:period_to, 'must be on or after From')
   end
 end

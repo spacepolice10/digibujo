@@ -1,9 +1,0 @@
-<% if @failed_bullet&.errors&.any? %>
-  <%= turbo_stream.update "toasts" do %>
-    <%= render "shared/toasts", type: "errmsg", messages: @failed_bullet.errors.full_messages %>
-  <% end %>
-<% else %>
-  <% @bullets.each do |bullet| %>
-    <%= render partial: "bullets/turbo_stream_update", formats: :html, locals: { bullet: bullet, source_bucket: bullet.bucket } %>
-  <% end %>
-<% end %>

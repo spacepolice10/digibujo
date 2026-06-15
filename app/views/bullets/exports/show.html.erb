@@ -31,7 +31,10 @@
         <% end %>
       </header>
       <div class="export--bullet-body<%= " export--bullet-body--done" if task_done %>">
-        <%= bullet.content %>
+        <%= bullet.body %>
+        <% if bullet.rich_body? %>
+          <div class="export--bullet-rich-body"><%= bullet.rich_body %></div>
+        <% end %>
       </div>
     </article>
   <% end %>

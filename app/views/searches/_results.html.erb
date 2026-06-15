@@ -1,45 +1,38 @@
-<turbo-frame id="search_results">
-  <div class="search--results" data-controller="bulk-menu">
-    <% if q.present? %>
-      <% if projects.any? || buckets.any? || bullets.any? %>
-        <h3>Results for "<%= q %>"</h3>
-
-        <% if projects.any? %>
-          <section class="search--section">
-            <h4 class="search--section-heading">Projects</h4>
-            <ul class="layout--list bucket--list">
-              <% projects.each do |project| %>
-                <%= render project %>
-              <% end %>
-            </ul>
-          </section>
-        <% end %>
-
-        <% if buckets.any? %>
-          <section class="search--section">
-            <h4 class="search--section-heading">Buckets</h4>
-            <ul class="layout--list bucket--list">
-              <% buckets.each do |bucket| %>
-                <%= render bucket.bucketable %>
-              <% end %>
-            </ul>
-          </section>
-        <% end %>
-
-        <% if bullets.any? %>
-          <section class="search--section">
-            <h4 class="search--section-heading">Bullets</h4>
-            <div data-bulk-menu-target="list">
-              <%= render "pagination/paginated_records",
-                page: page,
-                pagination_link_path: ->(next_param) { search_path(q: q, page: next_param) } %>
-            </div>
-            <%= render "bullets/bulk_menu" %>
-          </section>
-        <% end %>
-      <% else %>
-        <p class="search--empty">No results for "<%= q %>"</p>
-      <% end %>
+<% if q.present? %>
+  <% if projects.any? || buckets.any? || bullets.any? %>
+    <% if projects.any? %>
+      <section class="menu--palette-section">
+        <h4 class="search--section-heading">Projects</h4>
+        <ul class="layout--list bucket--list" role="listbox">
+          <% projects.each do |project| %>
+            <%= render "searches/project", project: project %>
+          <% end %>
+        </ul>
+      </section>
     <% end %>
-  </div>
-</turbo-frame>
+
+    <% if buckets.any? %>
+      <section class="menu--palette-section">
+        <h4 class="search--section-heading">Buckets</h4>
+        <ul class="layout--list bucket--list" role="listbox">
+          <% buckets.each do |bucket| %>
+            <%= render "searches/bucket", bucket: bucket %>
+          <% end %>
+        </ul>
+      </section>
+    <% end %>
+
+    <% if bullets.any? %>
+      <section class="menu--palette-section">
+        <h4 class="search--section-heading">Bullets</h4>
+        <ul class="layout--list menu--palette-list" role="listbox">
+          <% bullets.each do |bullet| %>
+            <%= render "searches/bullet", bullet: bullet %>
+          <% end %>
+        </ul>
+      </section>
+    <% end %>
+  <% else %>
+    <p class="search--empty">No results for "<%= q %>"</p>
+  <% end %>
+<% end %>

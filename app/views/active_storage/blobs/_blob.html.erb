@@ -1,7 +1,6 @@
 <% if blob.representable? %>
   <span class="attachment attachment--preview attachment--inline attachment--<%= blob.filename.extension %>">
-    <% preview = local_assigns[:preview_src] || blob.representation(resize_to_limit: local_assigns[:in_gallery] ? [ 480, 360 ] : [ 360, 260 ]) %>
-    <%= image_tag preview, class: "attachment--preview-image" %>
+    <%= image_tag blob, class: "attachment--preview-image" %>
   </span>
 <% else %>
   <span class="attachment attachment--file attachment--inline attachment--<%= blob.filename.extension %>">

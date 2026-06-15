@@ -1,17 +1,19 @@
+# frozen_string_literal: true
+
 module Iconable
   extend ActiveSupport::Concern
 
   ICON_MAPPINGS = {
-    "pencil" => "pencil",
-    "circle-check" => "circle-check",
-    "calendar" => "calendar",
-    "file" => "file",
-    "book" => "book",
-    "menu" => "menu",
-    "pin" => "pin",
-    "archive" => "archive",
-    "paperclip" => "paperclip",
-    "arrow-up" => "arrow-up",
+    'pencil' => 'pencil',
+    'circle-check' => 'circle-check',
+    'calendar' => 'calendar',
+    'file' => 'file',
+    'book' => 'book',
+    'menu' => 'menu',
+    'pin' => 'pin',
+    'archive' => 'archive',
+    'paperclip' => 'paperclip',
+    'arrow-up' => 'arrow-up'
   }.freeze
 
   included do
@@ -23,7 +25,7 @@ module Iconable
   end
 
   def icon_mask
-    key = icon.presence || "tag"
+    key = icon.presence || 'tag'
     "var(--icon-#{key})"
   end
 end

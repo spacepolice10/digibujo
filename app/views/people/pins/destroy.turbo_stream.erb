@@ -1,0 +1,3 @@
+<%= turbo_stream.replace dom_id(@person, :pin_button) do %>
+  <%= render "people/pins_button", person: @person %>
+<% end %>

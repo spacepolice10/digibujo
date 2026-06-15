@@ -58,14 +58,15 @@
 
 <div class="menu--search"
      data-controller="combobox search"
-     data-search-replace-link-value="<%= replace_link %>">
-  <%= form_with url: search_palette_path,
+     data-search-replace-link-value="<%= replace_link %>"
+     data-search-history-url-value="<%= menu_path %>">
+  <%= form_with url: search_path,
         method: :get,
         local: true,
         class: "search--form",
-        data: { search_target: "form" } do |form| %>
+        data: { search_target: "form", turbo_frame: "menu_search" } do |form| %>
     <%= form.search_field :q,
-          value: @q,
+          value: @menu_q,
           placeholder: "Search by bullet text or bucket name",
           class: "search--textform",
           data: {
@@ -77,9 +78,8 @@
           aria: { label: "Search" } %>
   <% end %>
 
-  <turbo-frame id="menu_palette_results" class="menu--palette">
-    <% if @q.to_s.strip.blank? %>
-      <%= render "menu/collections", collections: menu_collections %>
-    <% end %>
+  <turbo-frame id="menu_search"
+               class="menu--palette"
+               <% if @menu_q.present? %>src="<%= search_path(q: @menu_q) %>"<% end %>>
   </turbo-frame>
 </div>

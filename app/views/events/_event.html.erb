@@ -2,12 +2,12 @@
   <div class="bullet--marker bullet--event-marker">
     <i class="icon" style="--icon-mask: var(--icon-circle)" aria-hidden="true"></i>
   </div>
-     <div class="bullet--body" data-controller="bullet-navigation" data-action="mouseup->bullet-navigation#rememberSelection click->bullet-navigation#navigate" data-bullet-navigation-href-value="<%= edit_bullet_path(event) %>">
+  <div class="bullet--body">
     <div class="bullet--name">
-      <%= event.content %>
+      <%= event.body %>
     </div>
     <%= render "bullets/metadata", bullet: event %>
-    <%= render "bullets/attachments_gallery", bullet: event %>
+    <%= render "bullets/attachments", bullet: event %>
 </div>
   <%= render "bullets/select", bullet: event %>
 </turbo-frame>

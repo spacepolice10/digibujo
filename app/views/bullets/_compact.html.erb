@@ -12,9 +12,7 @@
   <a href="<%= edit_bullet_path(bullet) %>"
      class="bullet-compact--link"
      draggable="false"
-     data-turbo-frame="_top"
-     data-controller="bullet-navigation"
-     data-action="mouseup->bullet-navigation#rememberSelection">
+     data-turbo-frame="_top">
     <span class="bullet--marker bullet-compact--marker <%= bullet.marker_styles %>" aria-hidden="true">
       <i class="icon" style="--icon-mask: var(--icon-<%= bullet.marker_icon %>)" aria-hidden="true"></i>
       <% if bullet.mood_marker.present? %>

@@ -5,15 +5,6 @@
   <% end %>
 <% else %>
   <% @bullets.each do |bullet| %>
-    <% bucket = bullet.bucket %>
-    <% if bucket&.monthly_bucket? %>
-      <% monthly_bucket = bucket.bucketable %>
-      <%= turbo_stream.remove dom_id(bullet) %>
-      <%= turbo_stream.append dom_id(monthly_bucket, :unplanned_bullets) do %>
-        <%= render_monthly_bucket_bullet(bullet) %>
-      <% end %>
-    <% else %>
-      <%= turbo_stream.remove dom_id(bullet, :pops_notice) %>
-    <% end %>
+    <%= turbo_stream.remove dom_id(bullet, :pops_notice) %>
   <% end %>
 <% end %>

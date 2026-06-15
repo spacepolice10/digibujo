@@ -3,7 +3,6 @@
 module Poppable
   extend ActiveSupport::Concern
 
-
   def pop!(pops_on:)
     update!(
       pops_on: pops_on,
@@ -15,5 +14,4 @@ module Poppable
   def unpop!(previous_pops_on:)
     update!(pops_on: previous_pops_on)
   end
-
 end

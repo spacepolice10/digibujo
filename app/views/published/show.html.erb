@@ -15,7 +15,13 @@
     <% end %>
   </header>
   <div class="bullet-show-body">
-    <%= @bullet.content %>
+    <%= @bullet.body %>
+    <%= render "bullets/attachments", bullet: @bullet %>
+    <% if @bullet.rich_body? %>
+      <section class="bullet--rich-body">
+        <%= @bullet.rich_body %>
+      </section>
+    <% end %>
   </div>
   <footer class="bullet-show-footer">
     <time class="bullet-show-date"><%= @bullet.created_at.strftime("%-d %b %Y") %></time>

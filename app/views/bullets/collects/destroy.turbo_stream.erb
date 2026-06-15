@@ -4,6 +4,6 @@
   <% end %>
 <% else %>
   <% @bullets.each do |bullet| %>
-    <%= render partial: "bullets/turbo_stream_update", formats: :html, locals: { bullet: bullet, source_bucket: @source_buckets[bullet.id] } %>
+    <%= render partial: "bullets/turbo_stream_update", formats: :html, locals: { bullet: bullet } %>
   <% end %>
 <% end %>

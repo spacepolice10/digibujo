@@ -13,6 +13,6 @@ class CreatePublishedEntities < ActiveRecord::Migration[8.1]
     add_index :published_entities, :code, unique: true
     add_index :published_entities, %i[user_id publishable_type publishable_id],
               unique: true,
-              name: "idx_published_on_user_and_publishable"
+              name: 'idx_published_on_user_and_publishable'
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FutureBucket < ApplicationRecord
   include Bucketable
   belongs_to :user

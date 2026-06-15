@@ -2,7 +2,6 @@
 <%= link_to new_bullet_path(
       pops_on: date.iso8601,
       bucket_id: bucket.id,
-      bulletable_type: "Event",
       composer_frame_id: dom_id(monthly_bucket, "date_#{date}_composer"),
       render_context: "monthly_bucket_by_date",
       monthly_bucket_id: monthly_bucket.id

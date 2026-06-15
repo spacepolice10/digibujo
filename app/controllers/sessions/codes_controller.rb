@@ -1,27 +1,33 @@
-class Sessions::CodesController < ApplicationController
-  layout "session"
+# frozen_string_literal: true
 
-  allow_unauthenticated_access
-  rate_limit to: 5, within: 3.minutes, only: :create, with: -> { redirect_to new_session_code_path, alert: "Try again later." }
+module Sessions
+  class CodesController < ApplicationController
+    layout 'session'
 
-  def new
-    @email = session[:login_email]
-    redirect_to new_session_path unless @email
-  end
+    allow_unauthenticated_access
+    rate_limit to: 5, within: 3.minutes, only: :create, with: lambda {
+      redirect_to new_session_code_path, alert: 'Try again later.'
+    }
 
-  def create
-    LoginCode.sweep
+    def new
+      @email = session[:login_email]
+      redirect_to new_session_path unless @email
+    end
 
-    user = User.find_by(email_address: session[:login_email])
+    def create
+      LoginCode.sweep
 
-    if user && (login_code = user.login_codes.find { |lc| !lc.expired? && lc.code_matches?(params[:code]) })
-      login_code.destroy
-      user.login_codes.delete_all
-      session.delete(:login_email)
-      start_new_session_for(user)
-      redirect_to after_authentication_url
-    else
-      redirect_to new_session_code_path, alert: "Invalid or expired code."
+      user = User.find_by(email_address: session[:login_email])
+
+      if user && (login_code = user.login_codes.find { |lc| !lc.expired? && lc.code_matches?(params[:code]) })
+        login_code.destroy
+        user.login_codes.delete_all
+        session.delete(:login_email)
+        start_new_session_for(user)
+        redirect_to after_authentication_url
+      else
+        redirect_to new_session_code_path, alert: 'Invalid or expired code.'
+      end
     end
   end
 end

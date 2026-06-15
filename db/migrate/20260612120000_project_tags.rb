@@ -2,19 +2,19 @@
 
 class ProjectTags < ActiveRecord::Migration[8.1]
   class MigrationProject < ApplicationRecord
-    self.table_name = "projects"
+    self.table_name = 'projects'
   end
 
   class MigrationBucket < ApplicationRecord
-    self.table_name = "buckets"
+    self.table_name = 'buckets'
   end
 
   class MigrationBullet < ApplicationRecord
-    self.table_name = "bullets"
+    self.table_name = 'bullets'
   end
 
   class MigrationBulletProject < ApplicationRecord
-    self.table_name = "bullet_projects"
+    self.table_name = 'bullet_projects'
   end
 
   def up
@@ -62,8 +62,8 @@ class ProjectTags < ActiveRecord::Migration[8.1]
   private
 
   def migrate_project_buckets_to_tags
-    say_with_time "Migrating project buckets to tags" do
-      MigrationBucket.where(bucketable_type: "Project").find_each do |bucket|
+    say_with_time 'Migrating project buckets to tags' do
+      MigrationBucket.where(bucketable_type: 'Project').find_each do |bucket|
         project = MigrationProject.find(bucket.bucketable_id)
         project.update!(
           user_id: bucket.user_id,
@@ -88,18 +88,18 @@ class ProjectTags < ActiveRecord::Migration[8.1]
   end
 
   def delete_project_buckets
-    say_with_time "Removing project buckets" do
-      MigrationBucket.where(bucketable_type: "Project").delete_all
+    say_with_time 'Removing project buckets' do
+      MigrationBucket.where(bucketable_type: 'Project').delete_all
       MigrationProject.where(user_id: nil).delete_all
     end
   end
 
   def recreate_project_buckets_from_projects
-    say_with_time "Recreating project buckets from projects" do
+    say_with_time 'Recreating project buckets from projects' do
       MigrationProject.find_each do |project|
         bucket = MigrationBucket.create!(
           user_id: project.user_id,
-          bucketable_type: "Project",
+          bucketable_type: 'Project',
           bucketable_id: project.id,
           name: project.name,
           colour: project.colour,

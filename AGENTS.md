@@ -64,7 +64,7 @@ Custom session-based auth built with an `Authentication` concern (not Devise). U
 | `Note`  | `Bulletable`                   | Long-form/reference entry |
 | `Event` | `Bulletable`                   | Temporal (not completable) |
 
-Bullets have rich text `content` via Action Text with Lexxy as the editor; rendered content uses the app-owned `.rich-text-content` hook alongside Lexxy's `.lexxy-content` class. Files pasted, dropped, or selected in Lexxy become Action Text attachments stored through Active Storage and rendered inline via `app/views/active_storage/blobs/_blob.html.erb` (styled in `attachment.css`). **Project tags** use a many-to-many join (`bullet_projects` → `projects`); `Projectable` on `Bullet` provides `tag_project!`, `untag_project!`, `untag_all_projects!`, and `apply_project_tags_from_content!` (syncs join rows from Lexxy `#` project attachments on save; project pills stay inline in `bullet.content` via `projects/_attachable`). The composer includes a Lexxy `<lexxy-prompt trigger="#">` backed by `GET /projects/suggestions`. **Bucket membership** is separate: `Bullet` **optionally** `belongs_to :bucket` (`bullets.bucket_id` → `buckets`) for **Collection** and **TimeSpread** only — at most one bucket per bullet. `Bucket` is a `delegated_type :bucketable` for `Collection` and `TimeSpread` (each owns exactly one `Bucket`). The composer posts **`bucket_id`** on collection/timespread pages. **`Collectable`** (`collect!` / `uncollect!`) is bucket-only; bulk **collect** in the UI tags **projects** via `project_id` on `POST /bullets/collect` (does not clear `bucket_id`). **Destroying** a bucket **nullifies** `bullets.bucket_id` for linked bullets (`dependent: :nullify`). Other intent concerns (`Poppable#pop!` / `#unpop!`, etc.) update organization metadata (`triaged_at`, `pops_on`, `bucket`) without forcing bullet type conversion. To add a new bulletable type: create the model, `include Bulletable`, and register it in `Bullet`'s `delegated_type` declaration.
+Bullets store three content layers: **`body`** (Action Text, Lexxy preset `inline` — short log line with `#` / `@` prompts), optional **`rich_body`** (Action Text, preset `expand` — code, files, markdown only; no `#` / `@` prompts and no tag sync), and **`attachments`** (`has_many_attached` — direct uploads via `bullet-composer` Stimulus, rendered in `_attachments.html.erb`, not inline in `body`). Rendered rich text uses `.rich-text-content` alongside Lexxy's `.lexxy-content`. **Project tags** use `bullet_projects` → `projects`; `Projectable` syncs join rows from `#` attachments in `body` on save (pills inline via `projects/_attachable`). **Person tags** use `bullet_people` → `people`; `Personable` syncs from `@` attachments in `body`. The unified composer (`bullets/_bulletable_form.html.erb`) is opened via **Add bullet**; type (Task / Note / Event) is chosen with a select (locked on edit). Note-only flags (mood, research, idea) toggle when Note is selected. Expand is always available and submits `rich_body` in the same form (blank `rich_body` is discarded on save). Paste/drop/file-picker on the inline editor are intercepted (`lexxy:file-accept`) and routed to direct attachments. **Bucket membership**: `Bullet` optionally `belongs_to :bucket` for **Collection** and **TimeSpread** only. **`Collectable`** sets or clears `bullets.bucket_id`; bulk collect picks a collection via `POST /bullets/collect` with `bucket_id`. Other intents (`Poppable`, etc.) update `triaged_at`, `pops_on`, `bucket` without type conversion.
 
 ### Bullet Status
 `Bullet` has two independent boolean columns: `pinned` and `archived` (both `default: false, null: false`). There is no `status` enum. `Pinnable` adds a `pinned` scope and `pin!` / `unpin!` helpers (used by bullets and buckets; no pin count limit). `Archivable` adds an `archived` scope. The `timeline` scope returns all bullets (`all`) — pinned and archived bullets remain visible in the timeline and are distinguished by icons in the bullet partial.
@@ -82,9 +82,9 @@ Select bullets via row checkboxes; the sticky **`_bulk_menu`** (styled in `bulk-
 
 **Direct intents (no UI fetch):** **pin**, **archive** — `POST`/`DELETE` with `turbo_stream` from menu forms.
 
-**UI fetch then intent:** **pop** and **tag project** — `openPopsPicker` / `openCollectsPicker` set frame `src` with `bullet_ids` from `idListValue`, then `showPopover()` (lazy turbo-frame + popover, like pinned footer); picker POST/search forms use `data-bulk-menu-target="idList"` (synced on `idListTargetConnected` and `idListValueChanged`). Project tag search reloads the `collects_picker_frame` via GET with `q` (and Lexxy suggestions use `filter`).
+**UI fetch then intent:** **pop** and **collect** — `openPopsPicker` / `openCollectsPicker` set frame `src` with `bullet_ids` from `idListValue`, then `showPopover()` (lazy turbo-frame + popover, like pinned footer); picker POST/search forms use `data-bulk-menu-target="idList"` (synced on `idListTargetConnected` and `idListValueChanged`). Collect picker search reloads the `collects_picker_frame` via GET with `q`. Menu embeds search via `turbo-frame#menu_search` (`GET /search`, turbo-stream for live input); menu shell is `GET /menu`. Lexxy `#` / `@` suggestions use `filter`.
 
-**Pop intent:** `POST /bullets/pop` with `pops_on` (`DELETE` to restore previous day). **Tag project intent:** `POST /bullets/collect` with `project_id` (`DELETE` untags all projects on the selection). **Postpone** on the daylog is `POST /bullets/pop` with `pops_on` = viewing day + 1. Pin/Unpin buttons hide when the selection includes a pinned or unpinned bullet respectively (`data-pinned` on checkboxes). Activity records `popped` only; reports infer moves from `pops_on` changes. Project tag/untag actions record `project_tagged` / `project_untagged`. Responses use Turbo Streams where applicable, with HTML fallbacks.
+**Pop intent:** `POST /bullets/pop` with `pops_on` (`DELETE` to restore previous day). **Collect intent:** `POST /bullets/collect` with `bucket_id` (`DELETE` uncollects the selection). **Postpone** on the daylog is `POST /bullets/pop` with `pops_on` = viewing day + 1. Pin/Unpin buttons hide when the selection includes a pinned or unpinned bullet respectively (`data-pinned` on checkboxes). Activity records `popped` and `collected`; reports infer moves from `pops_on` changes. Project/person tag changes from Lexxy attachments record `project_tagged` / `project_untagged` and `person_tagged` / `person_untagged`. Responses use Turbo Streams where applicable, with HTML fallbacks.
 
 `Collectable` and `Poppable` are intent-focused concerns; they do not force bullet type conversion.
 
@@ -99,20 +99,20 @@ Select bullets via row checkboxes; the sticky **`_bulk_menu`** (styled in `bulk-
 ### Analog BuJo Alignment
 The architecture is intentionally closer to analog Bullet Journal behavior:
 
-- **Rapid logging** uses a native composer type select for Task, Note, and Event
+- **Rapid logging** uses one **Add bullet** composer with a type select (Task / Note / Event); inline `body` by default, Expand for optional `rich_body`
 - **Daily focus** is explicit (`/daylog` and dated daylog paths show the daily log)
 - **Migration over rewrite** happens where needed by editing or changing bullet type
 - **Deferred decisions** are supported by moving `pops_on` forward (postpone) or tagging a project
 - **Separation of concerns** mirrors BuJo pages: today/timeline, archived, pinned
 
 ### Projects (tags)
-`Project` is a first-class model (`belongs_to :user`) with `name`, `colour`, `icon`, and `pinned` (`Colourable`, `Iconable`, `Pinnable`, `ActionText::Attachable`). Bullets link via `bullet_projects` (many-to-many; a bullet may have several project tags). `GET /projects/:id` lists bullets joined through `bullet_projects`. Project show composer passes `default_project_id` so new bullets hydrate with that tag in the editor. Pin/unpin uses `POST`/`DELETE` on `projects/pin`.
+`Project` is a first-class model (`belongs_to :user`) with `name`, `colour`, `icon`, and `pinned` (`Colourable`, `Iconable`, `Pinnable`, `ActionText::Attachable`). Bullets link via `bullet_projects` (many-to-many; a bullet may have several project tags). `GET /projects/:id` lists bullets joined through `bullet_projects`. Project show composer passes `default_project_id` so new bullets hydrate with that tag in the editor. Pin/unpin uses `POST`/`DELETE` on `projects/pin`. `Person` mirrors the same pin/unpin pattern via `people/pin` on the person show page.
 
 ### Buckets and memberships
 `Bucket` belongs to a user and uses `delegated_type :bucketable` (`Collection`, `TimeSpread` only). `TimeSpread` includes **`Periodable`** for time restrictions (`period_from` / `period_to`). Each bullet has **zero or one** bucket via `bullets.bucket_id` for collection/timespread membership. `Collection` rows do not store `user_id`; ownership is the bucket’s `user_id`, with `creation_user_id` on the bucketable for attribution where needed. Bucket **identity** (`name`, `colour`, `icon`) is stored on `buckets` (`name` required; `colour` / `icon` optional via `Colourable` and `Iconable`; no auto-assign). Collection bucket names are unique per user. `Collection` is a thin delegated type (no identity columns); it delegates `name`, `colour`, `icon`, and colour CSS helpers to `bucket` for display. Create forms pass identity fields on the bucketable param object; controllers persist them on the bucket row. The index hub is at `GET /buckets` (linked from the app header). **Streams** (saved filtered views) were removed; use projects, collections, and timeline filters instead.
 
 ### Pinned workspace
-Desktop footer docks live in [`shared/_footer.html.erb`](app/views/shared/_footer.html.erb) (`#pinned_buckets_footer`, `#pinned_bullets_dock`) but are not mounted in the default layout while navigation is in flux. Pin/unpin Turbo Streams still target those frame ids when present. Mobile uses the bottom tab bar (`shared/_mobile_tab_bar`) and **`GET /pinned`** workspace (`pinned/index.html+mobile.erb`) for pinned bullets, pinned projects, and pinned bucket groups (collections/timespreads). Lazy popover lists still load via [`pinned#index`](app/controllers/pinned_controller.rb) (`Turbo-Frame: pinned_bullets`) or [`buckets#show`](app/controllers/buckets_controller.rb) for footer bucket frames.
+Desktop footer docks live in [`shared/_footer.html.erb`](app/views/shared/_footer.html.erb) (`#pinned_buckets_footer`, `#pinned_bullets_dock`) but are not mounted in the default layout while navigation is in flux. Pin/unpin Turbo Streams still target those frame ids when present. Mobile uses the bottom tab bar (`shared/_mobile_tab_bar`) and **`GET /pinned`** workspace (`pinned/index.html+mobile.erb`) for pinned bullets, pinned projects, pinned people, and pinned bucket groups (collections/timespreads). Lazy popover lists still load via [`pinned#index`](app/controllers/pinned_controller.rb) (`Turbo-Frame: pinned_bullets`) or [`buckets#show`](app/controllers/buckets_controller.rb) for footer bucket frames.
 
 ### Turbo Streams
 Mutating bullet actions (`create`, `update`, `destroy`, and bullet sub-resources) respond to `format.turbo_stream` for inline updates where applicable. HTML fallback redirects are provided. Bulk intents use the shared `_bulk_menu` forms; row checkboxes are unstyled (native inputs).
@@ -146,16 +146,18 @@ POST   /bullets/pin                          → bullets/pins#create
 DELETE /bullets/pin                          → bullets/pins#destroy
 POST   /bullets/archive                      → bullets/archives#create
 DELETE /bullets/archive                      → bullets/archives#destroy
-POST   /bullets/collect                      → bullets/collects#create (tag project; `project_id`)
-DELETE /bullets/collect                      → bullets/collects#destroy (untag all projects)
+POST   /bullets/collect                      → bullets/collects#create (collect into collection; `bucket_id`)
+GET    /bullets/collect/new                  → bullets/collects#new
+DELETE /bullets/collect                      → bullets/collects#destroy (uncollect)
 POST   /bullets/pop                          → bullets/pops#create
 DELETE /bullets/pop                          → bullets/pops#destroy
 POST   /bullets/:bullet_id/complete          → bullets/completes#create
 DELETE /bullets/:bullet_id/complete          → bullets/completes#destroy
 PATCH  /bullets/:bullet_id/publish           → bullets/publishes#update
 
-# Search
-resource :search, only: :show
+# Search & menu
+GET    /search                               → searches#show (?q=; turbo-stream updates menu_search frame)
+GET    /menu                                 → menu#show (?q= pre-fills search field)
 
 # Buckets, projects, collections
 GET    /buckets                              → buckets#index (sidebar shell)
@@ -173,8 +175,10 @@ GET    /collections/new                      → collections#new
 POST   /collections                          → collections#create
 GET    /collections/:id                      → collections#show
 DELETE /collections/:id                      → collections#destroy
-
-# Other pages
+GET    /people/suggestions                   → people/suggestions#index
+POST   /people/pin                           → people/pins#create
+DELETE /people/pin                           → people/pins#destroy
+GET    /people                               → people#index
 GET    /activities                           → activities#index (?bullet_id= optional)
 resources :pinned, only: :index
 resources :archived, only: :index

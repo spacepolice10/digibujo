@@ -5,7 +5,7 @@ const SEARCH_DEBOUNCE_MS = 20;
 
 export default class extends Controller {
   static targets = ["form", "textform"];
-  static values = { replaceLink: { type: Boolean, default: true } };
+  static values = { replaceLink: { type: Boolean, default: true }, historyUrl: String };
 
   connect() {
     this.abortController = null;
@@ -45,7 +45,11 @@ export default class extends Controller {
     if (!window.Turbo) return;
     window.Turbo.renderStreamMessage(turboStreamHtml);
     if (this.replaceLinkValue) {
-      history.replaceState({}, "", url.toString());
+      const historyUrl = this.hasHistoryUrlValue
+        ? new URL(this.historyUrlValue, window.location.origin)
+        : url;
+      historyUrl.searchParams.set("q", q);
+      history.replaceState({}, "", historyUrl.toString());
     }
   }
 

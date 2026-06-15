@@ -1,27 +1,7 @@
-<div class="search--layout">
-  <div class="search--header">
-    <h2>Search</h2>
-  </div>
-
-  <%= form_with url: search_path,
-        method: :get,
-        local: true,
-        class: "search--form",
-        data: {
-          controller: "search",
-          search_target: "form"
-        } do |form| %>
-    <%= form.search_field :q,
-          value: @q,
-          autofocus: true,
-          placeholder: "Search by bullet text or bucket name",
-          class: "search--textform",
-          data: {
-            action: "input->search#search",
-            search_target: "textform"
-          },
-          autocomplete: "off" %>
-  <% end %>
-
-<%= render "results", q: @q, projects: @projects, buckets: @buckets, bullets: @bullets, page: @page %>
-</div>
+<turbo-frame id="menu_search" class="menu--palette">
+  <%= render "searches/results",
+        q: @q,
+        projects: @projects,
+        buckets: @buckets,
+        bullets: @bullets %>
+</turbo-frame>

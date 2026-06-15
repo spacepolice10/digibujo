@@ -3,8 +3,6 @@
 module Projectable
   extend ActiveSupport::Concern
 
-  PROJECT_ATTACHMENT_SELECTOR = 'action-text-attachment[content-type="application/vnd.actiontext.project"]'
-
   included do
     has_many :bullet_projects, dependent: :destroy
     has_many :projects, through: :bullet_projects
@@ -29,10 +27,10 @@ module Projectable
     BulletActivityRecorder.record_project_untagged!(bullet: self)
   end
 
-  def apply_project_tags_from_content!
+  def apply_project_tags_from_content!(rich_text_record: nil)
     return if @applying_project_tags_from_content
 
-    record = rich_text_record
+    record = rich_text_record || rich_text_content_record
     return unless record
 
     project_attachables = project_attachables_from_content(record)
@@ -51,16 +49,16 @@ module Projectable
   def editor_content(default_projects: [], default_people: [])
     person_attachables = (respond_to?(:people) ? people.to_a : []) + Array(default_people).compact
     attachables = (projects.to_a + Array(default_projects).compact + person_attachables).uniq
-    html = rich_text_record&.body_before_type_cast.to_s.dup
-    existing_project_ids = project_ids_from_editor_html(html)
-    existing_person_ids = respond_to?(:person_ids_from_editor_html) ? person_ids_from_editor_html(html) : []
+    html = rich_text_content_record&.body_before_type_cast.to_s.dup
+    existing_project_ids = attachable_ids_from_content_html(html, Project)
+    existing_person_ids = attachable_ids_from_content_html(html, Person)
 
     attachables.each do |attachable|
       next if attachable.is_a?(Project) && existing_project_ids.include?(attachable.id)
       next if attachable.is_a?(Person) && existing_person_ids.include?(attachable.id)
 
-      attachment_html = ActionText::Attachment.from_attachables([ attachable ]).first.to_html
-      html = [ html.presence, attachment_html ].compact.join("\n")
+      attachment_html = ActionText::Attachment.from_attachables([attachable]).first.to_html
+      html = [html.presence, attachment_html].compact.join("\n")
     end
 
     ActionText::Content.new(html, canonicalize: false)
@@ -68,56 +66,28 @@ module Projectable
 
   private
 
-  def rich_text_record
-    ActionText::RichText.find_by(record: self, name: "content")
+  def rich_text_content_record
+    ActionText::RichText.find_by(record: self, name: 'body')
   end
 
   def project_attachables_from_content(record)
-    attachables = record.body.attachables.grep(Project)
-    return attachables if attachables.any?
-
-    projects_from_attachment_sgids(record)
-  end
-
-  def projects_from_attachment_sgids(record)
-    project_attachment_nodes(record).filter_map do |node|
-      sgid = node["sgid"]
-      next if sgid.blank?
-
-      Project.from_attachable_sgid(sgid)
-    rescue ActiveRecord::RecordNotFound
-      nil
-    end
+    record.body.attachables.grep(Project)
   end
 
   def content_removed_project_attachments?(record)
     old_body, new_body = record.saved_change_to_body
-    old_nodes = Nokogiri::HTML.fragment(old_body.to_s).css(PROJECT_ATTACHMENT_SELECTOR)
-    new_nodes = Nokogiri::HTML.fragment(new_body.to_s).css(PROJECT_ATTACHMENT_SELECTOR)
-    old_nodes.any? && new_nodes.empty?
+    old_attachables = ActionText::Content.new(old_body.to_s).attachables.grep(Project)
+    new_attachables = ActionText::Content.new(new_body.to_s).attachables.grep(Project)
+    old_attachables.any? && new_attachables.empty?
   end
 
-  def project_attachment_nodes(record)
-    html = record.body_before_type_cast.to_s
+  def attachable_ids_from_content_html(html, type)
     return [] if html.blank?
 
-    Nokogiri::HTML.fragment(html).css(PROJECT_ATTACHMENT_SELECTOR)
+    ActionText::Content.new(html, canonicalize: false).attachables.grep(type).map(&:id)
   end
 
   def stamp_triaged!
     update!(triaged_at: triaged_at || Time.current) unless triaged_at?
-  end
-
-  def project_ids_from_editor_html(html)
-    return [] if html.blank?
-
-    Nokogiri::HTML.fragment(html).css(PROJECT_ATTACHMENT_SELECTOR).filter_map do |node|
-      sgid = node["sgid"]
-      next if sgid.blank?
-
-      Project.from_attachable_sgid(sgid).id
-    rescue ActiveRecord::RecordNotFound
-      nil
-    end
   end
 end

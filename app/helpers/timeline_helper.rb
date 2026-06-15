@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module TimelineHelper
   def prev_date(date)
     date - 1.day

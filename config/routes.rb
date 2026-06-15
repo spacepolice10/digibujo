@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.application.routes.draw do
   # Authentication
   resource :session, only: %i[new create show destroy] do
@@ -19,7 +21,6 @@ Rails.application.routes.draw do
     resource :collect,  only: %i[new create destroy]
     resource :pop,      only: %i[new create destroy]
     resource :complete, only: %i[create destroy]
-    resource :person,   only: %i[new create destroy]
     resource :export,   only: :show
   end
   resources :bullets, except: :index do
@@ -29,7 +30,6 @@ Rails.application.routes.draw do
   end
 
   resource :search, only: :show
-  resource :search_palette, only: :show, path: 'search/palette'
   resource :menu, only: :show, controller: 'menu'
   resources :buckets, only: %i[index show]
   resource :future, only: %i[show create], controller: 'futures' do
@@ -45,6 +45,9 @@ Rails.application.routes.draw do
   resources :projects
   resources :collections
   get 'people/suggestions', to: 'people/suggestions#index', as: :person_suggestions
+  scope 'people', module: :people, as: 'people' do
+    resource :pin, only: %i[create destroy]
+  end
   resources :people, only: %i[index new create show destroy]
 
   # Views
@@ -61,10 +64,6 @@ Rails.application.routes.draw do
 
   # Health check
   get 'up' => 'rails/health#show', as: :rails_health_check
-
-  namespace :active_storage do
-    get 'blobs/:signed_id/inline', to: 'inline_blobs#show', as: :inline_blob
-  end
 
   root 'daylogs#show'
 end

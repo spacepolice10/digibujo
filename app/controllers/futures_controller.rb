@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FuturesController < ApplicationController
   def show
     @future = Current.user.buckets
@@ -22,10 +24,7 @@ class FuturesController < ApplicationController
         name: 'Future Log'
       )
 
-      current_monthly = MonthlyBucket.covering(today)
-                                     .joins(:bucket)
-                                     .where(buckets: { user_id: Current.user.id })
-                                     .first
+      current_monthly = MonthlyBucket.current(Current.user)
 
       current_monthly ||= MonthlyBucket.create!(
         period_from: today.beginning_of_month,

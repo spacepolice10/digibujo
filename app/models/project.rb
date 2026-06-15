@@ -12,11 +12,11 @@ class Project < ApplicationRecord
   normalizes :name, with: ->(name) { name.strip.downcase }
 
   def content_type
-    "application/vnd.actiontext.project"
+    'application/vnd.actiontext.project'
   end
 
   def to_attachable_partial_path
-    "projects/attachable"
+    'projects/attachable'
   end
 
   def attachable_plain_text_representation(_caption = nil)

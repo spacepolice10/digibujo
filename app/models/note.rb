@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Note < ApplicationRecord
   include Bulletable
 
@@ -21,34 +23,30 @@ class Note < ApplicationRecord
 
   def temporal?      = false
   def completable?   = false
-  def marker_styles  = "bullet--note-marker"
-
-  def body
-    excerpt
-  end
+  def marker_styles  = 'bullet--note-marker'
 
   def excerpt
-    text = bullet.content.to_plain_text
+    text = bullet.body.to_plain_text
     if text.length > 400
-      text.truncate(400) || "Untitled"
+      text.truncate(400) || 'Untitled'
     else
-      bullet.content
+      bullet.body
     end
   end
 
   def mood_marker
     case mood&.to_sym
-    when :positive   then "😊"
-    when :negative   then "😞"
-    when :inspired   then "✨"
-    when :frustrated then "😣"
+    when :positive   then '😊'
+    when :negative   then '😞'
+    when :inspired   then '✨'
+    when :frustrated then '😣'
     end
   end
 
   def meta_labels
     [].tap do |labels|
-      labels << { emoji: "🔬", colour: "amber" } if awaits_research?
-      labels << { emoji: "💡", colour: "purple" } if idea?
+      labels << { emoji: '🔬', colour: 'amber' } if awaits_research?
+      labels << { emoji: '💡', colour: 'purple' } if idea?
     end
   end
 

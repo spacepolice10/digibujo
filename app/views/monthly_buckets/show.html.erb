@@ -1,6 +1,6 @@
 <% content_for(:title) { @monthly_bucket.name } %>
 
-<div class="layout--page monthly-bucket--page" data-controller="bulk-menu">
+<div class="layout--page monthly-bucket--page">
   <div class="layout--header">
     <div class="layout--header-actions">
       <%= link_to buckets_path, class: "button--secondary" do %>
@@ -16,7 +16,7 @@
     <% end %>
   </div>
 
-  <div class="monthly-bucket--spread" data-bulk-menu-target="list">
+  <div class="monthly-bucket--spread">
     <section class="monthly-bucket--by-date" aria-label="Planned by date" data-controller="scroll">
       <% if @period_days %>
         <% @period_days.each do |date| %>
@@ -66,6 +66,4 @@
       </turbo-frame>
     </section>
   </div>
-
-  <%= render "bullets/bulk_menu" %>
 </div>

@@ -9,12 +9,12 @@
         <% end %>
     </button>
   <% end %>
-  <div class="bullet--body" data-controller="bullet-navigation" data-action="mouseup->bullet-navigation#rememberSelection click->bullet-navigation#navigate" data-bullet-navigation-href-value="<%= edit_bullet_path(task) %>">
+  <div class="bullet--body">
     <div class="bullet--name">
-      <%= task.content %>
+      <%= task.body %>
     </div>
     <%= render "bullets/metadata", bullet: task %>
-    <%= render "bullets/attachments_gallery", bullet: task %>
+    <%= render "bullets/attachments", bullet: task %>
   </div>
   <%= render "bullets/select", bullet: task %>
 </turbo-frame>

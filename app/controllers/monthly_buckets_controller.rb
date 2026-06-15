@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MonthlyBucketsController < ApplicationController
   before_action :set_monthly_bucket, only: :show
 
@@ -17,7 +19,7 @@ class MonthlyBucketsController < ApplicationController
 
   def new
     @monthly_bucket = MonthlyBucket.new(MonthlyBucket.default_period)
-    @monthly_bucket.build_bucket(name: Date.current.strftime("%B %Y"))
+    @monthly_bucket.build_bucket(name: Date.current.strftime('%B %Y'))
   end
 
   def create
@@ -30,7 +32,7 @@ class MonthlyBucketsController < ApplicationController
     )
 
     if @monthly_bucket.save
-      redirect_to monthly_bucket_path(@monthly_bucket), notice: "Monthly spread created"
+      redirect_to monthly_bucket_path(@monthly_bucket), notice: 'Monthly spread created'
     else
       render :new, status: :unprocessable_entity
     end
@@ -47,10 +49,10 @@ class MonthlyBucketsController < ApplicationController
     @period_days = @monthly_bucket.period_days
     scoped = Current.user.bullets.where(bucket_id: @bucket.id, archived: false)
     @bullets_by_date = if @period_days
-      scoped.where(pops_on: @period_days).includes(:bulletable).group_by(&:pops_on)
-    else
-      {}
-    end
+                         scoped.where(pops_on: @period_days).includes(:bulletable).group_by(&:pops_on)
+                       else
+                         {}
+                       end
     @unplanned_bullets = scoped.where(pops_on: nil).chronological.includes(:bulletable)
   end
 

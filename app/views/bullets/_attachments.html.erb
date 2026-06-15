@@ -1,0 +1,9 @@
+<% if bullet.attachments.attached? %>
+  <div class="attachment--gallery">
+    <% bullet.attachments.each do |attachment| %>
+      <div class="attachment--gallery-item">
+        <%= render "active_storage/blobs/blob", blob: attachment.blob, in_gallery: true %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

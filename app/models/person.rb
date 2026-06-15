@@ -13,11 +13,11 @@ class Person < ApplicationRecord
   normalizes :name, with: ->(name) { name.strip.downcase }
 
   def content_type
-    "application/vnd.actiontext.person"
+    'application/vnd.actiontext.person'
   end
 
   def to_attachable_partial_path
-    "people/attachable"
+    'people/attachable'
   end
 
   def attachable_plain_text_representation(_caption = nil)

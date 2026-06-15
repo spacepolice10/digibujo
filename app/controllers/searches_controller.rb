@@ -3,15 +3,13 @@
 class SearchesController < ApplicationController
   include Search
 
+  BUCKET_LIMIT = 5
+  BULLET_LIMIT = 8
+
   def show
     @q = q
-    @projects = search_projects
-    @buckets = search_buckets
-    @bullets = set_page_and_extract_portion_from(search_bullets, per_page: [5, 15, 30, 50])
-
-    respond_to do |format|
-      format.html
-      format.turbo_stream
-    end
+    @projects = search_projects.limit(BUCKET_LIMIT)
+    @buckets = search_buckets.limit(BUCKET_LIMIT)
+    @bullets = search_bullets.limit(BULLET_LIMIT)
   end
 end

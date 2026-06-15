@@ -1,10 +1,10 @@
 <div class="bulk-menu--pops-header">
-  <p class="bulk-menu--pops-title">Tag project</p>
+  <p class="bulk-menu--pops-title">Collect into collection</p>
   <button type="button"
           class="button--secondary button--icon"
           popovertarget="collects_picker_frame"
           popovertargetaction="hide"
-          aria-label="Close project picker">
+          aria-label="Close collection picker">
     <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
   </button>
 </div>
@@ -15,21 +15,21 @@
       data: { turbo_frame: "collects_picker_frame" } do %>
   <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
   <%= search_field_tag :q,
-        q,
+        @collects_q,
         class: "form-input",
-        placeholder: "Search projects",
+        placeholder: "Search collections",
         autofocus: true,
         autocomplete: "off" %>
 <% end %>
 
-<% if projects.any? %>
+<% if @collections.any? %>
   <ul class="layout--list bucket--list">
-    <%= render partial: "bullets/collects/project", collection: projects %>
+    <%= render partial: "bullets/collects/collection", collection: @collections %>
   </ul>
 <% else %>
-  <p>No projects found.</p>
+  <p>No collections found.</p>
 <% end %>
 
 <div class="bulk-menu--collects-footer">
-  <%= link_to "New project", new_project_path, class: "button--secondary", data: { turbo_frame: "_top" } %>
+  <%= link_to "New collection", new_collection_path, class: "button--secondary", data: { turbo_frame: "_top" } %>
 </div>

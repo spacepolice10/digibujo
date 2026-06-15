@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SweepCardsJob < ApplicationJob
   def perform
     Bullet.auto_archivable.where(archives_on: nil).update_all(archived: true, archives_on: Date.current)

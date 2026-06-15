@@ -2,6 +2,6 @@
 
 class MenuController < ApplicationController
   def show
-    @q = params[:q].to_s.strip
+    @menu_q = params[:q].to_s.strip
   end
 end

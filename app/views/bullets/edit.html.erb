@@ -12,9 +12,8 @@
 <turbo-frame id="<%= dom_id(@bullet) %>"
              class="bullet"
              data-bullet-type="<%= @bullet.bulletable_type.downcase %>">
-  <div class="bullet--inline-edit" data-controller="bullet-inline-edit">
-    <%= render "bullets/editors/#{@bullet.bulletable_type.downcase}",
-          bullet: @bullet,
-          attributes: {} %>
-  </div>
+  <%= render "bullets/bulletable_form",
+        bullet: @bullet,
+        attributes: {},
+        editing: true %>
 </turbo-frame>

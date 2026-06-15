@@ -1,0 +1,12 @@
+<div class="bucket--list-item-name">
+  <div class="bucket--list-item-marker" data-bucket-colour="<%= collection.colour %>" aria-hidden="true">
+    <% if collection.icon.present? %>
+      <i
+        class="icon"
+        style="--icon-mask: <%= collection.icon_mask %>"
+        aria-hidden="true"
+      ></i>
+    <% end %>
+  </div>
+  <span class="utilities--line-clamp-1"><%= collection.name %></span>
+</div>

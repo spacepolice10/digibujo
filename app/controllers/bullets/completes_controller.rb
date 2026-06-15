@@ -1,41 +1,43 @@
 # frozen_string_literal: true
 
-class Bullets::CompletesController < ApplicationController
-  include PrepareBullets
+module Bullets
+  class CompletesController < ApplicationController
+    include PrepareBullets, DaylogRedirects
 
-  before_action :prepare_bullets
+    before_action :prepare_bullets
 
-  def create
-    Bullet.transaction do
-      @bullets.lock.find_each do |bullet|
-        raise ActiveRecord::RecordNotFound unless bullet.completable?
+    def create
+      Bullet.transaction do
+        @bullets.lock.find_each do |bullet|
+          raise ActiveRecord::RecordNotFound unless bullet.completable?
 
-        bullet.bulletable.complete!
+          bullet.bulletable.complete!
+        end
       end
-    end
 
-    respond_to do |format|
-      format.turbo_stream
-      format.html { redirect_to daylog_path(date: daylog_redirect_date.iso8601) }
-    end
-  rescue ActiveRecord::RecordNotFound
-    head :unprocessable_entity
-  end
-
-  def destroy
-    Bullet.transaction do
-      @bullets.lock.find_each do |bullet|
-        raise ActiveRecord::RecordNotFound unless bullet.completable?
-
-        bullet.bulletable.uncomplete!
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to daylog_path(date: daylog_redirect_date.iso8601) }
       end
+    rescue ActiveRecord::RecordNotFound
+      head :unprocessable_entity
     end
 
-    respond_to do |format|
-      format.turbo_stream
-      format.html { redirect_to daylog_path(date: daylog_redirect_date.iso8601) }
+    def destroy
+      Bullet.transaction do
+        @bullets.lock.find_each do |bullet|
+          raise ActiveRecord::RecordNotFound unless bullet.completable?
+
+          bullet.bulletable.uncomplete!
+        end
+      end
+
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to daylog_path(date: daylog_redirect_date.iso8601) }
+      end
+    rescue ActiveRecord::RecordNotFound
+      head :unprocessable_entity
     end
-  rescue ActiveRecord::RecordNotFound
-    head :unprocessable_entity
   end
 end

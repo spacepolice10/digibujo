@@ -1,66 +1,70 @@
-require "test_helper"
+# frozen_string_literal: true
 
-class Sessions::CodesControllerTest < ActionDispatch::IntegrationTest
-  setup do
-    @user = users(:one)
-    @record, @code = LoginCode.create_for(@user)
-  end
+require 'test_helper'
 
-  test "new with login_email in session shows form" do
-    post session_path, params: { email_address: @user.email_address }
-    get new_session_code_path
+module Sessions
+  class CodesControllerTest < ActionDispatch::IntegrationTest
+    setup do
+      @user = users(:one)
+      @record, @code = LoginCode.create_for(@user)
+    end
 
-    assert_response :success
-    assert_select "header.header", count: 0
-    assert_select ".session-layout--main form[action=?]", session_code_path
-  end
+    test 'new with login_email in session shows form' do
+      post session_path, params: { email_address: @user.email_address }
+      get new_session_code_path
 
-  test "new without login_email redirects to login" do
-    get new_session_code_path
+      assert_response :success
+      assert_select 'header.header', count: 0
+      assert_select '.session-layout--main form[action=?]', session_code_path
+    end
 
-    assert_redirected_to new_session_path
-  end
+    test 'new without login_email redirects to login' do
+      get new_session_code_path
 
-  test "create with valid code starts session" do
-    post session_path, params: { email_address: @user.email_address }
-    post session_code_path, params: { code: @code }
+      assert_redirected_to new_session_path
+    end
 
-    assert_redirected_to root_path
-    assert cookies[:session_id]
-  end
+    test 'create with valid code starts session' do
+      post session_path, params: { email_address: @user.email_address }
+      post session_code_path, params: { code: @code }
 
-  test "create with valid lowercase code starts session" do
-    post session_path, params: { email_address: @user.email_address }
-    post session_code_path, params: { code: @code.downcase }
+      assert_redirected_to root_path
+      assert cookies[:session_id]
+    end
 
-    assert_redirected_to root_path
-    assert cookies[:session_id]
-  end
+    test 'create with valid lowercase code starts session' do
+      post session_path, params: { email_address: @user.email_address }
+      post session_code_path, params: { code: @code.downcase }
 
-  test "create with invalid code rejects" do
-    post session_path, params: { email_address: @user.email_address }
-    post session_code_path, params: { code: "WRONG1" }
+      assert_redirected_to root_path
+      assert cookies[:session_id]
+    end
 
-    assert_redirected_to new_session_code_path
-    assert_nil cookies[:session_id]
-  end
+    test 'create with invalid code rejects' do
+      post session_path, params: { email_address: @user.email_address }
+      post session_code_path, params: { code: 'WRONG1' }
 
-  test "create with expired code rejects" do
-    @record.update!(expires_at: 1.minute.ago)
+      assert_redirected_to new_session_code_path
+      assert_nil cookies[:session_id]
+    end
 
-    post session_path, params: { email_address: @user.email_address }
-    post session_code_path, params: { code: @code }
+    test 'create with expired code rejects' do
+      @record.update!(expires_at: 1.minute.ago)
 
-    assert_redirected_to new_session_code_path
-    assert_nil cookies[:session_id]
-  end
+      post session_path, params: { email_address: @user.email_address }
+      post session_code_path, params: { code: @code }
 
-  test "create destroys all user login codes on success" do
-    LoginCode.create_for(@user)
+      assert_redirected_to new_session_code_path
+      assert_nil cookies[:session_id]
+    end
 
-    post session_path, params: { email_address: @user.email_address }
-    post session_code_path, params: { code: @code }
+    test 'create destroys all user login codes on success' do
+      LoginCode.create_for(@user)
 
-    assert_equal 0, @user.login_codes.count
+      post session_path, params: { email_address: @user.email_address }
+      post session_code_path, params: { code: @code }
+
+      assert_equal 0, @user.login_codes.count
+    end
   end
 end

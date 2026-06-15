@@ -2,9 +2,7 @@
 
 class MonthlylogsAndBucketPeriods < ActiveRecord::Migration[8.1]
   def change
-    create_table :monthlylogs do |t|
-      t.timestamps
-    end
+    create_table :monthlylogs, &:timestamps
 
     change_table :buckets, bulk: true do |t|
       t.date :period_from

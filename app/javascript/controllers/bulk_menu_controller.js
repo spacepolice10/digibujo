@@ -13,7 +13,6 @@ export default class extends Controller {
     "uncompleteAction",
     "popsFrame",
     "collectsFrame",
-    "peopleFrame",
   ];
 
   static values = {
@@ -21,7 +20,6 @@ export default class extends Controller {
     selectMode: { type: Boolean, default: false },
     popsPickerUrl: { type: String, default: "/bullets/pop/new" },
     collectsPickerUrl: { type: String, default: "/bullets/collect/new" },
-    peoplePickerUrl: { type: String, default: "/bullets/person/new" },
   };
 
   connect() {
@@ -49,16 +47,6 @@ export default class extends Controller {
     };
     document.addEventListener("turbo:submit-end", this.popSubmitHandler);
 
-    this.personSubmitHandler = (event) => {
-      if (!event.detail.success) return;
-      const form = event.target;
-      if (!form?.action?.includes("/bullets/person")) return;
-
-      if (this.hasPeopleFrameTarget) this.peopleFrameTarget.hidePopover();
-      this.clearSelection();
-    };
-    document.addEventListener("turbo:submit-end", this.personSubmitHandler);
-
     this.syncSelectMode();
   }
 
@@ -66,7 +54,6 @@ export default class extends Controller {
     document.removeEventListener("turbo:before-visit", this.beforeVisitHandler);
     document.removeEventListener("turbo:submit-end", this.collectSubmitHandler);
     document.removeEventListener("turbo:submit-end", this.popSubmitHandler);
-    document.removeEventListener("turbo:submit-end", this.personSubmitHandler);
   }
 
   toggle(event) {
@@ -122,10 +109,6 @@ export default class extends Controller {
 
   openCollectsPicker() {
     this.openPickerFrame(this.collectsFrameTarget, this.collectsPickerUrlValue);
-  }
-
-  openPeoplePicker() {
-    this.openPickerFrame(this.peopleFrameTarget, this.peoplePickerUrlValue);
   }
 
   openPickerFrame(frame, baseUrl) {

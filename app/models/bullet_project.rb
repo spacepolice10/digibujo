@@ -11,6 +11,6 @@ class BulletProject < ApplicationRecord
   def same_user
     return if bullet.user_id == project.user_id
 
-    errors.add(:base, "bullet and project must belong to the same user")
+    errors.add(:base, 'bullet and project must belong to the same user')
   end
 end
