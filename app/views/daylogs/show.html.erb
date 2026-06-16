@@ -60,7 +60,7 @@
 
     <%= render "bullets/bulk_menu" %>
 
-    <turbo-frame id="new_bullet_form">
+    <turbo-frame id="bullet_composer" class="bullet_pops_on_<%= @selected_date %>">
       <%= render "bullets/composer",
           attributes: { pops_on: @selected_date } %>
     </turbo-frame>

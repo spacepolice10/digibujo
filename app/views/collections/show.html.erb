@@ -33,7 +33,7 @@
     <%= render "bullets/bulk_menu" %>
     </article>
       <div>
-    <turbo-frame id="new_bullet_form">
+    <turbo-frame id="bullet_composer" class="bullet_pops_on_">
       <%= render "bullets/composer",
             attributes: { bucket_id: @collection.bucket.id } %>
     </turbo-frame>
