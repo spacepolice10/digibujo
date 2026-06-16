@@ -1,7 +1,0 @@
-<%= turbo_stream.append "bullets", @bullet %>
-
-<%= turbo_stream.update "new_bullet_form" do %>
-  <% project = Current.user.projects.find(params.dig(:bullet, :default_project_id)) %>
-  <%= render "bullets/composer",
-        attributes: { render_context: "project", default_project_id: project.id } %>
-<% end %>

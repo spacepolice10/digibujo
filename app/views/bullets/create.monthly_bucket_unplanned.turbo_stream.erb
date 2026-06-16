@@ -1,9 +1,0 @@
-<% monthly_bucket = MonthlyBucket.find(@monthly_bucket_id) %>
-
-<%= turbo_stream.append dom_id(monthly_bucket, :unplanned_bullets) do %>
-  <%= render_monthly_bucket_bullet(@bullet) %>
-<% end %>
-
-<%= turbo_stream.update dom_id(monthly_bucket, :unplanned_composer) do %>
-  <%= render "bullets/composer", attributes: { bucket_id: @bullet.bucket_id, render_context: "monthly_bucket_unplanned", monthly_bucket_id: monthly_bucket.id } %>
-<% end %>
