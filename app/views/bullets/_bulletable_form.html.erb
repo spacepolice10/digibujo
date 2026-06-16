@@ -1,12 +1,8 @@
-<%# locals: (bullet:, attributes: {}, default_project: nil, default_person: nil, editing: false) %>
+<%# locals: (bullet:, attributes: {}, default_project: nil, default_person: nil, editing: false, url: nil) %>
 <% editor_id = "bullet_editor_#{bullet.object_id}" %>
-<% submitted_attributes = attributes.compact %>
-<% editor_value = bullet.editor_content(default_projects: Array(default_project).compact, default_people: Array(default_person).compact) %>
-<% expand_dialog_id = dom_id(bullet, :expand) %>
-<% type_name = bullet.bulletable_type.presence || "Task" %>
-<% bulletable_form = bullet.bulletable || type_name.constantize.new %>
 
 <%= form_with model: bullet,
+      url: url.presence,
       namespace: editor_id,
       class: "bullet-form",
       data: {
@@ -15,139 +11,11 @@
         action: "keydown->bullet-composer#handleKeydown"
       } do |f| %>
 
-  <% bullet_column_names = %w[pops_on bucket_id] %>
-  <% submitted_attributes.each do |name, value| %>
-    <% if bullet_column_names.include?(name.to_s) %>
-      <%= f.hidden_field name, value: value %>
-    <% else %>
-      <%= hidden_field_tag "bullet[#{name}]", value %>
-    <% end %>
-  <% end %>
-
-  <div class="bullet-form-composer">
-    <div class="bullet-form-type-row">
-      <% if editing %>
-        <%= f.hidden_field :bulletable_type %>
-      <% else %>
-        <%= f.select :bulletable_type,
-              Bullet.bulletable_types,
-              { selected: type_name },
-              class: "bullet-form-type-select",
-              data: {
-                bullet_composer_target: "typeSelect",
-                action: "change->bullet-composer#typeChanged"
-              } %>
-      <% end %>
-
-      <span class="bullet--marker <%= bullet.marker_styles %>"
-            data-bullet-composer-target="marker"
-            aria-hidden="true">
-        <i class="icon"
-           style="--icon-mask: var(--icon-<%= bullet.marker_icon %>)"
-           data-bullet-composer-target="markerIcon"
-           aria-hidden="true"></i>
-      </span>
-    </div>
-
-    <%= f.rich_text_area :body,
-          value: editor_value,
-          autofocus: !editing,
-          placeholder: "What's on your mind?",
-          multiline: false,
-          preset: "inline" do %>
-      <lexxy-prompt trigger="#"
-                    name="project"
-                    src="<%= project_suggestions_path %>"
-                    remote-filtering
-                    supports-space-in-searches>
-      </lexxy-prompt>
-      <lexxy-prompt trigger="@"
-                    name="person"
-                    src="<%= person_suggestions_path %>"
-                    remote-filtering
-                    supports-space-in-searches>
-      </lexxy-prompt>
-    <% end %>
-
-    <div class="bullet-form-actions">
-      <button type="button"
-              class="button--secondary button--icon"
-              data-action="bullet-composer#pickFile"
-              aria-label="Add attachment">
-        <i class="icon" style="--icon-mask: var(--icon-paperclip)" aria-hidden="true"></i>
-      </button>
-      <button type="button"
-              class="button--secondary"
-              commandfor="<%= expand_dialog_id %>"
-              command="show-modal">
-        Expand
-      </button>
-      <input type="file"
-             multiple
-             class="utilities--sr-only"
-             data-bullet-composer-target="fileInput"
-             data-action="change->bullet-composer#fileInputChanged">
-    </div>
-
-    <div class="bullet-form-note-options"
-         data-bullet-composer-target="noteOptions"
-         <%= "hidden" unless type_name == "Note" %>>
-      <% note_form = bullet.bulletable.is_a?(Note) ? bullet.bulletable : Note.new %>
-      <%= f.fields_for :bulletable, note_form do |nf| %>
-        <div class="mood-picker">
-          <% moods = { positive: "😊", negative: "😞", inspired: "✨", frustrated: "😣" } %>
-          <% moods.each do |name, emoji| %>
-            <label class="mood-option">
-              <%= nf.radio_button :mood, name, class: "utilities--sr-only" %>
-              <span class="mood_marker"><%= emoji %></span>
-            </label>
-          <% end %>
-        </div>
-        <div class="flag-picker">
-          <label class="flag-option">
-            <%= nf.check_box :awaits_research %>
-            <span>Research</span>
-          </label>
-          <label class="flag-option">
-            <%= nf.check_box :idea %>
-            <span>Idea</span>
-          </label>
-        </div>
-      <% end %>
-    </div>
-  </div>
-
-  <div class="attachment--previews"
-       data-bullet-composer-target="previews"
-       hidden></div>
-
-  <div data-bullet-composer-target="attachmentsField"></div>
-
-  <div class="bullet-form-footer">
-    <%= f.button type: "submit", class: "button--primary button--icon" do %>
-      <i class="icon" style="--icon-mask: var(--icon-arrow-up)" aria-hidden="true"></i>
-    <% end %>
-  </div>
-
-  <%= render "shared/dialog", id: expand_dialog_id, data_target: "expandDialog" do %>
-    <div class="bullet-form-expand">
-      <h2 class="bullet-form-expand-title">Expanded content</h2>
-      <%= f.rich_text_area :rich_body,
-            placeholder: "Code, files, markdown…",
-            preset: "expand" %>
-      <div class="bullet-form-expand-footer">
-        <button type="button"
-                class="button--secondary"
-                commandfor="<%= expand_dialog_id %>"
-                command="close">
-          Cancel
-        </button>
-        <button type="button"
-                class="button--primary"
-                data-action="bullet-composer#submitExpand">
-          Save
-        </button>
-      </div>
-    </div>
-  <% end %>
+  <%= render "bullets/form_fields",
+        f: f,
+        bullet: bullet,
+        submitted_attributes: attributes.compact,
+        default_project: default_project,
+        default_person: default_person,
+        editing: editing %>
 <% end %>
