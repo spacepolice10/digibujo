@@ -1,0 +1,23 @@
+<%# locals: (bullet:) %>
+<turbo-frame id="<%= dom_id(bullet) %>"
+             class="bullet bullet--monthly-bucket"
+             data-bullet-type="<%= bullet.bulletable_type.downcase %>"
+             <% if bullet.completed? %>
+             data-bullet-completed
+             <% end %>
+             draggable="true"
+             data-controller="bullet-drag"
+             data-bullet-drag-id-value="<%= bullet.id %>"
+             data-action="dragstart->bullet-drag#dragstart dragend->bullet-drag#dragend">
+  <div class="bullet--marker-slot">
+    <span class="bullet--marker <%= bullet.marker_styles %>" aria-hidden="true">
+      <i class="icon" style="--icon-mask: var(--icon-<%= bullet.marker_icon %>)" aria-hidden="true"></i>
+      <% if bullet.mood_marker.present? %>
+        <span class="bullet--mood-emoji"><%= bullet.mood_marker %></span>
+      <% end %>
+    </span>
+  </div>
+  <div class="bullet--body">
+    <span class="bullet--line"><%= bullet.name %></span>
+  </div>
+</turbo-frame>

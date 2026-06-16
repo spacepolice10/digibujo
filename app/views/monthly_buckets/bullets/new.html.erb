@@ -1,0 +1,4 @@
+<%= render "bullets/bulletable_form",
+      bullet: @bullet,
+      url: monthly_bucket_bullets_path(@monthly_bucket),
+      attributes: { pops_on: @bullet.pops_on, bucket_id: @bullet.bucket_id }.compact %>
