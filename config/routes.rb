@@ -11,7 +11,11 @@ Rails.application.routes.draw do
   # Logs (?date=YYYY-MM-DD for a specific day)
   resource :daylog, only: :show, controller: 'daylogs'
   get 'monthly_bucket', to: 'monthly_buckets#current', as: :monthly_bucket
-  resources :monthly_buckets, only: %i[show new create]
+  resources :monthly_buckets, only: %i[show new create] do
+    scope module: :monthly_buckets do
+      resources :bullets, only: %i[new create]
+    end
+  end
   resources :bundles, only: %i[show new create destroy]
 
   # Bullet
@@ -31,6 +35,7 @@ Rails.application.routes.draw do
 
   resource :search, only: :show
   resource :menu, only: :show, controller: 'menu'
+  resources :notes, only: :index
   resources :buckets, only: %i[index show]
   resource :future, only: %i[show create], controller: 'futures' do
     post :months, on: :collection
