@@ -27,6 +27,7 @@ class FuturesController < ApplicationController
       current_monthly = MonthlyBucket.current(Current.user)
 
       current_monthly ||= MonthlyBucket.create!(
+        user: Current.user,
         period_from: today.beginning_of_month,
         period_to: today.end_of_month
       ) { |mb| mb.build_bucket(user: Current.user, name: today.strftime('%B %Y')) }

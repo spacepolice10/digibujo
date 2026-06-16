@@ -83,3 +83,6 @@
                <% if @menu_q.present? %>src="<%= search_path(q: @menu_q) %>"<% end %>>
   </turbo-frame>
 </div>
+
+<turbo-frame id="menu_notes" class="menu--notes-section" src="<%= notes_path %>">
+</turbo-frame>

@@ -67,7 +67,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     get daylog_path(date: selected_date.iso8601)
 
     assert_response :success
-    assert_select 'turbo-frame#new_bullet_form' do
+    assert_select 'turbo-frame#bullet_composer' do
       assert_select 'a[href=?]', new_bullet_path(pops_on: selected_date.iso8601)
       assert_match(/Add bullet/, response.body)
     end

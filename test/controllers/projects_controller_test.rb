@@ -33,7 +33,7 @@ class ProjectsControllerTest < ActionDispatch::IntegrationTest
     get project_path(project)
 
     assert_response :success
-    assert_select 'turbo-frame#new_bullet_form' do
+    assert_select 'turbo-frame#bullet_composer' do
       assert_select 'a[href=?]',
                     new_bullet_path(render_context: 'project', default_project_id: project.id)
     end

@@ -1,4 +1,4 @@
-<%= turbo_stream.before targets: ".bullet_pops_on_#{@bullet.pops_on}" do %>
+<%= turbo_stream.before_all ".bullet_pops_on_#{@bullet.pops_on}" do %>
   <%= render @bullet %>
 <% end %>
 

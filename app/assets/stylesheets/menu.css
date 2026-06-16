@@ -104,6 +104,33 @@
     }
   }
 
+  .menu--notes-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical-half);
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+
+  .menu--section-heading {
+    font-size: var(--font-size-subtle);
+    font-weight: var(--font-weight-base);
+    color: var(--color-fg-subtle);
+  }
+
+  .menu--notes-list {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-strong);
+    padding-inline: var(--spacing-horizontal-half);
+  }
+
+  .menu--note-flags {
+    display: inline-flex;
+    gap: var(--spacing-vertical-half);
+    flex-shrink: 0;
+  }
+
   .menu--page {
     padding-bottom: calc(var(--spacing-vertical-double) * 3);
   }

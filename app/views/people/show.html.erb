@@ -16,7 +16,7 @@
     <h2><%= @person.name %></h2>
   </div>
   <div class="bucket--footer">
-    <turbo-frame id="new_bullet_form">
+    <turbo-frame id="bullet_composer">
       <%= render "bullets/composer",
             attributes: {
               render_context: "project",

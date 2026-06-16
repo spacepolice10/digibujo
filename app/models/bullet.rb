@@ -32,13 +32,11 @@ class Bullet < ApplicationRecord
     rich_body.present? && rich_body.to_plain_text.present?
   end
 
-  attr_accessor :pending_attachment_count
-
   private
 
   def body_or_rich_body_present
     return if body.present? || rich_body.present?
-    return if pending_attachment_count.to_i.positive? || attachments.attached?
+    return if attachments.attached?
 
     errors.add(:body, "can't be blank")
   end

@@ -57,18 +57,24 @@ export default class extends Controller {
   }
 
   uploadFile(file) {
-    const upload = new DirectUpload(file, this.directUploadUrlValue, this)
-    const preview = this.buildPreview(file)
+    const preview = this.makePreview(file)
+    const delegate = {
+      directUploadWillStoreFileWithXhr: (xhr) => {
+        xhr.upload.addEventListener("progress", () => {})
+      }
+    }
+
+    const upload = new DirectUpload(file, this.directUploadUrlValue, delegate)
 
     upload.create((error, blob) => {
       if (error) {
-        preview.remove()
+        this.changeStatus(preview, "failed")
         return
       }
 
+      this.changeStatus(preview, "finished")
       this.appendSignedId(blob.signed_id)
       preview.dataset.signedId = blob.signed_id
-      preview.querySelector("[data-blob-filename]").textContent = file.name
     })
   }
 
@@ -81,20 +87,30 @@ export default class extends Controller {
     this.attachmentsFieldTarget.appendChild(input)
   }
 
-  buildPreview(file) {
+  makePreview(file) {
     const preview = document.createElement("div")
     preview.className = "attachment--preview"
+    preview.dataset.attachmentStatus = "pending"
     preview.innerHTML = `
-      <span data-blob-filename></span>
+      <i class="icon attachment--status-icon icon--spin" style="--icon-mask: var(--icon-spinner)"></i>
+      <span data-blob-filename>${file.name}</span>
       <button type="button" class="button--icon button--tertiary" aria-label="Remove attachment">
         <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
       </button>
     `
     preview.querySelector("button").addEventListener("click", () => this.removePreview(preview))
-    preview.querySelector("[data-blob-filename]").textContent = file.name
     this.previewsTarget.appendChild(preview)
     this.previewsTarget.hidden = false
     return preview
+  }
+
+  changeStatus(preview, status) {
+    preview.dataset.attachmentStatus = status
+    const icon = preview.querySelector(".attachment--status-icon")
+    icon.classList.toggle("icon--spin", status == "pending")
+
+    const map = { pending: "spinner", finished: "circle-check", failed: "x" }
+    icon.style.setProperty("--icon-mask", `var(--icon-${map[status]})`)
   }
 
   removePreview(preview) {

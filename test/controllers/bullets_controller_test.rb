@@ -23,7 +23,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'updated', BulletActivity.order(:created_at).last.action
   end
 
-  test 'create turbo stream appends bullet and resets composer' do
+  test 'create turbo stream inserts bullet before composer' do
     collection = create_collection!(@user, name: 'Fresh collection')
 
     post bullets_path,
@@ -38,11 +38,9 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
          as: :turbo_stream
 
     assert_response :success
-    assert_match(/turbo-stream action="append"/, response.body)
-    assert_match(/turbo-stream action="update" target="new_bullet_form"/, response.body)
-    assert_match(/Add bullet/, response.body)
-    assert_match(/bucket_id=#{collection.bucket.id}/, response.body)
-    assert_match(/pops_on=#{Date.current.iso8601}/, response.body)
+    assert_match(/turbo-stream action="before" targets="\.bullet_pops_on_#{Date.current.iso8601}"/, response.body)
+    assert_no_match(/turbo-stream action="update" target="bullet_composer"/, response.body)
+    assert_no_match(/Add bullet/, response.body)
   end
 
   test 'create tags bullet from project attachment in body' do

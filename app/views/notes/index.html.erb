@@ -1,0 +1,10 @@
+<turbo-frame id="menu_notes" class="menu--notes">
+  <% if @notes.any? %>
+    <h4 class="menu--section-heading">Notes</h4>
+    <ul class="menu--notes-list" role="listbox">
+      <% @notes.each do |note| %>
+        <%= render "note", note: note %>
+      <% end %>
+    </ul>
+  <% end %>
+</turbo-frame>

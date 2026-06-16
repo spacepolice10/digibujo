@@ -437,4 +437,8 @@
     gap: var(--spacing-horizontal-half);
     font-size: var(--font-size-subtle);
   }
+
+  .attachment--status-icon {
+    flex-shrink: 0;
+  }
 }

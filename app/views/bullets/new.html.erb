@@ -1,4 +1,4 @@
-<turbo-frame id="<%= @composer_frame_id.presence || "new_bullet_form" %>">
+<turbo-frame id="bullet_composer">
   <% default_project = @default_project_id.present? ? Current.user.projects.find(@default_project_id) : nil %>
   <% default_person = @default_person_id.present? ? Current.user.people.find(@default_person_id) : nil %>
   <%= render "bullets/bulletable_form",

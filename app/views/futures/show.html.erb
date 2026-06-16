@@ -22,18 +22,16 @@
           <% unplanned = monthly_bucket.bullets.where(pops_on: nil).chronological.includes(:bucketable) %>
           <%= render partial: "bullets/bullet", collection: unplanned, as: :bullet %>
         </div>
-        <turbo-frame id="<%= dom_id(bucket, :composer) %>">
-          <%= link_to new_bullet_path(
-                bucket_id: bucket.id,
-                bulletable_type: "Task",
-                composer_frame_id: dom_id(bucket, :composer),
-                render_context: "future"
-              ),
-              class: "button--tertiary button--icon",
-              aria: { label: "Add bullet" } do %>
-            <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
-          <% end %>
-        </turbo-frame>
+        <%= link_to new_bullet_path(
+              bucket_id: bucket.id,
+              bulletable_type: "Task",
+              render_context: "future"
+            ),
+            data: { turbo_frame: "bullet_composer" },
+            class: "button--tertiary button--icon",
+            aria: { label: "Add bullet" } do %>
+          <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
+        <% end %>
       </div>
     <% end %>
 
@@ -41,6 +39,10 @@
       <%= button_to "+ Add month", months_future_path, method: :post, class: "button--primary" %>
     </div>
   </div>
+
+  <turbo-frame id="bullet_composer">
+    <%= render "bullets/composer", attributes: { render_context: "future" } %>
+  </turbo-frame>
 
   <%= render "bullets/bulk_menu" %>
 </div>

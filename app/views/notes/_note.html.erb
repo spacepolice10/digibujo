@@ -1,10 +1,22 @@
-<turbo-frame id="<%= dom_id(note) %>" class="bullet" data-bullet-type="note">
-  <div class="bullet--body">
-    <div class="bullet--excerpt">
-      <%= note.excerpt %>
-    </div>
-    <%= render "bullets/metadata", bullet: note %>
-
-</div>
-  <%= render "bullets/select", bullet: note %>
-</turbo-frame>
+<%# locals: (note:) %>
+<% bullet = note.bullet %>
+<li class="layout--list-item" role="option">
+  <%= link_to bullet_path(bullet),
+        class: "menu--palette-item",
+        data: { turbo_frame: "_top" } do %>
+    <span class="menu--palette-marker" data-bullet-type="note" aria-hidden="true">
+      <i class="icon" style="--icon-mask: var(--icon-<%= bullet.marker_icon %>)" aria-hidden="true"></i>
+      <% if note.mood_marker.present? %>
+        <span class="bullet--mood-emoji"><%= note.mood_marker %></span>
+      <% end %>
+    </span>
+    <span class="utilities--line-clamp-1"><%= bullet.body.to_plain_text %></span>
+    <% if note.meta_labels.any? %>
+      <span class="menu--note-flags">
+        <% note.meta_labels.each do |label| %>
+          <span class="pill pill--<%= label[:colour] %>"><%= label[:emoji] %></span>
+        <% end %>
+      </span>
+    <% end %>
+  <% end %>
+</li>

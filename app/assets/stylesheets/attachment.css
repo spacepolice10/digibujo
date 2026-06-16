@@ -72,7 +72,6 @@
     flex-wrap: wrap;
     align-items: flex-start;
     gap: var(--spacing-horizontal);
-    margin-block-start: var(--spacing-vertical-half);
   }
 
   .attachment--gallery-item {

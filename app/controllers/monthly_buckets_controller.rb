@@ -23,7 +23,7 @@ class MonthlyBucketsController < ApplicationController
   end
 
   def create
-    @monthly_bucket = MonthlyBucket.new(monthly_bucket_params.slice(:period_from, :period_to))
+    @monthly_bucket = MonthlyBucket.new(monthly_bucket_params.slice(:period_from, :period_to).merge(user: Current.user))
     @monthly_bucket.build_bucket(
       user: Current.user,
       name: monthly_bucket_params[:name],
