@@ -266,8 +266,4 @@
     right: auto;
   }
 
-  [data-mode="select"] .bullet[data-bullet-type="note"] > .select-checkbox,
-  [data-mode="select"] .bullet[data-bullet-type="note"] .bullet--marker-slot .select-checkbox {
-    border-radius: var(--radius-strong);
-  }
 }

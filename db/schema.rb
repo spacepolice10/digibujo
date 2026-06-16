@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_15_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_16_160000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -231,6 +231,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_15_120000) do
     t.datetime "done_at"
   end
 
+  create_table "user_settings", force: :cascade do |t|
+    t.boolean "collections_open", default: true, null: false
+    t.datetime "created_at", null: false
+    t.boolean "logs_open", default: true, null: false
+    t.boolean "projects_open", default: true, null: false
+    t.boolean "spreads_open", default: true, null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_user_settings_on_user_id", unique: true
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email_address", null: false
@@ -259,4 +270,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_15_120000) do
   add_foreign_key "projects", "users"
   add_foreign_key "published_entities", "users"
   add_foreign_key "sessions", "users"
+  add_foreign_key "user_settings", "users"
 end

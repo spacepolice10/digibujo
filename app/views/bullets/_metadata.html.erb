@@ -1,5 +1,5 @@
 <% bucket_tags = bullet.bucket.present? ? [bullet.bucket] : [] %>
-<% if bullet.pinned? || bullet.archived? || bullet.ends_date.present? || bucket_tags.any? %>
+<% if bullet.pinned? || bullet.archived? || bullet.ends_date.present? || bucket_tags.any? || bullet.rich_body? %>
   <div class="bullet--metadata">
     <span class="bullet--tags">
       <% if bullet.pops_on && @selected_date && bullet.pops_on > @selected_date %>
@@ -29,6 +29,11 @@
           aria-label="Archived"
         >
           <i class="icon" style="--icon-mask: var(--icon-archive)" aria-hidden="true"></i>
+        </span>
+      <% end %>
+      <% if bullet.rich_body? %>
+        <span class="pill pill--emerald" aria-label="Has expanded content">
+          <i class="icon" style="--icon-mask: var(--icon-file)" aria-hidden="true"></i>
         </span>
       <% end %>
       <% bucket_tags.each do |bucket| %>

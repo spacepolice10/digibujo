@@ -8,7 +8,7 @@
       data: {
         controller: "bullet-composer",
         bullet_composer_direct_upload_url_value: rails_direct_uploads_url,
-        action: "keydown->bullet-composer#handleKeydown"
+        action: "keydown->bullet-composer#handleKeydown turbo:submit-end->bullet-composer#clearOnSubmit"
       } do |f| %>
 
   <%= render "bullets/form_fields",

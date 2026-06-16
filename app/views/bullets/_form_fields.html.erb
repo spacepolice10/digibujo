@@ -118,12 +118,25 @@
   <% end %>
 </div>
 
-<%= render "shared/dialog", id: expand_dialog_id, data_target: "expandDialog" do %>
+<%= render "shared/dialog", id: expand_dialog_id, class: "dialog--large", data_target: "expandDialog" do %>
   <div class="bullet-form-expand">
     <h2 class="bullet-form-expand-title">Expanded content</h2>
     <%= f.rich_text_area :rich_body,
           placeholder: "Code, files, markdown…",
-          preset: "expand" %>
+          preset: "expand" do %>
+      <lexxy-prompt trigger="#"
+                    name="project"
+                    src="<%= project_suggestions_path %>"
+                    remote-filtering
+                    supports-space-in-searches>
+      </lexxy-prompt>
+      <lexxy-prompt trigger="@"
+                    name="person"
+                    src="<%= person_suggestions_path %>"
+                    remote-filtering
+                    supports-space-in-searches>
+      </lexxy-prompt>
+    <% end %>
     <div class="bullet-form-expand-footer">
       <button type="button"
               class="button--secondary"

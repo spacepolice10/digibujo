@@ -22,14 +22,20 @@
     min-width: 0;
     text-decoration: none;
     color: inherit;
+    border-radius: var(--radius-strong);
     &:hover {
-      background-color: var(--color-accent-bg);
+      background-color: var(--color-stroke-base);
     }
   }
   .bucket--list-item-name {
     display: flex;
     align-items: center;
     gap: var(--spacing-horizontal-half);
+  }
+
+  .bucket--list-item-meta {
+    font-size: var(--font-size-subtle);
+    color: var(--color-fg-subtle);
   }
 
   .bucket--list-item-marker {

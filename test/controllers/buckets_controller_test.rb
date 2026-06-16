@@ -8,27 +8,6 @@ class BucketsControllerTest < ActionDispatch::IntegrationTest
     sign_in_as @user
   end
 
-  test 'index returns success' do
-    get buckets_path
-    assert_response :success
-  end
-
-  test 'index lists projects collections and monthly buckets' do
-    create_project!(@user, name: 'alpha')
-    create_collection!(@user, name: 'reading')
-    create_monthly_bucket!(@user, name: 'june')
-
-    get buckets_path
-
-    assert_response :success
-    assert_select 'h2.project', text: 'Projects'
-    assert_select 'h2.collection', text: 'Collections'
-    assert_select 'h2.monthly-bucket', text: 'Monthly spreads'
-    assert_match 'alpha', response.body
-    assert_match 'reading', response.body
-    assert_match 'june', response.body
-  end
-
   test 'show loads bucket bullets for footer popover' do
     collection = create_collection!(@user, name: 'bucket list')
     @user.bullets.create!(

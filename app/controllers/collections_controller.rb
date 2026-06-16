@@ -15,7 +15,7 @@ class CollectionsController < ApplicationController
   def create
     @collection = Collection.new
     if save_collection_with_bucket(@collection)
-      redirect_back fallback_location: buckets_path, notice: 'Collection created'
+      redirect_back fallback_location: home_path, notice: 'Collection created'
     else
       @collection.name = collection_params[:name]
       render :new, status: :unprocessable_entity
@@ -31,7 +31,7 @@ class CollectionsController < ApplicationController
 
   def destroy
     @collection.bucket.destroy
-    redirect_back fallback_location: buckets_path, notice: 'Collection deleted'
+    redirect_back fallback_location: home_path, notice: 'Collection deleted'
   end
 
   private

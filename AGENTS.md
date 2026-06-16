@@ -4,7 +4,8 @@ This file contains agent workflow, architecture, and implementation guidance for
 
 ## AI Collaboration Rules
 
-### When theorizing / designing
+### When theorizing / designing (brainstorming)
+- Only activated when user explicitly asks to brainstorm, design, or explore approaches
 - Respond in prose or pseudocode, not code
 - Offer 2-3 approaches with trade-offs
 - Flag assumptions and risks in your recommendation
@@ -22,9 +23,10 @@ This file contains agent workflow, architecture, and implementation guidance for
 - Match the conventions already in the codebase
 
 ### Skills (Superpowers)
-- Before any task, check if a skill applies
+- Before any implementation task, check if a skill applies
 - If there is even a 1% chance a skill is relevant — invoke it
 - Skills are mandatory workflows, not suggestions
+- **Exception: brainstorming skill only fires when user explicitly asks to brainstorm, design, or explore approaches**
 - Exception: skip the skill if the answer fits in one sentence and requires no real reasoning (e.g. "what flag does X use?")
 - **Discard the skill after use** — Once a skill has served its purpose (or was loaded and found not to apply), discard its context/instructions. Do not let skill instructions bleed into subsequent unrelated tasks.
 - **Clean up artifacts** — Remove any files the skill created in `docs/superpowers/` (specs, plans, etc.) once they are no longer needed (e.g., after the plan is fully implemented and merged). Keeps the workspace free of stale cache and outdated plans.
@@ -50,10 +52,24 @@ This file contains agent workflow, architecture, and implementation guidance for
 - `bin/rails db:prepare` — create and migrate
 - `bin/rails db:reset` — drop, recreate, seed
 
+## Framework Reference Docs
+
+Shorter framework-anchored cheatsheets in `docs/`. Load these before working in their area — they're the fastest way to learn conventions, patterns, and where things live in this app.
+
+- `docs/_rails.md` — Rails patterns in use here (auth, concerns, delegated types, service objects, Action Text, Active Storage, variants, routes, SQLite stack).
+- `docs/_lexxy.md` — Lexxy (Action Text editor) concepts, presets, prompts, attachments, extensions, patching guide.
+- `docs/_turbo.md` — Turbo Drive/Frames/Streams/Morph, conventions in this app, events, stream actions.
+- `docs/_stimulus.md` — Stimulus concepts, lifecycle, all controllers in this app with one-line purpose, patterns.
+
+Each doc also links to the **Basecamp reference projects** for idiomatic examples: [Fizzy](https://github.com/basecamp/fizzy), [Writebook](https://github.com/basecamp/writebook), [Campfire](https://github.com/basecamp/campfire), and [Lexxy](https://github.com/basecamp/lexxy). Consult those repos when implementing non-trivial features.
+
 ## Architecture
 
 ### Authentication
 Custom session-based auth built with an `Authentication` concern (not Devise). Uses `has_secure_password`, signed httponly cookies, and `Current.user` via `ActiveSupport::CurrentAttributes`. Controllers opt out of auth with `allow_unauthenticated_access`. Rate limiting is applied to login and password reset endpoints.
+
+### User Settings
+Per-user settings live in a dedicated `user_settings` table (one row per user), accessed via `User::Configurable` concern. `User` `has_one :settings, class_name: "User::Settings"`; the row is created automatically on user create. `User::Settings` exposes typed columns (current: `logs_open`, `projects_open`, `collections_open`, `spreads_open` — all booleans) and a `SECTIONS` constant. Add new settings as real columns and extend the model; avoid JSON columns. UI state (e.g. home page section open/close) is updated via `PATCH /home/sections/:id` (`Home::SectionsController`), which guards against unknown keys using `User::Settings::SECTIONS`. The concern also exposes `User#settings!` which lazy-creates the row on first access; use it from controllers so users created before the row existed (or created via raw SQL) still get a settings record.
 
 ### Delegated Type Pattern (Bullets)
 `Bullet` uses `delegated_type :bulletable` for polymorphism. The `bullets` table holds `bulletable_type`/`bulletable_id`. Implemented bulletable types:
@@ -75,7 +91,7 @@ Bullets store three content layers: **`body`** (Action Text, Lexxy preset `inlin
 Bullets use `pops_on` (`date`) as the primary day bucket: which daily log page the bullet appears on. `Bullet.pops_on_date(date)` matches bullets for that calendar day per the model rules. The daily log is at `/daylog` (today) or `/daylog?date=YYYY-MM-DD`; pass `date:` to `daylog_path` when linking to another day.
 
 ### Monthly log spread
-`TimeSpread` is a `bucketable` type (thin model + `Bucketable` + `Periodable`). Spread period lives on the timespread itself via **`Periodable`** (`period_from`, `period_to`, `period_days`, `period_ranges_correct`). For timespread buckets, `period_from` is always the 1st of the month (month identity). **`TimeSpread.current(user)`** returns the spread whose `period_from` is this month, or `nil` (no auto-create). **`GET /timespread`** renders that spread or an empty state. Other spreads: **`GET /timespreads/:id`**. One timespread per `period_from` month per user (`TimeSpread#period_unique_per_user`). Left column: bullets in the bucket with `pops_on` in `period_days`; right column: unplanned (`pops_on` nil). `pops_on` still places bullets on the daily log when set.
+`MonthlyBucket` is a `bucketable` type (thin model + `Bucketable` + `Periodable`). The spread period lives on the monthly bucket itself via **`Periodable`** (`period_from`, `period_to`, `period_days`, `period_ranges_correct`). `period_from` is snapped to the 1st of the month. **`MonthlyBucket.current(user)`** returns the user's most recent monthly bucket, or `nil` (no auto-create). **`GET /monthly_bucket`** renders the current monthly bucket or an empty state. Specific spreads: **`GET /monthly_buckets/:id`**. Monthly buckets may optionally belong to a `FutureBucket`. Left column: bullets in the bucket with `pops_on` in `period_days`; right column: unplanned (`pops_on` nil). `pops_on` still places bullets on the daily log when set.
 
 ### Organizing from the timeline
 Select bullets via row checkboxes; the sticky **`_bulk_menu`** (styled in `bulk-menu.css`, driven by `bulk-menu` Stimulus on the page wrapper) keeps selection in **`idListValue`** and syncs a comma-separated `bullet_ids` CSV into every `data-bulk-menu-target="idList"` hidden field.
@@ -109,7 +125,7 @@ The architecture is intentionally closer to analog Bullet Journal behavior:
 `Project` is a first-class model (`belongs_to :user`) with `name`, `colour`, `icon`, and `pinned` (`Colourable`, `Iconable`, `Pinnable`, `ActionText::Attachable`). Bullets link via `bullet_projects` (many-to-many; a bullet may have several project tags). `GET /projects/:id` lists bullets joined through `bullet_projects`. Project show composer passes `default_project_id` so new bullets hydrate with that tag in the editor. Pin/unpin uses `POST`/`DELETE` on `projects/pin`. `Person` mirrors the same pin/unpin pattern via `people/pin` on the person show page.
 
 ### Buckets and memberships
-`Bucket` belongs to a user and uses `delegated_type :bucketable` (`Collection`, `TimeSpread` only). `TimeSpread` includes **`Periodable`** for time restrictions (`period_from` / `period_to`). Each bullet has **zero or one** bucket via `bullets.bucket_id` for collection/timespread membership. `Collection` rows do not store `user_id`; ownership is the bucket’s `user_id`, with `creation_user_id` on the bucketable for attribution where needed. Bucket **identity** (`name`, `colour`, `icon`) is stored on `buckets` (`name` required; `colour` / `icon` optional via `Colourable` and `Iconable`; no auto-assign). Collection bucket names are unique per user. `Collection` is a thin delegated type (no identity columns); it delegates `name`, `colour`, `icon`, and colour CSS helpers to `bucket` for display. Create forms pass identity fields on the bucketable param object; controllers persist them on the bucket row. The index hub is at `GET /buckets` (linked from the app header). **Streams** (saved filtered views) were removed; use projects, collections, and timeline filters instead.
+`Bucket` belongs to a user and uses `delegated_type :bucketable` (`Collection`, `Bundle`, `FutureBucket`, `MonthlyBucket`). `MonthlyBucket` includes **`Periodable`** for time restrictions (`period_from` / `period_to`). Each bullet has **zero or one** bucket via `bullets.bucket_id` for collection/bucket membership. `Collection` rows do not store `user_id`; ownership is the bucket’s `user_id`, with `creation_user_id` on the bucketable for attribution where needed. Bucket **identity** (`name`, `colour`, `icon`) is stored on `buckets` (`name` required; `colour` / `icon` optional via `Colourable` and `Iconable`; no auto-assign). Collection bucket names are unique per user. `Collection` is a thin delegated type (no identity columns); it delegates `name`, `colour`, `icon`, and colour CSS helpers to `bucket` for display. Create forms pass identity fields on the bucketable param object; controllers persist them on the bucket row. The home hub is at `GET /home` (linked from the app header). **Streams** (saved filtered views) were removed; use projects, collections, and timeline filters instead.
 
 ### Pinned workspace
 Desktop footer docks live in [`shared/_footer.html.erb`](app/views/shared/_footer.html.erb) (`#pinned_buckets_footer`, `#pinned_bullets_dock`) but are not mounted in the default layout while navigation is in flux. Pin/unpin Turbo Streams still target those frame ids when present. Mobile uses the bottom tab bar (`shared/_mobile_tab_bar`) and **`GET /pinned`** workspace (`pinned/index.html+mobile.erb`) for pinned bullets, pinned projects, pinned people, and pinned bucket groups (collections/timespreads). Lazy popover lists still load via [`pinned#index`](app/controllers/pinned_controller.rb) (`Turbo-Frame: pinned_bullets`) or [`buckets#show`](app/controllers/buckets_controller.rb) for footer bucket frames.
@@ -126,12 +142,15 @@ root                                         → daylogs#show (today)
 resource :session                            → sessions#new/create/show/destroy
 resource :session/code                       → sessions/codes#new/create
 
-# Logs
-GET    /daylog                               → daylogs#show (today; ?date= for another day)
-GET    /timespread                           → timespreads#current (spread for this month, or empty)
-GET    /timespreads/new                      → timespreads#new
-POST   /timespreads                          → timespreads#create
-GET    /timespreads/:id                      → timespreads#show
+# Logs (?date=YYYY-MM-DD for a specific day)
+GET    /daylog                               → daylogs#show
+GET    /monthly_bucket                       → monthly_buckets#current (current spread or empty)
+GET    /monthly_buckets/:id                  → monthly_buckets#show
+GET    /monthly_buckets/new                  → monthly_buckets#new
+POST   /monthly_buckets                      → monthly_buckets#create
+GET    /monthly_buckets/:monthly_bucket_id/bullets/new → monthly_buckets/bullets#new
+POST   /monthly_buckets/:monthly_bucket_id/bullets     → monthly_buckets/bullets#create
+resources :bundles, only: %i[show new create destroy]
 
 # Bullets CRUD (no index — daily log is /daylog)
 GET    /bullets/:id                          → bullets#show
@@ -154,35 +173,41 @@ DELETE /bullets/pop                          → bullets/pops#destroy
 POST   /bullets/:bullet_id/complete          → bullets/completes#create
 DELETE /bullets/:bullet_id/complete          → bullets/completes#destroy
 PATCH  /bullets/:bullet_id/publish           → bullets/publishes#update
+GET    /bullets/export                       → bullets/exports#show
 
 # Search & menu
 GET    /search                               → searches#show (?q=; turbo-stream updates menu_search frame)
 GET    /menu                                 → menu#show (?q= pre-fills search field)
+GET    /notes                                → notes#index
 
-# Buckets, projects, collections
-GET    /buckets                              → buckets#index (sidebar shell)
+# Home, buckets, future
+GET    /home                                 → home#show (navigation hub)
+PATCH  /home/sections/:id                    → home/sections#update (persist section open/close state)
 GET    /buckets/:id                          → buckets#show (footer popover bullet list)
+POST   /buckets/pin                          → buckets/pins#create
+DELETE /buckets/pin                          → buckets/pins#destroy
+GET    /future                               → futures#show
+POST   /future                               → futures#create
+POST   /future/months                        → futures#months
+
+# Projects, people, collections
 GET    /projects/suggestions                 → projects/suggestions#index (Lexxy `#` prompt items)
-GET    /projects                             → projects#index (HTML + JSON picker)
-GET    /projects/new                         → projects#new
-POST   /projects                             → projects#create
-GET    /projects/:id                         → projects#show
-DELETE /projects/:id                         → projects#destroy
 POST   /projects/pin                         → projects/pins#create
 DELETE /projects/pin                         → projects/pins#destroy
-GET    /collections                          → collections#index
-GET    /collections/new                      → collections#new
-POST   /collections                          → collections#create
-GET    /collections/:id                      → collections#show
-DELETE /collections/:id                      → collections#destroy
+resources :projects, only: %i[index new create show destroy]
 GET    /people/suggestions                   → people/suggestions#index
 POST   /people/pin                           → people/pins#create
 DELETE /people/pin                           → people/pins#destroy
-GET    /people                               → people#index
+resources :people, only: %i[index new create show destroy]
+resources :collections, only: %i[index new create show destroy]
+
+# Views
 GET    /activities                           → activities#index (?bullet_id= optional)
 resources :pinned, only: :index
 resources :archived, only: :index
 resources :published, param: :code
+
+# Health check
 GET    /up                                   → rails/health#show
 ```
 
@@ -227,6 +252,8 @@ Styles are layered in `application.css`: `reset` → `variables` → `base` → 
 
 **Prefer `<turbo-frame>` tags in HTML/ERB over ERB helper alternatives.** Use the raw `<turbo-frame id="...">` element directly rather than `turbo_frame_tag` helpers when writing views. This keeps templates explicit, readable, and framework-agnostic. Use `data-turbo-*` attributes directly on elements rather than wrapping helpers where possible.
 
+**Always consult the Turbo reference** (https://turbo.hotwired.dev/reference/drive) and the Rails guides when implementing Turbo features. Turbo events (`turbo:submit-end`, `turbo:render`, etc.) have specific ordering and guarantees — check docs instead of guessing.
+
 ### Testing Policy
 
 **Tests are only edited when the logic they cover has intentionally changed.** A failing test is a signal to fix the code, not the test. The only valid reasons to modify an existing test are:
@@ -244,3 +271,13 @@ Styles are layered in `application.css`: `reset` → `variables` → `base` → 
 - Find all references before renaming or removing a method/class
 - Let LSP diagnostics surface errors before running tests
 - Prefer LSP-informed edits over grep-and-replace for refactoring Ruby
+
+### Reference Projects
+
+Basecamp open-source Rails apps are good references for Rails patterns, Turbo usage, and Stimulus conventions:
+
+- **Fizzy** (github.com/basecamp/fizzy) — Rails patterns, nested routes via `scope module:`
+- **Campfire** (github.com/basecamp/campfire) — real-time features, Turbo Streams
+- **Writebook** (github.com/basecamp/writebook) — content publishing, form patterns
+
+Consult these when implementing non-trivial features to see idiomatic Rails/Turbo/Stimulus usage.

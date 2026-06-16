@@ -9,7 +9,7 @@
       </div>
       <span class="utilities--line-clamp-1"><%= monthly_bucket.name %></span>
     </div>
-    <div class="utilities--line-clamp-1 utilities--text-sm">
+    <div class="bucket--list-item-meta utilities--line-clamp-1">
       <% if monthly_bucket.period? %>
         <span><%= monthly_bucket.period_from.strftime("%b %-d") %> – <%= monthly_bucket.period_to.strftime("%b %-d") %></span>
       <% end %>

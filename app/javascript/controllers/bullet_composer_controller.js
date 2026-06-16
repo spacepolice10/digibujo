@@ -23,14 +23,6 @@ export default class extends Controller {
     directUploadUrl: String,
   }
 
-  connect() {
-    this.bindBodyEditors()
-    this.updateTypeUi()
-    if (this.hasPreviewsTarget) {
-      this.previewsTarget.hidden = this.previewsTarget.children.length == 0
-    }
-  }
-
   bindBodyEditors() {
     this.element.querySelectorAll('lexxy-editor[preset="inline"]').forEach((editor) => {
       if (editor.dataset.fileAcceptBound) return
@@ -145,6 +137,45 @@ export default class extends Controller {
     }
   }
 
+  connect() {
+    this.bindBodyEditors()
+    this.updateTypeUi()
+    if (this.hasPreviewsTarget) {
+      this.previewsTarget.hidden = this.previewsTarget.children.length == 0
+    }
+  }
+
+  clearOnSubmit(event) {
+    if (!event.detail.success) return
+
+    this.reset()
+  }
+
+  reset() {
+    this.element.querySelectorAll("trix-editor").forEach((el) => {
+      if (el.editor) el.editor.setContent("")
+    })
+
+    this.previewsTarget.querySelectorAll(".attachment--preview").forEach((preview) => {
+      this.removePreview(preview)
+    })
+
+    if (this.hasTypeSelectTarget) {
+      this.typeSelectTarget.value = "Task"
+      this.updateTypeUi()
+    }
+
+    if (this.hasExpandDialogTarget) {
+      this.expandDialogTarget.close()
+    }
+
+    const inlineEditor = this.element.querySelector('trix-editor[preset="inline"]')
+    if (inlineEditor?.editor) {
+      inlineEditor.editor.setSelectedRange([0, 0])
+      inlineEditor.focus()
+    }
+  }
+
   handleKeydown(event) {
     if (event.isComposing) return
     if (event.key != "Enter") return
@@ -155,6 +186,10 @@ export default class extends Controller {
   }
 
   submitExpand() {
+    const expandEditor = this.element.querySelector('trix-editor[preset="expand"]')
+    if (expandEditor?.editor) {
+      expandEditor.editor.setContent("")
+    }
     this.element.requestSubmit()
     if (this.hasExpandDialogTarget) {
       this.expandDialogTarget.close()

@@ -30,7 +30,7 @@
     </main>
 
     <nav class="tab-bar">
-      <%= link_to buckets_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'buckets'}", aria: { label: "Index" } do %>
+      <%= link_to home_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'home'}", aria: { label: "Home" } do %>
         <i class="icon" style="--icon-mask: var(--icon-list)" aria-hidden="true"></i>
       <% end %>
       <%= link_to pinned_index_path, class: "tab-bar-item #{'tab-bar-item--active' if controller_name == 'pinned'}", aria: { label: "Workspace" } do %>

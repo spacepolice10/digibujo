@@ -38,10 +38,10 @@ module Buckets
       assert_no_match dom_id(@bucket, :footer_bullets), response.body
     end
 
-    test 'create redirects html requests back to buckets index' do
+    test 'create redirects html requests back to home' do
       post buckets_pin_path, params: { bucket_id: @bucket.id }
 
-      assert_redirected_to buckets_path
+      assert_redirected_to home_path
       assert @bucket.reload.pinned?
     end
   end

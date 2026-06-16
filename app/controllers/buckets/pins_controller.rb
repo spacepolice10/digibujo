@@ -10,7 +10,7 @@ module Buckets
       @bucket.pin!
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_back fallback_location: buckets_path }
+        format.html { redirect_back fallback_location: home_path }
       end
     end
 
@@ -18,7 +18,7 @@ module Buckets
       @bucket.unpin!
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_back fallback_location: buckets_path }
+        format.html { redirect_back fallback_location: home_path }
       end
     end
 

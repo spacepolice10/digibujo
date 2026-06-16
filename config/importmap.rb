@@ -12,3 +12,4 @@ pin_all_from 'app/javascript/helpers', under: 'helpers'
 pin_all_from 'app/javascript/extensions', under: 'extensions'
 pin 'lexxy', to: 'lexxy.js'
 pin '@rails/activestorage', to: 'activestorage.esm.js'
+pin "@rails/request.js", to: "@rails--request.js.js" # @0.0.13

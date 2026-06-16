@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
+# Authenticated user and owner of all their bullets, buckets, projects, and settings.
 class User < ApplicationRecord
+  include User::Configurable
+
   has_many :sessions, dependent: :destroy
   has_many :login_codes, dependent: :destroy
   has_many :bullets, dependent: :destroy

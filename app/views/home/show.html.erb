@@ -1,0 +1,100 @@
+<div class="home--layout">
+  <aside class="home--side">
+    <%= link_to new_collection_path, class: "button--secondary home--side-button", data: { turbo_frame: "_top" } do %>
+      <i class="icon" style="--icon-mask: var(--icon-book)" aria-hidden="true"></i>
+      Add collection
+    <% end %>
+    <%= link_to new_monthly_bucket_path, class: "button--secondary home--side-button", data: { turbo_frame: "_top" } do %>
+      <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
+      Add monthly log
+    <% end %>
+    <%= link_to new_project_path, class: "button--secondary home--side-button", data: { turbo_frame: "_top" } do %>
+      <i class="icon" style="--icon-mask: var(--icon-tag)" aria-hidden="true"></i>
+      New project
+    <% end %>
+    <%= link_to new_person_path, class: "button--secondary home--side-button", data: { turbo_frame: "_top" } do %>
+      <i class="icon" style="--icon-mask: var(--icon-face)" aria-hidden="true"></i>
+      Add contact
+    <% end %>
+  </aside>
+
+  <div class="home--surface">
+    <%= render layout: "home/section", locals: { key: "logs", title: "Logs", open: @section_open["logs"] } do %>
+      <ul class="layout--list bucket--list">
+        <li class="layout--list-item">
+          <%= link_to daylog_path, class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
+            <div class="bucket--list-item-name">
+              <div class="bucket--list-item-marker" aria-hidden="true"></div>
+              <span class="utilities--line-clamp-1">Today</span>
+            </div>
+            <div class="bucket--list-item-meta utilities--line-clamp-1">
+              <span><%= pluralize(@today_count, 'bullet') %></span>
+            </div>
+          <% end %>
+        </li>
+      </ul>
+
+      <% if @future %>
+        <ul class="layout--list bucket--list">
+          <li id="<%= dom_id(@future, :list_item) %>" class="layout--list-item">
+            <%= link_to future_path, class: "bucket--list-item-link" do %>
+              <div class="bucket--list-item-name">
+                <div class="bucket--list-item-marker" data-bucket-colour="<%= @future.colour %>" aria-hidden="true"></div>
+                <span class="utilities--line-clamp-1"><%= @future.name %></span>
+              </div>
+              <div class="bucket--list-item-meta utilities--line-clamp-1">
+                <span><%= @future.bucketable.monthly_buckets.count %> months</span>
+              </div>
+            <% end %>
+          </li>
+        </ul>
+      <% end %>
+
+    <% end %>
+
+    <%= render layout: "home/section", locals: { key: "projects", title: "Projects", show_more_path: projects_path, open: @section_open["projects"] } do %>
+      <ul class="layout--list bucket--list">
+        <%= render @projects %>
+      </ul>
+    <% end %>
+
+    <%= render layout: "home/section", locals: { key: "collections", title: "Collections", show_more_path: collections_path, open: @section_open["collections"] } do %>
+      <ul class="layout--list bucket--list">
+        <%= render @collections.select { |c| c.bucket != @future } %>
+      </ul>
+    <% end %>
+
+    <%= render layout: "home/section", locals: { key: "spreads", title: "Spreads", open: @section_open["spreads"] } do %>
+      <ul class="layout--list bucket--list">
+        <%= render partial: "monthly_buckets/monthly_bucket", collection: @monthly_buckets, as: :monthly_bucket %>
+      </ul>
+    <% end %>
+  </div>
+
+  <aside class="home--side">
+    <div class="home--side-header">
+      <h4 class="home--side-heading">Activity</h4>
+      <%= link_to activities_path, class: "button--tertiary button--icon", data: { turbo_frame: "_top" }, aria: { label: "Earlier activity" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-menu)" aria-hidden="true"></i>
+      <% end %>
+    </div>
+    <div class="home--activity-list">
+      <% if @activities.any? %>
+        <% @activities.each do |activity| %>
+          <div class="home--activity-item">
+            <%= link_to bullet_path(activity.bullet), class: "home--activity-bullet utilities--line-clamp-1" do %>
+              <span class="home--activity-dot" data-bullet-type="<%= activity.bullet.bulletable_type.downcase %>"></span>
+              <%= activity.bullet.name.truncate(60) %>
+            <% end %>
+            <span class="home--activity-meta">
+              <span class="home--activity-action"><%= activity.action_name %></span>
+              <%= time_ago_in_words(activity.created_at) %> ago
+            </span>
+          </div>
+        <% end %>
+      <% else %>
+        <p class="home--activity-item utilities--text-sm" style="color: var(--color-fg-subtle);">No recent activity</p>
+      <% end %>
+    </div>
+  </aside>
+</div>

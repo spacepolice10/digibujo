@@ -13,7 +13,12 @@
         Delete
       <% end %>
     </div>
-    <h2><%= @person.name %></h2>
+    <div class="layout--header-info">
+      <% if @person.avatar.attached? %>
+        <%= image_tag fresh_person_avatar_path(@person), class: "person--avatar-large", alt: "" %>
+      <% end %>
+      <h2><%= @person.name %></h2>
+    </div>
   </div>
   <div class="bucket--footer">
     <turbo-frame id="bullet_composer">

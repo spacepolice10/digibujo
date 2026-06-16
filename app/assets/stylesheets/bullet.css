@@ -12,34 +12,6 @@
       corner-shape: squircle;
     }
 
-    &[data-bullet-type="note"] .bullet--body {
-      position: relative;
-      overflow: visible;
-      box-shadow: 0 0 2px var(--model-color-5);
-      border-radius: var(--radius-strong);
-      background-color: color-mix(
-        in oklch,
-        var(--model-color-5),
-        var(--color-bg-base) 90%
-      );
-      color: var(--color-fg-base);
-      padding-block: var(--radius-subtle);
-      padding-inline: var(--radius-subtle);
-
-      &:has(.bullet--tags) {
-        padding-bottom: var(--spacing-vertical-half);
-      }
-    }
-
-    &[data-bullet-type="note"] .bullet--tags {
-      position: absolute;
-      bottom: calc(-1 * var(--spacing-vertical-half));
-      left: 0;
-      background-color: var(--color-bg-subtle);
-      border-radius: var(--radius-strong);
-      padding: var(--radius-subtle) var(--radius-subtle);
-    }
-
     &[data-bullet-completed] .bullet--name,
     &:has(.bullet--task-marker[data-task-done="true"]) .bullet--name {
       text-decoration: line-through;
@@ -69,16 +41,6 @@
   }
 
   .bullet--monthly-bucket {
-    &[data-bullet-type="note"] .bullet--body {
-      position: static;
-      overflow: hidden;
-      box-shadow: none;
-      border-radius: 0;
-      background: none;
-      padding: 0;
-      color: inherit;
-    }
-
     .bullet--body {
       white-space: nowrap;
       overflow: hidden;
@@ -344,7 +306,6 @@
 
     a {
       color: var(--model-color-2);
-      text-decoration: underline;
       text-underline-offset: 0.15em;
     }
 
@@ -415,6 +376,11 @@
   .bullet-form-expand-title {
     font-size: var(--font-size-base);
     margin-bottom: var(--spacing-vertical);
+  }
+
+  .bullet-form-expand lexxy-editor {
+    display: block;
+    min-height: 200px;
   }
 
   .bullet-form-expand-footer {

@@ -36,7 +36,10 @@ Rails.application.routes.draw do
   resource :search, only: :show
   resource :menu, only: :show, controller: 'menu'
   resources :notes, only: :index
-  resources :buckets, only: %i[index show]
+  resources :buckets, only: :show
+  resource :home, only: :show, controller: 'home' do
+    resources :sections, only: :update, module: :home
+  end
   resource :future, only: %i[show create], controller: 'futures' do
     post :months, on: :collection
   end

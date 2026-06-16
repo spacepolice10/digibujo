@@ -69,6 +69,19 @@
     min-width: 0;
   }
 
+  .dialog--large {
+    width: min(
+      calc(100vw - (2 * var(--spacing-horizontal))),
+      calc(var(--breakpoint-tablet) * 2)
+    );
+    overflow: visible;
+  }
+
+  .dialog--large > .dialog--body {
+    overflow-y: auto;
+    max-height: 80dvh;
+  }
+
   .dialog--hide {
     position: relative;
     z-index: var(--z-dialog);
