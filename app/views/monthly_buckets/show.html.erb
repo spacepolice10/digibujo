@@ -32,12 +32,17 @@
                  data-monthly-bucket-drop-pops-on-value="<%= date.iso8601 %>"
                  data-action="dragover->monthly-bucket-drop#dragover dragleave->monthly-bucket-drop#dragleave drop->monthly-bucket-drop#drop">
               <% (@bullets_by_date[date] || []).each do |bullet| %>
-                <%= render_monthly_bucket_bullet(bullet) %>
+                <%= render "monthly_buckets/bullets/bullet", bullet: bullet %>
               <% end %>
+              <turbo-frame class="bullet_pops_on_<%= date %>" id="composer_<%= date.iso8601 %>">
+                <%= link_to new_monthly_bucket_bullet_path(@monthly_bucket, pops_on: date.iso8601),
+                      data: { turbo_frame: "_self" },
+                      class: "button--tertiary button--icon",
+                      aria: { label: "Add to #{date.strftime('%B %-d')}" } do %>
+                  <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
+                <% end %>
+              </turbo-frame>
             </div>
-            <turbo-frame id="<%= dom_id(@monthly_bucket, "date_#{date}_composer") %>">
-              <%= render "monthly_buckets/day_composer", monthly_bucket: @monthly_bucket, date: date, bucket: @bucket %>
-            </turbo-frame>
           </div>
         <% end %>
       <% else %>
@@ -53,17 +58,17 @@
            data-monthly-bucket-drop-pop-url-value="<%= pop_path %>"
            data-action="dragover->monthly-bucket-drop#dragover dragleave->monthly-bucket-drop#dragleave drop->monthly-bucket-drop#drop">
         <% @unplanned_bullets.each do |bullet| %>
-          <%= render_monthly_bucket_bullet(bullet) %>
+          <%= render "monthly_buckets/bullets/bullet", bullet: bullet %>
         <% end %>
+        <turbo-frame class="bullet_pops_on_" id="composer_unplanned">
+          <%= link_to new_monthly_bucket_bullet_path(@monthly_bucket),
+                data: { turbo_frame: "_self" },
+                class: "button--tertiary button--icon",
+                aria: { label: "Add bullet" } do %>
+            <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
+          <% end %>
+        </turbo-frame>
       </div>
-      <turbo-frame id="<%= dom_id(@monthly_bucket, :unplanned_composer) %>">
-        <%= render "bullets/composer",
-              attributes: {
-                bucket_id: @bucket.id,
-                render_context: "monthly_bucket_unplanned",
-                monthly_bucket_id: @monthly_bucket.id
-              } %>
-      </turbo-frame>
     </section>
   </div>
 </div>
