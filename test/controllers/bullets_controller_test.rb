@@ -32,13 +32,14 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
              bulletable_type: 'Task',
              body: 'Fresh task',
              pops_on: Date.current.iso8601,
-             bucket_id: collection.bucket.id
+             bucket_id: collection.bucket.id,
+             composer_id: 'bullet_composer'
            }
          },
          as: :turbo_stream
 
     assert_response :success
-    assert_match(/turbo-stream action="before" targets="\.bullet_pops_on_#{Date.current.iso8601}"/, response.body)
+    assert_match(/turbo-stream action="before" target="bullet_composer"/, response.body)
     assert_no_match(/turbo-stream action="update" target="bullet_composer"/, response.body)
     assert_no_match(/Add bullet/, response.body)
   end
@@ -149,17 +150,16 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Expanded content', response.body
   end
 
-  test 'create turbo stream renders validation errors in toasts' do
+  test 'create with invalid body re-renders form' do
     post bullets_path,
          params: {
-           bullet: { bulletable_type: 'Task', body: '' }
+           bullet: { bulletable_type: 'Task', body: '', composer_id: 'bullet_composer' }
          },
          as: :turbo_stream
 
-    assert_response :success
-    assert_select 'turbo-stream[action="update"][target="toasts"]'
-    assert_select '.toasts--errmsg', text: /Body can't be blank/
-    assert_select '.form-errmsg', 0
+    assert_response :unprocessable_entity
+    assert_select 'form.bullet-form'
+    assert_select '.form-errmsg', text: /Body can't be blank/
   end
 
   test 'create Title bullet with body' do
