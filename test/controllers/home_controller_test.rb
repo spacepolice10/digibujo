@@ -31,7 +31,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show respects collapsed section preferences' do
-    @user.settings.update!(projects_open: false)
+    @user.settings.update!(spreads_expanded: false)
 
     get home_path
 

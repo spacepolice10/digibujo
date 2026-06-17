@@ -13,7 +13,7 @@ class HomeController < ApplicationController
     @monthly_buckets = recent_monthly_buckets
     @activities = recent_activities
     @today_count = today_bullets_count
-    @section_open = section_open_state
+    @section_expanded_status = section_expanded_status
   end
 
   private
@@ -43,7 +43,7 @@ class HomeController < ApplicationController
     Current.user.bullets.dailylog(Date.current).count
   end
 
-  def section_open_state
-    User::Settings::SECTIONS.index_with { |key| Current.user.settings!.section_open?(key) }
+  def section_expanded_status
+    User::Settings::SECTION_COLUMNS.index_with { |_, column| Current.user.settings![column] }
   end
 end
