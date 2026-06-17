@@ -21,9 +21,10 @@ class BundlesController < ApplicationController
   def create
     @bundle = @collection.bundles.new
     if save_bundle_with_bucket(@bundle)
-      redirect_back fallback_location: collection_path(@collection), notice: 'Bundle created'
+      redirect_to collection_path(@collection), notice: 'Bundle created'
     else
-      redirect_back fallback_location: collection_path(@collection), alert: 'Could not create bundle'
+      @bundle.name = bundle_params[:name]
+      render :new, status: :unprocessable_entity
     end
   end
 
