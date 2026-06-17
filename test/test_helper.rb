@@ -24,6 +24,12 @@ module ActiveSupport
       collection
     end
 
+    def create_bundle!(user, collection, name:, colour: nil, icon: nil)
+      bundle = collection.bundles.create!(user: user)
+      user.buckets.create!(bucketable: bundle, name: name, colour: colour, icon: icon)
+      bundle
+    end
+
     def create_monthly_bucket!(user, name:, period_from: nil, period_to: nil, colour: nil, icon: nil)
       period = MonthlyBucket.default_period
       monthly_bucket = MonthlyBucket.create!(
