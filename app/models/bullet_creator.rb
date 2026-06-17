@@ -22,11 +22,16 @@ class BulletCreator
     @bullet.errors.none?
   end
 
+  def build
+    build_bullet
+    self
+  end
+
   private
 
   def build_bullet
     type_name = @params[:bulletable_type].presence || 'Task'
-    attributes = @params.except(:bulletable_type, :bulletable_attributes)
+    attributes = @params.except(:bulletable_type, :bulletable_attributes, :composer_id)
     @bullet = @user.bullets.new(attributes.merge(bulletable: type_name.constantize.new))
   end
 
