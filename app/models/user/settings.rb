@@ -4,19 +4,14 @@
 #
 # rubocop:disable Style/ClassAndModuleChildren
 class User::Settings < ApplicationRecord
-  SECTIONS = %w[logs projects collections spreads].freeze
+  SECTION_COLUMNS = {
+    'logs'        => :logs_expanded,
+    'projects'    => :projects_expanded,
+    'collections' => :collections_expanded,
+    'spreads'     => :spreads_expanded
+  }.freeze
+  SECTIONS = SECTION_COLUMNS.keys.freeze
 
   belongs_to :user
-
-  def section_open?(key, default: true)
-    return default unless SECTIONS.include?(key.to_s)
-
-    public_send("#{key}_open?")
-  end
-
-  def set_section_open(key, value)
-    public_send("#{key}_open=", value)
-    save!
-  end
 end
 # rubocop:enable Style/ClassAndModuleChildren
