@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_16_160000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_17_000001) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -232,11 +232,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_16_160000) do
   end
 
   create_table "user_settings", force: :cascade do |t|
-    t.boolean "collections_open", default: true, null: false
+    t.boolean "collections_expanded", default: true, null: false
     t.datetime "created_at", null: false
-    t.boolean "logs_open", default: true, null: false
-    t.boolean "projects_open", default: true, null: false
-    t.boolean "spreads_open", default: true, null: false
+    t.boolean "logs_expanded", default: true, null: false
+    t.boolean "projects_expanded", default: true, null: false
+    t.boolean "spreads_expanded", default: true, null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["user_id"], name: "index_user_settings_on_user_id", unique: true
