@@ -65,17 +65,24 @@ class BulletsController < ApplicationController
 
   def bullet_params
     params.require(:bullet).permit(
-      :body, :rich_body, :pops_on, :bulletable_type, :bucket_id,
+      :body, :rich_body, :pops_on, :bulletable_type, :bucket_id, :indented,
       attachments: [],
-      bulletable_attributes: %i[mood awaits_research idea]
+      bulletable_attributes: %i[text mood awaits_research idea]
     )
   end
 
   def update_bulletable!(bullet)
     attrs = params.dig(:bullet, :bulletable_attributes)
-    return unless attrs.present? && bullet.bulletable.is_a?(Note)
+    return unless attrs.present?
+    return unless bullet.bulletable.is_a?(Note) || bullet.bulletable.is_a?(Title)
 
-    bullet.bulletable.update!(attrs.permit(:mood, :awaits_research, :idea))
+    permitted = if bullet.bulletable.is_a?(Note)
+                  attrs.permit(:mood, :awaits_research, :idea)
+                else
+                  attrs.permit(:text)
+                end
+
+    bullet.bulletable.update!(permitted)
   end
 
   def finalize_bullet_content!(bullet)

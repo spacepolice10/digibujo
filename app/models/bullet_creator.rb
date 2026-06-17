@@ -32,9 +32,16 @@ class BulletCreator
 
   def update_bulletable!
     attrs = @params[:bulletable_attributes]
-    return unless attrs.present? && @bullet.bulletable.is_a?(Note)
+    return unless attrs.present?
+    return unless @bullet.bulletable.is_a?(Note) || @bullet.bulletable.is_a?(Title)
 
-    @bullet.bulletable.update!(attrs.permit(:mood, :awaits_research, :idea))
+    permitted = if @bullet.bulletable.is_a?(Note)
+                  attrs.permit(:mood, :awaits_research, :idea)
+                else
+                  attrs.permit(:text)
+                end
+
+    @bullet.bulletable.update!(permitted)
   end
 
   def finalize_content!
