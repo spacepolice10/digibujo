@@ -40,6 +40,17 @@
     }
   }
 
+  .bullet[data-bullet-indented="true"] {
+    padding-inline-start: 2rem;
+  }
+
+  .bullet--title {
+    margin: 0;
+    font-size: var(--font-size-large);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-fg-base);
+  }
+
   .bullet--monthly-bucket {
     .bullet--body {
       white-space: nowrap;
