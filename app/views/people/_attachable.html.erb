@@ -3,7 +3,7 @@
       data: { turbo_frame: "_top" },
       aria: { label: "Person: #{person.name}" } do %>
   <% if person.avatar.attached? %>
-    <%= image_tag fresh_person_avatar_path(person), class: "person--avatar", alt: "" %>
+    <%= image_tag person.avatar, class: "person--avatar", alt: "" %>
   <% elsif person.icon.present? %>
     <i class="icon" style="--icon-mask: <%= person.icon_mask %>" aria-hidden="true"></i>
   <% end %>

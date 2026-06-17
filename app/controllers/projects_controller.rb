@@ -16,7 +16,7 @@ class ProjectsController < ApplicationController
   def create
     @project = Current.user.projects.build(project_params)
     if @project.save
-      redirect_back fallback_location: projects_path, notice: 'Project created'
+      redirect_to home_path, notice: 'Project created'
     else
       render :new, status: :unprocessable_entity
     end

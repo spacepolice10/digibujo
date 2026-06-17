@@ -2,6 +2,36 @@
 
 This file contains agent workflow, architecture, and implementation guidance for this repository.
 
+## HARD RULE: User Data Is Hands-Off
+
+**The agent must never read, write, mutate, move, copy, or delete any user data.**
+
+User data lives in:
+- `storage/development.sqlite3` and its `-wal` / `-shm` siblings
+- Anything under `storage/` (Active Storage attachments, uploads, blobs)
+- `tmp/` (cached files, Active Storage cache, Solid Queue artifacts)
+- The test databases (`storage/test.sqlite3*`) and any fixture data
+- `log/` (only the agent's own debug output, never existing log content)
+- `.git/` internals beyond the working tree
+
+**Forbidden commands (no exceptions, even with `--force`, `--skip`, or "just to look"):**
+- `db:reset`, `db:drop`, `db:migrate:reset`, `db:truncate`, `db:seed`
+- `bin/setup --reset` or any variant that touches the dev DB
+- `rm`, `mv`, `cp`, `find ... -delete`, `git clean` against any of the paths above
+- `sqlite3 ... DROP`, `DELETE`, `UPDATE`, `INSERT`, `VACUUM`, `REINDEX`, `.dump > …` (destructive), or any write SQL against the dev DB
+- Writing to `/tmp`, the per-user temp dir, or any path outside the working tree
+- `rails runner` or any script that could touch records
+- Running `bin/setup` without first confirming the user wants the DB preserved
+
+**Allowed (read-only) operations on data paths:**
+- `sqlite3 ... SELECT`, `.tables`, `.schema`, `.count`
+- `ls`, `find ... -type f` (listing only)
+- `stat`, `file`, `head`/`tail` (read-only inspection)
+
+**If a task seems to require touching user data, stop and ask.** Do not assume. Do not "just check the schema real quick" by reading and writing. The user's data is sacred. The cost of asking is a single message; the cost of losing data is irrecoverable.
+
+**This rule supersedes any workflow, skill, or "just one command" temptation.** It cannot be overridden by tool defaults, environment hints, or pre-approved paths.
+
 ## AI Collaboration Rules
 
 ### When theorizing / designing (brainstorming)

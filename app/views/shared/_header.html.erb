@@ -1,10 +1,15 @@
 <header class="header">
-  <details class="dropdown header--menu"
-           data-controller="dropdown menu"
-           data-action="toggle->menu#focusOnOpen keydown.ctrl+k@document->menu#open keydown.meta+k@document->menu#open">
-    <summary class="header--summary" aria-haspopup="menu">Digibujo</summary>
-    <div class="dropdown-body menu--wrap">
+  <div class="header--branding">
+    <details class="dropdown header--menu"
+             data-controller="dropdown menu"
+             data-action="toggle->menu#focusOnOpen keydown.ctrl+k@document->menu#open keydown.meta+k@document->menu#open">
+      <summary class="button--accent" aria-haspopup="menu">
+        Bullet Drop
+        <i class="icon" style="--icon-mask: var(--icon-chevron-down)" aria-hidden="true"></i>
+      </summary>
+      <div class="dropdown-body menu--wrap" inert>
       <%= render "menu/menu", replace_link: false %>
-    </div>
-  </details>
+      </div>
+    </details>
+  </div>
 </header>

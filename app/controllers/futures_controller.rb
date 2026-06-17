@@ -17,25 +17,15 @@ class FuturesController < ApplicationController
   def create
     today = Date.current
 
-    Bucket.transaction do
-      future_bucket_record = FutureBucket.create!(user: Current.user)
-      @future = Current.user.buckets.create!(
-        bucketable: future_bucket_record,
-        name: 'Future Log'
-      )
+    @future_bucket = FutureBucket.new(user: Current.user)
+    @future_bucket.build_bucket(user: Current.user, name: 'Future Log')
 
-      current_monthly = MonthlyBucket.current(Current.user)
-
-      current_monthly ||= MonthlyBucket.create!(
-        user: Current.user,
-        period_from: today.beginning_of_month,
-        period_to: today.end_of_month
-      ) { |mb| mb.build_bucket(user: Current.user, name: today.strftime('%B %Y')) }
-
-      current_monthly.update!(future_bucket_id: future_bucket_record.id)
+    if @future_bucket.save
+      link_current_monthly_to(@future_bucket, today)
+      redirect_to future_path, notice: 'Future log created'
+    else
+      render :empty, status: :unprocessable_entity
     end
-
-    redirect_to future_path, notice: 'Future log created'
   end
 
   def months
@@ -47,19 +37,45 @@ class FuturesController < ApplicationController
     if future
       future_bucket = future.bucketable
       last_child = future_bucket.monthly_buckets.maximum(:period_to)
-
       next_month = (last_child || today.beginning_of_month) + 1.month
 
-      Bucket.transaction do
-        MonthlyBucket.create!(
-          user: Current.user,
-          future_bucket_id: future_bucket.id,
-          period_from: next_month.beginning_of_month,
-          period_to: next_month.end_of_month
-        ) { |mb| mb.build_bucket(user: Current.user, name: next_month.strftime('%B %Y')) }
+      @monthly_bucket = MonthlyBucket.new(
+        user: Current.user,
+        future_bucket: future_bucket,
+        period_from: next_month.beginning_of_month,
+        period_to: next_month.end_of_month
+      )
+      @monthly_bucket.build_bucket(user: Current.user, name: next_month.strftime('%B %Y'))
+
+      if @monthly_bucket.save
+        redirect_to future_path, notice: 'Month added'
+      else
+        redirect_to future_path, alert: 'Could not add month'
       end
+    else
+      redirect_to future_path, alert: 'No future log found'
+    end
+  end
+
+  private
+
+  def link_current_monthly_to(future_bucket, today)
+    current_monthly = MonthlyBucket.current(Current.user)
+
+    current_monthly ||= begin
+      mb = MonthlyBucket.new(
+        user: Current.user,
+        period_from: today.beginning_of_month,
+        period_to: today.end_of_month
+      )
+      mb.build_bucket(user: Current.user, name: today.strftime('%B %Y'))
+      mb.save!
+      mb
     end
 
-    redirect_to future_path, notice: 'Month added'
+    current_monthly.update!(future_bucket_id: future_bucket.id)
+  rescue ActiveRecord::RecordInvalid
+    # If current monthly can't be created, still allow future log creation
+    nil
   end
 end

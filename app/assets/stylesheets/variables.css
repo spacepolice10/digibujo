@@ -151,5 +151,36 @@
     --icon-size-subtle: 1rem;
     --icon-size-base: 1.5rem;
     --icon-size-strong: 2rem;
+
+    /* monthly picker gradients — seasonal color wheel progression, 135° 3-stop */
+    --gradient-january: linear-gradient(135deg, oklch(0.88 0.14 210), oklch(0.82 0.20 225), oklch(0.93 0.08 240));
+    --gradient-february: linear-gradient(135deg, oklch(0.88 0.18 245), oklch(0.84 0.22 260), oklch(0.90 0.14 275));
+    --gradient-march: linear-gradient(135deg, oklch(0.88 0.16 145), oklch(0.88 0.24 155), oklch(0.94 0.10 165));
+    --gradient-april: linear-gradient(135deg, oklch(0.93 0.06 170), oklch(0.88 0.14 185), oklch(0.90 0.10 200));
+    --gradient-may: linear-gradient(135deg, oklch(0.90 0.16 95), oklch(0.90 0.20 110), oklch(0.95 0.14 125));
+    --gradient-june: linear-gradient(135deg, oklch(0.90 0.16 65), oklch(0.94 0.22 80), oklch(0.92 0.14 95));
+    --gradient-july: linear-gradient(135deg, oklch(0.90 0.22 25), oklch(0.86 0.28 40), oklch(0.92 0.18 55));
+    --gradient-august: linear-gradient(135deg, oklch(0.86 0.18 355), oklch(0.90 0.24 10), oklch(0.88 0.20 25));
+    --gradient-september: linear-gradient(135deg, oklch(0.93 0.22 40), oklch(0.88 0.26 55), oklch(0.86 0.18 70));
+    --gradient-october: linear-gradient(135deg, oklch(0.90 0.20 15), oklch(0.84 0.22 30), oklch(0.82 0.14 45));
+    --gradient-november: linear-gradient(135deg, oklch(0.84 0.14 335), oklch(0.82 0.16 350), oklch(0.88 0.04 5));
+    --gradient-december: linear-gradient(135deg, oklch(0.86 0.16 215), oklch(0.90 0.08 230), oklch(0.95 0.02 245));
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --gradient-january: linear-gradient(135deg, oklch(0.26 0.14 210), oklch(0.20 0.20 225), oklch(0.30 0.08 240));
+      --gradient-february: linear-gradient(135deg, oklch(0.26 0.18 245), oklch(0.22 0.22 260), oklch(0.28 0.14 275));
+      --gradient-march: linear-gradient(135deg, oklch(0.26 0.16 145), oklch(0.26 0.24 155), oklch(0.32 0.10 165));
+      --gradient-april: linear-gradient(135deg, oklch(0.31 0.06 170), oklch(0.26 0.14 185), oklch(0.28 0.10 200));
+      --gradient-may: linear-gradient(135deg, oklch(0.28 0.16 95), oklch(0.28 0.20 110), oklch(0.33 0.14 125));
+      --gradient-june: linear-gradient(135deg, oklch(0.28 0.16 65), oklch(0.32 0.22 80), oklch(0.30 0.14 95));
+      --gradient-july: linear-gradient(135deg, oklch(0.28 0.22 25), oklch(0.24 0.28 40), oklch(0.30 0.18 55));
+      --gradient-august: linear-gradient(135deg, oklch(0.24 0.18 355), oklch(0.28 0.24 10), oklch(0.26 0.20 25));
+      --gradient-september: linear-gradient(135deg, oklch(0.31 0.22 40), oklch(0.26 0.26 55), oklch(0.24 0.18 70));
+      --gradient-october: linear-gradient(135deg, oklch(0.28 0.20 15), oklch(0.22 0.22 30), oklch(0.20 0.14 45));
+      --gradient-november: linear-gradient(135deg, oklch(0.22 0.14 335), oklch(0.20 0.16 350), oklch(0.26 0.04 5));
+      --gradient-december: linear-gradient(135deg, oklch(0.24 0.16 215), oklch(0.28 0.08 230), oklch(0.32 0.02 245));
+    }
   }
 }

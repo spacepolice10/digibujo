@@ -46,9 +46,8 @@ module Projectable
     @applying_project_tags_from_content = false
   end
 
-  def editor_content(default_projects: [], default_people: [])
-    person_attachables = (respond_to?(:people) ? people.to_a : []) + Array(default_people).compact
-    attachables = (projects.to_a + Array(default_projects).compact + person_attachables).uniq
+  def editor_content
+    attachables = (projects.to_a + (respond_to?(:people) ? people.to_a : [])).uniq
     html = rich_text_content_record&.body_before_type_cast.to_s.dup
     existing_project_ids = attachable_ids_from_content_html(html, Project)
     existing_person_ids = attachable_ids_from_content_html(html, Person)

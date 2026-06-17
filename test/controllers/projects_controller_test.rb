@@ -27,16 +27,14 @@ class ProjectsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match 'beta', response.body
   end
 
-  test 'show renders composer with add bullet link' do
+  test 'show renders project bullets' do
     project = create_project!(@user, name: 'alpha')
+    @user.bullets.create!(bulletable: Task.create!, body: 'Tagged task')
+      .tap { |b| b.tag_project!(project_id: project.id) }
 
     get project_path(project)
 
     assert_response :success
-    assert_select 'turbo-frame#bullet_composer' do
-      assert_select 'a[href=?]',
-                    new_bullet_path(render_context: 'project', default_project_id: project.id)
-    end
-    assert_match(/Add bullet/, response.body)
+    assert_match 'Tagged task', response.body
   end
 end

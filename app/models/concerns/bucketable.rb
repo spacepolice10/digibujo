@@ -7,7 +7,7 @@ module Bucketable
     has_one :bucket, as: :bucketable, inverse_of: :bucketable, touch: true, autosave: true
     has_many :bullets, through: :bucket
 
-    delegate :colour, :icon, to: :bucket, allow_nil: true
+    delegate :colour, :icon, :icon_path, :emoji_icon?, to: :bucket, allow_nil: true
   end
 
   def name

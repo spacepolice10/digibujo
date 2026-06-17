@@ -23,12 +23,16 @@ class MonthlyBucketsController < ApplicationController
   end
 
   def create
-    @monthly_bucket = MonthlyBucket.new(monthly_bucket_params.slice(:period_from, :period_to).merge(user: Current.user))
+    month_date = Date.parse(monthly_bucket_params[:month])
+    @monthly_bucket = MonthlyBucket.new(
+      user: Current.user,
+      period_from: month_date.beginning_of_month,
+      period_to: month_date.end_of_month
+    )
     @monthly_bucket.build_bucket(
       user: Current.user,
-      name: monthly_bucket_params[:name],
-      colour: monthly_bucket_params[:colour],
-      icon: monthly_bucket_params[:icon]
+      name: month_date.strftime("%B %Y"),
+      icon: "calendar"
     )
 
     if @monthly_bucket.save
@@ -57,6 +61,6 @@ class MonthlyBucketsController < ApplicationController
   end
 
   def monthly_bucket_params
-    params.require(:monthly_bucket).permit(:name, :period_from, :period_to, :colour, :icon)
+    params.require(:monthly_bucket).permit(:month)
   end
 end

@@ -20,16 +20,6 @@
       <h2><%= @person.name %></h2>
     </div>
   </div>
-  <div class="bucket--footer">
-    <turbo-frame id="bullet_composer">
-      <%= render "bullets/composer",
-            attributes: {
-              render_context: "project",
-              default_person_id: @person.id,
-              composer_id: "bullet_composer"
-            } %>
-    </turbo-frame>
-  </div>
   <article class="layout--column bucket--list">
       <div class="layout--header-actions">
         <%= link_to "All", person_path(@person), class: "button--secondary" %>

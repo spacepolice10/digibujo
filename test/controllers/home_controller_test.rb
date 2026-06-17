@@ -31,6 +31,9 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show respects collapsed section preferences' do
+    create_project!(@user, name: 'alpha')
+    create_collection!(@user, name: 'reading')
+    create_monthly_bucket!(@user, name: 'june')
     @user.settings.update!(spreads_expanded: false)
 
     get home_path
@@ -46,5 +49,33 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     get home_path
 
     assert_response :success
+  end
+
+  test 'collapsing a section persists and is reflected on next page load' do
+    create_project!(@user, name: 'alpha')
+    create_collection!(@user, name: 'reading')
+    create_monthly_bucket!(@user, name: 'june')
+    post home_collapse_section_path('projects')
+    assert_response :ok
+    assert_equal false, @user.reload.settings.projects_expanded?
+
+    get home_path
+    assert_response :success
+    assert_select 'details.home--section[data-controller=section][open]', count: 3
+  end
+
+  test 'expanding a collapsed section persists and is reflected on next page load' do
+    create_project!(@user, name: 'alpha')
+    create_collection!(@user, name: 'reading')
+    create_monthly_bucket!(@user, name: 'june')
+    @user.settings.update!(projects_expanded: false)
+
+    post home_expand_section_path('projects')
+    assert_response :ok
+    assert_equal true, @user.reload.settings.projects_expanded?
+
+    get home_path
+    assert_response :success
+    assert_select 'details.home--section[data-controller=section][open]', count: 4
   end
 end

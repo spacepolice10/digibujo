@@ -37,6 +37,10 @@
     box-shadow: var(--shadow-base);
   }
 
+  .dropdown:not([open]) > .dropdown-body {
+    display: none;
+  }
+
   .dropdown[open] > .dropdown-body {
     display: flex;
     flex-direction: column;

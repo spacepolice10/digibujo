@@ -1,11 +1,14 @@
-<details class="home--section" <%= "open".html_safe if open %> data-controller="section" data-section-url-value="<%= home_section_path(key) %>">
+<details class="home--section" <%= "open".html_safe if expanded %>
+        data-controller="section"
+        data-section-expand-url-value="<%= home_expand_section_path(key) %>"
+        data-section-collapse-url-value="<%= home_collapse_section_path(key) %>">
   <summary class="home--section-summary">
     <span class="home--section-heading">
       <span class="home--section-title"><%= title %></span>
       <i class="icon home--section-chevron" style="--icon-mask: var(--icon-chevron-down)" aria-hidden="true"></i>
     </span>
     <% if local_assigns[:show_more_path] %>
-      <%= link_to "Show more", show_more_path, class: "home--section-more button--tertiary", data: { turbo_frame: "_top", action: "click->section#showMore" }, "aria-label": "All #{title.downcase}" %>
+      <%= link_to "Show more", show_more_path, class: "home--section-more", data: { turbo_frame: "_top", action: "click->section#showMore" }, "aria-label": "All #{title.downcase}" %>
     <% end %>
   </summary>
   <div class="home--section-body">

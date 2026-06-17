@@ -1,5 +1,5 @@
-<%# locals: (f:, bullet:, submitted_attributes: {}, default_project: nil, default_person: nil, editing: false) %>
-<% editor_value = bullet.editor_content(default_projects: Array(default_project).compact, default_people: Array(default_person).compact) %>
+<%# locals: (f:, bullet:, submitted_attributes: {}, editing: false) %>
+<% editor_value = bullet.editor_content %>
 <% expand_dialog_id = dom_id(bullet, :expand) %>
 <% type_name = bullet.bulletable_type.presence || "Task" %>
 <% bulletable_form = bullet.bulletable || type_name.constantize.new %>

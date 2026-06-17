@@ -2,7 +2,6 @@
   .person--avatar {
     width: var(--icon-size-base);
     height: var(--icon-size-base);
-    border-radius: var(--radius-full);
     object-fit: cover;
     flex-shrink: 0;
   }
@@ -10,7 +9,6 @@
   .person--avatar-large {
     width: var(--icon-size-strong);
     height: var(--icon-size-strong);
-    border-radius: var(--radius-full);
     object-fit: cover;
     flex-shrink: 0;
   }

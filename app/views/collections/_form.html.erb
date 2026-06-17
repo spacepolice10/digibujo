@@ -1,4 +1,7 @@
-<%= form_with model: collection, class: "form" do |f| %>
-  <%= render "shared/bucket_identity_fields", form: f, name_hint: "This is the name of the collection. It could be a collection of tasks, notes, events or anything that should be grouped together and stored for a longer period of time." %>
-  <%= f.submit class: "button--primary" %>
+<%= form_with model: collection, class: "form form--strong" do |f| %>
+  <small class="form-hint">Collections are like folders in a traditional notebook — group related tasks, notes, or events together and keep them organised for as long as you need.</small>
+
+  <%= render "identity_fields", form: f,
+        name_hint: "Give your collection a name. Examples: Reading list, Travel plans, Work ideas." %>
+  <%= f.submit class: "button--primary form--submit" %>
 <% end %>

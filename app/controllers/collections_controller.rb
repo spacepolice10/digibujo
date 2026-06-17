@@ -14,10 +14,16 @@ class CollectionsController < ApplicationController
 
   def create
     @collection = Collection.new
-    if save_collection_with_bucket(@collection)
+    @collection.build_bucket(
+      user: Current.user,
+      name: collection_params[:name],
+      colour: collection_params[:colour],
+      icon: collection_params[:icon]
+    )
+
+    if @collection.save
       redirect_to collection_path(@collection), notice: 'Collection created'
     else
-      @collection.name = collection_params[:name]
       render :new, status: :unprocessable_entity
     end
   end
@@ -49,15 +55,5 @@ class CollectionsController < ApplicationController
     params.require(:collection).permit(:name, :colour, :icon)
   end
 
-  def save_collection_with_bucket(collection)
-    ActiveRecord::Base.transaction do
-      collection.save!
-      Current.user.buckets.create!(
-        bucketable: collection,
-        name: collection_params[:name],
-        colour: collection_params[:colour],
-        icon: collection_params[:icon]
-      )
-    end
-  end
+
 end

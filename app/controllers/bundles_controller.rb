@@ -3,7 +3,7 @@
 class BundlesController < ApplicationController
   include UserCollections
 
-  before_action :set_collection
+  before_action :set_collection, if: -> { params[:collection_id].present? }
   before_action :set_bundle, only: %i[show destroy]
 
   def show
@@ -15,22 +15,36 @@ class BundlesController < ApplicationController
   end
 
   def new
-    @bundle = @collection.bundles.new
+    @bundle = Bundle.new(user: Current.user)
+    @bundle.build_bucket
+    @bundle.collection = @collection if @collection
   end
 
   def create
-    @bundle = @collection.bundles.new
-    if save_bundle_with_bucket(@bundle)
-      redirect_to collection_path(@collection), notice: 'Bundle created'
+    @bundle = Bundle.new(user: Current.user)
+    @bundle.build_bucket(
+      user: Current.user,
+      name: bundle_params[:name],
+      colour: bundle_params[:colour],
+      icon: bundle_params[:icon]
+    )
+
+    if @collection
+      @bundle.collection = @collection
+    elsif bundle_params[:collection_id].present?
+      @bundle.collection = user_collections.find_by(id: bundle_params[:collection_id])
+    end
+
+    if @bundle.save
+      redirect_to @bundle.collection ? collection_path(@bundle.collection) : bundle_path(@bundle), notice: 'Bundle created'
     else
-      @bundle.name = bundle_params[:name]
       render :new, status: :unprocessable_entity
     end
   end
 
   def destroy
     @bundle.bucket.destroy
-    redirect_back fallback_location: collection_path(@collection), notice: 'Bundle deleted'
+    redirect_back fallback_location: (@bundle.collection ? collection_path(@bundle.collection) : home_path), notice: 'Bundle deleted'
   end
 
   private
@@ -40,22 +54,14 @@ class BundlesController < ApplicationController
   end
 
   def set_bundle
-    @bundle = @collection.bundles.find(params[:id])
-  end
-
-  def save_bundle_with_bucket(bundle)
-    ActiveRecord::Base.transaction do
-      bundle.save!
-      Current.user.buckets.create!(
-        bucketable: bundle,
-        name: bundle_params[:name],
-        colour: bundle_params[:colour],
-        icon: bundle_params[:icon]
-      )
-    end
+    @bundle = if @collection
+                @collection.bundles.find(params[:id])
+              else
+                Bundle.where(user: Current.user).find(params[:id])
+              end
   end
 
   def bundle_params
-    params.require(:bundle).permit(:name, :colour, :icon)
+    params.require(:bundle).permit(:name, :colour, :icon, :collection_id)
   end
 end

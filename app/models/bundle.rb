@@ -3,5 +3,5 @@
 class Bundle < ApplicationRecord
   include Bucketable
   belongs_to :user
-  belongs_to :collection
+  belongs_to :collection, optional: true
 end

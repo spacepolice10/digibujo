@@ -3,9 +3,11 @@
 <div class="layout--page">
   <div class="layout--header">
     <div class="layout--header-actions">
-      <%= link_to collection_path(@collection), class: "button--secondary" do %>
+      <% back_path = @bundle.collection ? collection_path(@bundle.collection) : home_path %>
+      <% back_label = @bundle.collection ? @bundle.collection.name : "Home" %>
+      <%= link_to back_path, class: "button--secondary" do %>
         <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
-        <%= @collection.name %>
+        <%= back_label %>
       <% end %>
     </div>
     <h2><%= @bundle.name %></h2>

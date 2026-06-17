@@ -1,7 +1,10 @@
 @layer components {
   .header--menu .dropdown-body {
+    top: 0;
     left: 50%;
     translate: -50% 0;
+    border-radius: var(--radius-strong);
+    box-shadow: 0 8px 32px oklch(0% 0 0 / 0.12), var(--shadow-base);
   }
 
   .menu--wrap {

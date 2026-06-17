@@ -9,6 +9,8 @@ class HomeController < ApplicationController
   def show
     @projects = recent_projects
     @collections = user_collections.limit(COLLECTIONS_LIMIT)
+    @bundles = recent_bundles
+    @people = recent_people
     @future = future_bucket
     @monthly_buckets = recent_monthly_buckets
     @activities = recent_activities
@@ -28,6 +30,14 @@ class HomeController < ApplicationController
            .first
   end
 
+  def recent_people
+    Current.user.people.first(8)
+  end
+
+  def recent_bundles
+    Current.user.bundles.includes(:collection, bucket: :bullets).first(8)
+  end
+
   def recent_monthly_buckets
     Current.user.monthly_buckets.first(8)
   end
@@ -44,6 +54,6 @@ class HomeController < ApplicationController
   end
 
   def section_expanded_status
-    User::Settings::SECTION_COLUMNS.index_with { |_, column| Current.user.settings![column] }
+    User::Settings::SECTION_COLUMNS.transform_values { |column| Current.user.settings![column] }
   end
 end

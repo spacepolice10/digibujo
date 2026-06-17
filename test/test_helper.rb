@@ -25,7 +25,7 @@ module ActiveSupport
     end
 
     def create_bundle!(user, collection, name:, colour: nil, icon: nil)
-      bundle = collection.bundles.create!(user: user)
+      bundle = Bundle.create!(user: user, collection: collection)
       user.buckets.create!(bucketable: bundle, name: name, colour: colour, icon: icon)
       bundle
     end

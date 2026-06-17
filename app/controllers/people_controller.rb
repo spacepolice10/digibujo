@@ -15,7 +15,7 @@ class PeopleController < ApplicationController
   def create
     @person = Current.user.people.build(person_params)
     if @person.save
-      redirect_back fallback_location: people_path, notice: 'Person created'
+      redirect_to home_path, notice: 'Person created'
     else
       render :new, status: :unprocessable_entity
     end

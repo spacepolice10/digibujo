@@ -15,53 +15,12 @@
     pointer-events: auto;
   }
 
-  .header--summary {
+  .header--branding {
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
-    border-radius: var(--radius-full);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     background: var(--color-bg-base);
-    /* 1px hairline — no stroke-width token in the design system */
-    border: 1px solid
-      color-mix(in oklch, var(--color-stroke-base) 55%, var(--color-accent-alternative));
-    box-shadow: var(--shadow-base);
-    cursor: pointer;
-    font-size: var(--font-size-subtle);
-    font-weight: var(--font-weight-strong);
-    color: var(--color-fg-base);
-    transition:
-      background 0.1s ease,
-      border-color 0.1s ease,
-      box-shadow 0.1s ease;
-
-    @media (hover: hover) {
-      &:hover {
-        background: var(--color-bg-subtle);
-        border-color: color-mix(
-          in oklch,
-          var(--color-stroke-strong) 35%,
-          var(--color-accent-alternative)
-        );
-        box-shadow: var(--shadow-strong);
-      }
-    }
-
-    &:focus-visible {
-      outline: none;
-      background: var(--color-bg-subtle);
-      border-color: var(--color-stroke-strong);
-    }
-  }
-
-  .header--menu[open] > .header--summary {
-    background: var(--color-bg-subtle);
-    border-color: color-mix(
-      in oklch,
-      var(--color-stroke-strong) 35%,
-      var(--color-accent-alternative)
-    );
-    box-shadow: var(--shadow-strong);
+    border-radius: var(--radius-base);
+    pointer-events: none;
   }
 
   .footer {

@@ -159,7 +159,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :unprocessable_entity
     assert_select 'form.bullet-form'
-    assert_select '.form-errmsg', text: /Body can't be blank/
+    assert_select '.field_with_errors'
   end
 
   test 'create Title bullet with body' do

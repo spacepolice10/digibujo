@@ -3,6 +3,10 @@
 module UserCollections
   extend ActiveSupport::Concern
 
+  included do
+    helper_method :user_collections
+  end
+
   private
 
   def user_collections

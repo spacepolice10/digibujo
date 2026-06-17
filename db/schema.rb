@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_17_040624) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_17_061223) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -119,7 +119,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_17_040624) do
   end
 
   create_table "bundles", force: :cascade do |t|
-    t.integer "collection_id", null: false
+    t.integer "collection_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false

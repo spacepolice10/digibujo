@@ -1,9 +1,10 @@
 import { Controller } from "@hotwired/stimulus";
-import { patch } from "@rails/request.js";
+import { post } from "@rails/request.js";
 
 export default class extends Controller {
   static values = {
-    url: String
+    expandUrl: String,
+    collapseUrl: String
   };
 
   connect() {
@@ -24,14 +25,11 @@ export default class extends Controller {
   }
 
   persist(open) {
-    if (!this.hasUrlValue) return;
+    const url = open ? this.expandUrlValue : this.collapseUrlValue;
+    if (!url) return;
 
-    // @rails/request.js sets Content-Type to application/json unless the body
-    // is a FormData. A plain URLSearchParams gets the wrong Content-Type and
-    // Rails would try to JSON-parse it, so we use FormData to let the browser
-    // set the correct multipart Content-Type and let Rails parse normally.
     const formData = new FormData();
     formData.append("open", open ? "true" : "false");
-    patch(this.urlValue, { body: formData }).catch(() => {});
+    post(url, { body: formData }).catch((error) => console.error("Section persist failed:", error));
   }
 }

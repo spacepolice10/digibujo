@@ -78,7 +78,8 @@ class ProjectableTest < ActiveSupport::TestCase
   end
 
   test 'editor_content avoids rendered layout markup' do
-    content = @bullet.editor_content(default_projects: [@project])
+    @bullet.tag_project!(project_id: @project.id)
+    content = @bullet.editor_content
 
     html = content.fragment.to_html
     assert_includes html, 'action-text-attachment'
@@ -86,7 +87,8 @@ class ProjectableTest < ActiveSupport::TestCase
   end
 
   test 'editor_content hydrates project attachments for lexxy' do
-    content = @bullet.editor_content(default_projects: [@project])
+    @bullet.tag_project!(project_id: @project.id)
+    content = @bullet.editor_content
     hydrated = ApplicationController.helpers.send(:render_custom_attachments_in, content)
 
     assert_includes hydrated, 'content="'

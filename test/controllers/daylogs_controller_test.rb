@@ -68,7 +68,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select 'turbo-frame#bullet_composer' do
-      assert_select 'a[href=?]', new_bullet_path(pops_on: selected_date.iso8601)
+      assert_select 'a[href=?]', new_bullet_path(pops_on: selected_date.iso8601, composer_id: 'bullet_composer')
       assert_match(/Add bullet/, response.body)
     end
   end
@@ -87,7 +87,8 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select 'header.header details.dropdown.header--menu' do
-      assert_select 'summary.header--summary', text: 'Digibujo'
+      assert_select 'summary.button--accent', text: 'Bullet Drop'
+      assert_select '.dropdown-body[inert]'
       assert_select 'form.search--form[action=?]', search_path
       assert_select 'turbo-frame#menu_search'
     end

@@ -1,4 +1,4 @@
-<%# locals: (bullet:, attributes: {}, default_project: nil, default_person: nil, editing: false, url: nil) %>
+<%# locals: (bullet:, attributes: {}, editing: false, url: nil) %>
 <% editor_id = "bullet_editor_#{bullet.object_id}" %>
 
 <%= form_with model: bullet,
@@ -15,7 +15,5 @@
         f: f,
         bullet: bullet,
         submitted_attributes: attributes.compact,
-        default_project: default_project,
-        default_person: default_person,
         editing: editing %>
 <% end %>

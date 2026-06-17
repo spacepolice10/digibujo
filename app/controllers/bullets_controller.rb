@@ -5,8 +5,6 @@ class BulletsController < ApplicationController
 
   def new
     @bullet = BulletCreator.new(Current.user, new_bullet_params.to_h).build.bullet
-    @default_project_id = params[:default_project_id]
-    @default_person_id = params[:default_person_id]
   end
 
   def create

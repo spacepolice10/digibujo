@@ -16,6 +16,7 @@ Rails.application.routes.draw do
       resources :bullets, only: %i[new create]
     end
   end
+  resources :bundles, only: %i[show new create destroy]
   resources :collections do
     resources :bundles, only: %i[show new create destroy]
   end

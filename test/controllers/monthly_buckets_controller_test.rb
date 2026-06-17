@@ -78,11 +78,13 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     assert_select '.bullet--monthly-bucket .bullet--metadata', count: 0
   end
 
-  test 'new form defaults to current month period' do
+  test 'new form defaults to current month' do
     get new_monthly_bucket_path
 
     assert_response :success
-    assert_select "input[name='monthly_bucket[period_from]'][value=?]", Date.current.beginning_of_month.iso8601
-    assert_select "input[name='monthly_bucket[period_to]'][value=?]", Date.current.end_of_month.iso8601
+    assert_select "input[name='monthly_bucket[month]'][type=radio]", count: 6
+    assert_select "input[name='monthly_bucket[month]'][value=?]", Date.current.beginning_of_month.iso8601
+    assert_select "input[name='monthly_bucket[month]'][item_wrapper_tag]", count: 0
+    assert_select "label.form--period-option[for=?]", "monthly_bucket_month_#{Date.current.beginning_of_month.iso8601}"
   end
 end

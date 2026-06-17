@@ -44,3 +44,10 @@ l
 
 # Superpowers brainstorming
 /.superpowers
+/docs/superpowers/
+
+# Local debug scratch tests
+/test/controllers/debug_*_test.rb
+
+# Accidental duplicate migrate folders (e.g. Finder copy)
+/db/migrate */

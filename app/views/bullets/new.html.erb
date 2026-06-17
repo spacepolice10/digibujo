@@ -1,15 +1,10 @@
-<turbo-frame id="bullet_composer">
-  <% default_project = @default_project_id.present? ? Current.user.projects.find(@default_project_id) : nil %>
-  <% default_person = @default_person_id.present? ? Current.user.people.find(@default_person_id) : nil %>
+<% composer_frame_id = params[:composer_id].presence || "bullet_composer" %>
+<turbo-frame id="<%= composer_frame_id %>">
   <%= render "bullets/bulletable_form",
         bullet: @bullet,
-        default_project: default_project,
-        default_person: default_person,
         attributes: {
           pops_on: @bullet.pops_on,
           bucket_id: @bullet.bucket_id,
-          render_context: @render_context,
-          monthly_bucket_id: @monthly_bucket_id,
-          composer_id: params[:composer_id]
+          composer_id: composer_frame_id
         }.compact %>
 </turbo-frame>

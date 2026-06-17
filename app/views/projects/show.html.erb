@@ -11,16 +11,6 @@
     </div>
     <h2 class="project"><%= @project.name %></h2>
   </div>
-  <div class="bucket--footer">
-    <turbo-frame id="bullet_composer" class="bullet_pops_on_">
-      <%= render "bullets/composer",
-            attributes: {
-              render_context: "project",
-              default_project_id: @project.id,
-              composer_id: "bullet_composer"
-            } %>
-    </turbo-frame>
-  </div>
   <article class="layout--column bucket--list">
       <div class="layout--header-actions">
         <%= link_to "All", project_path(@project), class: "button--secondary" %>

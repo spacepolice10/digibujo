@@ -4,6 +4,10 @@
       <i class="icon" style="--icon-mask: var(--icon-book)" aria-hidden="true"></i>
       Add collection
     <% end %>
+    <%= link_to new_bundle_path, class: "button--secondary home--side-button", data: { turbo_frame: "_top" } do %>
+      <i class="icon" style="--icon-mask: var(--icon-folder)" aria-hidden="true"></i>
+      New bundle
+    <% end %>
     <%= link_to new_monthly_bucket_path, class: "button--secondary home--side-button", data: { turbo_frame: "_top" } do %>
       <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
       Add monthly log
@@ -19,7 +23,7 @@
   </aside>
 
   <div class="home--surface">
-    <%= render layout: "home/section", locals: { key: "logs", title: "Logs", open: @section_open["logs"] } do %>
+    <%= render layout: "home/section", locals: { key: "logs", title: "Logs", expanded: @section_expanded_status["logs"] } do %>
       <ul class="layout--list bucket--list">
         <li class="layout--list-item">
           <%= link_to daylog_path, class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
@@ -52,22 +56,44 @@
 
     <% end %>
 
-    <%= render layout: "home/section", locals: { key: "projects", title: "Projects", show_more_path: projects_path, open: @section_open["projects"] } do %>
-      <ul class="layout--list bucket--list">
-        <%= render @projects %>
-      </ul>
+    <% if @projects.any? %>
+      <%= render layout: "home/section", locals: { key: "projects", title: "Projects", show_more_path: projects_path, expanded: @section_expanded_status["projects"] } do %>
+        <ul class="layout--list bucket--list">
+          <%= render @projects %>
+        </ul>
+      <% end %>
     <% end %>
 
-    <%= render layout: "home/section", locals: { key: "collections", title: "Collections", show_more_path: collections_path, open: @section_open["collections"] } do %>
-      <ul class="layout--list bucket--list">
-        <%= render @collections.select { |c| c.bucket != @future } %>
-      </ul>
+    <% if @collections.any? { |c| c.bucket != @future } %>
+      <%= render layout: "home/section", locals: { key: "collections", title: "Collections", show_more_path: collections_path, expanded: @section_expanded_status["collections"] } do %>
+        <ul class="layout--list bucket--list">
+          <%= render @collections.select { |c| c.bucket != @future } %>
+        </ul>
+      <% end %>
     <% end %>
 
-    <%= render layout: "home/section", locals: { key: "spreads", title: "Spreads", open: @section_open["spreads"] } do %>
-      <ul class="layout--list bucket--list">
-        <%= render partial: "monthly_buckets/monthly_bucket", collection: @monthly_buckets, as: :monthly_bucket %>
-      </ul>
+    <% if @bundles.any? %>
+      <%= render layout: "home/section", locals: { key: "bundles", title: "Bundles", expanded: true } do %>
+        <ul class="layout--list bucket--list">
+          <%= render @bundles %>
+        </ul>
+      <% end %>
+    <% end %>
+
+    <% if @monthly_buckets.any? %>
+      <%= render layout: "home/section", locals: { key: "spreads", title: "Spreads", expanded: @section_expanded_status["spreads"] } do %>
+        <ul class="layout--list bucket--list">
+          <%= render partial: "monthly_buckets/monthly_bucket", collection: @monthly_buckets, as: :monthly_bucket %>
+        </ul>
+      <% end %>
+    <% end %>
+
+    <% if @people.any? %>
+      <%= render layout: "home/section", locals: { key: "people", title: "People", show_more_path: people_path, expanded: @section_expanded_status["people"] } do %>
+        <ul class="layout--list bucket--list">
+          <%= render @people %>
+        </ul>
+      <% end %>
     <% end %>
   </div>
 

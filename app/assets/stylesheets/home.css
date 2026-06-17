@@ -30,7 +30,7 @@
   }
 
   .home--side-heading {
-    font-size: var(--font-size-subtle);
+    font-size: var(--font-size-base);
     font-weight: var(--font-weight-strong);
     color: var(--color-fg-subtle);
     margin-bottom: var(--spacing-vertical-half);
@@ -69,9 +69,6 @@
     gap: var(--spacing-vertical-half);
   }
 
-  .home--activity-item {
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-  }
 
   .home--activity-bullet {
     display: block;
@@ -162,5 +159,20 @@
     flex-direction: column;
     gap: var(--spacing-vertical);
     padding-top: var(--spacing-vertical);
+  }
+
+  .home--section-more {
+    font-size: var(--font-size-subtle);
+    color: var(--color-fg-subtle);
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    @media (hover: hover) {
+      &:hover {
+        color: var(--color-fg-base);
+        text-decoration: underline;
+      }
+    }
   }
 }

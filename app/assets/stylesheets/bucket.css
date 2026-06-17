@@ -43,10 +43,21 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    width: var(--icon-size-subtle);
-    height: var(--icon-size-subtle);
-    border-radius: var(--radius-strong);
+    width: calc(var(--icon-size-base));
+    height: calc(var(--icon-size-base));
+    border-radius: var(--radius-base);
     border: 1px solid var(--color-stroke-base);
+    overflow: hidden;
+  }
+
+  .bucket--list-item-marker .form--list-icon {
+    width: calc(var(--icon-size-base) / 1.5);
+    height: calc(var(--icon-size-base) / 1.5);
+  }
+
+  .bucket--list-item-marker .icon {
+    width: calc(var(--icon-size-base) * 0.5);
+    height: calc(var(--icon-size-base) * 0.5);
   }
   .bucket--list-item-marker[data-bucket-colour="violet"] {
     background: var(--model-color-1-bg);

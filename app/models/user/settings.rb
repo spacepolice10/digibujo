@@ -8,7 +8,8 @@ class User::Settings < ApplicationRecord
     'logs'        => :logs_expanded,
     'projects'    => :projects_expanded,
     'collections' => :collections_expanded,
-    'spreads'     => :spreads_expanded
+    'spreads'     => :spreads_expanded,
+    'people'      => :people_expanded
   }.freeze
   SECTIONS = SECTION_COLUMNS.keys.freeze
 
