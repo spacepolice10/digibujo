@@ -36,27 +36,41 @@
          data-bullet-composer-target="markerIcon"
          aria-hidden="true"></i>
     </span>
+
+    <label class="bullet-form-indent-option">
+      <%= f.check_box :indented %>
+      <span>Indent</span>
+    </label>
   </div>
 
-  <%= f.rich_text_area :body,
-        value: editor_value,
-        autofocus: !editing,
-        placeholder: "What's on your mind?",
-        multiline: false,
-        preset: "inline" do %>
-    <lexxy-prompt trigger="#"
-                  name="project"
-                  src="<%= project_suggestions_path %>"
-                  remote-filtering
-                  supports-space-in-searches>
-    </lexxy-prompt>
-    <lexxy-prompt trigger="@"
-                  name="person"
-                  src="<%= person_suggestions_path %>"
-                  remote-filtering
-                  supports-space-in-searches>
-    </lexxy-prompt>
-  <% end %>
+  <div class="bullet-form-body-editor" data-bullet-composer-target="bodyEditor">
+    <%= f.rich_text_area :body,
+          value: editor_value,
+          autofocus: !editing,
+          placeholder: "What's on your mind?",
+          multiline: false,
+          preset: "inline" do %>
+      <lexxy-prompt trigger="#"
+                    name="project"
+                    src="<%= project_suggestions_path %>"
+                    remote-filtering
+                    supports-space-in-searches>
+      </lexxy-prompt>
+      <lexxy-prompt trigger="@"
+                    name="person"
+                    src="<%= person_suggestions_path %>"
+                    remote-filtering
+                    supports-space-in-searches>
+      </lexxy-prompt>
+    <% end %>
+  </div>
+
+  <div class="bullet-form-title-input" data-bullet-composer-target="titleInput" hidden>
+    <% title_form = bullet.bulletable.is_a?(Title) ? bullet.bulletable : Title.new %>
+    <%= f.fields_for :bulletable, title_form do |tf| %>
+      <%= tf.text_field :text, placeholder: "Heading text…", class: "bullet-form-title-text" %>
+    <% end %>
+  </div>
 
   <div class="bullet-form-actions">
     <button type="button"
@@ -68,7 +82,8 @@
     <button type="button"
             class="button--secondary"
             commandfor="<%= expand_dialog_id %>"
-            command="show-modal">
+            command="show-modal"
+            data-bullet-composer-target="expandButton">
       Expand
     </button>
     <input type="file"
