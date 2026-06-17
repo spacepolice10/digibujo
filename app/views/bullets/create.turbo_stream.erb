@@ -1,9 +1,9 @@
-<%= turbo_stream.before_all ".bullet_pops_on_#{@bullet.pops_on}" do %>
+<%= turbo_stream.before (params[:bullet][:composer_id].presence || ".bullet_pops_on_#{@bullet.pops_on}") do %>
   <%= render @bullet %>
 <% end %>
 
 <% if @bullet.pops_on.present? && @bullet.pops_on > Date.current %>
-<%= turbo_stream.update "toasts" do %>
+  <%= turbo_stream.update "toasts" do %>
     <%= render "shared/toasts", type: "notify", messages: ["Scheduled for #{@bullet.pops_on.strftime('%B %d')}"] %>
-<% end %>
+  <% end %>
 <% end %>
