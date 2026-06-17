@@ -2,6 +2,7 @@
 <turbo-frame id="<%= dom_id(bullet) %>"
              class="bullet<%= " bullet--monthly-bucket" if monthly_bucket %>"
              data-bullet-type="<%= bullet.bulletable_type.downcase %>"
+             data-bullet-indented="<%= bullet.indented %>"
              <% if bullet.completed? %>
              data-bullet-completed
              <% end %>
@@ -23,7 +24,9 @@
     <% end %>
   </div>
   <div class="bullet--body">
-    <% if monthly_bucket %>
+    <% if bullet.bulletable_type == "Title" %>
+      <h3 class="bullet--title"><%= bullet.name %></h3>
+    <% elsif monthly_bucket %>
       <span class="bullet--line"><%= bullet.name %></span>
     <% else %>
       <% if bullet.body.to_plain_text.presence || bullet.rich_body? %>
