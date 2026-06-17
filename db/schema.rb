@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_17_000001) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_17_040624) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -102,6 +102,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_17_000001) do
     t.string "bulletable_type", null: false
     t.datetime "created_at", null: false
     t.date "ends_date"
+    t.boolean "indented", default: false, null: false
     t.date "pops_on"
     t.datetime "triaged_at"
     t.datetime "updated_at", null: false
@@ -231,10 +232,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_17_000001) do
     t.datetime "done_at"
   end
 
+  create_table "titles", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "text", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "user_settings", force: :cascade do |t|
     t.boolean "collections_expanded", default: true, null: false
     t.datetime "created_at", null: false
     t.boolean "logs_expanded", default: true, null: false
+    t.boolean "people_expanded", default: true, null: false
     t.boolean "projects_expanded", default: true, null: false
     t.boolean "spreads_expanded", default: true, null: false
     t.datetime "updated_at", null: false
