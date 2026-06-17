@@ -62,7 +62,7 @@
 
     <turbo-frame id="bullet_composer" class="bullet_pops_on_<%= @selected_date %>">
       <%= render "bullets/composer",
-          attributes: { pops_on: @selected_date } %>
+          attributes: { pops_on: @selected_date, composer_id: "bullet_composer" } %>
     </turbo-frame>
   </turbo-frame>
 </div>
