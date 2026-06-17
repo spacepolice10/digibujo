@@ -3,29 +3,24 @@
 require 'test_helper'
 
 class TitleTest < ActiveSupport::TestCase
-  test 'validates text presence' do
-    title = Title.new(text: '')
-    assert_not title.valid?
-    assert_includes title.errors[:text], "can't be blank"
-  end
-
-  test 'is valid with text' do
-    title = Title.new(text: 'My Heading')
+  test 'is valid without text' do
+    title = Title.new
     assert title.valid?
   end
 
-  test 'name returns text' do
-    title = Title.new(text: 'Hello')
-    assert_equal 'Hello', title.name
+  test 'name returns body text from bullet' do
+    title = Title.create!
+    bullet = Bullet.create!(user: users(:one), bulletable: title, body: 'Hello')
+    assert_equal 'Hello', bullet.name
   end
 
   test 'temporal? is false' do
-    title = Title.new(text: 'X')
+    title = Title.new
     assert_not title.temporal?
   end
 
   test 'completable? is false' do
-    title = Title.new(text: 'X')
+    title = Title.new
     assert_not title.completable?
   end
 end

@@ -27,36 +27,14 @@ class BulletCreator
   def build_bullet
     type_name = @params[:bulletable_type].presence || 'Task'
     attributes = @params.except(:bulletable_type, :bulletable_attributes)
-    bulletable_attrs = bulletable_attributes_for(type_name)
-    @bullet = @user.bullets.new(attributes.merge(bulletable: type_name.constantize.new(bulletable_attrs)))
-  end
-
-  def bulletable_attributes_for(type_name)
-    attrs = @params[:bulletable_attributes].presence || {}
-    return {} unless attrs.respond_to?(:permit)
-
-    case type_name
-    when 'Note'
-      attrs.permit(:mood, :awaits_research, :idea).to_h
-    when 'Title'
-      attrs.permit(:text).to_h
-    else
-      {}
-    end
+    @bullet = @user.bullets.new(attributes.merge(bulletable: type_name.constantize.new))
   end
 
   def update_bulletable!
     attrs = @params[:bulletable_attributes]
-    return unless attrs.present?
-    return unless @bullet.bulletable.is_a?(Note) || @bullet.bulletable.is_a?(Title)
+    return unless attrs.present? && @bullet.bulletable.is_a?(Note)
 
-    permitted = if @bullet.bulletable.is_a?(Note)
-                  attrs.permit(:mood, :awaits_research, :idea)
-                else
-                  attrs.permit(:text)
-                end
-
-    @bullet.bulletable.update!(permitted)
+    @bullet.bulletable.update!(attrs.permit(:mood, :awaits_research, :idea))
   end
 
   def finalize_content!

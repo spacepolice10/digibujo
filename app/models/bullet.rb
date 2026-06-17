@@ -35,7 +35,6 @@ class Bullet < ApplicationRecord
   private
 
   def body_or_rich_body_present
-    return if bulletable_type == 'Title'
     return if body.present? || rich_body.present?
     return if attachments.attached?
 

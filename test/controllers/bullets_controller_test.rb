@@ -162,12 +162,12 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_select '.form-errmsg', 0
   end
 
-  test 'create Title bullet without body' do
+  test 'create Title bullet with body' do
     post bullets_path,
          params: {
            bullet: {
              bulletable_type: 'Title',
-             bulletable_attributes: { text: 'My Heading' },
+             body: 'My Heading',
              pops_on: Date.current.iso8601
            }
          },
@@ -177,7 +177,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     bullet = @user.bullets.order(:created_at).last
     assert_equal 'Title', bullet.bulletable_type
     assert_equal 'My Heading', bullet.name
-    assert_not bullet.body.present?
+    assert bullet.body.present?
   end
 
   test 'update indented flag' do
