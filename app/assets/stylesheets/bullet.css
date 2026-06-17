@@ -245,6 +245,10 @@
     font-size: var(--font-size-subtle);
   }
 
+  .bullet-compact--title {
+    font-weight: var(--font-weight-bold);
+  }
+
   /* ── Edit & overlays ───────────────────────────────────── */
 
   .bullet--pops-notice {
