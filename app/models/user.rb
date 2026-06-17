@@ -2,7 +2,8 @@
 
 # Authenticated user and owner of all their bullets, buckets, projects, and settings.
 class User < ApplicationRecord
-  include User::Configurable
+  has_one :settings, class_name: 'User::Settings', dependent: :destroy
+  after_create :create_settings
 
   has_many :sessions, dependent: :destroy
   has_many :login_codes, dependent: :destroy
@@ -14,6 +15,10 @@ class User < ApplicationRecord
   has_many :people, dependent: :destroy
   has_many :pinned_entities, dependent: :destroy
   has_many :published_entities, dependent: :destroy
+
+  def settings!
+    settings || create_settings!
+  end
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 

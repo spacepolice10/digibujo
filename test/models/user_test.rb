@@ -17,4 +17,22 @@ class UserTest < ActiveSupport::TestCase
     assert_not_nil user.settings
     assert_predicate user.settings, :persisted?
   end
+
+  test 'settings! returns the existing row' do
+    user = users(:one)
+    user.create_settings! unless user.settings
+    existing = user.settings
+    assert_same existing, user.settings!
+  end
+
+  test 'settings! creates the row when missing' do
+    user = users(:one)
+    user.create_settings! unless user.settings
+    user.settings.destroy!
+    user.association(:settings).reset
+    assert_nil user.settings
+    result = user.settings!
+    assert_not_nil result
+    assert_predicate result, :persisted?
+  end
 end
