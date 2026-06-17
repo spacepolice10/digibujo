@@ -24,7 +24,7 @@ class MonthlyBucketsController < ApplicationController
 
   def create
     month_date = Date.parse(monthly_bucket_params[:month])
-    @monthly_bucket = MonthlyBucket.new(
+    @monthly_bucket = Current.user.future_bucket!.monthly_buckets.build(
       user: Current.user,
       period_from: month_date.beginning_of_month,
       period_to: month_date.end_of_month

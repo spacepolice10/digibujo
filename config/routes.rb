@@ -7,6 +7,11 @@ Rails.application.routes.draw do
       resource :code, only: %i[new create]
     end
   end
+  resource :signup, only: %i[new create] do
+    scope module: :signups do
+      resource :completion, only: %i[new create]
+    end
+  end
 
   # Logs (?date=YYYY-MM-DD for a specific day)
   resource :daylog, only: :show, controller: 'daylogs'
@@ -16,7 +21,6 @@ Rails.application.routes.draw do
       resources :bullets, only: %i[new create]
     end
   end
-  resources :bundles, only: %i[show new create destroy]
   resources :collections do
     resources :bundles, only: %i[show new create destroy]
   end
@@ -45,7 +49,7 @@ Rails.application.routes.draw do
     post 'home/sections/:id/expand',   to: 'sections#expand',   as: :home_expand_section
     post 'home/sections/:id/collapse', to: 'sections#collapse', as: :home_collapse_section
   end
-  resource :future, only: %i[show create], controller: 'futures' do
+  resource :future, only: :show, controller: 'futures' do
     post :months, on: :collection
   end
   scope 'buckets', module: :buckets, as: 'buckets' do

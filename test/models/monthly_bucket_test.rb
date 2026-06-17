@@ -5,6 +5,7 @@ require 'test_helper'
 class MonthlyBucketTest < ActiveSupport::TestCase
   setup do
     @user = users(:one)
+    ensure_future_bucket!(@user)
   end
 
   test 'current returns monthly bucket when one exists' do
@@ -19,7 +20,7 @@ class MonthlyBucketTest < ActiveSupport::TestCase
 
   test 'current returns most recently created spread' do
     period = MonthlyBucket.default_period
-    older = MonthlyBucket.create!(
+    older = @user.future_bucket.monthly_buckets.create!(
       user: @user,
       period_from: period[:period_from].prev_month,
       period_to: period[:period_to].prev_month.end_of_month

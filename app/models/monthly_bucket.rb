@@ -3,7 +3,9 @@
 class MonthlyBucket < ApplicationRecord
   include Bucketable, Periodable
   belongs_to :user
-  belongs_to :future_bucket, optional: true
+  belongs_to :future_bucket
+
+  validates :future_bucket, presence: true
 
   def self.current(user)
     user.monthly_buckets.order(created_at: :desc).first

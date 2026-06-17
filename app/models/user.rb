@@ -10,6 +10,7 @@ class User < ApplicationRecord
   has_many :bullets, dependent: :destroy
   has_many :bullet_activities, dependent: :destroy
   has_many :buckets, dependent: :destroy
+  has_one :future_bucket, dependent: :destroy
   has_many :bundles, dependent: :destroy
   has_many :monthly_buckets, through: :buckets, source: :bucketable, source_type: 'MonthlyBucket'
   has_many :projects, dependent: :destroy
@@ -19,6 +20,14 @@ class User < ApplicationRecord
 
   def settings!
     settings || create_settings!
+  end
+
+  def future_bucket!
+    future_bucket || begin
+      created = FutureBucket.create!(user: self)
+      buckets.create!(bucketable: created, name: 'Future Log')
+      created
+    end
   end
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }

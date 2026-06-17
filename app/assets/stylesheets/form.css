@@ -366,9 +366,10 @@
     min-height: calc(var(--icon-size-strong) * 3);
     white-space: nowrap;
     transition:
-      transform 0.2s ease,
-      border-color 0.2s ease,
-      box-shadow 0.2s ease;
+      transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.22s ease,
+      box-shadow 0.22s ease,
+      background-position 0.35s ease;
   }
 
   .form--period-label {
@@ -385,11 +386,12 @@
   }
 
   .form--period-option:hover .form--period-card {
-    transform: scale(1.04);
+    transform: translateY(-1px) scale(1.02);
     border-color: var(--color-stroke-strong);
+    box-shadow: var(--shadow-base);
   }
 
-  .form--period-option:has(.form--period-input:focus) .form--period-card {
+  .form--period-input:focus-visible + .form--period-card {
     transform: scale(1.05);
     border-color: var(--color-stroke-strong);
     outline: 2px solid var(--color-stroke-strong);
@@ -399,7 +401,7 @@
       var(--shadow-strong);
   }
 
-  .form--period-option:has(.form--period-input:focus) .form--period-card::after {
+  .form--period-input:focus-visible + .form--period-card::after {
     content: "";
     position: absolute;
     top: var(--spacing-vertical-half);
@@ -411,7 +413,7 @@
     box-shadow: 0 0 0 2px var(--color-bg-base);
   }
 
-  .form--period-option:has(input:checked) .form--period-card {
+  .form--period-input:checked + .form--period-card {
     border-color: var(--color-stroke-strong);
     transform: scale(1.02);
   }
@@ -423,83 +425,93 @@
   }
 
   .form--period-option[data-month]:hover .form--period-card,
-  .form--period-option[data-month]:has(.form--period-input:focus) .form--period-card,
-  .form--period-option[data-month]:has(input:checked) .form--period-card {
+  .form--period-input:focus-visible + .form--period-card,
+  .form--period-input:checked + .form--period-card {
     background-size: 200% 200%;
     box-shadow: var(--shadow-base);
     animation: gradient-shift 8s ease infinite;
   }
 
   .form--period-option[data-month="1"]:hover .form--period-card,
-  .form--period-option[data-month="1"]:has(.form--period-input:focus) .form--period-card,
-  .form--period-option[data-month="1"]:has(input:checked) .form--period-card {
+  .form--period-option[data-month="1"] .form--period-input:focus-visible + .form--period-card,
+  .form--period-option[data-month="1"] .form--period-input:checked + .form--period-card {
     background-image: var(--gradient-january);
   }
 
   .form--period-option[data-month="2"]:hover .form--period-card,
-  .form--period-option[data-month="2"]:has(.form--period-input:focus) .form--period-card,
-  .form--period-option[data-month="2"]:has(input:checked) .form--period-card {
+  .form--period-option[data-month="2"] .form--period-input:focus-visible + .form--period-card,
+  .form--period-option[data-month="2"] .form--period-input:checked + .form--period-card {
     background-image: var(--gradient-february);
   }
 
   .form--period-option[data-month="3"]:hover .form--period-card,
-  .form--period-option[data-month="3"]:has(.form--period-input:focus) .form--period-card,
-  .form--period-option[data-month="3"]:has(input:checked) .form--period-card {
+  .form--period-option[data-month="3"] .form--period-input:focus-visible + .form--period-card,
+  .form--period-option[data-month="3"] .form--period-input:checked + .form--period-card {
     background-image: var(--gradient-march);
   }
 
   .form--period-option[data-month="4"]:hover .form--period-card,
-  .form--period-option[data-month="4"]:has(.form--period-input:focus) .form--period-card,
-  .form--period-option[data-month="4"]:has(input:checked) .form--period-card {
+  .form--period-option[data-month="4"] .form--period-input:focus-visible + .form--period-card,
+  .form--period-option[data-month="4"] .form--period-input:checked + .form--period-card {
     background-image: var(--gradient-april);
   }
 
   .form--period-option[data-month="5"]:hover .form--period-card,
-  .form--period-option[data-month="5"]:has(.form--period-input:focus) .form--period-card,
-  .form--period-option[data-month="5"]:has(input:checked) .form--period-card {
+  .form--period-option[data-month="5"] .form--period-input:focus-visible + .form--period-card,
+  .form--period-option[data-month="5"] .form--period-input:checked + .form--period-card {
     background-image: var(--gradient-may);
   }
 
   .form--period-option[data-month="6"]:hover .form--period-card,
-  .form--period-option[data-month="6"]:has(.form--period-input:focus) .form--period-card,
-  .form--period-option[data-month="6"]:has(input:checked) .form--period-card {
+  .form--period-option[data-month="6"] .form--period-input:focus-visible + .form--period-card,
+  .form--period-option[data-month="6"] .form--period-input:checked + .form--period-card {
     background-image: var(--gradient-june);
   }
 
   .form--period-option[data-month="7"]:hover .form--period-card,
-  .form--period-option[data-month="7"]:has(.form--period-input:focus) .form--period-card,
-  .form--period-option[data-month="7"]:has(input:checked) .form--period-card {
+  .form--period-option[data-month="7"] .form--period-input:focus-visible + .form--period-card,
+  .form--period-option[data-month="7"] .form--period-input:checked + .form--period-card {
     background-image: var(--gradient-july);
   }
 
   .form--period-option[data-month="8"]:hover .form--period-card,
-  .form--period-option[data-month="8"]:has(.form--period-input:focus) .form--period-card,
-  .form--period-option[data-month="8"]:has(input:checked) .form--period-card {
+  .form--period-option[data-month="8"] .form--period-input:focus-visible + .form--period-card,
+  .form--period-option[data-month="8"] .form--period-input:checked + .form--period-card {
     background-image: var(--gradient-august);
   }
 
   .form--period-option[data-month="9"]:hover .form--period-card,
-  .form--period-option[data-month="9"]:has(.form--period-input:focus) .form--period-card,
-  .form--period-option[data-month="9"]:has(input:checked) .form--period-card {
+  .form--period-option[data-month="9"] .form--period-input:focus-visible + .form--period-card,
+  .form--period-option[data-month="9"] .form--period-input:checked + .form--period-card {
     background-image: var(--gradient-september);
   }
 
   .form--period-option[data-month="10"]:hover .form--period-card,
-  .form--period-option[data-month="10"]:has(.form--period-input:focus) .form--period-card,
-  .form--period-option[data-month="10"]:has(input:checked) .form--period-card {
+  .form--period-option[data-month="10"] .form--period-input:focus-visible + .form--period-card,
+  .form--period-option[data-month="10"] .form--period-input:checked + .form--period-card {
     background-image: var(--gradient-october);
   }
 
   .form--period-option[data-month="11"]:hover .form--period-card,
-  .form--period-option[data-month="11"]:has(.form--period-input:focus) .form--period-card,
-  .form--period-option[data-month="11"]:has(input:checked) .form--period-card {
+  .form--period-option[data-month="11"] .form--period-input:focus-visible + .form--period-card,
+  .form--period-option[data-month="11"] .form--period-input:checked + .form--period-card {
     background-image: var(--gradient-november);
   }
 
   .form--period-option[data-month="12"]:hover .form--period-card,
-  .form--period-option[data-month="12"]:has(.form--period-input:focus) .form--period-card,
-  .form--period-option[data-month="12"]:has(input:checked) .form--period-card {
+  .form--period-option[data-month="12"] .form--period-input:focus-visible + .form--period-card,
+  .form--period-option[data-month="12"] .form--period-input:checked + .form--period-card {
     background-image: var(--gradient-december);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .form--period-option:hover .form--period-card,
+    .form--period-option[data-month]:hover .form--period-card,
+    .form--period-input:focus-visible + .form--period-card,
+    .form--period-input:checked + .form--period-card {
+      animation: none;
+      transform: none;
+    }
   }
 
   /* ── Form page layout ─────────────────────────────── */

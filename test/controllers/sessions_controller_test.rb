@@ -20,14 +20,14 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_enqueued_emails 1
   end
 
-  test 'create with new email creates user, sends code, and redirects' do
-    assert_difference 'User.count', 1 do
+  test 'create with new email does not create user and redirects' do
+    assert_no_difference 'User.count' do
       post session_path, params: { email_address: 'newuser@example.com' }
     end
 
     assert_redirected_to new_session_code_path
     assert_equal 'newuser@example.com', session[:login_email]
-    assert_enqueued_emails 1
+    assert_enqueued_emails 0
   end
 
   test 'create with invalid email does not create user, still redirects' do

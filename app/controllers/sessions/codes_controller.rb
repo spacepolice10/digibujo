@@ -23,8 +23,14 @@ module Sessions
         login_code.destroy
         user.login_codes.delete_all
         session.delete(:login_email)
-        start_new_session_for(user)
-        redirect_to after_authentication_url
+
+        if session.delete(:auth_flow) == 'signup'
+          session[:signup_user_id] = user.id
+          redirect_to new_signup_completion_path
+        else
+          start_new_session_for(user)
+          redirect_to after_authentication_url
+        end
       else
         redirect_to new_session_code_path, alert: 'Invalid or expired code.'
       end

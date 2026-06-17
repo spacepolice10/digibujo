@@ -11,11 +11,12 @@ class SessionsController < ApplicationController
   def new; end
 
   def create
-    user = User.find_or_create_by(email_address: params[:email_address])
+    user = User.find_by(email_address: params[:email_address])
 
-    if user.persisted?
+    if user && user.persisted?
       _record, code = LoginCode.create_for(user)
       SessionMailer.login_code(user, code).deliver_later
+      session.delete(:auth_flow)
     end
 
     session[:login_email] = params[:email_address]

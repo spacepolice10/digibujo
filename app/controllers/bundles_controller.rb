@@ -3,7 +3,7 @@
 class BundlesController < ApplicationController
   include UserCollections
 
-  before_action :set_collection, if: -> { params[:collection_id].present? }
+  before_action :set_collection
   before_action :set_bundle, only: %i[show destroy]
 
   def show
@@ -15,13 +15,12 @@ class BundlesController < ApplicationController
   end
 
   def new
-    @bundle = Bundle.new(user: Current.user)
+    @bundle = @collection.bundles.build(user: Current.user)
     @bundle.build_bucket
-    @bundle.collection = @collection if @collection
   end
 
   def create
-    @bundle = Bundle.new(user: Current.user)
+    @bundle = @collection.bundles.build(user: Current.user)
     @bundle.build_bucket(
       user: Current.user,
       name: bundle_params[:name],
@@ -29,14 +28,8 @@ class BundlesController < ApplicationController
       icon: bundle_params[:icon]
     )
 
-    if @collection
-      @bundle.collection = @collection
-    elsif bundle_params[:collection_id].present?
-      @bundle.collection = user_collections.find_by(id: bundle_params[:collection_id])
-    end
-
     if @bundle.save
-      redirect_to @bundle.collection ? collection_path(@bundle.collection) : bundle_path(@bundle), notice: 'Bundle created'
+      redirect_to collection_path(@collection), notice: 'Bundle created'
     else
       render :new, status: :unprocessable_entity
     end
@@ -44,7 +37,7 @@ class BundlesController < ApplicationController
 
   def destroy
     @bundle.bucket.destroy
-    redirect_back fallback_location: (@bundle.collection ? collection_path(@bundle.collection) : home_path), notice: 'Bundle deleted'
+    redirect_to collection_path(@collection), notice: 'Bundle deleted'
   end
 
   private
@@ -54,14 +47,10 @@ class BundlesController < ApplicationController
   end
 
   def set_bundle
-    @bundle = if @collection
-                @collection.bundles.find(params[:id])
-              else
-                Bundle.where(user: Current.user).find(params[:id])
-              end
+    @bundle = @collection.bundles.find(params[:id])
   end
 
   def bundle_params
-    params.require(:bundle).permit(:name, :colour, :icon, :collection_id)
+    params.require(:bundle).permit(:name, :colour, :icon)
   end
 end

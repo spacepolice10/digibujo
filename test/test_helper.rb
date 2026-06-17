@@ -25,14 +25,22 @@ module ActiveSupport
     end
 
     def create_bundle!(user, collection, name:, colour: nil, icon: nil)
-      bundle = Bundle.create!(user: user, collection: collection)
+      bundle = collection.bundles.create!(user: user)
       user.buckets.create!(bucketable: bundle, name: name, colour: colour, icon: icon)
       bundle
     end
 
+    def ensure_future_bucket!(user)
+      return if user.future_bucket
+
+      future_bucket = FutureBucket.create!(user: user)
+      user.buckets.create!(bucketable: future_bucket, name: 'Future Log')
+    end
+
     def create_monthly_bucket!(user, name:, period_from: nil, period_to: nil, colour: nil, icon: nil)
+      ensure_future_bucket!(user)
       period = MonthlyBucket.default_period
-      monthly_bucket = MonthlyBucket.create!(
+      monthly_bucket = user.future_bucket.monthly_buckets.create!(
         user: user,
         period_from: period_from || period[:period_from],
         period_to: period_to || period[:period_to]

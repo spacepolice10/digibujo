@@ -127,6 +127,35 @@
     flex-shrink: 0;
     margin-inline-end: var(--spacing-horizontal-half);
   }
+
+  .bucket--list-item-child {
+    padding-inline-start: calc(var(--icon-size-base) + var(--spacing-horizontal-half));
+  }
+
+  .bucket--list-item-child-link {
+    justify-content: flex-start;
+  }
+
+  .bucket--child-dot-inner {
+    width: calc(var(--icon-size-base) / 3);
+    height: calc(var(--icon-size-base) / 3);
+    border-radius: var(--radius-full);
+    background: var(--color-stroke-base);
+  }
+
+  .bucket--list-item-child-link[data-bucket-colour="violet"] .bucket--child-dot-inner { background: var(--model-color-1); }
+  .bucket--list-item-child-link[data-bucket-colour="cobalt"] .bucket--child-dot-inner { background: var(--model-color-2); }
+  .bucket--list-item-child-link[data-bucket-colour="teal"] .bucket--child-dot-inner { background: var(--model-color-3); }
+  .bucket--list-item-child-link[data-bucket-colour="emerald"] .bucket--child-dot-inner { background: var(--model-color-4); }
+  .bucket--list-item-child-link[data-bucket-colour="gold"] .bucket--child-dot-inner { background: var(--model-color-5); }
+  .bucket--list-item-child-link[data-bucket-colour="vermillion"] .bucket--child-dot-inner { background: var(--model-color-6); }
+  .bucket--list-item-child-link[data-bucket-colour="magenta"] .bucket--child-dot-inner { background: var(--model-color-7); }
+  .bucket--list-item-child-link[data-bucket-colour="inks"] .bucket--child-dot-inner { background: var(--model-color-8); }
+
+  .bucket--list-item-child-link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
+  }
 }
 
 .bucket--footer {

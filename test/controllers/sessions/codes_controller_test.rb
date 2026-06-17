@@ -66,5 +66,14 @@ module Sessions
 
       assert_equal 0, @user.login_codes.count
     end
+
+    test 'create with signup auth flow redirects to signup completion' do
+      post signup_path, params: { email_address: @user.email_address }
+      _record, signup_code = LoginCode.create_for(@user)
+      post session_code_path, params: { code: signup_code }
+
+      assert_redirected_to new_signup_completion_path
+      assert_nil cookies[:session_id]
+    end
   end
 end

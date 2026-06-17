@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_17_061223) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_17_171000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -119,7 +119,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_17_061223) do
   end
 
   create_table "bundles", force: :cascade do |t|
-    t.integer "collection_id"
+    t.integer "collection_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
@@ -139,7 +139,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_17_061223) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index ["user_id"], name: "index_future_buckets_on_user_id"
+    t.index ["user_id"], name: "index_future_buckets_on_user_id", unique: true
   end
 
   create_table "login_codes", force: :cascade do |t|
@@ -153,7 +153,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_17_061223) do
 
   create_table "monthly_buckets", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.integer "future_bucket_id"
+    t.integer "future_bucket_id", null: false
     t.date "period_from"
     t.date "period_to"
     t.datetime "updated_at", null: false

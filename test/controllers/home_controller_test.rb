@@ -14,7 +14,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test 'show lists projects collections and monthly buckets' do
+  test 'show lists projects and collections' do
     create_project!(@user, name: 'alpha')
     create_collection!(@user, name: 'reading')
     create_monthly_bucket!(@user, name: 'june')
@@ -24,10 +24,8 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select '.home--section-title', text: 'Projects'
     assert_select '.home--section-title', text: 'Collections'
-    assert_select '.home--section-title', text: 'Spreads'
     assert_match 'alpha', response.body
     assert_match 'reading', response.body
-    assert_match 'june', response.body
   end
 
   test 'show respects collapsed section preferences' do
@@ -39,7 +37,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     get home_path
 
     assert_response :success
-    assert_select 'details.home--section[data-controller=section]', count: 4
+    assert_select 'details.home--section[data-controller=section]', count: 3
     assert_select 'details.home--section[open]', count: 3
   end
 
@@ -61,7 +59,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
     get home_path
     assert_response :success
-    assert_select 'details.home--section[data-controller=section][open]', count: 3
+    assert_select 'details.home--section[data-controller=section][open]', count: 2
   end
 
   test 'expanding a collapsed section persists and is reflected on next page load' do
@@ -76,6 +74,6 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
     get home_path
     assert_response :success
-    assert_select 'details.home--section[data-controller=section][open]', count: 4
+    assert_select 'details.home--section[data-controller=section][open]', count: 3
   end
 end

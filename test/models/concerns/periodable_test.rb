@@ -3,8 +3,10 @@
 class PeriodableTest < ActiveSupport::TestCase
   setup do
     @user = users(:one)
+    ensure_future_bucket!(@user)
     @monthly_bucket = MonthlyBucket.create!(
       user: @user,
+      future_bucket: @user.future_bucket,
       period_from: Date.new(2026, 6, 1),
       period_to: Date.new(2026, 6, 30)
     )

@@ -1,6 +1,6 @@
 <%# locals: (bundle:) %>
 <li id="<%= dom_id(bundle.bucket, :list_item) %>" class="layout--list-item">
-  <%= link_to (bundle.collection ? [bundle.collection, bundle] : bundle), class: "bucket--list-item-link" do %>
+  <%= link_to [bundle.collection, bundle], class: "bucket--list-item-link" do %>
     <div class="bucket--list-item-name">
       <div class="bucket--list-item-marker" data-bucket-colour="<%= bundle.colour %>" aria-hidden="true">
         <% if bundle.icon.present? %>

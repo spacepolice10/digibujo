@@ -14,3 +14,17 @@
     </div>
   <% end %>
 </li>
+<% if collection.bundles.any? %>
+  <% collection.bundles.each do |bundle| %>
+    <li class="layout--list-item bucket--list-item-child">
+      <%= link_to collection_bundle_path(collection, bundle),
+            class: "bucket--list-item-link bucket--list-item-child-link",
+            data: { bucket_colour: bundle.colour } do %>
+        <div class="bucket--list-item-name">
+          <span class="bucket--child-dot-inner" aria-hidden="true"></span>
+          <span class="utilities--line-clamp-1"><%= bundle.name %></span>
+        </div>
+      <% end %>
+    </li>
+  <% end %>
+<% end %>

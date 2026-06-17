@@ -4,10 +4,6 @@
       <i class="icon" style="--icon-mask: var(--icon-book)" aria-hidden="true"></i>
       Add collection
     <% end %>
-    <%= link_to new_bundle_path, class: "button--secondary home--side-button", data: { turbo_frame: "_top" } do %>
-      <i class="icon" style="--icon-mask: var(--icon-folder)" aria-hidden="true"></i>
-      New bundle
-    <% end %>
     <%= link_to new_monthly_bucket_path, class: "button--secondary home--side-button", data: { turbo_frame: "_top" } do %>
       <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
       Add monthly log
@@ -38,21 +34,33 @@
         </li>
       </ul>
 
-      <% if @future %>
-        <ul class="layout--list bucket--list">
-          <li id="<%= dom_id(@future, :list_item) %>" class="layout--list-item">
-            <%= link_to future_path, class: "bucket--list-item-link" do %>
-              <div class="bucket--list-item-name">
-                <div class="bucket--list-item-marker" data-bucket-colour="<%= @future.colour %>" aria-hidden="true"></div>
-                <span class="utilities--line-clamp-1"><%= @future.name %></span>
-              </div>
-              <div class="bucket--list-item-meta utilities--line-clamp-1">
-                <span><%= @future.bucketable.monthly_buckets.count %> months</span>
-              </div>
-            <% end %>
-          </li>
-        </ul>
-      <% end %>
+      <ul class="layout--list bucket--list">
+        <li id="<%= dom_id(@future, :list_item) %>" class="layout--list-item">
+          <%= link_to future_path, class: "bucket--list-item-link" do %>
+            <div class="bucket--list-item-name">
+              <div class="bucket--list-item-marker" data-bucket-colour="<%= @future.colour %>" aria-hidden="true"></div>
+              <span class="utilities--line-clamp-1"><%= @future.name %></span>
+            </div>
+            <div class="bucket--list-item-meta utilities--line-clamp-1">
+              <span><%= @future_monthly_buckets.count %> months</span>
+            </div>
+          <% end %>
+        </li>
+        <% if @future_monthly_buckets.any? %>
+          <% @future_monthly_buckets.each do |monthly_bucket| %>
+            <li class="layout--list-item bucket--list-item-child">
+              <%= link_to monthly_bucket_path(monthly_bucket),
+                    class: "bucket--list-item-link bucket--list-item-child-link",
+                    data: { bucket_colour: monthly_bucket.colour } do %>
+                <div class="bucket--list-item-name">
+                  <span class="bucket--child-dot-inner" aria-hidden="true"></span>
+                  <span class="utilities--line-clamp-1"><%= monthly_bucket.name %></span>
+                </div>
+              <% end %>
+            </li>
+          <% end %>
+        <% end %>
+      </ul>
 
     <% end %>
 
@@ -64,26 +72,10 @@
       <% end %>
     <% end %>
 
-    <% if @collections.any? { |c| c.bucket != @future } %>
+    <% if @collections.any? %>
       <%= render layout: "home/section", locals: { key: "collections", title: "Collections", show_more_path: collections_path, expanded: @section_expanded_status["collections"] } do %>
         <ul class="layout--list bucket--list">
-          <%= render @collections.select { |c| c.bucket != @future } %>
-        </ul>
-      <% end %>
-    <% end %>
-
-    <% if @bundles.any? %>
-      <%= render layout: "home/section", locals: { key: "bundles", title: "Bundles", expanded: true } do %>
-        <ul class="layout--list bucket--list">
-          <%= render @bundles %>
-        </ul>
-      <% end %>
-    <% end %>
-
-    <% if @monthly_buckets.any? %>
-      <%= render layout: "home/section", locals: { key: "spreads", title: "Spreads", expanded: @section_expanded_status["spreads"] } do %>
-        <ul class="layout--list bucket--list">
-          <%= render partial: "monthly_buckets/monthly_bucket", collection: @monthly_buckets, as: :monthly_bucket %>
+          <%= render @collections %>
         </ul>
       <% end %>
     <% end %>
