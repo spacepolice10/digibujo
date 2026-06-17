@@ -5,6 +5,7 @@ const TYPE_MARKERS = {
   Task: { icon: "square", styles: "bullet--task-marker" },
   Note: { icon: "line-dashed", styles: "bullet--note-marker" },
   Event: { icon: "circle", styles: "bullet--event-marker" },
+  Title: { icon: "none", styles: "" },
 }
 
 export default class extends Controller {
@@ -17,6 +18,9 @@ export default class extends Controller {
     "marker",
     "markerIcon",
     "expandDialog",
+    "bodyEditor",
+    "titleInput",
+    "expandButton",
   ]
 
   static values = {
@@ -125,6 +129,7 @@ export default class extends Controller {
 
     const type = this.typeSelectTarget.value
     const marker = TYPE_MARKERS[type] || TYPE_MARKERS.Task
+    const isTitle = type === "Title"
 
     if (this.hasMarkerTarget) {
       this.markerTarget.className = `bullet--marker ${marker.styles}`
@@ -134,6 +139,15 @@ export default class extends Controller {
     }
     if (this.hasNoteOptionsTarget) {
       this.noteOptionsTarget.hidden = type != "Note"
+    }
+    if (this.hasBodyEditorTarget) {
+      this.bodyEditorTarget.hidden = isTitle
+    }
+    if (this.hasTitleInputTarget) {
+      this.titleInputTarget.hidden = !isTitle
+    }
+    if (this.hasExpandButtonTarget) {
+      this.expandButtonTarget.hidden = isTitle
     }
   }
 
