@@ -10,30 +10,44 @@ module Home
       sign_in_as @user
     end
 
-    test 'update persists open state for allowed section' do
-      patch home_section_path('projects'), params: { open: 'false' }
+    test 'expand persists true for a known section' do
+      post home_expand_section_path('projects')
       assert_response :ok
-      assert_equal false, @user.reload.settings.projects_open?
+      assert_equal true, @user.reload.settings.projects_expanded?
     end
 
-    test 'update persists open=true from form data' do
-      patch home_section_path('projects'), params: { open: 'true' }
+    test 'collapse persists false for a known section' do
+      post home_collapse_section_path('projects')
       assert_response :ok
-      assert_equal true, @user.reload.settings.projects_open?
+      assert_equal false, @user.reload.settings.projects_expanded?
     end
 
-    test 'update rejects unknown section' do
-      patch home_section_path('unknown'), params: { open: false }
+    test 'expand rejects an unknown section' do
+      post home_expand_section_path('unknown')
       assert_response :unprocessable_entity
     end
 
-    test 'update works when user has no settings row' do
+    test 'collapse rejects an unknown section' do
+      post home_collapse_section_path('unknown')
+      assert_response :unprocessable_entity
+    end
+
+    test 'expand creates the settings row when missing' do
       @user.settings.destroy!
 
-      patch home_section_path('projects'), params: { open: false }
+      post home_expand_section_path('projects')
 
       assert_response :ok
-      assert_equal false, @user.reload.settings.projects_open?
+      assert_equal true, @user.reload.settings.projects_expanded?
+    end
+
+    test 'collapse creates the settings row when missing' do
+      @user.settings.destroy!
+
+      post home_collapse_section_path('projects')
+
+      assert_response :ok
+      assert_equal false, @user.reload.settings.projects_expanded?
     end
   end
 end

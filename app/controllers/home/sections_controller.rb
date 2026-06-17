@@ -3,13 +3,21 @@
 module Home
   # Persists which home page sections are expanded or collapsed per user.
   class SectionsController < ApplicationController
-    def update
-      unless User::Settings::SECTIONS.include?(params[:id])
-        head :unprocessable_entity
-        return
-      end
+    def expand
+      update_column(true)
+    end
 
-      Current.user.settings!.set_section_open(params[:id], params.expect(:open))
+    def collapse
+      update_column(false)
+    end
+
+    private
+
+    def update_column(value)
+      column = User::Settings::SECTION_COLUMNS[params[:id]]
+      return head :unprocessable_entity unless column
+
+      Current.user.settings!.update!(column => value)
       head :ok
     end
   end
