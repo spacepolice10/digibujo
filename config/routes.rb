@@ -37,8 +37,10 @@ Rails.application.routes.draw do
   resource :menu, only: :show, controller: 'menu'
   resources :notes, only: :index
   resources :buckets, only: :show
-  resource :home, only: :show, controller: 'home' do
-    resources :sections, only: :update, module: :home
+  resource :home, only: :show, controller: 'home'
+  scope module: :home do
+    post 'home/sections/:id/expand',   to: 'sections#expand',   as: :home_expand_section
+    post 'home/sections/:id/collapse', to: 'sections#collapse', as: :home_collapse_section
   end
   resource :future, only: %i[show create], controller: 'futures' do
     post :months, on: :collection
