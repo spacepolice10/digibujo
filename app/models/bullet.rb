@@ -12,7 +12,7 @@ class Bullet < ApplicationRecord
   belongs_to :user
   belongs_to :bucket, optional: true
 
-  delegated_type :bulletable, types: %w[Task Note Event], dependent: :destroy, optional: true
+  delegated_type :bulletable, types: %w[Task Note Event Title], dependent: :destroy, optional: true
   delegate :completable?, :temporal?, :name, :excerpt,
            :marker_icon, :marker_styles, :completed?, :meta_labels,
            :mood_marker, to: :bulletable
@@ -35,6 +35,7 @@ class Bullet < ApplicationRecord
   private
 
   def body_or_rich_body_present
+    return if bulletable_type == 'Title'
     return if body.present? || rich_body.present?
     return if attachments.attached?
 
