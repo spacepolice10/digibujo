@@ -15,7 +15,7 @@ class CollectionsController < ApplicationController
   def create
     @collection = Collection.new
     if save_collection_with_bucket(@collection)
-      redirect_back fallback_location: home_path, notice: 'Collection created'
+      redirect_to collection_path(@collection), notice: 'Collection created'
     else
       @collection.name = collection_params[:name]
       render :new, status: :unprocessable_entity
@@ -23,6 +23,7 @@ class CollectionsController < ApplicationController
   end
 
   def show
+    @bundles = @collection.bundles.includes(bucket: :bullets)
     scoped_bullets = Current.user.bullets.where(bucket_id: @collection.bucket.id)
                             .where(archived: false).distinct
     scoped_bullets = scoped_bullets.where(bulletable_type: selected_type) if selected_type.present?
