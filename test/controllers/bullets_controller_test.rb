@@ -162,6 +162,50 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_select '.form-errmsg', 0
   end
 
+  test 'create Title bullet without body' do
+    post bullets_path,
+         params: {
+           bullet: {
+             bulletable_type: 'Title',
+             bulletable_attributes: { text: 'My Heading' },
+             pops_on: Date.current.iso8601
+           }
+         },
+         as: :turbo_stream
+
+    assert_response :success
+    bullet = @user.bullets.order(:created_at).last
+    assert_equal 'Title', bullet.bulletable_type
+    assert_equal 'My Heading', bullet.name
+    assert_not bullet.body.present?
+  end
+
+  test 'update indented flag' do
+    patch bullet_path(@bullet),
+          params: { bullet: { indented: true } },
+          as: :turbo_stream
+
+    assert_response :success
+    assert @bullet.reload.indented
+  end
+
+  test 'create indented bullet' do
+    post bullets_path,
+         params: {
+           bullet: {
+             bulletable_type: 'Task',
+             body: 'Indented task',
+             indented: true,
+             pops_on: Date.current.iso8601
+           }
+         },
+         as: :turbo_stream
+
+    assert_response :success
+    bullet = @user.bullets.order(:created_at).last
+    assert bullet.indented
+  end
+
   private
 
   def create_blob!(filename:, content_type:, io: StringIO.new('file contents'))

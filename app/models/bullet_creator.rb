@@ -27,7 +27,8 @@ class BulletCreator
   def build_bullet
     type_name = @params[:bulletable_type].presence || 'Task'
     attributes = @params.except(:bulletable_type, :bulletable_attributes)
-    @bullet = @user.bullets.new(attributes.merge(bulletable: type_name.constantize.new))
+    bulletable_attrs = @params[:bulletable_attributes].presence || {}
+    @bullet = @user.bullets.new(attributes.merge(bulletable: type_name.constantize.new(bulletable_attrs.to_h)))
   end
 
   def update_bulletable!
