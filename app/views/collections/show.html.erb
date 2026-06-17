@@ -13,29 +13,62 @@
   </div>
 
   <article class="layout--column bucket--list">
+    <% @bundles.each do |bundle| %>
+      <section class="bundle--section">
+        <div class="bundle--header">
+          <div class="bucket--list-item-marker" data-bucket-colour="<%= bundle.colour %>" aria-hidden="true">
+            <% if bundle.icon.present? %>
+              <i class="icon" style="--icon-mask: <%= bundle.icon_mask %>" aria-hidden="true"></i>
+            <% end %>
+          </div>
+          <h3 class="bundle--title"><%= bundle.name %></h3>
+        </div>
+        <div class="bundle--bullets">
+          <%= render bundle.bullets.where(archived: false).distinct.chronological %>
+        </div>
+        <turbo-frame id="composer_bundle_<%= bundle.id %>" class="bundle-composer--<%= bundle.id %>">
+          <%= link_to new_bullet_path(
+                bucket_id: bundle.bucket.id,
+                composer_id: "composer_bundle_#{bundle.id}"
+              ),
+              data: { turbo_frame: "_self" },
+              class: "button--tertiary button--icon",
+              aria: { label: "Add bullet to #{bundle.name}" } do %>
+            <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
+          <% end %>
+        </turbo-frame>
+      </section>
+    <% end %>
+
+    <div class="bundle--create">
+      <%= link_to new_collection_bundle_path(@collection), class: "button--secondary" do %>
+        <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
+        New bundle
+      <% end %>
+    </div>
+
     <div class="layout--header-actions">
-        <%= link_to "All", collection_path(@collection), class: "button--secondary" %>
-        <% Bullet.bulletable_types.each do |type| %>
-          <%= link_to type.pluralize,
-                      collection_path(@collection, type: type.downcase),
-                      class: "button--secondary" %>
-        <% end %>
+      <%= link_to "All", collection_path(@collection), class: "button--secondary" %>
+      <% Bullet.bulletable_types.each do |type| %>
+        <%= link_to type.pluralize,
+                    collection_path(@collection, type: type.downcase),
+                    class: "button--secondary" %>
+      <% end %>
     </div>
 
     <div id="bullets" data-bulk-menu-target="list">
-    <%= render "pagination/paginated_records",
-          page: @page,
-          pagination_link_path: lambda { |next_param|
-            type = params[:type].presence
-            type ? collection_path(@collection, page: next_param, type:) : collection_path(@collection, page: next_param)
-          } %>
+      <%= render "pagination/paginated_records",
+            page: @page,
+            pagination_link_path: lambda { |next_param|
+              type = params[:type].presence
+              type ? collection_path(@collection, page: next_param, type:) : collection_path(@collection, page: next_param)
+            } %>
     </div>
     <%= render "bullets/bulk_menu" %>
-    </article>
-      <div>
-    <turbo-frame id="bullet_composer" class="bullet_pops_on_">
-      <%= render "bullets/composer",
-            attributes: { bucket_id: @collection.bucket.id } %>
-    </turbo-frame>
-    </div>
+  </article>
+
+  <turbo-frame id="bullet_composer" class="bullet_pops_on_">
+    <%= render "bullets/composer",
+          attributes: { bucket_id: @collection.bucket.id, composer_id: "bullet_composer" } %>
+  </turbo-frame>
 </div>
