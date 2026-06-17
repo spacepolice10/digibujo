@@ -27,8 +27,22 @@ class BulletCreator
   def build_bullet
     type_name = @params[:bulletable_type].presence || 'Task'
     attributes = @params.except(:bulletable_type, :bulletable_attributes)
-    bulletable_attrs = @params[:bulletable_attributes].presence || {}
-    @bullet = @user.bullets.new(attributes.merge(bulletable: type_name.constantize.new(bulletable_attrs.to_h)))
+    bulletable_attrs = bulletable_attributes_for(type_name)
+    @bullet = @user.bullets.new(attributes.merge(bulletable: type_name.constantize.new(bulletable_attrs)))
+  end
+
+  def bulletable_attributes_for(type_name)
+    attrs = @params[:bulletable_attributes].presence || {}
+    return {} unless attrs.respond_to?(:permit)
+
+    case type_name
+    when 'Note'
+      attrs.permit(:mood, :awaits_research, :idea).to_h
+    when 'Title'
+      attrs.permit(:text).to_h
+    else
+      {}
+    end
   end
 
   def update_bulletable!

@@ -21,6 +21,7 @@ export default class extends Controller {
     "bodyEditor",
     "titleInput",
     "expandButton",
+    "attachmentButton",
   ]
 
   static values = {
@@ -138,17 +139,31 @@ export default class extends Controller {
       this.markerIconTarget.style.setProperty("--icon-mask", `var(--icon-${marker.icon})`)
     }
     if (this.hasNoteOptionsTarget) {
-      this.noteOptionsTarget.hidden = type != "Note"
+      const hideNoteOptions = type != "Note"
+      this.noteOptionsTarget.hidden = hideNoteOptions
+      this.setInputsDisabled(this.noteOptionsTarget, hideNoteOptions)
     }
     if (this.hasBodyEditorTarget) {
       this.bodyEditorTarget.hidden = isTitle
+      this.setInputsDisabled(this.bodyEditorTarget, isTitle)
     }
     if (this.hasTitleInputTarget) {
       this.titleInputTarget.hidden = !isTitle
+      this.setInputsDisabled(this.titleInputTarget, !isTitle)
     }
     if (this.hasExpandButtonTarget) {
       this.expandButtonTarget.hidden = isTitle
     }
+    if (this.hasAttachmentButtonTarget) {
+      this.attachmentButtonTarget.hidden = isTitle
+    }
+  }
+
+  setInputsDisabled(container, disabled) {
+    if (!container) return
+    container.querySelectorAll("input, textarea, select").forEach((el) => {
+      el.disabled = disabled
+    })
   }
 
   connect() {

@@ -59,4 +59,34 @@
     display: flex;
     gap: var(--spacing-vertical-half);
   }
+
+  .bullet-form-title-input {
+    width: 100%;
+    margin-block: var(--spacing-vertical-half);
+  }
+
+  .bullet-form-title-text {
+    width: 100%;
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    border-radius: var(--radius-base);
+    font-family: inherit;
+    font-size: var(--font-size-base);
+    background: transparent;
+    border: 1px solid var(--color-stroke-base);
+    color: var(--color-fg-base);
+
+    &::placeholder {
+      color: var(--color-fg-subtle);
+      opacity: var(--opacity-half);
+    }
+
+    &:hover {
+      background: var(--color-bg-base);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--color-stroke-strong);
+    }
+  }
 }
