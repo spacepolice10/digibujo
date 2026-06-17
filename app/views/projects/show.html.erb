@@ -16,7 +16,8 @@
       <%= render "bullets/composer",
             attributes: {
               render_context: "project",
-              default_project_id: @project.id
+              default_project_id: @project.id,
+              composer_id: "bullet_composer"
             } %>
     </turbo-frame>
   </div>

@@ -15,7 +15,7 @@
     </div>
     <div class="layout--header-info">
       <% if @person.avatar.attached? %>
-        <%= image_tag fresh_person_avatar_path(@person), class: "person--avatar-large", alt: "" %>
+        <%= image_tag @person.avatar, class: "person--avatar-large", alt: "" %>
       <% end %>
       <h2><%= @person.name %></h2>
     </div>
@@ -25,7 +25,8 @@
       <%= render "bullets/composer",
             attributes: {
               render_context: "project",
-              default_person_id: @person.id
+              default_person_id: @person.id,
+              composer_id: "bullet_composer"
             } %>
     </turbo-frame>
   </div>
