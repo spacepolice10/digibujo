@@ -25,7 +25,8 @@
         <%= link_to new_bullet_path(
               bucket_id: bucket.id,
               bulletable_type: "Task",
-              render_context: "future"
+              render_context: "future",
+              composer_id: "bullet_composer"
             ),
             data: { turbo_frame: "bullet_composer" },
             class: "button--tertiary button--icon",
@@ -41,7 +42,7 @@
   </div>
 
   <turbo-frame id="bullet_composer">
-    <%= render "bullets/composer", attributes: { render_context: "future" } %>
+    <%= render "bullets/composer", attributes: { render_context: "future", composer_id: "bullet_composer" } %>
   </turbo-frame>
 
   <%= render "bullets/bulk_menu" %>
