@@ -1,0 +1,24 @@
+.bundle--section {
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.bundle--header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.bundle--title {
+  font-weight: var(--font-weight-semibold);
+}
+
+.bundle--bullets {
+  margin-bottom: var(--space-sm);
+}
+
+.bundle--create {
+  margin: var(--space-md) 0;
+}
