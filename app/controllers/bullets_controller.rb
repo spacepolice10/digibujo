@@ -4,13 +4,7 @@ class BulletsController < ApplicationController
   before_action :set_bullet, only: %i[show edit update destroy]
 
   def new
-    @bullet = Current.user.bullets.build(
-      pops_on: params[:pops_on],
-      bucket_id: params[:bucket_id]
-    )
-    type_name = params[:bulletable_type].presence || 'Task'
-    @bullet.bulletable_type = type_name
-    @bullet.bulletable = type_name.constantize.new
+    @bullet = BulletCreator.new(Current.user, new_bullet_params.to_h).build.bullet
     @default_project_id = params[:default_project_id]
     @default_person_id = params[:default_person_id]
   end
@@ -18,16 +12,14 @@ class BulletsController < ApplicationController
   def create
     result = BulletCreator.new(Current.user, bullet_params).call
     @bullet = result.bullet
+
     if result.success?
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to bullet_path(@bullet) }
       end
     else
-      respond_to do |format|
-        format.turbo_stream { render_invalid_create }
-        format.html { render :new, status: :unprocessable_entity }
-      end
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -65,10 +57,14 @@ class BulletsController < ApplicationController
 
   def bullet_params
     params.require(:bullet).permit(
-      :body, :rich_body, :pops_on, :bulletable_type, :bucket_id, :indented,
+      :body, :rich_body, :pops_on, :bulletable_type, :bucket_id, :composer_id, :indented,
       attachments: [],
       bulletable_attributes: %i[mood awaits_research idea]
     )
+  end
+
+  def new_bullet_params
+    params.permit(:pops_on, :bucket_id, :bulletable_type, :composer_id)
   end
 
   def update_bulletable!(bullet)
@@ -92,11 +88,5 @@ class BulletsController < ApplicationController
     ActionText::RichText.find_by(record: bullet, name: 'rich_body')&.destroy
   end
 
-  def render_invalid_create
-    render turbo_stream: turbo_stream.update(
-      'toasts',
-      partial: 'shared/toasts',
-      locals: { type: 'errmsg', messages: @bullet.errors.full_messages }
-    )
-  end
+
 end
