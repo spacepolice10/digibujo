@@ -1,0 +1,21 @@
+<% content_for(:title) { "New bundle" } %>
+
+<div class="layout--page form--page">
+  <div class="layout--header">
+    <div class="layout--header-actions">
+      <%= link_to collection_path(@collection), class: "button--secondary", onclick: "if (history.length > 1) { event.preventDefault(); history.back(); }" do %>
+        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+        Back
+      <% end %>
+    </div>
+    <h2>New bundle</h2>
+  </div>
+
+  <div class="form--surface">
+    <%= form_with model: [@collection, @bundle], class: "form form--strong" do |f| %>
+      <%= render "collections/identity_fields", form: f,
+            name_hint: "Give your bundle a name." %>
+      <%= f.submit "Create bundle", class: "button--primary form--submit" %>
+    <% end %>
+  </div>
+</div>
