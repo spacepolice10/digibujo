@@ -1,3 +1,3 @@
-<%= turbo_stream.before targets: ".bullet_pops_on_#{@bullet.pops_on}" do %>
+<%= turbo_stream.before(params.dig(:bullet, :composer_id).presence || monthly_bucket_composer_frame_id(@bullet.pops_on)) do %>
   <%= render "monthly_buckets/bullets/bullet", bullet: @bullet %>
 <% end %>

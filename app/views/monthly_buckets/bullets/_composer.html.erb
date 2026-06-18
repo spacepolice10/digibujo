@@ -1,0 +1,14 @@
+<%# locals: (monthly_bucket:, pops_on: nil, label: "Add bullet") %>
+<turbo-frame id="<%= monthly_bucket_composer_frame_id(pops_on) %>"
+             class="<%= monthly_bucket_composer_frame_class(pops_on) %>"
+             data-controller="composer-frame">
+  <div class="bullet-composer">
+    <%= link_to new_monthly_bucket_bullet_path(monthly_bucket, pops_on: pops_on),
+          class: "bullet-composer--add",
+          data: { turbo_frame: "_self" },
+          aria: { label: label } do %>
+      <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
+      <%= label %>
+    <% end %>
+  </div>
+</turbo-frame>

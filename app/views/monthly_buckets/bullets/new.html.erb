@@ -1,4 +1,13 @@
-<%= render "bullets/bulletable_form",
-      bullet: @bullet,
-      url: monthly_bucket_bullets_path(@monthly_bucket),
-      attributes: { pops_on: @bullet.pops_on, bucket_id: @bullet.bucket_id }.compact %>
+<% composer_frame_id = monthly_bucket_composer_frame_id(@bullet.pops_on) %>
+<turbo-frame id="<%= composer_frame_id %>"
+             class="<%= monthly_bucket_composer_frame_class(@bullet.pops_on) %>"
+             data-controller="composer-frame">
+  <%= render "bullets/bulletable_form",
+        bullet: @bullet,
+        url: monthly_bucket_bullets_path(@monthly_bucket),
+        attributes: {
+          pops_on: @bullet.pops_on,
+          bucket_id: @bullet.bucket_id,
+          composer_id: composer_frame_id
+        }.compact %>
+</turbo-frame>

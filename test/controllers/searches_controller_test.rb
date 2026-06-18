@@ -43,6 +43,18 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     assert_no_match "inbox", response.body
   end
 
+  test "show filters people by name and email" do
+    @user.people.create!(name: "alex", email: "alex@example.com")
+    @user.people.create!(name: "sam", email: "sam@example.com")
+
+    get search_path, params: { q: "alex@example.com" }
+
+    assert_response :success
+    assert_select "h4", text: "People"
+    assert_match "alex", response.body
+    assert_no_match "sam", response.body
+  end
+
   test "show reports empty results when nothing matches" do
     create_project!(@user, name: "alpha")
 

@@ -55,6 +55,29 @@
     display: flex;
   }
 
+  .bullet-composer--add {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-vertical-half);
+    padding: var(--spacing-vertical-half) 0;
+    font-size: var(--font-size-subtle);
+    color: var(--color-fg-subtle);
+    text-decoration: none;
+    cursor: pointer;
+
+    @media (hover: hover) {
+      &:hover {
+        color: var(--color-fg-base);
+        text-decoration: underline;
+      }
+    }
+
+    .icon {
+      width: var(--icon-size-subtle);
+      height: var(--icon-size-subtle);
+    }
+  }
+
   .bullet-composer--buttons {
     display: flex;
     gap: var(--spacing-vertical-half);

@@ -1,13 +1,15 @@
 <% content_for(:title) { "Collections" } %>
 
 <div class="layout--page">
-  <div class="layout--header">
-    <h2 class="collection">Collections</h2>
-    <div class="layout--header-actions">
-      <%= link_to "New collection", new_collection_path, class: "button--primary" %>
+  <div class="bucket--list">
+    <div class="bullet-composer">
+      <%= link_to new_collection_path, class: "bullet-composer--add", aria: { label: "Add collection" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
+        Add collection
+      <% end %>
     </div>
+    <ul class="layout--list">
+      <%= render @collections %>
+    </ul>
   </div>
-  <ul class="layout--list bucket--list">
-    <%= render @collections %>
-  </ul>
 </div>

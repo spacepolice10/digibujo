@@ -13,12 +13,18 @@
              data-action="dragstart->bullet-drag#dragstart dragend->bullet-drag#dragend"
              <% end %>>
   <div class="bullet--marker-slot">
-    <span class="bullet--marker <%= bullet.marker_styles %>" aria-hidden="true">
-      <i class="icon" style="--icon-mask: var(--icon-<%= bullet.marker_icon %>)" aria-hidden="true"></i>
-      <% if bullet.mood_marker.present? %>
-        <span class="bullet--mood-emoji"><%= bullet.mood_marker %></span>
+    <% if monthly_bucket %>
+      <% unless bullet.bulletable_type == "Title" %>
+        <span class="bullet--monthly-bucket-dot" aria-hidden="true"></span>
       <% end %>
-    </span>
+    <% else %>
+      <span class="bullet--marker <%= bullet.marker_styles %>" aria-hidden="true">
+        <i class="icon" style="--icon-mask: var(--icon-<%= bullet.marker_icon %>)" aria-hidden="true"></i>
+        <% if bullet.mood_marker.present? %>
+          <span class="bullet--mood-emoji"><%= bullet.mood_marker %></span>
+        <% end %>
+      </span>
+    <% end %>
     <% unless monthly_bucket %>
       <%= render "bullets/select", bullet: bullet %>
     <% end %>
@@ -27,7 +33,7 @@
     <% if bullet.bulletable_type == "Title" %>
       <h3 class="bullet--title"><%= bullet.name %></h3>
     <% elsif monthly_bucket %>
-      <span class="bullet--line"><%= bullet.name %></span>
+      <%= render "bullets/monthly_bucket_line", bullet: bullet %>
     <% else %>
       <% if bullet.body.to_plain_text.presence || bullet.rich_body? %>
         <div class="bullet--name">

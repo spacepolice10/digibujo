@@ -52,6 +52,37 @@
   }
 
   .bullet--monthly-bucket {
+    gap: var(--spacing-horizontal-half);
+
+    .bullet--marker-slot {
+      width: var(--spacing-horizontal-half);
+      height: var(--spacing-horizontal-half);
+    }
+
+    .bullet--monthly-bucket-dot {
+      display: block;
+      width: 100%;
+      height: 100%;
+      margin-top: var(--radius-subtle);
+      border-radius: var(--radius-full);
+    }
+
+    &[data-bullet-type="task"] .bullet--monthly-bucket-dot {
+      background: var(--model-color-2);
+    }
+
+    &[data-bullet-type="event"] .bullet--monthly-bucket-dot {
+      background: var(--model-color-6);
+    }
+
+    &[data-bullet-type="note"] .bullet--monthly-bucket-dot {
+      background: var(--model-color-5);
+    }
+
+    &[data-bullet-completed] .bullet--monthly-bucket-dot {
+      background: var(--color-fg-subtle);
+    }
+
     .bullet--body {
       white-space: nowrap;
       overflow: hidden;
@@ -64,6 +95,35 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       font-size: var(--font-size-subtle);
+    }
+
+    .bullet--monthly-bucket-link {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-horizontal-half);
+      min-width: 0;
+      color: inherit;
+      text-decoration: none;
+
+      .bullet--line {
+        flex: 1;
+      }
+
+      @media (hover: hover) {
+        &:hover .bullet--line {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .bullet--monthly-bucket-extra {
+      flex-shrink: 0;
+      color: var(--color-fg-subtle);
+
+      .icon {
+        width: var(--icon-size-subtle);
+        height: var(--icon-size-subtle);
+      }
     }
   }
 
@@ -123,6 +183,25 @@
     color: inherit;
     text-decoration: none;
     cursor: text;
+
+    &:is(a),
+    &:is(a):hover,
+    &:is(a):visited,
+    &:is(a):active,
+    &:is(a):focus {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    & a:not(.pill),
+    & a:not(.pill):hover,
+    & a:not(.pill):visited,
+    & a:not(.pill):active,
+    & a:not(.pill):focus {
+      color: inherit;
+      text-decoration: none;
+      cursor: text;
+    }
 
     > * {
       margin: 0;

@@ -18,10 +18,10 @@
     margin-bottom: calc(var(--spacing-vertical-double) * 6);
   }
 
-  /* Named container: body width is the centered page column (up to --breakpoint-laptop). */
+  /* Named container: body width is the centered page column. */
   body {
     margin-inline: auto;
-    max-width: var(--breakpoint-desktop);
+    max-width: min(100%, calc(var(--breakpoint-pc) + var(--spacing-horizontal-quad) * 2));
     container-type: inline-size;
     container-name: page-column;
   }

@@ -1,8 +1,16 @@
-<%# locals: (attributes: {}) %>
+<%# locals: (attributes: {}, style: :secondary) %>
 <div class="bullet-composer">
-  <%= link_to new_bullet_path(**attributes),
-        class: "button--secondary",
-        data: { turbo_frame: "bullet_composer" } do %>
-    Add bullet
+  <% if style == :tertiary %>
+    <% composer_frame = attributes[:composer_id].presence || "bullet_composer" %>
+    <%= render "bullets/add_bullet_button",
+          attributes: attributes,
+          turbo_frame: composer_frame,
+          aria_label: "Add bullet" %>
+  <% else %>
+    <%= link_to new_bullet_path(**attributes),
+          class: "button--secondary",
+          data: { turbo_frame: attributes[:composer_id].presence || "bullet_composer" } do %>
+      Add bullet
+    <% end %>
   <% end %>
 </div>

@@ -5,6 +5,6 @@ class Title < ApplicationRecord
 
   def temporal?      = false
   def completable?   = false
-  def marker_icon    = :none
+  def marker_icon    = :heading
   def marker_styles  = ''
 end

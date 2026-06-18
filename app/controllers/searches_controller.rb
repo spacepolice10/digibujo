@@ -1,15 +1,13 @@
 # frozen_string_literal: true
 
 class SearchesController < ApplicationController
-  include Search
-
-  BUCKET_LIMIT = 5
-  BULLET_LIMIT = 8
-
   def show
-    @q = q
-    @projects = search_projects.limit(BUCKET_LIMIT)
-    @buckets = search_buckets.limit(BUCKET_LIMIT)
-    @bullets = search_bullets.limit(BULLET_LIMIT)
+    @q = params[:q].to_s.strip
+    results = Search::GlobalRequest.call(user: Current.user, query: @q)
+
+    @projects = results.projects
+    @buckets = results.buckets
+    @bullets = results.bullets
+    @people = results.people
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_17_171000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_18_100000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -218,6 +218,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_17_171000) do
     t.index ["user_id"], name: "index_published_entities_on_user_id"
   end
 
+  create_table "search_records", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "search_body"
+    t.string "search_name"
+    t.integer "searchable_id", null: false
+    t.string "searchable_type", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id", "searchable_type", "searchable_id"], name: "index_search_records_on_user_and_searchable", unique: true
+    t.index ["user_id"], name: "index_search_records_on_user_id"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ip_address"
@@ -276,6 +288,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_17_171000) do
   add_foreign_key "pinned_entities", "users"
   add_foreign_key "projects", "users"
   add_foreign_key "published_entities", "users"
+  add_foreign_key "search_records", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "user_settings", "users"
+
+  # Virtual tables defined in this database.
+  # Note that virtual tables may not work with other database engines. Be careful if changing database.
+  create_virtual_table "search_records_fts", "fts5", [" search_name", "search_body", "tokenize='unicode61 remove_diacritics 2'", "prefix='2 3 4 5' "]
 end

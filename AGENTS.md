@@ -47,6 +47,14 @@ User data lives in:
 - Flag any new deps, side effects, or non-obvious decisions
 - If uncertain, say so explicitly rather than guessing
 
+### Large phased changes
+For very large changes executed in stages, **always make intermediate commits** — one per completed phase. Do not accumulate an entire multi-step refactor into a single commit at the end.
+
+- Break the work into logical phases before starting; each phase should be a reviewable, self-contained unit.
+- Commit when a phase is done: tests pass (for that scope), migrations apply, and the tree is in a coherent state.
+- Write commit messages that describe the phase outcome, not the whole initiative.
+- If the user has not asked you to commit yet, **ask at each phase boundary** rather than waiting until all phases are finished.
+
 ### Always
 - Ask clarifying questions before starting non-trivial tasks
 - Prefer explicit over implicit

@@ -9,7 +9,7 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'monthly bucket shows empty when user has no spreads' do
-    get monthly_bucket_path
+    get current_monthly_bucket_path
 
     assert_response :success
     assert_match 'No monthly spread yet', response.body
@@ -23,7 +23,7 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
       bucket_id: monthly_bucket.bucket.id
     )
 
-    get monthly_bucket_path
+    get current_monthly_bucket_path
 
     assert_response :success
     assert_match 'Unplanned task', response.body
@@ -44,6 +44,26 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_match 'Dentist', response.body
+  end
+
+  test 'monthly bucket spread has date add menu and composer frames' do
+    monthly_bucket = create_monthly_bucket!(@user, name: 'june')
+    day = Date.current.beginning_of_month + 2.days
+    @user.bullets.create!(
+      bulletable: Task.create!,
+      body: 'Planned task',
+      bucket_id: monthly_bucket.bucket.id,
+      pops_on: day
+    )
+
+    get monthly_bucket_path(monthly_bucket)
+
+    assert_response :success
+    assert_select 'select.monthly-bucket--date-add-select'
+    assert_select 'select.monthly-bucket--date-add-select option[value=?]', 'Task', text: 'Add task'
+    assert_select 'select.monthly-bucket--date-add-select option[value=?]', 'Event', text: 'Add event'
+    assert_select "turbo-frame#composer_#{day.iso8601}"
+    assert_match 'Planned task', response.body
   end
 
   test 'monthly bucket spread has no bulk menu or select checkboxes' do
@@ -74,8 +94,56 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select '.bullet--monthly-bucket .bullet--line', text: 'Pinned spread task'
+    assert_select '.bullet--monthly-bucket .bullet--monthly-bucket-dot', count: 1
+    assert_select '.bullet--monthly-bucket .bullet--marker', count: 0
     assert_select '.bullet--monthly-bucket .bullet--tags', count: 0
     assert_select '.bullet--monthly-bucket .bullet--metadata', count: 0
+  end
+
+  test 'monthly bucket bullets link to show page and indicate extra content' do
+    monthly_bucket = create_monthly_bucket!(@user, name: 'june')
+    plain = @user.bullets.create!(
+      bulletable: Task.create!,
+      body: 'Plain task',
+      bucket_id: monthly_bucket.bucket.id
+    )
+    with_rich_body = @user.bullets.create!(
+      bulletable: Note.create!,
+      body: 'Note line',
+      rich_body: '<p>Expanded detail</p>',
+      bucket_id: monthly_bucket.bucket.id
+    )
+    with_attachment = @user.bullets.create!(
+      bulletable: Task.create!,
+      body: 'File task',
+      bucket_id: monthly_bucket.bucket.id
+    )
+    with_attachment.attachments.attach(
+      ActiveStorage::Blob.create_and_upload!(
+        io: StringIO.new('file contents'),
+        filename: 'notes.txt',
+        content_type: 'text/plain'
+      )
+    )
+
+    get monthly_bucket_path(monthly_bucket)
+
+    assert_response :success
+    assert_select "a.bullet--monthly-bucket-link[href='#{bullet_path(plain)}']", text: /Plain task/
+    assert_select "a.bullet--monthly-bucket-link[href='#{bullet_path(with_rich_body)}'] .bullet--monthly-bucket-extra", count: 1
+    assert_select "a.bullet--monthly-bucket-link[href='#{bullet_path(with_attachment)}'] .bullet--monthly-bucket-extra", count: 1
+    assert_select '.bullet--monthly-bucket .bullet--monthly-bucket-extra', count: 2
+  end
+
+  test 'monthly bucket date labels link to daylog' do
+    monthly_bucket = create_monthly_bucket!(@user, name: 'june')
+    day = Date.current.beginning_of_month + 4.days
+
+    get monthly_bucket_path(monthly_bucket)
+
+    assert_response :success
+    assert_select "a.monthly-bucket--date-label[href='#{daylog_path(date: day.iso8601)}']",
+                  text: /#{day.day}.*#{day.strftime('%a')}/
   end
 
   test 'new form defaults to current month' do
@@ -86,5 +154,37 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     assert_select "input[name='monthly_bucket[month]'][value=?]", Date.current.beginning_of_month.iso8601
     assert_select "input[name='monthly_bucket[month]'][item_wrapper_tag]", count: 0
     assert_select "label.form--period-option[for=?]", "monthly_bucket_month_#{Date.current.beginning_of_month.iso8601}"
+  end
+
+  test 'show by id loads the requested spread when multiple months exist' do
+    june = create_monthly_bucket!(
+      @user,
+      name: 'June 2026',
+      period_from: Date.new(2026, 6, 1),
+      period_to: Date.new(2026, 6, 30)
+    )
+    july = create_monthly_bucket!(
+      @user,
+      name: 'July 2026',
+      period_from: Date.new(2026, 7, 1),
+      period_to: Date.new(2026, 7, 31)
+    )
+    @user.bullets.create!(
+      bulletable: Task.create!,
+      body: 'June-only task',
+      bucket_id: june.bucket.id
+    )
+    @user.bullets.create!(
+      bulletable: Task.create!,
+      body: 'July-only task',
+      bucket_id: july.bucket.id
+    )
+
+    get monthly_bucket_path(june)
+
+    assert_response :success
+    assert_match 'June-only task', response.body
+    assert_no_match 'July-only task', response.body
+    assert_equal "/monthly_buckets/#{june.id}", monthly_bucket_path(june)
   end
 end

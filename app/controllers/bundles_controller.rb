@@ -29,9 +29,15 @@ class BundlesController < ApplicationController
     )
 
     if @bundle.save
-      redirect_to collection_path(@collection), notice: 'Bundle created'
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to collection_path(@collection), notice: 'Bundle created' }
+      end
     else
-      render :new, status: :unprocessable_entity
+      respond_to do |format|
+        format.turbo_stream { render :new, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_entity }
+      end
     end
   end
 

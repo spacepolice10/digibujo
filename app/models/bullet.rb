@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Bullet < ApplicationRecord
-  include Collectable, Poppable, Archivable, Pinnable, Publishable, Projectable, Personable, RichBodySanitizable
+  include Collectable, Poppable, Archivable, Pinnable, Publishable, Projectable, Personable, RichBodySanitizable, Searchable
 
   scope :chronological, -> { order(created_at: :asc) }
   scope :pops_on_date, lambda { |date|
@@ -30,6 +30,24 @@ class Bullet < ApplicationRecord
 
   def rich_body?
     rich_body.present? && rich_body.to_plain_text.present?
+  end
+
+  def search_name
+    body.to_plain_text.truncate(255)
+  end
+
+  def search_body
+    bucket_names = [ bucket&.name ].compact
+    project_names = projects.map(&:name)
+    person_names = people.map(&:name)
+
+    [
+      body.to_plain_text,
+      rich_body&.to_plain_text,
+      *bucket_names,
+      *project_names,
+      *person_names
+    ].compact.join(" ")
   end
 
   private

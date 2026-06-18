@@ -212,12 +212,21 @@
   }
 
   .form--colour-option {
+    position: relative;
     cursor: pointer;
     line-height: 0;
   }
 
   .form--colour-option input {
-    display: none;
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .form--colour-option input:focus-visible {
+    outline: none;
   }
 
   .form--colour-swatch {
@@ -238,6 +247,19 @@
   .form--colour-option:has(input:checked) .form--colour-swatch {
     box-shadow: 0 0 0 2px var(--color-stroke-strong);
     transform: scale(1.08);
+  }
+
+  .form--colour-option:has(input:focus-visible) .form--colour-swatch {
+    box-shadow:
+      0 0 0 2px var(--color-stroke-strong),
+      0 0 0 4px color-mix(in oklch, var(--color-stroke-base) 40%, transparent);
+    transform: scale(1.08);
+  }
+
+  .form--colour-option:has(input:checked:focus-visible) .form--colour-swatch {
+    box-shadow:
+      0 0 0 2px var(--color-fg-base),
+      0 0 0 4px color-mix(in oklch, var(--color-stroke-base) 40%, transparent);
   }
 
   /* ── Emoji icon picker ────────────────────────────── */

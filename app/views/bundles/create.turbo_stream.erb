@@ -1,0 +1,6 @@
+<%= turbo_stream.prepend "bundle_list" do %>
+  <%= render "bundles/section", bundle: @bundle, collection: @collection %>
+<% end %>
+<%= turbo_stream.replace "bundle_composer" do %>
+  <turbo-frame id="bundle_composer"></turbo-frame>
+<% end %>

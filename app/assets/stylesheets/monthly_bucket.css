@@ -1,64 +1,252 @@
 @layer components {
   .monthly-bucket--page {
-    max-width: 960px;
-    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    max-width: none;
+    min-height: 0;
+  }
+
+  @media (min-width: 800px) {
+    .monthly-bucket--page {
+      min-height: calc(100vh - var(--spacing-vertical) * 2);
+    }
+  }
+
+  .monthly-bucket--actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-horizontal-half);
+    align-items: center;
+    margin-bottom: var(--spacing-vertical);
+  }
+
+  .monthly-bucket--actions .layout--rail-action,
+  .monthly-bucket--actions form {
+    width: auto;
+  }
+
+  .monthly-bucket--period {
+    margin: calc(var(--spacing-vertical) * -1) 0 var(--spacing-vertical);
+    color: var(--color-fg-subtle);
   }
 
   .monthly-bucket--spread {
     display: grid;
-    grid-template-columns: 1fr 280px;
-    gap: var(--spacing-horizontal-double);
-    align-items: start;
+    grid-template-columns: 1fr 1px calc(var(--spacing-horizontal-double) * 9);
+    align-items: stretch;
+    flex: 1;
+    min-height: 0;
+    border: 1px solid var(--color-stroke-base);
+    background: var(--color-bg-subtle);
+    border-radius: var(--radius-strong);
+    overflow: hidden;
   }
 
   .monthly-bucket--by-date {
     min-width: 0;
+    min-height: 0;
     overflow-y: auto;
-    max-height: calc(100vh - 120px);
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
+  }
+
+  .monthly-bucket--divider {
+    background: var(--color-stroke-base);
   }
 
   .monthly-bucket--by-date-empty {
-    color: var(--color-text-muted);
+    color: var(--color-fg-subtle);
     text-align: center;
-    padding: 48px 16px;
+    padding: var(--spacing-vertical-quad) var(--spacing-horizontal);
   }
 
   .monthly-bucket--date-row {
     display: flex;
-    gap: var(--spacing-horizontal);
-    padding-block: var(--spacing-vertical);
+    align-items: flex-start;
+    gap: var(--spacing-horizontal-half);
+    padding-block: var(--spacing-vertical-half);
+  }
+
+  .monthly-bucket--date-row--today {
+    position: relative;
+  }
+
+  .monthly-bucket--date-row--today::before {
+    content: "";
+    position: absolute;
+    left: calc(-1 * var(--spacing-horizontal-half));
+    top: var(--spacing-vertical-half);
+    bottom: var(--spacing-vertical-half);
+    width: var(--radius-base);
+    border-radius: var(--radius-full);
+    background: var(--model-color-4);
+    pointer-events: none;
+  }
+
+  .monthly-bucket--date-row--today .monthly-bucket--date-label {
+    color: var(--color-fg-base);
   }
 
   .monthly-bucket--date-label {
+    position: relative;
     flex-shrink: 0;
-    width: 32px;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: var(--spacing-horizontal-double);
+    padding-left: var(--spacing-horizontal-half);
+    box-sizing: border-box;
     font-size: var(--font-size-subtle);
-    font-weight: 600;
-    line-height: 1.4;
-    color: var(--color-text-muted);
+    color: var(--color-fg-subtle);
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--color-fg-base);
+    }
+  }
+
+  .monthly-bucket--date-day {
+    font-weight: var(--font-weight-strong);
+    font-size: 0.85em;
+  }
+
+  .monthly-bucket--date-weekday {
+    font-weight: var(--font-weight-base);
+    font-size: 0.75em;
+    text-transform: uppercase;
   }
 
   .monthly-bucket--date-entries {
     flex: 1;
     min-width: 0;
+    align-self: stretch;
+  }
+
+  .monthly-bucket--date-add {
+    flex-shrink: 0;
+    align-self: flex-start;
+  }
+
+  @supports (appearance: base-select) {
+    .monthly-bucket--date-add-select,
+    .monthly-bucket--date-add-select::picker(select) {
+      appearance: base-select;
+    }
+
+    .monthly-bucket--date-add-select {
+      width: var(--icon-size-base);
+      height: var(--icon-size-base);
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--color-fg-subtle);
+    }
+
+    .monthly-bucket--date-add-select > button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: var(--icon-size-base);
+      height: var(--icon-size-base);
+      padding: 0;
+      border: 0;
+      border-radius: var(--radius-strong);
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    .monthly-bucket--date-add-select:hover > button,
+    .monthly-bucket--date-add-select:focus-within > button {
+      color: var(--color-fg-base);
+      background: var(--color-stroke-base);
+    }
+
+    .monthly-bucket--date-add-select::picker-icon {
+      display: none;
+    }
+
+    .monthly-bucket--date-add-select::picker(select) {
+      border: 1px solid var(--color-stroke-base);
+      border-radius: var(--radius-base);
+      background: var(--color-bg-base);
+      box-shadow: var(--shadow-base);
+      min-width: calc(var(--spacing-horizontal-double) * 6);
+      margin-block: var(--spacing-vertical-half);
+      padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    }
+
+    .monthly-bucket--date-add-select option {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-horizontal-half);
+      padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+      background: var(--color-bg-base);
+      color: var(--color-fg-base);
+      cursor: pointer;
+    }
+
+    .monthly-bucket--date-add-marker {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: var(--icon-size-subtle);
+      height: var(--icon-size-subtle);
+    }
+
+    .monthly-bucket--date-add-marker--task {
+      color: var(--model-color-2);
+    }
+
+    .monthly-bucket--date-add-marker--event {
+      color: var(--model-color-6);
+    }
+
+    .monthly-bucket--date-add-marker .icon {
+      width: var(--icon-size-subtle);
+      height: var(--icon-size-subtle);
+    }
+
+    .monthly-bucket--date-add-select option:hover,
+    .monthly-bucket--date-add-select option:focus {
+      background: var(--color-stroke-base);
+    }
   }
 
   .monthly-bucket--unplanned {
-    border-left: 1px solid var(--color-stroke-subtle);
-    padding-left: var(--spacing-horizontal-double);
+    display: flex;
+    flex-direction: column;
     min-width: 0;
+    min-height: 0;
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    overflow-y: auto;
+  }
+
+  .monthly-bucket--unplanned-header {
+    margin-bottom: var(--spacing-vertical);
+  }
+
+  .monthly-bucket--unplanned-title {
+    margin: 0 0 var(--spacing-vertical-half);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-strong);
+  }
+
+  .monthly-bucket--unplanned-description {
+    margin: 0;
+    color: var(--color-fg-subtle);
   }
 
   .monthly-bucket--unplanned-entries {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-vertical);
+    gap: 0;
   }
 
   .monthly-bucket--drop-over {
-    outline: 2px dashed var(--color-accent);
+    outline: 2px dashed var(--model-color-4);
     outline-offset: -2px;
-    border-radius: var(--border-radius);
+    border-radius: var(--radius-base);
   }
 }

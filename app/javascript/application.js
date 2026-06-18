@@ -3,9 +3,11 @@ import "@hotwired/turbo-rails";
 import "controllers";
 
 import * as Lexxy from "lexxy";
+import { InlinePastingExtension } from "extensions/inline_pasting";
 
 Lexxy.configure({
   inline: {
+    extensions: [InlinePastingExtension],
     attachments: true,
     toolbar: false,
     multiLine: false,

@@ -12,6 +12,10 @@
     padding-inline: var(--spacing-horizontal-half);
   }
 
+  .bucket--list .bullet-composer {
+    padding-inline: var(--spacing-horizontal-half);
+  }
+
   .bucket--list-item-link {
     display: flex;
     justify-content: space-between;

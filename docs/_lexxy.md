@@ -27,7 +27,7 @@
 
 - **Presets** (`app/javascript/application.js`): `inline` (no toolbar, single-line feel) for task/event bodies; `expand` (full toolbar, multi-line) for `rich_body`.
 - **Prompts** (`app/views/bullets/_composer.html.erb` and the bulletable form): `#` triggers `RemoteFilterSource` at `GET /projects/suggestions?filter=…`; `@` hits `GET /people/suggestions?filter=…`. (Lexxy sends `filter`, not `q`.)
-- **Custom extension** (`app/javascript/extensions/inline_paste_extension.js`): strips formatting on rich-paste into inline editors — URLs become links, code-like pastes become `<pre><code>`.
+- **Custom extension** (`app/javascript/extensions/inline_pasting.js`): strips rich paste in inline editors; collapses whitespace to one line; lone URLs become links.
 - **Tag sync** (`app/models/concerns/projectable.rb`, `personable.rb`): on save, `apply_project_tags_from_content!` / `apply_people_tags_from_content!` walks attachables in `body` and syncs `bullet_projects` / `bullet_people` join rows.
 - **Direct uploads** (`app/javascript/controllers/bullet_composer_controller.js`): intercepts `lexxy:file-accept` and routes files to Active Storage direct uploads instead of inline attachment insertion.
 - **Attachment hydration** (`config/initializers/lexxy.rb`): `Project` attachables render via a custom partial (`projects/attachable_editor`) so pills display correctly inside the editor.
@@ -40,7 +40,7 @@
 | Editor behavior | `Lexxy.configure` + `app/javascript/extensions/*.js` |
 | Attachment partial | `config/initializers/lexxy.rb` |
 | Prompt UI | `app/views/projects/_prompt_item.html.erb`, `app/views/people/_prompt_item.html.erb` |
-| Styling | `app/assets/stylesheets/lexxy-variables.css`, `attachment.css` |
+| Styling | Gem `lexxy.css` (tokens + editor chrome), `app/assets/stylesheets/lexxy-overrides.css` (inline preset), `attachment.css` |
 | Tag sync on save | `app/models/concerns/projectable.rb`, `personable.rb` |
 | Upstream fix | Open an issue / PR on https://github.com/basecamp/lexxy |
 

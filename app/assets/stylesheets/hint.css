@@ -52,4 +52,54 @@
       transform: translateY(var(--spacing-vertical-half));
     }
   }
+
+  /* Filter icon triggers in workspace rails */
+  .layout--filter-group [interestfor] {
+    interest-delay: 0.2s;
+  }
+
+  .layout--filter-option {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: var(--icon-size-base);
+    height: var(--icon-size-base);
+    padding: 0;
+    border-radius: var(--radius-strong);
+    color: var(--color-fg-subtle);
+    text-decoration: none;
+    flex-shrink: 0;
+
+    @media (hover: hover) {
+      &:hover {
+        color: var(--color-fg-base);
+        background: var(--color-stroke-base);
+      }
+    }
+  }
+
+  .layout--filter-option[aria-current="page"] {
+    color: var(--color-fg-base);
+    background: var(--color-accent-bg);
+  }
+
+  .layout--filter-option[data-bullet-type="task"] {
+    color: var(--model-color-2);
+  }
+
+  .layout--filter-option[data-bullet-type="note"] {
+    color: var(--model-color-4);
+  }
+
+  .layout--filter-option[data-bullet-type="event"] {
+    color: var(--model-color-6);
+  }
+
+  .layout--filter-option[data-bullet-type="title"] {
+    color: var(--model-color-3);
+  }
+
+  .layout--filter-option[aria-current="page"][data-bullet-type] {
+    color: var(--color-fg-base);
+  }
 }

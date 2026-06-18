@@ -153,8 +153,8 @@ export default class extends Controller {
   }
 
   reset() {
-    this.element.querySelectorAll("trix-editor").forEach((el) => {
-      if (el.editor) el.editor.setContent("")
+    this.element.querySelectorAll("lexxy-editor").forEach((editor) => {
+      editor.value = ""
     })
 
     this.previewsTarget.querySelectorAll(".attachment--preview").forEach((preview) => {
@@ -170,11 +170,8 @@ export default class extends Controller {
       this.expandDialogTarget.close()
     }
 
-    const inlineEditor = this.element.querySelector('trix-editor[preset="inline"]')
-    if (inlineEditor?.editor) {
-      inlineEditor.editor.setSelectedRange([0, 0])
-      inlineEditor.focus()
-    }
+    const inlineEditor = this.element.querySelector('lexxy-editor[preset="inline"]')
+    inlineEditor?.focus()
   }
 
   handleKeydown(event) {
@@ -186,14 +183,11 @@ export default class extends Controller {
     this.element.requestSubmit()
   }
 
-  submitExpand() {
-    const expandEditor = this.element.querySelector('trix-editor[preset="expand"]')
-    if (expandEditor?.editor) {
-      expandEditor.editor.setContent("")
-    }
-    this.element.requestSubmit()
+  saveExpand() {
     if (this.hasExpandDialogTarget) {
       this.expandDialogTarget.close()
     }
+
+    this.element.querySelector('lexxy-editor[preset="inline"]')?.focus()
   }
 }

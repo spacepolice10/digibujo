@@ -10,14 +10,11 @@
              data-bullet-drag-id-value="<%= bullet.id %>"
              data-action="dragstart->bullet-drag#dragstart dragend->bullet-drag#dragend">
   <div class="bullet--marker-slot">
-    <span class="bullet--marker <%= bullet.marker_styles %>" aria-hidden="true">
-      <i class="icon" style="--icon-mask: var(--icon-<%= bullet.marker_icon %>)" aria-hidden="true"></i>
-      <% if bullet.mood_marker.present? %>
-        <span class="bullet--mood-emoji"><%= bullet.mood_marker %></span>
-      <% end %>
-    </span>
+    <% unless bullet.bulletable_type == "Title" %>
+      <span class="bullet--monthly-bucket-dot" aria-hidden="true"></span>
+    <% end %>
   </div>
   <div class="bullet--body">
-    <span class="bullet--line"><%= bullet.name %></span>
+    <%= render "bullets/monthly_bucket_line", bullet: bullet %>
   </div>
 </turbo-frame>

@@ -1,0 +1,35 @@
+<%# locals: (bundle:, collection:) %>
+<section class="bundle--section bundle--section-new">
+  <%= form_with model: [collection, bundle], class: "bundle--new-form" do |f| %>
+    <header class="bundle--header">
+      <h3 class="bundle--title">New bundle</h3>
+      <%= link_to new_collection_bundle_path(collection, cancel: 1),
+            class: "button--primary button--icon button--circle bundle--close",
+            data: { turbo_frame: "bundle_composer" },
+            aria: { label: "Cancel" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
+      <% end %>
+    </header>
+    <div class="bundle--body bundle--new-body">
+      <div class="bundle--new-fields">
+        <%= f.label :name, "Bundle name", class: "utilities--sr-only" %>
+        <%= f.text_field :name,
+              class: "bundle--new-name form-input",
+              placeholder: "Bundle name",
+              required: true,
+              autofocus: true %>
+        <div class="bundle--colour-picker" role="radiogroup" aria-label="Bundle colour">
+          <% Colourable::COLOUR_MAPPINGS.each_key do |name| %>
+            <label class="form--colour-option">
+              <%= f.radio_button :colour, name %>
+              <span class="form--colour-swatch" style="background: <%= Colourable.colour_bg_variable_for(name) %>" aria-hidden="true"></span>
+            </label>
+          <% end %>
+        </div>
+      </div>
+      <div class="bundle--new-actions">
+        <%= f.submit "Save", class: "button--primary" %>
+      </div>
+    </div>
+  <% end %>
+</section>

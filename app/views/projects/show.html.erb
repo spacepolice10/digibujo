@@ -7,30 +7,31 @@
         <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
         Projects
       <% end %>
-      <%= render "projects/pins_button", project: @project %>
     </div>
     <h2 class="project"><%= @project.name %></h2>
   </div>
-  <article class="layout--column bucket--list">
-      <div class="layout--header-actions">
-        <%= link_to "All", project_path(@project), class: "button--secondary" %>
-        <% Bullet.bulletable_types.each do |type| %>
-          <%= link_to type.pluralize,
-                      project_path(@project, type: type.downcase),
-                      class: "button--secondary" %>
-        <% end %>
+
+  <div class="layout--workspace">
+    <aside class="layout--rail">
+      <%= render "projects/pins_button", project: @project %>
+      <%= render "bullets/type_filters",
+            path_for_type: ->(type) {
+              type ? project_path(@project, type:) : project_path(@project)
+            } %>
+    </aside>
+
+    <div class="layout--surface bucket--list">
+      <div id="bullets" data-bulk-menu-target="list">
+        <%= render "pagination/paginated_records",
+              page: @page,
+              pagination_link_path: lambda { |next_param|
+                type = params[:type].presence
+                type ? project_path(@project, page: next_param, type:) : project_path(@project, page: next_param)
+              } %>
       </div>
-    <div id="bullets" data-bulk-menu-target="list">
-    <%= render "pagination/paginated_records",
-          page: @page,
-          pagination_link_path: lambda { |next_param|
-            type = params[:type].presence
-            type ? project_path(@project, page: next_param, type:) : project_path(@project, page: next_param)
-          } %>
+      <%= render "bullets/bulk_menu" %>
     </div>
-    <%= render "bullets/bulk_menu" %>
 
-
-  </article>
-
+    <aside class="layout--rail" aria-hidden="true"></aside>
+  </div>
 </div>

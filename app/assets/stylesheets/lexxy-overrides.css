@@ -1,0 +1,97 @@
+@layer components {
+  lexxy-editor[preset="inline"] {
+    width: 100%;
+    height: auto;
+    border: 0;
+    background: transparent;
+    border-radius: 0;
+  }
+
+  lexxy-editor[preset="inline"] .lexxy-editor__content {
+    width: 100%;
+    max-height: 100%;
+    min-height: 1ch;
+    min-block-size: 1ch;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    vertical-align: baseline;
+  }
+
+  lexxy-editor[preset="inline"] .lexxy-editor__content .attachment--preview {
+    position: relative;
+    width: var(--spacing-vertical-double);
+    margin: 0;
+    border: var(--spacing-vertical-half) solid var(--color-stroke-base);
+    border-radius: var(--radius-base);
+    background: var(--color-bg-base);
+
+    & .node--selected {
+      border-color: var(--model-color-2) !important;
+    }
+
+    & lexxy-node-delete-button {
+      position: absolute;
+      bottom: var(--spacing-vertical-half);
+      right: var(--spacing-vertical-half);
+      background: var(--color-bg-base);
+      inset-block-start: 0 !important;
+      inset-inline-end: 0 !important;
+      width: var(--spacing-vertical-half);
+      height: var(--spacing-vertical-half);
+      border: 1px solid var(--color-stroke-base);
+      border-radius: var(--radius-full);
+      opacity: 1;
+      --icon-mask: var(--icon-x);
+      mask-image: var(--icon-mask);
+      mask-position: center;
+      mask-repeat: no-repeat;
+      mask-size: contain;
+
+      & > svg {
+        display: none;
+      }
+    }
+  }
+
+  lexxy-editor[preset="inline"] .node--selected {
+    border: var(--spacing-vertical-half) solid var(--model-color-2) !important;
+  }
+
+  lexxy-editor[preset="inline"] figure.attachment.attachment--inline {
+    display: inline-flex;
+    align-items: center;
+    block-size: 1.4em;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    vertical-align: middle;
+  }
+
+  lexxy-editor[preset="inline"] figure.attachment.attachment--inline .attachment__container,
+  lexxy-editor[preset="inline"] figure.attachment.attachment--inline img {
+    display: inline;
+    block-size: 1em;
+    inline-size: auto;
+    max-block-size: 1em;
+    vertical-align: baseline;
+  }
+
+  lexxy-editor[preset="inline"] figure.attachment.attachment--inline figcaption,
+  lexxy-editor[preset="inline"] figure.attachment.attachment--inline lexxy-node-delete-button {
+    display: none;
+  }
+
+  lexxy-editor[preset="inline"] figure.attachment.attachment--inline progress {
+    inline-size: 3em;
+    block-size: 0.35em;
+    margin-inline-start: 0.25em;
+    vertical-align: middle;
+  }
+
+  lexxy-editor[preset="inline"] .provisional-paragraph {
+    display: none;
+  }
+}
