@@ -1,7 +1,13 @@
 <li class="layout--list-item" role="option">
   <%= link_to bucket_palette_path(bucket),
         class: "bucket--list-item-link",
-        data: { turbo_frame: "_top", combobox_target: "item" } do %>
+        data: {
+          turbo_frame: "_top",
+          combobox_target: "item",
+          action: "click->search#rememberSelection",
+          searchable_type: "Bucket",
+          searchable_id: bucket.id
+        } do %>
     <div class="bucket--list-item-name">
       <div class="bucket--list-item-marker" data-bucket-colour="<%= bucket.colour %>" aria-hidden="true">
         <% if bucket.icon_path %>

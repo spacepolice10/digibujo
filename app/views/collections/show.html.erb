@@ -8,12 +8,6 @@
         Back
       <% end %>
       <%= render "buckets/pins_button", bucket: @collection.bucket %>
-      <%= link_to new_collection_bundle_path(@collection),
-            class: "button--secondary layout--rail-action",
-            data: { turbo_frame: "bundle_composer" } do %>
-        <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
-        New bundle
-      <% end %>
       <%= render "bullets/add_bullet_button",
             attributes: {
               bucket_id: @collection.bucket.id,
@@ -30,35 +24,26 @@
     <div class="layout--surface bucket--list" data-controller="bulk-menu">
       <h2 class="layout--surface-title"><%= @collection.name %></h2>
 
-      <div data-bulk-menu-target="list">
-        <div class="bundle--list" id="bundle_list">
-          <turbo-frame id="bundle_composer"></turbo-frame>
-          <% @bundles.each do |bundle| %>
-            <%= render "bundles/section", bundle: bundle, collection: @collection %>
-          <% end %>
-        </div>
-
-        <div class="bundle--body">
-          <div id="bullets">
-            <%= render "pagination/paginated_records",
-                  page: @page,
-                  pagination_link_path: lambda { |next_param|
-                    type = params[:type].presence
-                    type ? collection_path(@collection, page: next_param, type:) : collection_path(@collection, page: next_param)
-                  } %>
-          </div>
-
-          <turbo-frame id="bullet_composer" class="bullet_pops_on_" data-controller="composer-frame">
-            <%= render "bullets/composer",
-                  attributes: { bucket_id: @collection.bucket.id, composer_id: "bullet_composer" },
-                  style: :tertiary %>
-          </turbo-frame>
-        </div>
+      <div id="bullets" data-bulk-menu-target="list">
+        <%= render "pagination/paginated_records",
+              page: @page,
+              pagination_link_path: lambda { |next_param|
+                type = params[:type].presence
+                type ? collection_path(@collection, page: next_param, type:) : collection_path(@collection, page: next_param)
+              } %>
       </div>
+
+      <turbo-frame id="bullet_composer" class="bullet_pops_on_" data-controller="composer-frame">
+        <%= render "bullets/composer",
+              attributes: { bucket_id: @collection.bucket.id, composer_id: "bullet_composer" },
+              style: :tertiary %>
+      </turbo-frame>
 
       <%= render "bullets/bulk_menu" %>
     </div>
 
-    <aside class="layout--rail" aria-hidden="true"></aside>
+    <aside class="layout--rail">
+      <%= render "buckets/side_note", bucket: @collection.bucket %>
+    </aside>
   </div>
 </div>

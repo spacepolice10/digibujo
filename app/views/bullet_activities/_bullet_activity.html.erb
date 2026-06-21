@@ -1,9 +1,0 @@
-<div id="<%= dom_id(bullet_activity) %>" class="activity--item">
-  <%= bullet_activity.bullet.name.truncate(100) %>
-  <div class="activity--metadata">
-    <time class="activity--time" datetime="<%= bullet_activity.created_at.to_fs(:db) %>">
-      <%= l(bullet_activity.created_at, format: :short) %>
-    </time>
-    <span class="activity--action"><%= bullet_activity.action_name %></span>
-  </div>
-  </div>

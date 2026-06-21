@@ -20,6 +20,7 @@ class MonthlyBucketsController < ApplicationController
   def new
     @monthly_bucket = MonthlyBucket.new(MonthlyBucket.default_period)
     @monthly_bucket.build_bucket(name: Date.current.strftime('%B %Y'))
+    @occupied_months = occupied_months
   end
 
   def create
@@ -36,8 +37,13 @@ class MonthlyBucketsController < ApplicationController
     )
 
     if @monthly_bucket.save
+      @monthly_bucket.bucket.record_activity!(
+        "created",
+        metadata: { "bucketable_type" => @monthly_bucket.bucket.bucketable_type }
+      )
       redirect_to monthly_bucket_path(@monthly_bucket), notice: 'Monthly spread created'
     else
+      @occupied_months = occupied_months
       render :new, status: :unprocessable_entity
     end
   end
@@ -45,7 +51,11 @@ class MonthlyBucketsController < ApplicationController
   private
 
   def set_monthly_bucket
-    @monthly_bucket = MonthlyBucket.find(params[:id])
+    @monthly_bucket = Current.user.monthly_buckets.find(params[:id])
+  end
+
+  def occupied_months
+    Current.user.monthly_buckets.pluck(:period_from)
   end
 
   def assign_data
@@ -58,6 +68,13 @@ class MonthlyBucketsController < ApplicationController
                          {}
                        end
     @unplanned_bullets = scoped.where(pops_on: nil).chronological.includes(:bulletable)
+    @recurrency_tracker = if @period_days
+                            RecurrencyTracker.new(
+                              user: Current.user,
+                              from: @monthly_bucket.period_from,
+                              to: @monthly_bucket.period_to
+                            )
+                          end
   end
 
   def monthly_bucket_params

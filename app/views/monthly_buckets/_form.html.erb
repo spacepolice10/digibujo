@@ -1,6 +1,9 @@
-<%# locals: (monthly_bucket:) %>
+<%# locals: (monthly_bucket:, occupied_months:) %>
 <% months = (0..5).map { |i| Date.current.beginning_of_month + i.months } %>
-<% selected_month = monthly_bucket.period_from&.beginning_of_month || months.first %>
+<% occupied_months = Array(occupied_months) %>
+<% available_months = months.reject { |m| occupied_months.include?(m) } %>
+<% selected_month = available_months.first || months.first %>
+<% all_occupied = months.all? { |m| occupied_months.include?(m) } %>
 
 <%= form_with url: monthly_buckets_path, scope: :monthly_bucket, class: "form form--strong" do |f| %>
   <% errors = (monthly_bucket.errors.any? ? monthly_bucket.errors.full_messages : []) +
@@ -18,10 +21,12 @@
   <div class="form-group">
     <%= field_set_tag "Month", class: "form--period-picker" do %>
       <%= f.collection_radio_buttons :month, months, :iso8601, ->(m) { m.strftime("%B %Y") },
-            { checked: selected_month.iso8601, item_wrapper_tag: false } do |b| %>
+            { checked: (all_occupied ? nil : selected_month.iso8601), item_wrapper_tag: false } do |b| %>
         <% month_date = Date.parse(b.value) %>
-        <%= b.label class: "form--period-option", data: { month: month_date.month } do %>
-          <%= b.radio_button class: "utilities--sr-only form--period-input" %>
+        <% disabled = occupied_months.include?(month_date) %>
+        <%= b.label class: ["form--period-option", ("form--period-option--disabled" if disabled)].compact.join(" "),
+                    data: { month: month_date.month } do %>
+          <%= b.radio_button class: "utilities--sr-only form--period-input", disabled: disabled %>
           <span class="form--period-card">
             <span class="form--period-label"><%= month_date.strftime("%b") %></span>
             <span class="form--period-meta"><%= month_date.year %></span>
@@ -31,5 +36,5 @@
     <% end %>
   </div>
 
-  <%= f.submit "Create monthly spread", class: "button--primary form--submit" %>
+  <%= f.submit "Create monthly spread", class: "button--primary form--submit", disabled: all_occupied %>
 <% end %>

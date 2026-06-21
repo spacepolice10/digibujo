@@ -1,0 +1,12 @@
+<%# locals: (bullet:) %>
+<div class="bullet-form-rich-body-preview"
+     data-bullet-composer-target="richBodyPreview"
+     <%= "hidden" unless bullet.rich_body? %>>
+  <div class="bullet-form-rich-body-preview-header">
+    <span class="bullet-form-rich-body-preview-label">Expanded</span>
+    <span class="pill pill--emerald">saved</span>
+  </div>
+  <div class="bullet-form-rich-body-preview-content rich-text-content">
+    <%= bullet.rich_body if bullet.rich_body? %>
+  </div>
+</div>

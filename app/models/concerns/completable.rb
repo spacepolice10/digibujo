@@ -5,11 +5,11 @@ module Completable
 
   def complete!
     update!(done: true, done_at: Time.current)
-    BulletActivityRecorder.record_completed!(bullet: bullet)
+    bullet.stamp_migration!(kind: "completed", pops_on: bullet.pops_on)
   end
 
   def uncomplete!
     update!(done: false, done_at: nil)
-    BulletActivityRecorder.record_uncompleted!(bullet: bullet)
+    bullet.record_activity!("uncompleted")
   end
 end

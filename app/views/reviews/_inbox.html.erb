@@ -1,0 +1,24 @@
+<%# locals: (draggable:, row_actions:) %>
+<main class="review--inbox" aria-label="Review inbox">
+  <header class="review--inbox-header">
+    <h3 class="review--panel-title">Inbox</h3>
+    <p class="review--panel-description utilities--text-sm">Timeline bullets for this period.</p>
+  </header>
+
+  <article class="layout--column bucket--list review--inbox-list" data-bulk-menu-target="list">
+    <%= render "reviews/paginated_inbox", draggable: draggable, row_actions: row_actions %>
+  </article>
+
+  <% if @amount_in_review.positive? %>
+    <footer id="review-inbox-footer" class="review--inbox-footer">
+      <%= form_with url: archive_all_review_path(from: @review_from.iso8601, to: @review_to.iso8601),
+            method: :post,
+            data: { turbo_stream: true } do %>
+        <%= button_tag type: :submit, class: "button--secondary" do %>
+          <i class="icon" style="--icon-mask: var(--icon-archive)" aria-hidden="true"></i>
+          Archive all
+        <% end %>
+      <% end %>
+    </footer>
+  <% end %>
+</main>

@@ -8,6 +8,7 @@ module Buckets
 
     def create
       @bucket.pin!
+      @bucket.record_activity!("pinned", metadata: { "bucketable_type" => @bucket.bucketable_type })
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_back fallback_location: home_path }
@@ -16,6 +17,7 @@ module Buckets
 
     def destroy
       @bucket.unpin!
+      @bucket.record_activity!("unpinned", metadata: { "bucketable_type" => @bucket.bucketable_type })
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_back fallback_location: home_path }

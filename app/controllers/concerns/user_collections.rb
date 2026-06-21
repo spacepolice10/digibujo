@@ -11,8 +11,7 @@ module UserCollections
 
   def user_collections
     Collection.joins(:bucket)
-              .where(buckets: { user_id: Current.user.id })
+              .where(buckets: { user_id: Current.user.id, archived: false })
               .order('buckets.name')
-              .preload(bundles: :bucket)
   end
 end

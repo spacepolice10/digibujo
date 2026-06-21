@@ -1,0 +1,11 @@
+<%= turbo_stream.replace dom_id(@recurrency, "cell_#{@date.iso8601}") do %>
+  <%= render "recurrencies/cell", recurrency: @recurrency, date: @date, tracker: RecurrencyTracker.new(user: Current.user, from: @date, to: @date) %>
+<% end %>
+
+<%= turbo_stream.replace dom_id(@recurrency, "header_#{@date.iso8601}") do %>
+  <%= render "recurrencies/chip", recurrency: @recurrency, date: @date, tracker: RecurrencyTracker.new(user: Current.user, from: @date, to: @date), dom_key: "header" %>
+<% end %>
+
+<%= turbo_stream.replace dom_id(@recurrency, "inline_#{@date.iso8601}") do %>
+  <%= render "recurrencies/chip", recurrency: @recurrency, date: @date, tracker: RecurrencyTracker.new(user: Current.user, from: @date, to: @date), dom_key: "inline" %>
+<% end %>

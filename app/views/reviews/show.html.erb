@@ -1,0 +1,13 @@
+<% content_for(:title) { "Review" } %>
+
+<div class="layout--page review--page" data-controller="bulk-menu">
+  <%= render "reviews/header" %>
+
+  <div class="review--workspace">
+    <%= render "reviews/collections_panel" %>
+    <%= render "reviews/inbox", draggable: true, row_actions: false %>
+    <%= render "reviews/week_strip" %>
+  </div>
+
+  <%= render "bullets/bulk_menu" %>
+</div>

@@ -26,6 +26,16 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     assert_select '.home--section-title', text: 'Collections'
     assert_match 'alpha', response.body
     assert_match 'reading', response.body
+    assert_select 'a.home--section-more[href=?]', collections_path, count: 0
+  end
+
+  test 'show collections section links to index when more than eight collections' do
+    9.times { |index| create_collection!(@user, name: "collection #{index}") }
+
+    get home_path
+
+    assert_response :success
+    assert_select 'a.home--section-more[href=?]', collections_path, count: 1
   end
 
   test 'show respects collapsed section preferences' do

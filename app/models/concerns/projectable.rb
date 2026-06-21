@@ -11,20 +11,21 @@ module Projectable
   def tag_project!(project_id:)
     project = user.projects.find(project_id)
     bullet_projects.find_or_create_by!(project: project)
-    stamp_triaged!
-    BulletActivityRecorder.record_project_tagged!(bullet: self)
+    association(:projects).reset
+    record_activity!("project_tagged")
   end
 
   def untag_project!(project_id:)
     bullet_projects.where(project_id: project_id).destroy_all
-    BulletActivityRecorder.record_project_untagged!(bullet: self)
+    record_activity!("project_untagged")
   end
 
   def untag_all_projects!
-    return if projects.none?
+    return if bullet_projects.none?
 
     bullet_projects.destroy_all
-    BulletActivityRecorder.record_project_untagged!(bullet: self)
+    association(:projects).reset
+    record_activity!("project_untagged")
   end
 
   def apply_project_tags_from_content!(rich_text_record: nil)
@@ -38,7 +39,6 @@ module Projectable
     if project_attachables.any?
       @applying_project_tags_from_content = true
       self.project_ids = project_attachables.map(&:id).uniq
-      stamp_triaged!
     elsif record.saved_change_to_body? && content_removed_project_attachments?(record)
       self.project_ids = []
     end
@@ -86,7 +86,4 @@ module Projectable
     ActionText::Content.new(html, canonicalize: false).attachables.grep(type).map(&:id)
   end
 
-  def stamp_triaged!
-    update!(triaged_at: triaged_at || Time.current) unless triaged_at?
-  end
 end

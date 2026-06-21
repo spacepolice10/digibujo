@@ -1,0 +1,30 @@
+<%# locals: (bucket:) %>
+<% dialog_id = dom_id(bucket, :side_note) %>
+<% has_side_note = bucket.side_note&.to_plain_text&.strip.present? %>
+
+<div class="side-note" data-controller="dialog side-note">
+  <button type="button"
+          class="side-note--trigger<%= " side-note--trigger-has-content" if has_side_note %>"
+          commandfor="<%= dialog_id %>"
+          command="show-modal"
+          aria-label="Side note">
+    <span class="side-note--trigger-label">Side note</span>
+    <span class="side-note--trigger-hint utilities--text-sm">Scratch space</span>
+  </button>
+
+  <%= render "shared/dialog",
+        id: dialog_id,
+        class: "dialog--large side-note--dialog",
+        data_action: "close->side-note#flush" do %>
+    <%= form_with model: bucket,
+          url: bucket_side_note_path(bucket),
+          method: :patch,
+          class: "side-note--form",
+          data: { side_note_target: "form" } do |f| %>
+      <h2 class="side-note--title">Side note</h2>
+      <%= f.rich_text_area :side_note,
+            preset: "expand",
+            placeholder: "Scratch space…" %>
+    <% end %>
+  <% end %>
+</div>

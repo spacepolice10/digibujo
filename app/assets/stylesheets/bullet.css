@@ -46,8 +46,8 @@
 
   .bullet--title {
     margin: 0;
-    font-size: var(--font-size-large);
-    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-strong);
+    font-weight: var(--font-weight-strong);
     color: var(--color-fg-base);
   }
 
@@ -83,6 +83,11 @@
       background: var(--color-fg-subtle);
     }
 
+    &[data-bullet-completed] .bullet--monthly-bucket-link .bullet--line {
+      text-decoration: line-through;
+      color: var(--color-fg-subtle);
+    }
+
     .bullet--body {
       white-space: nowrap;
       overflow: hidden;
@@ -112,6 +117,14 @@
       @media (hover: hover) {
         &:hover .bullet--line {
           text-decoration: underline;
+        }
+      }
+    }
+
+    &[data-bullet-completed] .bullet--monthly-bucket-link {
+      @media (hover: hover) {
+        &:hover .bullet--line {
+          text-decoration: line-through;
         }
       }
     }
@@ -243,6 +256,17 @@
     margin-top: 0;
   }
 
+  .bullet[data-bullet-migrated] .bullet--marker::before {
+    content: "›";
+    position: absolute;
+    top: calc(-1 * var(--radius-subtle));
+    right: calc(-1 * var(--radius-subtle));
+    font-size: var(--font-size-subtle);
+    line-height: 1;
+    color: var(--color-fg-subtle);
+    pointer-events: none;
+  }
+
   .bullet--marker,
   .bullet-compact--marker {
     display: inline-flex;
@@ -336,7 +360,7 @@
   }
 
   .bullet-compact--title {
-    font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-strong);
   }
 
   /* ── Edit & overlays ───────────────────────────────────── */
@@ -447,24 +471,6 @@
   .bullet--rich-body-title {
     font-size: var(--font-size-subtle);
     margin-bottom: var(--spacing-vertical-half);
-  }
-
-  .bullet-form-type-row {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
-    margin-bottom: var(--spacing-vertical-half);
-  }
-
-  .bullet-form-type-select {
-    font-size: var(--font-size-subtle);
-  }
-
-  .bullet-form-actions {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
-    margin-top: var(--spacing-vertical-half);
   }
 
   .bullet-form-expand-title {

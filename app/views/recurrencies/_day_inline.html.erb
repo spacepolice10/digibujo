@@ -1,0 +1,9 @@
+<%# locals: (tracker:, date:) %>
+<% scheduled_recurrencies = tracker.recurrencies.select { |recurrency| recurrency.scheduled_on?(date) } %>
+<% if scheduled_recurrencies.any? %>
+  <div class="recurrency--inline-chips" role="group" aria-label="Recurrency for <%= date.strftime('%B %-d') %>">
+    <% scheduled_recurrencies.each do |recurrency| %>
+      <%= render "recurrencies/chip", recurrency: recurrency, date: date, tracker: tracker, dom_key: "inline" %>
+    <% end %>
+  </div>
+<% end %>

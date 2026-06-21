@@ -1,8 +1,3 @@
 <%= turbo_stream.update "menu_search" do %>
-  <%= render "searches/results",
-        q: @q,
-        projects: @projects,
-        buckets: @buckets,
-        bullets: @bullets,
-        people: @people %>
+  <%= render "searches/results", q: @q, entries: @entries, selections: @selections %>
 <% end %>

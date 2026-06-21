@@ -1,0 +1,21 @@
+<%# locals: (date:, bullets: []) %>
+<div class="review--week-day<%= " review--week-day--today" if date == Date.current %>">
+  <%= link_to daylog_path(date: date.iso8601),
+        class: "review--week-day-label",
+        aria: { label: "Open #{date.strftime('%B %-d')} on daily log" },
+        data: { turbo_frame: "_top" } do %>
+    <span class="review--week-day-number"><%= date.day %></span>
+    <span class="review--week-day-weekday"><%= date.strftime("%a") %></span>
+  <% end %>
+
+  <div class="review--week-day-drop"
+       data-controller="pop-drop"
+       data-pop-drop-pop-url-value="<%= pop_path %>"
+       data-pop-drop-pops-on-value="<%= date.iso8601 %>"
+       data-pop-drop-review-drop-value="true"
+       data-action="dragover->pop-drop#dragover dragleave->pop-drop#dragleave drop->pop-drop#drop">
+    <% bullets.each do |bullet| %>
+      <%= render "monthly_buckets/bullets/bullet", bullet: bullet %>
+    <% end %>
+  </div>
+</div>

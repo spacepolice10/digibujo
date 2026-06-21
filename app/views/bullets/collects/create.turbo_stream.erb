@@ -4,6 +4,6 @@
   <% end %>
 <% else %>
   <% @bullets.each do |bullet| %>
-    <%= render partial: "bullets/turbo_stream_update", formats: :html, locals: { bullet: bullet } %>
+    <%= turbo_stream.remove_all bullet %>
   <% end %>
 <% end %>

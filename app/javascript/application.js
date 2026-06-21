@@ -4,10 +4,13 @@ import "controllers";
 
 import * as Lexxy from "lexxy";
 import { InlinePastingExtension } from "extensions/inline_pasting";
+import { PromptActionExtension } from "extensions/prompt_actions";
 
 Lexxy.configure({
+  global: {
+    extensions: [InlinePastingExtension, PromptActionExtension],
+  },
   inline: {
-    extensions: [InlinePastingExtension],
     attachments: true,
     toolbar: false,
     multiLine: false,

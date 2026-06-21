@@ -13,6 +13,7 @@
     cursor: pointer;
     white-space: nowrap;
     flex-shrink: 0;
+    width: fit-content;
     text-decoration: none;
     transition:
       background 0.1s ease,

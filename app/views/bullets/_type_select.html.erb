@@ -1,0 +1,39 @@
+<%# locals: (f:, selected_type:) %>
+
+<select name="<%= f.object_name %>[bulletable_type]"
+        id="<%= f.field_id(:bulletable_type) %>"
+        class="form-select select-menu bullet-form-rail-select bullet-form-type-select"
+        data-type="<%= selected_type %>"
+        data-bullet-composer-target="typeSelect"
+        data-action="change->bullet-composer#typeChanged"
+        aria-label="Bullet type">
+  <button type="button" class="bullet-form-type-select-button">
+    <span class="bullet-form-type-select-marker" aria-hidden="true">
+      <% Bullet::COMPOSER_TYPE_OPTIONS.each do |entry| %>
+        <span class="bullet--marker bullet-form-type-select-marker-item <%= entry[:marker_styles] %>"
+              data-type="<%= entry[:value] %>"
+              <%= "hidden" unless selected_type == entry[:value] %>
+              aria-hidden="true">
+          <i class="icon" style="--icon-mask: var(--icon-<%= entry[:icon] %>)" aria-hidden="true"></i>
+        </span>
+      <% end %>
+    </span>
+    <span class="bullet-form-type-select-label" data-bullet-composer-target="typeLabel">
+      <% Bullet::COMPOSER_TYPE_OPTIONS.each do |entry| %>
+        <span data-type="<%= entry[:value] %>"
+              <%= "hidden" unless selected_type == entry[:value] %>>
+          <%= entry[:label] %>
+        </span>
+      <% end %>
+    </span>
+  </button>
+  <% Bullet::COMPOSER_TYPE_OPTIONS.each do |entry| %>
+    <option value="<%= entry[:value] %>"<%= " selected" if selected_type == entry[:value] %>>
+      <%= render "shared/option_item",
+            label: entry[:label],
+            hint: entry[:hint],
+            icon: entry[:icon],
+            modifier: entry[:modifier] %>
+    </option>
+  <% end %>
+</select>

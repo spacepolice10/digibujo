@@ -1,0 +1,26 @@
+<%# locals: (bullet:) %>
+
+<select id="<%= dom_id(bullet, :composer_actions) %>"
+        class="form-select select-menu bullet-form-rail-select bullet-form-actions-select"
+        data-bullet-composer-target="actionsSelect"
+        data-action="change->bullet-composer#actionChanged"
+        aria-label="Composer options">
+  <button type="button" class="bullet-form-actions-select-button">
+    <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
+  </button>
+  <option value="" disabled selected hidden>Add…</option>
+  <% Bullet::COMPOSER_ACTION_OPTIONS.each do |entry| %>
+    <option value="<%= entry[:value] %>">
+      <%= render "shared/option_item",
+            label: entry[:label],
+            hint: entry[:hint],
+            icon: entry[:icon] %>
+    </option>
+  <% end %>
+</select>
+
+<input type="file"
+       multiple
+       class="utilities--sr-only"
+       data-bullet-composer-target="fileInput"
+       data-action="change->bullet-composer#fileInputChanged">

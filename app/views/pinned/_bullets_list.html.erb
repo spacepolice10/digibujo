@@ -1,17 +1,16 @@
-<div class="dropdown--header">
-  <h2>Pinned bullets</h2>
+<div class="pinned--list-body">
   <button
     type="button"
-    class="button--secondary button--icon"
+    class="button--primary button--icon button--circle bulk-menu--hide"
     popovertarget="pinned_bullets"
     popovertargetaction="hide"
     aria-label="Close pinned bullets"
   >
     <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
   </button>
-</div>
-<div class="layout--list bucket--list">
-<% bullets.each do |bullet| %>
-  <%= render_bullet(bullet) %>
-<% end %>
+  <div class="layout--list bucket--list">
+    <% bullets.each do |bullet| %>
+      <%= render_bullet_compact(bullet) %>
+    <% end %>
+  </div>
 </div>

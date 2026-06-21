@@ -32,14 +32,17 @@
 
   .monthly-bucket--spread {
     display: grid;
-    grid-template-columns: 1fr 1px calc(var(--spacing-horizontal-double) * 9);
+    grid-template-columns: 1fr 1px 1fr;
     align-items: stretch;
     flex: 1;
     min-height: 0;
-    border: 1px solid var(--color-stroke-base);
-    background: var(--color-bg-subtle);
-    border-radius: var(--radius-strong);
     overflow: hidden;
+  }
+
+  .monthly-bucket--workspace .monthly-bucket--spread {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
   }
 
   .monthly-bucket--by-date {
@@ -49,21 +52,52 @@
     padding: var(--spacing-vertical) var(--spacing-horizontal);
   }
 
-  .monthly-bucket--divider {
-    background: var(--color-stroke-base);
+  .monthly-bucket--calendar {
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
   }
 
-  .monthly-bucket--by-date-empty {
-    color: var(--color-fg-subtle);
-    text-align: center;
-    padding: var(--spacing-vertical-quad) var(--spacing-horizontal);
+  .monthly-bucket--calendar-header {
+    display: none;
+  }
+
+  .monthly-bucket--day-band {
+    display: grid;
+    grid-template-columns: minmax(0, calc(var(--icon-size-base) * 2.75)) minmax(0, 1fr);
+    gap: var(--spacing-horizontal-half);
+    align-items: start;
+    padding-block: calc(var(--spacing-vertical-half) / 2);
+  }
+
+  .monthly-bucket--day-band--today {
+    position: relative;
+  }
+
+  .monthly-bucket--day-band--today::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: var(--spacing-vertical-half);
+    bottom: var(--spacing-vertical-half);
+    width: var(--radius-base);
+    border-radius: var(--radius-full);
+    background: var(--model-color-4);
+    pointer-events: none;
+  }
+
+  .monthly-bucket--recurrency-slot {
+    min-width: 0;
+    padding-inline-end: calc(var(--spacing-horizontal-half) / 2);
+    border-inline-end: 1px solid var(--color-stroke-subtle);
   }
 
   .monthly-bucket--date-row {
     display: flex;
     align-items: flex-start;
     gap: var(--spacing-horizontal-half);
-    padding-block: var(--spacing-vertical-half);
+    min-width: 0;
   }
 
   .monthly-bucket--date-row--today {
@@ -82,7 +116,11 @@
     pointer-events: none;
   }
 
-  .monthly-bucket--date-row--today .monthly-bucket--date-label {
+  .monthly-bucket--day-band--today .monthly-bucket--date-row::before {
+    display: none;
+  }
+
+  .monthly-bucket--day-band--today .monthly-bucket--date-label {
     color: var(--color-fg-base);
   }
 
@@ -120,6 +158,16 @@
     flex: 1;
     min-width: 0;
     align-self: stretch;
+  }
+
+  .monthly-bucket--divider {
+    background: var(--color-stroke-base);
+  }
+
+  .monthly-bucket--by-date-empty {
+    color: var(--color-fg-subtle);
+    text-align: center;
+    padding: var(--spacing-vertical-quad) var(--spacing-horizontal);
   }
 
   .monthly-bucket--date-add {
@@ -167,50 +215,7 @@
     }
 
     .monthly-bucket--date-add-select::picker(select) {
-      border: 1px solid var(--color-stroke-base);
-      border-radius: var(--radius-base);
-      background: var(--color-bg-base);
-      box-shadow: var(--shadow-base);
-      min-width: calc(var(--spacing-horizontal-double) * 6);
-      margin-block: var(--spacing-vertical-half);
-      padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    }
-
-    .monthly-bucket--date-add-select option {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-horizontal-half);
-      padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-      background: var(--color-bg-base);
-      color: var(--color-fg-base);
-      cursor: pointer;
-    }
-
-    .monthly-bucket--date-add-marker {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      width: var(--icon-size-subtle);
-      height: var(--icon-size-subtle);
-    }
-
-    .monthly-bucket--date-add-marker--task {
-      color: var(--model-color-2);
-    }
-
-    .monthly-bucket--date-add-marker--event {
-      color: var(--model-color-6);
-    }
-
-    .monthly-bucket--date-add-marker .icon {
-      width: var(--icon-size-subtle);
-      height: var(--icon-size-subtle);
-    }
-
-    .monthly-bucket--date-add-select option:hover,
-    .monthly-bucket--date-add-select option:focus {
-      background: var(--color-stroke-base);
+      min-width: calc(var(--spacing-horizontal-double) * 8);
     }
   }
 
@@ -244,9 +249,77 @@
     gap: 0;
   }
 
-  .monthly-bucket--drop-over {
+  .monthly-bucket--drop-over,
+  .pop-drop--over {
     outline: 2px dashed var(--model-color-4);
     outline-offset: -2px;
     border-radius: var(--radius-base);
+  }
+
+  .monthly-bucket--workspace {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    border: 1px solid var(--color-stroke-base);
+    background: var(--color-bg-subtle);
+    border-radius: var(--radius-strong);
+    overflow: hidden;
+  }
+
+  .monthly-bucket--tabs {
+    display: none;
+    gap: 0;
+    border-bottom: 1px solid var(--color-stroke-base);
+    background: var(--color-bg-base);
+  }
+
+  .monthly-bucket--tab {
+    flex: 1;
+    margin: 0;
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    color: var(--color-fg-subtle);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .monthly-bucket--tab-active {
+    color: var(--color-fg-base);
+    border-bottom-color: var(--model-color-4);
+  }
+
+  @media (min-width: 1200px) {
+    .monthly-bucket--spread {
+      grid-template-columns: minmax(0, 1.65fr) 1px minmax(calc(var(--spacing-horizontal-double) * 9), 1fr);
+    }
+
+    .monthly-bucket--day-band {
+      grid-template-columns: minmax(0, calc(var(--icon-size-base) * 3)) minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 799px) {
+    .monthly-bucket--tabs {
+      display: flex;
+    }
+
+    .monthly-bucket--spread {
+      display: contents;
+    }
+
+    .monthly-bucket--by-date,
+    .monthly-bucket--calendar,
+    .monthly-bucket--unplanned {
+      min-height: 0;
+      overflow-y: auto;
+      padding: var(--spacing-vertical) var(--spacing-horizontal);
+    }
+
+    .monthly-bucket--divider {
+      display: none;
+    }
   }
 }

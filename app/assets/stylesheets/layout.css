@@ -25,23 +25,35 @@
 
   .footer {
     position: fixed;
-    bottom: 0;
+    bottom: var(--spacing-vertical);
     left: 0;
-    width: 100%;
+    right: 0;
+    z-index: var(--z-dropdown);
+    width: min(
+      calc(var(--spacing-horizontal-double) * 18),
+      calc(100% - var(--spacing-horizontal-double))
+    );
+    margin-inline: auto;
     anchor-name: --footer;
     position-area: block-start center;
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     background-color: var(--color-bg-base);
-    /* 1px hairline — no stroke-width token in the design system */
-    border-top: 1px solid var(--color-stroke-base);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-strong);
+    box-shadow: var(--shadow-base);
+    pointer-events: none;
   }
 
   .footer--dock {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
     align-items: center;
     gap: var(--spacing-horizontal-half);
     width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    pointer-events: auto;
   }
 
   /* Wrappers are block-level; let dock buttons join the footer flex row. */
@@ -61,7 +73,9 @@
     margin-inline: auto;
   }
 
-  .layout--page:has(.layout--workspace) {
+  .layout--page:has(.layout--workspace),
+  .layout--page:has(.review--workspace),
+  .layout--page:has(.monthly-bucket--spread) {
     max-width: none;
   }
 
@@ -141,12 +155,8 @@
       gap: var(--spacing-horizontal-double);
     }
 
-    body > .layout--workspace {
-      height: calc(100vh - var(--spacing-vertical) * 2);
-      overflow: hidden;
-    }
-
-    .layout--page:has(.layout--workspace) {
+    .layout--page:has(.layout--workspace),
+    .layout--page:has(.review--workspace) {
       min-height: calc(100vh - var(--spacing-vertical) * 2);
     }
 
@@ -154,6 +164,20 @@
       flex: 1;
       min-height: 0;
       overflow: hidden;
+    }
+
+    .layout--page:has(.layout--workspace) .layout--surface {
+      min-height: 0;
+      overflow-y: auto;
+    }
+
+    body > .layout--workspace {
+      align-items: start;
+    }
+
+    body > .layout--workspace .layout--rail {
+      align-self: start;
+      height: max-content;
     }
   }
 
@@ -173,7 +197,8 @@
   }
 
   .layout--rail > form {
-    width: 100%;
+    width: fit-content;
+    align-self: start;
   }
 
   .layout--rail-heading {
@@ -196,18 +221,17 @@
 
   .layout--rail-action {
     justify-content: flex-start;
-    width: 100%;
+    width: fit-content;
+    align-self: start;
   }
 
   .layout--surface {
     flex: 2 1 0%;
     min-width: 0;
-    min-height: 0;
     border: 1px solid var(--color-stroke-base);
     background: var(--color-bg-subtle);
     border-radius: var(--radius-strong);
     padding: var(--spacing-vertical) var(--spacing-horizontal);
-    overflow-y: auto;
   }
 
   .layout--surface-title {

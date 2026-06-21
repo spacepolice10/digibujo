@@ -1,0 +1,61 @@
+<%# locals: (recurrency:) %>
+<%= form_with model: recurrency, class: "form form--strong" do |f| %>
+  <% if recurrency.errors.any? %>
+    <div class="form--errors" role="alert">
+      <p><%= pluralize(recurrency.errors.count, "error") %> prevented this recurrency from being saved:</p>
+      <ul>
+        <% recurrency.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :name, class: "form-label" %>
+    <%= f.text_field :name, class: "form-input", required: true, autofocus: true %>
+  </div>
+
+  <%= render "identity_fields", form: f %>
+
+  <fieldset class="form--field">
+    <legend>Schedule</legend>
+    <% Recurrency::SCHEDULE_KINDS.each do |kind| %>
+      <label class="form--radio-label">
+        <input type="radio"
+               name="recurrency[schedule_kind]"
+               value="<%= kind %>"
+               <%= "checked" if recurrency.schedule_kind == kind %>>
+        <%= kind.humanize %>
+      </label>
+    <% end %>
+  </fieldset>
+
+  <fieldset class="form--field" data-schedule-custom>
+    <legend>Custom days</legend>
+    <% Date::ABBR_DAYNAMES.each_with_index do |label, wday| %>
+      <label class="form--checkbox-label">
+        <input type="checkbox"
+               name="recurrency[schedule_days][]"
+               value="<%= wday %>"
+               <%= "checked" if recurrency.schedule_kind == "custom" && Array(recurrency.schedule["days"]).map(&:to_i).include?(wday) %>>
+        <%= label %>
+      </label>
+    <% end %>
+  </fieldset>
+
+  <div class="form--field">
+    <%= f.label :active_from, "Active from (optional)" %>
+    <%= f.date_field :active_from %>
+  </div>
+
+  <div class="form--field">
+    <%= f.label :active_to, "Active to (optional)" %>
+    <%= f.date_field :active_to %>
+  </div>
+
+  <div class="form--actions">
+    <%= link_to "Cancel", recurrencies_path, class: "button--secondary" %>
+    <%= f.submit class: "button--primary" %>
+  </div>
+<% end %>

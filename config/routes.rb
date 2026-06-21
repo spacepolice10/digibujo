@@ -21,9 +21,7 @@ Rails.application.routes.draw do
       resources :bullets, only: %i[new create]
     end
   end
-  resources :collections do
-    resources :bundles, only: %i[show new create destroy]
-  end
+  resources :collections
 
   # Bullet
   scope 'bullets', module: :bullets do
@@ -40,10 +38,14 @@ Rails.application.routes.draw do
     end
   end
 
-  resource :search, only: :show
+  resource :search, only: :show do
+    resource :selection, only: :create, controller: 'searches/selections'
+  end
   resource :menu, only: :show, controller: 'menu'
   resources :notes, only: :index
-  resources :buckets, only: :show
+  resources :buckets, only: :show do
+    resource :side_note, only: :update, module: :buckets
+  end
   resource :home, only: :show, controller: 'home'
   scope module: :home do
     post 'home/sections/:id/expand',   to: 'sections#expand',   as: :home_expand_section
@@ -60,14 +62,20 @@ Rails.application.routes.draw do
     resource :pin, only: %i[create destroy]
   end
   resources :projects
-  resources :collections
   get 'people/suggestions', to: 'people/suggestions#index', as: :person_suggestions
   scope 'people', module: :people, as: 'people' do
     resource :pin, only: %i[create destroy]
   end
-  resources :people, only: %i[index new create show destroy]
+  resources :people, only: %i[index new create show edit update destroy]
+
+  resources :recurrencies do
+    resource :completion, only: %i[create destroy], module: :recurrencies
+  end
 
   # Views
+  resource :review, only: :show, controller: 'reviews' do
+    post :archive_all
+  end
   resources :activities, only: :index
   resources :pinned,    only: :index
   resources :archived,  only: :index

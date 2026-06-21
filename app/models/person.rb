@@ -6,7 +6,11 @@ class Person < ApplicationRecord
   belongs_to :user
   has_many :bullet_people, dependent: :destroy
   has_many :bullets, through: :bullet_people
+  has_many :search_selections, as: :searchable, dependent: :destroy, class_name: "Search::Selection"
+  has_many :handles, -> { order(:position, :id) }, class_name: "Person::Handle", dependent: :destroy, inverse_of: :person
   has_one_attached :avatar
+
+  accepts_nested_attributes_for :handles, allow_destroy: true, reject_if: proc { |attrs| attrs["data"].blank? }
 
   validates :name, presence: true
 
@@ -29,6 +33,6 @@ class Person < ApplicationRecord
   end
 
   def search_body
-    [ email, number ].compact.join(" ")
+    handles.map { |handle| [ handle.platform, handle.data ].compact.join(" ") }.join(" ")
   end
 end

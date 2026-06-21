@@ -1,8 +1,9 @@
+<%# locals: (bullet_ids: "", frame_id: "collects_picker_frame", return_to: nil) %>
 <div class="bulk-menu--pops-header">
   <p class="bulk-menu--pops-title">Collect into collection</p>
   <button type="button"
           class="button--secondary button--icon"
-          popovertarget="collects_picker_frame"
+          popovertarget="<%= frame_id %>"
           popovertargetaction="hide"
           aria-label="Close collection picker">
     <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
@@ -12,8 +13,10 @@
 <%= form_with url: new_collect_path,
       method: :get,
       class: "search-form",
-      data: { turbo_frame: "collects_picker_frame" } do %>
-  <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
+      data: { turbo_frame: frame_id } do %>
+  <%= hidden_field_tag :bullet_ids, bullet_ids, data: { bulk_menu_target: "idList" } %>
+  <%= hidden_field_tag :frame_id, frame_id if frame_id != "collects_picker_frame" %>
+  <%= hidden_field_tag :return_to, return_to if return_to.present? %>
   <%= search_field_tag :q,
         @collects_q,
         class: "form-input",
@@ -24,12 +27,15 @@
 
 <% if @collections.any? %>
   <ul class="layout--list bucket--list">
-    <%= render partial: "bullets/collects/collection", collection: @collections %>
+    <%= render partial: "bullets/collects/collection", collection: @collections, locals: { bullet_ids: bullet_ids } %>
   </ul>
 <% else %>
   <p>No collections found.</p>
 <% end %>
 
 <div class="bulk-menu--collects-footer">
-  <%= link_to "New collection", new_collection_path, class: "button--secondary", data: { turbo_frame: "_top" } %>
+  <%= link_to "Create new collection",
+        new_collection_path(bullet_ids: bullet_ids, return_to: return_to),
+        class: "button--secondary",
+        data: { turbo_frame: "_top" } %>
 </div>

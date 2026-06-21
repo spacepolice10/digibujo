@@ -1,0 +1,9 @@
+<div id="<%= dom_id(activity) %>" class="activity--item">
+  <%= render "activities/subject_label", activity: activity %>
+  <div class="activity--metadata">
+    <time class="activity--time" datetime="<%= activity.created_at.to_fs(:db) %>">
+      <%= l(activity.created_at, format: :short) %>
+    </time>
+    <span class="activity--action"><%= activity.action_name %></span>
+  </div>
+</div>

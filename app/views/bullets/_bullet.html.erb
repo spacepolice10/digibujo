@@ -3,6 +3,7 @@
              class="bullet<%= " bullet--monthly-bucket" if monthly_bucket %>"
              data-bullet-type="<%= bullet.bulletable_type.downcase %>"
              data-bullet-indented="<%= bullet.indented %>"
+             <% if bullet.migrated? %>data-bullet-migrated<% end %>
              <% if bullet.completed? %>
              data-bullet-completed
              <% end %>

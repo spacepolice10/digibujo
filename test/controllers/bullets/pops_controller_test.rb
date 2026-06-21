@@ -154,6 +154,7 @@ module Bullets
 
       assert_response :unprocessable_entity
       assert_nil card.reload.pops_on
+      assert_match %(turbo-stream action="update" target="toasts"), response.body
     end
 
     test 'create returns no content for monthly bucket drag drop' do
@@ -169,7 +170,7 @@ module Bullets
            params: { bullet_ids: card.id.to_s, pops_on: day.iso8601 },
            headers: {
              'Accept' => 'text/vnd.turbo-stream.html',
-             'X-Requested-With' => 'monthly-bucket-drop'
+             'X-Requested-With' => 'pop-drop'
            }
 
       assert_response :no_content
@@ -192,7 +193,7 @@ module Bullets
              params: { bullet_ids: card.id.to_s, pops_on: '' },
              headers: {
                'Accept' => 'text/vnd.turbo-stream.html',
-               'X-Requested-With' => 'monthly-bucket-drop'
+               'X-Requested-With' => 'pop-drop'
              }
 
       assert_response :no_content

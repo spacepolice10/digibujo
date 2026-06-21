@@ -10,7 +10,7 @@ class BulletCreatorTest < ActiveSupport::TestCase
   test 'creates bullet with default type' do
     result = BulletCreator.new(@user, { body: 'Test body', pops_on: Date.current.iso8601 }).call
     assert result.success?
-    assert_equal 'Task', result.bullet.bulletable_type
+    assert_equal Bullet::DEFAULT_COMPOSER_TYPE, result.bullet.bulletable_type
     assert_equal 'Test body', result.bullet.body.to_plain_text
   end
 

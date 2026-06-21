@@ -17,7 +17,8 @@ module Bullets
       Bullet.transaction do
         @bullets.lock.find_each { |bullet| bullet.pop!(pops_on: pops_on) }
       end
-      return head :no_content if monthly_bucket_drop_request?
+      @bullets.each(&:reload)
+      return head :no_content if pop_drop_request?
 
       respond_to do |format|
         format.turbo_stream
@@ -33,7 +34,13 @@ module Bullets
       end
     rescue ActiveRecord::RecordInvalid => e
       @failed_bullet = e.record
-      render :create, status: :unprocessable_entity
+      respond_to do |format|
+        format.turbo_stream { render :create, status: :unprocessable_entity }
+        format.html do
+          redirect_back fallback_location: daylog_path(date: daylog_redirect_date.iso8601),
+                        alert: e.record.errors.full_messages.to_sentence
+        end
+      end
     end
 
     def destroy
@@ -41,7 +48,8 @@ module Bullets
       Bullet.transaction do
         @bullets.lock.find_each { |bullet| bullet.unpop!(previous_pops_on: previous_pops_on) }
       end
-      return head :no_content if monthly_bucket_drop_request?
+      @bullets.each(&:reload)
+      return head :no_content if pop_drop_request?
 
       respond_to do |format|
         format.turbo_stream
@@ -55,12 +63,21 @@ module Bullets
           redirect_back fallback_location: daylog_path(date: daylog_redirect_date.iso8601), alert: 'Invalid date'
         end
       end
+    rescue ActiveRecord::RecordInvalid => e
+      @failed_bullet = e.record
+      respond_to do |format|
+        format.turbo_stream { render :destroy, status: :unprocessable_entity }
+        format.html do
+          redirect_back fallback_location: daylog_path(date: daylog_redirect_date.iso8601),
+                        alert: e.record.errors.full_messages.to_sentence
+        end
+      end
     end
 
     private
 
-    def monthly_bucket_drop_request?
-      request.headers['X-Requested-With'] == 'monthly-bucket-drop'
+    def pop_drop_request?
+      %w[pop-drop review-pop-drop monthly-bucket-drop].include?(request.headers['X-Requested-With'])
     end
   end
 end

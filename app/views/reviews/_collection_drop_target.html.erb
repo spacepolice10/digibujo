@@ -1,0 +1,12 @@
+<%# locals: (collection:) %>
+<li class="layout--list-item review--collection-drop">
+  <div class="review--collection-drop-target"
+       data-controller="collect-drop"
+       data-collect-drop-collect-url-value="<%= collect_path %>"
+       data-collect-drop-bucket-id-value="<%= collection.bucket.id %>"
+       data-action="dragover->collect-drop#dragover dragleave->collect-drop#dragleave drop->collect-drop#drop">
+    <%= link_to collection_path(collection), class: "bucket--list-item-link review--collection-link", data: { turbo_frame: "_top" } do %>
+      <%= render "collections/pickers/collection", collection: collection %>
+    <% end %>
+  </div>
+</li>

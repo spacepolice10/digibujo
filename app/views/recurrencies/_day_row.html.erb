@@ -1,0 +1,23 @@
+<%# locals: (recurrency:, date:, tracker:, show_streak: true) %>
+<% scheduled = recurrency.scheduled_on?(date) %>
+<% completed = tracker.completed?(recurrency, date) %>
+<% stats = tracker.stats(recurrency, as_of: date) if scheduled %>
+<li id="<%= dom_id(recurrency, "inline_#{date.iso8601}") %>"
+    class="recurrency--day-row<%= " recurrency--day-row-muted" unless scheduled %>">
+  <% if scheduled %>
+    <button type="button"
+            class="recurrency--marker<%= " recurrency--marker-done" if completed %>"
+            data-controller="recurrency-check"
+            data-recurrency-check-complete-url-value="<%= recurrency_completion_path(recurrency) %>"
+            data-recurrency-check-date-value="<%= date.iso8601 %>"
+            data-recurrency-check-completed-value="<%= completed %>"
+            data-action="recurrency-check#toggle"
+            aria-label="<%= completed ? "Mark #{recurrency.name} incomplete" : "Mark #{recurrency.name} complete" %>"
+            aria-pressed="<%= completed %>">
+    </button>
+    <span class="recurrency--day-name"><%= recurrency.name %></span>
+    <% if show_streak && stats && stats[:streak] > 0 %>
+      <span class="recurrency--day-streak"><%= stats[:streak] %></span>
+    <% end %>
+  <% end %>
+</li>

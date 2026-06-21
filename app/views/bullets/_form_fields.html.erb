@@ -1,7 +1,7 @@
 <%# locals: (f:, bullet:, submitted_attributes: {}, editing: false) %>
 <% editor_value = bullet.editor_content %>
 <% expand_dialog_id = dom_id(bullet, :expand) %>
-<% type_name = bullet.bulletable_type.presence || "Task" %>
+<% type_name = bullet.bulletable_type.presence || Bullet::DEFAULT_COMPOSER_TYPE %>
 <% bulletable_form = bullet.bulletable || type_name.constantize.new %>
 
 <% bullet_column_names = %w[pops_on bucket_id] %>
@@ -13,41 +13,17 @@
   <% end %>
 <% end %>
 
+<%= f.check_box :indented,
+      class: "utilities--sr-only",
+      data: { bullet_composer_target: "indentField" } %>
+
 <div class="bullet-form-composer">
-  <div class="bullet-form-type-row">
-    <% if editing %>
-      <%= f.hidden_field :bulletable_type %>
-    <% else %>
-      <%= f.select :bulletable_type,
-            Bullet.bulletable_types,
-            { selected: type_name },
-            class: "bullet-form-type-select",
-            data: {
-              bullet_composer_target: "typeSelect",
-              action: "change->bullet-composer#typeChanged"
-            } %>
-    <% end %>
-
-    <span class="bullet--marker <%= bullet.marker_styles %>"
-          data-bullet-composer-target="marker"
-          aria-hidden="true">
-      <i class="icon"
-         style="--icon-mask: var(--icon-<%= bullet.marker_icon %>)"
-         data-bullet-composer-target="markerIcon"
-         aria-hidden="true"></i>
-    </span>
-
-    <label class="bullet-form-indent-option">
-      <%= f.check_box :indented %>
-      <span>Indent</span>
-    </label>
-  </div>
-
   <%= f.rich_text_area :body,
         value: editor_value,
         autofocus: !editing,
         placeholder: "What's on your mind?",
         multiline: false,
+        rows: 1,
         preset: "inline" do %>
     <lexxy-prompt trigger="#"
                   name="project"
@@ -61,27 +37,43 @@
                   remote-filtering
                   supports-space-in-searches>
     </lexxy-prompt>
+    <lexxy-prompt trigger="/" name="action">
+      <% unless editing %>
+        <% Bullet::COMPOSER_TYPE_OPTIONS.each do |entry| %>
+          <lexxy-prompt-item search="<%= entry[:value].downcase %>">
+            <template type="menu">
+              <button type="button"
+                      data-action="bullet-composer#selectType"
+                      data-type="<%= entry[:value] %>">
+                <%= entry[:label] %>
+              </button>
+            </template>
+          </lexxy-prompt-item>
+        <% end %>
+      <% end %>
+      <lexxy-prompt-item search="attachment">
+        <template type="menu">
+          <button type="button" data-action="bullet-composer#pickFile">Attachment</button>
+        </template>
+      </lexxy-prompt-item>
+    </lexxy-prompt>
   <% end %>
+</div>
 
-  <div class="bullet-form-actions">
-    <button type="button"
-            class="button--secondary button--icon"
-            data-action="bullet-composer#pickFile"
-            aria-label="Add attachment">
-      <i class="icon" style="--icon-mask: var(--icon-paperclip)" aria-hidden="true"></i>
-    </button>
-    <button type="button"
-            class="button--secondary"
-            commandfor="<%= expand_dialog_id %>"
-            command="show-modal">
-      Expand
-    </button>
-    <input type="file"
-           multiple
-           class="utilities--sr-only"
-           data-bullet-composer-target="fileInput"
-           data-action="change->bullet-composer#fileInputChanged">
-  </div>
+<%= render "bullets/rich_body_preview", bullet: bullet %>
+
+<div class="attachment--previews"
+     data-bullet-composer-target="previews"
+     hidden></div>
+
+<div data-bullet-composer-target="attachmentsField"></div>
+
+<div class="bullet-form-rail">
+  <% unless editing %>
+    <%= render "bullets/type_select", f: f, selected_type: type_name %>
+  <% else %>
+    <%= f.hidden_field :bulletable_type %>
+  <% end %>
 
   <div class="bullet-form-note-options"
        data-bullet-composer-target="noteOptions"
@@ -93,34 +85,33 @@
         <% moods.each do |name, emoji| %>
           <label class="mood-option">
             <%= nf.radio_button :mood, name, class: "utilities--sr-only" %>
-            <span class="mood_marker"><%= emoji %></span>
+            <span class="mood_marker" title="<%= name.to_s.humanize %>" aria-hidden="true"><%= emoji %></span>
           </label>
         <% end %>
       </div>
+      <span class="bullet-form-note-divider" aria-hidden="true"></span>
       <div class="flag-picker">
-        <label class="flag-option">
-          <%= nf.check_box :awaits_research %>
-          <span>Research</span>
+        <label class="flag-option" title="Research">
+          <%= nf.check_box :awaits_research, class: "utilities--sr-only" %>
+          <span class="bullet-form-note-flag" aria-hidden="true">🔬</span>
         </label>
-        <label class="flag-option">
-          <%= nf.check_box :idea %>
-          <span>Idea</span>
+        <label class="flag-option" title="Idea">
+          <%= nf.check_box :idea, class: "utilities--sr-only" %>
+          <span class="bullet-form-note-flag" aria-hidden="true">💡</span>
         </label>
       </div>
     <% end %>
   </div>
-</div>
 
-<div class="attachment--previews"
-     data-bullet-composer-target="previews"
-     hidden></div>
+  <div class="bullet-form-rail-actions">
+    <%= render "bullets/actions_select", bullet: bullet %>
 
-<div data-bullet-composer-target="attachmentsField"></div>
-
-<div class="bullet-form-footer">
-  <%= f.button type: "submit", class: "button--primary button--icon" do %>
-    <i class="icon" style="--icon-mask: var(--icon-arrow-up)" aria-hidden="true"></i>
-  <% end %>
+    <div class="bullet-form-rail-submit">
+      <%= f.button type: "submit", class: "button--primary button--icon button--circle" do %>
+        <i class="icon" style="--icon-mask: var(--icon-arrow-up)" aria-hidden="true"></i>
+      <% end %>
+    </div>
+  </div>
 </div>
 
 <%= render "shared/dialog", id: expand_dialog_id, class: "dialog--large", data_target: "expandDialog" do %>

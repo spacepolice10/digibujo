@@ -79,4 +79,59 @@ class BucketTest < ActiveSupport::TestCase
   test 'collection bucket allows nil period' do
     assert @bucket.valid?
   end
+
+  test 'search_body includes side note plain text' do
+    @bucket.update!(side_note: '<p>Margin notes</p>')
+
+    assert_includes @bucket.search_body, 'alpha'
+    assert_includes @bucket.search_body, 'Margin notes'
+  end
+
+  test 'archive! marks collection bucket archived and records activity' do
+    assert_difference -> { Activity.count }, 1 do
+      @bucket.archive!
+    end
+
+    assert @bucket.reload.archived?
+    assert_equal Date.current, @bucket.archives_on
+    activity = Activity.order(:created_at).last
+    assert_equal 'archived', activity.action
+    assert_equal 'Bucket', activity.subject_type
+    assert_equal 'Collection', activity.metadata['bucketable_type']
+  end
+
+  test 'unarchive! clears archived state and records activity' do
+    @bucket.archive!
+
+    assert_difference -> { Activity.count }, 1 do
+      @bucket.unarchive!
+    end
+
+    assert_not @bucket.reload.archived?
+    assert_nil @bucket.archives_on
+    assert_equal 'unarchived', Activity.order(:created_at).last.action
+  end
+
+  test 'archive! rejects future log bucket' do
+    ensure_future_bucket!(@user)
+    future_bucket = @user.future_bucket!.bucket
+
+    assert_raises(ActiveRecord::RecordInvalid) { future_bucket.archive! }
+
+    assert_not future_bucket.reload.archived?
+  end
+
+  test 'archive! rejects monthly bucket' do
+    monthly_bucket = create_monthly_bucket!(@user, name: 'june')
+
+    assert_raises(ActiveRecord::RecordInvalid) { monthly_bucket.bucket.archive! }
+
+    assert_not monthly_bucket.bucket.reload.archived?
+  end
+
+  test 'archived collection bucket is not searchable' do
+    @bucket.archive!
+
+    assert_not @bucket.searchable?
+  end
 end

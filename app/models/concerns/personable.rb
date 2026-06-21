@@ -11,20 +11,21 @@ module Personable
   def tag_person!(person_id:)
     person = user.people.find(person_id)
     bullet_people.find_or_create_by!(person: person)
-    stamp_triaged!
-    BulletActivityRecorder.record_person_tagged!(bullet: self)
+    association(:people).reset
+    record_activity!("person_tagged")
   end
 
   def untag_person!(person_id:)
     bullet_people.where(person_id: person_id).destroy_all
-    BulletActivityRecorder.record_person_untagged!(bullet: self)
+    record_activity!("person_untagged")
   end
 
   def untag_all_people!
-    return if people.none?
+    return if bullet_people.none?
 
     bullet_people.destroy_all
-    BulletActivityRecorder.record_person_untagged!(bullet: self)
+    association(:people).reset
+    record_activity!("person_untagged")
   end
 
   def apply_people_tags_from_content!(rich_text_record: nil)
@@ -37,7 +38,6 @@ module Personable
     if person_attachables.any?
       @applying_people_tags_from_content = true
       self.person_ids = person_attachables.map(&:id).uniq
-      stamp_triaged!
     elsif record.saved_change_to_body? && content_removed_person_attachments?(record)
       self.person_ids = []
     end
@@ -62,7 +62,4 @@ module Personable
     old_attachables.any? && new_attachables.empty?
   end
 
-  def stamp_triaged!
-    update!(triaged_at: triaged_at || Time.current) unless triaged_at?
-  end
 end

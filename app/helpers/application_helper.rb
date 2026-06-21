@@ -5,7 +5,6 @@ module ApplicationHelper
     bucketable = bucket.bucketable
     case bucketable
     when Collection then collection_path(bucketable)
-    when Bundle then [bucketable.collection, bucketable]
     when FutureBucket then future_path
     when MonthlyBucket then monthly_bucket_path(bucketable)
     else raise ArgumentError, "Unknown bucketable type: #{bucketable.class}"

@@ -4,11 +4,18 @@ module Poppable
   extend ActiveSupport::Concern
 
   def pop!(pops_on:)
-    update!(
-      pops_on: pops_on,
-      triaged_at: triaged_at || Time.current
-    )
-    BulletActivityRecorder.record_popped!(bullet: self)
+    from = self.pops_on
+    update!(pops_on: pops_on)
+
+    if from != pops_on
+      stamp_migration!(
+        kind: "scheduled",
+        from_pops_on: from,
+        to_pops_on: pops_on
+      )
+    else
+      record_activity!("popped")
+    end
   end
 
   def unpop!(previous_pops_on:)

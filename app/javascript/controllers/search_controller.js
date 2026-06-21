@@ -5,7 +5,7 @@ const SEARCH_DEBOUNCE_MS = 20;
 
 export default class extends Controller {
   static targets = ["form", "textform"];
-  static values = { replaceLink: { type: Boolean, default: true }, historyUrl: String };
+  static values = { replaceLink: { type: Boolean, default: true }, historyUrl: String, selectionUrl: String };
 
   connect() {
     this.abortController = null;
@@ -56,5 +56,28 @@ export default class extends Controller {
   cancelPendingRequest() {
     if (this.abortController) this.abortController.abort();
     this.abortController = null;
+  }
+
+  rememberSelection(event) {
+    if (!this.hasSelectionUrlValue) return;
+
+    const link = event.currentTarget;
+    const searchableType = link.dataset.searchableType;
+    const searchableId = link.dataset.searchableId;
+    if (!searchableType || !searchableId) return;
+
+    const token = document.querySelector("meta[name='csrf-token']")?.content;
+    const q = this.textformTarget.value.trim();
+
+    fetch(this.selectionUrlValue, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "X-CSRF-Token": token
+      },
+      body: JSON.stringify({ searchable_type: searchableType, searchable_id: searchableId, query: q }),
+      keepalive: true
+    }).catch(() => null);
   }
 }

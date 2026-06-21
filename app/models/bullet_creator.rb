@@ -11,9 +11,7 @@ class BulletCreator
   def call
     build_bullet
     if @bullet.save
-      update_bulletable!
-      finalize_content!
-      @bullet.reload
+      BulletContentFinalizer.call(@bullet, bulletable_attributes: @params[:bulletable_attributes])
     end
     self
   end
@@ -30,29 +28,8 @@ class BulletCreator
   private
 
   def build_bullet
-    type_name = @params[:bulletable_type].presence || 'Task'
+    type_name = @params[:bulletable_type].presence || Bullet::DEFAULT_COMPOSER_TYPE
     attributes = @params.except(:bulletable_type, :bulletable_attributes, :composer_id)
     @bullet = @user.bullets.new(attributes.merge(bulletable: type_name.constantize.new))
-  end
-
-  def update_bulletable!
-    attrs = @params[:bulletable_attributes]
-    return unless attrs.present? && @bullet.bulletable.is_a?(Note)
-
-    @bullet.bulletable.update!(attrs.permit(:mood, :awaits_research, :idea))
-  end
-
-  def finalize_content!
-    body_record = ActionText::RichText.find_by(record: @bullet, name: 'body')
-    @bullet.apply_project_tags_from_content!(rich_text_record: body_record) if body_record
-    @bullet.apply_people_tags_from_content!(rich_text_record: body_record) if body_record
-    @bullet.sanitize_rich_body_tag_attachables!
-    purge_blank_rich_body!
-  end
-
-  def purge_blank_rich_body!
-    return unless @bullet.rich_body.blank?
-
-    ActionText::RichText.find_by(record: @bullet, name: 'rich_body')&.destroy
   end
 end

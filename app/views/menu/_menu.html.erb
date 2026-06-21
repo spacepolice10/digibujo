@@ -1,10 +1,11 @@
 <% replace_link = local_assigns.fetch(:replace_link, true) %>
 
-<nav data-controller="grid-navigation"
-     data-grid-navigation-columns-value="1"
+<nav class="menu--nav"
+     data-controller="grid-navigation"
+     data-grid-navigation-columns-value="4"
      data-action="keydown->grid-navigation#navigate">
-  <%= link_to "Home", home_path,
-        class: "button--secondary button--hotkey",
+  <%= link_to home_path,
+        class: "menu--nav-item button--hotkey",
         data: {
           turbo_frame: "_top",
           controller: "hotkey",
@@ -12,9 +13,12 @@
           grid_navigation_target: "item",
           action: "focus->grid-navigation#syncPosition"
         },
-        aria: { keyshortcuts: "Shift+1" } %>
-  <%= link_to "Daily log", daylog_path,
-        class: "button--secondary button--hotkey",
+        aria: { keyshortcuts: "Shift+1", label: "Home" } do %>
+    <i class="icon" style="--icon-mask: var(--icon-list)" aria-hidden="true"></i>
+    <span class="menu--nav-label">Home</span>
+  <% end %>
+  <%= link_to daylog_path,
+        class: "menu--nav-item button--hotkey",
         data: {
           turbo_frame: "_top",
           controller: "hotkey",
@@ -23,9 +27,12 @@
           grid_navigation_target: "item",
           action: "focus->grid-navigation#syncPosition"
         },
-        aria: { keyshortcuts: "Shift+2" } %>
-  <%= link_to "Monthly spread", current_monthly_bucket_path,
-        class: "button--secondary button--hotkey",
+        aria: { keyshortcuts: "Shift+2", label: "Daylog" } do %>
+    <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
+    <span class="menu--nav-label">Daylog</span>
+  <% end %>
+  <%= link_to current_monthly_bucket_path,
+        class: "menu--nav-item button--hotkey",
         data: {
           turbo_frame: "_top",
           controller: "hotkey",
@@ -33,9 +40,12 @@
           grid_navigation_target: "item",
           action: "focus->grid-navigation#syncPosition"
         },
-        aria: { keyshortcuts: "Shift+3" } %>
-  <%= link_to "Future", future_path,
-        class: "button--secondary button--hotkey",
+        aria: { keyshortcuts: "Shift+3", label: "Monthly" } do %>
+    <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
+    <span class="menu--nav-label">Monthly</span>
+  <% end %>
+  <%= link_to review_path,
+        class: "menu--nav-item button--hotkey",
         data: {
           turbo_frame: "_top",
           controller: "hotkey",
@@ -43,44 +53,38 @@
           grid_navigation_target: "item",
           action: "focus->grid-navigation#syncPosition"
         },
-        aria: { keyshortcuts: "Shift+4" } %>
-  <%= link_to "Activity", activities_path,
-        class: "button--secondary button--hotkey",
-        data: {
-          turbo_frame: "_top",
-          controller: "hotkey",
-          hotkey: "Shift+5",
-          grid_navigation_target: "item",
-          action: "focus->grid-navigation#syncPosition"
-        },
-        aria: { keyshortcuts: "Shift+5" } %>
+        aria: { keyshortcuts: "Shift+4", label: "Review" } do %>
+    <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
+    <span class="menu--nav-label">Review</span>
+  <% end %>
 </nav>
 
 <div class="menu--search"
      data-controller="combobox search"
      data-search-replace-link-value="<%= replace_link %>"
-     data-search-history-url-value="<%= menu_path %>">
+     data-search-history-url-value="<%= menu_path %>"
+     data-search-selection-url-value="<%= search_selection_path %>">
   <%= form_with url: search_path,
         method: :get,
         local: true,
         class: "search--form",
         data: { search_target: "form", turbo_frame: "menu_search" } do |form| %>
+    <%= form.label :q, "Search bullets, projects, collections, and people", class: "search--label" %>
     <%= form.search_field :q,
           value: @menu_q,
-          placeholder: "Search by bullet text or bucket name",
+          placeholder: "Search…",
           class: "search--textform",
           data: {
             menu_target: "focus",
             search_target: "textform",
             action: "input->search#search keydown->combobox#navigate"
           },
-          autocomplete: "off",
-          aria: { label: "Search" } %>
+          autocomplete: "off" %>
   <% end %>
 
   <turbo-frame id="menu_search"
                class="menu--palette"
-               <% if @menu_q.present? %>src="<%= search_path(q: @menu_q) %>"<% end %>>
+               src="<%= search_path(q: @menu_q) %>">
   </turbo-frame>
 </div>
 

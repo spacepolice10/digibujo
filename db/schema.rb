@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_18_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_21_140000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -49,7 +49,22 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_100000) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "activities", force: :cascade do |t|
+    t.string "action", null: false
+    t.datetime "created_at", null: false
+    t.json "metadata", default: {}, null: false
+    t.integer "subject_id", null: false
+    t.string "subject_type", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["subject_type", "subject_id", "created_at"], name: "index_activities_on_subject_type_and_subject_id_and_created_at"
+    t.index ["user_id", "created_at"], name: "index_activities_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_activities_on_user_id"
+  end
+
   create_table "buckets", force: :cascade do |t|
+    t.boolean "archived", default: false, null: false
+    t.date "archives_on"
     t.integer "bucketable_id", null: false
     t.string "bucketable_type", null: false
     t.string "colour"
@@ -60,19 +75,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_100000) do
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["bucketable_type", "bucketable_id"], name: "index_buckets_on_bucketable_type_and_bucketable_id", unique: true
+    t.index ["user_id", "archived"], name: "index_buckets_on_user_id_and_archived"
     t.index ["user_id", "pinned"], name: "index_buckets_on_user_id_and_pinned"
     t.index ["user_id"], name: "index_buckets_on_user_id"
-  end
-
-  create_table "bullet_activities", force: :cascade do |t|
-    t.string "action", null: false
-    t.integer "bullet_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["bullet_id", "created_at"], name: "index_bullet_activities_on_bullet_id_and_created_at"
-    t.index ["user_id", "created_at"], name: "index_bullet_activities_on_user_id_and_created_at"
-    t.index ["user_id"], name: "index_bullet_activities_on_user_id"
   end
 
   create_table "bullet_people", force: :cascade do |t|
@@ -103,28 +108,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_100000) do
     t.datetime "created_at", null: false
     t.date "ends_date"
     t.boolean "indented", default: false, null: false
+    t.json "last_migration", default: {}, null: false
+    t.datetime "migrated_at"
     t.date "pops_on"
-    t.datetime "triaged_at"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["bucket_id"], name: "index_bullets_on_bucket_id"
     t.index ["bulletable_type", "bulletable_id"], name: "index_bullets_on_bulletable"
     t.index ["user_id", "archived"], name: "index_bullets_on_user_id_and_archived"
     t.index ["user_id", "archives_on"], name: "index_bullets_on_user_id_and_archives_on"
+    t.index ["user_id", "migrated_at"], name: "index_bullets_on_user_id_and_migrated_at"
     t.index ["user_id", "pops_on"], name: "index_bullets_on_user_id_and_pops_on"
-    t.index ["user_id", "triaged_at"], name: "index_bullets_on_user_id_and_triaged_at"
     t.index ["user_id"], name: "index_bullets_on_user_id"
     t.index ["user_id"], name: "index_bullets_on_user_id_and_pinned"
     t.index ["user_id"], name: "index_bullets_on_user_id_and_status"
-  end
-
-  create_table "bundles", force: :cascade do |t|
-    t.integer "collection_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["collection_id"], name: "index_bundles_on_collection_id"
-    t.index ["user_id"], name: "index_bundles_on_user_id"
   end
 
   create_table "collections", force: :cascade do |t|
@@ -159,6 +156,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_100000) do
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["future_bucket_id"], name: "index_monthly_buckets_on_future_bucket_id"
+    t.index ["user_id", "period_from"], name: "index_monthly_buckets_on_user_id_and_period_from", unique: true
     t.index ["user_id"], name: "index_monthly_buckets_on_user_id"
   end
 
@@ -171,14 +169,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_100000) do
   create_table "people", force: :cascade do |t|
     t.string "colour"
     t.datetime "created_at", null: false
-    t.string "email"
     t.string "icon"
     t.string "name", null: false
-    t.string "number"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["user_id", "name"], name: "index_people_on_user_id_and_name", unique: true
     t.index ["user_id"], name: "index_people_on_user_id"
+  end
+
+  create_table "person_handles", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "data", null: false
+    t.integer "kind", default: 0, null: false
+    t.integer "person_id", null: false
+    t.string "platform"
+    t.integer "position", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["person_id"], name: "index_person_handles_on_person_id"
   end
 
   create_table "pinned_entities", force: :cascade do |t|
@@ -218,6 +225,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_100000) do
     t.index ["user_id"], name: "index_published_entities_on_user_id"
   end
 
+  create_table "recurrencies", force: :cascade do |t|
+    t.date "active_from"
+    t.date "active_to"
+    t.string "colour"
+    t.datetime "created_at", null: false
+    t.string "icon"
+    t.string "name", null: false
+    t.json "schedule", default: {"kind" => "daily"}, null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id", "created_at"], name: "index_recurrencies_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_recurrencies_on_user_id"
+  end
+
+  create_table "recurrency_completions", force: :cascade do |t|
+    t.datetime "completed_at", null: false
+    t.datetime "created_at", null: false
+    t.date "date", null: false
+    t.integer "recurrency_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["recurrency_id", "date"], name: "index_recurrency_completions_on_recurrency_id_and_date", unique: true
+    t.index ["recurrency_id"], name: "index_recurrency_completions_on_recurrency_id"
+  end
+
   create_table "search_records", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "search_body"
@@ -228,6 +259,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_100000) do
     t.integer "user_id", null: false
     t.index ["user_id", "searchable_type", "searchable_id"], name: "index_search_records_on_user_and_searchable", unique: true
     t.index ["user_id"], name: "index_search_records_on_user_id"
+  end
+
+  create_table "search_selections", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "query"
+    t.integer "searchable_id", null: false
+    t.string "searchable_type", null: false
+    t.datetime "selected_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["searchable_type", "searchable_id"], name: "index_search_selections_on_searchable"
+    t.index ["user_id", "searchable_type", "searchable_id"], name: "index_search_selections_on_user_and_searchable", unique: true
+    t.index ["user_id", "selected_at"], name: "index_search_selections_on_user_id_and_selected_at"
+    t.index ["user_id"], name: "index_search_selections_on_user_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -270,25 +315,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_18_100000) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "activities", "users"
   add_foreign_key "buckets", "users"
-  add_foreign_key "bullet_activities", "users"
   add_foreign_key "bullet_people", "bullets"
   add_foreign_key "bullet_people", "people"
   add_foreign_key "bullet_projects", "bullets"
   add_foreign_key "bullet_projects", "projects"
   add_foreign_key "bullets", "buckets"
   add_foreign_key "bullets", "users"
-  add_foreign_key "bundles", "collections"
-  add_foreign_key "bundles", "users"
   add_foreign_key "future_buckets", "users"
   add_foreign_key "login_codes", "users"
   add_foreign_key "monthly_buckets", "future_buckets"
   add_foreign_key "monthly_buckets", "users"
   add_foreign_key "people", "users"
+  add_foreign_key "person_handles", "people"
   add_foreign_key "pinned_entities", "users"
   add_foreign_key "projects", "users"
   add_foreign_key "published_entities", "users"
+  add_foreign_key "recurrencies", "users"
+  add_foreign_key "recurrency_completions", "recurrencies"
   add_foreign_key "search_records", "users"
+  add_foreign_key "search_selections", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "user_settings", "users"
 

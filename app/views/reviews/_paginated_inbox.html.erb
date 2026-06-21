@@ -1,0 +1,14 @@
+<%# locals: (draggable:, row_actions:) %>
+<div id="paginated-records" class="records-list" data-controller="pagination">
+  <% @page.records.each do |bullet| %>
+    <%= render "reviews/bullet_row", bullet: bullet, draggable: draggable, row_actions: row_actions %>
+  <% end %>
+  <% unless @page.last? %>
+    <% next_href = review_path(from: @review_from.iso8601, to: @review_to.iso8601, page: @page.next_param) %>
+    <%= link_to next_href,
+          class: "pagination-trigger",
+          data: { pagination_target: "nextPageLink", preload: @page.first? } do %>
+      <i class="icon icon--spin" style="--icon-mask: var(--icon-spinner)" aria-hidden="true"></i>
+    <% end %>
+  <% end %>
+</div>

@@ -3,6 +3,7 @@
     top: 0;
     left: 50%;
     translate: -50% 0;
+    padding: var(--spacing-vertical-double);
     border-radius: var(--radius-strong);
     box-shadow: 0 8px 32px oklch(0% 0 0 / 0.12), var(--shadow-base);
   }
@@ -10,28 +11,99 @@
   .menu--wrap {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-vertical);
+    gap: var(--spacing-vertical-double);
     width: min(
-      calc(var(--spacing-horizontal-double) * 12),
+      calc(var(--spacing-horizontal-double) * 15),
       calc(100vw - 2 * var(--spacing-horizontal))
     );
     height: min(
-      calc(var(--spacing-horizontal-double) * 14),
+      calc(var(--spacing-horizontal-double) * 16),
       calc(100dvh - var(--spacing-horizontal-double) * 4)
     );
     overflow: hidden;
   }
 
-  .menu--wrap > nav,
-  .menu--page > nav {
+  .dropdown[open] > .dropdown-body.menu--wrap {
+    gap: var(--spacing-vertical-double);
+  }
+
+  .menu--wrap > nav.menu--nav,
+  .menu--page > nav.menu--nav {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--spacing-horizontal);
+    flex-shrink: 0;
+  }
+
+  .menu--nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-vertical);
+    aspect-ratio: 1;
+    min-width: 0;
+    padding: var(--spacing-vertical);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-strong);
+    background: transparent;
+    color: var(--color-fg-subtle);
+    text-decoration: none;
+    font-size: var(--font-size-subtle);
+    text-align: center;
+
+    @media (hover: hover) {
+      &:hover {
+        background: var(--color-bg-subtle);
+        border-color: var(--color-stroke-strong);
+        color: var(--color-fg-base);
+      }
+    }
+
+    &:focus-visible {
+      border-color: var(--color-stroke-strong);
+      color: var(--color-fg-base);
+    }
+
+    .icon {
+      width: var(--icon-size-base);
+      height: var(--icon-size-base);
+      flex-shrink: 0;
+    }
+  }
+
+  .menu--nav-label {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .menu--nav-item.button--hotkey[data-hotkey]::after {
+    content: attr(data-hotkey);
+    margin-inline-start: 0;
+    padding: 0 var(--spacing-horizontal-half);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-subtle);
+    color: var(--color-fg-subtle);
+    font-size: var(--font-size-subtle);
+    opacity: var(--opacity-half);
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .menu--wrap > nav:not(.menu--nav),
+  .menu--page > nav:not(.menu--nav) {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-vertical-half);
     flex-shrink: 0;
   }
 
-  .menu--wrap > nav .button--secondary,
-  .menu--page > nav .button--secondary {
+  .menu--wrap > nav:not(.menu--nav) .button--secondary,
+  .menu--page > nav:not(.menu--nav) .button--secondary {
     width: 100%;
     justify-content: flex-start;
   }
@@ -39,7 +111,7 @@
   .menu--palette {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-vertical-half);
+    gap: var(--spacing-vertical);
     flex: 1;
     min-height: calc(var(--spacing-horizontal-double) * 4);
     overflow-y: auto;
@@ -48,7 +120,7 @@
   .menu--palette-section {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-vertical-half);
+    gap: var(--spacing-vertical);
   }
 
   .menu--palette-list {
@@ -59,8 +131,8 @@
   .menu--palette-item {
     display: flex;
     align-items: center;
-    gap: var(--spacing-horizontal-half);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    gap: var(--spacing-horizontal);
+    padding: var(--spacing-vertical) var(--spacing-horizontal-half);
     flex: 1;
     min-width: 0;
     text-decoration: none;
@@ -80,10 +152,9 @@
   .menu--search {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-vertical-half);
+    gap: var(--spacing-vertical);
     flex: 1;
     min-height: 0;
-    overflow: hidden;
   }
 
   .menu--palette-marker {
@@ -110,7 +181,7 @@
   .menu--notes-section {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-vertical-half);
+    gap: var(--spacing-vertical);
     overflow-y: auto;
     flex-shrink: 0;
   }

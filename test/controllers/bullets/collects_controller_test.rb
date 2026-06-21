@@ -60,6 +60,17 @@ module Bullets
       assert_no_match 'beta', response.body
     end
 
+    test 'picker footer links to full page create collection with bullet context' do
+      card = @user.bullets.create!(bulletable: Task.create!, body: 'Move me')
+
+      get new_collect_path, params: { bullet_ids: card.id.to_s, return_to: daylog_path }
+
+      assert_select 'a[href=?][data-turbo-frame=?]',
+                    new_collection_path(bullet_ids: card.id.to_s, return_to: daylog_path),
+                    '_top',
+                    text: 'Create new collection'
+    end
+
     test 'create collects bullet into selected collection' do
       card = @user.bullets.create!(bulletable: Note.create!, body: 'Solo')
       collection = create_collection!(@user, name: 'scratchpad')
@@ -83,7 +94,7 @@ module Bullets
       assert_equal collection.bucket.id, second.reload.bucket_id
     end
 
-    test 'create turbo stream replaces collected bullets' do
+    test 'create turbo stream removes collected bullets' do
       collection = create_collection!(@user, name: 'Ideas')
       card = @user.bullets.create!(bulletable: Task.create!, body: 'Collect me')
 
@@ -94,7 +105,7 @@ module Bullets
       assert_response :success
       card.reload
       assert_equal collection.bucket.id, card.bucket_id
-      assert_match %(turbo-stream action="replace" targets="#bullet_#{card.id}"), response.body
+      assert_match %(turbo-stream action="remove" targets="#bullet_#{card.id}"), response.body
     end
 
     test 'destroy uncollects multiple bullets' do
@@ -107,6 +118,17 @@ module Bullets
       assert_redirected_to daylog_path(date: Date.current.iso8601)
       assert_nil first.reload.bucket_id
       assert_nil second.reload.bucket_id
+    end
+
+    test 'create rejects collect into archived collection' do
+      collection = create_collection!(@user, name: 'Closed')
+      collection.bucket.archive!
+      card = @user.bullets.create!(bulletable: Task.create!, body: 'Move me')
+
+      post collect_path, params: { bullet_ids: card.id.to_s, bucket_id: collection.bucket.id }
+
+      assert_response :not_found
+      assert_nil card.reload.bucket_id
     end
   end
 end

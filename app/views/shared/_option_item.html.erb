@@ -1,0 +1,10 @@
+<%# locals: (label:, icon:, hint: nil, modifier: nil) %>
+<span class="option-item">
+  <span class="option-item--marker<%= " option-item--marker--#{modifier}" if modifier.present? %>" aria-hidden="true">
+    <i class="icon" style="--icon-mask: var(--icon-<%= icon %>)" aria-hidden="true"></i>
+  </span>
+  <span class="option-item--label"><%= label %></span>
+  <% if hint.present? %>
+    <span class="option-item--hint"><%= hint %></span>
+  <% end %>
+</span>

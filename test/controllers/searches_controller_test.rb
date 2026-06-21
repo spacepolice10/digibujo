@@ -27,7 +27,6 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_path, params: { q: "alp" }
 
     assert_response :success
-    assert_select "h4", text: "Projects"
     assert_match "alpha", response.body
     assert_no_match "beta", response.body
   end
@@ -44,13 +43,13 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "show filters people by name and email" do
-    @user.people.create!(name: "alex", email: "alex@example.com")
-    @user.people.create!(name: "sam", email: "sam@example.com")
+    alex = @user.people.create!(name: "alex")
+    alex.handles.create!(kind: :email, data: "alex@example.com")
+    @user.people.create!(name: "sam")
 
     get search_path, params: { q: "alex@example.com" }
 
     assert_response :success
-    assert_select "h4", text: "People"
     assert_match "alex", response.body
     assert_no_match "sam", response.body
   end
@@ -75,22 +74,14 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     assert_match "Buy milk today", response.body
   end
 
-  test "show caps buckets and bullets in turbo stream results" do
-    6.times { |i| create_project!(@user, name: "project #{i}") }
-    9.times { |i| @user.bullets.create!(bulletable: Task.create!, body: "task item #{i}") }
+  test "show caps flat results at the global limit" do
+    25.times { |i| create_project!(@user, name: "project #{i}") }
 
     get search_path(format: :turbo_stream), params: { q: "project" }
 
     assert_response :success
     assert_select "turbo-stream[action=?][target=?]", "update", "menu_search" do
-      assert_select "li.layout--list-item", maximum: 5
-    end
-
-    get search_path(format: :turbo_stream), params: { q: "task" }
-
-    assert_response :success
-    assert_select "turbo-stream[action=?][target=?]", "update", "menu_search" do
-      assert_select "li.layout--list-item", maximum: 8
+      assert_select "li.layout--list-item", maximum: Search::GlobalRequest::RESULT_LIMIT
     end
   end
 
@@ -113,5 +104,43 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match "example.com/docs", response.body
     assert_no_match "Unrelated content", response.body
+  end
+
+  test "show with blank query renders recent selections" do
+    project = create_project!(@user, name: "recent alpha")
+    Search::Selection.record!(
+      user: @user,
+      searchable_type: "Project",
+      searchable_id: project.id
+    )
+
+    get search_path
+
+    assert_response :success
+    assert_select "h4.menu--section-heading", text: "Recent"
+    assert_match "recent alpha", response.body
+  end
+
+  test "show with blank query and no selections renders empty palette" do
+    get search_path
+
+    assert_response :success
+    assert_select "h4.menu--section-heading", count: 0
+    assert_select "ul.menu--palette-list", count: 0
+  end
+
+  test "show with query does not render recent selections" do
+    project = create_project!(@user, name: "recent beta")
+    Search::Selection.record!(
+      user: @user,
+      searchable_type: "Project",
+      searchable_id: project.id
+    )
+
+    get search_path, params: { q: "recent" }
+
+    assert_response :success
+    assert_select "h4.menu--section-heading", count: 0
+    assert_match "recent beta", response.body
   end
 end

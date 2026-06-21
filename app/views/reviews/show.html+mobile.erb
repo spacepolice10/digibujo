@@ -1,0 +1,16 @@
+<% content_for(:title) { "Review" } %>
+
+<div class="layout--page review--page review--page-mobile" data-controller="bulk-menu">
+  <%= render "reviews/header" %>
+
+  <%= render "reviews/inbox", draggable: false, row_actions: true %>
+
+  <%= render "bullets/bulk_menu" %>
+</div>
+
+<turbo-frame id="review_collect_picker_frame"
+             class="review--collect-sheet bulk-menu--pops-menu bulk-menu--pops-frame"
+             popover
+             loading="lazy"
+             data-controller="collect-picker"
+             data-collect-picker-frame-id-value="review_collect_picker_frame"></turbo-frame>

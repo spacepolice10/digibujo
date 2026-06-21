@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class PeopleController < ApplicationController
-  before_action :set_person, only: %i[show destroy]
+  before_action :set_person, only: %i[show edit update destroy]
 
   def index
     @people = Current.user.people.order(created_at: :desc)
@@ -10,6 +10,7 @@ class PeopleController < ApplicationController
 
   def new
     @person = Person.new
+    @person.handles.build(kind: :email)
   end
 
   def create
@@ -18,6 +19,18 @@ class PeopleController < ApplicationController
       redirect_to home_path, notice: 'Person created'
     else
       render :new, status: :unprocessable_entity
+    end
+  end
+
+  def edit
+    @person.handles.build(kind: :email) if @person.handles.empty?
+  end
+
+  def update
+    if @person.update(person_params)
+      redirect_to person_path(@person), notice: 'Person updated'
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -38,7 +51,7 @@ class PeopleController < ApplicationController
   private
 
   def set_person
-    @person = Current.user.people.find(params[:id])
+    @person = Current.user.people.includes(:handles).find(params[:id])
   end
 
   def sanitized_string
@@ -50,6 +63,9 @@ class PeopleController < ApplicationController
   end
 
   def person_params
-    params.require(:person).permit(:name, :email, :number, :colour, :icon, :avatar)
+    params.require(:person).permit(
+      :name, :colour, :icon, :avatar,
+      handles_attributes: [ :id, :kind, :platform, :data, :position, :_destroy ]
+    )
   end
 end

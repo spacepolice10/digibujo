@@ -11,8 +11,8 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
   test 'index shows activities newest first' do
     a = @user.bullets.create!(bulletable: Task.create!, body: 'One')
     b = @user.bullets.create!(bulletable: Note.create!, body: 'Two')
-    BulletActivityRecorder.record_updated!(bullet: a)
-    BulletActivityRecorder.record_archived!(bullet: b)
+    a.record_activity!('updated')
+    b.record_activity!('archived', metadata: { 'kind' => 'discarded' })
 
     get activities_path
 
@@ -21,13 +21,13 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Updated', response.body
   end
 
-  test 'index filters by bullet_id' do
+  test 'index filters by subject' do
     keep = @user.bullets.create!(bulletable: Task.create!, body: 'Keep me visible')
     other = @user.bullets.create!(bulletable: Note.create!, body: 'Hidden from filter qxz')
-    BulletActivityRecorder.record_completed!(bullet: keep)
-    BulletActivityRecorder.record_updated!(bullet: other)
+    keep.record_activity!('completed', metadata: { 'kind' => 'completed' })
+    other.record_activity!('updated')
 
-    get activities_path(bullet_id: keep.id)
+    get activities_path(subject_type: 'Bullet', subject_id: keep.id)
 
     assert_response :success
     assert_match 'Keep me visible', response.body
@@ -38,7 +38,13 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     other = users(:two)
     foreign = other.bullets.create!(bulletable: Task.create!, body: 'Foreign')
 
-    get activities_path(bullet_id: foreign.id)
+    get activities_path(subject_type: 'Bullet', subject_id: foreign.id)
+
+    assert_response :not_found
+  end
+
+  test 'index returns not found for unknown subject type' do
+    get activities_path(subject_type: 'Project', subject_id: 1)
 
     assert_response :not_found
   end

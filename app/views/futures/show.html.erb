@@ -24,7 +24,6 @@
         </div>
         <%= link_to new_bullet_path(
               bucket_id: bucket.id,
-              bulletable_type: "Task",
               composer_id: "bullet_composer"
             ),
             data: { turbo_frame: "bullet_composer" },

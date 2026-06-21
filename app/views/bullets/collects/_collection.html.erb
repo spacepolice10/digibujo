@@ -1,6 +1,7 @@
+<%# locals: (collection:, bullet_ids: "") %>
 <li class="layout--list-item">
   <%= form_with url: collect_path, method: :post, data: { turbo_stream: true } do %>
-    <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
+    <%= hidden_field_tag :bullet_ids, bullet_ids, data: { bulk_menu_target: "idList" } %>
     <%= hidden_field_tag :bucket_id, collection.bucket.id %>
     <%= button_tag type: :submit, class: "button--secondary bucket--list-item-link" do %>
       <%= render "collections/pickers/collection", collection: collection %>

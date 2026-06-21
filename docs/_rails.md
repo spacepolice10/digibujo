@@ -41,7 +41,7 @@ Rails 8.1.2 app. This is a framework-agnostic cheatsheet — not a Rails tutoria
 
 ### Delegated types for polymorphism
 - `Bullet` uses `delegated_type :bulletable` with `Task`, `Note`, `Event` (`app/models/bullet.rb`).
-- `Bucket` uses `delegated_type :bucketable` with `Collection`, `Bundle`, `FutureBucket`, `MonthlyBucket` (`app/models/bucket.rb`).
+- `Bucket` uses `delegated_type :bucketable` with `Collection`, `FutureBucket`, `MonthlyBucket` (`app/models/bucket.rb`).
 - Reference: https://api.rubyonrails.org/classes/ActiveRecord/DelegatedType.html.
 
 ### Service objects

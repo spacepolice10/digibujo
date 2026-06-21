@@ -1,0 +1,74 @@
+<% content_for(:title) { @recurrency.name } %>
+
+<div class="layout--page recurrency--show-page">
+  <div class="layout--header">
+    <div class="layout--header-actions">
+      <%= link_to recurrencies_path, class: "button--secondary" do %>
+        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+        Recurrency
+      <% end %>
+    </div>
+    <div class="layout--header-info">
+      <h2><%= @recurrency.name %></h2>
+      <p class="utilities--text-sm"><%= @recurrency.schedule_label %></p>
+    </div>
+    <div class="layout--header-actions">
+      <%= link_to "Edit", edit_recurrency_path(@recurrency), class: "button--secondary" %>
+      <%= button_to @recurrency,
+            method: :delete,
+            class: "button--secondary button--danger",
+            form: { data: { turbo_confirm: "Delete this recurrency?" } } do %>
+        Delete
+      <% end %>
+    </div>
+  </div>
+
+  <% stats = @tracker.stats(@recurrency) %>
+  <dl class="recurrency--stats">
+    <div>
+      <dt>Current streak</dt>
+      <dd><%= stats[:streak] %></dd>
+    </div>
+    <div>
+      <dt>Best streak</dt>
+      <dd><%= stats[:best_streak] %></dd>
+    </div>
+    <div>
+      <dt>Total days</dt>
+      <dd><%= stats[:total] %></dd>
+    </div>
+    <div>
+      <dt>This month</dt>
+      <dd><%= stats[:period_completed] %>/<%= stats[:period_scheduled] %></dd>
+    </div>
+  </dl>
+
+  <section class="recurrency--heatmap" aria-label="Completion history">
+    <h3 class="recurrency--section-title">Last 12 months</h3>
+    <div class="recurrency--heatmap-grid">
+      <% @heatmap_months.each do |month_start| %>
+        <div class="recurrency--heatmap-month">
+          <span class="recurrency--heatmap-month-label utilities--text-sm"><%= month_start.strftime("%b") %></span>
+          <div class="recurrency--heatmap-days">
+            <% (month_start..month_start.end_of_month).each do |day| %>
+              <% done = @heatmap_completions.include?(day) && @recurrency.scheduled_on?(day) %>
+              <span class="recurrency--heatmap-day<%= " recurrency--heatmap-day-done" if done %>"
+                    title="<%= day.strftime("%b %-d") %>"></span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <nav class="recurrency--month-nav" aria-label="Month">
+    <%= link_to "‹", recurrency_path(@recurrency, month: (@month - 1.month).strftime("%Y-%m")), class: "button--tertiary" %>
+    <span><%= @month.strftime("%B %Y") %></span>
+    <%= link_to "›", recurrency_path(@recurrency, month: (@month + 1.month).strftime("%Y-%m")), class: "button--tertiary" %>
+  </nav>
+
+  <%= render "recurrencies/monthly_grid",
+        tracker: @tracker,
+        period_days: @period_days,
+        title: @recurrency.name %>
+</div>

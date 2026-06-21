@@ -21,7 +21,7 @@
   /* Named container: body width is the centered page column. */
   body {
     margin-inline: auto;
-    max-width: min(100%, calc(var(--breakpoint-pc) + var(--spacing-horizontal-quad) * 2));
+    max-width: 100%;
     container-type: inline-size;
     container-name: page-column;
   }

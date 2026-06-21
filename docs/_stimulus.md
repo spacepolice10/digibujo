@@ -63,7 +63,7 @@ export default class extends Controller {
 
 | Controller | Purpose |
 |---|---|
-| `bullet-composer` | Lexxy file-accept interceptor; direct upload via `DirectUpload`; type-select UI (Task/Note/Event); form reset on `turbo:submit-end` success |
+| `bullet-composer` | Lexxy file-accept interceptor; direct upload via `DirectUpload`; type-select UI (Task/Note/Event/Title); `/` prompt type switch via `selectType`; form reset on `turbo:submit-end` success |
 | `bulk-menu` | Sticky bulk-action menu; keeps `idListValue: Array`; syncs CSV to every form's hidden `idList` target; opens popover pickers; clears on visit |
 | `bullet-drag` | Native HTML5 dragstart/dragend for bullets |
 | `combobox` | Accessible combobox behavior |
@@ -73,11 +73,16 @@ export default class extends Controller {
 | `grid-navigation` | Arrow-key grid navigation |
 | `hotkey` | Document-wide hotkeys (`data-hotkey="cmd+k"`); ignores inputs, contenteditable, lexxy-editor |
 | `menu` | Menu shell |
-| `monthly-bucket-drop` | Drop target for monthly bucket |
+| `pop-drop` | Drop target for pop intent (monthly spread + review week strip) |
+| `recurrency-check` | Toggle recurrency completion for a date (POST/DELETE completion, turbo-stream) |
+| `monthly-tabs` | Mobile monthly spread tabs (days / recurrency / unplanned) |
+| `collect-drop` | Drop target for collect intent on review collections panel |
+| `review-row` | Mobile review row actions (collect picker sheet) |
 | `pagination` | Geared pagination |
 | `scroll` | Scroll position tracking |
 | `search` | Search field behavior |
 | `section` | Section open/close persistence |
+| `side-note` | Sticky-note trigger opens dialog with bucket side-note Lexxy editor; debounced autosave via `@rails/request.js` |
 | `timezone-cookie` | Sets timezone cookie (eager-loaded) |
 | `toasts` | Toast queue |
 | `zoom` | Pinch/scroll zoom |

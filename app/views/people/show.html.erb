@@ -12,12 +12,19 @@
       <% if @person.avatar.attached? %>
         <%= image_tag @person.avatar, class: "person--avatar-large", alt: "" %>
       <% end %>
-      <h2><%= @person.name %></h2>
+      <div>
+        <h2><%= @person.name %></h2>
+        <%= render "handles", person: @person %>
+      </div>
     </div>
   </div>
 
   <div class="layout--workspace">
     <aside class="layout--rail">
+      <%= link_to edit_person_path(@person), class: "button--secondary layout--rail-action" do %>
+        <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
+        Edit
+      <% end %>
       <%= render "people/pins_button", person: @person %>
       <%= button_to @person,
             method: :delete,

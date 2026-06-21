@@ -10,7 +10,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'update turbo stream replaces bullet only' do
-    assert_difference -> { BulletActivity.count }, 1 do
+    assert_difference -> { Activity.count }, 1 do
       patch bullet_path(@bullet),
             params: { bullet: { body: 'Updated' } },
             as: :turbo_stream
@@ -20,7 +20,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_match(/turbo-stream action="replace"/, response.body)
     assert_no_match(/turbo-stream action="after"/, response.body)
     assert_equal 'Updated', @bullet.reload.body.to_plain_text
-    assert_equal 'updated', BulletActivity.order(:created_at).last.action
+    assert_equal 'updated', Activity.order(:created_at).last.action
   end
 
   test 'create turbo stream inserts bullet before composer' do
@@ -150,7 +150,18 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Expanded content', response.body
   end
 
-  test 'create with invalid body re-renders form' do
+  test 'edit renders rich_body preview in composer' do
+    @bullet.update!(rich_body: '<p>Expanded content</p>')
+
+    get edit_bullet_path(@bullet)
+
+    assert_response :success
+    assert_select '.bullet-form-rich-body-preview', count: 1
+    assert_select '.bullet-form-rich-body-preview[hidden]', count: 0
+    assert_select '.bullet-form-rich-body-preview-content', text: /Expanded content/
+  end
+
+  test 'create with invalid body shows validation toast' do
     post bullets_path,
          params: {
            bullet: { bulletable_type: 'Task', body: '', composer_id: 'bullet_composer' }
@@ -158,8 +169,32 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
          as: :turbo_stream
 
     assert_response :unprocessable_entity
+    assert_match %(turbo-stream action="update" target="toasts"), response.body
+    assert_match "Body can&#39;t be blank", response.body
+    assert_no_match 'form.bullet-form', response.body
+  end
+
+  test 'new composer renders inline editor with rail layout' do
+    get new_bullet_path
+
+    assert_response :success
     assert_select 'form.bullet-form'
-    assert_select '.field_with_errors'
+    assert_select 'lexxy-editor[preset=inline]'
+    assert_select '.bullet-form-rail'
+    assert_select '.bullet-form-rail-actions'
+    assert_select 'select.select-menu.bullet-form-actions-select.form-select', aria: { label: 'Composer options' }
+    assert_select 'select.bullet-form-actions-select option[value=?]', 'attachment'
+    assert_select 'select.bullet-form-actions-select option[value=?]', 'expand'
+    assert_select 'select.select-menu.bullet-form-type-select.form-select', aria: { label: 'Bullet type' }
+    assert_select 'select.bullet-form-type-select option[value=?]', 'Task', text: /Task/
+    assert_select 'select.bullet-form-type-select option[value=?]', 'Note', text: /Note/
+    assert_select 'select.bullet-form-type-select option[value=?]', 'Event', text: /Event/
+    assert_select 'select.bullet-form-type-select option[value=?]', 'Title', text: /Title/
+    assert_select '.bullet-form-note-options .bullet-form-note-flag', count: 2
+    assert_select '.bullet-form-rich-body-preview[hidden]', count: 1
+    assert_select '.bullet-form-rail-actions .bullet-form-rail-submit button[type=submit]'
+    assert_select 'input[name=?][type=checkbox].utilities--sr-only', 'bullet[indented]'
+    assert_select '.bullet-form-footer', count: 0
   end
 
   test 'create Title bullet with body' do

@@ -14,7 +14,6 @@ class ProjectableTest < ActiveSupport::TestCase
     @bullet.tag_project!(project_id: @project.id)
 
     assert_includes @bullet.reload.projects, @project
-    assert @bullet.triaged_at.present?
   end
 
   test 'tag_project! allows multiple projects' do

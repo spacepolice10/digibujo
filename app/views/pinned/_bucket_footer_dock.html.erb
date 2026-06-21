@@ -1,6 +1,6 @@
 <div class="pinned--dock">
   <%= link_to bucket_palette_path(bucket),
-        class: "button--secondary pinned--summary pinned--bucket-summary",
+        class: ["pill", "pinned--summary", "pinned--bucket-summary", bucket.colour.present? ? "pill--#{bucket.colour}" : nil].compact.join(" "),
         data: { turbo_frame: "_top" } do %>
     <span class="bucket--list-item-marker" data-bucket-colour="<%= bucket.colour %>" aria-hidden="true">
       <% if bucket.icon_path %>

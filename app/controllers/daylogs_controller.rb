@@ -9,6 +9,11 @@ class DaylogsController < ApplicationController
       Current.user.bullets.dailylog(@selected_date),
       per_page: [15, 30, 50]
     )
+    @recurrency_tracker = RecurrencyTracker.new(
+      user: Current.user,
+      from: @selected_date,
+      to: @selected_date
+    )
   end
 
   private

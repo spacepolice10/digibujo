@@ -1,0 +1,204 @@
+@layer components {
+  .review--page {
+    display: flex;
+    flex-direction: column;
+    max-width: none;
+    min-height: 0;
+  }
+
+  @media (min-width: 800px) {
+    .review--page {
+      min-height: calc(100vh - var(--spacing-vertical) * 2);
+    }
+  }
+
+  .review--header {
+    margin-bottom: var(--spacing-vertical);
+  }
+
+  .review--workspace {
+    display: grid;
+    grid-template-columns: minmax(calc(var(--spacing-horizontal-double) * 9), 1fr) minmax(0, 2fr) minmax(calc(var(--spacing-horizontal-double) * 12), 1.1fr);
+    align-items: stretch;
+    flex: 1;
+    min-height: 0;
+    border: 1px solid var(--color-stroke-base);
+    background: var(--color-bg-subtle);
+    border-radius: var(--radius-strong);
+    overflow: hidden;
+  }
+
+  .review--inbox,
+  .review--week {
+    border-inline-start: 1px solid var(--color-stroke-base);
+  }
+
+  .review--collections,
+  .review--inbox,
+  .review--week {
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
+  }
+
+  .review--collections-header,
+  .review--inbox-header,
+  .review--week-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--spacing-horizontal-half);
+    margin-bottom: var(--spacing-vertical);
+  }
+
+  .review--panel-title {
+    margin: 0;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-strong);
+  }
+
+  .review--panel-description {
+    margin: var(--spacing-vertical-half) 0 0;
+    color: var(--color-fg-subtle);
+  }
+
+  .review--collections-empty {
+    margin: 0;
+    color: var(--color-fg-subtle);
+  }
+
+  .review--collections-more {
+    display: inline-block;
+    margin-top: var(--spacing-vertical);
+  }
+
+  .review--collections-list {
+    gap: 0;
+  }
+
+  .review--collection-drop-target {
+    border-radius: var(--radius-base);
+  }
+
+  .review--collection-link {
+    width: 100%;
+  }
+
+  .review--inbox-list {
+    gap: 0;
+  }
+
+  .review--inbox-footer {
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    border-top: 1px solid var(--color-stroke-base);
+  }
+
+  .review--bullet-row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical-half);
+  }
+
+  .review--week-days {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .review--week-day {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-horizontal-half);
+    padding-block: var(--spacing-vertical-half);
+  }
+
+  .review--week-day--today {
+    position: relative;
+  }
+
+  .review--week-day--today::before {
+    content: "";
+    position: absolute;
+    left: calc(-1 * var(--spacing-horizontal-half));
+    top: var(--spacing-vertical-half);
+    bottom: var(--spacing-vertical-half);
+    width: var(--radius-base);
+    border-radius: var(--radius-full);
+    background: var(--model-color-4);
+    pointer-events: none;
+  }
+
+  .review--week-day--today .review--week-day-label {
+    color: var(--color-fg-base);
+  }
+
+  .review--week-day-label {
+    position: relative;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: var(--spacing-horizontal-double);
+    padding-left: var(--spacing-horizontal-half);
+    box-sizing: border-box;
+    font-size: var(--font-size-subtle);
+    color: var(--color-fg-subtle);
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--color-fg-base);
+    }
+  }
+
+  .review--week-day-number {
+    font-weight: var(--font-weight-strong);
+    font-size: 0.85em;
+  }
+
+  .review--week-day-weekday {
+    font-weight: var(--font-weight-base);
+    font-size: 0.75em;
+    text-transform: uppercase;
+  }
+
+  .review--week-day-drop {
+    flex: 1;
+    min-width: 0;
+    min-height: calc(var(--spacing-vertical) * 3);
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .pop-drop--over,
+  .collect-drop--over {
+    outline: 2px dashed var(--model-color-4);
+    outline-offset: -2px;
+    border-radius: var(--radius-base);
+  }
+
+  .review--page-mobile .review--row-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    padding-inline: var(--spacing-horizontal);
+    padding-bottom: var(--spacing-vertical-half);
+  }
+
+  .review--row-action {
+    margin: 0;
+  }
+
+  .review--collect-sheet {
+    width: min(100vw - var(--spacing-horizontal-double), calc(var(--spacing-horizontal-double) * 14));
+    max-height: min(70vh, calc(var(--spacing-vertical) * 30));
+    overflow: auto;
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-strong);
+    background: var(--color-bg-base);
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
+  }
+}

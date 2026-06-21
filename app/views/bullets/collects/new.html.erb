@@ -1,3 +1,7 @@
-<turbo-frame id="collects_picker_frame" class="bulk-menu--pops-menu bulk-menu--pops-frame" popover>
-  <%= render "picker" %>
+<% frame_id = params[:frame_id].presence || "collects_picker_frame" %>
+<turbo-frame id="<%= frame_id %>" class="bulk-menu--pops-menu bulk-menu--pops-frame" popover>
+  <%= render "picker",
+        bullet_ids: params[:bullet_ids].to_s,
+        frame_id: frame_id,
+        return_to: @return_to %>
 </turbo-frame>

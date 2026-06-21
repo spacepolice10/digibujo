@@ -1,0 +1,18 @@
+<% case activity.subject %>
+<% when Bullet %>
+  <span class="bullet--marker home--activity-marker <%= activity.subject.marker_styles %>" aria-hidden="true">
+    <i class="icon" style="--icon-mask: var(--icon-<%= activity.subject.marker_icon %>)" aria-hidden="true"></i>
+  </span>
+  <%= link_to bullet_path(activity.subject), class: "home--activity-bullet" do %>
+    <span class="home--activity-name utilities--line-clamp-1"><%= activity.subject.name.truncate(60) %></span>
+  <% end %>
+<% when Bucket %>
+  <span class="bucket--list-item-marker home--activity-marker" data-bucket-colour="<%= activity.subject.colour %>" aria-hidden="true">
+    <% if activity.subject.icon_path %>
+      <%= image_tag activity.subject.icon_path, alt: "", class: "form--list-icon" %>
+    <% end %>
+  </span>
+  <%= link_to activity.subject.show_path, class: "home--activity-bullet", data: { turbo_frame: "_top" } do %>
+    <span class="home--activity-name utilities--line-clamp-1"><%= activity.subject.name.truncate(60) %></span>
+  <% end %>
+<% end %>

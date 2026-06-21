@@ -1,0 +1,22 @@
+<%# locals: (tracker:, date:) %>
+<% scheduled_recurrencies = tracker.recurrencies.select { |recurrency| recurrency.scheduled_on?(date) } %>
+<% if scheduled_recurrencies.any? %>
+  <section class="recurrency--day-panel" aria-label="Recurrency for this day">
+    <header class="recurrency--day-panel-header">
+      <h3 class="recurrency--day-panel-title">Recurrency</h3>
+      <span class="recurrency--day-panel-summary utilities--text-sm">
+        <%= scheduled_recurrencies.count { |r| tracker.completed?(r, date) } %> / <%= scheduled_recurrencies.size %>
+      </span>
+    </header>
+
+    <ul class="recurrency--day-list">
+      <% scheduled_recurrencies.each do |recurrency| %>
+        <%= render "recurrencies/day_row", recurrency: recurrency, date: date, tracker: tracker %>
+      <% end %>
+    </ul>
+
+    <footer class="recurrency--day-panel-footer">
+      <%= link_to "Manage recurrencies", recurrencies_path, class: "button--tertiary" %>
+    </footer>
+  </section>
+<% end %>

@@ -33,6 +33,8 @@ module Bullets
 
       assert_response :unprocessable_entity
       assert_not @bullet.reload.bulletable.done?
+      assert_match %(turbo-stream action="update" target="toasts"), response.body
+      assert_match 'Only tasks can be completed', response.body
     end
 
     test 'bulk destroy uncompletes selected tasks' do

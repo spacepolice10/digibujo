@@ -1,0 +1,22 @@
+<aside class="review--collections" aria-label="Collections">
+  <header class="review--collections-header">
+    <h3 class="review--panel-title">Collections</h3>
+    <%= link_to new_collection_path, class: "button--tertiary utilities--text-sm", data: { turbo_frame: "_top" } do %>
+      Add collection
+    <% end %>
+  </header>
+
+  <% if @collections.any? %>
+    <ul class="layout--list bucket--list review--collections-list">
+      <% @collections.each do |collection| %>
+        <%= render "reviews/collection_drop_target", collection: collection %>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="review--collections-empty utilities--text-sm">No collections yet.</p>
+  <% end %>
+
+  <% if @show_collections_more %>
+    <%= link_to "Show all", collections_path, class: "review--collections-more utilities--text-sm", data: { turbo_frame: "_top" } %>
+  <% end %>
+</aside>

@@ -103,4 +103,15 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'nav.tab-bar a[href=?]', daylog_path
     assert_select 'nav.tab-bar a[href=?]', pinned_index_path
   end
+
+  test 'daylog renders recurrency chips in header when scheduled' do
+    create_recurrency!(@user, name: 'Morning run', colour: 'teal', icon: 'muscle')
+
+    get daylog_path
+
+    assert_response :success
+    assert_select '.recurrency--header-chips .recurrency--chip'
+    assert_select '.recurrency--chip[data-bucket-colour=teal]'
+    assert_select '.recurrency--day-panel', count: 0
+  end
 end

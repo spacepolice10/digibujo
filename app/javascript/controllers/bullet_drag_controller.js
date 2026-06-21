@@ -7,8 +7,8 @@ export default class extends Controller {
     event.dataTransfer.effectAllowed = "move"
     event.dataTransfer.setData("bullet-id", this.idValue)
 
-    const zone = this.element.closest("[data-monthly-bucket-drop-pops-on-value]")
-    const sourcePopsOn = zone?.dataset.monthlyBucketDropPopsOnValue ?? ""
+    const zone = this.element.closest("[data-pop-drop-pops-on-value]")
+    const sourcePopsOn = zone?.dataset.popDropPopsOnValue ?? ""
     event.dataTransfer.setData("source-pops-on", sourcePopsOn)
 
     this.element.classList.add("dragging")

@@ -3,4 +3,25 @@
     gap: var(--spacing-horizontal-half);
     margin-block: var(--spacing-vertical-half);
   }
+
+  .daylog--header {
+    flex-wrap: wrap;
+    gap: var(--spacing-vertical-half);
+  }
+
+  .daylog--header-recurrencies {
+    flex: 1 1 auto;
+    min-width: 0;
+    justify-content: flex-start;
+  }
+
+  .daylog--header-nav {
+    flex: 0 1 auto;
+    justify-content: center;
+  }
+
+  .daylog--header-today {
+    flex: 1 1 auto;
+    justify-content: flex-end;
+  }
 }

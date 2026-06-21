@@ -4,12 +4,14 @@ module Collectable
   extend ActiveSupport::Concern
 
   def collect!(bucket_id:)
-    bucket = user.buckets.find(bucket_id)
-    update!(
-      bucket: bucket,
-      triaged_at: triaged_at || Time.current
+    bucket = user.buckets.active.find(bucket_id)
+    update!(bucket: bucket)
+    stamp_migration!(
+      kind: "collected",
+      bucket_id: bucket.id,
+      bucket_name: bucket.name,
+      bucketable_type: bucket.bucketable_type
     )
-    BulletActivityRecorder.record_collected!(bullet: self)
   end
 
   def uncollect!

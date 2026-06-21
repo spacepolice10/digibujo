@@ -3,11 +3,11 @@
 class SearchesController < ApplicationController
   def show
     @q = params[:q].to_s.strip
-    results = Search::GlobalRequest.call(user: Current.user, query: @q)
 
-    @projects = results.projects
-    @buckets = results.buckets
-    @bullets = results.bullets
-    @people = results.people
+    if @q.present?
+      @entries = Search::GlobalRequest.call(user: Current.user, query: @q).entries
+    else
+      @selections = Search::Selection.for_menu(Current.user)
+    end
   end
 end

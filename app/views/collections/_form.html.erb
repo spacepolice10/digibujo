@@ -1,7 +1,18 @@
+<%# locals: (collection:, bullet_ids: nil, return_to: nil) %>
 <%= form_with model: collection, class: "form form--strong" do |f| %>
-  <small class="form-hint">Collections are like folders in a traditional notebook — group related tasks, notes, or events together and keep them organised for as long as you need.</small>
+  <% if bullet_ids.present? %>
+    <%= hidden_field_tag :bullet_ids, bullet_ids %>
+    <%= hidden_field_tag :return_to, return_to if return_to.present? %>
+  <% else %>
+    <small class="form-hint">Collections are like folders in a traditional notebook — group related tasks, notes, or events together and keep them organised for as long as you need.</small>
+  <% end %>
 
   <%= render "identity_fields", form: f,
-        name_hint: "Give your collection a name. Examples: Reading list, Travel plans, Work ideas." %>
-  <%= f.submit class: "button--primary form--submit" %>
+        name_hint: bullet_ids.present? ? "Give your collection a name." : "Give your collection a name. Examples: Reading list, Travel plans, Work ideas." %>
+
+  <% if bullet_ids.present? %>
+    <%= f.submit "Create and collect", class: "button--primary form--submit" %>
+  <% else %>
+    <%= f.submit class: "button--primary form--submit" %>
+  <% end %>
 <% end %>

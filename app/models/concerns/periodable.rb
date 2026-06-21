@@ -24,10 +24,6 @@ module Periodable
     period? ? (period_from..period_to) : nil
   end
 
-  def covers?(date)
-    period? && period_days.cover?(date)
-  end
-
   private
 
   def period_ranges_correct

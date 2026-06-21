@@ -1,0 +1,10 @@
+<% case entry.searchable_type
+   when "Project" %>
+  <%= render "searches/project", project: entry.entity %>
+<% when "Bucket" %>
+  <%= render "searches/bucket", bucket: entry.entity %>
+<% when "Person" %>
+  <%= render "searches/person", person: entry.entity %>
+<% when "Bullet" %>
+  <%= render "searches/bullet", bullet: entry.entity %>
+<% end %>

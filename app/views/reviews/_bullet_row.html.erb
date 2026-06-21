@@ -1,0 +1,7 @@
+<%# locals: (bullet:, draggable:, row_actions:) %>
+<div class="review--bullet-row">
+  <%= render_bullet(bullet, draggable: draggable) %>
+  <% if row_actions %>
+    <%= render "reviews/row_actions", bullet: bullet %>
+  <% end %>
+</div>

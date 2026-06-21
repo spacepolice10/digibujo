@@ -18,16 +18,14 @@ module ActiveSupport
       user.projects.create!(name: name, colour: colour, icon: icon)
     end
 
+    def create_recurrency!(user, name:, schedule: { "kind" => "daily" }, active_from: nil, active_to: nil, colour: nil, icon: nil)
+      user.recurrencies.create!(name: name, schedule: schedule, active_from: active_from, active_to: active_to, colour: colour, icon: icon)
+    end
+
     def create_collection!(user, name:, colour: nil, icon: nil)
       collection = Collection.create!
       user.buckets.create!(bucketable: collection, name: name, colour: colour, icon: icon)
       collection
-    end
-
-    def create_bundle!(user, collection, name:, colour: nil, icon: nil)
-      bundle = collection.bundles.create!(user: user)
-      user.buckets.create!(bucketable: bundle, name: name, colour: colour, icon: icon)
-      bundle
     end
 
     def ensure_future_bucket!(user)

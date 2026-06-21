@@ -9,6 +9,7 @@ class HomeController < ApplicationController
   def show
     @projects = recent_projects
     @collections = user_collections.limit(COLLECTIONS_LIMIT)
+    @show_collections_more = user_collections.count > COLLECTIONS_LIMIT
     @people = recent_people
     @future = Current.user.future_bucket!.bucket
     @future_monthly_buckets = Current.user.future_bucket!.monthly_buckets.includes(:bucket)
@@ -28,8 +29,8 @@ class HomeController < ApplicationController
   end
 
   def recent_activities
-    Current.user.bullet_activities
-           .includes(:bullet)
+    Current.user.activities
+           .includes(:subject)
            .order(created_at: :desc)
            .limit(6)
   end

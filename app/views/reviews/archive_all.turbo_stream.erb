@@ -1,0 +1,9 @@
+<% if @failed_bullet&.errors&.any? %>
+  <%= turbo_stream.update "toasts" do %>
+    <%= render "shared/toasts", type: "errmsg", messages: @failed_bullet.errors.full_messages %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.update "paginated-records" do %><% end %>
+  <%= turbo_stream.update "review-amount-in-review", "0" %>
+  <%= turbo_stream.remove "review-inbox-footer" %>
+<% end %>

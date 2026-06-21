@@ -12,12 +12,15 @@ module Buckets
     end
 
     test 'create pins bucket and updates pin button via turbo stream' do
-      post buckets_pin_path,
-           params: { bucket_id: @bucket.id },
-           headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
+      assert_difference -> { Activity.count }, 1 do
+        post buckets_pin_path,
+             params: { bucket_id: @bucket.id },
+             headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
+      end
 
       assert_response :success
       assert @bucket.reload.pinned?
+      assert_equal 'pinned', Activity.order(:created_at).last.action
       assert_match 'turbo-stream', response.media_type
       assert_match dom_id(@bucket, :pin_button), response.body
       assert_match 'pinned_buckets_footer', response.body
@@ -27,12 +30,15 @@ module Buckets
     test 'destroy unpins bucket and updates pin button via turbo stream' do
       @bucket.pin!
 
-      delete buckets_pin_path,
-             params: { bucket_id: @bucket.id },
-             headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
+      assert_difference -> { Activity.count }, 1 do
+        delete buckets_pin_path,
+               params: { bucket_id: @bucket.id },
+               headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
+      end
 
       assert_response :success
       assert_not @bucket.reload.pinned?
+      assert_equal 'unpinned', Activity.order(:created_at).last.action
       assert_match dom_id(@bucket, :pin_button), response.body
       assert_match 'pinned_buckets_footer', response.body
       assert_no_match dom_id(@bucket, :footer_bullets), response.body
