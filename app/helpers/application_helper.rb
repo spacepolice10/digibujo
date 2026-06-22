@@ -26,8 +26,4 @@ module ApplicationHelper
   def monthly_bucket_composer_frame_class(pops_on)
     "bullet_pops_on_#{pops_on}"
   end
-
-  def render_bullet_compact(bullet)
-    render 'bullets/compact', bullet: bullet
-  end
 end

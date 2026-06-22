@@ -13,14 +13,7 @@
      class="bullet-compact--link"
      draggable="false"
      data-turbo-frame="_top">
-    <% unless bullet.bulletable_type == "Title" %>
-      <span class="bullet--marker bullet-compact--marker <%= bullet.marker_styles %>" aria-hidden="true">
-        <i class="icon" style="--icon-mask: var(--icon-<%= bullet.marker_icon %>)" aria-hidden="true"></i>
-        <% if bullet.mood_marker.present? %>
-          <span class="bullet--mood-emoji"><%= bullet.mood_marker %></span>
-        <% end %>
-      </span>
-    <% end %>
+    <%= render "bullets/marker", bullet: bullet %>
     <span class="bullet-compact--name utilities--line-clamp-1<%= " bullet-compact--title" if bullet.bulletable_type == "Title" %>"><%= bullet.excerpt %></span>
     <% if bullet.meta_labels.any? %>
       <span class="bullet--flags">

@@ -10,7 +10,7 @@
   </button>
   <div class="layout--list bucket--list">
     <% bullets.each do |bullet| %>
-      <%= render_bullet_compact(bullet) %>
+      <%= render "pinned/bullet", bullet: bullet %>
     <% end %>
   </div>
 </div>
