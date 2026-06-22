@@ -1,6 +1,6 @@
-<%# locals: (bullet:, draggable: false, monthly_bucket: false) %>
+<%# locals: (bullet:, draggable: false) %>
 <turbo-frame id="<%= dom_id(bullet) %>"
-             class="bullet<%= " bullet--monthly-bucket" if monthly_bucket %>"
+             class="bullet"
              data-bullet-type="<%= bullet.bulletable_type.downcase %>"
              data-bullet-indented="<%= bullet.indented %>"
              <% if bullet.migrated? %>data-bullet-migrated<% end %>
@@ -14,47 +14,10 @@
              data-action="dragstart->bullet-drag#dragstart dragend->bullet-drag#dragend"
              <% end %>>
   <div class="bullet--marker-slot">
-    <% if monthly_bucket %>
-      <% unless bullet.bulletable_type == "Title" %>
-        <span class="bullet--monthly-bucket-dot" aria-hidden="true"></span>
-      <% end %>
-    <% else %>
-      <%= render "bullets/marker", bullet: bullet %>
-    <% end %>
-    <% unless monthly_bucket %>
-      <%= render "bullets/select", bullet: bullet %>
-    <% end %>
+    <%= render "bullets/marker", bullet: bullet %>
+    <%= render "bullets/select", bullet: bullet %>
   </div>
   <div class="bullet--body">
-    <% if bullet.bulletable_type == "Title" %>
-      <h3 class="bullet--title"><%= bullet.name %></h3>
-    <% elsif monthly_bucket %>
-      <%= render "bullets/monthly_bucket_line", bullet: bullet %>
-    <% else %>
-      <% if bullet.body.to_plain_text.presence || bullet.rich_body? %>
-        <div class="bullet--name">
-          <% if bullet.bulletable_type == "Note" %>
-            <%= link_to bullet.excerpt, bullet_path(bullet), data: { turbo_frame: "_top" } %>
-          <% else %>
-            <%= link_to bullet.body, bullet_path(bullet), data: { turbo_frame: "_top" } %>
-          <% end %>
-
-          <% if bullet.attachments.attached? %>
-            <span class="pill" aria-label="Has attachments">
-              <i class="icon" style="--icon-mask: var(--icon-paperclip)" aria-hidden="true"></i>
-            </span>
-          <% end %>
-          <% if bullet.meta_labels.any? %>
-            <span class="bullet--flags">
-              <% bullet.meta_labels.each do |label| %>
-                <span class="pill pill--<%= label[:colour] %>"><%= label[:emoji] %></span>
-              <% end %>
-            </span>
-          <% end %>
-        </div>
-      <% end %>
-      <%= render "bullets/attachments", bullet: bullet %>
-      <%= render "bullets/metadata", bullet: bullet %>
-    <% end %>
+    <%= render "bullets/body", bullet: bullet %>
   </div>
 </turbo-frame>

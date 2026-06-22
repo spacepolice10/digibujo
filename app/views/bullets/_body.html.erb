@@ -1,0 +1,28 @@
+<%# locals: (bullet:) %>
+<% if bullet.bulletable_type == "Title" %>
+  <h3 class="bullet--title"><%= bullet.name %></h3>
+<% else %>
+  <% if bullet.body.to_plain_text.presence || bullet.rich_body? %>
+    <div class="bullet--name">
+      <% if bullet.bulletable_type == "Note" %>
+        <%= link_to bullet.excerpt, bullet_path(bullet), data: { turbo_frame: "_top" } %>
+      <% else %>
+        <%= link_to bullet.body, bullet_path(bullet), data: { turbo_frame: "_top" } %>
+      <% end %>
+      <% if bullet.attachments.attached? %>
+        <span class="pill" aria-label="Has attachments">
+          <i class="icon" style="--icon-mask: var(--icon-paperclip)" aria-hidden="true"></i>
+        </span>
+      <% end %>
+      <% if bullet.meta_labels.any? %>
+        <span class="bullet--flags">
+          <% bullet.meta_labels.each do |label| %>
+            <span class="pill pill--<%= label[:colour] %>"><%= label[:emoji] %></span>
+          <% end %>
+        </span>
+      <% end %>
+    </div>
+  <% end %>
+  <%= render "bullets/attachments", bullet: bullet %>
+  <%= render "bullets/metadata", bullet: bullet %>
+<% end %>

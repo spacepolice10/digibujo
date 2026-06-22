@@ -6,17 +6,17 @@ module ApplicationHelper
     case bucketable
     when Collection then collection_path(bucketable)
     when FutureBucket then future_path
-    when MonthlyBucket then monthly_bucket_path(bucketable)
+    when MonthlyBucket then future_monthly_bucket_path(bucketable)
     else raise ArgumentError, "Unknown bucketable type: #{bucketable.class}"
     end
   end
 
-  def render_bullet(bullet, draggable: false, monthly_bucket: false)
-    render 'bullets/bullet', bullet: bullet, draggable: draggable, monthly_bucket: monthly_bucket
+  def render_bullet(bullet, draggable: false)
+    render 'bullets/bullet', bullet: bullet, draggable: draggable
   end
 
   def render_monthly_bucket_bullet(bullet)
-    render_bullet(bullet, draggable: true, monthly_bucket: true)
+    render_bullet(bullet, draggable: true)
   end
 
   def monthly_bucket_composer_frame_id(pops_on)
