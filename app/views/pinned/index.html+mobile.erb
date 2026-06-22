@@ -66,6 +66,12 @@
     <% next unless bucket %>
     <% bucket_bullets = Current.user.bullets.where(bucket_id: bucket.id).includes(bucket: :bucketable).order(updated_at: :desc) %>
     <% next if bucket_bullets.none? %>
+    <% path = case bucket.bucketable
+            when Collection then collection_path(bucket.bucketable)
+            when FutureBucket then future_path
+            when MonthlyBucket then future_monthly_bucket_path(bucket.bucketable)
+            else raise ArgumentError, "Unknown bucketable type: #{bucket.bucketable.class}"
+            end %>
 
     <div class="workspace__section">
       <div class="workspace__group-header">
@@ -74,7 +80,7 @@
           <i class="icon workspace__icon" style="--icon-mask: <%= bucket.icon_mask %>" aria-hidden="true"></i>
         <% end %>
         <%= link_to bucket.name,
-              bucket_palette_path(bucket),
+              path,
               class: "workspace__label",
               data: { turbo_frame: "_top" } %>
         <span class="workspace__count"><%= pluralize(bucket_bullets.count, "bullet") %></span>

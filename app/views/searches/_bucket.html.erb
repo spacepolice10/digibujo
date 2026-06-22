@@ -1,5 +1,11 @@
+<% path = case bucket.bucketable
+        when Collection then collection_path(bucket.bucketable)
+        when FutureBucket then future_path
+        when MonthlyBucket then future_monthly_bucket_path(bucket.bucketable)
+        else raise ArgumentError, "Unknown bucketable type: #{bucket.bucketable.class}"
+        end %>
 <li class="layout--list-item" role="option">
-  <%= link_to bucket_palette_path(bucket),
+  <%= link_to path,
         class: "bucket--list-item-link",
         data: {
           turbo_frame: "_top",

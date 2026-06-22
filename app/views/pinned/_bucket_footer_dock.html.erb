@@ -1,5 +1,11 @@
+<% path = case bucket.bucketable
+        when Collection then collection_path(bucket.bucketable)
+        when FutureBucket then future_path
+        when MonthlyBucket then future_monthly_bucket_path(bucket.bucketable)
+        else raise ArgumentError, "Unknown bucketable type: #{bucket.bucketable.class}"
+        end %>
 <div class="pinned--dock">
-  <%= link_to bucket_palette_path(bucket),
+  <%= link_to path,
         class: ["pill", "pinned--summary", "pinned--bucket-summary", bucket.colour.present? ? "pill--#{bucket.colour}" : nil].compact.join(" "),
         data: { turbo_frame: "_top" } do %>
     <span class="bucket--list-item-marker" data-bucket-colour="<%= bucket.colour %>" aria-hidden="true">
