@@ -4,7 +4,9 @@
   <% end %>
 <% else %>
   <% @bullets.each do |bullet| %>
-    <%= render partial: "bullets/turbo_stream_update", formats: :html, locals: { bullet: bullet } %>
+    <%= turbo_stream.replace_all bullet do %>
+      <%= render "bullets/bullet", bullet: bullet %>
+    <% end %>
   <% end %>
 
   <%= turbo_stream.update "pinned_bullets_dock",

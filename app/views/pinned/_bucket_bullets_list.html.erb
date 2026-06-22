@@ -25,6 +25,6 @@
 </div>
 <div class="layout--list bucket--list">
 <% bullets.each do |bullet| %>
-  <%= render_bullet(bullet) %>
+  <%= render "bullets/bullet", bullet: bullet %>
 <% end %>
 </div>

@@ -25,9 +25,16 @@
           Pin
         <% end %>
       <% end %>
-      <%= button_to bullet_publish_path(@bullet), method: :patch, class: "button--secondary" do %>
-        <i class="icon" style="--icon-mask: var(--icon-link)" aria-hidden="true"></i>
-        <%= @bullet.published? ? "Unpublish" : "Publish" %>
+      <% if @bullet.published? %>
+        <%= button_to publish_path, method: :delete, params: { bullet_ids: @bullet.id }, class: "button--secondary" do %>
+          <i class="icon" style="--icon-mask: var(--icon-link)" aria-hidden="true"></i>
+          Unpublish
+        <% end %>
+      <% else %>
+        <%= button_to publish_path, method: :post, params: { bullet_ids: @bullet.id }, class: "button--secondary" do %>
+          <i class="icon" style="--icon-mask: var(--icon-link)" aria-hidden="true"></i>
+          Publish
+        <% end %>
       <% end %>
       <%= button_to bullet_path(@bullet), method: :delete, class: "button--secondary button--danger", form: { data: { turbo_confirm: "Are you sure?" } } do %>
         <i class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></i>

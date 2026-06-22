@@ -11,14 +11,6 @@ module ApplicationHelper
     end
   end
 
-  def render_bullet(bullet, draggable: false)
-    render 'bullets/bullet', bullet: bullet, draggable: draggable
-  end
-
-  def render_monthly_bucket_bullet(bullet)
-    render_bullet(bullet, draggable: true)
-  end
-
   def monthly_bucket_composer_frame_id(pops_on)
     pops_on.present? ? "composer_#{pops_on.to_date.iso8601}" : "composer_unplanned"
   end

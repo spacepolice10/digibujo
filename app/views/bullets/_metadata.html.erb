@@ -42,7 +42,7 @@
         <% if bucket.bucketable_type == "MonthlyBucket" %>
           <% monthly_bucket_hint_id = dom_id(bullet, "hint_monthly_bucket_#{bucket.id}") %>
           <% monthly_bucket_anchor = "--hint-#{bullet.id}-monthly_bucket-#{bucket.id}" %>
-          <%= link_to monthly_bucket_path(bucketable),
+          <%= link_to future_monthly_bucket_path(bucketable),
                 class: ["pill", bucket.colour.present? ? "pill--#{bucket.colour}" : nil].compact.join(" "),
                 interestfor: monthly_bucket_hint_id,
                 style: "anchor-name: #{monthly_bucket_anchor}",

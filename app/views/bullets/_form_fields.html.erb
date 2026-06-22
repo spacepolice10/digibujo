@@ -1,5 +1,5 @@
 <%# locals: (f:, bullet:, submitted_attributes: {}, editing: false) %>
-<% editor_value = bullet.editor_content %>
+<% editor_value = bullet.editor_content_for_form %>
 <% expand_dialog_id = dom_id(bullet, :expand) %>
 <% type_name = bullet.bulletable_type.presence || Bullet::DEFAULT_COMPOSER_TYPE %>
 <% bulletable_form = bullet.bulletable || type_name.constantize.new %>
@@ -88,17 +88,6 @@
             <span class="mood_marker" title="<%= name.to_s.humanize %>" aria-hidden="true"><%= emoji %></span>
           </label>
         <% end %>
-      </div>
-      <span class="bullet-form-note-divider" aria-hidden="true"></span>
-      <div class="flag-picker">
-        <label class="flag-option" title="Research">
-          <%= nf.check_box :awaits_research, class: "utilities--sr-only" %>
-          <span class="bullet-form-note-flag" aria-hidden="true">🔬</span>
-        </label>
-        <label class="flag-option" title="Idea">
-          <%= nf.check_box :idea, class: "utilities--sr-only" %>
-          <span class="bullet-form-note-flag" aria-hidden="true">💡</span>
-        </label>
       </div>
     <% end %>
   </div>

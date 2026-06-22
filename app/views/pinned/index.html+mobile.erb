@@ -12,7 +12,7 @@
         <span class="workspace__count"><%= pluralize(pinned_bullets.count, "bullet") %></span>
       </div>
       <% pinned_bullets.each do |bullet| %>
-        <%= render_bullet(bullet) %>
+        <%= render "bullets/bullet", bullet: bullet %>
       <% end %>
     </div>
   <% end %>
@@ -34,7 +34,7 @@
         <span class="workspace__count"><%= pluralize(project_bullets.count, "bullet") %></span>
       </div>
       <% project_bullets.each do |bullet| %>
-        <%= render_bullet(bullet) %>
+        <%= render "bullets/bullet", bullet: bullet %>
       <% end %>
     </div>
   <% end %>
@@ -56,7 +56,7 @@
         <span class="workspace__count"><%= pluralize(person_bullets.count, "bullet") %></span>
       </div>
       <% person_bullets.each do |bullet| %>
-        <%= render_bullet(bullet) %>
+        <%= render "bullets/bullet", bullet: bullet %>
       <% end %>
     </div>
   <% end %>
@@ -80,7 +80,7 @@
         <span class="workspace__count"><%= pluralize(bucket_bullets.count, "bullet") %></span>
       </div>
       <% bucket_bullets.each do |bullet| %>
-        <%= render_bullet(bullet) %>
+        <%= render "bullets/bullet", bullet: bullet %>
       <% end %>
     </div>
   <% end %>

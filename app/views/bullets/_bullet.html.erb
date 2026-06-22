@@ -1,4 +1,4 @@
-<%# locals: (bullet:, draggable: false) %>
+<%# locals: (bullet:) %>
 <turbo-frame id="<%= dom_id(bullet) %>"
              class="bullet"
              data-bullet-type="<%= bullet.bulletable_type.downcase %>"
@@ -6,12 +6,6 @@
              <% if bullet.migrated? %>data-bullet-migrated<% end %>
              <% if bullet.completed? %>
              data-bullet-completed
-             <% end %>
-             <% if draggable %>
-             draggable="true"
-             data-controller="bullet-drag"
-             data-bullet-drag-id-value="<%= bullet.id %>"
-             data-action="dragstart->bullet-drag#dragstart dragend->bullet-drag#dragend"
              <% end %>>
   <div class="bullet--marker-slot">
     <%= render "bullets/marker", bullet: bullet %>
