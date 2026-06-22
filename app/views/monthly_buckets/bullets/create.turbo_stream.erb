@@ -1,3 +1,4 @@
-<%= turbo_stream.before(params.dig(:bullet, :composer_id).presence || monthly_bucket_composer_frame_id(@bullet.pops_on)) do %>
+<% composer_id = params.dig(:bullet, :composer_id).presence || (@bullet.pops_on.present? ? "composer_#{@bullet.pops_on.to_date.iso8601}" : "composer_unplanned") %>
+<%= turbo_stream.before(composer_id) do %>
   <%= render "monthly_buckets/bullets/bullet", bullet: @bullet %>
 <% end %>

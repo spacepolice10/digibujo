@@ -1,10 +1,10 @@
-<% composer_frame_id = monthly_bucket_composer_frame_id(@bullet.pops_on) %>
+<% composer_frame_id = @bullet.pops_on.present? ? "composer_#{@bullet.pops_on.to_date.iso8601}" : "composer_unplanned" %>
 <turbo-frame id="<%= composer_frame_id %>"
-             class="<%= monthly_bucket_composer_frame_class(@bullet.pops_on) %>"
+             class="bullet_pops_on_<%= @bullet.pops_on %>"
              data-controller="composer-frame">
   <%= render "bullets/bulletable_form",
         bullet: @bullet,
-        url: monthly_bucket_bullets_path(@monthly_bucket),
+        url: future_monthly_bucket_bullets_path(@monthly_bucket),
         attributes: {
           pops_on: @bullet.pops_on,
           bucket_id: @bullet.bucket_id,

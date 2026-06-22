@@ -10,12 +10,4 @@ module ApplicationHelper
     else raise ArgumentError, "Unknown bucketable type: #{bucketable.class}"
     end
   end
-
-  def monthly_bucket_composer_frame_id(pops_on)
-    pops_on.present? ? "composer_#{pops_on.to_date.iso8601}" : "composer_unplanned"
-  end
-
-  def monthly_bucket_composer_frame_class(pops_on)
-    "bullet_pops_on_#{pops_on}"
-  end
 end
