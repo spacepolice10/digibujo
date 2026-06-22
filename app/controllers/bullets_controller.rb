@@ -62,7 +62,7 @@ class BulletsController < ApplicationController
     params.require(:bullet).permit(
       :body, :rich_body, :pops_on, :bulletable_type, :bucket_id, :composer_id, :indented,
       attachments: [],
-      bulletable_attributes: %i[mood awaits_research idea]
+      bulletable_attributes: %i[mood]
     )
   end
 

@@ -11,7 +11,7 @@ module MonthlyBuckets
     end
 
     test 'new renders bullet form inside matching composer frame' do
-      get new_monthly_bucket_bullet_path(@monthly_bucket),
+      get new_future_monthly_bucket_bullet_path(@monthly_bucket),
           headers: { 'Turbo-Frame' => 'composer_unplanned' }
 
       assert_response :success
@@ -23,7 +23,7 @@ module MonthlyBuckets
       day = Date.current.beginning_of_month + 2.days
       frame_id = "composer_#{day.iso8601}"
 
-      get new_monthly_bucket_bullet_path(@monthly_bucket, pops_on: day.iso8601, bulletable_type: 'Event'),
+      get new_future_monthly_bucket_bullet_path(@monthly_bucket, pops_on: day.iso8601, bulletable_type: 'Event'),
           headers: { 'Turbo-Frame' => frame_id }
 
       assert_response :success
@@ -35,7 +35,7 @@ module MonthlyBuckets
 
     test 'create prepends bullet before composer frame' do
       assert_difference -> { @user.bullets.count }, 1 do
-        post monthly_bucket_bullets_path(@monthly_bucket),
+        post future_monthly_bucket_bullets_path(@monthly_bucket),
              params: {
                bullet: {
                  body: 'Brain dump idea',

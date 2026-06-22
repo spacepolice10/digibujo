@@ -256,25 +256,14 @@
     display: none;
   }
 
-  .bullet-form-note-options .mood-picker,
-  .bullet-form-note-options .flag-picker {
+  .bullet-form-note-options .mood-picker {
     display: flex;
     align-items: center;
     gap: var(--spacing-horizontal-half);
     flex: 0 0 auto;
   }
 
-  .bullet-form-note-divider {
-    display: block;
-    width: 1px;
-    height: var(--icon-size-subtle);
-    background: var(--color-stroke-base);
-    flex-shrink: 0;
-    margin-inline: var(--spacing-horizontal-half);
-  }
-
-  .bullet-form-note-options .mood-option,
-  .bullet-form-note-options .flag-option {
+  .bullet-form-note-options .mood-option {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -289,15 +278,13 @@
     opacity: var(--opacity-half);
   }
 
-  .bullet-form-note-options .mood-option:has(input:checked),
-  .bullet-form-note-options .flag-option:has(input:checked) {
+  .bullet-form-note-options .mood-option:has(input:checked) {
     opacity: 1;
     border-color: var(--color-fg-base);
     background: var(--color-bg-base);
   }
 
-  .bullet-form-note-options .mood_marker,
-  .bullet-form-note-options .bullet-form-note-flag {
+  .bullet-form-note-options .mood_marker {
     pointer-events: none;
   }
 

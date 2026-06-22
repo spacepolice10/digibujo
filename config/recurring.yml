@@ -10,8 +10,8 @@
 #     schedule: at 5am every day
 
 production:
-  sweep_cards:
-    class: SweepCardsJob
+  clean_soft_deleted_records:
+    class: CleanSoftDeletedRecordsJob
     schedule: every day at 2am
   sweep_login_codes:
     class: SweepLoginCodesJob

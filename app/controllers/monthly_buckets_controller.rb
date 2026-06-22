@@ -41,7 +41,7 @@ class MonthlyBucketsController < ApplicationController
         "created",
         metadata: { "bucketable_type" => @monthly_bucket.bucket.bucketable_type }
       )
-      redirect_to monthly_bucket_path(@monthly_bucket), notice: 'Monthly spread created'
+      redirect_to future_monthly_bucket_path(@monthly_bucket), notice: 'Monthly spread created'
     else
       @occupied_months = occupied_months
       render :new, status: :unprocessable_entity

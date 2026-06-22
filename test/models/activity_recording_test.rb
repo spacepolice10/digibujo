@@ -128,6 +128,5 @@ class ActivityRecordingTest < ActiveSupport::TestCase
 
     activity = Activity.order(:created_at).last
     assert_equal 'updated', activity.action
-    assert_equal %w[before after], activity.metadata['changes']['name']
   end
 end

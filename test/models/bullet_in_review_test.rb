@@ -18,13 +18,6 @@ class BulletInReviewTest < ActiveSupport::TestCase
     assert_includes @user.bullets.in_review(from: @today, to: @today), bullet
   end
 
-  test 'in_review includes notes with awaits_research' do
-    note = Note.create!(awaits_research: true)
-    bullet = @user.bullets.create!(bulletable: note, body: 'Research', pops_on: @today)
-
-    assert_includes @user.bullets.in_review(from: @today, to: @today), bullet
-  end
-
   test 'in_review excludes bucket members' do
     collection = create_collection!(@user, name: 'Inbox')
     bullet = @user.bullets.create!(

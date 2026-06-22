@@ -2,25 +2,30 @@
 
 module Bullets
   class PublishesController < ApplicationController
-    before_action :set_bullet
+    include PrepareBullets
 
-    def update
-      if @bullet.published?
-        @bullet.unpublish!
-      else
-        @bullet.publish!
+    before_action :prepare_bullets
+
+    def create
+      Bullet.transaction do
+        @bullets.lock.find_each(&:publish!)
       end
 
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to @bullet }
+        format.html { redirect_to @bullets.first }
       end
     end
 
-    private
+    def destroy
+      Bullet.transaction do
+        @bullets.lock.find_each(&:unpublish!)
+      end
 
-    def set_bullet
-      @bullet = Current.user.bullets.find(params[:bullet_id])
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to @bullets.first }
+      end
     end
   end
 end

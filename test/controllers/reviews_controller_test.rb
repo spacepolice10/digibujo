@@ -103,43 +103,4 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
-  test 'show includes archive all when inbox has bullets' do
-    @user.bullets.create!(bulletable: Task.create!, body: 'To archive', pops_on: @today)
-
-    get review_path(from: @today.iso8601, to: @today.iso8601)
-
-    assert_response :success
-    assert_select '#review-inbox-footer button', text: /Archive all/
-  end
-
-  test 'show hides archive all when inbox is empty' do
-    get review_path(from: @today.iso8601, to: @today.iso8601)
-
-    assert_response :success
-    assert_select '#review-inbox-footer', count: 0
-  end
-
-  test 'archive all archives every in-review bullet for the period' do
-    in_period = @user.bullets.create!(bulletable: Task.create!, body: 'In period', pops_on: @today)
-    other_day = @user.bullets.create!(bulletable: Note.create!, body: 'Other day', pops_on: @today - 2.days)
-
-    post archive_all_review_path(from: @today.iso8601, to: @today.iso8601)
-
-    assert_redirected_to review_path(from: @today.iso8601, to: @today.iso8601)
-    assert in_period.reload.archived?
-    assert_not other_day.reload.archived?
-  end
-
-  test 'archive all responds with turbo stream' do
-    bullet = @user.bullets.create!(bulletable: Task.create!, body: 'Stream archive', pops_on: @today)
-
-    post archive_all_review_path(from: @today.iso8601, to: @today.iso8601),
-         headers: { Accept: 'text/vnd.turbo-stream.html' }
-
-    assert_response :success
-    assert bullet.reload.archived?
-    assert_match 'turbo-stream action="update" target="paginated-records"', response.body
-    assert_match 'turbo-stream action="update" target="review-amount-in-review"', response.body
-    assert_match 'turbo-stream action="remove" target="review-inbox-footer"', response.body
-  end
 end

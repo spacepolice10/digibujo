@@ -33,6 +33,20 @@
     gap: calc(var(--spacing-horizontal-half) / 2);
   }
 
+  .recurrency--toggle-form {
+    margin: 0;
+    padding: 0;
+    display: inline-flex;
+  }
+
+  .recurrency--toggle-form-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+
   .recurrency--chip {
     position: relative;
     padding: 0;
@@ -41,6 +55,7 @@
 
   .recurrency--chip-neutral {
     background: var(--color-bg-subtle);
+    border-color: var(--color-stroke-base);
   }
 
   .recurrency--chip-image {

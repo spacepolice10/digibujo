@@ -1,94 +1,114 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  # Authentication
-  resource :session, only: %i[new create show destroy] do
+  # --- System ---
+  get "up", to: "rails/health#show", as: :rails_health_check
+  get "manifest", to: "rails/pwa#manifest", as: :pwa_manifest
+  get "service-worker", to: "rails/pwa#service_worker", as: :pwa_service_worker
+
+  root "daylogs#show"
+
+  # --- Authentication ---
+  resource :session do
     scope module: :sessions do
       resource :code, only: %i[new create]
     end
   end
+
   resource :signup, only: %i[new create] do
     scope module: :signups do
       resource :completion, only: %i[new create]
     end
   end
 
-  # Logs (?date=YYYY-MM-DD for a specific day)
-  resource :daylog, only: :show, controller: 'daylogs'
-  get 'monthly_bucket', to: 'monthly_buckets#current', as: :current_monthly_bucket
-  resources :monthly_buckets, only: %i[show new create] do
-    scope module: :monthly_buckets do
-      resources :bullets, only: %i[new create]
+  # --- Logs ---
+  resource :daylog, only: :show, controller: "daylogs"
+
+  get "monthly_bucket", to: "monthly_buckets#current", as: :current_monthly_bucket
+
+  # Plural :futures supports multiple future_buckets later; show/months stay on /future for now.
+  get "future", to: "futures#show", as: :future
+  post "future/months", to: "futures#months", as: :months_future
+
+  scope path: "future", as: :future do
+    resources :monthly_buckets, controller: "monthly_buckets" do
+      scope module: :monthly_buckets do
+        resources :bullets, only: %i[new create]
+      end
     end
   end
+
+  # --- Tags ---
+  scope "projects", module: :projects, as: :projects do
+    resource :pin, only: %i[create destroy]
+  end
+
+  scope module: :projects, path: "projects", as: :project do
+    resources :suggestions
+  end
+
+  resources :projects
+
+  scope "people", module: :people, as: :people do
+    resource :pin, only: %i[create destroy]
+  end
+
+  scope module: :people, path: "people", as: :person do
+    resources :suggestions
+  end
+
+  resources :people
+
+  # --- Bullets ---
+  scope "bullets", module: :bullets do
+    resource :pin, only: %i[create destroy]
+    resource :archive, only: %i[create destroy]
+    resource :collect
+    resource :pop
+    resource :complete, only: %i[create destroy]
+    resource :publish, only: %i[create destroy]
+    resource :export
+  end
+
+  resources :bullets, except: :index
+
+  # --- Buckets & collections ---
   resources :collections
 
-  # Bullet
-  scope 'bullets', module: :bullets do
-    resource :pin
-    resource :archive,  only: %i[create destroy]
-    resource :collect,  only: %i[new create destroy]
-    resource :pop,      only: %i[new create destroy]
-    resource :complete, only: %i[create destroy]
-    resource :export,   only: :show
+  scope "buckets", module: :buckets, as: :buckets do
+    resource :pin, only: %i[create destroy]
   end
-  resources :bullets, except: :index do
-    scope module: :bullets do
-      resource :publish, only: :update
+
+  resources :buckets, only: :show
+
+  # --- Recurrencies ---
+  resources :recurrencies do
+    scope module: :recurrencies do
+      resource :completion, only: %i[create destroy]
     end
   end
 
-  resource :search, only: :show do
-    resource :selection, only: :create, controller: 'searches/selections'
-  end
-  resource :menu, only: :show, controller: 'menu'
-  resources :notes, only: :index
-  resources :buckets, only: :show do
-    resource :side_note, only: :update, module: :buckets
-  end
-  resource :home, only: :show, controller: 'home'
+  # --- Home & navigation ---
+  resource :home, controller: "home"
+
   scope module: :home do
-    post 'home/sections/:id/expand',   to: 'sections#expand',   as: :home_expand_section
-    post 'home/sections/:id/collapse', to: 'sections#collapse', as: :home_collapse_section
-  end
-  resource :future, only: :show, controller: 'futures' do
-    post :months, on: :collection
-  end
-  scope 'buckets', module: :buckets, as: 'buckets' do
-    resource :pin, only: %i[create destroy]
-  end
-  get 'projects/suggestions', to: 'projects/suggestions#index', as: :project_suggestions
-  scope 'projects', module: :projects, as: 'projects' do
-    resource :pin, only: %i[create destroy]
-  end
-  resources :projects
-  get 'people/suggestions', to: 'people/suggestions#index', as: :person_suggestions
-  scope 'people', module: :people, as: 'people' do
-    resource :pin, only: %i[create destroy]
-  end
-  resources :people, only: %i[index new create show edit update destroy]
-
-  resources :recurrencies do
-    resource :completion, only: %i[create destroy], module: :recurrencies
+    post "home/sections/:id/expand", to: "sections#expand", as: :home_expand_section
+    post "home/sections/:id/collapse", to: "sections#collapse", as: :home_collapse_section
   end
 
-  # Views
-  resource :review, only: :show, controller: 'reviews' do
-    post :archive_all
+  resource :menu, controller: "menu"
+  resource :search do
+    scope module: :searches do
+      resource :selection, only: :create
+    end
   end
-  resources :activities, only: :index
-  resources :pinned,    only: :index
-  resources :archived,  only: :index
 
-  # Publishing
-  resources :published, param: :code
+  # --- Workspaces ---
+  resource :review, controller: "reviews"
+  resources :activities
+  resources :pinned
+  resources :archived
 
-  # Progressive Web App (manifest + scaffolded worker from app/views/pwa/*)
-  get 'manifest', to: 'rails/pwa#manifest', as: :pwa_manifest
-  get 'service-worker', to: 'rails/pwa#service_worker', as: :pwa_service_worker
-
-  # Health check
-  get 'up' => 'rails/health#show', as: :rails_health_check
-
-  root 'daylogs#show'
+  # --- Publishing ---
+  resources :published, param: :code, only: %i[index show]
 end

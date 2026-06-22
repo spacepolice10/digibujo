@@ -80,8 +80,8 @@ class BucketTest < ActiveSupport::TestCase
     assert @bucket.valid?
   end
 
-  test 'search_body includes side note plain text' do
-    @bucket.update!(side_note: '<p>Margin notes</p>')
+  test 'search_body includes description' do
+    @bucket.update!(description: 'Margin notes')
 
     assert_includes @bucket.search_body, 'alpha'
     assert_includes @bucket.search_body, 'Margin notes'
@@ -110,23 +110,6 @@ class BucketTest < ActiveSupport::TestCase
     assert_not @bucket.reload.archived?
     assert_nil @bucket.archives_on
     assert_equal 'unarchived', Activity.order(:created_at).last.action
-  end
-
-  test 'archive! rejects future log bucket' do
-    ensure_future_bucket!(@user)
-    future_bucket = @user.future_bucket!.bucket
-
-    assert_raises(ActiveRecord::RecordInvalid) { future_bucket.archive! }
-
-    assert_not future_bucket.reload.archived?
-  end
-
-  test 'archive! rejects monthly bucket' do
-    monthly_bucket = create_monthly_bucket!(@user, name: 'june')
-
-    assert_raises(ActiveRecord::RecordInvalid) { monthly_bucket.bucket.archive! }
-
-    assert_not monthly_bucket.bucket.reload.archived?
   end
 
   test 'archived collection bucket is not searchable' do

@@ -85,10 +85,9 @@ class ProjectableTest < ActiveSupport::TestCase
     assert_not_includes html, 'BEGIN app/views/layouts'
   end
 
-  test 'editor_content hydrates project attachments for lexxy' do
+  test 'editor_content_for_form hydrates project attachments for lexxy' do
     @bullet.tag_project!(project_id: @project.id)
-    content = @bullet.editor_content
-    hydrated = ApplicationController.helpers.send(:render_custom_attachments_in, content)
+    hydrated = @bullet.editor_content_for_form
 
     assert_includes hydrated, 'content="'
     assert_includes hydrated, @project.name

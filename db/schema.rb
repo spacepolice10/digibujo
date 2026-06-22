@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_21_140000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_22_140000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -69,6 +69,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_21_140000) do
     t.string "bucketable_type", null: false
     t.string "colour"
     t.datetime "created_at", null: false
+    t.text "description"
     t.string "icon"
     t.string "name", null: false
     t.boolean "pinned", default: false, null: false
@@ -136,7 +137,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_21_140000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index ["user_id"], name: "index_future_buckets_on_user_id", unique: true
+    t.index ["user_id"], name: "index_future_buckets_on_user_id"
   end
 
   create_table "login_codes", force: :cascade do |t|
@@ -161,8 +162,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_21_140000) do
   end
 
   create_table "notes", force: :cascade do |t|
-    t.boolean "awaits_research", default: false, null: false
-    t.boolean "idea", default: false, null: false
     t.integer "mood"
   end
 

@@ -74,7 +74,6 @@ export default class extends Controller {
 | `hotkey` | Document-wide hotkeys (`data-hotkey="cmd+k"`); ignores inputs, contenteditable, lexxy-editor |
 | `menu` | Menu shell |
 | `pop-drop` | Drop target for pop intent (monthly spread + review week strip) |
-| `recurrency-check` | Toggle recurrency completion for a date (POST/DELETE completion, turbo-stream) |
 | `monthly-tabs` | Mobile monthly spread tabs (days / recurrency / unplanned) |
 | `collect-drop` | Drop target for collect intent on review collections panel |
 | `review-row` | Mobile review row actions (collect picker sheet) |
@@ -82,7 +81,6 @@ export default class extends Controller {
 | `scroll` | Scroll position tracking |
 | `search` | Search field behavior |
 | `section` | Section open/close persistence |
-| `side-note` | Sticky-note trigger opens dialog with bucket side-note Lexxy editor; debounced autosave via `@rails/request.js` |
 | `timezone-cookie` | Sets timezone cookie (eager-loaded) |
 | `toasts` | Toast queue |
 | `zoom` | Pinch/scroll zoom |

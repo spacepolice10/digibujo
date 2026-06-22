@@ -12,6 +12,11 @@
     padding-inline: var(--spacing-horizontal-half);
   }
 
+  .bucket--description {
+    margin-block: 0 var(--spacing-vertical);
+    color: var(--color-fg-subtle);
+  }
+
   .bucket--list .bullet-composer {
     padding-inline: var(--spacing-horizontal-half);
   }

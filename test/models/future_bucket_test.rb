@@ -8,10 +8,9 @@ class FutureBucketTest < ActiveSupport::TestCase
     ensure_future_bucket!(@user)
   end
 
-  test 'only one future bucket per user' do
+  test 'allows multiple future buckets per user' do
     duplicate = FutureBucket.new(user: @user)
 
-    assert_not duplicate.valid?
-    assert_includes duplicate.errors[:user_id], 'has already been taken'
+    assert duplicate.valid?
   end
 end

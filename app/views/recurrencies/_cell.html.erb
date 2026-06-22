@@ -1,18 +1,7 @@
 <%# locals: (recurrency:, date:, tracker:) %>
 <% scheduled = recurrency.scheduled_on?(date) %>
-<% completed = tracker.completed?(recurrency, date) %>
-<td id="<%= dom_id(recurrency, "cell_#{date.iso8601}") %>"
-    class="recurrency--grid-cell<%= " recurrency--grid-cell-today" if date == Date.current %><%= " recurrency--grid-cell-muted" unless scheduled %>">
+<td class="recurrency--grid-cell<%= " recurrency--grid-cell-today" if date == Date.current %><%= " recurrency--grid-cell-muted" unless scheduled %>">
   <% if scheduled %>
-    <button type="button"
-            class="recurrency--cell<%= " recurrency--cell-done" if completed %>"
-            data-controller="recurrency-check"
-            data-recurrency-check-complete-url-value="<%= recurrency_completion_path(recurrency) %>"
-            data-recurrency-check-date-value="<%= date.iso8601 %>"
-            data-recurrency-check-completed-value="<%= completed %>"
-            data-action="recurrency-check#toggle"
-            aria-label="<%= completed ? "Mark #{recurrency.name} incomplete on #{date}" : "Mark #{recurrency.name} complete on #{date}" %>"
-            aria-pressed="<%= completed %>">
-    </button>
+    <%= render "recurrencies/toggle", recurrency: recurrency, date: date, tracker: tracker, dom_key: "cell", appearance: :cell %>
   <% end %>
 </td>

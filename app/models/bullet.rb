@@ -2,7 +2,7 @@
 
 class Bullet < ApplicationRecord
   include Migratable, Collectable, Poppable, Archivable, Pinnable, Publishable, Projectable, Personable,
-          RichBodySanitizable, Searchable, ActivityTrackable
+          BodyTagSyncable, RichBodySanitizable, Searchable, ActivityTrackable
 
   scope :chronological, -> { order(created_at: :asc) }
   scope :pops_on_date, lambda { |date|
@@ -16,7 +16,6 @@ class Bullet < ApplicationRecord
 
   belongs_to :user
   belongs_to :bucket, optional: true
-  has_many :search_selections, as: :searchable, dependent: :destroy, class_name: "Search::Selection"
 
   delegated_type :bulletable, types: %w[Task Note Event Title], dependent: :destroy, optional: true
 

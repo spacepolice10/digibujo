@@ -2,7 +2,7 @@
 
 class Activity < ApplicationRecord
   SUBJECT_ACTIONS = {
-    "Bullet" => %w[
+    'Bullet' => %w[
       updated
       collected
       popped
@@ -14,24 +14,24 @@ class Activity < ApplicationRecord
       person_tagged
       person_untagged
     ].freeze,
-    "Bucket" => %w[created updated pinned unpinned archived unarchived].freeze
+    'Bucket' => %w[created updated pinned unpinned archived unarchived].freeze
   }.freeze
 
-  ACTION_ICONS = {
-    "updated" => "pencil",
-    "collected" => "arrow-left",
-    "popped" => "arrow-up",
-    "archived" => "archive",
-    "completed" => "check",
-    "uncompleted" => "square",
-    "project_tagged" => "tag",
-    "project_untagged" => "tag",
-    "person_tagged" => "face",
-    "person_untagged" => "face",
-    "created" => "plus",
-    "pinned" => "pin",
-    "unpinned" => "pin",
-    "unarchived" => "archive"
+  ACTION_ICON_MAPPINGS = {
+    'updated' => 'pencil',
+    'collected' => 'arrow-left',
+    'popped' => 'arrow-up',
+    'archived' => 'archive',
+    'completed' => 'check',
+    'uncompleted' => 'square',
+    'project_tagged' => 'tag',
+    'project_untagged' => 'tag',
+    'person_tagged' => 'face',
+    'person_untagged' => 'face',
+    'created' => 'plus',
+    'pinned' => 'pin',
+    'unpinned' => 'pin',
+    'unarchived' => 'archive'
   }.freeze
 
   belongs_to :user
@@ -45,10 +45,10 @@ class Activity < ApplicationRecord
   end
 
   def icon_mask
-    "var(--icon-#{ACTION_ICONS.fetch(action)})"
+    "var(--icon-#{ACTION_ICON_MAPPINGS.fetch(action)})"
   end
 
   def migration_kind
-    metadata["kind"]
+    metadata['kind']
   end
 end

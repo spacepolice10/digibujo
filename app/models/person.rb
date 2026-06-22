@@ -6,7 +6,6 @@ class Person < ApplicationRecord
   belongs_to :user
   has_many :bullet_people, dependent: :destroy
   has_many :bullets, through: :bullet_people
-  has_many :search_selections, as: :searchable, dependent: :destroy, class_name: "Search::Selection"
   has_many :handles, -> { order(:position, :id) }, class_name: "Person::Handle", dependent: :destroy, inverse_of: :person
   has_one_attached :avatar
 

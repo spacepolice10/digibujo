@@ -1,6 +1,6 @@
 <%# locals: (monthly_bucket:) %>
 <li id="<%= dom_id(monthly_bucket.bucket, :list_item) %>" class="layout--list-item">
-  <%= link_to monthly_bucket_path(monthly_bucket), data: { turbo_frame: "_top" }, class: "bucket--list-item-link" do %>
+  <%= link_to future_monthly_bucket_path(monthly_bucket), data: { turbo_frame: "_top" }, class: "bucket--list-item-link" do %>
     <div class="bucket--list-item-name">
       <div class="bucket--list-item-marker" data-bucket-colour="<%= monthly_bucket.colour %>" aria-hidden="true">
         <% if monthly_bucket.icon_path %>

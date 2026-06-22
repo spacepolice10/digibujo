@@ -4,7 +4,7 @@
       <i class="icon" style="--icon-mask: var(--icon-book)" aria-hidden="true"></i>
       Add collection
     <% end %>
-    <%= link_to new_monthly_bucket_path, class: "button--secondary layout--rail-action", data: { turbo_frame: "_top" } do %>
+    <%= link_to new_future_monthly_bucket_path, class: "button--secondary layout--rail-action", data: { turbo_frame: "_top" } do %>
       <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
       Add monthly log
     <% end %>
@@ -53,7 +53,7 @@
         <% if @future_monthly_buckets.any? %>
           <% @future_monthly_buckets.each do |monthly_bucket| %>
             <li class="layout--list-item bucket--list-item-child">
-              <%= link_to monthly_bucket_path(monthly_bucket),
+              <%= link_to future_monthly_bucket_path(monthly_bucket),
                     class: "bucket--list-item-link bucket--list-item-child-link",
                     data: { bucket_colour: monthly_bucket.colour } do %>
                 <div class="bucket--list-item-name">

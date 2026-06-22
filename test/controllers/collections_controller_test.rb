@@ -11,7 +11,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
   test 'create records bucket created activity' do
     assert_difference -> { Activity.count }, 1 do
       post collections_path, params: {
-        collection: { name: 'Inbox', colour: 'teal', icon: 'book' }
+        collection: { name: 'Inbox', colour: 'teal', icon: 'book', description: 'Things to sort' }
       }
     end
 
@@ -19,6 +19,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'created', activity.action
     assert_equal 'Bucket', activity.subject_type
     assert_equal 'Collection', activity.metadata['bucketable_type']
+    assert_equal 'Things to sort', Collection.last.bucket.description
     assert_redirected_to collection_path(Collection.last)
   end
 

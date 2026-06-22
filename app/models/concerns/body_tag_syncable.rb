@@ -1,12 +1,16 @@
 # frozen_string_literal: true
 
+module BodyTagSyncable
+  extend ActiveSupport::Concern
+end
+
 ActiveSupport.on_load(:action_text_rich_text) do
   after_save :sync_bullet_tags_from_body, if: :bullet_body_changed?
 
   private
 
   def bullet_body_changed?
-    record.is_a?(Bullet) && name == 'body' && saved_change_to_body?
+    record.is_a?(Bullet) && name == "body" && saved_change_to_body?
   end
 
   def sync_bullet_tags_from_body

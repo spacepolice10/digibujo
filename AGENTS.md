@@ -118,7 +118,7 @@ Per-user settings live in a dedicated `user_settings` table (one row per user), 
 | `Note`  | `Bulletable`                   | Long-form/reference entry |
 | `Event` | `Bulletable`                   | Temporal (not completable) |
 
-Bullets store three content layers: **`body`** (Action Text, Lexxy preset `inline` — short log line with `#` / `@` prompts), optional **`rich_body`** (Action Text, preset `expand` — code, files, markdown only; no `#` / `@` prompts and no tag sync), and **`attachments`** (`has_many_attached` — direct uploads via `bullet-composer` Stimulus, rendered in `_attachments.html.erb`, not inline in `body`). Rendered rich text uses `.rich-text-content` alongside Lexxy's `.lexxy-content`. **Project tags** use `bullet_projects` → `projects`; `Projectable` syncs join rows from `#` attachments in `body` on save (pills inline via `projects/_attachable`). **Person tags** use `bullet_people` → `people`; `Personable` syncs from `@` attachments in `body`. The unified composer (`bullets/_bulletable_form.html.erb`) is opened via **Add bullet**; type (Task / Note / Event) is chosen with a select (locked on edit). Note-only flags (mood, research, idea) toggle when Note is selected. Expand is always available and submits `rich_body` in the same form (blank `rich_body` is discarded on save). Paste/drop/file-picker on the inline editor are intercepted (`lexxy:file-accept`) and routed to direct attachments. **Bucket membership**: `Bullet` optionally `belongs_to :bucket` for **Collection** and **TimeSpread** only. **`Collectable`** sets or clears `bullets.bucket_id`; bulk collect picks a collection via `POST /bullets/collect` with `bucket_id`. Other intents (`Poppable`, etc.) update `pops_on`, `bucket`, and migration state without type conversion.
+Bullets store three content layers: **`body`** (Action Text, Lexxy preset `inline` — short log line with `#` / `@` prompts), optional **`rich_body`** (Action Text, preset `expand` — code, files, markdown only; no `#` / `@` prompts and no tag sync), and **`attachments`** (`has_many_attached` — direct uploads via `bullet-composer` Stimulus, rendered in `_attachments.html.erb`, not inline in `body`). Rendered rich text uses `.rich-text-content` alongside Lexxy's `.lexxy-content`. **Project tags** use `bullet_projects` → `projects`; `Projectable` syncs join rows from `#` attachments in `body` on save (pills inline via `projects/_attachable`). **Person tags** use `bullet_people` → `people`; `Personable` syncs from `@` attachments in `body`. The unified composer (`bullets/_bulletable_form.html.erb`) is opened via **Add bullet**; type (Task / Note / Event) is chosen with a select (locked on edit). Note-only mood picker toggles when Note is selected. Expand is always available and submits `rich_body` in the same form (blank `rich_body` is discarded on save). Paste/drop/file-picker on the inline editor are intercepted (`lexxy:file-accept`) and routed to direct attachments. **Bucket membership**: `Bullet` optionally `belongs_to :bucket` for **Collection** and **TimeSpread** only. **`Collectable`** sets or clears `bullets.bucket_id`; bulk collect picks a collection via `POST /bullets/collect` with `bucket_id`. Other intents (`Poppable`, etc.) update `pops_on`, `bucket`, and migration state without type conversion.
 
 ### Bullet Status
 `Bullet` has two independent boolean columns: `pinned` and `archived` (both `default: false, null: false`). There is no `status` enum. `Pinnable` adds a `pinned` scope and `pin!` / `unpin!` helpers (used by bullets and buckets; no pin count limit). `Archivable` adds an `archived` scope. The `timeline` scope returns all bullets (`all`) — pinned and archived bullets remain visible in the timeline and are distinguished by icons in the bullet partial.
@@ -135,18 +135,18 @@ Bullets store three content layers: **`body`** (Action Text, Lexxy preset `inlin
 
 **`RecurrencyTracker`** (plain object) loads recurrencies + completions for a date range; exposes `completed?`, `stats` (streak, best streak, total, period %).
 
-**UI:** `GET /recurrencies` (CRUD + show with heatmap/month grid; create/edit form includes colour + icon pickers like collections). Daylog: compact clickable icon chips in the page header (`recurrencies/_header_chips`). Monthly spread: dedicated recurrency column aligned per day via `monthly-bucket--day-band` (recurrency slot + date row share one row); unplanned in the third column. Mobile tabs: days vs unplanned. Toggle: `POST`/`DELETE /recurrencies/:id/completion?date=` (`recurrency-check` Stimulus, turbo-stream). Home rail links to `/recurrencies`.
+**UI:** `GET /recurrencies` (CRUD + show with heatmap/month grid; create/edit form includes colour + icon pickers like collections). Daylog: compact clickable icon chips in the page header (`recurrencies/_header_chips`). Monthly spread: dedicated recurrency column aligned per day via `monthly-bucket--day-band` (recurrency slot + date row share one row); unplanned in the third column. Mobile tabs: days vs unplanned. Toggle: each chip is a `form_with` (`recurrencies/_toggle`) posting to `POST`/`DELETE /recurrencies/:id/completion` with `date` + `dom_key`; turbo-stream replaces only that form. Home rail links to `/recurrencies`.
 
 ### Review
-**`GET /review`** (`ReviewsController#show`, `?from=YYYY-MM-DD&to=YYYY-MM-DD`, defaults to the last 7 days through today) lists timeline bullets for the period: `Bullet.in_review` = `bucket_id` nil, not archived, `pops_on` in range — all types including notes with `awaits_research` / `idea`. Bucket members are excluded (collect = migration off timeline). Migration state is **not** a review filter. Monthly bucket review is a separate future strategy.
+**`GET /review`** (`ReviewsController#show`, `?from=YYYY-MM-DD&to=YYYY-MM-DD`, defaults to the last 7 days through today) lists timeline bullets for the period: `Bullet.in_review` = `bucket_id` nil, not archived, `pops_on` in range — all types. Bucket members are excluded (collect = migration off timeline). Migration state is **not** a review filter. Monthly bucket review is a separate future strategy.
 
-**Review UI:** Desktop (`show.html.erb`, ≥800px) is a 3-column workspace in `review.css`: collections (left, drop → collect via `collect-drop` Stimulus), inbox (center, draggable bullets + bulk-menu, **Archive all** at the bottom), 7-day week strip anchored at `review_to` (right, drop → pop via `pop-drop` with `reviewDrop`). Mobile web (`show.html+mobile.erb`) shows inbox only with per-row actions (`review-row`: tomorrow pop, collect picker sheet, complete/archive) plus bulk-menu; native swipes are out of scope. Drop handlers POST with `X-Requested-With: review-pop-drop` / `review-collect-drop`; controllers return `head :no_content` so the client removes the bullet frame from the inbox.
+**Review UI:** Desktop (`show.html.erb`, ≥800px) is a 3-column workspace in `review.css`: collections (left, drop → collect via `collect-drop` Stimulus), inbox (center, draggable bullets + bulk-menu), 7-day week strip anchored at `review_to` (right, drop → pop via `pop-drop` with `reviewDrop`). Mobile web (`show.html+mobile.erb`) shows inbox only with per-row actions (`review-row`: tomorrow pop, collect picker sheet, complete/archive) plus bulk-menu; native swipes are out of scope. Drop handlers POST with `X-Requested-With: review-pop-drop` / `review-collect-drop`; controllers return `head :no_content` so the client removes the bullet frame from the inbox.
 
 ### Daily log and `pops_on`
 Bullets use `pops_on` (`date`) as the primary day bucket: which daily log page the bullet appears on. `Bullet.pops_on_date(date)` matches bullets for that calendar day per the model rules. The daily log is at `/daylog` (today) or `/daylog?date=YYYY-MM-DD`; pass `date:` to `daylog_path` when linking to another day.
 
 ### Monthly log spread
-`MonthlyBucket` is a `bucketable` type (thin model + `Bucketable` + `Periodable`). The spread period lives on the monthly bucket itself via **`Periodable`** (`period_from`, `period_to`, `period_days`, `period_ranges_correct`). `period_from` is snapped to the 1st of the month; each user may have at most one spread per calendar month (`user_id` + `period_from` unique). Spreads must cover a full calendar month (`period_from` through `period_to.end_of_month`). **`MonthlyBucket.current(user)`** returns the spread for the current calendar month (`find_by(period_from: …)`), or `nil` (no auto-create). **`covers_date?(date)`** checks whether a date falls in that spread's month. **`GET /monthly_bucket`** renders the current monthly bucket or an empty state. Specific spreads: **`GET /monthly_buckets/:id`**. Monthly buckets may optionally belong to a `FutureBucket`. Left area: two-column calendar (`recurrency` slot per day aligned with matching date row) plus bullets; right column: unplanned (`pops_on` nil). `pops_on` still places bullets on the daily log when set.
+`MonthlyBucket` is a `bucketable` type (thin model + `Bucketable` + `Periodable`). The spread period lives on the monthly bucket itself via **`Periodable`** (`period_from`, `period_to`, `period_days`, `period_ranges_correct`). `period_from` is snapped to the 1st of the month; each user may have at most one spread per calendar month (`user_id` + `period_from` unique). Spreads must cover a full calendar month (`period_from` through `period_to.end_of_month`). **`MonthlyBucket.current(user)`** returns the spread for the current calendar month (`find_by(period_from: …)`), or `nil` (no auto-create). **`covers_date?(date)`** checks whether a date falls in that spread's month. **`MonthlyBucket`** may belong to a **`FutureBucket`** (a user may have multiple future logs over time). Nested under **`GET /future`** in routes; monthly spreads live at **`/future/monthly_buckets/:id`**. Shortcut **`GET /monthly_bucket`** still opens the current calendar month. Left area: two-column calendar (`recurrency` slot per day aligned with matching date row) plus bullets; right column: unplanned (`pops_on` nil). `pops_on` still places bullets on the daily log when set.
 
 ### Organizing from the timeline
 Select bullets via row checkboxes; the sticky **`_bulk_menu`** (styled in `bulk-menu.css`, driven by `bulk-menu` Stimulus on the page wrapper) keeps selection in **`idListValue`** and syncs a comma-separated `bullet_ids` CSV into every `data-bulk-menu-target="idList"` hidden field.
@@ -160,7 +160,7 @@ Select bullets via row checkboxes; the sticky **`_bulk_menu`** (styled in `bulk-
 `Collectable` and `Poppable` are intent-focused concerns; they do not force bullet type conversion.
 
 ### Sweep Rules
-`SweepCardsJob` (name unchanged) runs daily and purges expired archived records:
+`CleanSoftDeletedRecordsJob` runs daily and purges expired archived records:
 
 - **`Bullet.expired_archived.destroy_all`** — hard-deletes archived bullets after `Archivable::ARCHIVE_RETENTION_DAYS`; pinned bullets are excluded
 - **`Bucket.expired_archived.destroy_all`** — hard-deletes archived **Collection** buckets after the same retention; pinned collection buckets are excluded; destroys the `Collection` row; collected bullets are nullified (`bucket_id` nil)
@@ -188,7 +188,7 @@ The architecture is intentionally closer to analog Bullet Journal behavior:
 ### Buckets and memberships
 `Bucket` belongs to a user and uses `delegated_type :bucketable` (`Collection`, `FutureBucket`, `MonthlyBucket`). `MonthlyBucket` includes **`Periodable`** for time restrictions (`period_from` / `period_to`). Each bullet has **zero or one** bucket via `bullets.bucket_id` for collection/bucket membership. `Collection` rows do not store `user_id`; ownership is the bucket’s `user_id`, with `creation_user_id` on the bucketable for attribution where needed. Bucket **identity** (`name`, `colour`, `icon`) is stored on `buckets` (`name` required; `colour` / `icon` optional via `Colourable` and `Iconable`; no auto-assign). Collection bucket names are unique per user. `Collection` is a thin delegated type (no identity columns); it delegates `name`, `colour`, `icon`, and colour CSS helpers to `bucket` for display. Create forms pass identity fields on the bucketable param object; controllers persist them on the bucket row. The home hub is at `GET /home` (linked from the app header). **Streams** (saved filtered views) were removed; use projects, collections, and timeline filters instead.
 
-**Collection archive:** only `Collection` buckets are archivable (`Bucket#archive!` / `#unarchive!` via `Archivable`). `DELETE /collections/:id` soft-archives the bucket (`archived`, `archives_on`); archived collections are hidden from home, review collect panel, and collect picker (`user_collections` filters `archived: false`). Collect into an archived bucket is rejected. Activity records `archived` / `unarchived` on the bucket. Future and monthly log buckets cannot be archived. Purge after retention is handled by `SweepCardsJob` (see Sweep Rules).
+**Collection archive:** only `Collection` buckets are archivable (`Bucket#archive!` / `#unarchive!` via `Archivable`). `DELETE /collections/:id` soft-archives the bucket (`archived`, `archives_on`); archived collections are hidden from home, review collect panel, and collect picker (`user_collections` filters `archived: false`). Collect into an archived bucket is rejected. Activity records `archived` / `unarchived` on the bucket. Future and monthly log buckets cannot be archived. Purge after retention is handled by `CleanSoftDeletedRecordsJob` (see Sweep Rules).
 
 ### Pinned workspace
 Desktop footer docks live in [`shared/_footer.html.erb`](app/views/shared/_footer.html.erb) (`#pinned_buckets_footer`, `#pinned_bullets_dock`) but are not mounted in the default layout while navigation is in flux. Pin/unpin Turbo Streams still target those frame ids when present. Mobile uses the bottom tab bar (`shared/_mobile_tab_bar`) and **`GET /pinned`** workspace (`pinned/index.html+mobile.erb`) for pinned bullets, pinned projects, pinned people, and pinned bucket groups (collections/timespreads). Lazy popover lists still load via [`pinned#index`](app/controllers/pinned_controller.rb) (`Turbo-Frame: pinned_bullets`) or [`buckets#show`](app/controllers/buckets_controller.rb) for footer bucket frames.
@@ -208,11 +208,13 @@ resource :session/code                       → sessions/codes#new/create
 # Logs (?date=YYYY-MM-DD for a specific day)
 GET    /daylog                               → daylogs#show
 GET    /monthly_bucket                       → monthly_buckets#current (current spread or empty)
-GET    /monthly_buckets/:id                  → monthly_buckets#show
-GET    /monthly_buckets/new                  → monthly_buckets#new
-POST   /monthly_buckets                      → monthly_buckets#create
-GET    /monthly_buckets/:monthly_bucket_id/bullets/new → monthly_buckets/bullets#new
-POST   /monthly_buckets/:monthly_bucket_id/bullets     → monthly_buckets/bullets#create
+GET    /future                               → futures#show
+POST   /future/months                        → futures#months
+GET    /future/monthly_buckets/:id           → monthly_buckets#show
+GET    /future/monthly_buckets/new           → monthly_buckets#new
+POST   /future/monthly_buckets               → monthly_buckets#create
+GET    /future/monthly_buckets/:monthly_bucket_id/bullets/new → monthly_buckets/bullets#new
+POST   /future/monthly_buckets/:monthly_bucket_id/bullets     → monthly_buckets/bullets#create
 
 # Bullets CRUD (no index — daily log is /daylog)
 GET    /bullets/:id                          → bullets#show
@@ -234,25 +236,22 @@ POST   /bullets/pop                          → bullets/pops#create
 DELETE /bullets/pop                          → bullets/pops#destroy
 POST   /bullets/:bullet_id/complete          → bullets/completes#create
 DELETE /bullets/:bullet_id/complete          → bullets/completes#destroy
-PATCH  /bullets/:bullet_id/publish           → bullets/publishes#update
+POST   /bullets/publish                      → bullets/publishes#create
+DELETE /bullets/publish                      → bullets/publishes#destroy
 GET    /bullets/export                       → bullets/exports#show
 
 # Search & menu
 GET    /search                               → searches#show (?q=; turbo-stream updates menu_search frame)
 GET    /menu                                 → menu#show (?q= pre-fills search field)
-GET    /notes                                → notes#index
 
-# Home, buckets, future
+# Home, buckets
 GET    /home                                 → home#show (navigation hub)
 PATCH  /home/sections/:id                    → home/sections#update (persist section open/close state)
 GET    /buckets/:id                          → buckets#show (footer popover bullet list)
 POST   /buckets/pin                          → buckets/pins#create
 DELETE /buckets/pin                          → buckets/pins#destroy
-GET    /future                               → futures#show
-POST   /future                               → futures#create
-POST   /future/months                        → futures#months
 
-# Projects, people, collections
+# Tags
 GET    /projects/suggestions                 → projects/suggestions#index (Lexxy `#` prompt items)
 POST   /projects/pin                         → projects/pins#create
 DELETE /projects/pin                         → projects/pins#destroy
@@ -270,7 +269,6 @@ end
 
 # Views
 GET    /review                               → reviews#show (?from= &to=YYYY-MM-DD)
-POST   /review/archive_all                   → reviews#archive_all (archive all in-review bullets for period)
 GET    /activities                           → activities#index (?subject_type= &subject_id= optional)
 resources :pinned, only: :index
 resources :archived, only: :index

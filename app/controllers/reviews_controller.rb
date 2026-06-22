@@ -14,31 +14,6 @@ class ReviewsController < ApplicationController
     assign_review_page_data
   end
 
-  def archive_all
-    @review_from, @review_to = review_dates_from_params
-    return unless @review_from && @review_to
-
-    scoped = Current.user.bullets.in_review(from: @review_from, to: @review_to)
-    @bullets = scoped.to_a
-    Bullet.transaction do
-      scoped.lock.find_each(&:archive!)
-    end
-
-    respond_to do |format|
-      format.turbo_stream
-      format.html { redirect_to review_path(from: @review_from.iso8601, to: @review_to.iso8601) }
-    end
-  rescue ActiveRecord::RecordInvalid => e
-    @failed_bullet = e.record
-    respond_to do |format|
-      format.turbo_stream { render :archive_all, status: :unprocessable_entity }
-      format.html do
-        redirect_to review_path(from: @review_from.iso8601, to: @review_to.iso8601),
-                      alert: e.record.errors.full_messages.to_sentence
-      end
-    end
-  end
-
   private
 
   def assign_review_page_data

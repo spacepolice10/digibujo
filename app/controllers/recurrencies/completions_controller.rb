@@ -2,8 +2,11 @@
 
 module Recurrencies
   class CompletionsController < ApplicationController
+    COMPLETION_DOM_KEYS = %w[header inline cell].freeze
+
     before_action :set_recurrency
     before_action :set_date
+    before_action :set_dom_key
 
     def create
       unless @recurrency.scheduled_on?(@date)
@@ -37,11 +40,17 @@ module Recurrencies
     end
 
     def respond_to_completion
+      @tracker = RecurrencyTracker.new(user: Current.user, from: @date, to: @date)
+
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_back fallback_location: recurrencies_path }
         format.any { head :no_content }
       end
+    end
+
+    def set_dom_key
+      @dom_key = params[:dom_key].presence_in(COMPLETION_DOM_KEYS) || "header"
     end
 
     def respond_unprocessable

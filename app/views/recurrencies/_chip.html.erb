@@ -1,22 +1,2 @@
 <%# locals: (recurrency:, date:, tracker:, dom_key:) %>
-<% completed = tracker.completed?(recurrency, date) %>
-<button type="button"
-        id="<%= dom_id(recurrency, "#{dom_key}_#{date.iso8601}") %>"
-        class="recurrency--chip bucket--list-item-marker<%= " recurrency--chip-done" if completed %><%= " recurrency--chip-neutral" if recurrency.colour.blank? %>"
-        <% if recurrency.colour.present? %>data-bucket-colour="<%= recurrency.colour %>"<% end %>
-        data-controller="recurrency-check"
-        data-recurrency-check-complete-url-value="<%= recurrency_completion_path(recurrency) %>"
-        data-recurrency-check-date-value="<%= date.iso8601 %>"
-        data-recurrency-check-completed-value="<%= completed %>"
-        data-action="recurrency-check#toggle"
-        title="<%= recurrency.name %>"
-        aria-label="<%= completed ? "Mark #{recurrency.name} incomplete" : "Mark #{recurrency.name} complete" %>"
-        aria-pressed="<%= completed %>">
-  <% if recurrency.icon_path %>
-    <%= image_tag recurrency.icon_path, alt: "", class: "recurrency--chip-image" %>
-  <% elsif recurrency.icon_variable %>
-    <i class="icon recurrency--chip-icon" style="--icon-mask: <%= recurrency.icon_mask %>" aria-hidden="true"></i>
-  <% else %>
-    <span class="recurrency--chip-initial" aria-hidden="true"><%= recurrency.name.first.upcase %></span>
-  <% end %>
-</button>
+<%= render "recurrencies/toggle", recurrency: recurrency, date: date, tracker: tracker, dom_key: dom_key %>

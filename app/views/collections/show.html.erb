@@ -23,6 +23,9 @@
 
     <div class="layout--surface bucket--list" data-controller="bulk-menu">
       <h2 class="layout--surface-title"><%= @collection.name %></h2>
+      <% if @collection.bucket.description.present? %>
+        <p class="bucket--description utilities--text-sm"><%= @collection.bucket.description %></p>
+      <% end %>
 
       <div id="bullets" data-bulk-menu-target="list">
         <%= render "pagination/paginated_records",
@@ -41,9 +44,5 @@
 
       <%= render "bullets/bulk_menu" %>
     </div>
-
-    <aside class="layout--rail">
-      <%= render "buckets/side_note", bucket: @collection.bucket %>
-    </aside>
   </div>
 </div>

@@ -63,6 +63,13 @@ module Projectable
     ActionText::Content.new(html, canonicalize: false)
   end
 
+  def editor_content_for_form
+    html = editor_content.fragment.to_html.presence
+    return "" unless html
+
+    BulletEditorContent.hydrate(html)
+  end
+
   private
 
   def rich_text_content_record

@@ -10,6 +10,16 @@
   <%= render "identity_fields", form: f,
         name_hint: bullet_ids.present? ? "Give your collection a name." : "Give your collection a name. Examples: Reading list, Travel plans, Work ideas." %>
 
+  <div class="form-group">
+    <%= label_tag "collection[description]", "Description", class: "form-label" %>
+    <small class="form-hint">Optional. A short note about what belongs in this collection.</small>
+    <%= text_area_tag "collection[description]",
+          collection.try(:bucket)&.description,
+          class: "form-input",
+          rows: 3,
+          id: "collection_description" %>
+  </div>
+
   <% if bullet_ids.present? %>
     <%= f.submit "Create and collect", class: "button--primary form--submit" %>
   <% else %>

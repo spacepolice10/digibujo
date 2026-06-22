@@ -190,7 +190,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'select.bullet-form-type-select option[value=?]', 'Note', text: /Note/
     assert_select 'select.bullet-form-type-select option[value=?]', 'Event', text: /Event/
     assert_select 'select.bullet-form-type-select option[value=?]', 'Title', text: /Title/
-    assert_select '.bullet-form-note-options .bullet-form-note-flag', count: 2
+    assert_select '.bullet-form-note-options .mood-option', count: 4
     assert_select '.bullet-form-rich-body-preview[hidden]', count: 1
     assert_select '.bullet-form-rail-actions .bullet-form-rail-submit button[type=submit]'
     assert_select 'input[name=?][type=checkbox].utilities--sr-only', 'bullet[indented]'

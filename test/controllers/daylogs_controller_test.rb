@@ -110,8 +110,8 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     get daylog_path
 
     assert_response :success
-    assert_select '.recurrency--header-chips .recurrency--chip'
-    assert_select '.recurrency--chip[data-bucket-colour=teal]'
+    assert_select '.recurrency--header-chips .recurrency--chip.recurrency--chip-neutral'
+    assert_select '.recurrency--chip[data-bucket-colour]', count: 0
     assert_select '.recurrency--day-panel', count: 0
   end
 end

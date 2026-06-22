@@ -19,7 +19,8 @@ class CollectionsController < ApplicationController
       user: Current.user,
       name: collection_params[:name],
       colour: collection_params[:colour],
-      icon: collection_params[:icon]
+      icon: collection_params[:icon],
+      description: collection_params[:description]
     )
 
     if @collection.save
@@ -75,7 +76,7 @@ class CollectionsController < ApplicationController
   end
 
   def collection_params
-    params.require(:collection).permit(:name, :colour, :icon)
+    params.require(:collection).permit(:name, :colour, :icon, :description)
   end
 
   def prepare_collect_context

@@ -54,14 +54,12 @@ class BulletCreatorTest < ActiveSupport::TestCase
     assert_match 'Long detail', result.bullet.rich_body.to_plain_text
   end
 
-  test 'sets note mood and flags' do
+  test 'sets note mood' do
     result = BulletCreator.new(@user, {
       bulletable_type: 'Note', body: 'Moody',
-      bulletable_attributes: ActionController::Parameters.new(mood: 'inspired', awaits_research: '1', idea: '1')
+      bulletable_attributes: ActionController::Parameters.new(mood: 'inspired')
     }).call
     assert result.success?
     assert_equal 'inspired', result.bullet.bulletable.mood
-    assert result.bullet.bulletable.awaits_research
-    assert result.bullet.bulletable.idea
   end
 end

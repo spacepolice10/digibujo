@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class BulletContentFinalizer
-  NOTE_ATTRIBUTES = %i[mood awaits_research idea].freeze
+  NOTE_ATTRIBUTES = %i[mood].freeze
 
   def self.call(bullet, bulletable_attributes: nil)
     new(bullet, bulletable_attributes:).call
@@ -29,9 +29,6 @@ class BulletContentFinalizer
   end
 
   def sync_content!
-    body_record = ActionText::RichText.find_by(record: @bullet, name: 'body')
-    @bullet.apply_project_tags_from_content!(rich_text_record: body_record) if body_record
-    @bullet.apply_people_tags_from_content!(rich_text_record: body_record) if body_record
     @bullet.sanitize_rich_body_tag_attachables!
     purge_blank_rich_body!
   end

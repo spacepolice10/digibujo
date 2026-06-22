@@ -5,7 +5,7 @@
 <% selected_month = available_months.first || months.first %>
 <% all_occupied = months.all? { |m| occupied_months.include?(m) } %>
 
-<%= form_with url: monthly_buckets_path, scope: :monthly_bucket, class: "form form--strong" do |f| %>
+<%= form_with url: future_monthly_buckets_path, scope: :monthly_bucket, class: "form form--strong" do |f| %>
   <% errors = (monthly_bucket.errors.any? ? monthly_bucket.errors.full_messages : []) +
               (monthly_bucket.bucket&.errors&.any? ? monthly_bucket.bucket.errors.full_messages : []) %>
   <% if errors.any? %>

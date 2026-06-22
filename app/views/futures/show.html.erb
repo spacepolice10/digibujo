@@ -16,7 +16,7 @@
       <% bucket = monthly_bucket.bucket %>
       <div class="future--card">
         <div class="future--card-header">
-          <%= link_to monthly_bucket.name, monthly_bucket_path(monthly_bucket) %>
+          <%= link_to monthly_bucket.name, future_monthly_bucket_path(monthly_bucket) %>
         </div>
         <div id="<%= dom_id(bucket, :unplanned) %>">
           <% unplanned = monthly_bucket.bullets.where(pops_on: nil).chronological.includes(:bucketable) %>
