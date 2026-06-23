@@ -41,5 +41,12 @@ module Bulletable
     end
 
     def bulletable_form_fields? = composer_config[:form_partial].present?
+
+    # Permission surface for accepts_nested_attributes_for :bulletable.
+    # Each bulletable type overrides this to declare which attributes the
+    # bullet form may submit through bulletable_attributes.
+    def permitted_bullet_attributes
+      []
+    end
   end
 end
