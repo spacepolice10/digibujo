@@ -1,7 +1,7 @@
 <%# locals: (f:, bullet:, submitted_attributes: {}, editing: false) %>
 <% editor_value = bullet.editor_content_for_form %>
 <% expand_dialog_id = dom_id(bullet, :expand) %>
-<% type_name = bullet.bulletable_type.presence || Bullet::DEFAULT_COMPOSER_TYPE %>
+<% type_name = bullet.bulletable_type.presence || Bullet::Composer.default_type %>
 <% bulletable_form = bullet.bulletable || type_name.constantize.new %>
 
 <% bullet_column_names = %w[pops_on bucket_id] %>
@@ -39,7 +39,7 @@
     </lexxy-prompt>
     <lexxy-prompt trigger="/" name="action">
       <% unless editing %>
-        <% Bullet::COMPOSER_TYPE_OPTIONS.each do |entry| %>
+        <% Bullet::Composer.type_options.each do |entry| %>
           <lexxy-prompt-item search="<%= entry[:value].downcase %>">
             <template type="menu">
               <button type="button"
@@ -75,22 +75,9 @@
     <%= f.hidden_field :bulletable_type %>
   <% end %>
 
-  <div class="bullet-form-note-options"
-       data-bullet-composer-target="noteOptions"
-       <%= "hidden" unless type_name == "Note" %>>
-    <% note_form = bullet.bulletable.is_a?(Note) ? bullet.bulletable : Note.new %>
-    <%= f.fields_for :bulletable, note_form do |nf| %>
-      <div class="mood-picker">
-        <% moods = { positive: "😊", negative: "😞", inspired: "✨", frustrated: "😣" } %>
-        <% moods.each do |name, emoji| %>
-          <label class="mood-option">
-            <%= nf.radio_button :mood, name, class: "utilities--sr-only" %>
-            <span class="mood_marker" title="<%= name.to_s.humanize %>" aria-hidden="true"><%= emoji %></span>
-          </label>
-        <% end %>
-      </div>
-    <% end %>
-  </div>
+  <% if Bullet::Composer.form_partial_path(type_name).present? %>
+    <%= render Bullet::Composer.form_partial_path(type_name), f: f, bullet: bullet, type_name: type_name %>
+  <% end %>
 
   <div class="bullet-form-rail-actions">
     <%= render "bullets/actions_select", bullet: bullet %>
