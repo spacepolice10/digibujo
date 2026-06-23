@@ -21,7 +21,7 @@
   <span class="form-label">Icon</span>
   <small class="form-hint">Pick an emoji to make this project easy to spot.</small>
   <div class="form--icon-picker" role="radiogroup" aria-label="Project icon">
-    <% Iconable::EMOJI_ICONS.each do |key| %>
+    <% Iconable::ICON_MAPPINGS.each do |key| %>
       <label class="form--icon-option">
         <%= form.radio_button :icon, key %>
         <%= image_tag "emoji/#{key}.svg", alt: "", class: "form--icon-image" %>

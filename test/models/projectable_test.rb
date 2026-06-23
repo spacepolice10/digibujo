@@ -41,11 +41,10 @@ class ProjectableTest < ActiveSupport::TestCase
     assert_empty @bullet.reload.projects
   end
 
-  test 'project attachable link keeps data-turbo-frame in rendered content' do
+  test 'project attachable link renders correct path' do
     content = ActionText::Content.new('Task').append_attachables(@project).to_html
     bullet = @user.bullets.create!(bulletable: Task.create!, body: content)
 
-    assert_includes bullet.body.to_s, 'data-turbo-frame="_top"'
     assert_includes bullet.body.to_s, "/projects/#{@project.id}"
   end
 

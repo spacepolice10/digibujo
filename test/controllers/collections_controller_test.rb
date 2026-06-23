@@ -11,7 +11,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
   test 'create records bucket created activity' do
     assert_difference -> { Activity.count }, 1 do
       post collections_path, params: {
-        collection: { name: 'Inbox', colour: 'teal', icon: 'book', description: 'Things to sort' }
+        collection: { name: 'Inbox', colour: 'teal', icon: 'folder', description: 'Things to sort' }
       }
     end
 
@@ -42,7 +42,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     assert_difference -> { Collection.count }, 1 do
       post collections_path,
            params: {
-             collection: { name: 'Fresh inbox', colour: 'teal', icon: 'book' },
+             collection: { name: 'Fresh inbox', colour: 'teal', icon: 'folder' },
              bullet_ids: "#{first.id},#{second.id}"
            },
            headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
@@ -62,7 +62,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
 
     post collections_path,
          params: {
-           collection: { name: 'Return path', colour: 'teal', icon: 'book' },
+           collection: { name: 'Return path', colour: 'teal', icon: 'folder' },
            bullet_ids: card.id.to_s,
            return_to: review_path
          }
@@ -77,7 +77,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     assert_no_difference -> { Collection.count } do
       post collections_path,
            params: {
-             collection: { name: '', colour: 'teal', icon: 'book' },
+             collection: { name: '', colour: 'teal', icon: 'folder' },
              bullet_ids: card.id.to_s,
              return_to: review_path
            }

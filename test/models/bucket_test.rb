@@ -47,10 +47,10 @@ class BucketTest < ActiveSupport::TestCase
   end
 
   test 'bucketable delegates identity' do
-    @bucket.update!(colour: 'cobalt', icon: 'pin')
+    @bucket.update!(colour: 'cobalt', icon: 'folder')
     assert_equal 'alpha', @collection.name
     assert_equal 'cobalt', @collection.colour
-    assert_equal 'pin', @collection.icon
+    assert_equal 'folder', @collection.icon
   end
 
   test 'collection names can be duplicated per user' do
