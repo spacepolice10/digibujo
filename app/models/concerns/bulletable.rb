@@ -18,6 +18,28 @@ module Bulletable
   def meta_labels    = []
 
   module ClassMethods
-    def bulletable_form_fields? = false
+    def composer(label: nil, hint: nil, icon: nil, modifier: nil, marker_styles: nil, form_partial: nil)
+      config = composer_config
+      config[:label] = label if label
+      config[:hint] = hint if hint
+      config[:icon] = icon if icon
+      config[:modifier] = modifier if modifier
+      config[:marker_styles] = marker_styles if marker_styles
+      config[:form_partial] = form_partial if form_partial
+      config
+    end
+
+    def composer_config
+      @composer_config ||= {
+        label: to_s,
+        hint: nil,
+        icon: :line_dashed,
+        modifier: to_s.downcase,
+        marker_styles: 'bullet--note-marker',
+        form_partial: nil
+      }
+    end
+
+    def bulletable_form_fields? = composer_config[:form_partial].present?
   end
 end
