@@ -12,6 +12,8 @@ class Note < ApplicationRecord
 
   enum :mood, { positive: 0, negative: 1, inspired: 2, frustrated: 3 }
 
+  def self.permitted_bullet_attributes = %i[mood]
+
   def temporal?      = false
   def completable?   = false
   def marker_styles  = 'bullet--note-marker'
