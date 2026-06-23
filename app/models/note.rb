@@ -5,7 +5,7 @@ class Note < ApplicationRecord
 
   composer label: 'Note',
            hint: 'Reference or log entry',
-           icon: :line_dashed,
+           icon: :'line-dashed',
            modifier: 'note',
            marker_styles: 'bullet--note-marker',
            form_partial: 'bullets/composer/note'
