@@ -3,6 +3,13 @@
 class Note < ApplicationRecord
   include Bulletable
 
+  composer label: 'Note',
+           hint: 'Reference or log entry',
+           icon: :line_dashed,
+           modifier: 'note',
+           marker_styles: 'bullet--note-marker',
+           form_partial: 'bullets/composer/note'
+
   enum :mood, { positive: 0, negative: 1, inspired: 2, frustrated: 3 }
 
   def temporal?      = false
@@ -26,6 +33,4 @@ class Note < ApplicationRecord
     when :frustrated then '😣'
     end
   end
-
-  def self.bulletable_form_fields? = true
 end

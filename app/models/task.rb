@@ -3,6 +3,12 @@
 class Task < ApplicationRecord
   include Bulletable, Completable
 
+  composer label: 'Task',
+           hint: 'Action you can complete',
+           icon: :square,
+           modifier: 'task',
+           marker_styles: 'bullet--task-marker'
+
   def temporal?      = true
   def completable?   = true
   def completed?     = done?
