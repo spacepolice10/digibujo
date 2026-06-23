@@ -60,23 +60,15 @@ class BulletsController < ApplicationController
   end
 
   def bullet_params
-    type_name = params.dig(:bullet, :bulletable_type).presence || Bullet::Composer.default_type
-    permitted_attrs = type_name.constantize.permitted_bullet_attributes
-
     params.require(:bullet).permit(
       :body, :rich_body, :pops_on, :bulletable_type, :bucket_id, :indented,
       attachments: [],
-      bulletable_attributes: permitted_attrs
-    ).tap do |p|
-      # accepts_nested_attributes_for needs both bulletable_type and
-      # bulletable_attributes present, even if the form submits neither.
-      p[:bulletable_type] = type_name if p[:bulletable_type].blank?
-      p[:bulletable_attributes] = {} if p[:bulletable_attributes].blank?
-    end
+      bulletable_attributes: permitted_bullet_attributes
+    ).then { |p| ensure_bulletable_defaults!(p) }
   end
 
   def new_bullet_params
-    params.permit(:pops_on, :bucket_id, :bulletable_type)
+    params.permit(:pops_on, :bucket_id, :bulletable_type).then { |p| ensure_bulletable_defaults!(p) }
   end
 
   def render_validation_toast(record)

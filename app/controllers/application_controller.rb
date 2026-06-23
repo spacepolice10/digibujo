@@ -23,4 +23,32 @@ class ApplicationController < ActionController::Base
   def set_variant
     request.variant = :mobile if request.user_agent&.match?(/Mobile|Android|iPhone/i)
   end
+
+  # Common bullet params handling shared by BulletsController and
+  # MonthlyBuckets::BulletsController. Each bulletable type declares
+  # its permitted attributes via Bulletable.permitted_bullet_attributes.
+
+  def permitted_bullet_attributes
+    bulletable_class.permitted_bullet_attributes
+  end
+
+  BULLETABLE_CLASSES = {
+  "Task"  => Task,
+  "Note"  => Note,
+  "Event" => Event,
+  "Title" => Title
+}.freeze
+
+def bulletable_class
+  BULLETABLE_CLASSES[params.dig(:bullet, :bulletable_type)] || BULLETABLE_CLASSES[Bullet::Composer.default_type]
+end
+
+  # accepts_nested_attributes_for :bulletable needs both bulletable_type and
+  # bulletable_attributes present, even when the form submits neither.
+  def ensure_bulletable_defaults!(permitted)
+    type_name = bulletable_class.name
+    permitted[:bulletable_type] = type_name if permitted[:bulletable_type].blank?
+    permitted[:bulletable_attributes] = {} if permitted[:bulletable_attributes].blank?
+    permitted
+  end
 end
