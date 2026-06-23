@@ -3,8 +3,8 @@
 require 'test_helper'
 
 class Bullet::ComposerTest < ActiveSupport::TestCase
-  test 'default type is Note' do
-    assert_equal 'Note', Bullet::Composer.default_type
+  test 'default type is Task' do
+    assert_equal 'Task', Bullet::Composer.default_type
   end
 
   test 'type options include all bulletable types in order' do

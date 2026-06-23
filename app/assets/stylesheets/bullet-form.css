@@ -244,12 +244,15 @@
     font-size: var(--font-size-subtle);
   }
 
+  .bullet-form-note-richtext {
+    flex-shrink: 0;
+  }
+
   .bullet-form-note-options {
     display: flex;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
-    width: fit-content;
-    flex: 0 0 auto;
+    flex-direction: column;
+    gap: var(--spacing-vertical-half);
+    width: 100%;
   }
 
   .bullet-form-note-options[hidden] {
