@@ -199,6 +199,62 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert bullet.body.present?
   end
 
+  test 'create sets note mood from bulletable_attributes' do
+    post bullets_path,
+         params: {
+           bullet: {
+             bulletable_type: 'Note',
+             body: 'Moody note',
+             pops_on: Date.current.iso8601,
+             bulletable_attributes: { mood: 'inspired' }
+           }
+         },
+         as: :turbo_stream
+
+    assert_response :success
+    bullet = @user.bullets.order(:created_at).last
+    assert_equal 'Note', bullet.bulletable_type
+    assert_equal 'inspired', bullet.bulletable.mood
+  end
+
+  test 'update changes note mood via bulletable_attributes' do
+    note = @user.bullets.create!(bulletable: Note.create!(mood: 'positive'), body: 'Existing note')
+
+    patch bullet_path(note),
+          params: {
+            bullet: {
+              bulletable_type: 'Note',
+              body: 'Updated body',
+              bulletable_attributes: { mood: 'frustrated' }
+            }
+          },
+          as: :turbo_stream
+
+    assert_response :success
+    assert_equal 'frustrated', note.reload.bulletable.mood
+    assert_equal 'Updated body', note.body.to_plain_text
+  end
+
+  test 'create with non-Note type ignores stale bulletable_attributes' do
+    # Simulates user picking a mood (Note), then switching to Task in the same form.
+    post bullets_path,
+         params: {
+           bullet: {
+             bulletable_type: 'Task',
+             body: 'Stale mood',
+             pops_on: Date.current.iso8601,
+             bulletable_attributes: { mood: 'inspired' }
+           }
+         },
+         as: :turbo_stream
+
+    assert_response :success
+    bullet = @user.bullets.order(:created_at).last
+    assert_equal 'Task', bullet.bulletable_type
+    # Task has no mood column; the per-type permitted attrs stripped it before assignment.
+    assert_not bullet.bulletable.respond_to?(:mood)
+  end
+
   test 'update indented flag' do
     patch bullet_path(@bullet),
           params: { bullet: { indented: true } },
