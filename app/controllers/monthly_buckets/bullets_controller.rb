@@ -9,7 +9,7 @@ module MonthlyBuckets
         pops_on: params[:pops_on],
         bucket_id: @monthly_bucket.bucket.id
       )
-      @bullet.bulletable_type = params[:bulletable_type].presence || Bullet::DEFAULT_COMPOSER_TYPE
+      @bullet.bulletable_type = params[:bulletable_type].presence || Bullet::Composer.default_type
       @bullet.bulletable = @bullet.bulletable_type.constantize.new
     end
 
