@@ -28,7 +28,7 @@ class BulletCreator
   private
 
   def build_bullet
-    type_name = @params[:bulletable_type].presence || Bullet::DEFAULT_COMPOSER_TYPE
+    type_name = @params[:bulletable_type].presence || Bullet::Composer.default_type
     attributes = @params.except(:bulletable_type, :bulletable_attributes, :composer_id)
     @bullet = @user.bullets.new(attributes.merge(bulletable: type_name.constantize.new))
   end
