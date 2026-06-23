@@ -24,12 +24,11 @@ class Bullet::ComposerTest < ActiveSupport::TestCase
     assert_equal 'bullet--note-marker', note_option[:marker_styles]
   end
 
-  test 'action options include attachment and expand' do
+  test 'action options include attachment' do
     options = Bullet::Composer.action_options
     values = options.map { |o| o[:value] }
 
     assert_includes values, 'attachment'
-    assert_includes values, 'expand'
   end
 
   test 'form partial path is present for Note' do

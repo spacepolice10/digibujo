@@ -11,8 +11,6 @@ export default class extends Controller {
     "actionsSelect",
     "typeFields",
     "indentField",
-    "expandDialog",
-    "richBodyPreview",
   ]
 
   static values = {
@@ -45,8 +43,6 @@ export default class extends Controller {
 
     if (action == "attachment") {
       this.pickFile()
-    } else if (action == "expand" && this.hasExpandDialogTarget) {
-      this.expandDialogTarget.showModal()
     }
   }
 
@@ -182,9 +178,6 @@ export default class extends Controller {
     if (this.hasPreviewsTarget) {
       this.previewsTarget.hidden = this.previewsTarget.children.length == 0
     }
-    if (this.hasRichBodyPreviewTarget) {
-      this.syncRichBodyPreviewVisibility()
-    }
   }
 
   clearOnSubmit(event) {
@@ -197,21 +190,10 @@ export default class extends Controller {
     const inlineEditor = this.element.querySelector('lexxy-editor[preset="inline"]')
     if (inlineEditor) inlineEditor.value = ""
 
-    const expandEditor = this.element.querySelector('lexxy-editor[preset="expand"]')
-    if (expandEditor) expandEditor.value = ""
-
     if (this.hasPreviewsTarget) {
       this.previewsTarget.querySelectorAll(".attachment--preview").forEach((preview) => {
         this.removePreview(preview)
       })
-    }
-
-    if (this.hasExpandDialogTarget) {
-      this.expandDialogTarget.close()
-    }
-
-    if (this.hasRichBodyPreviewTarget) {
-      this.clearRichBodyPreview()
     }
 
     inlineEditor?.focus()
@@ -230,7 +212,6 @@ export default class extends Controller {
     }
 
     if (event.ctrlKey && event.shiftKey && event.key == "Tab") {
-      if (this.hasExpandDialogTarget && this.expandDialogTarget.open) return
       if (!this.hasTypeSelectTarget) return
 
       event.preventDefault()
@@ -239,58 +220,8 @@ export default class extends Controller {
     }
 
     if (event.key != "Enter") return
-    if (this.hasExpandDialogTarget && this.expandDialogTarget.open) return
 
     event.preventDefault()
     this.element.requestSubmit()
-  }
-
-  saveExpand() {
-    const expandEditor = this.element.querySelector('lexxy-editor[preset="expand"]')
-    if (expandEditor) {
-      this.syncRichBodyPreview(expandEditor.value)
-    }
-
-    if (this.hasExpandDialogTarget) {
-      this.expandDialogTarget.close()
-    }
-
-    this.element.querySelector('lexxy-editor[preset="inline"]')?.focus()
-  }
-
-  syncRichBodyPreview(html) {
-    if (!this.hasRichBodyPreviewTarget) return
-
-    const content = this.richBodyPreviewTarget.querySelector(".bullet-form-rich-body-preview-content")
-    if (!content) return
-
-    if (this.richBodyContentPresent(html)) {
-      content.innerHTML = html
-      this.richBodyPreviewTarget.hidden = false
-    } else {
-      this.clearRichBodyPreview()
-    }
-  }
-
-  syncRichBodyPreviewVisibility() {
-    const content = this.richBodyPreviewTarget.querySelector(".bullet-form-rich-body-preview-content")
-    if (!content) return
-
-    this.richBodyPreviewTarget.hidden = !this.richBodyContentPresent(content.innerHTML)
-  }
-
-  clearRichBodyPreview() {
-    if (!this.hasRichBodyPreviewTarget) return
-
-    const content = this.richBodyPreviewTarget.querySelector(".bullet-form-rich-body-preview-content")
-    if (content) content.innerHTML = ""
-    this.richBodyPreviewTarget.hidden = true
-  }
-
-  richBodyContentPresent(html) {
-    if (!html || !html.trim()) return false
-
-    const doc = new DOMParser().parseFromString(html, "text/html")
-    return doc.body.textContent.trim().length > 0
   }
 }

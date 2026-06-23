@@ -5,8 +5,7 @@ class Bullet
     DEFAULT_TYPE = 'Task'
 
     ACTION_OPTIONS = [
-      { value: 'attachment', icon: 'paperclip', label: 'Attachment', hint: 'Upload files' },
-      { value: 'expand', icon: 'expand', label: 'Expand', hint: 'Code, files, markdown' }
+      { value: 'attachment', icon: 'paperclip', label: 'Attachment', hint: 'Upload files' }
     ].freeze
 
     class << self

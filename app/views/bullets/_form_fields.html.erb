@@ -1,6 +1,5 @@
 <%# locals: (f:, bullet:, submitted_attributes: {}, editing: false) %>
-<% editor_value = bullet.editor_content_for_form %>
-<% expand_dialog_id = dom_id(bullet, :expand) %>
+<% editor_value = hydrate_editor_content(bullet.editor_content_for_form) %>
 <% type_name = bullet.bulletable_type.presence || Bullet::Composer.default_type %>
 <% bulletable_form = bullet.bulletable || type_name.constantize.new %>
 
@@ -60,8 +59,6 @@
   <% end %>
 </div>
 
-<%= render "bullets/rich_body_preview", bullet: bullet %>
-
 <div class="attachment--previews"
      data-bullet-composer-target="previews"
      hidden></div>
@@ -95,40 +92,3 @@
     </div>
   </div>
 </div>
-
-<% unless Bullet::Composer.form_partial_path(type_name).present? %>
-<%= render "shared/dialog", id: expand_dialog_id, class: "dialog--large", data_target: "expandDialog" do %>
-  <div class="bullet-form-expand">
-    <h2 class="bullet-form-expand-title">Expanded content</h2>
-    <%= f.rich_text_area :rich_body,
-          placeholder: "Code, files, markdown…",
-          preset: "expand" do %>
-      <lexxy-prompt trigger="#"
-                    name="project"
-                    src="<%= project_suggestions_path %>"
-                    remote-filtering
-                    supports-space-in-searches>
-      </lexxy-prompt>
-      <lexxy-prompt trigger="@"
-                    name="person"
-                    src="<%= person_suggestions_path %>"
-                    remote-filtering
-                    supports-space-in-searches>
-      </lexxy-prompt>
-    <% end %>
-    <div class="bullet-form-expand-footer">
-      <button type="button"
-              class="button--secondary"
-              commandfor="<%= expand_dialog_id %>"
-              command="close">
-        Cancel
-      </button>
-      <button type="button"
-              class="button--primary"
-              data-action="bullet-composer#saveExpand">
-        Save
-      </button>
-    </div>
-  </div>
-<% end %>
-<% end %>
