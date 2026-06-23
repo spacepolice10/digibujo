@@ -19,20 +19,6 @@ class Bullet < ApplicationRecord
 
   delegated_type :bulletable, types: %w[Task Note Event Title], dependent: :destroy, optional: true
 
-  DEFAULT_COMPOSER_TYPE = 'Note'
-  COMPOSER_TYPE_OPTIONS = [
-    { value: 'Task', icon: 'square', modifier: 'task', marker_styles: 'bullet--task-marker', label: 'Task',
-      hint: 'Action you can complete' },
-    { value: 'Note', icon: 'line-dashed', modifier: 'note', marker_styles: 'bullet--note-marker', label: 'Note',
-      hint: 'Reference or log entry' },
-    { value: 'Event', icon: 'circle', modifier: 'event', marker_styles: 'bullet--event-marker', label: 'Event',
-      hint: 'Scheduled occurrence' },
-    { value: 'Title', icon: 'heading', modifier: 'title', marker_styles: '', label: 'Title', hint: 'Section heading' }
-  ].freeze
-  COMPOSER_ACTION_OPTIONS = [
-    { value: 'attachment', icon: 'paperclip', label: 'Attachment', hint: 'Upload files' },
-    { value: 'expand', icon: 'expand', label: 'Expand', hint: 'Code, files, markdown' }
-  ].freeze
   delegate :completable?, :temporal?, :name, :excerpt,
            :marker_icon, :marker_styles, :completed?, :meta_labels,
            :mood_marker, to: :bulletable
