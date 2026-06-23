@@ -64,10 +64,7 @@ module Projectable
   end
 
   def editor_content_for_form
-    html = editor_content.fragment.to_html.presence
-    return "" unless html
-
-    BulletEditorContent.hydrate(html)
+    editor_content.fragment.to_html.presence || ''
   end
 
   private

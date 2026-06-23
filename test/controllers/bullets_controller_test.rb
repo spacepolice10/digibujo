@@ -83,7 +83,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'reference.txt', bullet.attachments.first.filename.to_s
   end
 
-  test 'create persists rich_body from expand dialog' do
+  test 'create persists rich_body for note' do
     post bullets_path,
          params: {
            bullet: {
@@ -98,19 +98,6 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     bullet = @user.bullets.order(:created_at).last
     assert bullet.rich_body?
     assert_match 'Long detail', bullet.rich_body.to_plain_text
-  end
-
-  test 'rich_body with project attachment does not tag project' do
-    project = create_project!(@user, name: 'Hidden')
-    rich_body = ActionText::Content.new('Detail').append_attachables(project).to_html
-
-    patch bullet_path(@bullet),
-          params: { bullet: { rich_body: rich_body } },
-          as: :turbo_stream
-
-    @bullet.reload
-    assert_empty @bullet.projects
-    assert_empty @bullet.rich_body.body.attachables.grep(Project)
   end
 
   test 'create ignores blank rich_body' do
@@ -150,15 +137,14 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Expanded content', response.body
   end
 
-  test 'edit renders rich_body preview in composer' do
-    @bullet.update!(rich_body: '<p>Expanded content</p>')
+  test 'edit renders rich_body editor for note with saved content' do
+    note = @user.bullets.create!(bulletable: Note.create!, body: 'Note body', rich_body: '<p>Expanded content</p>')
 
-    get edit_bullet_path(@bullet)
+    get edit_bullet_path(note)
 
     assert_response :success
-    assert_select '.bullet-form-rich-body-preview', count: 1
-    assert_select '.bullet-form-rich-body-preview[hidden]', count: 0
-    assert_select '.bullet-form-rich-body-preview-content', text: /Expanded content/
+    assert_select 'lexxy-editor[preset=expand]', count: 1
+    assert_match 'Expanded content', response.body
   end
 
   test 'create with invalid body shows validation toast' do
@@ -184,14 +170,12 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_select '.bullet-form-rail-actions'
     assert_select 'select.select-menu.bullet-form-actions-select.form-select', aria: { label: 'Composer options' }
     assert_select 'select.bullet-form-actions-select option[value=?]', 'attachment'
-    assert_select 'select.bullet-form-actions-select option[value=?]', 'expand'
     assert_select 'select.select-menu.bullet-form-type-select.form-select', aria: { label: 'Bullet type' }
     assert_select 'select.bullet-form-type-select option[value=?]', 'Task', text: /Task/
     assert_select 'select.bullet-form-type-select option[value=?]', 'Note', text: /Note/
     assert_select 'select.bullet-form-type-select option[value=?]', 'Event', text: /Event/
     assert_select 'select.bullet-form-type-select option[value=?]', 'Title', text: /Title/
     assert_select '.bullet-form-note-options .mood-option', count: 4
-    assert_select '.bullet-form-rich-body-preview[hidden]', count: 1
     assert_select '.bullet-form-rail-actions .bullet-form-rail-submit button[type=submit]'
     assert_select 'input[name=?][type=checkbox].utilities--sr-only', 'bullet[indented]'
     assert_select '.bullet-form-footer', count: 0

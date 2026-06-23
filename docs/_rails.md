@@ -51,6 +51,7 @@ Rails 8.1.2 app. This is a framework-agnostic cheatsheet — not a Rails tutoria
 
 ### Action Text for rich text
 - `Bullet#body` and `Bullet#rich_body` are Action Text fields, edited with Lexxy (see `docs/_lexxy.md`).
+- `rich_body` is Note-only: only `app/views/bullets/composer/_note.html.erb` renders an editor for it. Task/Event/Title have no rich_body UI. Legacy non-Note bullets with rich_body still display via `rich_body?` in read views.
 - Post-save content syncing uses `ActionText::RichText.find_by(record: bullet, name: 'body')` (`app/controllers/bullets_controller.rb`, `app/models/bullet_creator.rb`).
 - Reference: https://guides.rubyonrails.org/action_text_overview.html.
 

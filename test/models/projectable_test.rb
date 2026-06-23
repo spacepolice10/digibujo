@@ -84,13 +84,11 @@ class ProjectableTest < ActiveSupport::TestCase
     assert_not_includes html, 'BEGIN app/views/layouts'
   end
 
-  test 'editor_content_for_form hydrates project attachments for lexxy' do
+  test 'editor_content_for_form returns raw HTML with project attachment node' do
     @bullet.tag_project!(project_id: @project.id)
-    hydrated = @bullet.editor_content_for_form
+    html = @bullet.editor_content_for_form
 
-    assert_includes hydrated, 'content="'
-    assert_includes hydrated, @project.name
-    assert_includes hydrated, 'pill'
-    assert_not_includes hydrated, 'attachment--unknown'
+    assert_includes html, 'action-text-attachment'
+    assert_not_includes html, 'attachment--unknown'
   end
 end

@@ -25,12 +25,12 @@
 
 ## How this app uses it
 
-- **Presets** (`app/javascript/application.js`): `inline` (no toolbar, single-line feel) for task/event bodies; `expand` (full toolbar, multi-line) for `rich_body`. Custom extensions are registered via `global.extensions` (each extension's `enabled` getter scopes it to a preset).
+- **Presets** (`app/javascript/application.js`): `inline` (no toolbar, single-line feel) for task/event/note bodies; `expand` (full toolbar, multi-line) for Note's `rich_body`. Custom extensions are registered via `global.extensions` (each extension's `enabled` getter scopes it to a preset).
 - **Prompts** (`app/views/bullets/_form_fields.html.erb` and the bulletable form): `#` triggers `RemoteFilterSource` at `GET /projects/suggestions?filter=…`; `@` hits `GET /people/suggestions?filter=…`. (Lexxy sends `filter`, not `q`.) `/` lists inline composer commands (type switch, attachment) via `data-action` on menu buttons.
 - **Custom extensions** (`app/javascript/extensions/`): `inline_pasting.js` strips rich paste in inline editors; `prompt_actions.js` runs Stimulus commands from prompt menu items — put `data-action` on an element inside `template[type="menu"]` to invoke it instead of inserting into the editor.
 - **Tag sync** (`app/models/concerns/body_tag_syncable.rb`, `projectable.rb`, `personable.rb`): on save, `apply_project_tags_from_content!` / `apply_people_tags_from_content!` walks attachables in `body` and syncs `bullet_projects` / `bullet_people` join rows.
 - **Direct uploads** (`app/javascript/controllers/bullet_composer_controller.js`): intercepts `lexxy:file-accept` and routes files to Active Storage direct uploads instead of inline attachment insertion.
-- **Attachment hydration** (`app/models/bullet_editor_content.rb`): `Bullet#editor_content_for_form` hydrates project/person pills for the Lexxy editor via `projects/attachable_editor` and `people/attachable_editor`.
+- **Attachment hydration** (`app/helpers/bullet_editor_content_helper.rb`): the `_form_fields.html.erb` view calls `hydrate_editor_content(bullet.editor_content_for_form)` to render project/person pills fresh for the Lexxy editor via `projects/attachable_editor` and `people/attachable_editor`. (The model's `editor_content_for_form` returns raw HTML; hydration is view-side.)
 - **Turbo morph**: the `<lexxy-editor>` web component handles disconnect/reconnect to survive Turbo Drive page morphs without losing value or focus.
 
 ## Patching guide
@@ -38,7 +38,7 @@
 | Goal | Where |
 |---|---|
 | Editor behavior | `Lexxy.configure` + `app/javascript/extensions/*.js` |
-| Attachment partial | `app/models/bullet_editor_content.rb` |
+| Attachment partial | `app/helpers/bullet_editor_content_helper.rb` |
 | Prompt UI | `app/views/projects/_prompt_item.html.erb`, `app/views/people/_prompt_item.html.erb` |
 | Styling | Gem `lexxy.css` (tokens + editor chrome), `app/assets/stylesheets/actiontext.css` (inline preset), `attachment.css` |
 | Tag sync on save | `app/models/concerns/body_tag_syncable.rb`, `projectable.rb`, `personable.rb` |
