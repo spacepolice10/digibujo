@@ -41,7 +41,7 @@ class MonthlyBucketsController < ApplicationController
         "created",
         metadata: { "bucketable_type" => @monthly_bucket.bucket.bucketable_type }
       )
-      redirect_to future_monthly_bucket_path(@monthly_bucket), notice: 'Monthly spread created'
+      redirect_to monthly_bucket_path(@monthly_bucket), notice: 'Monthly spread created'
     else
       @occupied_months = occupied_months
       render :new, status: :unprocessable_entity
@@ -61,7 +61,7 @@ class MonthlyBucketsController < ApplicationController
   def assign_data
     @bucket = @monthly_bucket.bucket
     @period_days = @monthly_bucket.period_days
-    scoped = Current.user.bullets.where(bucket_id: @bucket.id, archived: false)
+    scoped = Current.user.bullets.where(bucket_id: @bucket.id).active
     @bullets_by_date = if @period_days
                          scoped.where(pops_on: @period_days).includes(:bulletable).group_by(&:pops_on)
                        else

@@ -55,7 +55,7 @@ class CollectionsController < ApplicationController
 
   def show
     scoped_bullets = Current.user.bullets.where(bucket_id: @collection.bucket.id)
-                            .where(archived: false).distinct
+                            .active.distinct
     scoped_bullets = scoped_bullets.where(bulletable_type: selected_type) if selected_type.present?
     @bullets = set_page_and_extract_portion_from(scoped_bullets, per_page: [5, 15, 30, 50])
   end

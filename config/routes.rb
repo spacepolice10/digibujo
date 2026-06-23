@@ -26,16 +26,12 @@ Rails.application.routes.draw do
 
   get "monthly_bucket", to: "monthly_buckets#current", as: :current_monthly_bucket
 
-  # Plural :futures supports multiple future_buckets later; show/months stay on /future for now.
-  get "future", to: "futures#show", as: :future
-  post "future/months", to: "futures#months", as: :months_future
+  resources :future_buckets, only: :show do
+    post :months, on: :member
+  end
 
-  scope path: "future", as: :future do
-    resources :monthly_buckets, controller: "monthly_buckets" do
-      scope module: :monthly_buckets do
-        resources :bullets, only: %i[new create]
-      end
-    end
+  resources :monthly_buckets, only: [:show, :new, :create] do
+    resources :bullets, only: [:new, :create], module: :monthly_buckets
   end
 
   # --- Tags ---

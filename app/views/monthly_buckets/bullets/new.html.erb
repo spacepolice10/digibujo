@@ -4,7 +4,7 @@
              data-controller="composer-frame">
   <%= render "bullets/bulletable_form",
         bullet: @bullet,
-        url: future_monthly_bucket_bullets_path(@monthly_bucket),
+        url: monthly_bucket_bullets_path(@monthly_bucket),
         attributes: {
           pops_on: @bullet.pops_on,
           bucket_id: @bullet.bucket_id,

@@ -22,7 +22,7 @@ module MonthlyBuckets
       if result.success?
         respond_to do |format|
           format.turbo_stream
-          format.html { redirect_to future_monthly_bucket_path(@monthly_bucket) }
+          format.html { redirect_to monthly_bucket_path(@monthly_bucket) }
         end
       else
         respond_to do |format|

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Project < ApplicationRecord
-  include Colourable, Iconable, Pinnable, Searchable, ActionText::Attachable
+  include Colourable, Iconable, Pinnable, Project::Searchable, ActionText::Attachable
 
   belongs_to :user
   has_many :bullet_projects, dependent: :destroy
@@ -23,11 +23,4 @@ class Project < ApplicationRecord
     name
   end
 
-  def search_name
-    name
-  end
-
-  def search_body
-    name
-  end
 end

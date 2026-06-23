@@ -37,7 +37,7 @@ class PeopleController < ApplicationController
   def show
     scoped_bullets = Current.user.bullets.joins(:people)
                             .where(people: { id: @person.id })
-                            .where(archived: false)
+                            .active
                             .distinct
     scoped_bullets = scoped_bullets.where(bulletable_type: selected_type) if selected_type.present?
     @bullets = set_page_and_extract_portion_from(scoped_bullets, per_page: [5, 15, 30, 50])

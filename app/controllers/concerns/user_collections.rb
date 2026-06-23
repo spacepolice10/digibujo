@@ -10,8 +10,7 @@ module UserCollections
   private
 
   def user_collections
-    Collection.joins(:bucket)
-              .where(buckets: { user_id: Current.user.id, archived: false })
+    Collection.joins(:bucket).merge(Bucket.where(user_id: Current.user.id).active)
               .order('buckets.name')
   end
 end

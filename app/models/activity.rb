@@ -7,6 +7,7 @@ class Activity < ApplicationRecord
       collected
       popped
       archived
+      unarchived
       completed
       uncompleted
       project_tagged

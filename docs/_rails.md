@@ -35,8 +35,9 @@ Rails 8.1.2 app. This is a framework-agnostic cheatsheet — not a Rails tutoria
 - This is the Basecamp pattern; see Fizzy's `app/controllers/concerns/authentication.rb` for the same shape.
 
 ### Concerns for cross-cutting model behavior
-- `app/models/concerns/` — `pinnable`, `archivable`, `collectable`, `poppable`, `completable`, `projectable`, `personable`, `bucketable`, `periodable`, `colourable`, `iconable`, `bulletable`.
+- `app/models/concerns/` — `pinnable`, `collectable`, `poppable`, `completable`, `projectable`, `personable`, `bucketable`, `periodable`, `colourable`, `iconable`, `bulletable`.
 - Each adds a scope + a small set of methods (`pin!`, `collect!(bucket_id:)`, etc.) mixed into models like `Bullet` and `Bucket`.
+- **Namespaced concerns** for behavior that diverges per host: `Bullet::Archivable` (`app/models/bullet/archivable.rb`) and `Bucket::Archivable` (`app/models/bucket/archivable.rb`) wrap the `Archive` polymorphic entity. Mirrors Fizzy's `Card::Closeable` / `Card::Pinnable` namespace style. The flat shared `Archivable` concern was retired — Bullet and Bucket diverge on activity, migration stamping, and search-reindex side-effects, so one concern forced `after_archive!` / `after_unarchive!` hooks that masked real coupling. Each namespaced concern owns its own `archive!` / `unarchive!` transaction (INSERT/DELETE on `archives`, no `update!` on the subject) so `after_update` activity callbacks do not double-log.
 - Same pattern as Fizzy / Writebook. See Fizzy's `app/models/concerns/` for the cleanest catalog.
 
 ### Delegated types for polymorphism

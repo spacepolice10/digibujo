@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Person < ApplicationRecord
-  include Colourable, Iconable, Pinnable, Searchable, ActionText::Attachable
+  include Colourable, Iconable, Pinnable, Person::Searchable, ActionText::Attachable
 
   belongs_to :user
   has_many :bullet_people, dependent: :destroy
@@ -27,11 +27,4 @@ class Person < ApplicationRecord
     name
   end
 
-  def search_name
-    name
-  end
-
-  def search_body
-    handles.map { |handle| [ handle.platform, handle.data ].compact.join(" ") }.join(" ")
-  end
 end

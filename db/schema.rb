@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_22_140000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_23_120200) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -62,9 +62,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_22_140000) do
     t.index ["user_id"], name: "index_activities_on_user_id"
   end
 
+  create_table "archives", force: :cascade do |t|
+    t.integer "archivable_id", null: false
+    t.string "archivable_type", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.index ["archivable_type", "archivable_id"], name: "index_archives_on_archivable"
+    t.index ["archivable_type", "archivable_id"], name: "index_archives_on_archivable_type_and_archivable_id", unique: true
+    t.index ["archivable_type"], name: "index_archives_on_archivable_type"
+    t.index ["user_id"], name: "index_archives_on_user_id"
+  end
+
   create_table "buckets", force: :cascade do |t|
-    t.boolean "archived", default: false, null: false
-    t.date "archives_on"
     t.integer "bucketable_id", null: false
     t.string "bucketable_type", null: false
     t.string "colour"
@@ -76,7 +86,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_22_140000) do
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["bucketable_type", "bucketable_id"], name: "index_buckets_on_bucketable_type_and_bucketable_id", unique: true
-    t.index ["user_id", "archived"], name: "index_buckets_on_user_id_and_archived"
     t.index ["user_id", "pinned"], name: "index_buckets_on_user_id_and_pinned"
     t.index ["user_id"], name: "index_buckets_on_user_id"
   end
@@ -101,8 +110,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_22_140000) do
   end
 
   create_table "bullets", force: :cascade do |t|
-    t.boolean "archived", default: false, null: false
-    t.date "archives_on"
     t.integer "bucket_id"
     t.integer "bulletable_id", null: false
     t.string "bulletable_type", null: false
@@ -116,13 +123,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_22_140000) do
     t.integer "user_id", null: false
     t.index ["bucket_id"], name: "index_bullets_on_bucket_id"
     t.index ["bulletable_type", "bulletable_id"], name: "index_bullets_on_bulletable"
-    t.index ["user_id", "archived"], name: "index_bullets_on_user_id_and_archived"
-    t.index ["user_id", "archives_on"], name: "index_bullets_on_user_id_and_archives_on"
     t.index ["user_id", "migrated_at"], name: "index_bullets_on_user_id_and_migrated_at"
     t.index ["user_id", "pops_on"], name: "index_bullets_on_user_id_and_pops_on"
     t.index ["user_id"], name: "index_bullets_on_user_id"
     t.index ["user_id"], name: "index_bullets_on_user_id_and_pinned"
-    t.index ["user_id"], name: "index_bullets_on_user_id_and_status"
   end
 
   create_table "collections", force: :cascade do |t|
@@ -315,6 +319,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_22_140000) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "activities", "users"
+  add_foreign_key "archives", "users"
   add_foreign_key "buckets", "users"
   add_foreign_key "bullet_people", "bullets"
   add_foreign_key "bullet_people", "people"

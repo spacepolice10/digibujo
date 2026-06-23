@@ -3,19 +3,19 @@
 # rubocop:disable Style/ClassAndModuleChildren
 class Person::Handle < ApplicationRecord
   PLATFORMS = {
-    "instagram" => { label: "Instagram", url: "https://instagram.com/%{data}" },
-    "twitter" => { label: "X / Twitter", url: "https://x.com/%{data}" },
-    "facebook" => { label: "Facebook", url: "https://facebook.com/%{data}" },
-    "linkedin" => { label: "LinkedIn", url: "https://linkedin.com/in/%{data}" },
-    "github" => { label: "GitHub", url: "https://github.com/%{data}" },
-    "youtube" => { label: "YouTube", url: "https://youtube.com/@%{data}" },
-    "tiktok" => { label: "TikTok", url: "https://tiktok.com/@%{data}" },
-    "threads" => { label: "Threads", url: "https://threads.net/@%{data}" },
-    "bluesky" => { label: "Bluesky", url: "https://bsky.app/profile/%{data}" },
-    "telegram" => { label: "Telegram", url: "https://t.me/%{data}" },
-    "whatsapp" => { label: "WhatsApp", url: nil },
-    "signal" => { label: "Signal", url: nil },
-    "mastodon" => { label: "Mastodon", url: nil }
+    'instagram' => { label: 'Instagram', url: 'https://instagram.com/%{data}' },
+    'twitter' => { label: 'X / Twitter', url: 'https://x.com/%{data}' },
+    'facebook' => { label: 'Facebook', url: 'https://facebook.com/%{data}' },
+    'linkedin' => { label: 'LinkedIn', url: 'https://linkedin.com/in/%{data}' },
+    'github' => { label: 'GitHub', url: 'https://github.com/%{data}' },
+    'youtube' => { label: 'YouTube', url: 'https://youtube.com/@%{data}' },
+    'tiktok' => { label: 'TikTok', url: 'https://tiktok.com/@%{data}' },
+    'threads' => { label: 'Threads', url: 'https://threads.net/@%{data}' },
+    'bluesky' => { label: 'Bluesky', url: 'https://bsky.app/profile/%{data}' },
+    'telegram' => { label: 'Telegram', url: 'https://t.me/%{data}' },
+    'whatsapp' => { label: 'WhatsApp', url: nil },
+    'signal' => { label: 'Signal', url: nil },
+    'mastodon' => { label: 'Mastodon', url: nil }
   }.freeze
 
   enum :kind, { email: 0, phone: 1, handle: 2 }
@@ -65,7 +65,7 @@ class Person::Handle < ApplicationRecord
 
     self.data = data.strip
     self.data = data.downcase if email?
-    self.data = data.delete_prefix("@") if handle?
+    self.data = data.delete_prefix('@') if handle?
   end
 end
 # rubocop:enable Style/ClassAndModuleChildren

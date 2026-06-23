@@ -47,7 +47,8 @@ class ReviewsController < ApplicationController
     return {} if @week_days.empty?
 
     Current.user.bullets
-             .where(pops_on: @week_days, archived: false)
+             .where(pops_on: @week_days)
+             .active
              .chronological
              .includes(:bulletable)
              .group_by(&:pops_on)

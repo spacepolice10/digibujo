@@ -19,7 +19,7 @@ class MenuControllerTest < ActionDispatch::IntegrationTest
     assert_select "nav.menu--nav a[href=?]", home_path
     assert_select "nav.menu--nav a[href=?]", daylog_path
     assert_select "nav.menu--nav a[href=?]", review_path
-    assert_select "nav.menu--nav a[href=?]", future_path, count: 0
+    assert_select "nav.menu--nav a[href^=?]", "/future_buckets/", count: 0
     assert_select "form.search--form[action=?]", search_path
     assert_select "label.search--label[for=?]", "q", text: "Search bullets, projects, collections, and people"
     assert_select "input.search--textform[placeholder=?]", "Search…"

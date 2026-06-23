@@ -34,7 +34,7 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     other_user = users(:two)
     monthly_bucket = create_monthly_bucket!(other_user, name: 'private spread')
 
-    get future_monthly_bucket_path(monthly_bucket)
+    get monthly_bucket_path(monthly_bucket)
 
     assert_response :not_found
   end
@@ -49,7 +49,7 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
       pops_on: day
     )
 
-    get future_monthly_bucket_path(monthly_bucket)
+    get monthly_bucket_path(monthly_bucket)
 
     assert_response :success
     assert_match 'Dentist', response.body
@@ -65,7 +65,7 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
       pops_on: day
     )
 
-    get future_monthly_bucket_path(monthly_bucket)
+    get monthly_bucket_path(monthly_bucket)
 
     assert_response :success
     assert_select 'select.select-menu.monthly-bucket--date-add-select'
@@ -83,7 +83,7 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
       bucket_id: monthly_bucket.bucket.id
     )
 
-    get future_monthly_bucket_path(monthly_bucket)
+    get monthly_bucket_path(monthly_bucket)
 
     assert_response :success
     assert_select '.bulk-menu', count: 0
@@ -99,7 +99,7 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     )
     PinnedEntity.create!(user: @user, pinnable: bullet)
 
-    get future_monthly_bucket_path(monthly_bucket)
+    get monthly_bucket_path(monthly_bucket)
 
     assert_response :success
     assert_select '.bullet--monthly-bucket .bullet--line', text: 'Pinned spread task'
@@ -135,7 +135,7 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
       )
     )
 
-    get future_monthly_bucket_path(monthly_bucket)
+    get monthly_bucket_path(monthly_bucket)
 
     assert_response :success
     assert_select "a.bullet--monthly-bucket-link[href='#{bullet_path(plain)}']", text: /Plain task/
@@ -155,7 +155,7 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     )
     bullet.bulletable.complete!
 
-    get future_monthly_bucket_path(monthly_bucket)
+    get monthly_bucket_path(monthly_bucket)
 
     assert_response :success
     assert_select "turbo-frame##{dom_id(bullet)}[data-bullet-completed]"
@@ -166,7 +166,7 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     monthly_bucket = create_monthly_bucket!(@user, name: 'june')
     day = Date.current.beginning_of_month + 4.days
 
-    get future_monthly_bucket_path(monthly_bucket)
+    get monthly_bucket_path(monthly_bucket)
 
     assert_response :success
     assert_select "a.monthly-bucket--date-label[href='#{daylog_path(date: day.iso8601)}']",
@@ -174,7 +174,7 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'new form defaults to current month' do
-    get new_future_monthly_bucket_path
+    get new_monthly_bucket_path
 
     assert_response :success
     assert_select "input[name='monthly_bucket[month]'][type=radio]", count: 6
@@ -188,7 +188,7 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     create_monthly_bucket!(@user, name: 'june')
     next_month = Date.current.beginning_of_month.next_month
 
-    get new_future_monthly_bucket_path
+    get new_monthly_bucket_path
 
     assert_response :success
     assert_select "input[name='monthly_bucket[month]'][value=?][disabled]",
@@ -201,7 +201,7 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     create_monthly_bucket!(@user, name: 'june')
 
     assert_no_difference -> { MonthlyBucket.count } do
-      post future_monthly_buckets_path, params: {
+      post monthly_buckets_path, params: {
         monthly_bucket: { month: Date.current.beginning_of_month.iso8601 }
       }
     end
@@ -234,12 +234,12 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
       bucket_id: july.bucket.id
     )
 
-    get future_monthly_bucket_path(june)
+    get monthly_bucket_path(june)
 
     assert_response :success
     assert_match 'June-only task', response.body
     assert_no_match 'July-only task', response.body
-    assert_equal "/future/monthly_buckets/#{june.id}", future_monthly_bucket_path(june)
+    assert_equal "/monthly_buckets/#{june.id}", monthly_bucket_path(june)
   end
 
   test 'monthly spread renders inline recurrency on scheduled days' do
@@ -247,7 +247,7 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     create_recurrency!(@user, name: 'Run')
     day = Date.current.beginning_of_month
 
-    get future_monthly_bucket_path(monthly_bucket)
+    get monthly_bucket_path(monthly_bucket)
 
     assert_response :success
     assert_select '.recurrency--inline-chips .recurrency--chip'

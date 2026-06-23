@@ -4,7 +4,7 @@
              class="bullet_pops_on_<%= pops_on %>"
              data-controller="composer-frame">
   <div class="bullet-composer">
-    <%= link_to new_future_monthly_bucket_bullet_path(monthly_bucket, pops_on: pops_on),
+    <%= link_to new_monthly_bucket_bullet_path(monthly_bucket, pops_on: pops_on),
           class: "bullet-composer--add",
           data: { turbo_frame: "_self" },
           aria: { label: label } do %>

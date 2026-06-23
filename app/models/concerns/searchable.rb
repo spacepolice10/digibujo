@@ -57,6 +57,14 @@ module Searchable
     true
   end
 
+  def search_name
+    respond_to?(:name) ? name : "#{self.class.name} ##{id}"
+  end
+
+  def search_body
+    [ try(:name), try(:description), try(:body)&.to_plain_text, try(:rich_body)&.to_plain_text ].compact.join(" ")
+  end
+
   def search_user_id
     user_id
   end

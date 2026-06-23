@@ -87,8 +87,8 @@ class FlattenBundlesToCollectionsTest < ActiveSupport::TestCase
 
     colour_sql = colour ? "'#{colour}'" : "NULL"
     bucket_id = ActiveRecord::Base.connection.insert(<<~SQL.squish)
-      INSERT INTO buckets (user_id, bucketable_type, bucketable_id, name, colour, pinned, archived, created_at, updated_at)
-      VALUES (#{@user.id}, 'Bundle', #{bundle_id}, '#{name}', #{colour_sql}, 0, 0, '#{now}', '#{now}')
+      INSERT INTO buckets (user_id, bucketable_type, bucketable_id, name, colour, pinned, created_at, updated_at)
+      VALUES (#{@user.id}, 'Bundle', #{bundle_id}, '#{name}', #{colour_sql}, 0, '#{now}', '#{now}')
     SQL
 
     [bundle_id, bucket_id]

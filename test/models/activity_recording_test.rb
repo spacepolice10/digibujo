@@ -46,13 +46,15 @@ class ActivityRecordingTest < ActiveSupport::TestCase
     assert_equal 'discarded', activity.metadata['kind']
   end
 
-  test 'unarchive does not record activity' do
+  test 'unarchive records unarchived activity' do
     bullet = @user.bullets.create!(bulletable: Note.create!, body: 'Note')
     bullet.archive!
 
-    assert_no_difference -> { Activity.count } do
+    assert_difference -> { Activity.count }, 1 do
       bullet.unarchive!
     end
+
+    assert_equal 'unarchived', Activity.order(:created_at).last.action
   end
 
   test 'collect records collected with migration metadata' do

@@ -34,9 +34,9 @@ class BulletInReviewTest < ActiveSupport::TestCase
     bullet = @user.bullets.create!(
       bulletable: Task.create!,
       body: 'Archived',
-      pops_on: @today,
-      archived: true
+      pops_on: @today
     )
+    bullet.archive!
 
     assert_not_includes @user.bullets.in_review(from: @today, to: @today), bullet
   end

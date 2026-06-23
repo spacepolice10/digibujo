@@ -10,7 +10,8 @@ class CleanSoftDeletedRecordsJobTest < ActiveJob::TestCase
   test "destroys expired archived collection buckets" do
     collection = create_collection!(@user, name: "Stale")
     bucket = collection.bucket
-    bucket.update!(archived: true, archives_on: (Archivable::ARCHIVE_RETENTION_DAYS + 1).days.ago.to_date)
+    bucket.archive!
+    bucket.archive.update!(created_at: (Bucket::Archivable::RETENTION_DAYS + 1).days.ago)
 
     assert_difference -> { Bucket.count }, -1 do
       assert_difference -> { Collection.count }, -1 do
@@ -22,7 +23,8 @@ class CleanSoftDeletedRecordsJobTest < ActiveJob::TestCase
   test "keeps pinned archived collection buckets past retention" do
     collection = create_collection!(@user, name: "Pinned stale")
     bucket = collection.bucket
-    bucket.update!(archived: true, archives_on: (Archivable::ARCHIVE_RETENTION_DAYS + 1).days.ago.to_date)
+    bucket.archive!
+    bucket.archive.update!(created_at: (Bucket::Archivable::RETENTION_DAYS + 1).days.ago)
     bucket.pin!
 
     assert_no_difference -> { Bucket.count } do

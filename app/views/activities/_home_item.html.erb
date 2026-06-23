@@ -12,7 +12,7 @@
       <%= image_tag activity.subject.icon_path, alt: "", class: "form--list-icon" %>
     <% end %>
   </span>
-  <%= link_to activity.subject.show_path, class: "home--activity-bullet", data: { turbo_frame: "_top" } do %>
+  <%= link_to polymorphic_path(activity.subject.bucketable), class: "home--activity-bullet", data: { turbo_frame: "_top" } do %>
     <span class="home--activity-name utilities--line-clamp-1"><%= activity.subject.name.truncate(60) %></span>
   <% end %>
 <% end %>
