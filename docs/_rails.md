@@ -45,14 +45,15 @@ Rails 8.1.2 app. This is a framework-agnostic cheatsheet — not a Rails tutoria
 - `Bucket` uses `delegated_type :bucketable` with `Collection`, `FutureBucket`, `MonthlyBucket` (`app/models/bucket.rb`).
 - Reference: https://api.rubyonrails.org/classes/ActiveRecord/DelegatedType.html.
 
-### Service objects
-- `app/models/bullet_creator.rb` — encapsulates multi-step create flow. `BulletCreator.new(user, params).call` returns self with `result.success?` and `result.bullet`.
-- Same `Object#call` + result-object style as Writebook's `app/models/`.
+### Delegated types + nested attributes
+- `Bullet` uses `delegated_type :bulletable` with `Task`, `Note`, `Event`, `Title` and declares `accepts_nested_attributes_for :bulletable` (`app/models/bullet.rb`).
+- Each bulletable type declares which attributes it accepts from the bullet form via the `Bulletable.permitted_bullet_attributes` class method (concern default returns `[]`; `Note` overrides to `%i[mood]`). Controllers derive the strong-params permit list from the bulletable class named in `bulletable_type`, then guarantee `bulletable_attributes: {}` is present so the nested-attributes flow always has something to build from — even when the form submits no per-type fields (Task / Event / Title).
+- Reference: https://api.rubyonrails.org/classes/ActiveRecord/DelegatedType.html, https://api.rubyonrails.org/classes/ActiveRecord/NestedAttributes/ClassMethods.html
 
 ### Action Text for rich text
 - `Bullet#body` and `Bullet#rich_body` are Action Text fields, edited with Lexxy (see `docs/_lexxy.md`).
 - `rich_body` is Note-only: only `app/views/bullets/composer/_note.html.erb` renders an editor for it. Task/Event/Title have no rich_body UI. Legacy non-Note bullets with rich_body still display via `rich_body?` in read views.
-- Post-save content syncing uses `ActionText::RichText.find_by(record: bullet, name: 'body')` (`app/controllers/bullets_controller.rb`, `app/models/bullet_creator.rb`).
+- Post-save content syncing uses `ActionText::RichText.find_by(record: bullet, name: 'body')` (`app/controllers/bullets_controller.rb`).
 - Reference: https://guides.rubyonrails.org/action_text_overview.html.
 
 ### Active Storage for direct uploads
