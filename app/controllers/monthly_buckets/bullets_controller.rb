@@ -14,12 +14,12 @@ module MonthlyBuckets
     end
 
     def create
-      result = BulletCreator.new(Current.user, bullet_params.merge(
-        bucket_id: @monthly_bucket.bucket.id
-      )).call
-      @bullet = result.bullet
+      @bullet = Current.user.bullets.new(
+        bullet_params.merge(bucket_id: @monthly_bucket.bucket.id)
+      )
       @monthly_bucket
-      if result.success?
+
+      if @bullet.save
         respond_to do |format|
           format.turbo_stream
           format.html { redirect_to monthly_bucket_path(@monthly_bucket) }
@@ -39,11 +39,17 @@ module MonthlyBuckets
     end
 
     def bullet_params
+      type_name = params.dig(:bullet, :bulletable_type).presence || Bullet::Composer.default_type
+      permitted_attrs = type_name.constantize.permitted_bullet_attributes
+
       params.require(:bullet).permit(
         :body, :rich_body, :pops_on, :bulletable_type, :bucket_id,
         attachments: [],
-        bulletable_attributes: %i[mood]
-      )
+        bulletable_attributes: permitted_attrs
+      ).tap do |p|
+        p[:bulletable_type] = type_name if p[:bulletable_type].blank?
+        p[:bulletable_attributes] = {} if p[:bulletable_attributes].blank?
+      end
     end
 
     def render_invalid_create
