@@ -9,7 +9,7 @@ export default class extends Controller {
     "typeSelect",
     "typeLabel",
     "actionsSelect",
-    "noteOptions",
+    "typeFields",
     "indentField",
     "expandDialog",
     "richBodyPreview",
@@ -142,9 +142,9 @@ export default class extends Controller {
         label.hidden = label.dataset.type != type
       })
     }
-    if (this.hasNoteOptionsTarget) {
-      this.noteOptionsTarget.hidden = type != "Note"
-    }
+    this.typeFieldsTargets.forEach((el) => {
+      el.hidden = el.dataset.type != type
+    })
   }
 
   cycleType(direction) {

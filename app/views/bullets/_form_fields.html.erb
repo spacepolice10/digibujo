@@ -75,8 +75,14 @@
     <%= f.hidden_field :bulletable_type %>
   <% end %>
 
-  <% if Bullet::Composer.form_partial_path(type_name).present? %>
-    <%= render Bullet::Composer.form_partial_path(type_name), f: f, bullet: bullet, type_name: type_name %>
+  <% Bullet::Composer.type_options.each do |entry| %>
+    <% if (partial = Bullet::Composer.form_partial_path(entry[:value])).present? %>
+      <div data-bullet-composer-target="typeFields"
+           data-type="<%= entry[:value] %>"
+           <%= "hidden" unless type_name == entry[:value] %>>
+        <%= render partial, f: f, bullet: bullet, type_name: type_name %>
+      </div>
+    <% end %>
   <% end %>
 
   <div class="bullet-form-rail-actions">

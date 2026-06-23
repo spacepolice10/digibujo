@@ -1,8 +1,6 @@
 <%# locals: (f:, bullet:, type_name:) %>
 <% note_form = bullet.bulletable.is_a?(Note) ? bullet.bulletable : Note.new %>
-<div class="bullet-form-note-options"
-     data-bullet-composer-target="noteOptions"
-     <%= "hidden" unless type_name == "Note" %>>
+<div class="bullet-form-note-options">
   <%= f.fields_for :bulletable, note_form do |nf| %>
     <div class="mood-picker">
       <% moods = { positive: "😊", negative: "😞", inspired: "✨", frustrated: "😣" } %>
