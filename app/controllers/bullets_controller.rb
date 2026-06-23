@@ -4,14 +4,16 @@ class BulletsController < ApplicationController
   before_action :set_bullet, only: %i[show edit update destroy]
 
   def new
-    @bullet = BulletCreator.new(Current.user, new_bullet_params.to_h).build.bullet
+    type_name = new_bullet_params[:bulletable_type].presence || Bullet::Composer.default_type
+    @bullet = Current.user.bullets.new(
+      new_bullet_params.to_h.merge(bulletable_type: type_name, bulletable_attributes: {})
+    )
   end
 
   def create
-    result = BulletCreator.new(Current.user, bullet_params).call
-    @bullet = result.bullet
+    @bullet = Current.user.bullets.new(bullet_params)
 
-    if result.success?
+    if @bullet.save
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to bullet_path(@bullet) }
@@ -29,8 +31,7 @@ class BulletsController < ApplicationController
   def show; end
 
   def update
-    if @bullet.update(bullet_params.except(:bulletable_attributes))
-      BulletContentFinalizer.call(@bullet, bulletable_attributes: params.dig(:bullet, :bulletable_attributes))
+    if @bullet.update(bullet_params)
       @bullet.record_activity!("updated")
       respond_to do |format|
         format.turbo_stream
@@ -59,15 +60,23 @@ class BulletsController < ApplicationController
   end
 
   def bullet_params
+    type_name = params.dig(:bullet, :bulletable_type).presence || Bullet::Composer.default_type
+    permitted_attrs = type_name.constantize.permitted_bullet_attributes
+
     params.require(:bullet).permit(
-      :body, :rich_body, :pops_on, :bulletable_type, :bucket_id, :composer_id, :indented,
+      :body, :rich_body, :pops_on, :bulletable_type, :bucket_id, :indented,
       attachments: [],
-      bulletable_attributes: %i[mood]
-    )
+      bulletable_attributes: permitted_attrs
+    ).tap do |p|
+      # accepts_nested_attributes_for needs both bulletable_type and
+      # bulletable_attributes present, even if the form submits neither.
+      p[:bulletable_type] = type_name if p[:bulletable_type].blank?
+      p[:bulletable_attributes] = {} if p[:bulletable_attributes].blank?
+    end
   end
 
   def new_bullet_params
-    params.permit(:pops_on, :bucket_id, :bulletable_type, :composer_id)
+    params.permit(:pops_on, :bucket_id, :bulletable_type)
   end
 
   def render_validation_toast(record)
