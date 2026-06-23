@@ -1,6 +1,26 @@
 <%# locals: (f:, bullet:, type_name:) %>
 <% note_form = bullet.bulletable.is_a?(Note) ? bullet.bulletable : Note.new %>
+
 <div class="bullet-form-note-options">
+  <div class="bullet-form-note-richtext">
+    <%= f.rich_text_area :rich_body,
+          placeholder: "Code, files, markdown…",
+          preset: "expand" do %>
+      <lexxy-prompt trigger="#"
+                    name="project"
+                    src="<%= project_suggestions_path %>"
+                    remote-filtering
+                    supports-space-in-searches>
+      </lexxy-prompt>
+      <lexxy-prompt trigger="@"
+                    name="person"
+                    src="<%= person_suggestions_path %>"
+                    remote-filtering
+                    supports-space-in-searches>
+      </lexxy-prompt>
+    <% end %>
+  </div>
+
   <%= f.fields_for :bulletable, note_form do |nf| %>
     <div class="mood-picker">
       <% moods = { positive: "😊", negative: "😞", inspired: "✨", frustrated: "😣" } %>

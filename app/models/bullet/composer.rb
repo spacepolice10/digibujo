@@ -2,7 +2,7 @@
 
 class Bullet
   class Composer
-    DEFAULT_TYPE = 'Task'
+    DEFAULT_TYPE = 'Note'
 
     ACTION_OPTIONS = [
       { value: 'attachment', icon: 'paperclip', label: 'Attachment', hint: 'Upload files' },

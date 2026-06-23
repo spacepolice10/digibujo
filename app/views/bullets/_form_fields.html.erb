@@ -96,6 +96,7 @@
   </div>
 </div>
 
+<% unless Bullet::Composer.form_partial_path(type_name).present? %>
 <%= render "shared/dialog", id: expand_dialog_id, class: "dialog--large", data_target: "expandDialog" do %>
   <div class="bullet-form-expand">
     <h2 class="bullet-form-expand-title">Expanded content</h2>
@@ -129,4 +130,5 @@
       </button>
     </div>
   </div>
+<% end %>
 <% end %>
