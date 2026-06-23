@@ -14,7 +14,6 @@ class BulletContentFinalizer
 
   def call
     update_bulletable!
-    sync_content!
     @bullet.reload
   end
 
@@ -26,16 +25,5 @@ class BulletContentFinalizer
 
     permitted = attrs.respond_to?(:permit) ? attrs.permit(*NOTE_ATTRIBUTES) : attrs.slice(*NOTE_ATTRIBUTES)
     @bullet.bulletable.update!(permitted)
-  end
-
-  def sync_content!
-    @bullet.sanitize_rich_body_tag_attachables!
-    purge_blank_rich_body!
-  end
-
-  def purge_blank_rich_body!
-    return unless @bullet.rich_body.blank?
-
-    ActionText::RichText.find_by(record: @bullet, name: 'rich_body')&.destroy
   end
 end

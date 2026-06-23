@@ -17,19 +17,6 @@
   <div class="bullet-form-note-richtext">
     <%= f.rich_text_area :rich_body,
           placeholder: "Code, files, markdown…",
-          preset: "expand" do %>
-      <lexxy-prompt trigger="#"
-                    name="project"
-                    src="<%= project_suggestions_path %>"
-                    remote-filtering
-                    supports-space-in-searches>
-      </lexxy-prompt>
-      <lexxy-prompt trigger="@"
-                    name="person"
-                    src="<%= person_suggestions_path %>"
-                    remote-filtering
-                    supports-space-in-searches>
-      </lexxy-prompt>
-    <% end %>
+          preset: "expand" %>
   </div>
 </div>

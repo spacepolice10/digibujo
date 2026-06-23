@@ -2,7 +2,7 @@
 
 class Bullet < ApplicationRecord
   include Migratable, Collectable, Poppable, Bullet::Archivable, Pinnable, Publishable, Projectable, Personable,
-          BodyTagSyncable, RichBodySanitizable, Bullet::Searchable, ActivityTrackable
+          BodyTagSyncable, Bullet::Searchable, ActivityTrackable
 
   scope :chronological, -> { order(created_at: :asc) }
   scope :pops_on_date, lambda { |date|

@@ -41,12 +41,6 @@ class BulletCreatorTest < ActiveSupport::TestCase
     assert result.bullet.errors[:body].any?
   end
 
-  test 'purges blank rich_body' do
-    result = BulletCreator.new(@user, { bulletable_type: 'Task', body: 'Only body', rich_body: '' }).call
-    assert result.success?
-    assert_not result.bullet.rich_body?
-  end
-
   test 'persists rich_body' do
     result = BulletCreator.new(@user, { bulletable_type: 'Note', body: 'Short', rich_body: '<p>Long detail</p>' }).call
     assert result.success?
