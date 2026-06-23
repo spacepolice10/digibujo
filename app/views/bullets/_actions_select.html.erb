@@ -9,7 +9,7 @@
     <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
   </button>
   <option value="" disabled selected hidden>Add…</option>
-  <% Bullet::COMPOSER_ACTION_OPTIONS.each do |entry| %>
+  <% Bullet::Composer.action_options.each do |entry| %>
     <option value="<%= entry[:value] %>">
       <%= render "shared/option_item",
             label: entry[:label],

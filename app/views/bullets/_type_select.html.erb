@@ -9,7 +9,7 @@
         aria-label="Bullet type">
   <button type="button" class="bullet-form-type-select-button">
     <span class="bullet-form-type-select-marker" aria-hidden="true">
-      <% Bullet::COMPOSER_TYPE_OPTIONS.each do |entry| %>
+      <% Bullet::Composer.type_options.each do |entry| %>
         <span class="bullet--marker bullet-form-type-select-marker-item <%= entry[:marker_styles] %>"
               data-type="<%= entry[:value] %>"
               <%= "hidden" unless selected_type == entry[:value] %>
@@ -19,7 +19,7 @@
       <% end %>
     </span>
     <span class="bullet-form-type-select-label" data-bullet-composer-target="typeLabel">
-      <% Bullet::COMPOSER_TYPE_OPTIONS.each do |entry| %>
+      <% Bullet::Composer.type_options.each do |entry| %>
         <span data-type="<%= entry[:value] %>"
               <%= "hidden" unless selected_type == entry[:value] %>>
           <%= entry[:label] %>
@@ -27,7 +27,7 @@
       <% end %>
     </span>
   </button>
-  <% Bullet::COMPOSER_TYPE_OPTIONS.each do |entry| %>
+  <% Bullet::Composer.type_options.each do |entry| %>
     <option value="<%= entry[:value] %>"<%= " selected" if selected_type == entry[:value] %>>
       <%= render "shared/option_item",
             label: entry[:label],
