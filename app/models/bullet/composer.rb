@@ -28,16 +28,8 @@ class Bullet
 
       def action_options = ACTION_OPTIONS
 
-      def config_for(type_name)
-        type_name.to_s.constantize.composer_config
-      end
-
       def form_partial_path(type_name)
-        config_for(type_name)[:form_partial]
-      end
-
-      def form_fields?(type_name)
-        form_partial_path(type_name).present?
+        type_name.to_s.constantize.composer_config[:form_partial]
       end
     end
   end

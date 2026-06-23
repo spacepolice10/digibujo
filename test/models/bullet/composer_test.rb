@@ -32,13 +32,6 @@ class Bullet::ComposerTest < ActiveSupport::TestCase
     assert_includes values, 'expand'
   end
 
-  test 'config_for returns config for a type' do
-    config = Bullet::Composer.config_for('Note')
-
-    assert_equal 'Note', config[:label]
-    assert_equal 'bullets/composer/note', config[:form_partial]
-  end
-
   test 'form partial path is present for Note' do
     assert_equal 'bullets/composer/note', Bullet::Composer.form_partial_path('Note')
   end
@@ -47,15 +40,5 @@ class Bullet::ComposerTest < ActiveSupport::TestCase
     assert_nil Bullet::Composer.form_partial_path('Task')
     assert_nil Bullet::Composer.form_partial_path('Event')
     assert_nil Bullet::Composer.form_partial_path('Title')
-  end
-
-  test 'form_fields? is true for types with custom partials' do
-    assert Bullet::Composer.form_fields?('Note')
-  end
-
-  test 'form_fields? is false for types without custom partials' do
-    assert_not Bullet::Composer.form_fields?('Task')
-    assert_not Bullet::Composer.form_fields?('Event')
-    assert_not Bullet::Composer.form_fields?('Title')
   end
 end
