@@ -1,8 +1,8 @@
 <% if q.present? %>
   <% if entries.any? %>
     <ul class="layout--list menu--palette-list" role="listbox">
-      <% entries.each do |entry| %>
-        <%= render "searches/entry", entry: entry %>
+      <% entries.each do |entity| %>
+        <%= render "searches/palette_item", entity: entity %>
       <% end %>
     </ul>
   <% else %>
@@ -12,7 +12,7 @@
   <h4 class="menu--section-heading">Recent</h4>
   <ul class="layout--list menu--palette-list" role="listbox">
     <% selections.each do |selection| %>
-      <%= render "searches/entry", entry: selection.to_entry %>
+      <%= render "searches/palette_item", entity: selection.searchable %>
     <% end %>
   </ul>
 <% end %>

@@ -9,11 +9,32 @@ export default class extends Controller {
       requestAnimationFrame(() => this.scrollToFrame())
     }
 
+    this.onKeydown = this.#onKeydown.bind(this)
+
     this.element.addEventListener("turbo:frame-load", this.onFrameLoad)
+    document.addEventListener("keydown", this.onKeydown)
   }
 
   disconnect() {
     this.element.removeEventListener("turbo:frame-load", this.onFrameLoad)
+    document.removeEventListener("keydown", this.onKeydown)
+  }
+
+  #onKeydown(event) {
+    if (event.key != "Escape") return
+    if (event.defaultPrevented) return
+    if (document.querySelector("dialog[open]")) return
+
+    const form = this.element.querySelector(".bullet-form")
+    if (!form) return
+    if (form.dataset.bulletComposerEditingValue == "true") return
+    if (!this.element.matches(":focus-within")) return
+
+    const url = form.dataset.composerFramePickerUrl
+    if (!url) return
+
+    event.preventDefault()
+    this.element.src = url
   }
 
   scrollToFrame() {
@@ -35,7 +56,7 @@ export default class extends Controller {
         behavior: "smooth",
       })
     } else {
-      frame.scrollIntoView({ block: "nearest", behavior: "smooth" })
+      frame.scrollIntoView({ block: "end", behavior: "smooth" })
     }
 
     const focusTarget = frame.querySelector(

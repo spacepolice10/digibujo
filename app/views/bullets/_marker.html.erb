@@ -1,5 +1,5 @@
 <%# locals: (bullet:) %>
-<% unless bullet.bulletable_type == "Title" %>
+<% if bullet.shows_marker? %>
   <span class="bullet--marker <%= bullet.marker_styles %>" aria-hidden="true">
     <i class="icon" style="--icon-mask: var(--icon-<%= bullet.marker_icon %>)" aria-hidden="true"></i>
     <% if bullet.mood_marker.present? %>

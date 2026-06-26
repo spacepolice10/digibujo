@@ -1,8 +1,9 @@
+<%# locals: (task:, selected_date: nil) %>
 <turbo-frame id="<%= dom_id(task) %>" class="bullet" data-bullet-type="task">
-  <%= form_with url: complete_path, method: task.bulletable.done? ? :delete : :post, data: { turbo_stream: true } do %>
+  <%= form_with url: complete_path, method: task.bulletable.completed? ? :delete : :post, data: { turbo_stream: true } do %>
     <%= hidden_field_tag :bullet_ids, task.id %>
-    <button class="bullet--marker bullet--task-marker" data-task-done="<%= task.bulletable.done? %>">
-        <% if task.bulletable.done? %>
+    <button class="bullet--marker bullet--task-marker" data-task-completed="<%= task.bulletable.completed? %>">
+        <% if task.bulletable.completed? %>
           <i class="icon " style="--icon-mask: var(--icon-check)" aria-hidden="true"></i>
         <% else %>
           <i class="icon" style="--icon-mask: var(--icon-square)" aria-hidden="true"></i>
@@ -10,11 +11,10 @@
     </button>
   <% end %>
   <div class="bullet--body">
-    <div class="bullet--name">
+    <div class="bullet-body">
       <%= task.body %>
     </div>
-    <%= render "bullets/metadata", bullet: task %>
-    <%= render "bullets/attachments", bullet: task %>
+    <%= render "bullets/metadata", bullet: task, selected_date: selected_date %>
   </div>
-  <%= render "bullets/select", bullet: task %>
+  <%= render "bullets/bulk-menu-select", bullet: task %>
 </turbo-frame>

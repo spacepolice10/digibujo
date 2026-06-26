@@ -1,29 +1,24 @@
 <% content_for(:title) { @bullet.bulletable.name } %>
-<article class="bullet-show">
-  <header class="bullet-show-header">
-    <div class="bullet-show-meta">
-      <span class="bullet-type" data-bullet-type="<%= @bullet.bulletable_type.downcase %>"><%= @bullet.name %></span>
-    </div>
+<div class="layout--column">
+  <header class="layout--header">
+    <h2 data-bullet-type="<%= @bullet.bulletable_type.downcase %>"><%= @bullet.name %></h2>
     <% if @bullet.bucket.present? %>
-      <div class="bullet-tags">
-        <% bucket = @bullet.bucket %>
-          <% b = bucket.bucketable %>
-          <% if b %>
-          <span class="<%= ["pill", bucket.colour.present? ? "pill--#{bucket.colour}" : nil].compact.join(" ") %>"><%= b.name %></span>
-          <% end %>
-      </div>
+      <% bucket = @bullet.bucket %>
+      <% bucketable = bucket.bucketable %>
+      <% if bucketable %>
+        <div class="layout--header-actions">
+          <span class="<%= ["pill", bucket.colour.present? ? "pill--#{bucket.colour}" : nil].compact.join(" ") %>"><%= bucketable.name %></span>
+        </div>
+      <% end %>
     <% end %>
   </header>
-  <div class="bullet-show-body">
-    <%= @bullet.body %>
-    <%= render "bullets/attachments", bullet: @bullet %>
-    <% if @bullet.rich_body? %>
-      <section class="bullet--rich-body">
-        <%= @bullet.rich_body %>
-      </section>
-    <% end %>
-  </div>
-  <footer class="bullet-show-footer">
-    <time class="bullet-show-date"><%= @bullet.created_at.strftime("%-d %b %Y") %></time>
-  </footer>
-</article>
+
+  <article class="layout--main">
+    <div class="bullet--read-body">
+      <%= @bullet.body %>
+    </div>
+    <footer class="public--published-footer">
+      <time class="public--published-date" datetime="<%= @bullet.created_at.iso8601 %>"><%= @bullet.created_at.strftime("%-d %b %Y") %></time>
+    </footer>
+  </article>
+</div>

@@ -1,19 +1,15 @@
 # frozen_string_literal: true
 
 class RecurrencyTracker
-  attr_reader :user, :from, :to
+  attr_reader :user, :from, :to, :recurrencies
 
   def initialize(user:, from:, to:)
     @user = user
     @from = from.to_date
     @to = to.to_date
-    raise ArgumentError, "from must be on or before to" if @from > @to
+    raise ArgumentError, 'from must be on or before to' if @from > @to
 
     load_data
-  end
-
-  def recurrencies
-    @recurrencies
   end
 
   def completed?(recurrency, date)
@@ -24,7 +20,7 @@ class RecurrencyTracker
     @completions_by_recurrency[recurrency.id] || Set.new
   end
 
-  def stats(recurrency, as_of: Date.current)
+  def statistics(recurrency, as_of: Date.current)
     range_to = [to, as_of].min
     scheduled_days = scheduled_days_for(recurrency, from: recurrency_range_from(recurrency), to: range_to)
     completed_days = scheduled_days.count { |day| completed?(recurrency, day) }
@@ -43,6 +39,16 @@ class RecurrencyTracker
     recurrency.scheduled_on?(date) && date_in_tracker_range?(date)
   end
 
+  def scheduled_for(date)
+    recurrencies.select { |recurrency| scheduled_on?(recurrency, date) }
+  end
+
+  def max_scheduled_per_day
+    return 0 if recurrencies.empty? || from > to
+
+    (from..to).map { |date| scheduled_for(date).size }.max
+  end
+
   private
 
   def load_data
@@ -55,17 +61,15 @@ class RecurrencyTracker
   end
 
   def overlaps_tracker?(recurrency)
-    range_from = recurrency.active_from || from
-    range_to = recurrency.active_to || to
-    range_from <= to && range_to >= from
+    (recurrency.active_from || from) <= to
   end
 
   def recurrency_range_from(recurrency)
     [from, recurrency.active_from].compact.max
   end
 
-  def recurrency_range_to(recurrency)
-    [to, recurrency.active_to].compact.min
+  def recurrency_range_to(_recurrency)
+    to
   end
 
   def date_in_tracker_range?(date)

@@ -30,7 +30,7 @@ module Searches
            params: { searchable_type: "User", searchable_id: @user.id },
            as: :json
 
-      assert_response :unprocessable_entity
+      assert_response :not_found
       assert_empty @user.search_selections
     end
 

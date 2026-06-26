@@ -33,21 +33,11 @@
         <i class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></i>
         Delete
       <% end %>
-      <%= render "bullets/type_filters",
-            path_for_type: ->(type) {
-              type ? person_path(@person, type:) : person_path(@person)
-            } %>
+      <%= render "bullet/listing/type_filters", listing: @listing %>
     </aside>
 
     <div class="layout--surface bucket--list">
-      <div id="bullets" data-bulk-menu-target="list">
-        <%= render "pagination/paginated_records",
-              page: @page,
-              pagination_link_path: lambda { |next_param|
-                type = params[:type].presence
-                type ? person_path(@person, page: next_param, type:) : person_path(@person, page: next_param)
-              } %>
-      </div>
+      <%= render "bullet/listing/list", listing: @listing, page: @page %>
       <%= render "bullets/bulk_menu" %>
     </div>
 

@@ -14,14 +14,7 @@
      draggable="false"
      data-turbo-frame="_top">
     <%= render "bullets/marker", bullet: bullet %>
-    <span class="bullet-compact--name utilities--line-clamp-1<%= " bullet-compact--title" if bullet.bulletable_type == "Title" %>"><%= bullet.excerpt %></span>
-    <% if bullet.meta_labels.any? %>
-      <span class="bullet--flags">
-        <% bullet.meta_labels.each do |label| %>
-          <span class="pill pill--<%= label[:colour] %>"><%= label[:emoji] %></span>
-        <% end %>
-      </span>
-    <% end %>
+    <span class="bullet-compact--name utilities--line-clamp-1<%= " #{bullet.compact_list_name_class}" if bullet.compact_list_name_class.present? %>"><%= bullet.excerpt %></span>
   </a>
-  <%= render "bullets/select", bullet: bullet %>
+  <%= render "bullets/bulk-menu-select", bullet: bullet %>
 </turbo-frame>

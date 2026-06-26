@@ -7,8 +7,15 @@
     <small class="form-hint">Collections are like folders in a traditional notebook — group related tasks, notes, or events together and keep them organised for as long as you need.</small>
   <% end %>
 
-  <%= render "identity_fields", form: f,
-        name_hint: bullet_ids.present? ? "Give your collection a name." : "Give your collection a name. Examples: Reading list, Travel plans, Work ideas." %>
+  <div class="form-group">
+    <%= f.label :name, class: "form-label" %>
+    <small class="form-hint"><%= bullet_ids.present? ? "Give your collection a name." : "Give your collection a name. Examples: Reading list, Travel plans, Work ideas." %></small>
+    <%= f.text_field :name, class: "form-input", required: true %>
+  </div>
+  <%= render "shared/form/colour_picker", form: f, aria_label: "Collection colour" %>
+  <%= render "shared/form/icon_picker", form: f,
+        aria_label: "Collection icon",
+        hint: "Pick an emoji to make this collection easy to spot." %>
 
   <div class="form-group">
     <%= label_tag "collection[description]", "Description", class: "form-label" %>

@@ -12,7 +12,7 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     a = @user.bullets.create!(bulletable: Task.create!, body: 'One')
     b = @user.bullets.create!(bulletable: Note.create!, body: 'Two')
     a.record_activity!('updated')
-    b.record_activity!('archived', metadata: { 'kind' => 'discarded' })
+    b.record_activity!('archived', metadata: { 'action' => 'archived' })
 
     get activities_path
 
@@ -24,7 +24,7 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
   test 'index filters by subject' do
     keep = @user.bullets.create!(bulletable: Task.create!, body: 'Keep me visible')
     other = @user.bullets.create!(bulletable: Note.create!, body: 'Hidden from filter qxz')
-    keep.record_activity!('completed', metadata: { 'kind' => 'completed' })
+    keep.record_activity!('completed', metadata: { 'action' => 'completed' })
     other.record_activity!('updated')
 
     get activities_path(subject_type: 'Bullet', subject_id: keep.id)
@@ -47,5 +47,24 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     get activities_path(subject_type: 'Project', subject_id: 1)
 
     assert_response :not_found
+  end
+
+  test 'rail renders recent activities in home frame' do
+    bullet = @user.bullets.create!(bulletable: Task.create!, body: 'Rail visible')
+    bullet.record_activity!('updated')
+
+    get rail_activities_path, headers: { 'Turbo-Frame' => 'home_activity' }
+
+    assert_response :success
+    assert_select 'turbo-frame#home_activity'
+    assert_match 'Rail visible', response.body
+    assert_match 'Updated', response.body
+  end
+
+  test 'rail shows empty state when there is no activity' do
+    get rail_activities_path, headers: { 'Turbo-Frame' => 'home_activity' }
+
+    assert_response :success
+    assert_match 'No recent activity', response.body
   end
 end

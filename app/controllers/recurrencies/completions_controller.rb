@@ -44,7 +44,7 @@ module Recurrencies
 
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_back fallback_location: recurrencies_path }
+        format.html { redirect_back fallback_location: home_path }
         format.any { head :no_content }
       end
     end
@@ -56,7 +56,7 @@ module Recurrencies
     def respond_unprocessable
       respond_to do |format|
         format.turbo_stream { head :unprocessable_entity }
-        format.html { redirect_back fallback_location: recurrencies_path, alert: "Cannot mark this day" }
+        format.html { redirect_back fallback_location: home_path, alert: "Cannot mark this day" }
         format.any { head :unprocessable_entity }
       end
     end

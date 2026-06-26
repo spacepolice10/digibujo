@@ -16,14 +16,14 @@
       <i class="icon" style="--icon-mask: var(--icon-face)" aria-hidden="true"></i>
       Add contact
     <% end %>
-    <%= link_to recurrencies_path, class: "button--secondary layout--rail-action", data: { turbo_frame: "_top" } do %>
-      <i class="icon" style="--icon-mask: var(--icon-square)" aria-hidden="true"></i>
-      Recurrency
+    <%= link_to new_recurrency_path, class: "button--secondary layout--rail-action", data: { turbo_frame: "_top" } do %>
+      <i class="icon" style="--icon-mask: var(--icon-report-medical)" aria-hidden="true"></i>
+      Add recurrency
     <% end %>
   </aside>
 
   <div class="layout--surface">
-    <%= render layout: "home/section", locals: { key: "logs", title: "Logs", expanded: @section_expanded_status["logs"] } do %>
+    <%= render layout: "home/section", locals: { key: "logs", title: "Logs", icon: "calendar", expanded: @section_expanded_status["logs"] } do %>
       <ul class="layout--list bucket--list">
         <li class="layout--list-item">
           <%= link_to daylog_path, class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
@@ -32,15 +32,12 @@
               <span class="utilities--line-clamp-1">Today</span>
             </div>
             <div class="bucket--list-item-meta utilities--line-clamp-1">
-              <span><%= pluralize(@today_count, 'bullet') %></span>
+              <span><%= pluralize(@daylog_bullets_number, "bullet") %></span>
             </div>
           <% end %>
         </li>
-      </ul>
-
-      <ul class="layout--list bucket--list">
         <li id="<%= dom_id(@future, :list_item) %>" class="layout--list-item">
-          <%= link_to future_bucket_path(@future.bucketable), class: "bucket--list-item-link" do %>
+          <%= link_to future_bucket_path(@future.bucketable), class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
             <div class="bucket--list-item-name">
               <div class="bucket--list-item-marker" data-bucket-colour="<%= @future.colour %>" aria-hidden="true"></div>
               <span class="utilities--line-clamp-1"><%= @future.name %></span>
@@ -55,7 +52,7 @@
             <li class="layout--list-item bucket--list-item-child">
               <%= link_to monthly_bucket_path(monthly_bucket),
                     class: "bucket--list-item-link bucket--list-item-child-link",
-                    data: { bucket_colour: monthly_bucket.colour } do %>
+                    data: { turbo_frame: "_top", bucket_colour: monthly_bucket.colour } do %>
                 <div class="bucket--list-item-name">
                   <span class="bucket--child-dot-inner" aria-hidden="true"></span>
                   <span class="utilities--line-clamp-1"><%= monthly_bucket.name %></span>
@@ -65,11 +62,10 @@
           <% end %>
         <% end %>
       </ul>
-
     <% end %>
 
     <% if @projects.any? %>
-      <%= render layout: "home/section", locals: { key: "projects", title: "Projects", show_more_path: projects_path, expanded: @section_expanded_status["projects"] } do %>
+      <%= render layout: "home/section", locals: { key: "projects", title: "Projects", icon: "hash", show_more_path: projects_path, expanded: @section_expanded_status["projects"] } do %>
         <ul class="layout--list bucket--list">
           <%= render @projects %>
         </ul>
@@ -77,7 +73,7 @@
     <% end %>
 
     <% if @collections.any? %>
-      <%= render layout: "home/section", locals: { key: "collections", title: "Collections", show_more_path: (@show_collections_more ? collections_path : nil), expanded: @section_expanded_status["collections"] } do %>
+      <%= render layout: "home/section", locals: { key: "collections", title: "Collections", icon: "book", show_more_path: (@show_collections_more ? collections_path : nil), expanded: @section_expanded_status["collections"] } do %>
         <ul class="layout--list bucket--list">
           <%= render @collections %>
         </ul>
@@ -85,9 +81,17 @@
     <% end %>
 
     <% if @people.any? %>
-      <%= render layout: "home/section", locals: { key: "people", title: "People", show_more_path: people_path, expanded: @section_expanded_status["people"] } do %>
+      <%= render layout: "home/section", locals: { key: "people", title: "People", icon: "face", show_more_path: people_path, expanded: @section_expanded_status["people"] } do %>
         <ul class="layout--list bucket--list">
           <%= render @people %>
+        </ul>
+      <% end %>
+    <% end %>
+
+    <% if @recurrencies.any? %>
+      <%= render layout: "home/section", locals: { key: "recurrencies", title: "Recurrency", icon: "calendar-repeat", expanded: @section_expanded_status["recurrencies"] } do %>
+        <ul class="layout--list bucket--list">
+          <%= render partial: "recurrencies/recurrency", collection: @recurrencies, as: :recurrency, locals: { tracker: @recurrency_tracker } %>
         </ul>
       <% end %>
     <% end %>
@@ -100,32 +104,7 @@
         <i class="icon" style="--icon-mask: var(--icon-menu)" aria-hidden="true"></i>
       <% end %>
     </div>
-    <div class="home--activity-list">
-      <% if @activities.any? %>
-        <% @activities.each do |activity| %>
-          <div class="home--activity-item">
-            <%= render "activities/home_item", activity: activity %>
-            <% hint_id = dom_id(activity, :hint_action) %>
-            <% hint_anchor = "--hint-activity-#{activity.id}" %>
-            <button type="button"
-                    class="layout--filter-option home--activity-action"
-                    interestfor="<%= hint_id %>"
-                    style="anchor-name: <%= hint_anchor %>"
-                    aria-label="<%= activity.action_name %>">
-              <i class="icon" style="--icon-mask: <%= activity.icon_mask %>" aria-hidden="true"></i>
-            </button>
-            <span class="home--activity-time"><%= time_ago_in_words(activity.created_at) %> ago</span>
-            <div id="<%= hint_id %>"
-                 class="hint"
-                 popover="hint"
-                 style="position-anchor: <%= hint_anchor %>">
-              <%= activity.action_name %>
-            </div>
-          </div>
-        <% end %>
-      <% else %>
-        <p class="home--activity-item utilities--text-sm" style="color: var(--color-fg-subtle);">No recent activity</p>
-      <% end %>
-    </div>
+    <turbo-frame id="home_activity" src="<%= rail_activities_path %>">
+    </turbo-frame>
   </aside>
 </div>

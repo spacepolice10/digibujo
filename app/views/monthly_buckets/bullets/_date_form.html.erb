@@ -1,0 +1,36 @@
+<%# locals: (monthly_bucket:, date:) %>
+<% composer_frame_id = date.present? ? "composer_#{date.to_date.iso8601}" : "composer_unplanned" %>
+<% add_label = "Add to #{date.strftime('%B %-d')}" %>
+<div class="monthly-bucket--date-form">
+  <select id="<%= dom_id(monthly_bucket, "date_form_#{date}") %>"
+          class="select monthly-bucket--date-form-select"
+          data-controller="monthly-bucket-date-add"
+          data-monthly-bucket-date-add-frame-id-value="<%= composer_frame_id %>"
+          data-monthly-bucket-date-add-new-url-value="<%= new_monthly_bucket_bullet_path(monthly_bucket) %>"
+          data-monthly-bucket-date-add-pops-on-value="<%= date.iso8601 %>"
+          data-action="change->monthly-bucket-date-add#pick"
+          aria-label="<%= add_label %>">
+    <button type="button" class="monthly-bucket--date-form-button">
+      <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
+    </button>
+    <option value="" disabled selected hidden>Add…</option>
+    <option value="Task">
+      <span class="select--option">
+        <span class="select--option-marker select--option-marker--task" aria-hidden="true">
+          <i class="icon" style="--icon-mask: var(--icon-square)" aria-hidden="true"></i>
+        </span>
+        <span class="select--option-label">Add task</span>
+        <span class="select--option-hint">Action you can complete</span>
+      </span>
+    </option>
+    <option value="Event">
+      <span class="select--option">
+        <span class="select--option-marker select--option-marker--event" aria-hidden="true">
+          <i class="icon" style="--icon-mask: var(--icon-circle)" aria-hidden="true"></i>
+        </span>
+        <span class="select--option-label">Add event</span>
+        <span class="select--option-hint">Scheduled occurrence</span>
+      </span>
+    </option>
+  </select>
+</div>

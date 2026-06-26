@@ -36,7 +36,7 @@ class Recurrencies::CompletionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create rejects unscheduled day" do
-    @recurrency.update!(schedule: { "kind" => "custom", "days" => [(@date + 1.day).wday] })
+    @recurrency.update!(schedule: { "days" => [(@date + 1.day).wday] })
 
     assert_no_difference -> { @recurrency.completions.count } do
       post recurrency_completion_path(@recurrency),

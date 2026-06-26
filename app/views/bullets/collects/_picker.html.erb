@@ -1,6 +1,6 @@
-<%# locals: (bullet_ids: "", frame_id: "collects_picker_frame", return_to: nil) %>
-<div class="bulk-menu--pops-header">
-  <p class="bulk-menu--pops-title">Collect into collection</p>
+<%# locals: (bullet_ids: "", frame_id: "collects_picker_frame", return_to: nil, collects_q: nil, collections: []) %>
+<div class="bulk-menu--action-header">
+  <p class="bulk-menu--action-name">Collect into collection</p>
   <button type="button"
           class="button--secondary button--icon"
           popovertarget="<%= frame_id %>"
@@ -18,22 +18,22 @@
   <%= hidden_field_tag :frame_id, frame_id if frame_id != "collects_picker_frame" %>
   <%= hidden_field_tag :return_to, return_to if return_to.present? %>
   <%= search_field_tag :q,
-        @collects_q,
+        collects_q,
         class: "form-input",
         placeholder: "Search collections",
         autofocus: true,
         autocomplete: "off" %>
 <% end %>
 
-<% if @collections.any? %>
+<% if collections.any? %>
   <ul class="layout--list bucket--list">
-    <%= render partial: "bullets/collects/collection", collection: @collections, locals: { bullet_ids: bullet_ids } %>
+    <%= render partial: "bullets/collects/collection", collection: collections, locals: { bullet_ids: bullet_ids } %>
   </ul>
 <% else %>
   <p>No collections found.</p>
 <% end %>
 
-<div class="bulk-menu--collects-footer">
+<div class="bulk-menu--action-footer">
   <%= link_to "Create new collection",
         new_collection_path(bullet_ids: bullet_ids, return_to: return_to),
         class: "button--secondary",

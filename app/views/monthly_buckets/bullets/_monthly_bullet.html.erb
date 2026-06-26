@@ -1,0 +1,20 @@
+<%# locals: (bullet:) %>
+<turbo-frame id="<%= dom_id(bullet) %>"
+             class="bullet bullet--monthly-bucket"
+             data-bullet-type="<%= bullet.bulletable_type.downcase %>"
+             <% if bullet.completed? %>
+             data-bullet-completed
+             <% end %>
+             draggable="true"
+             data-controller="bullet-drag"
+             data-bullet-drag-id-value="<%= bullet.id %>"
+             data-action="dragstart->bullet-drag#dragstart dragend->bullet-drag#dragend">
+  <div class="bullet--marker-slot">
+    <% if bullet.shows_marker? %>
+      <span class="bullet--monthly-bucket-dot" aria-hidden="true"></span>
+    <% end %>
+  </div>
+  <div class="bullet--body">
+    <%= render "monthly_buckets/bullets/monthly_bullet_line", bullet: bullet %>
+  </div>
+</turbo-frame>

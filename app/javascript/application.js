@@ -17,7 +17,7 @@ Lexxy.configure({
     richText: true,
     markdown: false,
   },
-  expand: {
+  note: {
     attachments: true,
     toolbar: true,
     multiLine: true,

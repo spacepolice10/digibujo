@@ -5,9 +5,9 @@ class SearchesController < ApplicationController
     @q = params[:q].to_s.strip
 
     if @q.present?
-      @entries = Search::GlobalRequest.call(user: Current.user, query: @q).entries
+      @entries = Search::GlobalRequest.call(user: Current.user, query: @q)
     else
-      @selections = Search::Selection.for_menu(Current.user)
+      @selections = Search::Selection.in_menu(Current.user)
     end
   end
 end

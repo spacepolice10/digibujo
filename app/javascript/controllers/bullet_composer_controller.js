@@ -1,23 +1,24 @@
 import { Controller } from "@hotwired/stimulus"
-import { DirectUpload } from "@rails/activestorage"
 
 export default class extends Controller {
   static targets = [
     "fileInput",
-    "previews",
-    "attachmentsField",
     "typeSelect",
     "typeLabel",
     "actionsSelect",
     "typeFields",
-    "indentField",
   ]
 
   static values = {
-    directUploadUrl: String,
+    editorUrl: String,
+    editing: Boolean,
+    actiontextPreset: { type: String, default: "inline" },
+    acceptsAttachments: Boolean,
+    submitOnEnter: Boolean,
+    submitOnCommandReturn: Boolean,
   }
 
-  bindBodyEditors() {
+  bindEditors() {
     this.element.querySelectorAll('lexxy-editor[preset="inline"]').forEach((editor) => {
       if (editor.dataset.fileAcceptBound) return
 
@@ -27,12 +28,9 @@ export default class extends Controller {
   }
 
   interceptFile(event) {
-    event.preventDefault()
-    this.uploadFile(event.detail.file)
-  }
+    if (this.acceptsAttachmentsValue) return
 
-  pickFile() {
-    this.fileInputTarget.click()
+    event.preventDefault()
   }
 
   actionChanged() {
@@ -46,90 +44,100 @@ export default class extends Controller {
     }
   }
 
-  fileInputChanged(event) {
-    for (const file of event.target.files) {
-      this.uploadFile(file)
-    }
-    event.target.value = ""
-  }
+  pickFile() {
+    if (!this.acceptsAttachmentsValue) return
 
-  uploadFile(file) {
-    const preview = this.makePreview(file)
-    const delegate = {
-      directUploadWillStoreFileWithXhr: (xhr) => {
-        xhr.upload.addEventListener("progress", () => {})
-      }
-    }
+    const editor = this.element.querySelector(`lexxy-editor[preset="${this.actiontextPresetValue}"]`)
+    if (!editor) return
 
-    const upload = new DirectUpload(file, this.directUploadUrlValue, delegate)
-
-    upload.create((error, blob) => {
-      if (error) {
-        this.changeStatus(preview, "failed")
-        return
-      }
-
-      this.changeStatus(preview, "finished")
-      this.appendSignedId(blob.signed_id)
-      preview.dataset.signedId = blob.signed_id
-    })
-  }
-
-  appendSignedId(signedId) {
     const input = document.createElement("input")
-    input.type = "hidden"
-    input.name = "bullet[attachments][]"
-    input.value = signedId
-    input.dataset.bulletComposerSignedId = signedId
-    this.attachmentsFieldTarget.appendChild(input)
-  }
-
-  makePreview(file) {
-    const preview = document.createElement("div")
-    preview.className = "attachment--preview"
-    preview.dataset.attachmentStatus = "pending"
-    preview.innerHTML = `
-      <i class="icon attachment--status-icon icon--spin" style="--icon-mask: var(--icon-spinner)"></i>
-      <span data-blob-filename>${file.name}</span>
-      <button type="button" class="button--icon button--tertiary" aria-label="Remove attachment">
-        <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
-      </button>
-    `
-    preview.querySelector("button").addEventListener("click", () => this.removePreview(preview))
-    this.previewsTarget.appendChild(preview)
-    this.previewsTarget.hidden = false
-    return preview
-  }
-
-  changeStatus(preview, status) {
-    preview.dataset.attachmentStatus = status
-    const icon = preview.querySelector(".attachment--status-icon")
-    icon.classList.toggle("icon--spin", status == "pending")
-
-    const map = { pending: "spinner", finished: "circle-check", failed: "x" }
-    icon.style.setProperty("--icon-mask", `var(--icon-${map[status]})`)
-  }
-
-  removePreview(preview) {
-    const signedId = preview.dataset.signedId
-    if (signedId) {
-      this.attachmentsFieldTarget
-        .querySelectorAll(`input[data-bullet-composer-signed-id="${signedId}"]`)
-        .forEach((input) => input.remove())
-    }
-    preview.remove()
-    this.previewsTarget.hidden = this.previewsTarget.children.length == 0
+    input.type = "file"
+    input.multiple = true
+    input.addEventListener("change", () => {
+      for (const file of input.files) {
+        editor.dispatchEvent(new CustomEvent("lexxy:file-accept", { detail: { file }, cancelable: true }))
+      }
+      input.remove()
+    })
+    input.click()
   }
 
   typeChanged() {
+    if (!this.hasTypeSelectTarget) return
+
+    const previousType = this.typeSelectTarget.dataset.type || this.typeSelectTarget.value
+    const type = this.typeSelectTarget.value
+    const selectedOption = this.typeSelectTarget.selectedOptions[0]
+
+    this.updateEditorConfig(selectedOption)
     this.updateTypeUi()
+
+    if (!this.editingValue && this.crossedEditorBoundary(previousType, type)) {
+      this.swapEditor(type)
+    }
+
+    this.typeSelectTarget.dataset.type = type
+  }
+
+  crossedEditorBoundary(from, to) {
+    return this.editorPresetForType(from) != this.editorPresetForType(to)
+  }
+
+  editorPresetForType(type) {
+    const option = Array.from(this.typeSelectTarget.options).find((entry) => entry.value == type)
+    return option?.dataset.actiontextPreset || "inline"
+  }
+
+  updateEditorConfig(option) {
+    if (!option) return
+
+    this.actiontextPresetValue = option.dataset.actiontextPreset || "inline"
+    this.acceptsAttachmentsValue = option.dataset.acceptsAttachments == "true"
+    this.submitOnEnterValue = option.dataset.submitOnEnter == "true"
+    this.submitOnCommandReturnValue = option.dataset.submitOnCommandReturn == "true"
+  }
+
+  swapEditor(type) {
+    const frame = this.element.querySelector("#composer_editor")
+    if (!frame || !this.hasEditorUrlValue) return
+
+    const bodyHtml = this.currentBodyHtml()
+    const form = document.createElement("form")
+    form.method = "post"
+    form.action = this.editorUrlValue
+    form.setAttribute("data-turbo-frame", "composer_editor")
+    form.hidden = true
+
+    this.appendHiddenField(form, "authenticity_token", this.csrfToken())
+    this.appendHiddenField(form, "bulletable_type", type)
+    if (bodyHtml) this.appendHiddenField(form, "body", bodyHtml)
+
+    document.body.appendChild(form)
+    form.requestSubmit()
+    form.remove()
+  }
+
+  appendHiddenField(form, name, value) {
+    const input = document.createElement("input")
+    input.type = "hidden"
+    input.name = name
+    input.value = value
+    form.appendChild(input)
+  }
+
+  csrfToken() {
+    return document.querySelector('meta[name="csrf-token"]')?.content || ""
+  }
+
+  currentBodyHtml() {
+    const editor = this.element.querySelector("lexxy-editor")
+    return editor?.value ?? ""
   }
 
   updateTypeUi() {
     if (!this.hasTypeSelectTarget) return
 
     const type = this.typeSelectTarget.value
-    this.typeSelectTarget.dataset.type = type
     this.typeSelectTarget.querySelectorAll(".bullet-form-type-select-marker-item").forEach((marker) => {
       marker.hidden = marker.dataset.type != type
     })
@@ -166,50 +174,52 @@ export default class extends Controller {
     this.typeSelectTarget.dispatchEvent(new Event("change", { bubbles: true }))
   }
 
-  updateIndentUi() {
-    const indented = this.hasIndentFieldTarget && this.indentFieldTarget.checked
-    this.element.classList.toggle("bullet-form--indented", indented)
+  onEditorFrameLoad(event) {
+    if (event.target.id != "composer_editor") return
+    if (!this.element.contains(event.target)) return
+
+    this.bindEditors()
+    event.target.querySelector("lexxy-editor")?.focus()
   }
 
   connect() {
-    this.bindBodyEditors()
-    this.updateTypeUi()
-    this.updateIndentUi()
-    if (this.hasPreviewsTarget) {
-      this.previewsTarget.hidden = this.previewsTarget.children.length == 0
+    this.boundFrameLoad = this.onEditorFrameLoad.bind(this)
+    this.onSubmit = this.#rememberSubmitter.bind(this)
+    document.addEventListener("turbo:frame-load", this.boundFrameLoad)
+    this.element.addEventListener("submit", this.onSubmit)
+
+    this.bindEditors()
+    if (this.hasTypeSelectTarget) {
+      this.typeSelectTarget.dataset.type = this.typeSelectTarget.value
+      this.updateEditorConfig(this.typeSelectTarget.selectedOptions[0])
     }
+    this.updateTypeUi()
+  }
+
+  disconnect() {
+    document.removeEventListener("turbo:frame-load", this.boundFrameLoad)
+    this.element.removeEventListener("submit", this.onSubmit)
+  }
+
+  #rememberSubmitter(event) {
+    this.addAnotherSubmit = event.submitter?.name == "add_another"
   }
 
   clearOnSubmit(event) {
     if (!event.detail.success) return
+    if (!this.addAnotherSubmit) return
 
     this.clearForNextEntry()
   }
 
   clearForNextEntry() {
-    const inlineEditor = this.element.querySelector('lexxy-editor[preset="inline"]')
-    if (inlineEditor) inlineEditor.value = ""
-
-    if (this.hasPreviewsTarget) {
-      this.previewsTarget.querySelectorAll(".attachment--preview").forEach((preview) => {
-        this.removePreview(preview)
-      })
-    }
-
-    inlineEditor?.focus()
+    const editor = this.element.querySelector(`lexxy-editor[preset="${this.actiontextPresetValue}"]`)
+    if (editor) editor.value = ""
+    editor?.focus()
   }
 
   handleKeydown(event) {
     if (event.isComposing) return
-
-    if (event.shiftKey && event.key == ">") {
-      if (!this.hasIndentFieldTarget) return
-
-      event.preventDefault()
-      this.indentFieldTarget.checked = !this.indentFieldTarget.checked
-      this.updateIndentUi()
-      return
-    }
 
     if (event.ctrlKey && event.shiftKey && event.key == "Tab") {
       if (!this.hasTypeSelectTarget) return
@@ -220,6 +230,19 @@ export default class extends Controller {
     }
 
     if (event.key != "Enter") return
+
+    const commandReturn = event.metaKey || event.ctrlKey
+
+    if (this.submitOnCommandReturnValue) {
+      if (!commandReturn) return
+
+      event.preventDefault()
+      this.element.requestSubmit()
+      return
+    }
+
+    if (!this.submitOnEnterValue) return
+    if (commandReturn) return
 
     event.preventDefault()
     this.element.requestSubmit()

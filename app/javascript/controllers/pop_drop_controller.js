@@ -66,18 +66,30 @@ export default class extends Controller {
   }
 
   #applyOptimisticMove(frame) {
+    if (this.reviewDropValue) {
+      const removeTarget = frame.closest(".review--bullet") || frame
+      const originalParent = removeTarget.parentElement
+      const originalNextSibling = removeTarget.nextSibling
+
+      removeTarget.remove()
+
+      return () => {
+        if (originalNextSibling) {
+          originalParent.insertBefore(removeTarget, originalNextSibling)
+        } else {
+          originalParent.appendChild(removeTarget)
+        }
+      }
+    }
+
     const originalParent = frame.parentElement
     const originalNextSibling = frame.nextSibling
 
-    if (this.reviewDropValue) {
-      frame.remove()
+    const composer = this.element.querySelector("turbo-frame[id^='composer_']")
+    if (composer) {
+      composer.before(frame)
     } else {
-      const composer = this.element.querySelector("turbo-frame[id^='composer_']")
-      if (composer) {
-        composer.before(frame)
-      } else {
-        this.element.appendChild(frame)
-      }
+      this.element.appendChild(frame)
     }
 
     return () => {

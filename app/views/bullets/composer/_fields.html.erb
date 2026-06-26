@@ -1,0 +1,51 @@
+<%# locals: (f:, bullet:, submitted_attributes: {}, editing: false) %>
+<% type_name = bullet.bulletable_type %>
+
+<% bullet_column_names = %w[pops_on bucket_id] %>
+<% submitted_attributes.each do |name, value| %>
+  <% if bullet_column_names.include?(name.to_s) %>
+    <%= f.hidden_field name, value: value %>
+  <% else %>
+    <%= hidden_field_tag "bullet[#{name}]", value %>
+  <% end %>
+<% end %>
+
+<% if editing %>
+  <%= render "bullets/composer/editor",
+        f: f,
+        bullet: bullet,
+        type_name: type_name,
+        editing: editing %>
+<% else %>
+  <turbo-frame id="composer_editor">
+    <%= render "bullets/composer/editor",
+          f: f,
+          bullet: bullet,
+          type_name: type_name,
+          editing: editing %>
+  </turbo-frame>
+<% end %>
+
+<div class="bullet-form-rail">
+  <% unless editing %>
+    <%= render "bullets/composer/type_select", f: f, selected_type: type_name %>
+  <% else %>
+    <%= f.hidden_field :bulletable_type %>
+  <% end %>
+
+  <% composer_types = editing ? [ type_name ] : Bullet.bulletable_types %>
+  <% composer_types.each do |type| %>
+    <% partial = Bullet::Composer.form_partial_path(type) %>
+    <% next unless partial %>
+    <%= tag.div data: { bullet_composer_target: "typeFields", type: type },
+                hidden: type != type_name do %>
+      <%= render partial, f: f, bullet: bullet %>
+    <% end %>
+  <% end %>
+
+    <div class="bullet-form-rail-actions">
+      <%= render "bullets/composer/actions_select", bullet: bullet %>
+
+      <%= render "bullets/composer/submit_actions", f: f, editing: editing %>
+    </div>
+</div>

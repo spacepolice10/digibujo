@@ -1,4 +1,14 @@
 <% composer_id = params.dig(:bullet, :composer_id).presence || (@bullet.pops_on.present? ? "composer_#{@bullet.pops_on.to_date.iso8601}" : "composer_unplanned") %>
 <%= turbo_stream.before(composer_id) do %>
-  <%= render "monthly_buckets/bullets/bullet", bullet: @bullet %>
+  <%= render "monthly_buckets/bullets/monthly_bullet", bullet: @bullet %>
+<% end %>
+
+<% unless params[:add_another].present? %>
+<%= turbo_stream.update composer_id do %>
+  <%= render "monthly_buckets/bullets/composer_content",
+        bullet: Current.user.bullets.build(bucket_id: @bullet.bucket_id, pops_on: @bullet.pops_on),
+        monthly_bucket: @monthly_bucket,
+        composer_id: composer_id,
+        composer_attributes: { pops_on: @bullet.pops_on, bucket_id: @bullet.bucket_id }.compact %>
+<% end %>
 <% end %>

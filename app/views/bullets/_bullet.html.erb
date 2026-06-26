@@ -1,17 +1,15 @@
-<%# locals: (bullet:) %>
+<%# locals: (bullet:, selected_date: nil) %>
 <turbo-frame id="<%= dom_id(bullet) %>"
              class="bullet"
              data-bullet-type="<%= bullet.bulletable_type.downcase %>"
-             data-bullet-indented="<%= bullet.indented %>"
-             <% if bullet.migrated? %>data-bullet-migrated<% end %>
              <% if bullet.completed? %>
              data-bullet-completed
              <% end %>>
   <div class="bullet--marker-slot">
     <%= render "bullets/marker", bullet: bullet %>
-    <%= render "bullets/select", bullet: bullet %>
+    <%= render "bullets/bulk-menu-select", bullet: bullet %>
   </div>
   <div class="bullet--body">
-    <%= render "bullets/body", bullet: bullet %>
+    <%= render "bullets/body", bullet: bullet, selected_date: selected_date %>
   </div>
 </turbo-frame>

@@ -62,7 +62,7 @@
       <% end %>
     <% end %>
 
-    <div class="bulk-menu--pops-dock">
+    <div class="bulk-menu--action-dock">
       <button type="button"
               class="button--secondary"
               data-action="bulk-menu#openPopsPicker">
@@ -70,13 +70,13 @@
         Pop
       </button>
       <turbo-frame id="pops_picker_frame"
-                   class="bulk-menu--pops-menu bulk-menu--pops-frame"
+                   class="bulk-menu--action-menu bulk-menu--action-frame"
                    popover
                    loading="lazy"
                    data-bulk-menu-target="popsFrame"></turbo-frame>
     </div>
 
-    <div class="bulk-menu--pops-dock">
+    <div class="bulk-menu--action-dock">
       <button type="button"
               class="button--secondary"
               data-action="bulk-menu#openCollectsPicker">
@@ -84,19 +84,24 @@
         Collect
       </button>
       <turbo-frame id="collects_picker_frame"
-                   class="bulk-menu--pops-menu bulk-menu--pops-frame"
+                   class="bulk-menu--action-menu bulk-menu--action-frame"
                    popover
                    loading="lazy"
                    data-bulk-menu-target="collectsFrame"></turbo-frame>
     </div>
 
-    <%= form_with url: export_path, method: :get, data: { turbo: false } do %>
-      <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
-      <%= button_tag type: :submit, class: "button--secondary" do %>
-        <i class="icon" style="--icon-mask: var(--icon-file)" aria-hidden="true"></i>
-        Export
+    <% if local_assigns[:review_migrate] %>
+      <%= form_with url: review_migrate_path(from: review_migrate[:from].iso8601, to: review_migrate[:to].iso8601),
+                    method: :post,
+                    data: { turbo_stream: true } do %>
+        <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
+        <%= button_tag type: :submit, class: "button--secondary" do %>
+          <span class="review--migration-mark" aria-hidden="true">›</span>
+          Mark migrated
+        <% end %>
       <% end %>
     <% end %>
+
       <button
     type="button"
     class="button--primary button--icon button--circle bulk-menu--hide"

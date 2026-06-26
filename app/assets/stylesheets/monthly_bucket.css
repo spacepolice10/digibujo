@@ -59,23 +59,92 @@
     padding: var(--spacing-vertical) var(--spacing-horizontal);
   }
 
-  .monthly-bucket--calendar-header {
-    display: none;
+  .monthly-bucket--calendar-body {
+    display: flex;
+    flex-direction: column;
   }
 
-  .monthly-bucket--day-band {
+  .monthly-bucket--calendar-body-recurrencies {
     display: grid;
-    grid-template-columns: minmax(0, calc(var(--icon-size-base) * 2.75)) minmax(0, 1fr);
-    gap: var(--spacing-horizontal-half);
+    grid-template-columns: var(--spacing-horizontal-double) minmax(0, 1fr);
     align-items: start;
+  }
+
+  .monthly-bucket--calendar-body-recurrencies.monthly-bucket--recurrencies-open {
+    grid-template-columns: var(--spacing-horizontal-double) auto minmax(0, 1fr);
+  }
+
+  .monthly-bucket--recurrencies-toggle {
+    grid-column: 1;
+    grid-row: 1 / -1;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    width: 100%;
+    min-height: 100%;
+    padding: 0;
+    border: 0;
+    border-inline-end: 1px solid var(--color-stroke-subtle);
+    background: transparent;
+    color: var(--color-fg-subtle);
+    cursor: pointer;
+
+    &:hover,
+    .monthly-bucket--recurrencies-open > & {
+      color: var(--color-fg-base);
+      background: var(--color-bg-base);
+    }
+  }
+
+  .monthly-bucket--recurrencies-toggle .icon {
+    width: var(--icon-size-subtle);
+    height: var(--icon-size-subtle);
+    margin-block: var(--spacing-vertical-half);
+  }
+
+  .monthly-bucket--date-recurrencies {
+    display: none;
+    grid-column: 2;
+    padding-block: calc(var(--spacing-vertical-half) / 2);
+    padding-inline-end: var(--spacing-horizontal-half);
+    border-inline-end: 1px solid var(--color-stroke-subtle);
+  }
+
+  .monthly-bucket--recurrencies-open .monthly-bucket--date-recurrencies {
+    display: block;
+  }
+
+  .monthly-bucket--calendar-body-recurrencies .monthly-bucket--date-band {
+    grid-column: 2;
+  }
+
+  .monthly-bucket--recurrencies-open .monthly-bucket--date-band {
+    grid-column: 3;
+  }
+
+  .monthly-bucket--date-recurrencies .recurrency--for-day {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: calc(var(--spacing-vertical-half) / 2);
+  }
+
+  .monthly-bucket--date-recurrencies .recurrency--chip {
+    width: var(--icon-size-base);
+    height: var(--icon-size-base);
+    border-radius: var(--radius-subtle);
+  }
+
+  .monthly-bucket--date-band {
     padding-block: calc(var(--spacing-vertical-half) / 2);
   }
 
-  .monthly-bucket--day-band--today {
-    position: relative;
+  .monthly-bucket--date-band-current .monthly-bucket--date-number {
+    color: var(--color-fg-base);
   }
 
-  .monthly-bucket--day-band--today::before {
+  .monthly-bucket--date-band-current .monthly-bucket--date-number::before {
     content: "";
     position: absolute;
     left: 0;
@@ -87,12 +156,6 @@
     pointer-events: none;
   }
 
-  .monthly-bucket--recurrency-slot {
-    min-width: 0;
-    padding-inline-end: calc(var(--spacing-horizontal-half) / 2);
-    border-inline-end: 1px solid var(--color-stroke-subtle);
-  }
-
   .monthly-bucket--date-row {
     display: flex;
     align-items: flex-start;
@@ -100,31 +163,7 @@
     min-width: 0;
   }
 
-  .monthly-bucket--date-row--today {
-    position: relative;
-  }
-
-  .monthly-bucket--date-row--today::before {
-    content: "";
-    position: absolute;
-    left: calc(-1 * var(--spacing-horizontal-half));
-    top: var(--spacing-vertical-half);
-    bottom: var(--spacing-vertical-half);
-    width: var(--radius-base);
-    border-radius: var(--radius-full);
-    background: var(--model-color-4);
-    pointer-events: none;
-  }
-
-  .monthly-bucket--day-band--today .monthly-bucket--date-row::before {
-    display: none;
-  }
-
-  .monthly-bucket--day-band--today .monthly-bucket--date-label {
-    color: var(--color-fg-base);
-  }
-
-  .monthly-bucket--date-label {
+  .monthly-bucket--date-number {
     position: relative;
     flex-shrink: 0;
     display: flex;
@@ -170,18 +209,18 @@
     padding: var(--spacing-vertical-quad) var(--spacing-horizontal);
   }
 
-  .monthly-bucket--date-add {
+  .monthly-bucket--date-form {
     flex-shrink: 0;
     align-self: flex-start;
   }
 
   @supports (appearance: base-select) {
-    .monthly-bucket--date-add-select,
-    .monthly-bucket--date-add-select::picker(select) {
+    .monthly-bucket--date-form-select,
+    .monthly-bucket--date-form-select::picker(select) {
       appearance: base-select;
     }
 
-    .monthly-bucket--date-add-select {
+    .monthly-bucket--date-form-select {
       width: var(--icon-size-base);
       height: var(--icon-size-base);
       padding: 0;
@@ -190,7 +229,7 @@
       color: var(--color-fg-subtle);
     }
 
-    .monthly-bucket--date-add-select > button {
+    .monthly-bucket--date-form-select > button {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -204,17 +243,17 @@
       cursor: pointer;
     }
 
-    .monthly-bucket--date-add-select:hover > button,
-    .monthly-bucket--date-add-select:focus-within > button {
+    .monthly-bucket--date-form-select:hover > button,
+    .monthly-bucket--date-form-select:focus-within > button {
       color: var(--color-fg-base);
       background: var(--color-stroke-base);
     }
 
-    .monthly-bucket--date-add-select::picker-icon {
+    .monthly-bucket--date-form-select::picker-icon {
       display: none;
     }
 
-    .monthly-bucket--date-add-select::picker(select) {
+    .monthly-bucket--date-form-select::picker(select) {
       min-width: calc(var(--spacing-horizontal-double) * 8);
     }
   }
@@ -267,14 +306,14 @@
     overflow: hidden;
   }
 
-  .monthly-bucket--tabs {
+  .monthly-bucket--monthly-sections {
     display: none;
     gap: 0;
     border-bottom: 1px solid var(--color-stroke-base);
     background: var(--color-bg-base);
   }
 
-  .monthly-bucket--tab {
+  .monthly-bucket--monthly-section {
     flex: 1;
     margin: 0;
     padding: var(--spacing-vertical-half) var(--spacing-horizontal);
@@ -286,7 +325,7 @@
     cursor: pointer;
   }
 
-  .monthly-bucket--tab-active {
+  .monthly-bucket--monthly-section-active {
     color: var(--color-fg-base);
     border-bottom-color: var(--model-color-4);
   }
@@ -295,14 +334,10 @@
     .monthly-bucket--spread {
       grid-template-columns: minmax(0, 1.65fr) 1px minmax(calc(var(--spacing-horizontal-double) * 9), 1fr);
     }
-
-    .monthly-bucket--day-band {
-      grid-template-columns: minmax(0, calc(var(--icon-size-base) * 3)) minmax(0, 1fr);
-    }
   }
 
   @media (max-width: 799px) {
-    .monthly-bucket--tabs {
+    .monthly-bucket--monthly-sections {
       display: flex;
     }
 

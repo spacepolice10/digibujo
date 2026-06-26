@@ -234,7 +234,7 @@
     padding: var(--spacing-vertical) var(--spacing-horizontal);
   }
 
-  .layout--surface-title {
+  .layout--surface-name {
     margin: 0 0 var(--spacing-vertical);
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-strong);

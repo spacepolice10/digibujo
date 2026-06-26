@@ -1,9 +1,0 @@
-<% if blob.representable? %>
-  <span class="attachment attachment--preview attachment--inline attachment--<%= blob.filename.extension %>">
-    <%= image_tag blob, class: "attachment--preview-image" %>
-  </span>
-<% else %>
-  <span class="attachment attachment--file attachment--inline attachment--<%= blob.filename.extension %>">
-    <%= link_to blob.filename, rails_blob_path(blob, disposition: "attachment"), class: "attachment--name" %>
-  </span>
-<% end %>

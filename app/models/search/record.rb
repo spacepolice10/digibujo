@@ -3,9 +3,7 @@
 class Search::Record < ApplicationRecord
   include Search::Record::Sqlite
 
-  self.table_name = "search_records"
-
-  SEARCH_CONTENT_LIMIT = 32.kilobytes
+  SEARCH_CONTENT_SIZE = 32.kilobytes
 
   belongs_to :user
   belongs_to :searchable, polymorphic: true

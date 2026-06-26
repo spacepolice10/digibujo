@@ -22,5 +22,4 @@ class Project < ApplicationRecord
   def attachable_plain_text_representation(_caption = nil)
     name
   end
-
 end

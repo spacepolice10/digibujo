@@ -1,1 +1,25 @@
-<%= render @bullets %>
+<% content_for(:title) { "Published" } %>
+
+<div class="layout--page">
+  <div class="layout--header">
+    <div class="layout--header-actions">
+      <%= link_to home_path, class: "button--secondary" do %>
+        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+        Home
+      <% end %>
+    </div>
+    <h2>Published</h2>
+  </div>
+
+  <article class="layout--column bucket--list">
+    <ul class="layout--list">
+      <% @bullets.each do |bullet| %>
+        <li class="layout--list-item">
+          <%= link_to published_path(bullet.public_code), class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
+            <span class="utilities--line-clamp-1"><%= bullet.bulletable.name %></span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </article>
+</div>

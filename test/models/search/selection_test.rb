@@ -1,94 +1,93 @@
 # frozen_string_literal: true
 
-require "test_helper"
+require 'test_helper'
 
 class Search::SelectionTest < ActiveSupport::TestCase
   setup do
     @user = users(:one)
-    @project = create_project!(@user, name: "alpha")
+    @project = create_project!(@user, name: 'alpha')
   end
 
-  test "record! upserts the same target" do
+  test 'record! upserts the same target' do
     Search::Selection.record!(
       user: @user,
-      searchable_type: "Project",
+      searchable_type: 'Project',
       searchable_id: @project.id,
-      query: "alp"
+      query: 'alp'
     )
 
     travel 1.hour do
       Search::Selection.record!(
         user: @user,
-        searchable_type: "Project",
+        searchable_type: 'Project',
         searchable_id: @project.id,
-        query: "alpha"
+        query: 'alpha'
       )
 
       selection = @user.search_selections.sole
-      assert_equal "alpha", selection.query
+      assert_equal 'alpha', selection.query
       assert_in_delta Time.current, selection.selected_at, 1.second
     end
 
     assert_equal 1, @user.search_selections.count
   end
 
-  test "record! keeps at most STORE_LIMIT selections per user" do
-    projects = 11.times.map { |i| create_project!(@user, name: "project #{i}") }
+  test 'record! keeps at most LIMIT selections per user' do
+    projects = (Search::Selection::LIMIT + 1).times.map { |i| create_project!(@user, name: "project #{i}") }
 
     projects.each do |project|
       Search::Selection.record!(
         user: @user,
-        searchable_type: "Project",
+        searchable_type: 'Project',
         searchable_id: project.id
       )
     end
 
-    assert_equal Search::Selection::STORE_LIMIT, @user.search_selections.count
+    assert_equal Search::Selection::LIMIT, @user.search_selections.count
     assert_not_includes @user.search_selections.pluck(:searchable_id), projects.first.id
   end
 
-  test "for_menu returns recent selections up to MENU_LIMIT" do
-    projects = 8.times.map { |i| create_project!(@user, name: "menu project #{i}") }
+  test 'in_menu returns recent selections up to LIMIT' do
+    projects = (Search::Selection::LIMIT + 1).times.map { |i| create_project!(@user, name: "menu project #{i}") }
 
     projects.each do |project|
       Search::Selection.record!(
         user: @user,
-        searchable_type: "Project",
+        searchable_type: 'Project',
         searchable_id: project.id
       )
     end
 
-    selections = Search::Selection.for_menu(@user)
+    selections = Search::Selection.in_menu(@user)
 
-    assert_equal Search::Selection::MENU_LIMIT, selections.size
+    assert_equal Search::Selection::LIMIT, selections.size
     assert_equal projects.last.id, selections.first.searchable_id
   end
 
-  test "for_menu skips selections whose searchable was deleted" do
-    deleted = create_project!(@user, name: "gone")
-    kept = create_project!(@user, name: "kept")
+  test 'in_menu skips selections whose searchable was deleted' do
+    deleted = create_project!(@user, name: 'gone')
+    kept = create_project!(@user, name: 'kept')
 
-    Search::Selection.record!(user: @user, searchable_type: "Project", searchable_id: deleted.id)
-    Search::Selection.record!(user: @user, searchable_type: "Project", searchable_id: kept.id)
+    Search::Selection.record!(user: @user, searchable_type: 'Project', searchable_id: deleted.id)
+    Search::Selection.record!(user: @user, searchable_type: 'Project', searchable_id: kept.id)
 
     deleted.destroy!
 
-    selections = Search::Selection.for_menu(@user)
+    selections = Search::Selection.in_menu(@user)
 
     assert_equal 1, selections.size
     assert_equal kept, selections.first.searchable
   end
 
-  test "to_entry wraps searchable for palette rendering" do
+  test 'in_menu returns selections with searchable loaded' do
     Search::Selection.record!(
       user: @user,
-      searchable_type: "Project",
+      searchable_type: 'Project',
       searchable_id: @project.id
     )
 
-    entry = @user.search_selections.sole.to_entry
+    selection = Search::Selection.in_menu(@user).sole
 
-    assert_equal @project, entry.entity
-    assert_equal "Project", entry.searchable_type
+    assert_equal @project, selection.searchable
   end
 end

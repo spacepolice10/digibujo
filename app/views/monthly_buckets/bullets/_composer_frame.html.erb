@@ -1,6 +1,0 @@
-<%# locals: (monthly_bucket:, pops_on: nil) %>
-<% composer_id = pops_on.present? ? "composer_#{pops_on.to_date.iso8601}" : "composer_unplanned" %>
-<turbo-frame id="<%= composer_id %>"
-             class="bullet_pops_on_<%= pops_on %>"
-             data-controller="composer-frame">
-</turbo-frame>

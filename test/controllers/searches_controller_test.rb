@@ -81,7 +81,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "turbo-stream[action=?][target=?]", "update", "menu_search" do
-      assert_select "li.layout--list-item", maximum: Search::GlobalRequest::RESULT_LIMIT
+      assert_select "li.layout--list-item", maximum: Search::GlobalRequest::LIMIT
     end
   end
 

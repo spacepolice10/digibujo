@@ -16,23 +16,11 @@ class User < ApplicationRecord
   has_many :people, dependent: :destroy
   has_many :pinned_entities, dependent: :destroy
   has_many :published_entities, dependent: :destroy
-  has_many :search_selections, class_name: "Search::Selection", dependent: :destroy
+  has_many :search_selections, class_name: 'Search::Selection', dependent: :destroy
   has_many :recurrencies, dependent: :destroy
 
   def settings!
     settings || create_settings!
-  end
-
-  def future_bucket
-    future_buckets.order(:created_at).first
-  end
-
-  def future_bucket!
-    future_bucket || begin
-      created = FutureBucket.create!(user: self)
-      buckets.create!(bucketable: created, name: 'Future Log')
-      created
-    end
   end
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }

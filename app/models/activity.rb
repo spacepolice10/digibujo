@@ -10,10 +10,11 @@ class Activity < ApplicationRecord
       unarchived
       completed
       uncompleted
-      project_tagged
-      project_untagged
-      person_tagged
-      person_untagged
+      project_mentioned
+      project_unmentioned
+      person_mentioned
+      person_unmentioned
+      acknowledged
     ].freeze,
     'Bucket' => %w[created updated pinned unpinned archived unarchived].freeze
   }.freeze
@@ -25,14 +26,15 @@ class Activity < ApplicationRecord
     'archived' => 'archive',
     'completed' => 'check',
     'uncompleted' => 'square',
-    'project_tagged' => 'tag',
-    'project_untagged' => 'tag',
-    'person_tagged' => 'face',
-    'person_untagged' => 'face',
+    'project_mentioned' => 'tag',
+    'project_unmentioned' => 'tag',
+    'person_mentioned' => 'face',
+    'person_unmentioned' => 'face',
     'created' => 'plus',
     'pinned' => 'pin',
     'unpinned' => 'pin',
-    'unarchived' => 'archive'
+    'unarchived' => 'archive',
+    'acknowledged' => 'line-dashed'
   }.freeze
 
   belongs_to :user
@@ -49,7 +51,4 @@ class Activity < ApplicationRecord
     "var(--icon-#{ACTION_ICON_MAPPINGS.fetch(action)})"
   end
 
-  def migration_kind
-    metadata['kind']
-  end
 end

@@ -2,4 +2,10 @@
   <turbo-frame id="pinned_bullets" class="dropdown pinned--list" popover>
     <%= render "pinned/bullets_list", bullets: @items.select { |pe| pe.pinnable_type == "Bullet" }.map(&:pinnable) %>
   </turbo-frame>
+<% else %>
+  <% content_for(:title, "Pinned") %>
+  <div class="layout--page pinned--page" data-controller="bulk-menu">
+    <%= render "pinned/workspace" %>
+    <%= render "bullets/bulk_menu" %>
+  </div>
 <% end %>

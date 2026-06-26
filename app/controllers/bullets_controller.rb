@@ -4,10 +4,9 @@ class BulletsController < ApplicationController
   before_action :set_bullet, only: %i[show edit update destroy]
 
   def new
-    type_name = new_bullet_params[:bulletable_type].presence || Bullet::Composer.default_type
-    @bullet = Current.user.bullets.new(
-      new_bullet_params.to_h.merge(bulletable_type: type_name, bulletable_attributes: {})
-    )
+    preview = Bullet::Params.preview(params)
+    @bullet = Current.user.bullets.new(preview.except(:bulletable_attributes))
+    @composer_attributes = composer_attributes_from(preview)
   end
 
   def create
@@ -20,8 +19,15 @@ class BulletsController < ApplicationController
       end
     else
       respond_to do |format|
-        format.turbo_stream { render_validation_toast(@bullet) }
+        format.turbo_stream { notify(@bullet) }
         format.html { render :new, status: :unprocessable_entity }
+      end
+    end
+  rescue Bullet::Params::TypeRequired
+    respond_to do |format|
+      format.turbo_stream { notify_type_required }
+      format.html do
+        redirect_back fallback_location: daylog_path, alert: 'Bullet type is required'
       end
     end
   end
@@ -32,14 +38,14 @@ class BulletsController < ApplicationController
 
   def update
     if @bullet.update(bullet_params)
-      @bullet.record_activity!("updated")
+      @bullet.record_activity!('updated')
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to bullet_path(@bullet) }
       end
     else
       respond_to do |format|
-        format.turbo_stream { render_validation_toast(@bullet) }
+        format.turbo_stream { notify(@bullet) }
         format.html { render :edit, status: :unprocessable_entity }
       end
     end
@@ -60,18 +66,26 @@ class BulletsController < ApplicationController
   end
 
   def bullet_params
-    params.require(:bullet).permit(
-      :body, :rich_body, :pops_on, :bulletable_type, :bucket_id, :indented,
-      attachments: [],
-      bulletable_attributes: permitted_bullet_attributes
-    ).then { |p| ensure_bulletable_defaults!(p) }
+    Bullet::Params.permit(params, bullet: @bullet)
   end
 
-  def new_bullet_params
-    params.permit(:pops_on, :bucket_id, :bulletable_type).then { |p| ensure_bulletable_defaults!(p) }
+  def composer_attributes_from(preview)
+    {
+      pops_on: preview[:pops_on],
+      bucket_id: preview[:bucket_id],
+      composer_id: params[:composer_id].presence || 'bullet_composer'
+    }.compact
   end
 
-  def render_validation_toast(record)
+  def notify_type_required
+    render turbo_stream: turbo_stream.update(
+      'toasts',
+      partial: 'shared/toasts',
+      locals: { type: 'errmsg', messages: ['Bullet type is required'] }
+    ), status: :unprocessable_entity
+  end
+
+  def notify(record)
     render turbo_stream: turbo_stream.update(
       'toasts',
       partial: 'shared/toasts',

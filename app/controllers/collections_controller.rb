@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CollectionsController < ApplicationController
-  include UserCollections, PrepareBullets
+  include BulletListing, UserCollections, PrepareBullets
   before_action :set_collection, only: %i[show destroy]
   before_action :prepare_collect_context, only: %i[new create]
 
@@ -25,15 +25,15 @@ class CollectionsController < ApplicationController
 
     if @collection.save
       @collection.bucket.record_activity!(
-        "created",
-        metadata: { "bucketable_type" => @collection.bucket.bucketable_type }
+        'created',
+        metadata: { 'bucketable_type' => @collection.bucket.bucketable_type }
       )
 
       if @bullet_ids.present?
         collect_bullets_into_collection!
         respond_to do |format|
-          format.turbo_stream { render "bullets/collects/create" }
-          format.html { redirect_to collect_return_path, notice: "Collection created" }
+          format.turbo_stream { render 'bullets/collects/create' }
+          format.html { redirect_to collect_return_path, notice: 'Collection created' }
         end
       else
         redirect_to collection_path(@collection), notice: 'Collection created'
@@ -46,7 +46,7 @@ class CollectionsController < ApplicationController
   rescue ActiveRecord::RecordInvalid => e
     @failed_bullet = e.record
     respond_to do |format|
-      format.turbo_stream { render "bullets/collects/create", status: :unprocessable_entity }
+      format.turbo_stream { render 'bullets/collects/create', status: :unprocessable_entity }
       format.html do
         redirect_back fallback_location: home_path, alert: e.record.errors.full_messages.to_sentence
       end
@@ -54,10 +54,7 @@ class CollectionsController < ApplicationController
   end
 
   def show
-    scoped_bullets = Current.user.bullets.where(bucket_id: @collection.bucket.id)
-                            .active.distinct
-    scoped_bullets = scoped_bullets.where(bulletable_type: selected_type) if selected_type.present?
-    @bullets = set_page_and_extract_portion_from(scoped_bullets, per_page: [5, 15, 30, 50])
+    set_bullet_listing(@collection)
   end
 
   def destroy
@@ -69,10 +66,6 @@ class CollectionsController < ApplicationController
 
   def set_collection
     @collection = user_collections.find(params[:id])
-  end
-
-  def selected_type
-    @selected_type ||= params[:type].to_s.classify.presence_in(Bullet.bulletable_types)
   end
 
   def collection_params

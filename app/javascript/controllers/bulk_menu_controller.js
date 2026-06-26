@@ -158,23 +158,23 @@ export default class extends Controller {
     const anyNonCompletable = checked.some(
       (checkbox) => !checkbox.hasAttribute("data-completable"),
     );
-    const anyDone = checked.some((checkbox) =>
-      checkbox.hasAttribute("data-done"),
+    const anyCompleted = checked.some((checkbox) =>
+      checkbox.hasAttribute("data-completed"),
     );
-    const anyUndone = checked.some(
+    const anyIncomplete = checked.some(
       (checkbox) =>
         checkbox.hasAttribute("data-completable") &&
-        !checkbox.hasAttribute("data-done"),
+        !checkbox.hasAttribute("data-completed"),
     );
 
     if (this.hasCompleteActionTarget) {
       this.completeActionTarget.hidden =
-        checked.length == 0 || anyNonCompletable || anyDone;
+        checked.length == 0 || anyNonCompletable || anyCompleted;
     }
 
     if (this.hasUncompleteActionTarget) {
       this.uncompleteActionTarget.hidden =
-        checked.length == 0 || anyNonCompletable || anyUndone;
+        checked.length == 0 || anyNonCompletable || anyIncomplete;
     }
   }
 

@@ -18,7 +18,7 @@ class BulletEditorContentHelperTest < ActionView::TestCase
 
   test 'hydrate_editor_content renders project pill into attachment node' do
     bullet = @user.bullets.create!(bulletable: Task.create!, body: 'Task')
-    bullet.tag_project!(project_id: @project.id)
+    bullet.mentions.projects.add!(project_id: @project.id)
     raw_html = bullet.editor_content_for_form
 
     hydrated = hydrate_editor_content(raw_html)
@@ -31,7 +31,7 @@ class BulletEditorContentHelperTest < ActionView::TestCase
 
   test 'hydrate_editor_content renders person pill into attachment node' do
     bullet = @user.bullets.create!(bulletable: Task.create!, body: 'Task')
-    bullet.tag_person!(person_id: @person.id)
+    bullet.mentions.people.add!(person_id: @person.id)
     raw_html = bullet.editor_content_for_form
 
     hydrated = hydrate_editor_content(raw_html)

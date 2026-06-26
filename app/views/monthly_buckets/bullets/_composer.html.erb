@@ -3,13 +3,9 @@
 <turbo-frame id="<%= composer_id %>"
              class="bullet_pops_on_<%= pops_on %>"
              data-controller="composer-frame">
-  <div class="bullet-composer">
-    <%= link_to new_monthly_bucket_bullet_path(monthly_bucket, pops_on: pops_on),
-          class: "bullet-composer--add",
-          data: { turbo_frame: "_self" },
-          aria: { label: label } do %>
-      <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
-      <%= label %>
-    <% end %>
-  </div>
+  <%= render "monthly_buckets/bullets/composer_content",
+        bullet: Current.user.bullets.build(bucket_id: monthly_bucket.bucket.id, pops_on: pops_on),
+        monthly_bucket: monthly_bucket,
+        composer_id: composer_id,
+        composer_attributes: { pops_on: pops_on, bucket_id: monthly_bucket.bucket.id }.compact %>
 </turbo-frame>

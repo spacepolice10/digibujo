@@ -16,7 +16,7 @@ export default class extends Controller {
     this.element.removeEventListener("toggle", this.onToggle);
   }
 
-  showMore(event) {
+  preventToggle(event) {
     event.stopPropagation();
   }
 
@@ -28,8 +28,6 @@ export default class extends Controller {
     const url = open ? this.expandUrlValue : this.collapseUrlValue;
     if (!url) return;
 
-    const formData = new FormData();
-    formData.append("open", open ? "true" : "false");
-    post(url, { body: formData }).catch((error) => console.error("Section persist failed:", error));
+    post(url).catch((error) => console.error("Section persist failed:", error));
   }
 }

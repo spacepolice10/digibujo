@@ -38,6 +38,33 @@ lexxy-editor[preset="inline"] .lexxy-editor__content {
   overflow-wrap: anywhere;
 }
 
+/* Unlayered — must beat gem :where(.lexxy-editor__content) min-block-size. */
+lexxy-editor[preset="note"] {
+  --lexxy-editor-rows: 3lh;
+  --lexxy-editor-padding: 0;
+  --lexxy-toolbar-button-size: var(--icon-size-subtle);
+  --lexxy-toolbar-gap: var(--spacing-horizontal-half);
+  --lexxy-toolbar-spacing: var(--spacing-horizontal-half);
+  width: 100%;
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+}
+
+lexxy-editor[preset="note"] lexxy-toolbar {
+  --lexxy-toolbar-icon-size: var(--icon-size-subtle);
+  font-size: var(--font-size-subtle);
+  padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+  margin-block-end: var(--spacing-vertical-half);
+  background: var(--color-bg-base);
+  border: 1px solid var(--color-stroke-base);
+  border-radius: var(--radius-base);
+}
+
+lexxy-editor[preset="note"] .lexxy-editor__content {
+  background: transparent;
+}
+
 @layer components {
   lexxy-editor[preset="inline"] .lexxy-editor__content .attachment--preview {
     position: relative;

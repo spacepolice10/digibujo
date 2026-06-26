@@ -8,13 +8,13 @@ module Poppable
     update!(pops_on: pops_on)
 
     if from != pops_on
-      stamp_migration!(
-        kind: "scheduled",
+      mark_migration!(
+        action: 'popped',
         from_pops_on: from,
         to_pops_on: pops_on
       )
     else
-      record_activity!("popped")
+      record_activity!('popped')
     end
   end
 

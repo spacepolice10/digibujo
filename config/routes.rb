@@ -26,9 +26,7 @@ Rails.application.routes.draw do
 
   get "monthly_bucket", to: "monthly_buckets#current", as: :current_monthly_bucket
 
-  resources :future_buckets, only: :show do
-    post :months, on: :member
-  end
+  resources :future_buckets, only: :show
 
   resources :monthly_buckets, only: [:show, :new, :create] do
     resources :bullets, only: [:new, :create], module: :monthly_buckets
@@ -59,17 +57,27 @@ Rails.application.routes.draw do
   scope "bullets", module: :bullets do
     resource :pin, only: %i[create destroy]
     resource :archive, only: %i[create destroy]
+    namespace :composer do
+      resource :editor, only: :create, controller: :editor
+    end
     resource :collect
     resource :pop
-    resource :complete, only: %i[create destroy]
     resource :publish, only: %i[create destroy]
-    resource :export
   end
 
   resources :bullets, except: :index
 
+  # --- Tasks ---
+  scope "tasks", module: :tasks do
+    resource :complete, only: %i[create destroy]
+  end
+
   # --- Buckets & collections ---
-  resources :collections
+  resources :collections do
+    scope module: :collections do
+      resource :export, only: :show
+    end
+  end
 
   scope "buckets", module: :buckets, as: :buckets do
     resource :pin, only: %i[create destroy]
@@ -78,7 +86,7 @@ Rails.application.routes.draw do
   resources :buckets, only: :show
 
   # --- Recurrencies ---
-  resources :recurrencies do
+  resources :recurrencies, except: :index do
     scope module: :recurrencies do
       resource :completion, only: %i[create destroy]
     end
@@ -100,8 +108,14 @@ Rails.application.routes.draw do
   end
 
   # --- Workspaces ---
-  resource :review, controller: "reviews"
-  resources :activities
+  resource :review, controller: "reviews" do
+    post :migrate
+  end
+  resources :activities do
+    collection do
+      get :rail
+    end
+  end
   resources :pinned
   resources :archived
 

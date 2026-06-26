@@ -61,16 +61,36 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'daylog renders composer with add bullet link and selected day as attribute' do
+  test 'daylog renders composer with quick add links for task event and note' do
     selected_date = Date.current - 2.days
 
     get daylog_path(date: selected_date.iso8601)
 
     assert_response :success
     assert_select 'turbo-frame#bullet_composer' do
-      assert_select 'a[href=?]', new_bullet_path(pops_on: selected_date.iso8601, composer_id: 'bullet_composer')
-      assert_match(/Add bullet/, response.body)
+      assert_select 'a[href=?]',
+                    new_bullet_path(
+                      pops_on: selected_date.iso8601,
+                      composer_id: 'bullet_composer',
+                      bulletable_type: 'Task'
+                    )
+      assert_select 'a[href=?]',
+                    new_bullet_path(
+                      pops_on: selected_date.iso8601,
+                      composer_id: 'bullet_composer',
+                      bulletable_type: 'Event'
+                    )
+      assert_select 'a[href=?]',
+                    new_bullet_path(
+                      pops_on: selected_date.iso8601,
+                      composer_id: 'bullet_composer',
+                      bulletable_type: 'Note'
+                    )
+      assert_match(/Add task/, response.body)
+      assert_match(/Add event/, response.body)
+      assert_match(/Add note/, response.body)
     end
+    assert_no_match(/Add bullet/, response.body)
   end
 
   test 'root shows today daylog' do
@@ -104,13 +124,27 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'nav.tab-bar a[href=?]', pinned_index_path
   end
 
+  test 'daylog renders mixed bullet types on the same page' do
+    selected_date = Date.current
+    @user.bullets.create!(bulletable: Task.create!, body: 'Task line', pops_on: selected_date)
+    @user.bullets.create!(bulletable: Note.create!, body: 'Note line', pops_on: selected_date)
+    @user.bullets.create!(bulletable: Event.create!, body: 'Event line', pops_on: selected_date)
+
+    get daylog_path(date: selected_date.iso8601)
+
+    assert_response :success
+    assert_match 'Task line', response.body
+    assert_match 'Note line', response.body
+    assert_match 'Event line', response.body
+  end
+
   test 'daylog renders recurrency chips in header when scheduled' do
     create_recurrency!(@user, name: 'Morning run', colour: 'teal', icon: 'muscle')
 
     get daylog_path
 
     assert_response :success
-    assert_select '.recurrency--header-chips .recurrency--chip.recurrency--chip-neutral'
+    assert_select '.recurrency--for-day .recurrency--chip.recurrency--chip-neutral'
     assert_select '.recurrency--chip[data-bucket-colour]', count: 0
     assert_select '.recurrency--day-panel', count: 0
   end

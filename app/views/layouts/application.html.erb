@@ -10,11 +10,8 @@
     <meta name="turbo-refresh-scroll" content="preserve">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
     <%= yield :head %>
-
     <%= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
@@ -22,6 +19,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;400;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap&subset=cyrillic" rel="stylesheet">
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
@@ -37,9 +35,11 @@
     <% end %>
     <%= yield %>
     <% if request.variant.include?(:mobile) %>
-      <%= render "shared/mobile_tab_bar" %>
+      <%= render "shared/mobile_tabbar" %>
     <% end %>
-    <%= render "shared/footer" %>
+    <% unless request.variant.include?(:mobile) %>
+      <%= render "shared/footer" %>
+    <% end %>
     <%= render "shared/dialog", data_action: "turbo:submit-end->dialog#submitEnd" do %>
       <%= turbo_frame_tag "modal" %>
     <% end %>

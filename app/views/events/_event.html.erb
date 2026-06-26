@@ -1,13 +1,13 @@
+<%# locals: (event:, selected_date: nil) %>
 <turbo-frame id="<%= dom_id(event) %>" class="bullet" data-bullet-type="event">
   <div class="bullet--marker bullet--event-marker">
     <i class="icon" style="--icon-mask: var(--icon-circle)" aria-hidden="true"></i>
   </div>
   <div class="bullet--body">
-    <div class="bullet--name">
+    <div class="bullet-body">
       <%= event.body %>
     </div>
-    <%= render "bullets/metadata", bullet: event %>
-    <%= render "bullets/attachments", bullet: event %>
+    <%= render "bullets/metadata", bullet: event, selected_date: selected_date %>
 </div>
-  <%= render "bullets/select", bullet: event %>
+  <%= render "bullets/bulk-menu-select", bullet: event %>
 </turbo-frame>

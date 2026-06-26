@@ -57,7 +57,7 @@ class BulletInReviewTest < ActiveSupport::TestCase
     assert_not_includes @user.bullets.in_review(from: @today, to: @today), bullet
   end
 
-  test 'in_review includes migrated bullets' do
+  test 'in_review excludes migrated bullets' do
     bullet = @user.bullets.create!(
       bulletable: Task.create!,
       body: 'Migrated',
@@ -66,6 +66,6 @@ class BulletInReviewTest < ActiveSupport::TestCase
     bullet.pop!(pops_on: @today + 1.day)
     bullet.update!(pops_on: @today)
 
-    assert_includes @user.bullets.in_review(from: @today, to: @today), bullet
+    assert_not_includes @user.bullets.in_review(from: @today, to: @today), bullet
   end
 end

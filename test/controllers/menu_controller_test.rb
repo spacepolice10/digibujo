@@ -14,12 +14,12 @@ class MenuControllerTest < ActionDispatch::IntegrationTest
     get menu_path, headers: { "User-Agent" => MOBILE_UA }
 
     assert_response :success
-    assert_select "nav.menu--nav[data-controller=?][data-grid-navigation-columns-value=?]", "grid-navigation", "4"
-    assert_select "nav.menu--nav a.menu--nav-item[data-grid-navigation-target=?]", "item", count: 4
-    assert_select "nav.menu--nav a[href=?]", home_path
-    assert_select "nav.menu--nav a[href=?]", daylog_path
-    assert_select "nav.menu--nav a[href=?]", review_path
-    assert_select "nav.menu--nav a[href^=?]", "/future_buckets/", count: 0
+    assert_select "nav.menu--navigation[data-controller=?][data-grid-navigation-columns-value=?]", "grid-navigation", "4"
+    assert_select "nav.menu--navigation a.menu--navigation-item[data-grid-navigation-target=?]", "item", count: 4
+    assert_select "nav.menu--navigation a[href=?]", home_path
+    assert_select "nav.menu--navigation a[href=?]", daylog_path
+    assert_select "nav.menu--navigation a[href=?]", review_path
+    assert_select "nav.menu--navigation a[href^=?]", "/future_buckets/", count: 0
     assert_select "form.search--form[action=?]", search_path
     assert_select "label.search--label[for=?]", "q", text: "Search bullets, projects, collections, and people"
     assert_select "input.search--textform[placeholder=?]", "Search…"

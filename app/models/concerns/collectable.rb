@@ -6,8 +6,8 @@ module Collectable
   def collect!(bucket_id:)
     bucket = user.buckets.active.find(bucket_id)
     update!(bucket: bucket)
-    stamp_migration!(
-      kind: "collected",
+    mark_migration!(
+      action: 'collected',
       bucket_id: bucket.id,
       bucket_name: bucket.name,
       bucketable_type: bucket.bucketable_type

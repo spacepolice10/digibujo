@@ -16,46 +16,26 @@
     <%= f.text_field :name, class: "form-input", required: true, autofocus: true %>
   </div>
 
-  <%= render "identity_fields", form: f %>
+  <%= render "shared/form/colour_picker", form: f, aria_label: "Recurrency colour" %>
+  <%= render "shared/form/icon_picker", form: f,
+        aria_label: "Recurrency icon",
+        hint: "Pick an emoji to spot this recurrency in your daily log." %>
 
   <fieldset class="form--field">
-    <legend>Schedule</legend>
-    <% Recurrency::SCHEDULE_KINDS.each do |kind| %>
-      <label class="form--radio-label">
-        <input type="radio"
-               name="recurrency[schedule_kind]"
-               value="<%= kind %>"
-               <%= "checked" if recurrency.schedule_kind == kind %>>
-        <%= kind.humanize %>
-      </label>
-    <% end %>
-  </fieldset>
-
-  <fieldset class="form--field" data-schedule-custom>
-    <legend>Custom days</legend>
+    <legend>Days</legend>
     <% Date::ABBR_DAYNAMES.each_with_index do |label, wday| %>
       <label class="form--checkbox-label">
         <input type="checkbox"
                name="recurrency[schedule_days][]"
                value="<%= wday %>"
-               <%= "checked" if recurrency.schedule_kind == "custom" && Array(recurrency.schedule["days"]).map(&:to_i).include?(wday) %>>
+               <% if recurrency.schedule_days.include?(wday) %>checked<% end %>>
         <%= label %>
       </label>
     <% end %>
   </fieldset>
 
-  <div class="form--field">
-    <%= f.label :active_from, "Active from (optional)" %>
-    <%= f.date_field :active_from %>
-  </div>
-
-  <div class="form--field">
-    <%= f.label :active_to, "Active to (optional)" %>
-    <%= f.date_field :active_to %>
-  </div>
-
   <div class="form--actions">
-    <%= link_to "Cancel", recurrencies_path, class: "button--secondary" %>
+    <%= link_to "Cancel", home_path, class: "button--secondary" %>
     <%= f.submit class: "button--primary" %>
   </div>
 <% end %>

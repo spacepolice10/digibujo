@@ -30,7 +30,7 @@ class ProjectsControllerTest < ActionDispatch::IntegrationTest
   test 'show renders project bullets' do
     project = create_project!(@user, name: 'alpha')
     @user.bullets.create!(bulletable: Task.create!, body: 'Tagged task')
-      .tap { |b| b.tag_project!(project_id: project.id) }
+      .tap { |b| b.mentions.projects.add!(project_id: project.id) }
 
     get project_path(project)
 

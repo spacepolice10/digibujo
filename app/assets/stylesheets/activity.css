@@ -27,4 +27,77 @@
       border-radius: var(--radius-strong);
     }
   }
+
+  .activity--rail-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical-half);
+  }
+
+  .activity--rail-item {
+    display: grid;
+    grid-template-columns: var(--icon-size-subtle) minmax(0, 1fr);
+    column-gap: var(--spacing-horizontal-half);
+    row-gap: var(--spacing-vertical-half);
+    align-items: center;
+    min-width: 0;
+  }
+
+  .activity--rail-dot {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: center;
+    width: calc(var(--icon-size-subtle) / 2);
+    height: calc(var(--icon-size-subtle) / 2);
+    border-radius: var(--radius-full);
+    background: var(--color-stroke-base);
+  }
+
+  .activity--rail-dot[data-bullet-type="task"] {
+    background: var(--model-color-2);
+  }
+
+  .activity--rail-dot[data-bullet-type="event"] {
+    background: var(--model-color-6);
+  }
+
+  .activity--rail-dot[data-bullet-type="note"] {
+    background: var(--model-color-5);
+  }
+
+  .activity--rail-dot[data-bucket-colour="violet"] { background: var(--model-color-1); }
+  .activity--rail-dot[data-bucket-colour="cobalt"] { background: var(--model-color-2); }
+  .activity--rail-dot[data-bucket-colour="teal"] { background: var(--model-color-3); }
+  .activity--rail-dot[data-bucket-colour="emerald"] { background: var(--model-color-4); }
+  .activity--rail-dot[data-bucket-colour="gold"] { background: var(--model-color-5); }
+  .activity--rail-dot[data-bucket-colour="vermillion"] { background: var(--model-color-6); }
+  .activity--rail-dot[data-bucket-colour="magenta"] { background: var(--model-color-7); }
+  .activity--rail-dot[data-bucket-colour="inks"] { background: var(--model-color-8); }
+
+  .activity--rail-link {
+    grid-column: 2;
+    grid-row: 1;
+    min-width: 0;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .activity--rail-name {
+    font-size: var(--font-size-subtle);
+    color: var(--color-fg-base);
+  }
+
+  .activity--rail-action {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: center;
+  }
+
+  .activity--rail-time {
+    grid-column: 2;
+    grid-row: 2;
+    min-width: 0;
+    font-size: var(--font-size-subtle);
+    color: var(--color-fg-subtle);
+  }
 }

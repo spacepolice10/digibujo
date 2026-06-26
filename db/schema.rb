@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_23_120200) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_26_190000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -114,8 +114,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_23_120200) do
     t.integer "bulletable_id", null: false
     t.string "bulletable_type", null: false
     t.datetime "created_at", null: false
-    t.date "ends_date"
-    t.boolean "indented", default: false, null: false
     t.json "last_migration", default: {}, null: false
     t.datetime "migrated_at"
     t.date "pops_on"
@@ -135,6 +133,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_23_120200) do
   end
 
   create_table "events", force: :cascade do |t|
+    t.date "ends_date"
+    t.date "starts_date"
   end
 
   create_table "future_buckets", force: :cascade do |t|
@@ -229,13 +229,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_23_120200) do
   end
 
   create_table "recurrencies", force: :cascade do |t|
-    t.date "active_from"
-    t.date "active_to"
     t.string "colour"
     t.datetime "created_at", null: false
     t.string "icon"
     t.string "name", null: false
-    t.json "schedule", default: {"kind" => "daily"}, null: false
+    t.json "schedule", default: {"days" => [0, 1, 2, 3, 4, 5, 6]}, null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["user_id", "created_at"], name: "index_recurrencies_on_user_id_and_created_at"
@@ -288,13 +286,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_23_120200) do
   end
 
   create_table "tasks", force: :cascade do |t|
-    t.boolean "done", default: false, null: false
-    t.datetime "done_at"
-  end
-
-  create_table "titles", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.boolean "completed", default: false, null: false
+    t.datetime "completed_at"
   end
 
   create_table "user_settings", force: :cascade do |t|
@@ -303,6 +296,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_23_120200) do
     t.boolean "logs_expanded", default: true, null: false
     t.boolean "people_expanded", default: true, null: false
     t.boolean "projects_expanded", default: true, null: false
+    t.boolean "recurrencies_expanded", default: true, null: false
     t.boolean "spreads_expanded", default: true, null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false

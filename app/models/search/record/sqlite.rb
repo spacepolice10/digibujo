@@ -7,9 +7,9 @@ module Search::Record::Sqlite
     after_save :upsert_to_fts5_table
     after_destroy :remove_from_fts5_table
 
-    scope :matching, ->(query) {
+    scope :matching, lambda { |query|
       joins("INNER JOIN search_records_fts ON search_records_fts.rowid = #{table_name}.id")
-        .where("search_records_fts MATCH ?", query)
+        .where('search_records_fts MATCH ?', query)
     }
   end
 
@@ -22,9 +22,9 @@ module Search::Record::Sqlite
         .where(user_id: user.id)
         .select(
           "#{table_name}.*",
-          "bm25(search_records_fts, 10.0, 1.0) AS fts_rank"
+          'bm25(search_records_fts, 10.0, 1.0) AS fts_rank'
         )
-        .order(Arel.sql("fts_rank"))
+        .order(Arel.sql('fts_rank'))
         .limit(limit)
     end
   end

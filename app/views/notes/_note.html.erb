@@ -1,0 +1,10 @@
+<%# locals: (note:, selected_date: nil) %>
+<turbo-frame id="<%= dom_id(note) %>" class="bullet" data-bullet-type="note">
+  <div class="bullet--marker-slot">
+    <%= render "bullets/marker", bullet: note %>
+  </div>
+  <div class="bullet--body">
+    <%= render "bullets/body", bullet: note, selected_date: selected_date %>
+  </div>
+  <%= render "bullets/bulk-menu-select", bullet: note %>
+</turbo-frame>

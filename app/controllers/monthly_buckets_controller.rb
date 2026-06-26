@@ -18,23 +18,20 @@ class MonthlyBucketsController < ApplicationController
   end
 
   def new
-    @monthly_bucket = MonthlyBucket.new(MonthlyBucket.default_period)
-    @monthly_bucket.build_bucket(name: Date.current.strftime('%B %Y'))
+    @monthly_bucket = Current.user.future_bucket.monthly_buckets.build(user: Current.user)
     @occupied_months = occupied_months
   end
 
   def create
-    month_date = Date.parse(monthly_bucket_params[:month])
-    @monthly_bucket = Current.user.future_bucket!.monthly_buckets.build(
+    @monthly_bucket = Current.user.future_bucket.monthly_buckets.build(
       user: Current.user,
-      period_from: month_date.beginning_of_month,
-      period_to: month_date.end_of_month
+      month: monthly_bucket_params[:month]
     )
     @monthly_bucket.build_bucket(
       user: Current.user,
-      name: month_date.strftime("%B %Y"),
+      name: @monthly_bucket.period_from&.strftime("%B %Y"),
       icon: "calendar"
-    )
+    ) if @monthly_bucket.period_from.present?
 
     if @monthly_bucket.save
       @monthly_bucket.bucket.record_activity!(
@@ -75,6 +72,9 @@ class MonthlyBucketsController < ApplicationController
                               to: @monthly_bucket.period_to
                             )
                           end
+    @spread_recurrencies = @recurrency_tracker && @period_days&.any? do |date|
+      @recurrency_tracker.scheduled_for(date).any?
+    end
   end
 
   def monthly_bucket_params

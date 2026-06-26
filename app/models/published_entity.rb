@@ -6,11 +6,11 @@ class PublishedEntity < ApplicationRecord
 
   validates :code, uniqueness: true
 
-  before_create :set_defaults
+  before_create :generate_defaults
 
   private
 
-  def set_defaults
+  def generate_defaults
     self.code ||= SecureRandom.urlsafe_base64(16)
     self.published_at ||= Time.current
   end

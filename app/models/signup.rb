@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
 class Signup
-  include ActiveModel::Model
-  include ActiveModel::Attributes
-  include ActiveModel::Validations
+  include ActiveModel::Validations, ActiveModel::Attributes, ActiveModel::Model
 
-  FUTURE_LOG_NAME = 'Future Log'
+  FUTURE_BUCKET_NAME = 'Future Log'
   LOOSE_NOTES_NAME = 'Loose Notes'
 
   attr_accessor :email_address, :user
@@ -35,23 +33,23 @@ class Signup
     return false unless valid?(:completion)
 
     ActiveRecord::Base.transaction do
-      ensure_future_log!
+      ensure_future_bucket!
       ensure_loose_notes!
     end
 
     true
-  rescue ActiveRecord::RecordInvalid => error
-    errors.add(:base, error.message)
+  rescue ActiveRecord::RecordInvalid => e
+    errors.add(:base, e.message)
     false
   end
 
   private
 
-  def ensure_future_log!
+  def ensure_future_bucket!
     future_bucket = FutureBucket.find_or_create_by!(user: user)
     return if future_bucket.bucket.present?
 
-    user.buckets.create!(bucketable: future_bucket, name: FUTURE_LOG_NAME)
+    user.buckets.create!(bucketable: future_bucket, name: FUTURE_BUCKET_NAME)
   end
 
   def ensure_loose_notes!

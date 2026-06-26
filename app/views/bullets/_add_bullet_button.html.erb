@@ -1,9 +1,0 @@
-<%# locals: (attributes:, turbo_frame:, aria_label: "Add bullet", style: :link) %>
-<% button_class = style == :rail ? "button--secondary layout--rail-action" : "bullet-composer--add" %>
-<%= link_to new_bullet_path(**attributes),
-      class: button_class,
-      data: { turbo_frame: turbo_frame },
-      aria: { label: aria_label } do %>
-  <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
-  Add bullet
-<% end %>

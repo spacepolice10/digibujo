@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = [ "nextPageLink" ]
-  static values = { rootMargin: String }
+  static values = { rootMargin: String, turboFrame: String }
 
   nextPageLinkTargetConnected(link) {
     if (link.dataset.preload == "true") {
@@ -19,11 +19,31 @@ export default class extends Controller {
   }
 
   async #fetchNextPageHTML(url) {
-    const response = await fetch(url, { headers: { Accept: "text/html" } })
+    const headers = { Accept: "text/html" }
+    if (this.hasTurboFrameValue) {
+      headers["Turbo-Frame"] = this.turboFrameValue
+    }
+
+    const response = await fetch(url, { headers })
     const html = await response.text()
     const doc = new DOMParser().parseFromString(html, "text/html")
-    const container = doc.querySelector(`[data-controller~="${this.identifier}"]`)
+    const container = this.#paginationContainerFrom(doc)
     return container ? container.innerHTML.trim() : ""
+  }
+
+  #paginationContainerFrom(doc) {
+    if (this.element.id) {
+      const byId = doc.getElementById(this.element.id)
+      if (byId) return byId
+    }
+
+    if (this.hasTurboFrameValue) {
+      const frame = doc.getElementById(this.turboFrameValue)
+      const inFrame = frame?.querySelector(`[data-controller~="${this.identifier}"]`)
+      if (inFrame) return inFrame
+    }
+
+    return doc.querySelector(`[data-controller~="${this.identifier}"]`)
   }
 
   #waitForIntersection(element) {

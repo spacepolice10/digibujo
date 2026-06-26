@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class PeopleController < ApplicationController
+  include BulletListing
+
   before_action :set_person, only: %i[show edit update destroy]
 
   def index
@@ -35,12 +37,7 @@ class PeopleController < ApplicationController
   end
 
   def show
-    scoped_bullets = Current.user.bullets.joins(:people)
-                            .where(people: { id: @person.id })
-                            .active
-                            .distinct
-    scoped_bullets = scoped_bullets.where(bulletable_type: selected_type) if selected_type.present?
-    @bullets = set_page_and_extract_portion_from(scoped_bullets, per_page: [5, 15, 30, 50])
+    set_bullet_listing(@person)
   end
 
   def destroy
@@ -56,10 +53,6 @@ class PeopleController < ApplicationController
 
   def sanitized_string
     @sanitized_string ||= ActiveRecord::Base.sanitize_sql_like(params[:q].to_s.strip.downcase)
-  end
-
-  def selected_type
-    @selected_type ||= params[:type].to_s.classify.presence_in(Bullet.bulletable_types)
   end
 
   def person_params

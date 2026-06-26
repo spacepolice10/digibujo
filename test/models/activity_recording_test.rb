@@ -17,7 +17,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
 
     activity = Activity.order(:created_at).last
     assert_equal 'completed', activity.action
-    assert_equal 'completed', activity.metadata['kind']
+    assert_equal 'completed', activity.metadata['action']
     assert_equal bullet, activity.subject
     assert_equal @user.id, activity.user_id
   end
@@ -43,7 +43,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
 
     activity = Activity.order(:created_at).last
     assert_equal 'archived', activity.action
-    assert_equal 'discarded', activity.metadata['kind']
+    assert_equal 'archived', activity.metadata['action']
   end
 
   test 'unarchive records unarchived activity' do
@@ -67,19 +67,19 @@ class ActivityRecordingTest < ActiveSupport::TestCase
 
     activity = Activity.order(:created_at).last
     assert_equal 'collected', activity.action
-    assert_equal 'collected', activity.metadata['kind']
+    assert_equal 'collected', activity.metadata['action']
     assert_equal collection.bucket.id, activity.metadata['bucket_id']
   end
 
-  test 'tag project records project_tagged' do
+  test 'mention project records project_mentioned' do
     project = create_project!(@user, name: 'Inbox')
     bullet = @user.bullets.create!(bulletable: Task.create!, body: 'Move')
 
     assert_difference -> { Activity.count }, 1 do
-      bullet.tag_project!(project_id: project.id)
+      bullet.mentions.projects.add!(project_id: project.id)
     end
 
-    assert_equal 'project_tagged', Activity.order(:created_at).last.action
+    assert_equal 'project_mentioned', Activity.order(:created_at).last.action
   end
 
   test 'pin toggle does not record activity' do
@@ -100,7 +100,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
 
     activity = Activity.order(:created_at).last
     assert_equal 'popped', activity.action
-    assert_equal 'scheduled', activity.metadata['kind']
+    assert_equal 'popped', activity.metadata['action']
   end
 
   test 'pop records popped' do
@@ -117,7 +117,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
     bullet = @user.bullets.create!(bulletable: Note.create!, body: 'Before')
 
     assert_no_difference -> { Activity.count } do
-      bullet.update!(body: 'After', ends_date: Date.current + 3)
+      bullet.update!(body: 'After')
     end
   end
 

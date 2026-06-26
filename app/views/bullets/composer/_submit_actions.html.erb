@@ -1,0 +1,17 @@
+<%# locals: (f:, editing: false) %>
+<div class="bullet-form-rail-submit">
+  <%= f.button type: "submit",
+        class: "button--primary button--icon button--circle",
+        aria: { label: "Save" } do %>
+    <i class="icon" style="--icon-mask: var(--icon-arrow-up)" aria-hidden="true"></i>
+  <% end %>
+  <% unless editing %>
+    <%= f.button type: "submit",
+          name: "add_another",
+          value: "1",
+          class: "button--secondary bullet-form-add-another",
+          aria: { label: "Save and add another" } do %>
+      Add another
+    <% end %>
+  <% end %>
+</div>

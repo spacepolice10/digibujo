@@ -19,7 +19,7 @@
           <%= link_to monthly_bucket.name, monthly_bucket_path(monthly_bucket) %>
         </div>
         <div id="<%= dom_id(bucket, :unplanned) %>">
-          <% unplanned = monthly_bucket.bullets.where(pops_on: nil).chronological.includes(:bucketable) %>
+          <% unplanned = monthly_bucket.bullets.where(pops_on: nil).chronological.includes(:bulletable) %>
           <%= render partial: "bullets/bullet", collection: unplanned, as: :bullet %>
         </div>
         <%= link_to new_bullet_path(
@@ -35,12 +35,12 @@
     <% end %>
 
     <div class="future--add-month">
-      <%= button_to "+ Add month", months_future_bucket_path(@future_bucket), method: :post, class: "button--primary" %>
+      <%= link_to "+ Add month", new_monthly_bucket_path, class: "button--primary" %>
     </div>
   </div>
 
-  <turbo-frame id="bullet_composer">
-    <%= render "bullets/composer", attributes: { composer_id: "bullet_composer" } %>
+  <turbo-frame id="bullet_composer" data-controller="composer-frame">
+    <%= render "bullets/composer/picker", composer_id: "bullet_composer" %>
   </turbo-frame>
 
   <%= render "bullets/bulk_menu" %>

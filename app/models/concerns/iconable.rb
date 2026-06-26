@@ -18,6 +18,6 @@ module Iconable
   end
 
   def icon_path
-    "emoji/#{icon}.svg" if icon.in?(ICON_MAPPINGS)
+    "tweemoji/#{icon}.svg" if icon.in?(ICON_MAPPINGS)
   end
 end

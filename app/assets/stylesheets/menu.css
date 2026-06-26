@@ -27,15 +27,15 @@
     gap: var(--spacing-vertical-double);
   }
 
-  .menu--wrap > nav.menu--nav,
-  .menu--page > nav.menu--nav {
+  .menu--wrap > nav.menu--navigation,
+  .menu--page > nav.menu--navigation {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: var(--spacing-horizontal);
     flex-shrink: 0;
   }
 
-  .menu--nav-item {
+  .menu--navigation-item {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -72,14 +72,14 @@
     }
   }
 
-  .menu--nav-label {
+  .menu--navigation-label {
     width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .menu--nav-item.button--hotkey[data-hotkey]::after {
+  .menu--navigation-item.button--hotkey[data-hotkey]::after {
     content: attr(data-hotkey);
     margin-inline-start: 0;
     padding: 0 var(--spacing-horizontal-half);
@@ -94,16 +94,16 @@
     white-space: nowrap;
   }
 
-  .menu--wrap > nav:not(.menu--nav),
-  .menu--page > nav:not(.menu--nav) {
+  .menu--wrap > nav:not(.menu--navigation),
+  .menu--page > nav:not(.menu--navigation) {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-vertical-half);
     flex-shrink: 0;
   }
 
-  .menu--wrap > nav:not(.menu--nav) .button--secondary,
-  .menu--page > nav:not(.menu--nav) .button--secondary {
+  .menu--wrap > nav:not(.menu--navigation) .button--secondary,
+  .menu--page > nav:not(.menu--navigation) .button--secondary {
     width: 100%;
     justify-content: flex-start;
   }
@@ -144,7 +144,6 @@
     }
   }
 
-  .bucket--list-item-link.is-active,
   .menu--palette-view-all.is-active {
     background-color: var(--color-accent-bg);
   }
@@ -175,38 +174,6 @@
 
     &[data-bullet-type="note"] {
       color: var(--model-color-4);
-    }
-  }
-
-  .menu--page {
-    padding-bottom: calc(var(--spacing-vertical-double) * 3);
-  }
-
-  .tab-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
-    padding-bottom: max(var(--spacing-vertical-half), env(safe-area-inset-bottom));
-    background-color: var(--color-bg-base);
-    border-top: 1px solid var(--color-stroke-base);
-    z-index: var(--z-dropdown);
-  }
-
-  .tab-bar-item {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
-    color: var(--color-fg-subtle);
-    text-decoration: none;
-
-    &.tab-bar-item--active {
-      color: var(--color-fg-base);
     }
   }
 }

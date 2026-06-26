@@ -1,0 +1,20 @@
+<%# locals: (bullet:, monthly_bucket:, composer_id:, composer_attributes: {}) %>
+<% types = composer_id == "composer_unplanned" ? %w[Task Note] : %w[Task Event] %>
+
+<% if bullet.bulletable_type.blank? %>
+  <%= render "bullets/composer/picker",
+        composer_id: composer_id,
+        types: types,
+        new_path: ->(type) {
+          new_monthly_bucket_bullet_path(
+            monthly_bucket,
+            **composer_attributes.merge(composer_id: composer_id, bulletable_type: type)
+          )
+        } %>
+<% else %>
+  <%= render "monthly_buckets/bullets/form",
+        bullet: bullet,
+        monthly_bucket: monthly_bucket,
+        composer_id: composer_id,
+        attributes: composer_attributes %>
+<% end %>

@@ -34,6 +34,8 @@
     --icon-pencil: url("icon-pencil.svg");
     --icon-circle-check: url("icon-circle-check.svg");
     --icon-calendar: url("icon-calendar.svg");
+    --icon-calendar-repeat: url("icon-calendar-repeat.svg");
+    --icon-report-medical: url("icon-report-medical.svg");
     --icon-file: url("icon-file.svg");
     --icon-book: url("icon-book.svg");
     --icon-menu: url("icon-menu.svg");
@@ -44,6 +46,7 @@
     --icon-spinner: url("icon-spinner.svg");
     --icon-search: url("icon-search.svg");
     --icon-tag: url("icon-tag.svg");
+    --icon-hash: url("icon-hash.svg");
     --icon-check: url("icon-check.svg");
     --icon-chevron-down: url("icon-chevron-down.svg");
     --icon-face: url("icon-face.svg");

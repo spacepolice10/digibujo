@@ -15,7 +15,6 @@ module Bullet::Searchable
 
     [
       body.to_plain_text,
-      rich_body&.to_plain_text,
       *bucket_names,
       *project_names,
       *person_names

@@ -7,21 +7,21 @@ module PrepareBullets
 
   private
 
-  def parse_bullet_ids(raw)
-    raw.to_s.split(',').map(&:strip).grep(/\A\d+\z/).map(&:to_i).uniq
+  def prepare_bullet_list_from(bullet_id_parameter)
+    bullet_id_parameter.to_s.split(',').map(&:strip).grep(/\A\d+\z/).map(&:to_i).uniq
   end
 
-  def bullets_from_param(raw)
-    ids = parse_bullet_ids(raw)
-    raise ActiveRecord::RecordNotFound if ids.empty? || ids.size > MAX_BULK_BULLET_IDS
+  def prepare_bullets_from(bullet_id_parameter)
+    bullet_ids = prepare_bullet_list_from(bullet_id_parameter)
+    raise ActiveRecord::RecordNotFound if bullet_ids.empty? || bullet_ids.size > MAX_BULK_BULLET_IDS
 
-    bullets = Current.user.bullets.where(id: ids).order(:id)
-    raise ActiveRecord::RecordNotFound if bullets.count != ids.size
+    bullets = Current.user.bullets.where(id: bullet_ids).order(:id)
+    raise ActiveRecord::RecordNotFound if bullets.count != bullet_ids.size
 
     bullets
   end
 
   def prepare_bullets
-    @bullets = bullets_from_param(params.fetch(:bullet_ids, ''))
+    @bullets = prepare_bullets_from(params[:bullet_ids])
   end
 end

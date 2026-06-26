@@ -28,7 +28,7 @@ module Bullet::Archivable
   def archive!
     transaction do
       create_archive!(user: user)
-      stamp_migration!(kind: 'discarded', pops_on: pops_on)
+      mark_migration!(action: 'archived', pops_on: pops_on)
     end
   end
 

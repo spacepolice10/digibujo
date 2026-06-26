@@ -1,0 +1,23 @@
+<% path = entity.is_a?(Bucket) ? polymorphic_path(entity.bucketable) : polymorphic_path(entity) %>
+<li class="layout--list-item" role="option">
+  <%= link_to path,
+        class: "menu--palette-item",
+        data: {
+          turbo_frame: "_top",
+          combobox_target: "item",
+          action: "click->search#rememberSelection",
+          searchable_type: entity.class.name,
+          searchable_id: entity.id
+        } do %>
+    <% case entity %>
+    <% when Project %>
+      <%= render "projects/search_palette", project: entity %>
+    <% when Person %>
+      <%= render "people/search_palette", person: entity %>
+    <% when Bucket %>
+      <%= render "buckets/search_palette", bucket: entity %>
+    <% when Bullet %>
+      <%= render "bullets/search_palette", bullet: entity %>
+    <% end %>
+  <% end %>
+</li>

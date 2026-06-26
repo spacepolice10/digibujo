@@ -41,13 +41,13 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select '.review--collections'
-    assert_select '.review--inbox'
+    assert_select '.review--to-review'
     assert_select '.review--week'
-    assert_select '.review--week-days'
+    assert_select '.review--week-dates'
     assert_select '[data-controller="pop-drop"]', minimum: 1
     assert_select '[data-controller="collect-drop"]', minimum: 1
-    assert_select 'turbo-frame.bullet[draggable="true"]', minimum: 1
-    assert_select '.review--row-actions', count: 0
+    assert_select '.review--bullet[draggable="true"]', minimum: 1
+    assert_select '.review--review-actions', count: 0
   end
 
   test 'show desktop week strip lists scheduled bullets for each day' do
@@ -59,10 +59,10 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_match 'Team standup', response.body
-    assert_select '.review--week-day-drop .bullet--monthly-bucket', text: /Team standup/
+    assert_select '.review--week-date-drop .bullet--monthly-bucket', text: /Team standup/
   end
 
-  test 'show mobile renders inbox row actions without week strip' do
+  test 'show mobile renders review actions without week strip' do
     @user.bullets.create!(bulletable: Task.create!, body: 'Mobile review', pops_on: @today)
 
     get review_path(from: @today.iso8601, to: @today.iso8601), headers: { 'User-Agent' => MOBILE_UA }
@@ -71,8 +71,8 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Mobile review', response.body
     assert_select '.review--week', count: 0
     assert_select '.review--collections', count: 0
-    assert_select '.review--row-actions', minimum: 1
-    assert_select 'turbo-frame.bullet[draggable="true"]', count: 0
+    assert_select '.review--review-actions', minimum: 1
+    assert_select '.review--bullet[draggable="true"]', count: 0
     assert_select '#review_collect_picker_frame'
   end
 
@@ -97,10 +97,38 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to new_session_path
   end
 
-  test 'show returns not found for invalid date' do
-    get review_path(from: 'not-a-date')
+  test 'migrate marks all bullets in review period' do
+    in_review = @user.bullets.create!(bulletable: Task.create!, body: 'Keep as is', pops_on: @today)
+    @user.bullets.create!(bulletable: Note.create!, body: 'Already migrated', pops_on: @today).tap(&:acknowledge_migration!)
 
-    assert_response :not_found
+    assert_difference -> { @user.bullets.in_review(from: @today, to: @today).count }, -1 do
+      post review_migrate_path(from: @today.iso8601, to: @today.iso8601)
+    end
+
+    assert_redirected_to review_path(from: @today.iso8601, to: @today.iso8601)
+    assert in_review.reload.migrated?
+    assert_equal 'acknowledged', in_review.last_migration['action']
+  end
+
+  test 'migrate with bullet_ids marks only selected bullets' do
+    first = @user.bullets.create!(bulletable: Task.create!, body: 'First', pops_on: @today)
+    second = @user.bullets.create!(bulletable: Task.create!, body: 'Second', pops_on: @today)
+
+    post review_migrate_path(from: @today.iso8601, to: @today.iso8601),
+         params: { bullet_ids: first.id.to_s },
+         as: :turbo_stream
+
+    assert_response :success
+    assert first.reload.migrated?
+    assert_not second.reload.migrated?
+  end
+
+  test 'migrate requires authentication' do
+    sign_out
+
+    post review_migrate_path
+
+    assert_redirected_to new_session_path
   end
 
 end

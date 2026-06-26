@@ -7,11 +7,11 @@ module Search::TermBuilder
     terms = normalize(query)
     return if terms.empty?
 
-    terms.map { |term| "\"#{escape(term)}\"*" }.join(" AND ")
+    terms.map { |term| "\"#{escape(term)}\"*" }.join(' AND ')
   end
 
   def normalize(query)
-    query.to_s.downcase.gsub(/[^\p{L}\p{N}\s"]/u, " ").split(/\s+/).grep(/\S/)
+    query.to_s.downcase.gsub(/[^\p{L}\p{N}\s"]/u, ' ').split(/\s+/).grep(/\S/)
   end
 
   private

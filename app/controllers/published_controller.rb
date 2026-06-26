@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class PublishedController < ApplicationController
+  layout 'public', only: :show
+
   allow_unauthenticated_access only: ['show']
 
   def index

@@ -1,0 +1,15 @@
+<%# locals: (form:, aria_label:, hint: nil) %>
+<div class="form-group">
+  <span class="form-label">Icon</span>
+  <% if hint.present? %>
+    <small class="form-hint"><%= hint %></small>
+  <% end %>
+  <div class="form--icon-picker" role="radiogroup" aria-label="<%= aria_label %>">
+    <% Iconable::ICON_MAPPINGS.each do |key| %>
+      <label class="form--icon-option">
+        <%= form.radio_button :icon, key %>
+        <%= image_tag "tweemoji/#{key}.svg", alt: "", class: "form--icon-image" %>
+      </label>
+    <% end %>
+  </div>
+</div>

@@ -8,9 +8,8 @@ module Bullets
 
     def new
       @return_to = permitted_return_to(params[:return_to]) || permitted_return_to(request.referer)
-      @collects_q = sanitized_query
-      @collections = user_collections
-      @collections = @collections.where('buckets.name LIKE ?', "#{@collects_q}%") if @collects_q.present?
+      @collects_q = sanitized_collections_query(params[:q])
+      @collections = user_collections_matching(@collects_q)
       @collections = @collections.limit(5) if review_collect_picker_request? && @collects_q.blank?
     end
 
@@ -58,10 +57,6 @@ module Bullets
     end
 
     private
-
-    def sanitized_query
-      @sanitized_query ||= ActiveRecord::Base.sanitize_sql_like(params[:q].to_s.strip.downcase)
-    end
 
     def review_collect_drop_request?
       request.headers['X-Requested-With'] == 'review-collect-drop'

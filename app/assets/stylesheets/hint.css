@@ -8,6 +8,28 @@
     interest-delay: 0.2s;
   }
 
+  .bullet--migration {
+    display: contents;
+  }
+
+  .bullet--migration-mark {
+    flex-shrink: 0;
+    align-self: flex-start;
+    margin-top: var(--radius-subtle);
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    font-size: var(--font-size-subtle);
+    line-height: 1;
+    color: var(--color-fg-subtle);
+    cursor: default;
+  }
+
+  .bullet--migration-mark[interestfor] {
+    interest-delay: 0.2s;
+  }
+
   .hint[popover="hint"] {
     box-sizing: border-box;
     position: fixed;
@@ -58,7 +80,11 @@
     interest-delay: 0.2s;
   }
 
-  .home--activity-list [interestfor] {
+  .activity--rail-list [interestfor] {
+    interest-delay: 0.2s;
+  }
+
+  .recurrency--for-day [interestfor] {
     interest-delay: 0.2s;
   }
 
@@ -103,20 +129,16 @@
     color: var(--model-color-6);
   }
 
-  .layout--filter-option[data-bullet-type="title"] {
-    color: var(--model-color-3);
-  }
-
   .layout--filter-option[aria-current="page"][data-bullet-type] {
     color: var(--color-fg-base);
   }
 
-  .home--activity-item .layout--filter-option {
+  .activity--rail-item .layout--filter-option {
     width: var(--icon-size-subtle);
     height: var(--icon-size-subtle);
   }
 
-  .home--activity-item .layout--filter-option .icon {
+  .activity--rail-item .layout--filter-option .icon {
     width: 100%;
     height: 100%;
   }

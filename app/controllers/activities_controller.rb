@@ -1,29 +1,32 @@
 # frozen_string_literal: true
 
 class ActivitiesController < ApplicationController
-  ALLOWED_SUBJECT_TYPES = %w[Bullet Bucket].freeze
+  RECENT_LIMIT = 6
 
   def index
-    if params[:subject_type].present? && params[:subject_id].present?
-      subject = find_subject(params[:subject_type], params[:subject_id])
-      return head :not_found unless subject
+    @activities = Current.user.activities.order(created_at: :desc)
+    return unless subject_filter?
 
-      @activities = subject.activities.order(created_at: :desc)
-    else
-      @activities = Current.user.activities.order(created_at: :desc)
-    end
+    @activities = @activities.where(subject_type: params[:subject_type],
+                                    subject_id: params[:subject_id])
+  end
+
+  def rail
+    @activities = recent_activities
   end
 
   private
 
-  def find_subject(subject_type, subject_id)
-    return unless ALLOWED_SUBJECT_TYPES.include?(subject_type)
+  SUBJECT_ASSOCIATIONS = { 'Bullet' => :bullets, 'Bucket' => :buckets }.freeze
 
-    case subject_type
-    when "Bullet"
-      Current.user.bullets.find_by(id: subject_id)
-    when "Bucket"
-      Current.user.buckets.find_by(id: subject_id)
-    end
+  def recent_activities
+    Current.user.activities
+           .includes(:subject)
+           .order(created_at: :desc)
+           .limit(RECENT_LIMIT)
+  end
+
+  def subject_filter?
+    params[:subject_type].present? && params[:subject_id].present?
   end
 end

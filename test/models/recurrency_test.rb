@@ -5,47 +5,32 @@ require "test_helper"
 class RecurrencyTest < ActiveSupport::TestCase
   setup do
     @user = users(:one)
-    @recurrency = @user.recurrencies.create!(name: "Run", schedule: { "kind" => "daily" })
+    @recurrency = @user.recurrencies.create!(name: "Run", schedule: { "days" => (0..6).to_a })
   end
 
-  test "scheduled_on daily" do
-    assert @recurrency.scheduled_on?(Date.current)
+  test "scheduled_on matches selected days" do
+    today = Date.current
+
+    assert @recurrency.scheduled_on?(today)
+    assert @recurrency.scheduled_on?(today + 1.day)
   end
 
-  test "scheduled_on weekdays skips weekend" do
-    @recurrency.update!(schedule: { "kind" => "weekdays" })
-    monday = Date.current.beginning_of_week
+  test "scheduled_on skips unselected days" do
+    today = Date.current
+    @recurrency.update!(schedule: { "days" => [today.wday] })
 
-    assert @recurrency.scheduled_on?(monday)
-    assert_not @recurrency.scheduled_on?(monday + 5.days)
+    assert @recurrency.scheduled_on?(today)
+    assert_not @recurrency.scheduled_on?(today + 1.day)
   end
 
-  test "scheduled_on custom days" do
-    monday = Date.current.beginning_of_week
-    @recurrency.update!(schedule: { "kind" => "custom", "days" => [monday.wday] })
-
-    assert @recurrency.scheduled_on?(monday)
-    assert_not @recurrency.scheduled_on?(monday + 1.day)
+  test "active_from is creation date" do
+    assert_equal @recurrency.created_at.to_date, @recurrency.active_from
   end
 
-  test "active_on respects active_from and active_to" do
-    @recurrency.update!(active_from: Date.current, active_to: Date.current + 2.days)
-
-    assert_not @recurrency.active_on?(Date.current - 1.day)
-    assert @recurrency.active_on?(Date.current + 1.day)
-    assert_not @recurrency.active_on?(Date.current + 3.days)
-  end
-
-  test "scheduled_on false outside active range" do
-    @recurrency.update!(active_to: Date.current - 1.day)
+  test "scheduled_on false before creation date" do
+    @recurrency.update_column(:created_at, 1.day.from_now.in_time_zone.beginning_of_day)
 
     assert_not @recurrency.scheduled_on?(Date.current)
-  end
-
-  test "retired when active_to in past" do
-    @recurrency.update!(active_to: Date.current - 1.day)
-
-    assert @recurrency.retired?
   end
 
   test "destroy restricted when completions exist" do

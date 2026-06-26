@@ -1,22 +1,23 @@
 # frozen_string_literal: true
 
 class Search::GlobalRequest
-  RESULT_LIMIT = 20
-
-  FUZZY_THRESHOLD = 3
-  FTS_CANDIDATE_LIMIT = 100
+  LIMIT = 20
+  FUZZY_MATCH_THRESHOLD = 4
+  FTS5_CANDIDATE_LIMIT = 100
   FUZZY_SCAN_LIMIT = 200
 
-  Entry = Data.define(:entity, :rank, :searchable_type)
-  Result = Data.define(:entries)
+  SEARCHABLE_INCLUDES = {
+    'Bucket' => %i[bucketable bullets],
+    'Bullet' => [:projects, { bucket: :bucketable }]
+  }.freeze
 
   class << self
-    def call(user:, query:, limit: RESULT_LIMIT)
+    def call(user:, query:, limit: LIMIT)
       new(user:, query:, limit:).call
     end
   end
 
-  def initialize(user:, query:, limit: RESULT_LIMIT)
+  def initialize(user:, query:, limit: LIMIT)
     @user = user
     @query = query.to_s.strip
     @limit = limit
@@ -24,37 +25,29 @@ class Search::GlobalRequest
   end
 
   def call
-    return no_result if @query.blank?
+    return [] if @query.blank?
 
-    records = Search::Record.search(user: @user, query: @query, limit: FTS_CANDIDATE_LIMIT).to_a
-    records = apply_fuzzy_fallback(records) if records.size < FUZZY_THRESHOLD
+    records = Search::Record.search(user: @user, query: @query, limit: FTS5_CANDIDATE_LIMIT).to_a
+    records = apply_fuzzy_fallback(records) if records.size < FUZZY_MATCH_THRESHOLD
 
-    ranked_records = rank_records(records)
-
-    Result.new(entries: load_entries(ranked_records))
+    build_results(records)
   end
 
   private
-
-  def no_result
-    Result.new(entries: [])
-  end
 
   def apply_fuzzy_fallback(records)
     existing_ids = records.map(&:id).to_set
 
     supplemental = Search::Record.where(user_id: @user.id)
-      .where.not(id: existing_ids.to_a)
-      .limit(FUZZY_SCAN_LIMIT)
-      .select do |record|
-        fuzzy_match?(record)
-      end
+                                 .where.not(id: existing_ids.to_a)
+                                 .limit(FUZZY_SCAN_LIMIT)
+                                 .select { |record| fuzzy_match?(record) }
 
     records + supplemental
   end
 
   def fuzzy_match?(record)
-    haystack = [ record.search_name, record.search_body ].join(" ").downcase
+    haystack = [record.search_name, record.search_body].join(' ').downcase
     haystack_words = haystack.split(/\s+/)
 
     @terms.all? do |term|
@@ -63,15 +56,15 @@ class Search::GlobalRequest
     end
   end
 
-  def rank_records(records)
-    records
-      .map { |record| { record: record, rank: rank(record) } }
-      .sort_by { |ranked| ranked[:rank] }
-      .first(@limit)
+  def build_results(records)
+    ranked = records.sort_by { |record| rank(record) }.first(@limit)
+    preload_searchables(ranked)
+
+    ranked.filter_map(&:searchable)
   end
 
   def rank(record)
-    ranking = record.attributes["fts_rank"].to_f
+    ranking = record.attributes['fts_rank'].to_f
     name = record.search_name.to_s.downcase
     body = record.search_body.to_s.downcase
 
@@ -82,57 +75,18 @@ class Search::GlobalRequest
     end
 
     age_days = (Time.current - record.updated_at) / 1.day
-    ranking -= [ 3 - age_days / 30.0, 0 ].max
+    ranking -= [3 - age_days / 30.0, 0].max
 
     ranking
   end
 
-  def load_entries(ranked_records)
-    records = ranked_records.pluck(:record)
-    index = load_entities_for(records)
-
-    ranked_records.filter_map do |ranked|
-      record = ranked[:record]
-      entity = index[[ record.searchable_type, record.searchable_id ]]
-      next unless entity
-
-      Entry.new(entity: entity, rank: ranked[:rank], searchable_type: record.searchable_type)
-    end
-  end
-
-  def load_entities_for(records)
-    index = {}
-
+  def preload_searchables(records)
     records.group_by(&:searchable_type).each do |type, type_records|
-      entities = case type
-      when "Project" then load_entities(type_records, Project)
-      when "Person" then load_entities(type_records, Person)
-      when "Bucket" then load_buckets(type_records)
-      when "Bullet" then load_bullets(type_records)
-      else []
-      end
-
-      entities.each { |entity| index[[ type, entity.id ]] = entity }
+      includes = SEARCHABLE_INCLUDES[type] || []
+      ActiveRecord::Associations::Preloader.new(
+        records: type_records,
+        associations: { searchable: includes }
+      ).call
     end
-
-    index
-  end
-
-  def load_entities(records, klass)
-    ids = records.map(&:searchable_id)
-    indexed = klass.where(id: ids).index_by(&:id)
-    ids.filter_map { |id| indexed[id] }
-  end
-
-  def load_buckets(records)
-    ids = records.map(&:searchable_id)
-    indexed = Bucket.where(id: ids).includes(:bucketable, :bullets).index_by(&:id)
-    ids.filter_map { |id| indexed[id] }
-  end
-
-  def load_bullets(records)
-    ids = records.map(&:searchable_id)
-    indexed = Bullet.where(id: ids).includes(:projects, bucket: :bucketable).index_by(&:id)
-    ids.filter_map { |id| indexed[id] }
   end
 end

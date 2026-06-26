@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ProjectsController < ApplicationController
+  include BulletListing
+
   before_action :set_project, only: %i[show destroy]
 
   def index
@@ -23,12 +25,7 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    scoped_bullets = Current.user.bullets.joins(:projects)
-                            .where(projects: { id: @project.id })
-                            .active
-                            .distinct
-    scoped_bullets = scoped_bullets.where(bulletable_type: selected_type) if selected_type.present?
-    @bullets = set_page_and_extract_portion_from(scoped_bullets, per_page: [5, 15, 30, 50])
+    set_bullet_listing(@project)
   end
 
   def destroy
@@ -44,10 +41,6 @@ class ProjectsController < ApplicationController
 
   def sanitized_string
     @sanitized_string ||= ActiveRecord::Base.sanitize_sql_like(params[:q].to_s.strip.downcase)
-  end
-
-  def selected_type
-    @selected_type ||= params[:type].to_s.classify.presence_in(Bullet.bulletable_types)
   end
 
   def project_params

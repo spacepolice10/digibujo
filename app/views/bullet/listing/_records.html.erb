@@ -1,0 +1,3 @@
+<%= render "pagination/paginated_records",
+      page: page,
+      pagination_link_path: ->(next_param) { listing.path(page: next_param) } %>

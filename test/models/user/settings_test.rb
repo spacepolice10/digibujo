@@ -10,13 +10,13 @@ class User::SettingsTest < ActiveSupport::TestCase
     @settings = @user.settings
   end
 
-  test 'SECTION_COLUMNS has 5 entries mapping sections to columns' do
+  test 'SECTION_COLUMNS maps home sections to settings columns' do
     assert_equal 5, User::Settings::SECTION_COLUMNS.size
-    assert_equal :logs_expanded,        User::Settings::SECTION_COLUMNS['logs']
-    assert_equal :projects_expanded,    User::Settings::SECTION_COLUMNS['projects']
-    assert_equal :collections_expanded, User::Settings::SECTION_COLUMNS['collections']
-    assert_equal :spreads_expanded,     User::Settings::SECTION_COLUMNS['spreads']
-    assert_equal :people_expanded,      User::Settings::SECTION_COLUMNS['people']
+    assert_equal :logs_expanded,         User::Settings::SECTION_COLUMNS['logs']
+    assert_equal :projects_expanded,     User::Settings::SECTION_COLUMNS['projects']
+    assert_equal :collections_expanded,  User::Settings::SECTION_COLUMNS['collections']
+    assert_equal :people_expanded,       User::Settings::SECTION_COLUMNS['people']
+    assert_equal :recurrencies_expanded, User::Settings::SECTION_COLUMNS['recurrencies']
   end
 
   test 'SECTION_COLUMNS values correspond to real columns on user_settings' do

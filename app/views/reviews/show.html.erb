@@ -1,13 +1,29 @@
 <% content_for(:title) { "Review" } %>
 
 <div class="layout--page review--page" data-controller="bulk-menu">
-  <%= render "reviews/header" %>
+  <%= render "reviews/header",
+        review_from: @review_from,
+        review_to: @review_to,
+        amount_in_review: @amount_in_review %>
 
   <div class="review--workspace">
-    <%= render "reviews/collections_panel" %>
-    <%= render "reviews/inbox", row_actions: false %>
-    <%= render "reviews/week_strip" %>
+    <%= render "reviews/collections_side",
+          review_from: @review_from,
+          review_to: @review_to,
+          collections_q: @collections_q,
+          collections: @collections,
+          collections_page: @collections_page %>
+    <%= render "reviews/to_review",
+          review_actions: false,
+          review_from: @review_from,
+          review_to: @review_to,
+          page: @page,
+          amount_in_review: @amount_in_review %>
+    <%= render "reviews/week_side",
+          review_to: @review_to,
+          week_days: @week_days,
+          week_bullets_by_date: @week_bullets_by_date %>
   </div>
 
-  <%= render "bullets/bulk_menu" %>
+  <%= render "bullets/bulk_menu", review_migrate: { from: @review_from, to: @review_to } %>
 </div>

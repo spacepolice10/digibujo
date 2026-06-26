@@ -5,8 +5,8 @@ class PinnedController < ApplicationController
 
   def index
     pinned = Current.user.pinned_entities.includes(:pinnable).order(created_at: :desc)
-    @items = pinned.where.not(pinnable_type: 'Bucket')
-    @buckets = pinned.where(pinnable_type: 'Bucket')
+    @items = pinned.where.not(pinnable_type: "Bucket")
+    @buckets = pinned.where(pinnable_type: "Bucket")
   end
 
   private

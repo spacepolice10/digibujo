@@ -1,0 +1,32 @@
+<div class="activity--rail-item">
+  <% case activity.subject %>
+  <% when Bullet %>
+    <span class="activity--rail-dot"
+          data-bullet-type="<%= activity.subject.bulletable_type.downcase %>"
+          aria-hidden="true"></span>
+    <%= link_to bullet_path(activity.subject), class: "activity--rail-link" do %>
+      <span class="activity--rail-name utilities--line-clamp-1"><%= activity.subject.name.truncate(60) %></span>
+    <% end %>
+  <% when Bucket %>
+    <span class="activity--rail-dot" data-bucket-colour="<%= activity.subject.colour %>" aria-hidden="true"></span>
+    <%= link_to polymorphic_path(activity.subject.bucketable), class: "activity--rail-link", data: { turbo_frame: "_top" } do %>
+      <span class="activity--rail-name utilities--line-clamp-1"><%= activity.subject.name.truncate(60) %></span>
+    <% end %>
+  <% end %>
+  <% hint_id = dom_id(activity, :hint_action) %>
+  <% hint_anchor = "--hint-activity-#{activity.id}" %>
+  <button type="button"
+          class="layout--filter-option activity--rail-action"
+          interestfor="<%= hint_id %>"
+          style="anchor-name: <%= hint_anchor %>"
+          aria-label="<%= activity.action_name %>">
+    <i class="icon" style="--icon-mask: <%= activity.icon_mask %>" aria-hidden="true"></i>
+  </button>
+  <span class="activity--rail-time"><%= time_ago_in_words(activity.created_at) %> ago</span>
+  <div id="<%= hint_id %>"
+       class="hint"
+       popover="hint"
+       style="position-anchor: <%= hint_anchor %>">
+    <%= activity.action_name %>
+  </div>
+</div>

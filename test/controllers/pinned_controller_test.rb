@@ -12,7 +12,17 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
     get pinned_index_path, headers: { 'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)' }
 
     assert_response :success
-    assert_select '.workspace'
+    assert_select '.pinned--workspace'
+    assert_select 'footer.footer', count: 0
+    assert_select 'nav.tab-bar a.tab-bar-item--active[href=?]', pinned_index_path
+  end
+
+  test 'index renders workspace on desktop (direct visit)' do
+    get pinned_index_path
+
+    assert_response :success
+    assert_select '.pinned--workspace'
+    assert_select 'footer.footer', count: 1
   end
 
   test 'mobile workspace lists pinned bullets' do
@@ -25,7 +35,7 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
     get pinned_index_path, headers: { 'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)' }
 
     assert_response :success
-    assert_select '.workspace .bullet', text: /Pinned bullet/, count: 1
+    assert_select '.pinned--workspace .bullet', text: /Pinned bullet/, count: 1
   end
 
   test 'mobile workspace lists pinned project bullets' do
@@ -36,12 +46,12 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
       body: 'Project bullet',
       pops_on: Date.current
     )
-    bullet.tag_project!(project_id: project.id)
+    bullet.mentions.projects.add!(project_id: project.id)
 
     get pinned_index_path, headers: { 'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)' }
 
     assert_response :success
-    assert_select '.workspace .bullet', text: /Project bullet/, count: 1
+    assert_select '.pinned--workspace .bullet', text: /Project bullet/, count: 1
   end
 
   test 'pinned bullets popover loads bullets on request' do

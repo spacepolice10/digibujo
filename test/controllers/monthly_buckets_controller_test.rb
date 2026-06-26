@@ -5,6 +5,7 @@ require 'test_helper'
 class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @user = users(:one)
+    ensure_future_bucket!(@user)
     sign_in_as @user
   end
 
@@ -55,7 +56,16 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Dentist', response.body
   end
 
-  test 'monthly bucket spread has date add menu and composer frames' do
+    test 'monthly bucket unplanned composer offers task and note' do
+      get monthly_bucket_path(@monthly_bucket)
+
+      assert_response :success
+      assert_select 'turbo-frame#composer_unplanned a', text: /Add task/
+      assert_select 'turbo-frame#composer_unplanned a', text: /Add note/
+      assert_select 'turbo-frame#composer_unplanned a', text: /Add event/, count: 0
+    end
+
+    test 'monthly bucket spread has date add menu and composer frames' do
     monthly_bucket = create_monthly_bucket!(@user, name: 'june')
     day = Date.current.beginning_of_month + 2.days
     @user.bullets.create!(
@@ -68,9 +78,9 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     get monthly_bucket_path(monthly_bucket)
 
     assert_response :success
-    assert_select 'select.select-menu.monthly-bucket--date-add-select'
+    assert_select 'select.select.monthly-bucket--date-form-select'
     assert_match 'Add task', response.body
-    assert_match 'option-item--label', response.body
+    assert_match 'select--option-label', response.body
     assert_select "turbo-frame#composer_#{day.iso8601}"
     assert_match 'Planned task', response.body
   end
@@ -109,7 +119,7 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     assert_select '.bullet--monthly-bucket .bullet--metadata', count: 0
   end
 
-  test 'monthly bucket bullets link to show page and indicate extra content' do
+  test 'monthly bucket bullets link to show page' do
     monthly_bucket = create_monthly_bucket!(@user, name: 'june')
     plain = @user.bullets.create!(
       bulletable: Task.create!,
@@ -118,30 +128,16 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     )
     with_rich_body = @user.bullets.create!(
       bulletable: Note.create!,
-      body: 'Note line',
-      rich_body: '<p>Expanded detail</p>',
+      body: '<p>Expanded detail</p>',
       bucket_id: monthly_bucket.bucket.id
-    )
-    with_attachment = @user.bullets.create!(
-      bulletable: Task.create!,
-      body: 'File task',
-      bucket_id: monthly_bucket.bucket.id
-    )
-    with_attachment.attachments.attach(
-      ActiveStorage::Blob.create_and_upload!(
-        io: StringIO.new('file contents'),
-        filename: 'notes.txt',
-        content_type: 'text/plain'
-      )
     )
 
     get monthly_bucket_path(monthly_bucket)
 
     assert_response :success
     assert_select "a.bullet--monthly-bucket-link[href='#{bullet_path(plain)}']", text: /Plain task/
-    assert_select "a.bullet--monthly-bucket-link[href='#{bullet_path(with_rich_body)}'] .bullet--monthly-bucket-extra", count: 1
-    assert_select "a.bullet--monthly-bucket-link[href='#{bullet_path(with_attachment)}'] .bullet--monthly-bucket-extra", count: 1
-    assert_select '.bullet--monthly-bucket .bullet--monthly-bucket-extra', count: 2
+    assert_select "a.bullet--monthly-bucket-link[href='#{bullet_path(with_rich_body)}']", text: /Expanded detail/
+    assert_select '.bullet--monthly-bucket-extra', count: 0
   end
 
   test 'completed monthly bucket tasks are marked completed' do
@@ -169,7 +165,7 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     get monthly_bucket_path(monthly_bucket)
 
     assert_response :success
-    assert_select "a.monthly-bucket--date-label[href='#{daylog_path(date: day.iso8601)}']",
+    assert_select "a.monthly-bucket--date-number[href='#{daylog_path(date: day.iso8601)}']",
                   text: /#{day.day}.*#{day.strftime('%a')}/
   end
 
@@ -250,7 +246,7 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     get monthly_bucket_path(monthly_bucket)
 
     assert_response :success
-    assert_select '.recurrency--inline-chips .recurrency--chip'
-    assert_select "button[title='Run']"
+    assert_select '.recurrency--for-day .recurrency--chip'
+    assert_select '.hint[popover="hint"]', text: /Run/
   end
 end

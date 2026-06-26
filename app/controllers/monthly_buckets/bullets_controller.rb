@@ -5,19 +5,13 @@ module MonthlyBuckets
     before_action :set_monthly_bucket
 
     def new
-      @bullet = Current.user.bullets.build(
-        pops_on: params[:pops_on],
-        bucket_id: @monthly_bucket.bucket.id
-      )
-      @bullet.bulletable_type = params[:bulletable_type].presence || Bullet::Composer.default_type
-      @bullet.bulletable = @bullet.bulletable_type.constantize.new
+      assign_composer_state
     end
 
     def create
       @bullet = Current.user.bullets.new(
         bullet_params.merge(bucket_id: @monthly_bucket.bucket.id)
       )
-      @monthly_bucket
 
       if @bullet.save
         respond_to do |format|
@@ -26,8 +20,15 @@ module MonthlyBuckets
         end
       else
         respond_to do |format|
-          format.turbo_stream { render_invalid_create }
-          format.html { render :new, status: :unprocessable_entity }
+          format.turbo_stream { notify }
+          format.html { render_composer_form(status: :unprocessable_entity) }
+        end
+      end
+    rescue Bullet::Params::TypeRequired
+      respond_to do |format|
+        format.turbo_stream { notify_type_required }
+        format.html do
+          redirect_to monthly_bucket_path(@monthly_bucket), alert: 'Bullet type is required'
         end
       end
     end
@@ -39,19 +40,58 @@ module MonthlyBuckets
     end
 
     def bullet_params
-      params.require(:bullet).permit(
-        :body, :rich_body, :pops_on, :bulletable_type, :bucket_id,
-        attachments: [],
-        bulletable_attributes: permitted_bullet_attributes
-      ).then { |p| ensure_bulletable_defaults!(p) }
+      Bullet::Params.permit(params)
     end
 
-    def render_invalid_create
+    def assign_composer_state
+      preview = Bullet::Params.preview(params, bucket_id: @monthly_bucket.bucket.id)
+      @bullet = Current.user.bullets.build(preview.except(:bulletable_attributes))
+      @composer_attributes = {
+        pops_on: preview[:pops_on],
+        bucket_id: preview[:bucket_id]
+      }.compact
+      @composer_id = params[:composer_id].presence || composer_frame_id(preview[:pops_on])
+    end
+
+    def composer_frame_id(pops_on = nil)
+      pops_on.present? ? "composer_#{pops_on.to_date.iso8601}" : "composer_unplanned"
+    end
+
+    def render_composer_form(status: :ok)
+      @composer_id = params.dig(:bullet, :composer_id).presence || composer_frame_id(@bullet.pops_on)
+      @composer_attributes = {
+        pops_on: @bullet.pops_on,
+        bucket_id: @monthly_bucket.bucket.id
+      }.compact
+      render_composer_content(status: status)
+    end
+
+    def render_composer_content(status: :ok)
+      render partial: "monthly_buckets/bullets/composer_content",
+             locals: {
+               bullet: @bullet,
+               monthly_bucket: @monthly_bucket,
+               composer_id: @composer_id,
+               composer_attributes: @composer_attributes
+             },
+             layout: false,
+             status: status
+    end
+
+    def notify_type_required
+      render turbo_stream: turbo_stream.update(
+        'toasts',
+        partial: 'shared/toasts',
+        locals: { type: 'errmsg', messages: ['Bullet type is required'] }
+      ), status: :unprocessable_entity
+    end
+
+    def notify
       render turbo_stream: turbo_stream.update(
         'toasts',
         partial: 'shared/toasts',
         locals: { type: 'errmsg', messages: @bullet.errors.full_messages }
-      )
+      ), status: :unprocessable_entity
     end
   end
 end

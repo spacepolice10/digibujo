@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Navigation hub: projects, collections, monthly spreads, future log, and recent activity.
+# Navigation hub: projects, collections, monthly spreads, and future log.
 class HomeController < ApplicationController
   include UserCollections
 
@@ -11,10 +11,15 @@ class HomeController < ApplicationController
     @collections = user_collections.limit(COLLECTIONS_LIMIT)
     @show_collections_more = user_collections.count > COLLECTIONS_LIMIT
     @people = recent_people
-    @future = Current.user.future_bucket!.bucket
-    @future_monthly_buckets = Current.user.future_bucket!.monthly_buckets.includes(:bucket)
-    @activities = recent_activities
-    @today_count = today_bullets_count
+    @future = Current.user.future_buckets.first.bucket
+    @future_monthly_buckets = Current.user.future_buckets.first.monthly_buckets.includes(:bucket)
+    @daylog_bullets_number = daylog_bullets_number
+    @recurrencies = Current.user.recurrencies.chronological
+    @recurrency_tracker = RecurrencyTracker.new(
+      user: Current.user,
+      from: Date.current.beginning_of_month,
+      to: Date.current.end_of_month
+    )
     @section_expanded_status = section_expanded_status
   end
 
@@ -28,14 +33,7 @@ class HomeController < ApplicationController
     Current.user.people.first(8)
   end
 
-  def recent_activities
-    Current.user.activities
-           .includes(:subject)
-           .order(created_at: :desc)
-           .limit(6)
-  end
-
-  def today_bullets_count
+  def daylog_bullets_number
     Current.user.bullets.dailylog(Date.current).count
   end
 

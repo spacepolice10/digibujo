@@ -25,7 +25,7 @@ class SignupTest < ActiveSupport::TestCase
     end
   end
 
-  test 'complete provisions future log and loose notes' do
+  test 'complete provisions future bucket and loose notes' do
     user = users(:one)
     signup = Signup.new(user: user)
 

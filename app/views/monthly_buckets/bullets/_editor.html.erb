@@ -1,0 +1,26 @@
+<%# locals: (f:, bullet:) %>
+<% raw_html = bullet.body.body_before_type_cast.to_s.presence || bullet.editor_content_for_form %>
+<% editor_value = hydrate_editor_content(raw_html) %>
+
+<div class="bullet-form-composer">
+  <%= f.rich_text_area :body,
+        value: editor_value,
+        autofocus: true,
+        placeholder: "What's on your mind?",
+        multiline: false,
+        rows: 1,
+        preset: "inline" do %>
+    <lexxy-prompt trigger="#"
+                  name="project"
+                  src="<%= project_suggestions_path %>"
+                  remote-filtering
+                  supports-space-in-searches>
+    </lexxy-prompt>
+    <lexxy-prompt trigger="@"
+                  name="person"
+                  src="<%= person_suggestions_path %>"
+                  remote-filtering
+                  supports-space-in-searches>
+    </lexxy-prompt>
+  <% end %>
+</div>

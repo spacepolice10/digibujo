@@ -1,15 +1,24 @@
 <% content_for(:title) { "Review" } %>
 
 <div class="layout--page review--page review--page-mobile" data-controller="bulk-menu">
-  <%= render "reviews/header" %>
+  <%= render "reviews/header",
+        review_from: @review_from,
+        review_to: @review_to,
+        amount_in_review: @amount_in_review %>
 
-  <%= render "reviews/inbox", row_actions: true %>
+  <%= render "reviews/to_review",
+        review_actions: true,
+        review_from: @review_from,
+        review_to: @review_to,
+        page: @page,
+        schedule_tomorrow: @schedule_tomorrow,
+        amount_in_review: @amount_in_review %>
 
-  <%= render "bullets/bulk_menu" %>
+  <%= render "bullets/bulk_menu", review_migrate: { from: @review_from, to: @review_to } %>
 </div>
 
 <turbo-frame id="review_collect_picker_frame"
-             class="review--collect-sheet bulk-menu--pops-menu bulk-menu--pops-frame"
+             class="review--collect-sheet bulk-menu--action-menu bulk-menu--action-frame"
              popover
              loading="lazy"
              data-controller="collect-picker"

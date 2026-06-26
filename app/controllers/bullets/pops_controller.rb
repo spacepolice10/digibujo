@@ -77,7 +77,7 @@ module Bullets
     private
 
     def pop_drop_request?
-      %w[pop-drop review-pop-drop monthly-bucket-drop].include?(request.headers['X-Requested-With'])
+      request.headers['X-Requested-With'].in?(%w[pop-drop review-pop-drop])
     end
   end
 end

@@ -1,11 +1,12 @@
 <% replace_link = local_assigns.fetch(:replace_link, true) %>
+<% q = local_assigns.fetch(:q, "").to_s.strip %>
 
-<nav class="menu--nav"
+<nav class="menu--navigation"
      data-controller="grid-navigation"
      data-grid-navigation-columns-value="4"
      data-action="keydown->grid-navigation#navigate">
   <%= link_to home_path,
-        class: "menu--nav-item button--hotkey",
+        class: "menu--navigation-item button--hotkey",
         data: {
           turbo_frame: "_top",
           controller: "hotkey",
@@ -15,10 +16,10 @@
         },
         aria: { keyshortcuts: "Shift+1", label: "Home" } do %>
     <i class="icon" style="--icon-mask: var(--icon-list)" aria-hidden="true"></i>
-    <span class="menu--nav-label">Home</span>
+    <span class="menu--navigation-label">Home</span>
   <% end %>
   <%= link_to daylog_path,
-        class: "menu--nav-item button--hotkey",
+        class: "menu--navigation-item button--hotkey",
         data: {
           turbo_frame: "_top",
           controller: "hotkey",
@@ -29,10 +30,10 @@
         },
         aria: { keyshortcuts: "Shift+2", label: "Daylog" } do %>
     <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
-    <span class="menu--nav-label">Daylog</span>
+    <span class="menu--navigation-label">Daylog</span>
   <% end %>
   <%= link_to current_monthly_bucket_path,
-        class: "menu--nav-item button--hotkey",
+        class: "menu--navigation-item button--hotkey",
         data: {
           turbo_frame: "_top",
           controller: "hotkey",
@@ -42,10 +43,10 @@
         },
         aria: { keyshortcuts: "Shift+3", label: "Monthly" } do %>
     <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
-    <span class="menu--nav-label">Monthly</span>
+    <span class="menu--navigation-label">Monthly</span>
   <% end %>
   <%= link_to review_path,
-        class: "menu--nav-item button--hotkey",
+        class: "menu--navigation-item button--hotkey",
         data: {
           turbo_frame: "_top",
           controller: "hotkey",
@@ -55,7 +56,7 @@
         },
         aria: { keyshortcuts: "Shift+4", label: "Review" } do %>
     <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
-    <span class="menu--nav-label">Review</span>
+    <span class="menu--navigation-label">Review</span>
   <% end %>
 </nav>
 
@@ -71,7 +72,7 @@
         data: { search_target: "form", turbo_frame: "menu_search" } do |form| %>
     <%= form.label :q, "Search bullets, projects, collections, and people", class: "search--label" %>
     <%= form.search_field :q,
-          value: @menu_q,
+          value: q,
           placeholder: "Search…",
           class: "search--textform",
           data: {
@@ -84,6 +85,6 @@
 
   <turbo-frame id="menu_search"
                class="menu--palette"
-               src="<%= search_path(q: @menu_q) %>">
+               src="<%= search_path(q: q) %>">
   </turbo-frame>
 </div>

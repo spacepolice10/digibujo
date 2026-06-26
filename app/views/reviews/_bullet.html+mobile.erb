@@ -1,0 +1,11 @@
+<%# locals: (bullet:, review_actions:, schedule_tomorrow: nil, review_from: nil, review_to: nil) %>
+<div class="review--bullet">
+  <%= render bullet %>
+  <% if review_actions %>
+    <%= render "reviews/review_actions",
+          bullet: bullet,
+          schedule_tomorrow: schedule_tomorrow,
+          review_from: review_from,
+          review_to: review_to %>
+  <% end %>
+</div>

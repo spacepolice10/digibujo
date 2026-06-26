@@ -1,0 +1,52 @@
+<%# locals: (f:, selected_type:) %>
+<% type_button = capture do %>
+  <span class="bullet-form-type-select-marker" aria-hidden="true">
+    <% Bullet::Composer.type_options.each do |entry| %>
+      <%= tag.span class: "bullet--marker bullet-form-type-select-marker-item #{entry[:marker_styles]}",
+            data: { type: entry[:type] },
+            hidden: selected_type != entry[:type],
+            aria: { hidden: true } do %>
+        <%= tag.i class: "icon",
+              style: "--icon-mask: var(--icon-#{entry[:icon]})",
+              aria: { hidden: true } %>
+      <% end %>
+    <% end %>
+  </span>
+  <span class="bullet-form-type-select-label" data-bullet-composer-target="typeLabel">
+    <% Bullet::Composer.type_options.each do |entry| %>
+      <%= tag.span data: { type: entry[:type] },
+            hidden: selected_type != entry[:type] do %>
+        <%= entry[:name] %>
+      <% end %>
+    <% end %>
+  </span>
+<% end %>
+
+<%= render "shared/select",
+      name: "#{f.object_name}[bulletable_type]",
+      id: f.field_id(:bulletable_type),
+      class: "form-select bullet-form-rail-select bullet-form-type-select",
+      aria_label: "Bullet type",
+      data: {
+        type: selected_type,
+        bullet_composer_target: "typeSelect",
+        action: "change->bullet-composer#typeChanged"
+      },
+      button_class: "bullet-form-type-select-button",
+      button: type_button,
+      options: Bullet::Composer.type_options.map { |entry|
+        {
+          value: entry[:type],
+          name: entry[:name],
+          hint: entry[:hint],
+          icon: entry[:icon],
+          modifier: entry[:modifier],
+          selected: selected_type == entry[:type],
+          data: {
+            actiontext_preset: entry[:actiontext_preset],
+            accepts_attachments: entry[:accepts_editor_attachments],
+            submit_on_enter: entry[:submit_on_enter],
+            submit_on_command_return: entry[:submit_on_command_return]
+          }
+        }
+      } %>

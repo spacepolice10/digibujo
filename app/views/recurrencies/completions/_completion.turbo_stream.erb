@@ -1,8 +1,10 @@
-<%= turbo_stream.replace dom_id(@recurrency, "#{@dom_key}_#{@date.iso8601}") do %>
-  <%= render "recurrencies/toggle",
-        recurrency: @recurrency,
-        date: @date,
-        tracker: @tracker,
-        dom_key: @dom_key,
-        appearance: @dom_key == "cell" ? :cell : :chip %>
+<%# locals: (recurrency:, date:, tracker:, dom_key:) %>
+<%= turbo_stream.replace dom_id(recurrency, "#{dom_key}_#{date.iso8601}") do %>
+  <%= render "recurrencies/cell",
+        recurrency: recurrency,
+        date: date,
+        tracker: tracker,
+        dom_key: dom_key,
+        variant: dom_key == "cell" ? :grid : :chip,
+        content_only: dom_key == "cell" %>
 <% end %>

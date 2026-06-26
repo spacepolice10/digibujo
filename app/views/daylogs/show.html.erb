@@ -2,7 +2,17 @@
   <turbo-frame id="bullets-timeline">
     <div id="bullets-header" class="layout--header daylog--header">
       <div class="layout--header-actions daylog--header-recurrencies">
-        <%= render "recurrencies/header_chips", tracker: @recurrency_tracker, date: @selected_date %>
+        <% scheduled_recurrencies = @recurrency_tracker.recurrencies.select { |recurrency| recurrency.scheduled_on?(@selected_date) } %>
+        <% if scheduled_recurrencies.any? %>
+          <div class="recurrency--for-day" role="group" aria-label="Recurrency for <%= @selected_date == Date.current ? "this day" : @selected_date.strftime("%B %-d") %>">
+            <span class="recurrency--for-day-label" aria-hidden="true">
+              <i class="icon" style="--icon-mask: var(--icon-calendar-repeat)" aria-hidden="true"></i>
+            </span>
+            <% scheduled_recurrencies.each do |recurrency| %>
+              <%= render "recurrencies/cell", recurrency: recurrency, date: @selected_date, tracker: @recurrency_tracker, variant: :chip, dom_key: "header" %>
+            <% end %>
+          </div>
+        <% end %>
       </div>
 
       <div class="layout--header-actions daylog--header-nav">
@@ -57,14 +67,16 @@
     <div id="bullets" data-bulk-menu-target="list">
       <%= render "pagination/paginated_records",
           page: @page,
+          selected_date: @selected_date,
           pagination_link_path: ->(next_param) { daylog_path(date: @selected_date.iso8601, page: next_param) } %>
     </div>
 
     <%= render "bullets/bulk_menu" %>
 
-    <turbo-frame id="bullet_composer" class="bullet_pops_on_<%= @selected_date %>">
-      <%= render "bullets/composer",
-          attributes: { pops_on: @selected_date, composer_id: "bullet_composer" } %>
+    <turbo-frame id="bullet_composer" class="bullet_pops_on_<%= @selected_date %>" data-controller="composer-frame">
+      <%= render "bullets/composer/picker",
+            composer_id: "bullet_composer",
+            attributes: { pops_on: @selected_date } %>
     </turbo-frame>
   </turbo-frame>
 </div>

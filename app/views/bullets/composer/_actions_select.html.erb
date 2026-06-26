@@ -1,0 +1,30 @@
+<%# locals: (bullet:) %>
+<% type_name = bullet.bulletable_type %>
+<% action_options = type_name.present? ? type_name.constantize.composer_action_options : [] %>
+
+<%= render "shared/select",
+      id: dom_id(bullet, :composer_actions),
+      class: "form-select bullet-form-rail-select bullet-form-actions-select",
+      aria_label: "Composer options",
+      hidden: action_options.empty?,
+      data: {
+        bullet_composer_target: "actionsSelect",
+        action: "change->bullet-composer#actionChanged"
+      },
+      button_class: "bullet-form-actions-select-button",
+      button_icon: "plus",
+      placeholder: { label: "Add…", hidden: true, selected: true },
+      options: action_options.map { |entry|
+        {
+          value: entry[:value],
+          name: entry[:name],
+          hint: entry[:hint],
+          icon: entry[:icon]
+        }
+      } %>
+
+<input type="file"
+       multiple
+       class="utilities--sr-only"
+       data-bullet-composer-target="fileInput"
+       data-action="change->bullet-composer#fileInputChanged">

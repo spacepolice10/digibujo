@@ -6,12 +6,24 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   setup do
     @user = users(:one)
     @user.create_settings! unless @user.settings
+    ensure_future_bucket!(@user)
     sign_in_as @user
+  end
+
+  test 'show lists recurrencies in section' do
+    create_recurrency!(@user, name: 'Morning run')
+
+    get home_path
+
+    assert_response :success
+    assert_select '.home--section-name', text: 'Recurrency'
+    assert_match 'Morning run', response.body
   end
 
   test 'show returns success' do
     get home_path
     assert_response :success
+    assert_select 'turbo-frame#home_activity[src=?]', rail_activities_path
   end
 
   test 'show lists projects and collections' do
@@ -22,8 +34,8 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     get home_path
 
     assert_response :success
-    assert_select '.home--section-title', text: 'Projects'
-    assert_select '.home--section-title', text: 'Collections'
+    assert_select '.home--section-name', text: 'Projects'
+    assert_select '.home--section-name', text: 'Collections'
     assert_match 'alpha', response.body
     assert_match 'reading', response.body
     assert_select 'a.home--section-more[href=?]', collections_path, count: 0
@@ -42,13 +54,13 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     create_project!(@user, name: 'alpha')
     create_collection!(@user, name: 'reading')
     create_monthly_bucket!(@user, name: 'june')
-    @user.settings.update!(spreads_expanded: false)
+    @user.settings.update!(projects_expanded: false)
 
     get home_path
 
     assert_response :success
     assert_select 'details.home--section[data-controller=section]', count: 3
-    assert_select 'details.home--section[open]', count: 3
+    assert_select 'details.home--section[open]', count: 2
   end
 
   test 'show works when user has no settings row' do

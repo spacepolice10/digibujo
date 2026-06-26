@@ -1,3 +1,9 @@
-<turbo-frame id="pops_picker_frame" class="bulk-menu--pops-menu bulk-menu--pops-frame" popover>
-  <%= render "picker", asap: @asap, tomorrow: @tomorrow, next_monday: @next_monday %>
+<% frame_id = params[:frame_id].presence || "pops_picker_frame" %>
+<turbo-frame id="<%= frame_id %>" class="bulk-menu--action-menu bulk-menu--action-frame" popover>
+  <%= render "picker",
+        bullet_ids: params[:bullet_ids].to_s,
+        frame_id: frame_id,
+        asap: @asap,
+        tomorrow: @tomorrow,
+        next_monday: @next_monday %>
 </turbo-frame>

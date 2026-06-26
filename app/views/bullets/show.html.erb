@@ -50,13 +50,6 @@
     <turbo-frame id="<%= dom_id(@bullet, :content) %>">
       <div class="bullet--read-body">
         <%= @bullet.body %>
-        <%= render "bullets/attachments", bullet: @bullet %>
-        <% if @bullet.rich_body? %>
-          <section class="bullet--rich-body">
-            <h2 class="bullet--rich-body-title">Expanded</h2>
-            <%= @bullet.rich_body %>
-          </section>
-        <% end %>
       </div>
     </turbo-frame>
   </article>

@@ -40,8 +40,44 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_match(/turbo-stream action="before" target="bullet_composer"/, response.body)
+    assert_match(/turbo-stream action="update" target="bullet_composer"/, response.body)
+    assert_match(/Add task/, response.body)
+  end
+
+  test 'create note turbo stream inserts bullet before composer' do
+    post bullets_path,
+         params: {
+           bullet: {
+             bulletable_type: 'Note',
+             body: 'A long note',
+             pops_on: Date.current.iso8601,
+             composer_id: 'bullet_composer'
+           }
+         },
+         as: :turbo_stream
+
+    assert_response :success
+    assert_match(/turbo-stream action="before" target="bullet_composer"/, response.body)
+    assert_match(/turbo-stream action="update" target="bullet_composer"/, response.body)
+    assert_match(/Add note/, response.body)
+  end
+
+  test 'create with add_another keeps composer open' do
+    post bullets_path,
+         params: {
+           add_another: '1',
+           bullet: {
+             bulletable_type: 'Task',
+             body: 'Rapid task',
+             pops_on: Date.current.iso8601,
+             composer_id: 'bullet_composer'
+           }
+         },
+         as: :turbo_stream
+
+    assert_response :success
+    assert_match(/turbo-stream action="before" target="bullet_composer"/, response.body)
     assert_no_match(/turbo-stream action="update" target="bullet_composer"/, response.body)
-    assert_no_match(/Add bullet/, response.body)
   end
 
   test 'create tags bullet from project attachment in body' do
@@ -64,87 +100,49 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_includes bullet.projects, project
   end
 
-  test 'create attaches direct uploads' do
-    blob = create_blob!(filename: 'reference.txt', content_type: 'text/plain')
-
-    post bullets_path,
-         params: {
-           bullet: {
-             bulletable_type: 'Task',
-             body: 'With file',
-             attachments: [blob.signed_id],
-             pops_on: Date.current.iso8601
-           }
-         },
-         as: :turbo_stream
-
-    bullet = @user.bullets.order(:created_at).last
-    assert_equal 1, bullet.attachments.count
-    assert_equal 'reference.txt', bullet.attachments.first.filename.to_s
-  end
-
-  test 'create persists rich_body for note' do
+  test 'create persists rich content in note body' do
     post bullets_path,
          params: {
            bullet: {
              bulletable_type: 'Note',
-             body: 'Short line',
-             rich_body: '<p>Long detail</p>',
+             body: '<h1>Long detail</h1>',
              pops_on: Date.current.iso8601
            }
          },
          as: :turbo_stream
 
     bullet = @user.bullets.order(:created_at).last
-    assert bullet.rich_body?
-    assert_match 'Long detail', bullet.rich_body.to_plain_text
+    assert_match 'Long detail', bullet.body.to_plain_text
+    assert_includes bullet.body.body_before_type_cast.to_s, '<h1'
   end
 
-  test 'create ignores blank rich_body' do
-    post bullets_path,
-         params: {
-           bullet: {
-             bulletable_type: 'Task',
-             body: 'Only body',
-             rich_body: '',
-             pops_on: Date.current.iso8601
-           }
-         },
-         as: :turbo_stream
+  test 'show renders note body' do
+    note = @user.bullets.create!(bulletable: Note.create!, body: '<p>Expanded content</p>')
 
-    bullet = @user.bullets.order(:created_at).last
-    assert_not bullet.rich_body?
-  end
-
-  test 'show renders direct attachments' do
-    blob = create_blob!(filename: 'reference.txt', content_type: 'text/plain')
-    @bullet.attachments.attach(blob)
-
-    get bullet_path(@bullet)
+    get bullet_path(note)
 
     assert_response :success
-    assert_select '.attachment--gallery', count: 1
-    assert_select 'a.attachment--name', text: 'reference.txt'
-  end
-
-  test 'show renders rich_body section' do
-    @bullet.update!(rich_body: '<p>Expanded content</p>')
-
-    get bullet_path(@bullet)
-
-    assert_response :success
-    assert_select '.bullet--rich-body', count: 1
     assert_match 'Expanded content', response.body
+    assert_select '.bullet--rich-body', count: 0
   end
 
-  test 'edit renders rich_body editor for note with saved content' do
-    note = @user.bullets.create!(bulletable: Note.create!, body: 'Note body', rich_body: '<p>Expanded content</p>')
+  test 'edit renders note body editor for note with saved content' do
+    note = @user.bullets.create!(bulletable: Note.create!, body: '<p>Expanded content</p>')
 
     get edit_bullet_path(note)
 
     assert_response :success
-    assert_select 'lexxy-editor[preset=expand]', count: 1
+    assert_select 'lexxy-editor[preset=note]', count: 1
     assert_match 'Expanded content', response.body
+  end
+
+  test 'create requires bullet type' do
+    post bullets_path,
+         params: { bullet: { body: 'No type' } },
+         as: :turbo_stream
+
+    assert_response :unprocessable_entity
+    assert_match 'Bullet type is required', response.body
   end
 
   test 'create with invalid body shows validation toast' do
@@ -160,43 +158,46 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match 'form.bullet-form', response.body
   end
 
-  test 'new composer renders inline editor with rail layout' do
+  test 'new without type renders type picker' do
     get new_bullet_path
+
+    assert_response :success
+    assert_select 'form.bullet-form', count: 0
+    assert_select '.bullet--composer-buttons'
+    assert_select 'a[href*="bulletable_type=Task"]'
+    assert_select 'a[href*="bulletable_type=Note"]'
+    assert_select 'a[href*="bulletable_type=Event"]'
+    assert_no_match 'bulletable_type=Title', response.body
+  end
+
+  test 'new composer renders inline editor with rail layout' do
+    get new_bullet_path(bulletable_type: 'Task')
 
     assert_response :success
     assert_select 'form.bullet-form'
     assert_select 'lexxy-editor[preset=inline]'
     assert_select '.bullet-form-rail'
     assert_select '.bullet-form-rail-actions'
-    assert_select 'select.select-menu.bullet-form-actions-select.form-select', aria: { label: 'Composer options' }
-    assert_select 'select.bullet-form-actions-select option[value=?]', 'attachment'
-    assert_select 'select.select-menu.bullet-form-type-select.form-select', aria: { label: 'Bullet type' }
+    assert_select 'select.select.bullet-form-actions-select.form-select', aria: { label: 'Composer options' }
+    assert_select 'select.bullet-form-actions-select option[value=?]', 'attachment', count: 0
+    assert_select 'select.select.bullet-form-type-select.form-select', aria: { label: 'Bullet type' }
     assert_select 'select.bullet-form-type-select option[value=?]', 'Task', text: /Task/
     assert_select 'select.bullet-form-type-select option[value=?]', 'Note', text: /Note/
     assert_select 'select.bullet-form-type-select option[value=?]', 'Event', text: /Event/
-    assert_select 'select.bullet-form-type-select option[value=?]', 'Title', text: /Title/
-    assert_select '.bullet-form-note-options .mood-option', count: 4
+    assert_select 'select.bullet-form-type-select option[value=?]', 'Title', count: 0
+    assert_select '.bullet-form-rail .mood-option', count: 4
     assert_select '.bullet-form-rail-actions .bullet-form-rail-submit button[type=submit]'
-    assert_select 'input[name=?][type=checkbox].utilities--sr-only', 'bullet[indented]'
     assert_select '.bullet-form-footer', count: 0
   end
 
-  test 'create Title bullet with body' do
-    post bullets_path,
-         params: {
-           bullet: {
-             bulletable_type: 'Title',
-             body: 'My Heading',
-             pops_on: Date.current.iso8601
-           }
-         },
-         as: :turbo_stream
+  test 'new composer with Note type renders note editor' do
+    get new_bullet_path(bulletable_type: 'Note')
 
     assert_response :success
-    bullet = @user.bullets.order(:created_at).last
-    assert_equal 'Title', bullet.bulletable_type
-    assert_equal 'My Heading', bullet.name
-    assert bullet.body.present?
+    assert_select 'lexxy-editor[preset=note]'
+    assert_select 'lexxy-editor[preset=inline]', false
+    assert_select 'select.bullet-form-actions-select option[value=?]', 'attachment'
+    assert_select 'select.bullet-form-type-select option[value=?][selected]', 'Note'
   end
 
   test 'create sets note mood from bulletable_attributes' do
@@ -253,32 +254,6 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'Task', bullet.bulletable_type
     # Task has no mood column; the per-type permitted attrs stripped it before assignment.
     assert_not bullet.bulletable.respond_to?(:mood)
-  end
-
-  test 'update indented flag' do
-    patch bullet_path(@bullet),
-          params: { bullet: { indented: true } },
-          as: :turbo_stream
-
-    assert_response :success
-    assert @bullet.reload.indented
-  end
-
-  test 'create indented bullet' do
-    post bullets_path,
-         params: {
-           bullet: {
-             bulletable_type: 'Task',
-             body: 'Indented task',
-             indented: true,
-             pops_on: Date.current.iso8601
-           }
-         },
-         as: :turbo_stream
-
-    assert_response :success
-    bullet = @user.bullets.order(:created_at).last
-    assert bullet.indented
   end
 
   private

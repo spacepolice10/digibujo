@@ -8,39 +8,45 @@
         Back
       <% end %>
       <%= render "buckets/pins_button", bucket: @collection.bucket %>
-      <%= render "bullets/add_bullet_button",
-            attributes: {
-              bucket_id: @collection.bucket.id,
-              composer_id: "bullet_composer"
-            },
-            turbo_frame: "bullet_composer",
-            style: :rail %>
-      <%= render "bullets/type_filters",
-            path_for_type: ->(type) {
-              type ? collection_path(@collection, type:) : collection_path(@collection)
-            } %>
+      <%= link_to collection_export_path(@collection),
+            class: "button--secondary layout--rail-action",
+            data: { turbo: false } do %>
+        <i class="icon" style="--icon-mask: var(--icon-file)" aria-hidden="true"></i>
+        Export
+      <% end %>
+      <%= link_to new_bullet_path(bucket_id: @collection.bucket.id, composer_id: "bullet_composer", bulletable_type: "Task"),
+            class: "button--secondary layout--rail-action",
+            data: { turbo_frame: "bullet_composer" },
+            aria: { label: "Add task" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-square)" aria-hidden="true"></i>
+        Add task
+      <% end %>
+      <%= link_to new_bullet_path(bucket_id: @collection.bucket.id, composer_id: "bullet_composer", bulletable_type: "Event"),
+            class: "button--secondary layout--rail-action",
+            data: { turbo_frame: "bullet_composer" },
+            aria: { label: "Add event" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-circle)" aria-hidden="true"></i>
+        Add event
+      <% end %>
+      <%= link_to new_bullet_path(bucket_id: @collection.bucket.id, composer_id: "bullet_composer", bulletable_type: "Note"),
+            class: "button--secondary layout--rail-action",
+            data: { turbo_frame: "bullet_composer" },
+            aria: { label: "Add note" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-line-dashed)" aria-hidden="true"></i>
+        Add note
+      <% end %>
+      <%= render "bullet/listing/type_filters", listing: @listing %>
     </aside>
 
     <div class="layout--surface bucket--list" data-controller="bulk-menu">
-      <h2 class="layout--surface-title"><%= @collection.name %></h2>
+      <h2 class="layout--surface-name"><%= @collection.name %></h2>
       <% if @collection.bucket.description.present? %>
         <p class="bucket--description utilities--text-sm"><%= @collection.bucket.description %></p>
       <% end %>
 
-      <div id="bullets" data-bulk-menu-target="list">
-        <%= render "pagination/paginated_records",
-              page: @page,
-              pagination_link_path: lambda { |next_param|
-                type = params[:type].presence
-                type ? collection_path(@collection, page: next_param, type:) : collection_path(@collection, page: next_param)
-              } %>
-      </div>
+      <%= render "bullet/listing/list", listing: @listing, page: @page %>
 
-      <turbo-frame id="bullet_composer" class="bullet_pops_on_" data-controller="composer-frame">
-        <%= render "bullets/composer",
-              attributes: { bucket_id: @collection.bucket.id, composer_id: "bullet_composer" },
-              style: :tertiary %>
-      </turbo-frame>
+      <turbo-frame id="bullet_composer" class="bullet_pops_on_" data-controller="composer-frame"></turbo-frame>
 
       <%= render "bullets/bulk_menu" %>
     </div>

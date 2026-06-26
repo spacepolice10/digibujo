@@ -18,8 +18,8 @@ module ActiveSupport
       user.projects.create!(name: name, colour: colour, icon: icon)
     end
 
-    def create_recurrency!(user, name:, schedule: { "kind" => "daily" }, active_from: nil, active_to: nil, colour: nil, icon: nil)
-      user.recurrencies.create!(name: name, schedule: schedule, active_from: active_from, active_to: active_to, colour: colour, icon: icon)
+    def create_recurrency!(user, name:, schedule: Recurrency::DEFAULT_SCHEDULE.dup, colour: nil, icon: nil)
+      user.recurrencies.create!(name: name, schedule: schedule, colour: colour, icon: icon)
     end
 
     def create_collection!(user, name:, colour: nil, icon: nil)
@@ -29,16 +29,17 @@ module ActiveSupport
     end
 
     def ensure_future_bucket!(user)
-      return if user.future_bucket
+      future_bucket = user.future_buckets.first
+      return if future_bucket&.bucket.present?
 
       future_bucket = FutureBucket.create!(user: user)
-      user.buckets.create!(bucketable: future_bucket, name: 'Future Log')
+      user.buckets.create!(bucketable: future_bucket, name: Signup::FUTURE_BUCKET_NAME)
     end
 
     def create_monthly_bucket!(user, name:, period_from: nil, period_to: nil, colour: nil, icon: nil)
       ensure_future_bucket!(user)
       period = MonthlyBucket.default_period
-      monthly_bucket = user.future_bucket.monthly_buckets.create!(
+      monthly_bucket = user.future_buckets.first.monthly_buckets.create!(
         user: user,
         period_from: period_from || period[:period_from],
         period_to: period_to || period[:period_to]
