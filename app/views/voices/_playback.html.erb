@@ -1,0 +1,35 @@
+<%# locals: (voice:, compact: false, hide_duration: false) %>
+<div class="voice--playback<%= " voice--playback-compact" if compact %>"
+     data-controller="voice-player"
+     data-voice-player-duration-value="<%= voice.duration_seconds.to_i %>">
+  <audio class="utilities--sr-only"
+         data-voice-player-target="audio"
+         preload="metadata"
+         src="<%= url_for(voice.recording) %>"
+         aria-hidden="true"></audio>
+
+  <button type="button"
+          class="button--secondary button--icon button--circle voice--play"
+          data-voice-player-target="playButton"
+          data-action="voice-player#toggle"
+          aria-label="Play">
+    <i class="icon voice--play-icon" style="--icon-mask: var(--icon-play)" aria-hidden="true" data-voice-player-target="playIcon"></i>
+    <i class="icon voice--pause-icon" style="--icon-mask: var(--icon-pause)" aria-hidden="true" data-voice-player-target="pauseIcon" hidden></i>
+  </button>
+
+  <div class="voice--progress"
+       data-voice-player-target="progress"
+       data-action="click->voice-player#seek keydown->voice-player#progressKeydown"
+       role="slider"
+       aria-label="Playback position"
+       aria-valuemin="0"
+       aria-valuemax="<%= voice.duration_seconds.to_i %>"
+       aria-valuenow="0"
+       tabindex="0">
+    <div class="voice--progress-fill" data-voice-player-target="progressFill"></div>
+  </div>
+
+  <% if voice.duration_seconds.present? && !hide_duration %>
+    <span class="voice--duration utilities--text-sm"><%= voice.duration_seconds %>s</span>
+  <% end %>
+</div>

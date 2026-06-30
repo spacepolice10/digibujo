@@ -4,7 +4,7 @@ class Bucket < ApplicationRecord
   include Bucket::Archivable, Colourable, Iconable, Pinnable, Bucket::Searchable, ActivityTrackable
 
   belongs_to :user
-  delegated_type :bucketable, types: %w[Collection FutureBucket MonthlyBucket], dependent: :destroy
+  delegated_type :bucketable, types: %w[Collection FutureBucket MonthlyBucket Sprint], dependent: :destroy
   has_many :bullets, dependent: :nullify
 
   validates :name, presence: true

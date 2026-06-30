@@ -31,7 +31,22 @@ module Bullets
       assert_select 'form[action=?][data-turbo-frame=?]', new_collect_path, 'collects_picker_frame'
       assert_select 'input[name="bullet_ids"][data-bulk-menu-target="idList"]'
       assert_match collection.name, response.body
-      assert_match 'Collect into collection', response.body
+    end
+
+    test 'new renders picker for custom frame id' do
+      collection = create_collection!(@user, name: 'Ideas')
+      card = @user.bullets.create!(bulletable: Task.create!, body: 'Move me')
+
+      get new_collect_path,
+          params: {
+            bullet_ids: card.id.to_s,
+            frame_id: 'custom_collects_frame'
+          },
+          headers: { 'Turbo-Frame' => 'custom_collects_frame' }
+
+      assert_response :success
+      assert_select 'turbo-frame#custom_collects_frame[popover]'
+      assert_match collection.name, response.body
     end
 
     test 'new renders picker content inside turbo frame request' do
@@ -60,15 +75,41 @@ module Bullets
       assert_no_match 'beta', response.body
     end
 
-    test 'picker footer links to full page create collection with bullet context' do
+    test 'new renders paginated collections list' do
+      create_collection!(@user, name: 'Ideas')
+      card = @user.bullets.create!(bulletable: Task.create!, body: 'Move me')
+
+      get new_collect_path, params: { bullet_ids: card.id.to_s }
+
+      assert_select '#paginated-collects-collections[data-controller="pagination"]'
+      assert_select '#paginated-collects-sprints[data-controller="pagination"]'
+    end
+
+    test 'new turbo stream replaces list containers for live search' do
+      create_collection!(@user, name: 'alpha')
+      create_collection!(@user, name: 'beta')
+      card = @user.bullets.create!(bulletable: Task.create!, body: 'Move me')
+
+      get new_collect_path,
+          params: { bullet_ids: card.id.to_s, q: 'alp' },
+          headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
+
+      assert_response :success
+      assert_match %(turbo-stream action="replace" target="paginated-collects-collections"), response.body
+      assert_match %(turbo-stream action="replace" target="paginated-collects-sprints"), response.body
+      assert_match 'alpha', response.body
+      assert_no_match 'beta', response.body
+    end
+
+    test 'picker heading links to full page create collection with bullet context' do
       card = @user.bullets.create!(bulletable: Task.create!, body: 'Move me')
 
       get new_collect_path, params: { bullet_ids: card.id.to_s, return_to: daylog_path }
 
-      assert_select 'a[href=?][data-turbo-frame=?]',
+      assert_select 'a[href=?][data-turbo-frame=?][aria-label=?]',
                     new_collection_path(bullet_ids: card.id.to_s, return_to: daylog_path),
                     '_top',
-                    text: 'Create new collection'
+                    'Create new collection'
     end
 
     test 'create collects bullet into selected collection' do
@@ -106,6 +147,8 @@ module Bullets
       card.reload
       assert_equal collection.bucket.id, card.bucket_id
       assert_match %(turbo-stream action="remove" targets="#bullet_#{card.id}"), response.body
+      assert_match %(turbo-stream action="update" target="toasts"), response.body
+      assert_match "Bullet collected into #{collection.name}", response.body
     end
 
     test 'destroy uncollects multiple bullets' do

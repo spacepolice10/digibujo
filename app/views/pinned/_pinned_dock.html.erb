@@ -1,0 +1,17 @@
+<div class="pinned--dock">
+  <button
+    type="button"
+    class="pinned--trigger"
+    popovertarget="pinned_list"
+  >
+    <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
+    Pinned
+  </button>
+  <turbo-frame
+    id="pinned_list"
+    class="dropdown pinned--list"
+    src="<%= pinned_index_path %>"
+    loading="lazy"
+    popover
+  ></turbo-frame>
+</div>

@@ -16,6 +16,8 @@ module Bullets
 
       assert_response :success
       assert_select 'turbo-frame#pops_picker_frame'
+      assert_select 'turbo-frame#pops_picker_frame button[data-grid-navigation-target=?]', 'item', count: 3
+      assert_select 'turbo-frame#pops_picker_frame label[data-grid-navigation-target=?]', 'item', count: 1
       assert_select 'input[name="bullet_ids"][data-bulk-menu-target="idList"]', count: 4
       assert_select 'input[type=date][name=pops_on]'
       assert_match 'ASAP', response.body
@@ -33,6 +35,7 @@ module Bullets
 
       assert_response :success
       assert_select 'turbo-frame#pops_picker_frame .bulk-menu--action-header'
+      assert_select 'turbo-frame#pops_picker_frame button[data-grid-navigation-target=?]', 'item', count: 3
       assert_select 'input[name="bullet_ids"][data-bulk-menu-target="idList"]', count: 4
     end
 
@@ -170,7 +173,7 @@ module Bullets
            params: { bullet_ids: card.id.to_s, pops_on: day.iso8601 },
            headers: {
              'Accept' => 'text/vnd.turbo-stream.html',
-             'X-Requested-With' => 'pop-drop'
+             'X-Requested-With' => 'pops-drop'
            }
 
       assert_response :no_content
@@ -193,7 +196,7 @@ module Bullets
              params: { bullet_ids: card.id.to_s, pops_on: '' },
              headers: {
                'Accept' => 'text/vnd.turbo-stream.html',
-               'X-Requested-With' => 'pop-drop'
+               'X-Requested-With' => 'pops-drop'
              }
 
       assert_response :no_content

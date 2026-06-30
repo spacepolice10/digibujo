@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["list", "template", "row", "platformField", "destroyField", "dataField"];
+  static targets = ["list", "template", "rail", "platformForm", "destroyForm", "dataForm"];
 
   add() {
     const content = this.templateTarget.content.cloneNode(true);
@@ -23,43 +23,47 @@ export default class extends Controller {
   }
 
   remove(event) {
-    const row = event.target.closest("[data-person-handles-target='row']");
-    if (!row) return;
+    const rail = this.#railFor(event.currentTarget);
+    if (!rail) return;
 
-    const destroyField = row.querySelector("[data-person-handles-target='destroyField']");
-    if (destroyField) {
-      destroyField.checked = true;
-      row.hidden = true;
+    const destroyForm = this.destroyFormTargets.find((field) => rail.contains(field));
+    if (destroyForm) {
+      destroyForm.checked = true;
+      rail.hidden = true;
       return;
     }
 
-    row.remove();
+    rail.remove();
   }
 
   kindChanged(event) {
-    const row = event.target.closest("[data-person-handles-target='row']");
-    if (!row) return;
+    const rail = this.#railFor(event.currentTarget);
+    if (!rail) return;
 
-    const platformField = row.querySelector("[data-person-handles-target='platformField']");
-    if (platformField) {
-      platformField.hidden = event.target.value != "handle";
+    const platformForm = this.platformFormTargets.find((element) => rail.contains(element));
+    if (platformForm) {
+      platformForm.hidden = event.currentTarget.value != "handle";
     }
 
-    const dataField = row.querySelector("[data-person-handles-target='dataField']");
-    if (!dataField) return;
+    const dataForm = this.dataFormTargets.find((element) => rail.contains(element));
+    if (!dataForm) return;
 
-    if (event.target.value == "email") {
-      dataField.type = "email";
-      dataField.autocomplete = "email";
-      dataField.placeholder = "";
-    } else if (event.target.value == "phone") {
-      dataField.type = "tel";
-      dataField.autocomplete = "tel";
-      dataField.placeholder = "";
+    if (event.currentTarget.value == "email") {
+      dataForm.type = "email";
+      dataForm.autocomplete = "email";
+      dataForm.placeholder = "";
+    } else if (event.currentTarget.value == "phone") {
+      dataForm.type = "tel";
+      dataForm.autocomplete = "tel";
+      dataForm.placeholder = "";
     } else {
-      dataField.type = "text";
-      dataField.autocomplete = "off";
-      dataField.placeholder = "Handle or username";
+      dataForm.type = "text";
+      dataForm.autocomplete = "off";
+      dataForm.placeholder = "Handle or username";
     }
+  }
+
+  #railFor(element) {
+    return this.railTargets.find((rail) => rail.contains(element));
   }
 }

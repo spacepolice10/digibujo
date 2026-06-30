@@ -1,11 +1,19 @@
-<% if request.headers["Turbo-Frame"] == "pinned_bullets" %>
-  <turbo-frame id="pinned_bullets" class="dropdown pinned--list" popover>
-    <%= render "pinned/bullets_list", bullets: @items.select { |pe| pe.pinnable_type == "Bullet" }.map(&:pinnable) %>
+<% if request.headers["Turbo-Frame"] == "pinned_list" %>
+  <turbo-frame id="pinned_list" class="dropdown pinned--list" popover>
+    <%= render "pinned/entities_list",
+          pinned_entities: @pinned_entities,
+          compact: true,
+          popover: true %>
   </turbo-frame>
 <% else %>
   <% content_for(:title, "Pinned") %>
   <div class="layout--page pinned--page" data-controller="bulk-menu">
-    <%= render "pinned/workspace" %>
+    <section class="pinned--workspace">
+      <%= render "pinned/entities_list",
+            pinned_entities: @pinned_entities,
+            compact: false,
+            popover: false %>
+    </section>
     <%= render "bullets/bulk_menu" %>
   </div>
 <% end %>

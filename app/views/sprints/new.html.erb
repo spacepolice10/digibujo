@@ -1,0 +1,35 @@
+<div class="layout--page form--page">
+  <div class="layout--header">
+    <div class="layout--header-actions">
+      <% if @bullet_ids.present? && @return_to.present? %>
+        <%= link_to @return_to, class: "button--secondary" do %>
+          <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+          Back
+        <% end %>
+      <% else %>
+        <%= link_to home_path, class: "button--secondary", onclick: "if (history.length > 1) { event.preventDefault(); history.back(); }" do %>
+          <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+          Back
+        <% end %>
+      <% end %>
+    </div>
+    <h2>New sprint</h2>
+  </div>
+  <div class="form--surface">
+    <%= render "form",
+          sprint: @sprint,
+          bullet_ids: @bullet_ids,
+          return_to: @return_to %>
+
+    <% if @bullets.present? %>
+      <section class="form--collect-preview">
+        <h3 class="form--collect-preview-title">
+          <%= pluralize(@bullets.size, "bullet") %> will be added
+        </h3>
+        <ul class="form--collect-preview-list">
+          <%= render partial: "collections/bullet_preview", collection: @bullets, as: :bullet %>
+        </ul>
+      </section>
+    <% end %>
+  </div>
+</div>

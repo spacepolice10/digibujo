@@ -23,8 +23,6 @@ module Buckets
       assert_equal 'pinned', Activity.order(:created_at).last.action
       assert_match 'turbo-stream', response.media_type
       assert_match dom_id(@bucket, :pin_button), response.body
-      assert_match 'pinned_buckets_footer', response.body
-      assert_match collection_path(@collection), response.body
     end
 
     test 'destroy unpins bucket and updates pin button via turbo stream' do
@@ -40,8 +38,6 @@ module Buckets
       assert_not @bucket.reload.pinned?
       assert_equal 'unpinned', Activity.order(:created_at).last.action
       assert_match dom_id(@bucket, :pin_button), response.body
-      assert_match 'pinned_buckets_footer', response.body
-      assert_no_match dom_id(@bucket, :footer_bullets), response.body
     end
 
     test 'create redirects html requests back to home' do

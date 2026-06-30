@@ -31,38 +31,6 @@ module Bullet::Mentionable
     @syncing_mentions = false
   end
 
-  def editor_content
-    attachables = (projects.to_a + people.to_a).uniq
-    html = rich_text_content_record&.body_before_type_cast.to_s.dup
-    existing_project_ids = attachable_ids_from_content_html(html, Project)
-    existing_person_ids = attachable_ids_from_content_html(html, Person)
-
-    attachables.each do |attachable|
-      next if attachable.is_a?(Project) && existing_project_ids.include?(attachable.id)
-      next if attachable.is_a?(Person) && existing_person_ids.include?(attachable.id)
-
-      attachment_html = ActionText::Attachment.from_attachables([attachable]).first.to_html
-      html = [html.presence, attachment_html].compact.join("\n")
-    end
-
-    ActionText::Content.new(html, canonicalize: false)
-  end
-
-  def editor_content_for_form
-    editor_content.fragment.to_html.presence || ''
-  end
-
-  private
-
-  def rich_text_content_record
-    ActionText::RichText.find_by(record: self, name: 'body')
-  end
-
-  def attachable_ids_from_content_html(html, type)
-    return [] if html.blank?
-
-    ActionText::Content.new(html, canonicalize: false).attachables.grep(type).map(&:id)
-  end
 end
 
 ActiveSupport.on_load(:action_text_rich_text) do

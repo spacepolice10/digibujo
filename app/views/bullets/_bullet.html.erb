@@ -7,9 +7,16 @@
              <% end %>>
   <div class="bullet--marker-slot">
     <%= render "bullets/marker", bullet: bullet %>
-    <%= render "bullets/bulk-menu-select", bullet: bullet %>
+    <%= render "bullets/bulk_menu_select", bullet: bullet %>
   </div>
   <div class="bullet--body">
-    <%= render "bullets/body", bullet: bullet, selected_date: selected_date %>
+    <div class="bullet-body">
+      <% unless bullet.bulletable_type == "Voice" && bullet.bulletable.recording.attached? %>
+        <%= bullet.body %>
+      <% end %>
+      <%= render "voices/playback_for_bullet", bullet: bullet %>
+    </div>
+    <%= render "bullets/metadata", bullet: bullet, selected_date: selected_date %>
   </div>
+
 </turbo-frame>

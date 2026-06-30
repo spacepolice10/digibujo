@@ -1,1 +1,6 @@
-<%= render "people/pickers/person", person: person %>
+<div class="bucket--list-item-name">
+  <div class="bucket--list-item-marker" data-bucket-colour="<%= person.colour %>" aria-hidden="true">
+    <%= render "shared/entity_icon", record: person %>
+  </div>
+  <span class="utilities--line-clamp-1"><%= person.name %></span>
+</div>

@@ -1,12 +1,10 @@
 <%# locals: (bullet:) %>
 <li class="form--collect-preview-item">
-  <% if bullet.shows_marker? %>
-    <span class="bullet--marker form--collect-preview-marker <%= bullet.marker_styles %>" aria-hidden="true">
-      <i class="icon" style="--icon-mask: var(--icon-<%= bullet.marker_icon %>)" aria-hidden="true"></i>
-      <% if bullet.mood_marker.present? %>
-        <span class="bullet--mood-emoji"><%= bullet.mood_marker %></span>
-      <% end %>
-    </span>
-  <% end %>
-  <span class="form--collect-preview-name utilities--line-clamp-1"><%= bullet.excerpt %></span>
+  <span class="bullet--marker form--collect-preview-marker <%= bullet.marker_styles %>" aria-hidden="true">
+    <i class="icon" style="--icon-mask: var(--icon-<%= bullet.marker_icon %>)" aria-hidden="true"></i>
+    <% if bullet.mood_marker.present? %>
+      <span class="bullet--mood-emoji"><%= bullet.mood_marker %></span>
+    <% end %>
+  </span>
+  <span class="form--collect-preview-name utilities--line-clamp-1"><%= bullet.name %></span>
 </li>

@@ -54,6 +54,9 @@
     --icon-circle: url("icon-circle.svg");
     --icon-plus: url("icon-plus.svg");
     --icon-line-dashed: url("icon-line-dashed.svg");
+    --icon-microphone: url("icon-microphone.svg");
+    --icon-play: url("icon-play.svg");
+    --icon-pause: url("icon-pause.svg");
     --icon-expand: url("icon-expand.svg");
     --icon-x: url("icon-x.svg");
   }

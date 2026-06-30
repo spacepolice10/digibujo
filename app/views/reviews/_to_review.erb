@@ -27,7 +27,7 @@
 
   <% if amount_in_review.to_i.positive? %>
     <footer id="review-migrate-footer" class="review--to-review-footer">
-      <%= form_with url: review_migrate_path(from: review_from.iso8601, to: review_to.iso8601),
+      <%= form_with url: migrate_review_path(from: review_from.iso8601, to: review_to.iso8601),
                     method: :post,
                     data: { turbo_stream: true } do %>
         <%= button_tag type: :submit, class: "button--secondary" do %>

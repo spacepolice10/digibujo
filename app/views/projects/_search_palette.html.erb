@@ -1,1 +1,6 @@
-<%= render "projects/pickers/project", project: project %>
+<div class="bucket--list-item-name">
+      <div class="bucket--list-item-marker" data-bucket-colour="<%= project.colour %>" aria-hidden="true">
+        <%= render "shared/entity_icon", record: project %>
+      </div>
+  <span class="utilities--line-clamp-1"><%= project.name %></span>
+</div>

@@ -1,21 +1,20 @@
 # frozen_string_literal: true
 
-# rubocop:disable Style/ClassAndModuleChildren
 class Person::Handle < ApplicationRecord
   PLATFORMS = {
-    'instagram' => { label: 'Instagram', url: 'https://instagram.com/%{data}' },
-    'twitter' => { label: 'X / Twitter', url: 'https://x.com/%{data}' },
-    'facebook' => { label: 'Facebook', url: 'https://facebook.com/%{data}' },
-    'linkedin' => { label: 'LinkedIn', url: 'https://linkedin.com/in/%{data}' },
-    'github' => { label: 'GitHub', url: 'https://github.com/%{data}' },
-    'youtube' => { label: 'YouTube', url: 'https://youtube.com/@%{data}' },
-    'tiktok' => { label: 'TikTok', url: 'https://tiktok.com/@%{data}' },
-    'threads' => { label: 'Threads', url: 'https://threads.net/@%{data}' },
-    'bluesky' => { label: 'Bluesky', url: 'https://bsky.app/profile/%{data}' },
-    'telegram' => { label: 'Telegram', url: 'https://t.me/%{data}' },
-    'whatsapp' => { label: 'WhatsApp', url: nil },
-    'signal' => { label: 'Signal', url: nil },
-    'mastodon' => { label: 'Mastodon', url: nil }
+    'instagram' => { name: 'Instagram', link: 'https://instagram.com/%{data}' },
+    'twitter' => { name: 'X / Twitter', link: 'https://x.com/%{data}' },
+    'facebook' => { name: 'Facebook', link: 'https://facebook.com/%{data}' },
+    'linkedin' => { name: 'LinkedIn', link: 'https://linkedin.com/in/%{data}' },
+    'github' => { name: 'GitHub', link: 'https://github.com/%{data}' },
+    'youtube' => { name: 'YouTube', link: 'https://youtube.com/@%{data}' },
+    'tiktok' => { name: 'TikTok', link: 'https://tiktok.com/@%{data}' },
+    'threads' => { name: 'Threads', link: 'https://threads.net/@%{data}' },
+    'bluesky' => { name: 'Bluesky', link: 'https://bsky.app/profile/%{data}' },
+    'telegram' => { name: 'Telegram', link: 'https://t.me/%{data}' },
+    'whatsapp' => { name: 'WhatsApp', link: nil },
+    'signal' => { name: 'Signal', link: nil },
+    'mastodon' => { name: 'Mastodon', link: nil }
   }.freeze
 
   enum :kind, { email: 0, phone: 1, handle: 2 }
@@ -36,22 +35,22 @@ class Person::Handle < ApplicationRecord
     when :phone
       "tel:#{normalized_data}"
     when :handle
-      url_template = PLATFORMS.dig(platform, :url)
-      url_template ? format(url_template, data: normalized_data) : nil
+      link_template = PLATFORMS.dig(platform, :link)
+      link_template ? format(link_template, data: normalized_data) : nil
     end
   end
 
-  def display_label
+  def display_name
     case kind.to_sym
     when :email, :phone
       normalized_data
     when :handle
-      "#{platform_label}: #{normalized_data}"
+      "#{platform_name}: #{normalized_data}"
     end
   end
 
-  def platform_label
-    PLATFORMS.dig(platform, :label) || platform.to_s.humanize
+  def platform_name
+    PLATFORMS.dig(platform, :name) || platform.to_s.humanize
   end
 
   def normalized_data
@@ -68,4 +67,3 @@ class Person::Handle < ApplicationRecord
     self.data = data.delete_prefix('@') if handle?
   end
 end
-# rubocop:enable Style/ClassAndModuleChildren

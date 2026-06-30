@@ -1,33 +1,37 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  connect() {
-    this.element.querySelectorAll(".rich-text-content img").forEach((img) => {
-      img.style.cursor = "zoom-in";
-    });
+  zoom() {
+    if (this.element.classList.contains("attachment--zoomed")) {
+      this.close();
+      return;
+    }
+
+    this.element.classList.add("attachment--zoomed");
+
+    this.backdrop = document.createElement("div");
+    this.backdrop.className = "zoom-overlay";
+    this.backdrop.addEventListener("click", this.close);
+    document.body.appendChild(this.backdrop);
+
+    this.onKeydown = (event) => {
+      if (event.key == "Escape") this.close();
+    };
+    document.addEventListener("keydown", this.onKeydown);
   }
 
-  zoom(event) {
-    const img = event.target.closest("img");
-    if (!img) return;
+  close = () => {
+    this.element.classList.remove("attachment--zoomed");
+    this.backdrop?.remove();
+    this.backdrop = null;
 
-    const overlay = document.createElement("div");
-    overlay.className = "image-zoom-overlay";
+    if (this.onKeydown) {
+      document.removeEventListener("keydown", this.onKeydown);
+      this.onKeydown = null;
+    }
+  };
 
-    const zoomedImage = document.createElement("img");
-    zoomedImage.src = img.src;
-    zoomedImage.alt = img.alt || "";
-    overlay.append(zoomedImage);
-
-    overlay.addEventListener("click", () => overlay.remove());
-    document.addEventListener(
-      "keydown",
-      (e) => {
-        if (e.key == "Escape") overlay.remove();
-      },
-      { once: true },
-    );
-
-    document.body.appendChild(overlay);
+  disconnect() {
+    this.close();
   }
 }

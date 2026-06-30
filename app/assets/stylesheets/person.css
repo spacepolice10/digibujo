@@ -6,20 +6,13 @@
     flex-shrink: 0;
   }
 
-  .person--avatar-large {
-    width: var(--icon-size-strong);
-    height: var(--icon-size-strong);
-    object-fit: cover;
-    flex-shrink: 0;
-  }
-
   .person--handles {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-vertical);
   }
 
-  .person--handle-row {
+  .person--handle-rail {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-vertical-half);
@@ -28,19 +21,15 @@
     border-radius: var(--radius-base);
   }
 
-  .person--handle-row-fields {
+  .person--handle-rail-fields {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-vertical-half);
   }
 
-  .person--handle-row-actions {
+  .person--handle-rail-actions {
     display: flex;
     justify-content: flex-end;
-  }
-
-  .person--handles-add {
-    align-self: flex-start;
   }
 
   .person--handles-list {

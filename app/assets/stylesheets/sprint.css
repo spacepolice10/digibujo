@@ -1,0 +1,54 @@
+@layer components {
+  .sprint--summary {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical-half);
+    margin-block-end: var(--spacing-vertical);
+  }
+
+  .sprint--dates {
+    color: var(--color-fg-subtle);
+    margin: 0;
+  }
+
+  .sprint--status {
+    margin: 0;
+    font-weight: var(--font-weight-strong);
+  }
+
+  .sprint--status-active {
+    color: var(--color-fg-positive);
+  }
+
+  .sprint--status-upcoming {
+    color: var(--color-fg-subtle);
+  }
+
+  .sprint--status-ended {
+    color: var(--color-fg-subtle);
+  }
+
+  .sprint--progress {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical-half);
+  }
+
+  .sprint--progress-bar {
+    height: var(--spacing-vertical-half);
+    border-radius: var(--radius-strong);
+    background-color: var(--color-stroke-base);
+    overflow: hidden;
+  }
+
+  .sprint--progress-fill {
+    height: 100%;
+    border-radius: inherit;
+    background-color: var(--color-fg-positive);
+  }
+
+  .sprint--progress-label {
+    margin: 0;
+    color: var(--color-fg-subtle);
+  }
+}

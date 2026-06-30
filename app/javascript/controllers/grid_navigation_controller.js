@@ -7,11 +7,14 @@ export default class extends Controller {
 
   connect() {
     this.currentPosition = 0;
+    this.focusPending = false;
     this.detailsElement = this.element.closest("details");
     this.initTabindex();
     if (this.element.hasAttribute("popover")) {
       this._onToggle = this.onToggle.bind(this);
+      this._onFrameLoad = this.onFrameLoad.bind(this);
       this.element.addEventListener("toggle", this._onToggle);
+      this.element.addEventListener("turbo:frame-load", this._onFrameLoad);
     }
     if (this.detailsElement) {
       this._onDetailsToggle = this.onDetailsToggle.bind(this);
@@ -23,6 +26,9 @@ export default class extends Controller {
     if (this._onToggle) {
       this.element.removeEventListener("toggle", this._onToggle);
     }
+    if (this._onFrameLoad) {
+      this.element.removeEventListener("turbo:frame-load", this._onFrameLoad);
+    }
     if (this._onDetailsToggle && this.detailsElement) {
       this.detailsElement.removeEventListener("toggle", this._onDetailsToggle);
     }
@@ -30,8 +36,18 @@ export default class extends Controller {
 
   onToggle(event) {
     if (event.newState != "open") return;
+    this.focusFirst();
+  }
+
+  onFrameLoad() {
+    if (!this.element.matches(":popover-open")) return;
+    this.focusFirst();
+  }
+
+  focusFirst() {
     this.currentPosition = 0;
-    requestAnimationFrame(() => this.moveTo(this.currentPosition));
+    this.focusPending = true;
+    this.#focusWhenReady();
   }
 
   navigate(event) {
@@ -74,7 +90,11 @@ export default class extends Controller {
   }
 
   itemTargetConnected() {
-    this.currentPosition = 0;
+    if (this.focusPending) {
+      this.#focusWhenReady();
+      return;
+    }
+
     this.initTabindex();
   }
 
@@ -110,5 +130,21 @@ export default class extends Controller {
 
   isNavigable() {
     return !this.detailsElement || this.detailsElement.open;
+  }
+
+  #focusWhenReady(attempt = 0) {
+    if (!this.focusPending) return;
+
+    if (this.itemTargets.length > 0) {
+      this.focusPending = false;
+      requestAnimationFrame(() => this.moveTo(this.currentPosition));
+      return;
+    }
+
+    if (attempt < 20) {
+      requestAnimationFrame(() => this.#focusWhenReady(attempt + 1));
+    } else {
+      this.focusPending = false;
+    }
   }
 }

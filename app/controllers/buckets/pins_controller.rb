@@ -2,8 +2,6 @@
 
 module Buckets
   class PinsController < ApplicationController
-    include PreparePinned
-
     before_action :set_bucket
 
     def create
@@ -29,7 +27,5 @@ module Buckets
     def set_bucket
       @bucket = Current.user.buckets.find(params.require(:bucket_id))
     end
-
-    helper_method :pinned_buckets
   end
 end

@@ -1,4 +1,12 @@
 import { Controller } from "@hotwired/stimulus";
+import { debounce } from "helpers/debounce";
+
+const SEARCH_DEBOUNCE_MS = 150;
+
+const ACTION_REQUIREMENTS = {
+  requirePinnable: "pinnable",
+  requireCompletable: "completable",
+};
 
 export default class extends Controller {
   static targets = [
@@ -7,12 +15,9 @@ export default class extends Controller {
     "checkbox",
     "idList",
     "amount",
-    "pinAction",
-    "unpinAction",
-    "completeAction",
-    "uncompleteAction",
-    "popsFrame",
-    "collectsFrame",
+    "conditionalAction",
+    "popsDropdown",
+    "collectsDropdown",
   ];
 
   static values = {
@@ -22,38 +27,20 @@ export default class extends Controller {
     collectsPickerUrl: { type: String, default: "/bullets/collect/new" },
   };
 
+  #searchAbort = null;
+
   connect() {
-    this.beforeVisitHandler = () => this.clearSelection();
+    this.beforeVisitHandler = () => this.#reset();
+    this.submitEndHandler = (event) => this.#handleSubmitEnd(event);
     document.addEventListener("turbo:before-visit", this.beforeVisitHandler);
-
-    this.collectSubmitHandler = (event) => {
-      if (!event.detail.success) return;
-      const form = event.target;
-      if (!form?.action?.includes("/bullets/collect")) return;
-
-      if (this.hasCollectsFrameTarget) this.collectsFrameTarget.hidePopover();
-      this.clearSelection();
-    };
-    document.addEventListener("turbo:submit-end", this.collectSubmitHandler);
-
-    this.popSubmitHandler = (event) => {
-      if (!event.detail.success) return;
-      const form = event.target;
-      if (!form?.action?.includes("/bullets/pop")) return;
-      if (form.method?.toLowerCase() != "post") return;
-
-      if (this.hasPopsFrameTarget) this.popsFrameTarget.hidePopover();
-      this.clearSelection();
-    };
-    document.addEventListener("turbo:submit-end", this.popSubmitHandler);
-
-    this.syncSelectMode();
+    document.addEventListener("turbo:submit-end", this.submitEndHandler);
+    this.#syncSelectMode();
   }
 
   disconnect() {
     document.removeEventListener("turbo:before-visit", this.beforeVisitHandler);
-    document.removeEventListener("turbo:submit-end", this.collectSubmitHandler);
-    document.removeEventListener("turbo:submit-end", this.popSubmitHandler);
+    document.removeEventListener("turbo:submit-end", this.submitEndHandler);
+    this.#cancelPendingSearch();
   }
 
   toggle(event) {
@@ -84,19 +71,17 @@ export default class extends Controller {
     }
 
     this.selectModeValue = this.idListValue.length > 0;
-    this.updatePinActions();
-    this.updateCompleteActions();
+    this.#updateBulkActions();
   }
 
   selectModeValueChanged() {
     this.menuTarget.focus();
-    this.syncSelectMode();
+    this.#syncSelectMode();
   }
 
   checkboxTargetConnected(checkbox) {
     checkbox.checked = this.idListValue.includes(checkbox.value);
-    this.updatePinActions();
-    this.updateCompleteActions();
+    this.#updateBulkActions();
   }
 
   idListTargetConnected(input) {
@@ -104,91 +89,175 @@ export default class extends Controller {
   }
 
   openPopsPicker() {
-    this.openPickerFrame(this.popsFrameTarget, this.popsPickerUrlValue);
+    this.#openPopsPicker();
   }
 
   openCollectsPicker() {
-    this.openPickerFrame(this.collectsFrameTarget, this.collectsPickerUrlValue);
+    this.#openCollectsPicker();
   }
 
-  openPickerFrame(frame, baseUrl) {
-    if (!frame || this.idListValue.length == 0) return;
+  searchCollects(event) {
+    this.#cancelPendingSearch();
+    this.#searchAbort = new AbortController();
+    this.#debouncedSearchCollects(event.target);
+  }
 
-    const url = new URL(baseUrl, window.location.origin);
-    url.searchParams.set("bullet_ids", this.idListValue.join(","));
-    const nextSrc = `${url.pathname}${url.search}`;
+  selectAndOpenCollects({ params: { bulletId } }) {
+    if (!bulletId) return;
 
-    if (frame.src != nextSrc) frame.src = nextSrc;
-    if (!frame.hasAttribute("popover")) return;
-
-    if (!frame.matches(":popover-open")) frame.showPopover();
+    this.idListValue = [bulletId];
+    this.checkboxTargets.forEach((checkbox) => {
+      checkbox.checked = checkbox.value == bulletId;
+    });
+    this.#openCollectsPicker();
   }
 
   clear() {
-    this.clearSelection();
+    this.#reset();
   }
 
-  clearSelection() {
+  escape(event) {
+    if (event?.defaultPrevented) return;
+    if (this.idListValue.length == 0) return;
+    if (this.#isPickerOpen()) return;
+
+    this.#clearSelection();
+  }
+
+  #isPickerOpen() {
+    const pickers = [];
+    if (this.hasPopsDropdownTarget) pickers.push(this.popsDropdownTarget);
+    if (this.hasCollectsDropdownTarget) pickers.push(this.collectsDropdownTarget);
+    return pickers.some((picker) => picker.matches(":popover-open"));
+  }
+
+  #debouncedSearchCollects = debounce((input) => this.#performCollectsSearch(input), SEARCH_DEBOUNCE_MS);
+
+  async #performCollectsSearch(input) {
+    const form = input.form;
+    const url = new URL(form.action, window.location.origin);
+    const params = new URLSearchParams(new FormData(form));
+
+    params.set("q", input.value.trim());
+    params.delete("collections_page");
+    params.delete("sprints_page");
+    url.search = params.toString();
+
+    const response = await fetch(url.toString(), {
+      signal: this.#searchAbort.signal,
+      headers: { Accept: "text/vnd.turbo-stream.html" },
+    }).catch(() => null);
+    if (!response || !response.ok) return;
+
+    const stream = await response.text().catch(() => "");
+    if (stream && window.Turbo) window.Turbo.renderStreamMessage(stream);
+  }
+
+  #cancelPendingSearch() {
+    this.#searchAbort?.abort();
+    this.#searchAbort = null;
+  }
+
+  #openPopsPicker() {
+    this.#loadPicker(this.popsDropdownTarget, this.popsPickerUrlValue);
+  }
+
+  #openCollectsPicker() {
+    this.#loadPicker(this.collectsDropdownTarget, this.collectsPickerUrlValue);
+  }
+
+  #loadPicker(frame, baseUrl) {
+    if (this.idListValue.length == 0) return;
+
+    this.#openPicker(frame, this.#pickerLink(baseUrl, this.idListValue));
+  }
+
+  #pickerLink(baseUrl, bulletIds, params = {}) {
+    const url = new URL(baseUrl, window.location.origin);
+    url.searchParams.set("bullet_ids", bulletIds.join(","));
+    Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, value));
+    return `${url.pathname}${url.search}`;
+  }
+
+  #openPicker(frame, src) {
+    if (!frame) return;
+
+    if (frame.src != src) frame.src = src;
+    if (!frame.hasAttribute("popover")) return;
+    if (!frame.matches(":popover-open")) frame.showPopover();
+  }
+
+  #closePicker(frame) {
+    if (frame?.matches(":popover-open")) frame.hidePopover();
+  }
+
+  #reset() {
+    this.#closePicker(this.popsDropdownTarget);
+    this.#closePicker(this.collectsDropdownTarget);
+    this.#clearSelection();
+  }
+
+  #clearSelection() {
     this.idListValue = [];
     this.checkboxTargets.forEach((checkbox) => {
       checkbox.checked = false;
     });
   }
 
-  updatePinActions() {
-    const checked = this.checkboxTargets.filter((checkbox) => checkbox.checked);
-    const anyPinned = checked.some((checkbox) =>
-      checkbox.hasAttribute("data-pinned"),
-    );
-    const anyUnpinned = checked.some(
-      (checkbox) => !checkbox.hasAttribute("data-pinned"),
-    );
-
-    if (this.hasPinActionTarget) {
-      this.pinActionTarget.hidden = anyPinned || checked.length == 0;
-    }
-
-    if (this.hasUnpinActionTarget) {
-      this.unpinActionTarget.hidden = anyUnpinned || checked.length == 0;
-    }
-  }
-
-  updateCompleteActions() {
-    const checked = this.checkboxTargets.filter((checkbox) => checkbox.checked);
-    const anyNonCompletable = checked.some(
-      (checkbox) => !checkbox.hasAttribute("data-completable"),
-    );
-    const anyCompleted = checked.some((checkbox) =>
-      checkbox.hasAttribute("data-completed"),
-    );
-    const anyIncomplete = checked.some(
-      (checkbox) =>
-        checkbox.hasAttribute("data-completable") &&
-        !checkbox.hasAttribute("data-completed"),
-    );
-
-    if (this.hasCompleteActionTarget) {
-      this.completeActionTarget.hidden =
-        checked.length == 0 || anyNonCompletable || anyCompleted;
-    }
-
-    if (this.hasUncompleteActionTarget) {
-      this.uncompleteActionTarget.hidden =
-        checked.length == 0 || anyNonCompletable || anyIncomplete;
-    }
-  }
-
-  submitEnd(event) {
-    if (!this.hasMenuTarget || !this.menuTarget.contains(event.target)) return;
+  #handleSubmitEnd(event) {
     if (!event.detail.success) return;
 
     const form = event.target;
-    if (form.method?.toLowerCase() == "get") return;
+    if (!form?.action) return;
 
-    this.clearSelection();
+    const isCollect = form.action.includes("/bullets/collect");
+    const isPop =
+      form.action.includes("/bullets/pop") &&
+      form.method?.toLowerCase() == "post";
+    const isMenuBulk =
+      this.hasMenuTarget &&
+      this.menuTarget.contains(form) &&
+      form.method?.toLowerCase() != "get";
+
+    if (isCollect || isPop || isMenuBulk) this.#reset();
   }
 
-  syncSelectMode() {
+  #updateBulkActions() {
+    const traits = this.#selectionTraits();
+
+    this.conditionalActionTargets.forEach((action) => {
+      action.hidden = !this.#actionApplies(action, traits);
+    });
+  }
+
+  #selectionTraits() {
+    const checked = this.checkboxTargets.filter((checkbox) => checkbox.checked);
+    if (checked.length == 0) return null;
+
+    return {
+      pinnable: this.#uniformTrait(checked, "bulkPinnable"),
+      completable: this.#uniformTrait(checked, "bulkCompletable"),
+    };
+  }
+
+  #uniformTrait(checkboxes, datasetKey) {
+    const values = checkboxes.map((checkbox) => checkbox.dataset[datasetKey]);
+    if (values.some((value) => !value)) return null;
+    if (values.some((value) => value != values[0])) return null;
+    return values[0];
+  }
+
+  #actionApplies(action, traits) {
+    if (!traits) return false;
+
+    return Object.entries(ACTION_REQUIREMENTS).every(([requirement, trait]) => {
+      const expected = action.dataset[requirement];
+      if (!expected) return true;
+      return traits[trait] == expected;
+    });
+  }
+
+  #syncSelectMode() {
     if (!this.hasListTarget) return;
 
     if (this.selectModeValue) {

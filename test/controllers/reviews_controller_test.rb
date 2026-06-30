@@ -44,7 +44,7 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
     assert_select '.review--to-review'
     assert_select '.review--week'
     assert_select '.review--week-dates'
-    assert_select '[data-controller="pop-drop"]', minimum: 1
+    assert_select '[data-controller="pops-drop"]', minimum: 1
     assert_select '[data-controller="collect-drop"]', minimum: 1
     assert_select '.review--bullet[draggable="true"]', minimum: 1
     assert_select '.review--review-actions', count: 0
@@ -73,7 +73,8 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
     assert_select '.review--collections', count: 0
     assert_select '.review--review-actions', minimum: 1
     assert_select '.review--bullet[draggable="true"]', count: 0
-    assert_select '#review_collect_picker_frame'
+    assert_select '[data-action="bulk-menu#selectAndOpenCollects"]', minimum: 1
+    assert_select '#collects_picker_frame[popover]'
   end
 
   test 'show defaults to the last seven days through today' do
@@ -89,6 +90,24 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match 'Too old', response.body
   end
 
+  test 'show excludes archived migrated and unplanned bullets from inbox' do
+    @user.bullets.create!(bulletable: Task.create!, body: 'In review', pops_on: @today)
+    archived = @user.bullets.create!(bulletable: Task.create!, body: 'Archived', pops_on: @today)
+    archived.archive!
+    migrated = @user.bullets.create!(bulletable: Task.create!, body: 'Migrated', pops_on: @today)
+    migrated.pop!(pops_on: @today + 1.day)
+    migrated.update!(pops_on: @today)
+    @user.bullets.create!(bulletable: Task.create!, body: 'Unplanned', pops_on: nil)
+
+    get review_path(from: @today.iso8601, to: @today.iso8601)
+
+    assert_response :success
+    assert_select '.review--to-review', text: /In review/
+    assert_select '.review--to-review', text: /Archived/, count: 0
+    assert_select '.review--to-review', text: /Migrated/, count: 0
+    assert_select '.review--to-review', text: /Unplanned/, count: 0
+  end
+
   test 'show requires authentication' do
     sign_out
 
@@ -101,20 +120,25 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
     in_review = @user.bullets.create!(bulletable: Task.create!, body: 'Keep as is', pops_on: @today)
     @user.bullets.create!(bulletable: Note.create!, body: 'Already migrated', pops_on: @today).tap(&:acknowledge_migration!)
 
-    assert_difference -> { @user.bullets.in_review(from: @today, to: @today).count }, -1 do
-      post review_migrate_path(from: @today.iso8601, to: @today.iso8601)
-    end
+    get review_path(from: @today.iso8601, to: @today.iso8601)
+    assert_select '.review--to-review', text: /Keep as is/
+
+    post migrate_review_path(from: @today.iso8601, to: @today.iso8601)
 
     assert_redirected_to review_path(from: @today.iso8601, to: @today.iso8601)
     assert in_review.reload.migrated?
     assert_equal 'acknowledged', in_review.last_migration['action']
+
+    get review_path(from: @today.iso8601, to: @today.iso8601)
+    assert_select '#review-amount-in-review', text: '0'
+    assert_select '.review--to-review', text: /Keep as is/, count: 0
   end
 
   test 'migrate with bullet_ids marks only selected bullets' do
     first = @user.bullets.create!(bulletable: Task.create!, body: 'First', pops_on: @today)
     second = @user.bullets.create!(bulletable: Task.create!, body: 'Second', pops_on: @today)
 
-    post review_migrate_path(from: @today.iso8601, to: @today.iso8601),
+    post migrate_review_path(from: @today.iso8601, to: @today.iso8601),
          params: { bullet_ids: first.id.to_s },
          as: :turbo_stream
 
@@ -126,7 +150,7 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
   test 'migrate requires authentication' do
     sign_out
 
-    post review_migrate_path
+    post migrate_review_path
 
     assert_redirected_to new_session_path
   end

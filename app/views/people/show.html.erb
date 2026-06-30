@@ -10,7 +10,7 @@
     </div>
     <div class="layout--header-info">
       <% if @person.avatar.attached? %>
-        <%= image_tag @person.avatar, class: "person--avatar-large", alt: "" %>
+        <%= image_tag @person.avatar, class: "person--avatar", alt: "" %>
       <% end %>
       <div>
         <h2><%= @person.name %></h2>

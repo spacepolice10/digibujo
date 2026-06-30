@@ -24,4 +24,8 @@ module PrepareBullets
   def prepare_bullets
     @bullets = prepare_bullets_from(params[:bullet_ids])
   end
+
+  def bullets_from_param(bullet_id_parameter)
+    prepare_bullets_from(bullet_id_parameter)
+  end
 end

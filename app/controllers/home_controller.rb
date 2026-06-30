@@ -2,14 +2,15 @@
 
 # Navigation hub: projects, collections, monthly spreads, and future log.
 class HomeController < ApplicationController
-  include UserCollections
-
   COLLECTIONS_LIMIT = 8
+  SPRINTS_LIMIT = 8
 
   def show
     @projects = recent_projects
-    @collections = user_collections.limit(COLLECTIONS_LIMIT)
-    @show_collections_more = user_collections.count > COLLECTIONS_LIMIT
+    @collections = Current.user.active_collections.limit(COLLECTIONS_LIMIT)
+    @show_collections_more = Current.user.active_collections.count > COLLECTIONS_LIMIT
+    @sprints = Current.user.active_sprints.limit(SPRINTS_LIMIT)
+    @show_sprints_more = Current.user.active_sprints.count > SPRINTS_LIMIT
     @people = recent_people
     @future = Current.user.future_buckets.first.bucket
     @future_monthly_buckets = Current.user.future_buckets.first.monthly_buckets.includes(:bucket)
@@ -34,7 +35,7 @@ class HomeController < ApplicationController
   end
 
   def daylog_bullets_number
-    Current.user.bullets.dailylog(Date.current).count
+    Current.user.bullets.where(pops_on: Date.current).active.count
   end
 
   def section_expanded_status

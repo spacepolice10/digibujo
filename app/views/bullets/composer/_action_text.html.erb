@@ -1,0 +1,18 @@
+<%# locals: (form:, bullet:, preset:, placeholder: nil) %>
+<% placeholder ||= preset == "note" ? "Add markdown notes, files or images..." : "What need to be done?" %>
+<%= form.rich_text_area :body, preset: preset, autofocus: true, placeholder: placeholder do %>
+  <lexxy-prompt
+    trigger="#"
+    name="project"
+    src="<%= project_suggestions_path %>"
+    remote-filtering
+    supports-space-in-searches
+  ></lexxy-prompt>
+  <lexxy-prompt
+    trigger="@"
+    name="person"
+    src="<%= person_suggestions_path %>"
+    remote-filtering
+    supports-space-in-searches
+  ></lexxy-prompt>
+<% end %>

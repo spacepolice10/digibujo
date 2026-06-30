@@ -82,4 +82,43 @@ class MigratableTest < ActiveSupport::TestCase
     assert @bullet.migrated?
     assert_equal 'archived', @bullet.last_migration['action']
   end
+
+  test 'migration_hint describes popped move between days' do
+    from = Date.current
+    to = Date.current + 2.days
+    @bullet.update!(pops_on: to)
+    @bullet.mark_migration!(action: 'popped', from_pops_on: from, to_pops_on: to)
+
+    assert_includes @bullet.migration_hint, from.strftime('%a, %b %-d')
+    assert_includes @bullet.migration_hint, to.strftime('%a, %b %-d')
+    assert_match(/Moved — rescheduled/, @bullet.migration_hint)
+  end
+
+  test 'migration_hint describes collection' do
+    @bullet.mark_migration!(action: 'collected', bucket_id: 1, bucket_name: 'Reading list')
+
+    assert_equal 'Collected — moved into Reading list.', @bullet.migration_hint
+  end
+
+  test 'migration_hint describes completion' do
+    @bullet.mark_migration!(action: 'completed', pops_on: Date.current)
+
+    assert_match(/Completed/, @bullet.migration_hint)
+  end
+
+  test 'migration_hint describes archive' do
+    @bullet.mark_migration!(action: 'archived', pops_on: Date.current)
+
+    assert_match(/Archived — removed from/, @bullet.migration_hint)
+  end
+
+  test 'migration_hint describes acknowledged review' do
+    @bullet.mark_migration!(action: 'acknowledged', pops_on: Date.current)
+
+    assert_match(/Reviewed — kept on/, @bullet.migration_hint)
+  end
+
+  test 'migration_hint is nil when not migrated' do
+    assert_nil @bullet.migration_hint
+  end
 end

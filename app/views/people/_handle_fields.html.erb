@@ -1,7 +1,7 @@
 <%# locals: (form:) %>
 <% handle = form.object %>
-<div class="person--handle-row" data-person-handles-target="row">
-  <div class="person--handle-row-fields">
+<div class="person--handle-rail" data-person-handles-target="rail">
+  <div class="person--handle-rail-fields">
     <%= form.hidden_field :id if handle.persisted? %>
     <%= form.hidden_field :position, value: handle.position || 0 %>
 
@@ -15,7 +15,7 @@
     </div>
 
     <div class="form-group person--handle-platform"
-         data-person-handles-target="platformField"
+         data-person-handles-target="platformForm"
          <%= "hidden" unless handle.handle? %>>
       <%= form.label :platform, "Platform", class: "form-label" %>
       <%= form.select :platform,
@@ -34,14 +34,14 @@
             autocomplete: handle.email? ? "email" : (handle.phone? ? "tel" : "off"),
             placeholder: handle.handle? ? "Handle or username" : nil,
             type: handle.email? ? "email" : (handle.phone? ? "tel" : "text"),
-            data: { person_handles_target: "dataField" } %>
+            data: { person_handles_target: "dataForm" } %>
     </div>
   </div>
 
-  <div class="person--handle-row-actions">
+  <div class="person--handle-rail-actions">
     <% if handle.persisted? %>
       <%= form.label :_destroy, class: "button--secondary person--handle-remove" do %>
-        <%= form.check_box :_destroy, class: "utilities--sr-only", data: { person_handles_target: "destroyField" } %>
+        <%= form.check_box :_destroy, class: "utilities--sr-only", data: { person_handles_target: "destroyForm" } %>
         Remove
       <% end %>
     <% else %>

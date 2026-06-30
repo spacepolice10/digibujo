@@ -4,6 +4,10 @@
       <i class="icon" style="--icon-mask: var(--icon-book)" aria-hidden="true"></i>
       Add collection
     <% end %>
+    <%= link_to new_sprint_path, class: "button--secondary layout--rail-action", data: { turbo_frame: "_top" } do %>
+      <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
+      Add sprint
+    <% end %>
     <%= link_to new_monthly_bucket_path, class: "button--secondary layout--rail-action", data: { turbo_frame: "_top" } do %>
       <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
       Add monthly log
@@ -76,6 +80,14 @@
       <%= render layout: "home/section", locals: { key: "collections", title: "Collections", icon: "book", show_more_path: (@show_collections_more ? collections_path : nil), expanded: @section_expanded_status["collections"] } do %>
         <ul class="layout--list bucket--list">
           <%= render @collections %>
+        </ul>
+      <% end %>
+    <% end %>
+
+    <% if @sprints.any? %>
+      <%= render layout: "home/section", locals: { key: "sprints", title: "Sprints", icon: "circle-check", show_more_path: (@show_sprints_more ? sprints_path : nil), expanded: @section_expanded_status["sprints"] } do %>
+        <ul class="layout--list bucket--list">
+          <%= render @sprints %>
         </ul>
       <% end %>
     <% end %>

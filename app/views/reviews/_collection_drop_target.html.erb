@@ -6,7 +6,7 @@
        data-collect-drop-bucket-id-value="<%= collection.bucket.id %>"
        data-action="dragover->collect-drop#dragover dragleave->collect-drop#dragleave drop->collect-drop#drop">
     <%= link_to collection_path(collection), class: "bucket--list-item-link review--collection-link", data: { turbo_frame: "_top" } do %>
-      <%= render "collections/pickers/collection", collection: collection %>
+      <%= render "collections/search_palette", collection: collection %>
     <% end %>
   </div>
 </li>

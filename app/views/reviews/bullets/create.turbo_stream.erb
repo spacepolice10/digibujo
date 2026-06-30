@@ -1,0 +1,7 @@
+<%= turbo_stream.append "paginated-review-to-review" do %>
+  <%= render "reviews/bullet",
+        bullet: @bullet,
+        review_actions: true,
+        review_from: params[:review_from],
+        review_to: params[:review_to] %>
+<% end %>

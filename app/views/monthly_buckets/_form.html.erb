@@ -1,5 +1,5 @@
 <%# locals: (monthly_bucket:, occupied_months:) %>
-<% months = (0..5).map { |i| Date.current.beginning_of_month + i.months } %>
+<% months = MonthlyBucket.selectable_months %>
 <% occupied_months = Array(occupied_months) %>
 <% available_months = months.reject { |m| occupied_months.include?(m) } %>
 <% selected_month = available_months.first || months.first %>
@@ -19,17 +19,17 @@
   <small class="form-hint">A monthly spread gives you a bird's-eye view of the month — like the traditional BuJo calendar page, but linked to your daily log. Plan events and deadlines here, then jump to any day to work on the details.</small>
 
   <div class="form-group">
-    <%= field_set_tag "Month", class: "form--period-picker" do %>
+    <%= field_set_tag "Month", class: "monthly-bucket--period-picker" do %>
       <%= f.collection_radio_buttons :month, months, :iso8601, ->(m) { m.strftime("%B %Y") },
             { checked: (all_occupied ? nil : selected_month.iso8601), item_wrapper_tag: false } do |b| %>
         <% month_date = Date.parse(b.value) %>
         <% disabled = occupied_months.include?(month_date) %>
-        <%= b.label class: ["form--period-option", ("form--period-option--disabled" if disabled)].compact.join(" "),
+        <%= b.label class: ["monthly-bucket--period-option", ("monthly-bucket--period-option--disabled" if disabled)].compact.join(" "),
                     data: { month: month_date.month } do %>
-          <%= b.radio_button class: "utilities--sr-only form--period-input", disabled: disabled %>
-          <span class="form--period-card">
-            <span class="form--period-label"><%= month_date.strftime("%b") %></span>
-            <span class="form--period-meta"><%= month_date.year %></span>
+          <%= b.radio_button class: "utilities--sr-only monthly-bucket--period-input", disabled: disabled %>
+          <span class="monthly-bucket--period-card">
+            <span class="monthly-bucket--period-label"><%= month_date.strftime("%b") %></span>
+            <span class="monthly-bucket--period-meta"><%= month_date.year %></span>
           </span>
         <% end %>
       <% end %>

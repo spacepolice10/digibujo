@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 class CollectionsController < ApplicationController
-  include BulletListing, UserCollections, PrepareBullets
+  include BulletListing, PrepareBullets
   before_action :set_collection, only: %i[show destroy]
   before_action :prepare_collect_context, only: %i[new create]
 
   def index
-    @collections = user_collections
+    @collections = Current.user.active_collections
   end
 
   def new
@@ -65,7 +65,7 @@ class CollectionsController < ApplicationController
   private
 
   def set_collection
-    @collection = user_collections.find(params[:id])
+    @collection = Current.user.active_collections.find(params[:id])
   end
 
   def collection_params

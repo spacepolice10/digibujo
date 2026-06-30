@@ -10,11 +10,11 @@
         data: {
           turbo_frame: "_top",
           controller: "hotkey",
-          hotkey: "Shift+1",
+          hotkey: "1",
           grid_navigation_target: "item",
-          action: "focus->grid-navigation#syncPosition"
+          action: "#{hotkey_click_action('1')} focus->grid-navigation#syncPosition"
         },
-        aria: { keyshortcuts: "Shift+1", label: "Home" } do %>
+        aria: { keyshortcuts: "1", label: "Home" } do %>
     <i class="icon" style="--icon-mask: var(--icon-list)" aria-hidden="true"></i>
     <span class="menu--navigation-label">Home</span>
   <% end %>
@@ -23,12 +23,11 @@
         data: {
           turbo_frame: "_top",
           controller: "hotkey",
-          hotkey: "Shift+2",
-          hotkey_bindings: "Shift+2 Ctrl+D Meta+D",
+          hotkey: "2",
           grid_navigation_target: "item",
-          action: "focus->grid-navigation#syncPosition"
+          action: "#{hotkey_click_action('2', 'Ctrl+D', 'Meta+D')} focus->grid-navigation#syncPosition"
         },
-        aria: { keyshortcuts: "Shift+2", label: "Daylog" } do %>
+        aria: { keyshortcuts: "2", label: "Daylog" } do %>
     <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
     <span class="menu--navigation-label">Daylog</span>
   <% end %>
@@ -37,11 +36,11 @@
         data: {
           turbo_frame: "_top",
           controller: "hotkey",
-          hotkey: "Shift+3",
+          hotkey: "3",
           grid_navigation_target: "item",
-          action: "focus->grid-navigation#syncPosition"
+          action: "#{hotkey_click_action('3')} focus->grid-navigation#syncPosition"
         },
-        aria: { keyshortcuts: "Shift+3", label: "Monthly" } do %>
+        aria: { keyshortcuts: "3", label: "Monthly" } do %>
     <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
     <span class="menu--navigation-label">Monthly</span>
   <% end %>
@@ -50,11 +49,11 @@
         data: {
           turbo_frame: "_top",
           controller: "hotkey",
-          hotkey: "Shift+4",
+          hotkey: "4",
           grid_navigation_target: "item",
-          action: "focus->grid-navigation#syncPosition"
+          action: "#{hotkey_click_action('4')} focus->grid-navigation#syncPosition"
         },
-        aria: { keyshortcuts: "Shift+4", label: "Review" } do %>
+        aria: { keyshortcuts: "4", label: "Review" } do %>
     <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
     <span class="menu--navigation-label">Review</span>
   <% end %>

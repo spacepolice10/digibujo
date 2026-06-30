@@ -16,10 +16,6 @@ class Bullet
       new(params, bullet: bullet).permit(keys: keys)
     end
 
-    def self.preview(params, **defaults)
-      new(params).preview(**defaults)
-    end
-
     def initialize(params, bullet: nil)
       @params = params
       @bullet = bullet
@@ -32,17 +28,6 @@ class Bullet
         *keys,
         bulletable_attributes: type_class.permitted_bullet_attributes
       ).then { |permitted| ensure_bulletable_defaults!(permitted, type_class) }
-    end
-
-    def preview(**defaults)
-      type_name = resolve_type(@params[:bulletable_type])
-
-      {
-        pops_on: @params[:pops_on],
-        bucket_id: @params[:bucket_id],
-        bulletable_type: type_name,
-        bulletable_attributes: {}
-      }.merge(defaults).compact
     end
 
     private

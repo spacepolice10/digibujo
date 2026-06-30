@@ -2,11 +2,11 @@
 
 Rails.application.routes.draw do
   # --- System ---
-  get "up", to: "rails/health#show", as: :rails_health_check
-  get "manifest", to: "rails/pwa#manifest", as: :pwa_manifest
-  get "service-worker", to: "rails/pwa#service_worker", as: :pwa_service_worker
+  get 'up', to: 'rails/health#show', as: :rails_health_check
+  get 'manifest', to: 'rails/pwa#manifest', as: :pwa_manifest
+  get 'service-worker', to: 'rails/pwa#service_worker', as: :pwa_service_worker
 
-  root "daylogs#show"
+  root 'home#show'
 
   # --- Authentication ---
   resource :session do
@@ -22,44 +22,47 @@ Rails.application.routes.draw do
   end
 
   # --- Logs ---
-  resource :daylog, only: :show, controller: "daylogs"
+  resource :daylog, only: :show, controller: 'daylogs' do
+    scope module: :daylogs do
+      resources :bullets, only: %i[new create]
+    end
+  end
 
-  get "monthly_bucket", to: "monthly_buckets#current", as: :current_monthly_bucket
+  get 'monthly_bucket', to: 'monthly_buckets#current', as: :current_monthly_bucket
 
   resources :future_buckets, only: :show
 
-  resources :monthly_buckets, only: [:show, :new, :create] do
-    resources :bullets, only: [:new, :create], module: :monthly_buckets
+  resources :monthly_buckets, only: %i[show new create] do
+    scope module: :monthly_buckets do
+      resources :bullets, only: %i[new create]
+    end
   end
 
   # --- Tags ---
-  scope "projects", module: :projects, as: :projects do
+  scope 'projects', module: :projects, as: :projects do
     resource :pin, only: %i[create destroy]
   end
 
-  scope module: :projects, path: "projects", as: :project do
+  scope module: :projects, path: 'projects', as: :project do
     resources :suggestions
   end
 
   resources :projects
 
-  scope "people", module: :people, as: :people do
+  scope 'people', module: :people, as: :people do
     resource :pin, only: %i[create destroy]
   end
 
-  scope module: :people, path: "people", as: :person do
+  scope module: :people, path: 'people', as: :person do
     resources :suggestions
   end
 
   resources :people
 
   # --- Bullets ---
-  scope "bullets", module: :bullets do
+  scope 'bullets', module: :bullets do
     resource :pin, only: %i[create destroy]
     resource :archive, only: %i[create destroy]
-    namespace :composer do
-      resource :editor, only: :create, controller: :editor
-    end
     resource :collect
     resource :pop
     resource :publish, only: %i[create destroy]
@@ -68,7 +71,7 @@ Rails.application.routes.draw do
   resources :bullets, except: :index
 
   # --- Tasks ---
-  scope "tasks", module: :tasks do
+  scope 'tasks', module: :tasks do
     resource :complete, only: %i[create destroy]
   end
 
@@ -76,10 +79,17 @@ Rails.application.routes.draw do
   resources :collections do
     scope module: :collections do
       resource :export, only: :show
+      resources :bullets, only: %i[new create]
     end
   end
 
-  scope "buckets", module: :buckets, as: :buckets do
+  resources :sprints do
+    scope module: :sprints do
+      resources :bullets, only: %i[new create]
+    end
+  end
+
+  scope 'buckets', module: :buckets, as: :buckets do
     resource :pin, only: %i[create destroy]
   end
 
@@ -93,14 +103,14 @@ Rails.application.routes.draw do
   end
 
   # --- Home & navigation ---
-  resource :home, controller: "home"
+  resource :home, controller: 'home'
 
   scope module: :home do
-    post "home/sections/:id/expand", to: "sections#expand", as: :home_expand_section
-    post "home/sections/:id/collapse", to: "sections#collapse", as: :home_collapse_section
+    post 'home/sections/:id/expand', to: 'sections#expand', as: :home_expand_section
+    post 'home/sections/:id/collapse', to: 'sections#collapse', as: :home_collapse_section
   end
 
-  resource :menu, controller: "menu"
+  resource :menu, controller: 'menu'
   resource :search do
     scope module: :searches do
       resource :selection, only: :create
@@ -108,8 +118,11 @@ Rails.application.routes.draw do
   end
 
   # --- Workspaces ---
-  resource :review, controller: "reviews" do
+  resource :review, controller: 'reviews' do
     post :migrate
+    scope module: :reviews do
+      resources :bullets, only: %i[new create]
+    end
   end
   resources :activities do
     collection do

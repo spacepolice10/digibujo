@@ -9,6 +9,6 @@ module Person::Searchable
   end
 
   def search_body
-    handles.map { |handle| [ handle.platform, handle.data ].compact.join(" ") }.join(" ")
+    handles.map { |handle| [handle.platform, handle.data].compact.join(' ') }.join(' ')
   end
 end

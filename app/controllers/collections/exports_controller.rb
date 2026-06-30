@@ -2,7 +2,7 @@
 
 module Collections
   class ExportsController < ApplicationController
-    include UserCollections, ExportDownload
+    include ExportDownload
 
     before_action :set_collection
     before_action :prepare_export_bullets
@@ -17,7 +17,7 @@ module Collections
     private
 
     def set_collection
-      @collection = user_collections.find(params[:collection_id])
+      @collection = Current.user.active_collections.find(params[:collection_id])
     end
 
     def prepare_export_bullets

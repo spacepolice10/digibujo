@@ -57,7 +57,7 @@
                 style: "anchor-name: #{monthly_bucket_anchor}",
                 data: { turbo_frame: "_top" },
                 aria: { label: "Monthly spread: #{bucket.name}" } do %>
-            <i class="icon" style="--icon-mask: <%= bucket.icon_mask %>" aria-hidden="true"></i>
+            <%= render "shared/entity_icon", record: bucket %>
           <% end %>
         <% elsif bucket.bucketable_type == "Collection" %>
           <% coll_hint_id = dom_id(bullet, "hint_collection_#{bucket.id}") %>
@@ -68,11 +68,18 @@
                 style: "anchor-name: #{coll_anchor}",
                 data: { turbo_frame: "_top" },
                 aria: { label: "Collection: #{bucket.name}" } do %>
-            <% if bucket.icon_path %>
-              <%= image_tag bucket.icon_path, alt: "", class: "form--list-icon" %>
-            <% else %>
-              <i class="icon" style="--icon-mask: <%= bucket.icon_mask %>" aria-hidden="true"></i>
-            <% end %>
+            <%= render "shared/entity_icon", record: bucket %>
+          <% end %>
+        <% elsif bucket.bucketable_type == "Sprint" %>
+          <% sprint_hint_id = dom_id(bullet, "hint_sprint_#{bucket.id}") %>
+          <% sprint_anchor = "--hint-#{bullet.id}-sprint-#{bucket.id}" %>
+          <%= link_to sprint_path(bucketable),
+                class: ["pill", bucket.colour.present? ? "pill--#{bucket.colour}" : nil].compact.join(" "),
+                interestfor: sprint_hint_id,
+                style: "anchor-name: #{sprint_anchor}",
+                data: { turbo_frame: "_top" },
+                aria: { label: "Sprint: #{bucket.name}" } do %>
+            <%= render "shared/entity_icon", record: bucket %>
           <% end %>
         <% end %>
       <% end %>
@@ -86,7 +93,7 @@
         popover="hint"
         style="position-anchor: <%= migration_anchor %>"
       >
-        <%= migration_hint(bullet) %>
+        <%= bullet.migration_hint %>
       </div>
     <% end %>
     <% if bullet.pinned? %>
@@ -137,6 +144,17 @@
           style="position-anchor: <%= coll_anchor %>"
         >
           <%= bucket.name %>
+        </div>
+      <% elsif bucket.bucketable_type == "Sprint" %>
+        <% sprint_hint_id = dom_id(bullet, "hint_sprint_#{bucket.id}") %>
+        <% sprint_anchor = "--hint-#{bullet.id}-sprint-#{bucket.id}" %>
+        <div
+          id="<%= sprint_hint_id %>"
+          class="hint"
+          popover="hint"
+          style="position-anchor: <%= sprint_anchor %>"
+        >
+          <%= bucket.name %> · <%= render "sprints/status_label", sprint: bucketable %>
         </div>
       <% end %>
     <% end %>

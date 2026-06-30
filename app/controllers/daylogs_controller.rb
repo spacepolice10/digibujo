@@ -6,7 +6,7 @@ class DaylogsController < ApplicationController
     return unless @selected_date
 
     @bullets = set_page_and_extract_portion_from(
-      Current.user.bullets.dailylog(@selected_date),
+      Current.user.bullets.where(pops_on: @selected_date).active,
       per_page: [15, 30, 50]
     )
     @recurrency_tracker = RecurrencyTracker.new(

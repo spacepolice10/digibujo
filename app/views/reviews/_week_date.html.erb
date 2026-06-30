@@ -9,13 +9,14 @@
   <% end %>
 
   <div class="review--week-date-drop"
-       data-controller="pop-drop"
-       data-pop-drop-pop-url-value="<%= pop_path %>"
-       data-pop-drop-pops-on-value="<%= date.iso8601 %>"
-       data-pop-drop-review-drop-value="true"
-       data-action="dragover->pop-drop#dragover dragleave->pop-drop#dragleave drop->pop-drop#drop">
+       data-controller="pops-drop"
+       data-drop-zone-value="<%= date.iso8601 %>"
+       data-pops-drop-pops-url-value="<%= pop_path %>"
+       data-pops-drop-pops-on-value="<%= date.iso8601 %>"
+       data-pops-drop-review-drop-value="true"
+       data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop">
     <% bullets.each do |bullet| %>
-      <%= render "monthly_buckets/bullets/monthly_bullet", bullet: bullet %>
+      <%= render "monthly_buckets/bullets/bullet", bullet: bullet %>
     <% end %>
   </div>
 </div>

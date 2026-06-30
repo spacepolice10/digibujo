@@ -1,0 +1,32 @@
+<%# locals: (pinned_entities:, compact: false, popover: false) %>
+<div class="pinned--list-body">
+  <% if popover %>
+    <button
+      type="button"
+      class="button--primary button--icon button--circle bulk-menu--hide"
+      popovertarget="pinned_list"
+      popovertargetaction="hide"
+      aria-label="Close pinned list"
+    >
+      <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
+    </button>
+  <% end %>
+
+  <% if pinned_entities.any? %>
+    <% if compact %>
+      <ul class="layout--list bucket--list">
+        <% pinned_entities.each do |pinned_entity| %>
+          <%= render "pinned/entity", pinned_entity: pinned_entity, compact: true %>
+        <% end %>
+      </ul>
+    <% else %>
+      <div class="pinned--entities">
+        <% pinned_entities.each do |pinned_entity| %>
+          <%= render "pinned/entity", pinned_entity: pinned_entity, compact: false %>
+        <% end %>
+      </div>
+    <% end %>
+  <% else %>
+    <p class="pinned--empty">Nothing pinned yet.</p>
+  <% end %>
+</div>

@@ -1,14 +1,5 @@
-<%= turbo_stream.before (params[:bullet][:composer_id].presence || ".bullet_pops_on_#{@bullet.pops_on}") do %>
+<%= turbo_stream.append "bullets" do %>
   <%= render @bullet %>
-<% end %>
-
-<% composer_id = params.dig(:bullet, :composer_id).presence || "bullet_composer" %>
-<% unless params[:add_another].present? %>
-<%= turbo_stream.update composer_id do %>
-  <%= render "bullets/composer/picker",
-        composer_id: composer_id,
-        attributes: { pops_on: @bullet.pops_on, bucket_id: @bullet.bucket_id }.compact %>
-<% end %>
 <% end %>
 
 <% if @bullet.pops_on.present? && @bullet.pops_on > Date.current %>

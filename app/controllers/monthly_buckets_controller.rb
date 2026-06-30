@@ -18,25 +18,27 @@ class MonthlyBucketsController < ApplicationController
   end
 
   def new
-    @monthly_bucket = Current.user.future_bucket.monthly_buckets.build(user: Current.user)
+    @monthly_bucket = Current.user.future_buckets.first.monthly_buckets.build(user: Current.user)
     @occupied_months = occupied_months
   end
 
   def create
-    @monthly_bucket = Current.user.future_bucket.monthly_buckets.build(
+    @monthly_bucket = Current.user.future_buckets.first.monthly_buckets.build(
       user: Current.user,
-      month: monthly_bucket_params[:month]
+      **period_attributes_for(monthly_bucket_params[:month])
     )
-    @monthly_bucket.build_bucket(
-      user: Current.user,
-      name: @monthly_bucket.period_from&.strftime("%B %Y"),
-      icon: "calendar"
-    ) if @monthly_bucket.period_from.present?
+    if @monthly_bucket.period_from
+      @monthly_bucket.build_bucket(
+        user: Current.user,
+        name: @monthly_bucket.period_from.strftime('%B %Y'),
+        icon: 'calendar'
+      )
+    end
 
     if @monthly_bucket.save
       @monthly_bucket.bucket.record_activity!(
-        "created",
-        metadata: { "bucketable_type" => @monthly_bucket.bucket.bucketable_type }
+        'created',
+        metadata: { 'bucketable_type' => @monthly_bucket.bucket.bucketable_type }
       )
       redirect_to monthly_bucket_path(@monthly_bucket), notice: 'Monthly spread created'
     else
@@ -55,6 +57,14 @@ class MonthlyBucketsController < ApplicationController
     Current.user.monthly_buckets.pluck(:period_from)
   end
 
+  def period_attributes_for(month_param)
+    return {} if month_param.blank?
+
+    MonthlyBucket.period_for(Date.parse(month_param))
+  rescue Date::Error
+    {}
+  end
+
   def assign_data
     @bucket = @monthly_bucket.bucket
     @period_days = @monthly_bucket.period_days
@@ -64,7 +74,7 @@ class MonthlyBucketsController < ApplicationController
                        else
                          {}
                        end
-    @unplanned_bullets = scoped.where(pops_on: nil).chronological.includes(:bulletable)
+    @unplanned_bullets = scoped.where(pops_on: nil).order(created_at: :asc).includes(:bulletable)
     @recurrency_tracker = if @period_days
                             RecurrencyTracker.new(
                               user: Current.user,

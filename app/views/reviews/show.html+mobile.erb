@@ -14,12 +14,6 @@
         schedule_tomorrow: @schedule_tomorrow,
         amount_in_review: @amount_in_review %>
 
-  <%= render "bullets/bulk_menu", review_migrate: { from: @review_from, to: @review_to } %>
+  <%= render "bullets/bulk_menu",
+        review_migrate: { from: @review_from, to: @review_to } %>
 </div>
-
-<turbo-frame id="review_collect_picker_frame"
-             class="review--collect-sheet bulk-menu--action-menu bulk-menu--action-frame"
-             popover
-             loading="lazy"
-             data-controller="collect-picker"
-             data-collect-picker-frame-id-value="review_collect_picker_frame"></turbo-frame>

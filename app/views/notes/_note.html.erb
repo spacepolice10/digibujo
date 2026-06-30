@@ -4,7 +4,10 @@
     <%= render "bullets/marker", bullet: note %>
   </div>
   <div class="bullet--body">
-    <%= render "bullets/body", bullet: note, selected_date: selected_date %>
+    <div class="bullet-body">
+      <%= note.body %>
+    </div>
+    <%= render "bullets/metadata", bullet: note, selected_date: selected_date %>
   </div>
-  <%= render "bullets/bulk-menu-select", bullet: note %>
+  <%= render "bullets/bulk_menu_select", bullet: note %>
 </turbo-frame>

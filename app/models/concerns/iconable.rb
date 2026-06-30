@@ -13,7 +13,7 @@ module Iconable
   end
 
   def icon_mask
-    key = icon.presence || 'tag'
+    key = icon.presence || "tag"
     "var(--icon-#{key})"
   end
 

@@ -24,14 +24,11 @@ class Bullet
       @type ||= @params[:type].to_s.classify.presence_in(Bullet.bulletable_types)
     end
 
-    def type_param
-      @params[:type].presence
-    end
-
     def filters
-      [ [ nil, "All", "list", nil ] ] + Bullet.bulletable_types.map { |bulletable_type|
-        [ bulletable_type.downcase, bulletable_type.pluralize, bulletable_type.constantize.new.marker_icon, bulletable_type.downcase ]
-      }
+      [[nil, 'All', 'list', nil]] + Bullet.bulletable_types.map do |bulletable_type|
+        [bulletable_type.downcase, bulletable_type.pluralize, bulletable_type.constantize.new.marker_icon,
+         bulletable_type.downcase]
+      end
     end
 
     def path(type: :current, page: nil)
@@ -44,6 +41,7 @@ class Bullet
       when Project then project_path(@context, **query)
       when Person then person_path(@context, **query)
       when Collection then collection_path(@context, **query)
+      when Sprint then sprint_path(@context, **query)
       else
         raise ArgumentError, "unsupported listing context: #{@context.class.name}"
       end
@@ -54,11 +52,13 @@ class Bullet
     def base_scope
       case @context
       when Person
-        @user.bullets.tagged_with_person(@context)
+        @user.bullets.joins(:people).where(people: { id: @context.id })
       when Project
-        @user.bullets.tagged_with_project(@context)
+        @user.bullets.joins(:projects).where(projects: { id: @context.id })
       when Collection
-        @user.bullets.in_bucket(@context.bucket)
+        @user.bullets.where(bucket_id: @context.bucket.id)
+      when Sprint
+        @user.bullets.where(bucket_id: @context.bucket.id)
       else
         raise ArgumentError, "unsupported listing context: #{@context.class.name}"
       end

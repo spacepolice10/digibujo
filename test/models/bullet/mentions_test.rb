@@ -83,23 +83,6 @@ class Bullet::MentionsTest < ActiveSupport::TestCase
     assert_not join.valid?
   end
 
-  test 'editor_content avoids rendered layout markup' do
-    @bullet.mentions.projects.add!(project_id: @project.id)
-    content = @bullet.editor_content
-
-    html = content.fragment.to_html
-    assert_includes html, 'action-text-attachment'
-    assert_not_includes html, 'BEGIN app/views/layouts'
-  end
-
-  test 'editor_content_for_form returns raw HTML with project attachment node' do
-    @bullet.mentions.projects.add!(project_id: @project.id)
-    html = @bullet.editor_content_for_form
-
-    assert_includes html, 'action-text-attachment'
-    assert_not_includes html, 'attachment--unknown'
-  end
-
   test 'people.add! mentions person' do
     @bullet.mentions.people.add!(person_id: @person.id)
 

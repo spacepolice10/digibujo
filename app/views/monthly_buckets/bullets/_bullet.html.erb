@@ -1,0 +1,28 @@
+<%# locals: (bullet:) %>
+<turbo-frame id="<%= dom_id(bullet) %>"
+             class="bullet bullet--monthly-bucket"
+             data-bullet-type="<%= bullet.bulletable_type.downcase %>"
+             <% if bullet.completed? %>
+             data-bullet-completed
+             <% end %>
+             draggable="true"
+             data-controller="bullet-drag"
+             data-bullet-drag-id-value="<%= bullet.id %>"
+             data-action="dragstart->bullet-drag#dragstart dragend->bullet-drag#dragend">
+  <div class="bullet--marker-slot">
+    <span class="bullet--monthly-bucket-dot" aria-hidden="true"></span>
+  </div>
+  <div class="bullet--body">
+    <% if bullet.bulletable_type == "Voice" && bullet.bulletable.recording.attached? %>
+      <%= render "voices/playback_for_bullet", bullet: bullet %>
+    <% else %>
+      <%= link_to bullet_path(bullet),
+            class: "bullet--monthly-bucket-link",
+            data: { turbo_frame: "_top" },
+            draggable: "false" do %>
+        <span class="bullet--line"><%= bullet.name %></span>
+      <% end %>
+      <%= render "voices/playback_for_bullet", bullet: bullet %>
+    <% end %>
+  </div>
+</turbo-frame>

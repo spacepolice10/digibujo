@@ -8,8 +8,4 @@
       <%= render "bullets/bullet", bullet: bullet %>
     <% end %>
   <% end %>
-
-  <%= turbo_stream.update "pinned_bullets_dock",
-        partial: "pinned/pinned_bullets_dock",
-        locals: { bullets: pinned_bullets } %>
 <% end %>

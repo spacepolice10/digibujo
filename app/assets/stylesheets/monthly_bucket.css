@@ -64,76 +64,40 @@
     flex-direction: column;
   }
 
-  .monthly-bucket--calendar-body-recurrencies {
-    display: grid;
-    grid-template-columns: var(--spacing-horizontal-double) minmax(0, 1fr);
-    align-items: start;
-  }
-
-  .monthly-bucket--calendar-body-recurrencies.monthly-bucket--recurrencies-open {
-    grid-template-columns: var(--spacing-horizontal-double) auto minmax(0, 1fr);
-  }
-
-  .monthly-bucket--recurrencies-toggle {
-    grid-column: 1;
-    grid-row: 1 / -1;
+  .monthly-bucket--habits {
     display: flex;
-    align-items: stretch;
-    justify-content: center;
-    width: 100%;
-    min-height: 100%;
-    padding: 0;
-    border: 0;
-    border-inline-end: 1px solid var(--color-stroke-subtle);
-    background: transparent;
-    color: var(--color-fg-subtle);
-    cursor: pointer;
-
-    &:hover,
-    .monthly-bucket--recurrencies-open > & {
-      color: var(--color-fg-base);
-      background: var(--color-bg-base);
-    }
-  }
-
-  .monthly-bucket--recurrencies-toggle .icon {
-    width: var(--icon-size-subtle);
-    height: var(--icon-size-subtle);
-    margin-block: var(--spacing-vertical-half);
-  }
-
-  .monthly-bucket--date-recurrencies {
-    display: none;
-    grid-column: 2;
-    padding-block: calc(var(--spacing-vertical-half) / 2);
-    padding-inline-end: var(--spacing-horizontal-half);
-    border-inline-end: 1px solid var(--color-stroke-subtle);
-  }
-
-  .monthly-bucket--recurrencies-open .monthly-bucket--date-recurrencies {
-    display: block;
-  }
-
-  .monthly-bucket--calendar-body-recurrencies .monthly-bucket--date-band {
-    grid-column: 2;
-  }
-
-  .monthly-bucket--recurrencies-open .monthly-bucket--date-band {
-    grid-column: 3;
-  }
-
-  .monthly-bucket--date-recurrencies .recurrency--for-day {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     align-items: center;
-    gap: calc(var(--spacing-vertical-half) / 2);
+    gap: var(--spacing-horizontal-half);
+    margin-block: var(--radius-subtle);
   }
 
-  .monthly-bucket--date-recurrencies .recurrency--chip {
+  .monthly-bucket--habit {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(var(--spacing-horizontal-half) / 2);
+    min-width: 0;
+  }
+
+  .monthly-bucket--habit .recurrency--header-chip {
+    display: contents;
+  }
+
+  .monthly-bucket--habit .recurrency--chip {
     width: var(--icon-size-base);
     height: var(--icon-size-base);
+    border: 0;
     border-radius: var(--radius-subtle);
+    background: transparent;
+  }
+
+  .monthly-bucket--habit .recurrency--chip-neutral {
+    background: transparent;
+  }
+
+  .monthly-bucket--habit-name {
+    font-size: var(--font-size-subtle);
+    color: var(--color-fg-base);
   }
 
   .monthly-bucket--date-band {
@@ -197,6 +161,19 @@
     flex: 1;
     min-width: 0;
     align-self: stretch;
+  }
+
+  @media (hover: hover) {
+    .monthly-bucket--calendar .monthly-bucket--date-composer:not(:has(.bullet-composer)) {
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .monthly-bucket--calendar .monthly-bucket--date-band:is(:hover, :focus-within) .monthly-bucket--date-composer:not(:has(.bullet-composer)),
+    .monthly-bucket--calendar .monthly-bucket--date-composer:has(.bullet-composer) {
+      visibility: visible;
+      pointer-events: auto;
+    }
   }
 
   .monthly-bucket--divider {
@@ -289,7 +266,7 @@
   }
 
   .monthly-bucket--drop-over,
-  .pop-drop--over {
+  .pops-drop--over {
     outline: 2px dashed var(--model-color-4);
     outline-offset: -2px;
     border-radius: var(--radius-base);
@@ -355,6 +332,263 @@
 
     .monthly-bucket--divider {
       display: none;
+    }
+  }
+
+  .monthly-bucket--page-mobile {
+    min-height: calc(100dvh - var(--spacing-vertical) * 2);
+  }
+
+  .monthly-bucket--workspace-mobile {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .monthly-bucket--page-mobile .monthly-bucket--monthly-sections {
+    display: flex;
+  }
+
+  .monthly-bucket--page-mobile .monthly-bucket--spread-mobile {
+    display: contents;
+  }
+
+  /* ── Month period picker (new spread form) ────────── */
+
+  .monthly-bucket--period-picker {
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .monthly-bucket--period-picker > legend {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  .monthly-bucket--period-picker {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-vertical);
+  }
+
+  @container page-column (max-width: 600px) {
+    .monthly-bucket--period-picker {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .monthly-bucket--period-option {
+    display: flex;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .monthly-bucket--period-option--disabled {
+    cursor: not-allowed;
+    opacity: var(--opacity-half);
+  }
+
+  .monthly-bucket--period-option--disabled .monthly-bucket--period-input {
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .monthly-bucket--period-option--disabled:hover .monthly-bucket--period-card,
+  .monthly-bucket--period-option--disabled .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
+  .monthly-bucket--period-option--disabled .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
+    transform: none;
+    border-color: var(--color-stroke-base);
+    box-shadow: none;
+    outline: none;
+  }
+
+  .monthly-bucket--period-option--disabled .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card::after {
+    content: none;
+  }
+
+  .monthly-bucket--period-input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    clip: auto;
+    clip-path: none;
+    overflow: visible;
+    pointer-events: auto;
+    cursor: pointer;
+    z-index: 1;
+  }
+
+  .monthly-bucket--period-input:focus {
+    outline: none;
+  }
+
+  .monthly-bucket--period-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-vertical);
+    width: 100%;
+    padding: var(--spacing-vertical-quad) var(--spacing-horizontal);
+    border-radius: var(--radius-strong);
+    border: 1px solid var(--color-stroke-base);
+    background: var(--color-bg-base);
+    min-height: calc(var(--icon-size-strong) * 3);
+    white-space: nowrap;
+    transition:
+      transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.22s ease,
+      box-shadow 0.22s ease,
+      background-position 0.35s ease;
+  }
+
+  .monthly-bucket--period-label {
+    font-size: var(--font-size-strong);
+    font-weight: var(--font-weight-strong);
+    color: var(--color-fg-base);
+    line-height: 1;
+  }
+
+  .monthly-bucket--period-meta {
+    font-size: var(--font-size-base);
+    color: var(--color-fg-subtle);
+    line-height: 1;
+  }
+
+  .monthly-bucket--period-option:hover .monthly-bucket--period-card {
+    transform: translateY(-1px) scale(1.02);
+    border-color: var(--color-stroke-strong);
+    box-shadow: var(--shadow-base);
+  }
+
+  .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card {
+    transform: scale(1.05);
+    border-color: var(--color-stroke-strong);
+    outline: 2px solid var(--color-stroke-strong);
+    outline-offset: 3px;
+    box-shadow:
+      0 0 0 4px color-mix(in oklch, var(--color-accent) 40%, transparent),
+      var(--shadow-strong);
+  }
+
+  .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card::after {
+    content: "";
+    position: absolute;
+    top: var(--spacing-vertical-half);
+    right: var(--spacing-horizontal-half);
+    width: var(--spacing-horizontal);
+    height: var(--spacing-horizontal);
+    border-radius: var(--radius-full);
+    background: var(--color-accent);
+    box-shadow: 0 0 0 2px var(--color-bg-base);
+  }
+
+  .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
+    border-color: var(--color-stroke-strong);
+    transform: scale(1.02);
+  }
+
+  @keyframes monthly-bucket-gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .monthly-bucket--period-option[data-month]:hover .monthly-bucket--period-card,
+  .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
+  .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
+    background-size: 200% 200%;
+    box-shadow: var(--shadow-base);
+    animation: monthly-bucket-gradient-shift 8s ease infinite;
+  }
+
+  .monthly-bucket--period-option[data-month="1"]:hover .monthly-bucket--period-card,
+  .monthly-bucket--period-option[data-month="1"] .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
+  .monthly-bucket--period-option[data-month="1"] .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
+    background-image: var(--gradient-january);
+  }
+
+  .monthly-bucket--period-option[data-month="2"]:hover .monthly-bucket--period-card,
+  .monthly-bucket--period-option[data-month="2"] .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
+  .monthly-bucket--period-option[data-month="2"] .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
+    background-image: var(--gradient-february);
+  }
+
+  .monthly-bucket--period-option[data-month="3"]:hover .monthly-bucket--period-card,
+  .monthly-bucket--period-option[data-month="3"] .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
+  .monthly-bucket--period-option[data-month="3"] .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
+    background-image: var(--gradient-march);
+  }
+
+  .monthly-bucket--period-option[data-month="4"]:hover .monthly-bucket--period-card,
+  .monthly-bucket--period-option[data-month="4"] .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
+  .monthly-bucket--period-option[data-month="4"] .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
+    background-image: var(--gradient-april);
+  }
+
+  .monthly-bucket--period-option[data-month="5"]:hover .monthly-bucket--period-card,
+  .monthly-bucket--period-option[data-month="5"] .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
+  .monthly-bucket--period-option[data-month="5"] .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
+    background-image: var(--gradient-may);
+  }
+
+  .monthly-bucket--period-option[data-month="6"]:hover .monthly-bucket--period-card,
+  .monthly-bucket--period-option[data-month="6"] .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
+  .monthly-bucket--period-option[data-month="6"] .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
+    background-image: var(--gradient-june);
+  }
+
+  .monthly-bucket--period-option[data-month="7"]:hover .monthly-bucket--period-card,
+  .monthly-bucket--period-option[data-month="7"] .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
+  .monthly-bucket--period-option[data-month="7"] .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
+    background-image: var(--gradient-july);
+  }
+
+  .monthly-bucket--period-option[data-month="8"]:hover .monthly-bucket--period-card,
+  .monthly-bucket--period-option[data-month="8"] .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
+  .monthly-bucket--period-option[data-month="8"] .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
+    background-image: var(--gradient-august);
+  }
+
+  .monthly-bucket--period-option[data-month="9"]:hover .monthly-bucket--period-card,
+  .monthly-bucket--period-option[data-month="9"] .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
+  .monthly-bucket--period-option[data-month="9"] .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
+    background-image: var(--gradient-september);
+  }
+
+  .monthly-bucket--period-option[data-month="10"]:hover .monthly-bucket--period-card,
+  .monthly-bucket--period-option[data-month="10"] .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
+  .monthly-bucket--period-option[data-month="10"] .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
+    background-image: var(--gradient-october);
+  }
+
+  .monthly-bucket--period-option[data-month="11"]:hover .monthly-bucket--period-card,
+  .monthly-bucket--period-option[data-month="11"] .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
+  .monthly-bucket--period-option[data-month="11"] .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
+    background-image: var(--gradient-november);
+  }
+
+  .monthly-bucket--period-option[data-month="12"]:hover .monthly-bucket--period-card,
+  .monthly-bucket--period-option[data-month="12"] .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
+  .monthly-bucket--period-option[data-month="12"] .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
+    background-image: var(--gradient-december);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .monthly-bucket--period-option:hover .monthly-bucket--period-card,
+    .monthly-bucket--period-option[data-month]:hover .monthly-bucket--period-card,
+    .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
+    .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
+      animation: none;
+      transform: none;
     }
   }
 }

@@ -6,7 +6,7 @@
     justify-content: center;
     align-items: center;
     gap: var(--spacing-vertical-half);
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    padding: var(--spacing-vertical) var(--spacing-horizontal-half);
     border-radius: var(--radius-strong);
     font-family: inherit;
     font-size: var(--font-size-subtle);
@@ -30,6 +30,11 @@
     padding: 0;
     width: var(--icon-size-base);
     height: var(--icon-size-base);
+  }
+
+  .button--icon-subtle {
+    width: calc(var(--icon-size-subtle) - var(--spacing-horizontal-half));
+    height: calc(var(--icon-size-subtle) - var(--spacing-horizontal-half) );
   }
 
   .button--circle {
@@ -95,14 +100,16 @@
   .button--primary.button--hotkey[data-hotkey]::after,
   .button--secondary.button--hotkey[data-hotkey]::after,
   .button--tertiary.button--hotkey[data-hotkey]::after {
-    content: attr(data-hotkey);
-    margin-inline-start: auto;
-    padding: 0 var(--spacing-horizontal-half);
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-subtle);
-    color: var(--color-fg-subtle);
-    font-size: var(--font-size-subtle);
-    opacity: var(--opacity-half);
+    @media (pointer: fine) {
+      content: attr(data-hotkey);
+      margin-inline-start: auto;
+      padding: 0 var(--spacing-horizontal-half);
+      border: 1px solid var(--color-stroke-base);
+      border-radius: var(--radius-subtle);
+      color: var(--color-fg-subtle);
+      font-size: var(--font-size-subtle);
+      opacity: var(--opacity-half);
+    }
   }
 
   /* ── Primary ──────────────────────────────────────── */

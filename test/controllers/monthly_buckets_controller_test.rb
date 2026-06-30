@@ -3,6 +3,8 @@
 require 'test_helper'
 
 class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
+  MOBILE_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)'
+
   setup do
     @user = users(:one)
     ensure_future_bucket!(@user)
@@ -56,16 +58,16 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Dentist', response.body
   end
 
-    test 'monthly bucket unplanned composer offers task and note' do
-      get monthly_bucket_path(@monthly_bucket)
+  test 'monthly bucket unplanned composer renders unscheduled picker' do
+    monthly_bucket = create_monthly_bucket!(@user, name: 'june')
+    get monthly_bucket_path(monthly_bucket)
 
-      assert_response :success
-      assert_select 'turbo-frame#composer_unplanned a', text: /Add task/
-      assert_select 'turbo-frame#composer_unplanned a', text: /Add note/
-      assert_select 'turbo-frame#composer_unplanned a', text: /Add event/, count: 0
-    end
+    assert_response :success
+    assert_select '.monthly-bucket--unplanned a.bullet--composer-create-button[href*="bulletable_type=Task"]'
+    assert_select '.monthly-bucket--unplanned a.bullet--composer-create-button[href*="bulletable_type=Note"]'
+  end
 
-    test 'monthly bucket spread has date add menu and composer frames' do
+  test 'monthly bucket spread has date add menu and composer frames' do
     monthly_bucket = create_monthly_bucket!(@user, name: 'june')
     day = Date.current.beginning_of_month + 2.days
     @user.bullets.create!(
@@ -78,10 +80,9 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     get monthly_bucket_path(monthly_bucket)
 
     assert_response :success
-    assert_select 'select.select.monthly-bucket--date-form-select'
+    assert_select '.bullet--composer-create-button'
     assert_match 'Add task', response.body
-    assert_match 'select--option-label', response.body
-    assert_select "turbo-frame#composer_#{day.iso8601}"
+    assert_select "turbo-frame##{dom_id(monthly_bucket, day)}[data-controller=?]", 'composer'
     assert_match 'Planned task', response.body
   end
 
@@ -158,6 +159,54 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     assert_select "a.bullet--monthly-bucket-link[href='#{bullet_path(bullet)}']", text: /Buy ointment/
   end
 
+  test 'mobile monthly bucket renders planned and unplanned tabs' do
+    monthly_bucket = create_monthly_bucket!(@user, name: 'june')
+    create_recurrency!(@user, name: 'Run')
+    day = Date.current.beginning_of_month
+    @user.bullets.create!(
+      bulletable: Task.create!,
+      body: 'Planned mobile task',
+      bucket_id: monthly_bucket.bucket.id,
+      pops_on: day
+    )
+    @user.bullets.create!(
+      bulletable: Note.create!,
+      body: 'Unplanned mobile note',
+      bucket_id: monthly_bucket.bucket.id
+    )
+
+    get monthly_bucket_path(monthly_bucket), headers: { 'User-Agent' => MOBILE_UA }
+
+    assert_response :success
+    assert_select '.monthly-bucket--page-mobile'
+    assert_select '.monthly-bucket--monthly-sections button[role=tab]', count: 2
+    assert_select 'button[data-monthly-sections-section=?]', 'days', text: 'Planned'
+    assert_select 'button[data-monthly-sections-section=?]', 'unplanned', text: 'Unplanned'
+    assert_select '.monthly-bucket--calendar.monthly-bucket--side-active', count: 1
+    assert_select '.monthly-bucket--unplanned[hidden]', count: 1
+    assert_match 'Planned mobile task', response.body
+    assert_match 'Unplanned mobile note', response.body
+    assert_select '.monthly-bucket--habit .recurrency--chip', minimum: 1
+    assert_select '[data-controller=?]', 'pops-drop', count: 0
+  end
+
+  test 'mobile monthly bucket bullets render full rows without drag' do
+    monthly_bucket = create_monthly_bucket!(@user, name: 'june')
+    @user.bullets.create!(
+      bulletable: Task.create!,
+      body: 'Mobile spread task',
+      bucket_id: monthly_bucket.bucket.id
+    )
+
+    get monthly_bucket_path(monthly_bucket), headers: { 'User-Agent' => MOBILE_UA }
+
+    assert_response :success
+    assert_match 'Mobile spread task', response.body
+    assert_select '.bullet--monthly-bucket', count: 0
+    assert_select 'turbo-frame.bullet[draggable="true"]', count: 0
+    assert_select '.bullet--task-marker', count: 1
+  end
+
   test 'monthly bucket date labels link to daylog' do
     monthly_bucket = create_monthly_bucket!(@user, name: 'june')
     day = Date.current.beginning_of_month + 4.days
@@ -177,7 +226,7 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     assert_select "input[name='monthly_bucket[month]'][value=?][checked]",
                   Date.current.beginning_of_month.iso8601
     assert_select "input[name='monthly_bucket[month]'][item_wrapper_tag]", count: 0
-    assert_select "label.form--period-option[for=?]", "monthly_bucket_month_#{Date.current.beginning_of_month.iso8601}"
+    assert_select "label.monthly-bucket--period-option[for=?]", "monthly_bucket_month_#{Date.current.beginning_of_month.iso8601}"
   end
 
   test 'new form disables occupied months and selects first available' do
@@ -190,7 +239,7 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     assert_select "input[name='monthly_bucket[month]'][value=?][disabled]",
                   Date.current.beginning_of_month.iso8601
     assert_select "input[name='monthly_bucket[month]'][value=?][checked]", next_month.iso8601
-    assert_select 'label.form--period-option--disabled'
+    assert_select 'label.monthly-bucket--period-option--disabled'
   end
 
   test 'create rejects duplicate month' do
@@ -204,6 +253,17 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :unprocessable_entity
     assert_match 'has already been taken', response.body
+  end
+
+  test 'create rejects month outside selectable range' do
+    assert_no_difference -> { MonthlyBucket.count } do
+      post monthly_buckets_path, params: {
+        monthly_bucket: { month: (Date.current.beginning_of_month + 6.months).iso8601 }
+      }
+    end
+
+    assert_response :unprocessable_entity
+    assert_match 'must be within the next six months', response.body
   end
 
   test 'show by id loads the requested spread when multiple months exist' do
@@ -246,7 +306,8 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     get monthly_bucket_path(monthly_bucket)
 
     assert_response :success
-    assert_select '.recurrency--for-day .recurrency--chip'
+    assert_select '.recurrency--chip'
+    assert_select '.monthly-bucket--habit', minimum: 1
     assert_select '.hint[popover="hint"]', text: /Run/
   end
 end

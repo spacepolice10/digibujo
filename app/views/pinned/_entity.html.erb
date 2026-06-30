@@ -1,0 +1,111 @@
+<%# locals: (pinned_entity:, compact: false) %>
+<% pinnable = pinned_entity.pinnable %>
+<% return unless pinnable %>
+
+<% case pinned_entity.pinnable_type %>
+<% when "Bullet" %>
+  <% if compact %>
+    <li class="layout--list-item">
+      <%= link_to edit_bullet_path(pinnable),
+            class: "bucket--list-item-link",
+            data: { turbo_frame: "_top" } do %>
+        <div class="bucket--list-item-name">
+          <%= render "bullets/marker", bullet: pinnable %>
+          <span class="utilities--line-clamp-1"><%= pinnable.name %></span>
+        </div>
+      <% end %>
+    </li>
+  <% else %>
+    <%= render "bullets/bullet", bullet: pinnable %>
+  <% end %>
+<% when "Bucket" %>
+  <% path = polymorphic_path(pinnable.bucketable) %>
+  <% if compact %>
+    <li id="<%= dom_id(pinnable, :list_item) %>" class="layout--list-item">
+      <%= link_to path, class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
+        <div class="bucket--list-item-name">
+          <div class="bucket--list-item-marker" data-bucket-colour="<%= pinnable.colour %>" aria-hidden="true">
+            <%= render "shared/entity_icon", record: pinnable %>
+          </div>
+          <span class="utilities--line-clamp-1"><%= pinnable.name %></span>
+        </div>
+      <% end %>
+    </li>
+  <% else %>
+    <div id="<%= dom_id(pinnable, :list_item) %>" class="pinned--entity-item">
+      <%= link_to path, class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
+        <div class="bucket--list-item-name">
+          <div class="bucket--list-item-marker" data-bucket-colour="<%= pinnable.colour %>" aria-hidden="true">
+            <%= render "shared/entity_icon", record: pinnable %>
+          </div>
+          <span class="utilities--line-clamp-1"><%= pinnable.name %></span>
+        </div>
+        <div class="bucket--list-item-meta utilities--line-clamp-1">
+          <span><%= pinnable.bullets.count %> <%= "bullet".pluralize(pinnable.bullets.count) %></span>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+<% when "Project" %>
+  <% if compact %>
+    <li id="<%= dom_id(pinnable, :list_item) %>" class="layout--list-item">
+      <%= link_to project_path(pinnable), class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
+        <div class="bucket--list-item-name">
+          <div class="bucket--list-item-marker" data-bucket-colour="<%= pinnable.colour %>" aria-hidden="true">
+            <%= render "shared/entity_icon", record: pinnable %>
+          </div>
+          <span class="utilities--line-clamp-1"><%= pinnable.name %></span>
+        </div>
+      <% end %>
+    </li>
+  <% else %>
+    <div id="<%= dom_id(pinnable, :list_item) %>" class="pinned--entity-item">
+      <%= link_to project_path(pinnable), class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
+        <div class="bucket--list-item-name">
+          <div class="bucket--list-item-marker" data-bucket-colour="<%= pinnable.colour %>" aria-hidden="true">
+            <%= render "shared/entity_icon", record: pinnable %>
+          </div>
+          <span class="utilities--line-clamp-1"><%= pinnable.name %></span>
+        </div>
+        <div class="bucket--list-item-meta utilities--line-clamp-1">
+          <span><%= pinnable.bullets.count %> <%= "bullet".pluralize(pinnable.bullets.count) %></span>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+<% when "Person" %>
+  <% if compact %>
+    <li id="<%= dom_id(pinnable, :list_item) %>" class="layout--list-item">
+      <%= link_to person_path(pinnable), class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
+        <div class="bucket--list-item-name">
+          <div class="bucket--list-item-marker" data-bucket-colour="<%= pinnable.colour %>" aria-hidden="true">
+            <% if pinnable.avatar.attached? %>
+              <%= image_tag pinnable.avatar, class: "person--avatar", alt: "" %>
+            <% else %>
+              <%= render "shared/entity_icon", record: pinnable %>
+            <% end %>
+          </div>
+          <span class="utilities--line-clamp-1"><%= pinnable.name %></span>
+        </div>
+      <% end %>
+    </li>
+  <% else %>
+    <div id="<%= dom_id(pinnable, :list_item) %>" class="pinned--entity-item">
+      <%= link_to person_path(pinnable), class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
+        <div class="bucket--list-item-name">
+          <div class="bucket--list-item-marker" data-bucket-colour="<%= pinnable.colour %>" aria-hidden="true">
+            <% if pinnable.avatar.attached? %>
+              <%= image_tag pinnable.avatar, class: "person--avatar", alt: "" %>
+            <% else %>
+              <%= render "shared/entity_icon", record: pinnable %>
+            <% end %>
+          </div>
+          <span class="utilities--line-clamp-1"><%= pinnable.name %></span>
+        </div>
+        <div class="bucket--list-item-meta utilities--line-clamp-1">
+          <span><%= pinnable.bullets.count %> <%= "bullet".pluralize(pinnable.bullets.count) %></span>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

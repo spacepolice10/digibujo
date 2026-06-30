@@ -7,7 +7,11 @@ module Tasks
     before_action :prepare_bullets
 
     def create
-      ::Task.complete_bullets!(@bullets)
+      Bullet.transaction do
+        @bullets.lock.find_each do |bullet|
+          bullet.bulletable.complete!
+        end
+      end
 
       respond_to do |format|
         format.turbo_stream
@@ -16,7 +20,11 @@ module Tasks
     end
 
     def destroy
-      ::Task.uncomplete_bullets!(@bullets)
+      Bullet.transaction do
+        @bullets.lock.find_each do |bullet|
+          bullet.bulletable.uncomplete!
+        end
+      end
 
       respond_to do |format|
         format.turbo_stream

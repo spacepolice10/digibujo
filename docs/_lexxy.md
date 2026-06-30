@@ -73,16 +73,16 @@ Each item provides:
 
 ### Direct uploads
 
-`bullet-composer` Stimulus (`app/javascript/controllers/bullet_composer_controller.js`) intercepts `lexxy:file-accept` and routes files to Active Storage direct uploads instead of inline blob insertion in the editor.
+Note preset enables attachments via Lexxy (`attachments: true` in `app/javascript/application.js`).
 
 ### Attachment hydration
 
-Stored Action Text HTML keeps attachment nodes as lightweight references. Before the editor loads, `hydrate_editor_content` (`app/helpers/bullet_editor_content_helper.rb`) re-renders each custom attachable's **editor template** into the node's `content` attribute so pills display correctly in Lexxy:
+Stored Action Text HTML keeps attachment nodes as lightweight references. On load, Lexxy's `rich_text_area` hydrates them via the gem's `render_custom_attachments_in` (uses each attachable's `to_attachable_partial_path`). New `#` / `@` picks embed editor pill HTML from prompt `template[type="editor"]`:
 
-- `app/views/projects/attachable_editor.html.erb`
-- `app/views/people/attachable_editor.html.erb`
+- `app/views/projects/_attachable_editor.html.erb`
+- `app/views/people/_attachable_editor.html.erb`
 
-Read views use separate attachable partials (`projects/attachable`, `people/attachable`).
+Read views use separate attachable partials (`projects/_attachable`, `people/_attachable`).
 
 ### Turbo morph
 
@@ -96,10 +96,9 @@ The `<lexxy-editor>` web component handles disconnect/reconnect to survive Turbo
 | Custom Lexxy extensions | `app/javascript/extensions/*.js` |
 | Prompt triggers and layout | `app/views/bullets/composer/_editor.html.erb` |
 | Prompt suggestion rows | `app/views/projects/_prompt_item.html.erb`, `app/views/people/_prompt_item.html.erb` |
-| Pill HTML in the editor | `app/views/*/attachable_editor.html.erb` |
-| Pill hydration helper | `app/helpers/bullet_editor_content_helper.rb` |
-| File upload interception | `app/javascript/controllers/bullet_composer_controller.js` |
-| Styling | Gem `lexxy.css`, `app/assets/stylesheets/actiontext.css`, `attachment.css` |
+| Pill HTML in the editor | `app/views/*/_attachable_editor.html.erb` |
+| Composer submit / reset | `app/javascript/controllers/composer_controller.js` |
+| Styling | Gem `lexxy.css`, `app/assets/stylesheets/actiontext.css` |
 | Upstream fix | Issue / PR on https://github.com/basecamp/lexxy |
 
 ## Debugging

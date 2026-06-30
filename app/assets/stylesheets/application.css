@@ -20,19 +20,16 @@
 @import "icons.css";
 @import "button.css";
 @import "form.css";
-@import "select.css";
 @import "pill.css";
 @import "hint.css";
 @import "dropdown.css";
 @import "dialog.css";
 @import "bullet.css";
-@import "attachment.css";
-@import "bullet-form.css";
+@import "bullet-composer.css";
 @import "date-picker.css";
 @import "bucket.css";
 
 @import "daylog.css";
-@import "bucket-picker.css";
 @import "pinned.css";
 @import "bulk-menu.css";
 @import "toasts.css";
@@ -48,3 +45,4 @@
 @import "home.css";
 @import "review.css";
 @import "recurrency.css";
+@import "sprint.css";

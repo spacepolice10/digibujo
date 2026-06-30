@@ -10,7 +10,7 @@ module Bullets
       @bullet = @user.bullets.create!(bulletable: Task.create!, body: 'Pin me')
     end
 
-    test 'create pins bullet and renders dock via turbo stream' do
+    test 'create pins bullet via turbo stream' do
       post pin_path,
            params: { bullet_ids: @bullet.id.to_s },
            headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
@@ -18,24 +18,7 @@ module Bullets
       assert_response :success
       assert @bullet.reload.pinned?
       assert_match 'turbo-stream', response.media_type
-      assert_match 'pinned_bullets_dock', response.body
-    end
-
-    test 'create updates dock frame when dock already has pins' do
-      existing = @user.bullets.create!(bulletable: Task.create!, body: 'Already pinned')
-      PinnedEntity.create!(user: @user, pinnable: existing)
-
-      post pin_path,
-           params: { bullet_ids: @bullet.id.to_s },
-           headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
-
-      assert_response :success
-      assert @bullet.reload.pinned?
-      assert_match 'pinned_bullets_dock', response.body
-      assert_match 'popovertarget="pinned_bullets"', response.body
-      assert_match 'popover', response.body
-      assert_match 'loading="lazy"', response.body
-      assert_no_match 'pinned--dock-item', response.body
+      assert_match %(turbo-stream action="replace" targets="#bullet_#{@bullet.id}"), response.body
     end
 
     test 'create pins multiple bullets' do
@@ -48,7 +31,7 @@ module Bullets
       assert other.reload.pinned?
     end
 
-    test 'destroy unpins bullet and updates dock frame via turbo stream' do
+    test 'destroy unpins bullet via turbo stream' do
       @user.bullets.create!(bulletable: Task.create!, body: 'Still pinned')
       @bullet.pin!
 
@@ -58,11 +41,7 @@ module Bullets
 
       assert_response :success
       assert_not @bullet.reload.pinned?
-      assert_match 'pinned_bullets_dock', response.body
-      assert_match 'popovertarget="pinned_bullets"', response.body
-      assert_match 'popover', response.body
-      assert_match 'loading="lazy"', response.body
-      assert_no_match 'pinned--dock-item', response.body
+      assert_match %(turbo-stream action="replace" targets="#bullet_#{@bullet.id}"), response.body
     end
 
     test 'create turbo stream replaces monthly bucket bullet with unified row' do
@@ -81,20 +60,7 @@ module Bullets
       assert bullet.reload.pinned?
       assert_match %(turbo-stream action="replace" targets="#bullet_#{bullet.id}"), response.body
       assert_match 'bullet--marker-slot', response.body
-      assert_match 'bullet--body', response.body
       assert_no_match 'bullet-compact', response.body
-    end
-
-    test 'destroy clears dock when last pin is removed' do
-      @bullet.pin!
-
-      delete pin_path,
-             params: { bullet_ids: @bullet.id.to_s },
-             headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
-
-      assert_response :success
-      assert_not @bullet.reload.pinned?
-      assert_match 'pinned_bullets_dock', response.body
     end
   end
 end

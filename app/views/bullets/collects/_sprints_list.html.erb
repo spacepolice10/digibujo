@@ -1,0 +1,23 @@
+<%# locals: (bullet_ids:, frame_id:, return_to:, collects_q:, sprints:, sprints_page:) %>
+<%= render layout: "pagination/paginated_list",
+      locals: {
+        page: sprints_page,
+        container_id: "paginated-collects-sprints",
+        turbo_frame: frame_id,
+        pagination_link_path: lambda { |next_param|
+          new_collect_path(
+            bullet_ids: bullet_ids,
+            frame_id: frame_id,
+            return_to: return_to,
+            q: collects_q,
+            sprints_page: next_param
+          )
+        }
+      } do %>
+  <ul class="layout--list bucket--list" role="listbox">
+    <%= render partial: "bullets/collects/sprint",
+          collection: sprints,
+          as: :sprint,
+          locals: { bullet_ids: bullet_ids } %>
+  </ul>
+<% end %>

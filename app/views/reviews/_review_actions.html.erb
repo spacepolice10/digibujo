@@ -1,5 +1,5 @@
 <%# locals: (bullet:, schedule_tomorrow:, review_from:, review_to:) %>
-<div class="review--review-actions" data-controller="review-actions" data-review-actions-bullet-id-value="<%= bullet.id %>">
+<div class="review--review-actions">
   <%= form_with url: pop_path, method: :post, class: "review--review-action", data: { turbo_stream: true } do %>
     <%= hidden_field_tag :bullet_ids, bullet.id %>
     <%= hidden_field_tag :pops_on, schedule_tomorrow.iso8601 %>
@@ -10,7 +10,8 @@
 
   <button type="button"
           class="button--tertiary button--icon review--review-action"
-          data-action="review-actions#openCollectPicker"
+          data-action="bulk-menu#selectAndOpenCollects"
+          data-bulk-menu-bullet-id-param="<%= bullet.id %>"
           aria-label="Collect into collection">
     <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
   </button>
@@ -31,7 +32,7 @@
     <% end %>
   <% end %>
 
-  <%= form_with url: review_migrate_path(from: review_from.iso8601, to: review_to.iso8601),
+  <%= form_with url: migrate_review_path(from: review_from.iso8601, to: review_to.iso8601),
                 method: :post,
                 class: "review--review-action",
                 data: { turbo_stream: true } do %>

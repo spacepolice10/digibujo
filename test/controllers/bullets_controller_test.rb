@@ -23,7 +23,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'updated', Activity.order(:created_at).last.action
   end
 
-  test 'create turbo stream inserts bullet before composer' do
+  test 'create turbo stream appends bullet into bullets container' do
     collection = create_collection!(@user, name: 'Fresh collection')
 
     post bullets_path,
@@ -32,52 +32,47 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
              bulletable_type: 'Task',
              body: 'Fresh task',
              pops_on: Date.current.iso8601,
-             bucket_id: collection.bucket.id,
-             composer_id: 'bullet_composer'
+             bucket_id: collection.bucket.id
            }
          },
          as: :turbo_stream
 
     assert_response :success
-    assert_match(/turbo-stream action="before" target="bullet_composer"/, response.body)
-    assert_match(/turbo-stream action="update" target="bullet_composer"/, response.body)
-    assert_match(/Add task/, response.body)
+    assert_turbo_stream action: 'append', target: 'bullets'
+    assert_no_turbo_stream action: 'replace', target: 'bullet_composer'
   end
 
-  test 'create note turbo stream inserts bullet before composer' do
+  test 'create note turbo stream appends bullet into bullets container' do
     post bullets_path,
          params: {
            bullet: {
              bulletable_type: 'Note',
              body: 'A long note',
-             pops_on: Date.current.iso8601,
-             composer_id: 'bullet_composer'
+             pops_on: Date.current.iso8601
            }
          },
          as: :turbo_stream
 
     assert_response :success
-    assert_match(/turbo-stream action="before" target="bullet_composer"/, response.body)
-    assert_match(/turbo-stream action="update" target="bullet_composer"/, response.body)
-    assert_match(/Add note/, response.body)
+    assert_turbo_stream action: 'append', target: 'bullets'
+    assert_no_turbo_stream action: 'replace', target: 'bullet_composer'
   end
 
-  test 'create with add_another keeps composer open' do
+  test 'create with another keeps composer open' do
     post bullets_path,
          params: {
-           add_another: '1',
+           another: '1',
            bullet: {
              bulletable_type: 'Task',
              body: 'Rapid task',
-             pops_on: Date.current.iso8601,
-             composer_id: 'bullet_composer'
+             pops_on: Date.current.iso8601
            }
          },
          as: :turbo_stream
 
     assert_response :success
-    assert_match(/turbo-stream action="before" target="bullet_composer"/, response.body)
-    assert_no_match(/turbo-stream action="update" target="bullet_composer"/, response.body)
+    assert_turbo_stream action: 'append', target: 'bullets'
+    assert_no_turbo_stream action: 'replace', target: 'bullet_composer'
   end
 
   test 'create tags bullet from project attachment in body' do
@@ -145,25 +140,29 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Bullet type is required', response.body
   end
 
-  test 'create with invalid body shows validation toast' do
-    post bullets_path,
-         params: {
-           bullet: { bulletable_type: 'Task', body: '', composer_id: 'bullet_composer' }
-         },
-         as: :turbo_stream
+  test 'create allows blank body (becomes untitled)' do
+    assert_difference -> { @user.bullets.count }, 1 do
+      post bullets_path,
+           params: {
+             bullet: {
+               bulletable_type: 'Task',
+               body: ''
+             }
+           },
+           as: :turbo_stream
+    end
 
-    assert_response :unprocessable_entity
-    assert_match %(turbo-stream action="update" target="toasts"), response.body
-    assert_match "Body can&#39;t be blank", response.body
-    assert_no_match 'form.bullet-form', response.body
+    assert_response :success
+    assert_turbo_stream action: 'append', target: 'bullets'
+    assert_no_turbo_stream action: 'replace', target: 'bullet_composer'
   end
 
   test 'new without type renders type picker' do
     get new_bullet_path
 
     assert_response :success
-    assert_select 'form.bullet-form', count: 0
-    assert_select '.bullet--composer-buttons'
+    assert_select 'form.bullet-composer', count: 0
+    assert_select '.bullet--composer-create-button'
     assert_select 'a[href*="bulletable_type=Task"]'
     assert_select 'a[href*="bulletable_type=Note"]'
     assert_select 'a[href*="bulletable_type=Event"]'
@@ -174,30 +173,26 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     get new_bullet_path(bulletable_type: 'Task')
 
     assert_response :success
-    assert_select 'form.bullet-form'
     assert_select 'lexxy-editor[preset=inline]'
-    assert_select '.bullet-form-rail'
-    assert_select '.bullet-form-rail-actions'
-    assert_select 'select.select.bullet-form-actions-select.form-select', aria: { label: 'Composer options' }
-    assert_select 'select.bullet-form-actions-select option[value=?]', 'attachment', count: 0
-    assert_select 'select.select.bullet-form-type-select.form-select', aria: { label: 'Bullet type' }
-    assert_select 'select.bullet-form-type-select option[value=?]', 'Task', text: /Task/
-    assert_select 'select.bullet-form-type-select option[value=?]', 'Note', text: /Note/
-    assert_select 'select.bullet-form-type-select option[value=?]', 'Event', text: /Event/
-    assert_select 'select.bullet-form-type-select option[value=?]', 'Title', count: 0
-    assert_select '.bullet-form-rail .mood-option', count: 4
-    assert_select '.bullet-form-rail-actions .bullet-form-rail-submit button[type=submit]'
-    assert_select '.bullet-form-footer', count: 0
+    assert_select '.bullet-composer--rail'
+    assert_select '.bullet-composer--type-pill[data-bullet-type=?]', 'task', text: /Task/
+    assert_select '.bullet-composer--type-dismiss[data-action=?]', 'composer#cancel'
+    assert_select '.bullet-composer--rail-actions'
+    assert_select 'select.bullet-composer-type-select', count: 0
+    assert_select '.bullet-composer--rail .mood-option', count: 0
+    assert_select '.bullet-composer--rail-actions .bullet-composer--rail-submit button[type=submit]'
+    assert_select '.bullet-composer--footer', count: 0
   end
 
   test 'new composer with Note type renders note editor' do
     get new_bullet_path(bulletable_type: 'Note')
 
     assert_response :success
+    assert_select 'form.bullet-composer[data-action*="keydown.enter+meta->composer#submit"]'
     assert_select 'lexxy-editor[preset=note]'
     assert_select 'lexxy-editor[preset=inline]', false
-    assert_select 'select.bullet-form-actions-select option[value=?]', 'attachment'
-    assert_select 'select.bullet-form-type-select option[value=?][selected]', 'Note'
+    assert_select '.bullet-composer--type-pill[data-bullet-type=?]', 'note', text: /Note/
+    assert_select '.bullet-composer--rail .mood-option', count: 4
   end
 
   test 'create sets note mood from bulletable_attributes' do
@@ -254,6 +249,33 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'Task', bullet.bulletable_type
     # Task has no mood column; the per-type permitted attrs stripped it before assignment.
     assert_not bullet.bulletable.respond_to?(:mood)
+  end
+
+  test 'edit redirects voice bullets to show' do
+    blob = create_blob!(filename: 'voice.webm', content_type: 'audio/webm')
+    bullet = @user.bullets.create!(
+      bulletable_type: 'Voice',
+      body: 'Voice caption',
+      bulletable_attributes: { recording: blob.signed_id, duration_seconds: 5 }
+    )
+
+    get edit_bullet_path(bullet)
+
+    assert_redirected_to bullet_path(bullet)
+  end
+
+  test 'update redirects voice bullets to show' do
+    blob = create_blob!(filename: 'voice.webm', content_type: 'audio/webm')
+    bullet = @user.bullets.create!(
+      bulletable_type: 'Voice',
+      body: 'Voice caption',
+      bulletable_attributes: { recording: blob.signed_id, duration_seconds: 5 }
+    )
+
+    patch bullet_path(bullet), params: { bullet: { body: 'Changed' } }
+
+    assert_redirected_to bullet_path(bullet)
+    assert_equal 'Voice caption', bullet.reload.body.to_plain_text
   end
 
   private

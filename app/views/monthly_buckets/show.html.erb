@@ -3,129 +3,181 @@
 <div class="layout--page monthly-bucket--page">
   <div class="monthly-bucket--actions">
     <%= link_to home_path, class: "button--secondary" do %>
-      <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+      <i
+        class="icon"
+        style="--icon-mask: var(--icon-arrow-left)"
+        aria-hidden="true"
+      ></i>
       Back
     <% end %>
+
     <%= render "buckets/pins_button", bucket: @bucket %>
   </div>
 
   <h2 class="layout--surface-name"><%= @monthly_bucket.name %></h2>
+
   <% if @monthly_bucket.period? %>
     <p class="monthly-bucket--period utilities--text-sm">
-      <%= @monthly_bucket.period_from.strftime("%b %-d") %> – <%= @monthly_bucket.period_to.strftime("%b %-d, %Y") %>
+      <%= @monthly_bucket.period_from.strftime("%b %-d") %> –
+      <%= @monthly_bucket.period_to.strftime("%b %-d, %Y") %>
     </p>
   <% end %>
 
-  <div class="monthly-bucket--workspace"
-       data-controller="monthly-sections"
-       data-monthly-sections-active-value="days">
-    <nav class="monthly-bucket--monthly-sections" role="tablist" aria-label="Monthly spread sections">
-      <button type="button"
-              class="monthly-bucket--monthly-section monthly-bucket--monthly-section-active"
-              role="tab"
-              aria-selected="true"
-              data-monthly-sections-target="section"
-              data-monthly-sections-section="days"
-              data-action="monthly-sections#select">
+  <div
+    class="monthly-bucket--workspace"
+    data-controller="monthly-sections"
+    data-monthly-sections-active-value="days"
+  >
+    <nav
+      class="monthly-bucket--monthly-sections"
+      role="tablist"
+      aria-label="Monthly spread sections"
+    >
+      <button
+        type="button"
+        class="
+          monthly-bucket--monthly-section
+          monthly-bucket--monthly-section-active
+        "
+        role="tab"
+        aria-selected="true"
+        data-monthly-sections-target="section"
+        data-monthly-sections-section="days"
+        data-action="monthly-sections#select"
+      >
         Days
       </button>
-      <button type="button"
-              class="monthly-bucket--monthly-section"
-              role="tab"
-              aria-selected="false"
-              data-monthly-sections-target="section"
-              data-monthly-sections-section="unplanned"
-              data-action="monthly-sections#select">
+
+      <button
+        type="button"
+        class="monthly-bucket--monthly-section"
+        role="tab"
+        aria-selected="false"
+        data-monthly-sections-target="section"
+        data-monthly-sections-section="unplanned"
+        data-action="monthly-sections#select"
+      >
         Unplanned
       </button>
     </nav>
 
     <div class="monthly-bucket--spread">
-      <section class="monthly-bucket--calendar monthly-bucket--side monthly-bucket--side-active"
-               aria-label="Planned by date"
-               data-controller="scroll"
-               data-monthly-sections-target="side"
-               data-monthly-sections-side="days">
+      <section
+        class="
+          monthly-bucket--calendar monthly-bucket--side
+          monthly-bucket--side-active
+        "
+        aria-label="Planned by date"
+        data-controller="scroll"
+        data-monthly-sections-target="side"
+        data-monthly-sections-side="days"
+      >
         <% if @period_days %>
-          <div class="monthly-bucket--calendar-body<%= " monthly-bucket--calendar-body-recurrencies" if @spread_recurrencies %>"
-               <% if @spread_recurrencies %>data-controller="monthly-recurrencies"<% end %>>
-            <% if @spread_recurrencies %>
-              <button type="button"
-                      class="monthly-bucket--recurrencies-toggle"
-                      data-monthly-recurrencies-target="toggle"
-                      data-action="monthly-recurrencies#toggle"
-                      aria-expanded="false"
-                      aria-label="Show habits">
-                <i class="icon" style="--icon-mask: var(--icon-calendar-repeat)" aria-hidden="true"></i>
-              </button>
-            <% end %>
+          <div class="monthly-bucket--calendar-body">
             <% @period_days.each do |date| %>
-              <% if @spread_recurrencies %>
-                <div class="monthly-bucket--date-recurrencies">
-                  <% if @recurrency_tracker.scheduled_for(date).any? %>
-                    <div class="recurrency--for-day" role="group" aria-label="Recurrency for <%= date == Date.current ? "this day" : date.strftime("%B %-d") %>">
-                      <% @recurrency_tracker.scheduled_for(date).each do |recurrency| %>
-                        <%= render "recurrencies/cell", recurrency: recurrency, date: date, tracker: @recurrency_tracker, variant: :chip, dom_key: "inline" %>
-                      <% end %>
-                    </div>
-                  <% end %>
-                </div>
-              <% end %>
-              <div class="monthly-bucket--date-band<%= " monthly-bucket--date-band-current" if date == Date.current %>"
-                   <% if date == Date.current %> data-scroll-target="current"<% end %>>
+              <div class="monthly-bucket--date-band<%= " monthly-bucket--date-band-current" if date == Date.current %>" <% if date == Date.current %> data-scroll-target="current" <% end %>>
                 <div class="monthly-bucket--date-row">
                   <%= link_to daylog_path(date: date.iso8601),
                         class: "monthly-bucket--date-number",
                         aria: { label: "Open #{date.strftime('%B %-d')} on daily log" } do %>
-                    <span class="monthly-bucket--date-day"><%= date.day %></span>
-                    <span class="monthly-bucket--date-weekday"><%= date.strftime("%a") %></span>
+                    <span class="monthly-bucket--date-day">
+                      <%= date.day %>
+                    </span>
+
+                    <span class="monthly-bucket--date-weekday">
+                      <%= date.strftime("%a") %>
+                    </span>
                   <% end %>
-                  <div id="<%= dom_id(@monthly_bucket, "date_#{date}_bullets") %>"
-                       class="monthly-bucket--date-entries"
-                       data-controller="pop-drop"
-                       data-pop-drop-pop-url-value="<%= pop_path %>"
-                       data-pop-drop-pops-on-value="<%= date.iso8601 %>"
-                       data-action="dragover->pop-drop#dragover dragleave->pop-drop#dragleave drop->pop-drop#drop">
-                    <% (@bullets_by_date[date] || []).each do |bullet| %>
-                      <%= render "monthly_buckets/bullets/monthly_bullet", bullet: bullet %>
+
+                  <div
+                    class="monthly-bucket--date-entries"
+                    data-controller="pops-drop"
+                    data-drop-zone-value="<%= date.iso8601 %>"
+                    data-pops-drop-pops-url-value="<%= pop_path %>"
+                    data-pops-drop-pops-on-value="<%= date.iso8601 %>"
+                    data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop"
+                  >
+                    <% if @spread_recurrencies && @recurrency_tracker.scheduled_for(date).any? %>
+                      <div
+                        class="monthly-bucket--habits"
+                        role="group"
+                        aria-label="Recurrency for <%= date == Date.current ? "this day" : date.strftime("%B %-d") %>"
+                      >
+                        <% @recurrency_tracker.scheduled_for(date).each do |recurrency| %>
+                          <div class="monthly-bucket--habit">
+                            <%= render "recurrencies/cell", recurrency: recurrency, date: date, tracker: @recurrency_tracker, variant: :chip, dom_key: "inline" %>
+                            <span class="monthly-bucket--habit-name"><%= recurrency.name %></span>
+                          </div>
+                        <% end %>
+                      </div>
                     <% end %>
-                    <turbo-frame id="composer_<%= date.iso8601 %>"
-                                 class="bullet_pops_on_<%= date %>"
-                                 data-controller="composer-frame">
+
+                    <div
+                      id="<%= dom_id(@monthly_bucket, "date_#{date.to_date}_bullets") %>"
+                      class="monthly-bucket--bullets-list"
+                    >
+                      <% (@bullets_by_date[date] || []).each do |bullet| %>
+                        <%= render "monthly_buckets/bullets/bullet", bullet: bullet %>
+                      <% end %>
+                    </div>
+
+                    <turbo-frame
+                      id="<%= dom_id(@monthly_bucket, date) %>"
+                      class="monthly-bucket--date-composer"
+                      data-controller="composer"
+                    >
+                      <%= render "bullets/composer/open_composer_of", type: { path: new_monthly_bucket_bullet_path(@monthly_bucket, pops_on: date, bucket_id: @monthly_bucket.bucket.id, bulletable_type: "Task"), name: "Task", icon: "square", modifier: "task" } %>
+                      <%= render "bullets/composer/open_composer_of", type: { path: new_monthly_bucket_bullet_path(@monthly_bucket, pops_on: date, bucket_id: @monthly_bucket.bucket.id, bulletable_type: "Event"), name: "Event", icon: "circle", modifier: "event" } %>
                     </turbo-frame>
                   </div>
-                  <%= render "monthly_buckets/bullets/date_form", monthly_bucket: @monthly_bucket, date: date %>
                 </div>
               </div>
             <% end %>
           </div>
         <% else %>
-          <p class="monthly-bucket--by-date-empty">No period set for this spread.</p>
+          <p class="monthly-bucket--by-date-empty">
+            No period set for this spread.
+          </p>
         <% end %>
       </section>
 
       <div class="monthly-bucket--divider" aria-hidden="true"></div>
 
-      <section class="monthly-bucket--unplanned monthly-bucket--side"
-               aria-label="Unplanned"
-               data-monthly-sections-target="side"
-               data-monthly-sections-side="unplanned"
-               hidden>
+      <section
+        class="monthly-bucket--unplanned monthly-bucket--side"
+        aria-label="Unplanned"
+        data-monthly-sections-target="side"
+        data-monthly-sections-side="unplanned"
+        hidden
+      >
         <header class="monthly-bucket--unplanned-header">
           <h3 class="monthly-bucket--unplanned-title">Unplanned</h3>
+
           <p class="monthly-bucket--unplanned-description utilities--text-sm">
-            Brain dump for the month — park ideas here until you assign them to a day.
+            Brain dump for the month — park ideas here until you assign them to
+            a day.
           </p>
         </header>
-        <div id="<%= dom_id(@monthly_bucket, :unplanned_bullets) %>"
-             class="monthly-bucket--unplanned-entries"
-             data-controller="pop-drop"
-             data-pop-drop-pop-url-value="<%= pop_path %>"
-             data-action="dragover->pop-drop#dragover dragleave->pop-drop#dragleave drop->pop-drop#drop">
-          <% @unplanned_bullets.each do |bullet| %>
-            <%= render "monthly_buckets/bullets/monthly_bullet", bullet: bullet %>
+
+        <div
+          class="monthly-bucket--unplanned-entries"
+          data-controller="pops-drop"
+          data-drop-zone-value=""
+          data-pops-drop-pops-url-value="<%= pop_path %>"
+          data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop"
+        >
+          <div
+            id="<%= dom_id(@monthly_bucket, :unplanned_bullets) %>"
+            class="monthly-bucket--bullets-list"
+          >
+            <% @unplanned_bullets.each do |bullet| %>
+              <%= render "monthly_buckets/bullets/bullet", bullet: bullet %>
+            <% end %>
+          </div>
+
+          <% composer_type_options(->(**params) { new_monthly_bucket_bullet_path(@monthly_bucket, bucket_id: @monthly_bucket.bucket.id, **params) }).each do |type| %>
+            <%= render "bullets/composer/open_composer_of", type: type %>
           <% end %>
-          <%= render "monthly_buckets/bullets/composer", monthly_bucket: @monthly_bucket %>
         </div>
       </section>
     </div>

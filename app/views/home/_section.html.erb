@@ -1,5 +1,6 @@
 <details class="home--section"<% if expanded %> open<% end %>
         data-controller="section"
+        data-action="toggle->section#onToggle"
         data-section-expand-url-value="<%= home_expand_section_path(key) %>"
         data-section-collapse-url-value="<%= home_collapse_section_path(key) %>">
   <summary class="home--section-summary">

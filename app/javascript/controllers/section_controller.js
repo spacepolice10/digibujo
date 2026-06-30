@@ -7,15 +7,6 @@ export default class extends Controller {
     collapseUrl: String
   };
 
-  connect() {
-    this.onToggle = this.onToggle.bind(this);
-    this.element.addEventListener("toggle", this.onToggle);
-  }
-
-  disconnect() {
-    this.element.removeEventListener("toggle", this.onToggle);
-  }
-
   preventToggle(event) {
     event.stopPropagation();
   }

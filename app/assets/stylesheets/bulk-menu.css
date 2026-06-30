@@ -6,9 +6,9 @@
     z-index: 20;
     anchor-name: --bulk-menu;
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-vertical-half);
     width: fit-content;
     max-width: min(100%, calc(var(--spacing-horizontal-double) * 20));
     margin-inline: auto;
@@ -60,12 +60,14 @@
   }
 
   .bulk-menu--amount {
+    width: fit-content;
     margin: 0;
     font-size: var(--font-size-subtle);
     color: var(--model-color-2);
     background: var(--model-color-2-bg);
-    border-radius: var(--radius-base);
+    border-radius: var(--radius-strong);
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    text-align: center;
   }
 
   .bulk-menu--action-menu {
@@ -80,7 +82,9 @@
       flip-inline,
       flip-block flip-inline;
     overflow: auto;
-    padding: var(--spacing-vertical-half);
+    max-height: calc(100dvh - var(--spacing-vertical-double) * 8);
+    min-width: calc(var(--spacing-horizontal-double) * 7);
+    padding: var(--spacing-vertical) var(--spacing-horizontal-half);
     background: color-mix(
       in oklch,
       var(--color-bg-base),
@@ -91,15 +95,83 @@
     box-shadow: var(--shadow-base);
   }
 
+  .bulk-menu--action-menu--wide {
+    min-width: calc(var(--spacing-horizontal-double) * 8);
+  }
+
+  .bulk-menu--action-menu--collects {
+    width: calc(var(--spacing-horizontal-double) * 9);
+    height: calc(100dvh - var(--spacing-vertical-double) * 9);
+  }
+
   .bulk-menu--action-frame:popover-open {
     display: flex;
     flex-direction: column;
+    gap: var(--spacing-vertical-half);
   }
 
-  .bulk-menu--action-footer {
-    padding-top: var(--spacing-vertical-half);
-    margin-top: var(--spacing-vertical-half);
-    border-top: 1px solid var(--color-stroke-base);
+  .bulk-menu--collect-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-horizontal-half);
+    margin-block: var(--spacing-vertical) var(--spacing-vertical-half);
+  }
+
+  .bulk-menu--collect-section-title {
+    margin: 0;
+    font-weight: var(--font-weight-strong);
+    font-size: var(--font-size-base);
+  }
+
+  .bulk-menu--collect-section-add.button--icon {
+    width: var(--icon-size-subtle);
+    height: var(--icon-size-subtle);
+
+    .icon {
+      width: var(--icon-size-subtle);
+      height: var(--icon-size-subtle);
+    }
+  }
+
+  .bulk-menu--action-menu--collects .bucket--list {
+    padding-inline: 0;
+  }
+
+  .bulk-menu--collect-form {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+  }
+
+  .bulk-menu--collect-item-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    width: 100%;
+    min-width: 0;
+    padding: var(--spacing-vertical-half) 0;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: var(--font-size-base);
+    text-align: start;
+    color: inherit;
+    cursor: pointer;
+    border-radius: var(--radius-strong);
+
+    @media (hover: hover) {
+      &:hover {
+        color: var(--color-fg-base);
+        text-decoration: underline;
+      }
+    }
+
+    &.is-active {
+      background-color: var(--color-accent-bg);
+      color: var(--color-fg-base);
+    }
   }
 
   .bulk-menu--action-header {
@@ -109,11 +181,16 @@
     gap: var(--spacing-horizontal);
     padding-bottom: var(--spacing-vertical-half);
     margin-bottom: var(--spacing-vertical-half);
-    border-bottom: 1px solid var(--color-stroke-base);
+
+    .button--circle {
+      border-color: var(--color-stroke-base);
+    }
   }
 
   .bulk-menu--action-name {
     margin: 0;
+    font-weight: var(--font-weight-strong);
+    font-size: var(--font-size-base);
   }
 
   .bulk-menu--action-options {
@@ -121,11 +198,21 @@
     flex-direction: column;
     gap: var(--spacing-vertical-half);
     margin-bottom: var(--spacing-vertical-half);
+
+    form {
+      display: flex;
+      width: 100%;
+    }
   }
 
   .bulk-menu--action-option {
-    width: 100%;
+    width: 100% !important;
     justify-content: flex-start;
+  }
+
+  .bulk-menu--action-date-picker > .bulk-menu--action-option {
+    display: flex;
+    width: 100%;
   }
 
   .bulk-menu--action-form {

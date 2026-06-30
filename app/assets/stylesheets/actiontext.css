@@ -45,7 +45,7 @@ lexxy-editor[preset="note"] {
   --lexxy-toolbar-button-size: var(--icon-size-subtle);
   --lexxy-toolbar-gap: var(--spacing-horizontal-half);
   --lexxy-toolbar-spacing: var(--spacing-horizontal-half);
-  width: 100%;
+  width: auto;
   border: 0;
   background: transparent;
   border-radius: 0;
@@ -55,10 +55,13 @@ lexxy-editor[preset="note"] lexxy-toolbar {
   --lexxy-toolbar-icon-size: var(--icon-size-subtle);
   font-size: var(--font-size-subtle);
   padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-  margin-block-end: var(--spacing-vertical-half);
+  margin-block-start: var(--spacing-vertical-half);
+  margin-block-end: 0;
+  border-block-end: none;
   background: var(--color-bg-base);
   border: 1px solid var(--color-stroke-base);
   border-radius: var(--radius-base);
+  width: fit-content;
 }
 
 lexxy-editor[preset="note"] .lexxy-editor__content {
@@ -66,6 +69,103 @@ lexxy-editor[preset="note"] .lexxy-editor__content {
 }
 
 @layer components {
+  .attachment--preview {
+    display: inline;
+    inline-size: auto;
+    max-inline-size: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    vertical-align: baseline;
+  }
+
+  .attachment--preview-image,
+  .attachment--preview img {
+    display: inline;
+    block-size: var(--icon-size-base);
+    inline-size: auto;
+    max-inline-size: 100%;
+    border-radius: var(--radius-base);
+    vertical-align: baseline;
+  }
+
+  .lexxy-editor__content figure.attachment--preview,
+  .lexxy-content figure.attachment--preview,
+  .rich-text-content figure.attachment--preview {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    vertical-align: baseline;
+  }
+
+  .lexxy-editor__content figure.attachment--preview .attachment__container,
+  .lexxy-content figure.attachment--preview .attachment__container,
+  .rich-text-content figure.attachment--preview .attachment__container {
+    display: inline;
+  }
+
+  .attachment--file.attachment--inline {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    vertical-align: baseline;
+  }
+
+  .attachment--inline .attachment--name {
+    color: var(--color-accent-alternative);
+    font-size: inherit;
+    font-weight: inherit;
+    text-decoration: underline;
+    white-space: nowrap;
+  }
+
+  .attachment--inline .attachment--name:hover {
+    color: var(--color-fg-base);
+  }
+
+  .lexxy-editor__content .attachment--inline,
+  .lexxy-content .attachment--inline,
+  .rich-text-content .attachment--inline,
+  .lexxy-editor__content .attachment--preview,
+  .lexxy-content .attachment--preview,
+  .rich-text-content .attachment--preview {
+    max-inline-size: 100%;
+  }
+
+  .attachment--gallery {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--spacing-horizontal);
+  }
+
+  .attachment--gallery-item {
+    display: inline-flex;
+    max-inline-size: 100%;
+  }
+
+  .attachment--gallery .attachment--preview {
+    display: block;
+  }
+
+  .attachment--gallery .attachment--preview-image,
+  .attachment--gallery img {
+    display: block;
+    block-size: auto;
+    max-block-size: calc(var(--icon-size-strong) * 4);
+    max-inline-size: calc(var(--spacing-horizontal-double) * 10);
+    border-radius: var(--radius-base);
+  }
+
+  .attachment--gallery .attachment--file .attachment--name {
+    font-size: var(--font-size-subtle);
+  }
+
   lexxy-editor[preset="inline"] .lexxy-editor__content .attachment--preview {
     position: relative;
     width: var(--spacing-vertical-double);
@@ -140,5 +240,30 @@ lexxy-editor[preset="note"] .lexxy-editor__content {
 
   lexxy-editor[preset="inline"] .provisional-paragraph {
     display: none;
+  }
+
+  [data-controller="zoom"] {
+    cursor: zoom-in;
+  }
+
+  .attachment--preview img.attachment--zoomed {
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--z-dialog) + 1);
+    block-size: auto;
+    inline-size: auto;
+    max-width: 90vw;
+    max-height: 90vh;
+    margin: auto;
+    object-fit: contain;
+    cursor: zoom-out;
+  }
+
+  .zoom-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-dialog);
+    background: oklch(0% 0 0 / 0.8);
+    cursor: zoom-out;
   }
 }

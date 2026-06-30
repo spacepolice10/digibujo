@@ -3,7 +3,7 @@
       data: { turbo_frame: "_top" },
       aria: { label: "Project: #{project.name}" } do %>
   <% if project.icon.present? %>
-    <i class="icon" style="--icon-mask: <%= project.icon_mask %>" aria-hidden="true"></i>
+    <%= render "shared/entity_icon", record: project %>
   <% end %>
   <span><%= project.name %></span>
 <% end %>

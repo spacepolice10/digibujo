@@ -19,16 +19,13 @@
           <%= link_to monthly_bucket.name, monthly_bucket_path(monthly_bucket) %>
         </div>
         <div id="<%= dom_id(bucket, :unplanned) %>">
-          <% unplanned = monthly_bucket.bullets.where(pops_on: nil).chronological.includes(:bulletable) %>
+          <% unplanned = monthly_bucket.bullets.where(pops_on: nil).order(created_at: :asc).includes(:bulletable) %>
           <%= render partial: "bullets/bullet", collection: unplanned, as: :bullet %>
         </div>
-        <%= link_to new_bullet_path(
-              bucket_id: bucket.id,
-              composer_id: "bullet_composer"
-            ),
-            data: { turbo_frame: "bullet_composer" },
-            class: "button--tertiary button--icon",
-            aria: { label: "Add bullet" } do %>
+        <%= link_to new_bullet_path(bucket_id: bucket.id, bulletable_type: "Task"),
+              data: { turbo_frame: "bullet_composer" },
+              class: "button--tertiary button--icon",
+              aria: { label: "Add bullet" } do %>
           <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
         <% end %>
       </div>
@@ -39,8 +36,10 @@
     </div>
   </div>
 
-  <turbo-frame id="bullet_composer" data-controller="composer-frame">
-    <%= render "bullets/composer/picker", composer_id: "bullet_composer" %>
+  <turbo-frame id="bullet_composer" data-controller="composer">
+    <% composer_type_options(->(**params) { new_bullet_path(**params) }).each do |type| %>
+      <%= render "bullets/composer/open_composer_of", type: type %>
+    <% end %>
   </turbo-frame>
 
   <%= render "bullets/bulk_menu" %>

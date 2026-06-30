@@ -43,7 +43,7 @@
            class="hint"
            popover="hint"
            style="position-anchor: <%= hint_anchor %>">
-        <%= recurrency_hint(recurrency, tracker: tracker, date: date) %>
+        <%= render "recurrencies/hint", recurrency: recurrency, tracker: tracker, date: date %>
       </div>
     </div>
   <% end %>

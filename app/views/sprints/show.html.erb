@@ -1,0 +1,79 @@
+<% content_for(:title) { @sprint.name } %>
+
+<div class="layout--page layout--workspace-page">
+  <div class="layout--workspace">
+    <aside class="layout--rail">
+      <%= link_to home_path, class: "button--secondary layout--rail-action" do %>
+        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+        Back
+      <% end %>
+      <%= render "buckets/pins_button", bucket: @sprint.bucket %>
+      <%= link_to new_sprint_bullet_path(@sprint, bucket_id: @sprint.bucket.id, bulletable_type: "Task"),
+            class: "button--secondary layout--rail-action",
+            data: { turbo_frame: "bullet_composer" },
+            aria: { label: "Add task" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-square)" aria-hidden="true"></i>
+        Add task
+      <% end %>
+      <%= link_to new_sprint_bullet_path(@sprint, bucket_id: @sprint.bucket.id, bulletable_type: "Event"),
+            class: "button--secondary layout--rail-action",
+            data: { turbo_frame: "bullet_composer" },
+            aria: { label: "Add event" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-circle)" aria-hidden="true"></i>
+        Add event
+      <% end %>
+      <%= link_to new_sprint_bullet_path(@sprint, bucket_id: @sprint.bucket.id, bulletable_type: "Note"),
+            class: "button--secondary layout--rail-action",
+            data: { turbo_frame: "bullet_composer" },
+            aria: { label: "Add note" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-line-dashed)" aria-hidden="true"></i>
+        Add note
+      <% end %>
+      <%= link_to new_sprint_bullet_path(@sprint, bucket_id: @sprint.bucket.id, bulletable_type: "Voice"),
+            class: "button--secondary layout--rail-action",
+            data: { turbo_frame: "bullet_composer" },
+            aria: { label: "Add voice" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-microphone)" aria-hidden="true"></i>
+        Add voice
+      <% end %>
+      <%= render "bullet/listing/type_filters", listing: @listing %>
+    </aside>
+
+    <div class="layout--surface bucket--list" data-controller="bulk-menu">
+      <h2 class="layout--surface-name"><%= @sprint.name %></h2>
+
+      <div class="sprint--summary">
+        <p class="sprint--dates utilities--text-sm">
+          <%= @sprint.starts_on.strftime("%b %-d") %> – <%= @sprint.ends_on.strftime("%b %-d, %Y") %>
+        </p>
+        <p class="sprint--status sprint--status-<%= @sprint.status %>">
+          <%= render "sprints/status_label", sprint: @sprint %>
+        </p>
+        <% if @progress[:total].positive? %>
+          <div class="sprint--progress" role="group" aria-label="Task progress">
+            <div class="sprint--progress-bar" aria-hidden="true">
+              <div class="sprint--progress-fill" style="width: <%= @progress[:percent] %>%"></div>
+            </div>
+            <p class="sprint--progress-label utilities--text-sm">
+              <%= @progress[:completed] %>/<%= @progress[:total] %> tasks
+            </p>
+          </div>
+        <% end %>
+      </div>
+
+      <% if @sprint.bucket.description.present? %>
+        <p class="bucket--description utilities--text-sm"><%= @sprint.bucket.description %></p>
+      <% end %>
+
+      <%= render "bullet/listing/list", listing: @listing, page: @page %>
+
+      <turbo-frame id="bullet_composer" class="bullet_pops_on_" data-controller="composer">
+        <% composer_type_options(->(**params) { new_sprint_bullet_path(@sprint, bucket_id: @sprint.bucket.id, **params) }).each do |type| %>
+          <%= render "bullets/composer/open_composer_of", type: type %>
+        <% end %>
+      </turbo-frame>
+
+      <%= render "bullets/bulk_menu" %>
+    </div>
+  </div>
+</div>

@@ -7,18 +7,25 @@ class MonthlyBucket < ApplicationRecord
 
   validates :future_bucket, presence: true
   validates :period_from, presence: true, uniqueness: { scope: :user_id }
-  validate :period_ranges_correct
-  validate :period_is_full_calendar_month
+  validates :period_to, presence: true
+  validate :period_from_must_be_selectable, on: :create
+  validate :period_must_cover_full_calendar_month
 
   def self.current(user, date = Date.current)
     user.monthly_buckets.find_by(period_from: date.beginning_of_month)
   end
 
+  def self.period_for(date)
+    month_start = date.to_date.beginning_of_month
+    { period_from: month_start, period_to: month_start.end_of_month }
+  end
+
   def self.default_period
-    {
-      period_from: Date.current.beginning_of_month,
-      period_to: Date.current.end_of_month
-    }
+    period_for(Date.current)
+  end
+
+  def self.selectable_months(from: Date.current)
+    (0..5).map { |i| from.beginning_of_month + i.months }
   end
 
   def covers_date?(date)
@@ -33,49 +40,19 @@ class MonthlyBucket < ApplicationRecord
     period? ? (period_from..period_to) : nil
   end
 
-  def month
-    period_from&.iso8601
-  end
-
-  def month=(value)
-    @month = value.presence
-  end
-
-  before_validation :apply_month_selection, :snap_period_from
-
   private
 
-  def apply_month_selection
-    return if @month.blank?
+  def period_from_must_be_selectable
+    return if period_from.blank?
+    return if self.class.selectable_months.include?(period_from)
 
-    date = @month.is_a?(Date) ? @month : Date.parse(@month.to_s)
-    self.period_from = date.beginning_of_month
-    self.period_to = date.end_of_month
-  rescue Date::Error
-    errors.add(:month, "is invalid")
+    errors.add(:period_from, 'must be within the next six months')
   end
 
-  def snap_period_from
-    self.period_from = period_from.beginning_of_month if period_from.present?
-  end
+  def period_must_cover_full_calendar_month
+    return if period_from.blank? || period_to.blank?
+    return if period_from == period_from.beginning_of_month && period_to == period_from.end_of_month
 
-  def period_ranges_correct
-    return if period_from.blank? && period_to.blank?
-
-    if period_from.present? ^ period_to.present?
-      errors.add(:base, 'From and To must both be set or both be blank')
-      return
-    end
-
-    return unless period_from.present? && period_to.present? && period_to < period_from
-
-    errors.add(:period_to, 'must be on or after From')
-  end
-
-  def period_is_full_calendar_month
-    return unless period_from.present? && period_to.present?
-    return if period_to == period_from.end_of_month
-
-    errors.add(:base, 'Spread must cover a full calendar month')
+    errors.add(:period_to, 'must be the last day of the spread month')
   end
 end

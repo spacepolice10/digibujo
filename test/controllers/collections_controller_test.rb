@@ -101,6 +101,6 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to home_path
     assert collection.bucket.reload.archived?
     assert_equal collection.bucket.id, card.reload.bucket_id
-    assert_empty Collection.joins(:bucket).merge(Bucket.where(user_id: @user.id).active).where(collections: { id: collection.id })
+    assert_empty @user.active_collections.where(collections: { id: collection.id })
   end
 end

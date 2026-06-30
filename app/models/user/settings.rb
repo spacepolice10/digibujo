@@ -7,6 +7,7 @@ class User::Settings < ApplicationRecord
     'logs' => :logs_expanded,
     'projects' => :projects_expanded,
     'collections' => :collections_expanded,
+    'sprints' => :sprints_expanded,
     'people' => :people_expanded,
     'recurrencies' => :recurrencies_expanded
   }.freeze

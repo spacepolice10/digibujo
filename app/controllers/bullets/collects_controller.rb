@@ -2,15 +2,20 @@
 
 module Bullets
   class CollectsController < ApplicationController
-    include PrepareBullets, UserCollections, DaylogRedirects
+    include PrepareBullets, DaylogRedirects, PaginatedRecords
 
     before_action :prepare_bullets
+    before_action :set_return_to, only: :new
 
     def new
-      @return_to = permitted_return_to(params[:return_to]) || permitted_return_to(request.referer)
-      @collects_q = sanitized_collections_query(params[:q])
-      @collections = user_collections_matching(@collects_q)
-      @collections = @collections.limit(5) if review_collect_picker_request? && @collects_q.blank?
+      @collects_q = Collection.sanitized_name_query(params[:q])
+      @collections, @collections_page = collectables_page(Current.user.active_collections, :collections_page)
+      @sprints, @sprints_page = collectables_page(Current.user.active_sprints, :sprints_page)
+
+      respond_to do |format|
+        format.html
+        format.turbo_stream
+      end
     end
 
     def create
@@ -19,7 +24,7 @@ module Bullets
         @bullets.lock.find_each { |bullet| bullet.collect!(bucket_id: bucket_id) }
       end
       @bullets.each(&:reload)
-      return head :no_content if review_collect_drop_request?
+      @bucket = Bucket.find(bucket_id)
 
       respond_to do |format|
         format.turbo_stream
@@ -58,12 +63,15 @@ module Bullets
 
     private
 
-    def review_collect_drop_request?
-      request.headers['X-Requested-With'] == 'review-collect-drop'
+    def set_return_to
+      @return_to = permitted_return_to(params[:return_to]) || permitted_return_to(request.referer)
     end
 
-    def review_collect_picker_request?
-      params[:frame_id] == 'review_collect_picker_frame'
+    def collectables_page(scope, page_param)
+      paginated_portion_from(
+        scope.matching_bucket_name(@collects_q),
+        page_param: page_param, per_page: [8, 16, 24]
+      )
     end
 
     def permitted_return_to(url)

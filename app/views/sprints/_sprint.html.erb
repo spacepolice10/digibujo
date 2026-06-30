@@ -1,0 +1,14 @@
+<li id="<%= dom_id(sprint.bucket, :list_item) %>" class="layout--list-item">
+  <%= link_to sprint_path(sprint), class: "bucket--list-item-link" do %>
+    <div class="bucket--list-item-name">
+      <div class="bucket--list-item-marker" data-bucket-colour="<%= sprint.bucket.colour %>" aria-hidden="true">
+        <%= render "shared/entity_icon", record: sprint %>
+      </div>
+      <span class="utilities--line-clamp-1"><%= sprint.name %></span>
+    </div>
+    <div class="bucket--list-item-meta utilities--line-clamp-1">
+      <span class="sprint--status sprint--status-<%= sprint.status %>"><%= render "sprints/status_hint", sprint: sprint %></span>,
+      <span><%= sprint.starts_on.strftime("%b %-d") %> – <%= sprint.ends_on.strftime("%b %-d") %></span>
+    </div>
+  <% end %>
+</li>

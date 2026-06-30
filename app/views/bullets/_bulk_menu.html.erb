@@ -1,45 +1,71 @@
 <div class="bulk-menu"
      data-bulk-menu-target="menu"
-     data-action="turbo:submit-end->bulk-menu#submitEnd keydown.esc->bulk-menu#clear"
+     data-action="keydown.esc@document->bulk-menu#escape"
      tabindex="0"
      hidden>
-
-
   <div class="bulk-menu--actions">
-    <div data-bulk-menu-target="pinAction" hidden>
+    <div data-bulk-menu-target="conditionalAction" data-require-pinnable="unpinned" hidden>
       <%= form_with url: pin_path, method: :post, data: { turbo_stream: true } do %>
         <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
-        <%= button_tag type: :submit, class: "button--secondary" do %>
+        <%= button_tag type: :submit,
+              class: "button--secondary button--hotkey",
+              data: {
+                controller: "hotkey",
+                hotkey: "P",
+                action: hotkey_click_action("P")
+              },
+              aria: { keyshortcuts: "P" } do %>
           <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
           Pin
         <% end %>
       <% end %>
     </div>
 
-    <div data-bulk-menu-target="unpinAction" hidden>
+    <div data-bulk-menu-target="conditionalAction" data-require-pinnable="pinned" hidden>
       <%= form_with url: pin_path, method: :delete, data: { turbo_stream: true } do %>
         <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
-        <%= button_tag type: :submit, class: "button--secondary" do %>
+        <%= button_tag type: :submit,
+              class: "button--secondary button--hotkey",
+              data: {
+                controller: "hotkey",
+                hotkey: "P",
+                action: hotkey_click_action("P")
+              },
+              aria: { keyshortcuts: "P" } do %>
           <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
           Unpin
         <% end %>
       <% end %>
     </div>
 
-    <div data-bulk-menu-target="completeAction" hidden>
+    <div data-bulk-menu-target="conditionalAction" data-require-completable="incomplete" hidden>
       <%= form_with url: complete_path, method: :post, data: { turbo_stream: true } do %>
         <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
-        <%= button_tag type: :submit, class: "button--secondary" do %>
+        <%= button_tag type: :submit,
+              class: "button--secondary button--hotkey",
+              data: {
+                controller: "hotkey",
+                hotkey: "C",
+                action: hotkey_click_action("C")
+              },
+              aria: { keyshortcuts: "C" } do %>
           <i class="icon" style="--icon-mask: var(--icon-check)" aria-hidden="true"></i>
           Complete
         <% end %>
       <% end %>
     </div>
 
-    <div data-bulk-menu-target="uncompleteAction" hidden>
+    <div data-bulk-menu-target="conditionalAction" data-require-completable="completed" hidden>
       <%= form_with url: complete_path, method: :delete, data: { turbo_stream: true } do %>
         <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
-        <%= button_tag type: :submit, class: "button--secondary" do %>
+        <%= button_tag type: :submit,
+              class: "button--secondary button--hotkey",
+              data: {
+                controller: "hotkey",
+                hotkey: "U",
+                action: hotkey_click_action("U")
+              },
+              aria: { keyshortcuts: "U" } do %>
           <i class="icon" style="--icon-mask: var(--icon-square)" aria-hidden="true"></i>
           Uncomplete
         <% end %>
@@ -48,50 +74,58 @@
 
     <%= form_with url: archive_path, method: :post, data: { turbo_stream: true } do %>
       <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
-      <%= button_tag type: :submit, class: "button--secondary" do %>
+      <%= button_tag type: :submit,
+            class: "button--secondary button--hotkey",
+            data: {
+              controller: "hotkey",
+              hotkey: "A",
+              action: hotkey_click_action("A")
+            },
+            aria: { keyshortcuts: "A" } do %>
         <i class="icon" style="--icon-mask: var(--icon-archive)" aria-hidden="true"></i>
         Archive
       <% end %>
     <% end %>
 
-    <%= form_with url: archive_path, method: :delete, data: { turbo_stream: true } do %>
-      <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
-      <%= button_tag type: :submit, class: "button--secondary" do %>
-        <i class="icon" style="--icon-mask: var(--icon-archive)" aria-hidden="true"></i>
-        Unarchive
-      <% end %>
-    <% end %>
-
     <div class="bulk-menu--action-dock">
       <button type="button"
-              class="button--secondary"
-              data-action="bulk-menu#openPopsPicker">
+              class="button--secondary button--hotkey"
+              data-controller="hotkey"
+              data-hotkey="L"
+              data-action="bulk-menu#openPopsPicker <%= hotkey_click_action("L") %>"
+              aria-keyshortcuts="L">
         <i class="icon" style="--icon-mask: var(--icon-arrow-up)" aria-hidden="true"></i>
-        Pop
+        Later
       </button>
       <turbo-frame id="pops_picker_frame"
-                   class="bulk-menu--action-menu bulk-menu--action-frame"
+                   class="bulk-menu--action-menu bulk-menu--action-menu--wide bulk-menu--action-frame"
                    popover
                    loading="lazy"
-                   data-bulk-menu-target="popsFrame"></turbo-frame>
+                   data-bulk-menu-target="popsDropdown"
+                   data-controller="grid-navigation"
+                   data-grid-navigation-columns-value="1"
+                   data-action="keydown->grid-navigation#navigate"></turbo-frame>
     </div>
 
     <div class="bulk-menu--action-dock">
       <button type="button"
-              class="button--secondary"
-              data-action="bulk-menu#openCollectsPicker">
+              class="button--secondary button--hotkey"
+              data-controller="hotkey"
+              data-hotkey="S"
+              data-action="bulk-menu#openCollectsPicker <%= hotkey_click_action("S") %>"
+              aria-keyshortcuts="S">
         <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
-        Collect
+        Save
       </button>
       <turbo-frame id="collects_picker_frame"
-                   class="bulk-menu--action-menu bulk-menu--action-frame"
+                   class="bulk-menu--action-menu bulk-menu--action-menu--collects bulk-menu--action-frame"
                    popover
                    loading="lazy"
-                   data-bulk-menu-target="collectsFrame"></turbo-frame>
+                   data-bulk-menu-target="collectsDropdown"></turbo-frame>
     </div>
 
     <% if local_assigns[:review_migrate] %>
-      <%= form_with url: review_migrate_path(from: review_migrate[:from].iso8601, to: review_migrate[:to].iso8601),
+      <%= form_with url: migrate_review_path(from: review_migrate[:from].iso8601, to: review_migrate[:to].iso8601),
                     method: :post,
                     data: { turbo_stream: true } do %>
         <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
@@ -102,12 +136,12 @@
       <% end %>
     <% end %>
 
-      <button
-    type="button"
-    class="button--primary button--icon button--circle bulk-menu--hide"
-    data-action="bulk-menu#clear"
-  >
-    <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
-  </button>
-  </div>  <p class="bulk-menu--amount" data-bulk-menu-target="amount">0 selected</p>
+    <button type="button"
+            class="button--primary button--icon button--circle bulk-menu--hide"
+            data-action="bulk-menu#clear">
+      <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <p class="bulk-menu--amount" data-bulk-menu-target="amount">0 selected</p>
 </div>

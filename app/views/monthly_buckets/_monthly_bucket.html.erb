@@ -3,11 +3,7 @@
   <%= link_to monthly_bucket_path(monthly_bucket), data: { turbo_frame: "_top" }, class: "bucket--list-item-link" do %>
     <div class="bucket--list-item-name">
       <div class="bucket--list-item-marker" data-bucket-colour="<%= monthly_bucket.colour %>" aria-hidden="true">
-        <% if monthly_bucket.icon_path %>
-          <%= image_tag monthly_bucket.icon_path, alt: "", class: "form--list-icon" %>
-        <% elsif monthly_bucket.icon.present? %>
-          <i class="icon" style="--icon-mask: <%= monthly_bucket.icon_mask %>" aria-hidden="true"></i>
-        <% end %>
+        <%= render "shared/entity_icon", record: monthly_bucket %>
       </div>
       <span class="utilities--line-clamp-1"><%= monthly_bucket.name %></span>
     </div>

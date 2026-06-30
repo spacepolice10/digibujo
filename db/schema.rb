@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_26_190000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_30_120000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -285,6 +285,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_26_190000) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
+  create_table "sprints", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.date "ends_on"
+    t.date "starts_on"
+    t.datetime "updated_at", null: false
+  end
+
   create_table "tasks", force: :cascade do |t|
     t.boolean "completed", default: false, null: false
     t.datetime "completed_at"
@@ -298,6 +305,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_26_190000) do
     t.boolean "projects_expanded", default: true, null: false
     t.boolean "recurrencies_expanded", default: true, null: false
     t.boolean "spreads_expanded", default: true, null: false
+    t.boolean "sprints_expanded", default: true, null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["user_id"], name: "index_user_settings_on_user_id", unique: true
@@ -308,6 +316,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_26_190000) do
     t.string "email_address", null: false
     t.datetime "updated_at", null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
+  end
+
+  create_table "voices", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "duration_seconds"
+    t.datetime "updated_at", null: false
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

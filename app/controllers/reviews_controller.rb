@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 class ReviewsController < ApplicationController
-  include UserCollections, PaginatedRecords, PrepareBullets
+  include PaginatedRecords, PrepareBullets
 
   before_action :set_review_period, only: %i[show migrate]
 
   def show
-    scoped = Current.user.bullets.in_review(from: @review_from, to: @review_to).includes(:bulletable)
+    scoped = review_bullets.includes(:bulletable)
     @bullets = set_page_and_extract_portion_from(scoped, per_page: [15, 30, 50])
     @amount_in_review = scoped.count
 
@@ -15,7 +15,7 @@ class ReviewsController < ApplicationController
     @schedule_tomorrow = @review_to + 1.day
 
     @collections_q = params[:q].to_s.strip.presence
-    collections = user_collections_matching(@collections_q)
+    collections = Current.user.active_collections.matching_bucket_name(@collections_q)
     @collections, @collections_page = paginated_portion_from(collections, page_param: :collections_page,
                                                                           per_page: [8, 16, 24])
   end
@@ -27,7 +27,7 @@ class ReviewsController < ApplicationController
       Current.user.bullets.where(id: @bullets.map(&:id)).lock.find_each(&:acknowledge_migration!)
     end
 
-    @remaining_in_review = Current.user.bullets.in_review(from: @review_from, to: @review_to).count
+    @remaining_in_review = review_bullets.count
 
     respond_to do |format|
       format.turbo_stream
@@ -37,6 +37,13 @@ class ReviewsController < ApplicationController
 
   private
 
+  def review_bullets
+    Current.user.bullets
+           .where(bucket_id: nil, migrated_at: nil, pops_on: @review_from..@review_to)
+           .active
+           .order(created_at: :asc)
+  end
+
   def set_review_period
     @review_to = params[:to].present? ? params[:to].to_date : Date.current
     @review_from = params[:from].present? ? params[:from].to_date : @review_to - 6.days
@@ -44,7 +51,7 @@ class ReviewsController < ApplicationController
   end
 
   def review_bullets_to_migrate
-    scope = Current.user.bullets.in_review(from: @review_from, to: @review_to)
+    scope = review_bullets
 
     if params[:bullet_ids].present?
       bullet_ids = prepare_bullet_list_from(params[:bullet_ids])
@@ -63,7 +70,7 @@ class ReviewsController < ApplicationController
     Current.user.bullets
            .where(pops_on: @week_days)
            .active
-           .chronological
+           .order(created_at: :asc)
            .includes(:bulletable)
            .group_by(&:pops_on)
   end

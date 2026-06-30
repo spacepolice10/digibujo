@@ -80,18 +80,20 @@
   }
 
   .menu--navigation-item.button--hotkey[data-hotkey]::after {
-    content: attr(data-hotkey);
-    margin-inline-start: 0;
-    padding: 0 var(--spacing-horizontal-half);
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-subtle);
-    color: var(--color-fg-subtle);
-    font-size: var(--font-size-subtle);
-    opacity: var(--opacity-half);
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    @media (pointer: fine) {
+      content: attr(data-hotkey);
+      margin-inline-start: 0;
+      padding: 0 var(--spacing-horizontal-half);
+      border: 1px solid var(--color-stroke-base);
+      border-radius: var(--radius-subtle);
+      color: var(--color-fg-subtle);
+      font-size: var(--font-size-subtle);
+      opacity: var(--opacity-half);
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
 
   .menu--wrap > nav:not(.menu--navigation),

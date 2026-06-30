@@ -18,7 +18,7 @@ module Bullets
         @bullets.lock.find_each { |bullet| bullet.pop!(pops_on: pops_on) }
       end
       @bullets.each(&:reload)
-      return head :no_content if pop_drop_request?
+      return head :no_content if pops_drop_request?
 
       respond_to do |format|
         format.turbo_stream
@@ -49,7 +49,7 @@ module Bullets
         @bullets.lock.find_each { |bullet| bullet.unpop!(previous_pops_on: previous_pops_on) }
       end
       @bullets.each(&:reload)
-      return head :no_content if pop_drop_request?
+      return head :no_content if pops_drop_request?
 
       respond_to do |format|
         format.turbo_stream
@@ -76,8 +76,8 @@ module Bullets
 
     private
 
-    def pop_drop_request?
-      request.headers['X-Requested-With'].in?(%w[pop-drop review-pop-drop])
+    def pops_drop_request?
+      request.headers['X-Requested-With'].in?(%w[pops-drop review-pops-drop])
     end
   end
 end

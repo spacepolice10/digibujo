@@ -67,23 +67,23 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     get daylog_path(date: selected_date.iso8601)
 
     assert_response :success
-    assert_select 'turbo-frame#bullet_composer' do
+    assert_select 'turbo-frame#bullet_composer[data-controller=?]', 'composer' do
       assert_select 'a[href=?]',
-                    new_bullet_path(
-                      pops_on: selected_date.iso8601,
-                      composer_id: 'bullet_composer',
+                    new_daylog_bullet_path(
+                      date: selected_date,
+                      pops_on: selected_date,
                       bulletable_type: 'Task'
                     )
       assert_select 'a[href=?]',
-                    new_bullet_path(
-                      pops_on: selected_date.iso8601,
-                      composer_id: 'bullet_composer',
+                    new_daylog_bullet_path(
+                      date: selected_date,
+                      pops_on: selected_date,
                       bulletable_type: 'Event'
                     )
       assert_select 'a[href=?]',
-                    new_bullet_path(
-                      pops_on: selected_date.iso8601,
-                      composer_id: 'bullet_composer',
+                    new_daylog_bullet_path(
+                      date: selected_date,
+                      pops_on: selected_date,
                       bulletable_type: 'Note'
                     )
       assert_match(/Add task/, response.body)

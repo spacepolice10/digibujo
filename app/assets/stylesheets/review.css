@@ -146,11 +146,11 @@
     pointer-events: none;
   }
 
-  .review--week-date--today .review--week-date-label {
+  .review--week-date--today .review--week-date-name {
     color: var(--color-fg-base);
   }
 
-  .review--week-date-label {
+  .review--week-date-name {
     position: relative;
     flex-shrink: 0;
     display: flex;
@@ -190,7 +190,7 @@
     gap: 0;
   }
 
-  .pop-drop--over,
+  .pops-drop--over,
   .collect-drop--over {
     outline: 2px dashed var(--model-color-4);
     outline-offset: -2px;
@@ -211,15 +211,5 @@
 
   .review--migration-mark {
     font-weight: var(--font-weight-strong);
-  }
-
-  .review--collect-sheet {
-    width: min(100vw - var(--spacing-horizontal-double), calc(var(--spacing-horizontal-double) * 14));
-    max-height: min(70vh, calc(var(--spacing-vertical) * 30));
-    overflow: auto;
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-strong);
-    background: var(--color-bg-base);
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
   }
 }

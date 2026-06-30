@@ -1,9 +1,3 @@
-<turbo-frame id="<%= @composer_id %>"
-             class="bullet_pops_on_<%= @bullet.pops_on %>"
-             data-controller="composer-frame">
-  <%= render "monthly_buckets/bullets/composer_content",
-        bullet: @bullet,
-        monthly_bucket: @monthly_bucket,
-        composer_id: @composer_id,
-        composer_attributes: @composer_attributes %>
+<turbo-frame id="<%= dom_id(@monthly_bucket, @bullet.pops_on) %>">
+  <%= render Bullet.composer_partial_of(@bullet.bulletable_type), bullet: @bullet, bullets_path: monthly_bucket_bullets_path(@monthly_bucket) %>
 </turbo-frame>

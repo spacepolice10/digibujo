@@ -8,7 +8,7 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
     sign_in_as @user
   end
 
-  test 'index renders workspace on mobile (direct visit)' do
+  test 'index renders flat list on mobile (direct visit)' do
     get pinned_index_path, headers: { 'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)' }
 
     assert_response :success
@@ -17,7 +17,7 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
     assert_select 'nav.tab-bar a.tab-bar-item--active[href=?]', pinned_index_path
   end
 
-  test 'index renders workspace on desktop (direct visit)' do
+  test 'index renders flat list on desktop (direct visit)' do
     get pinned_index_path
 
     assert_response :success
@@ -25,7 +25,7 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
     assert_select 'footer.footer', count: 1
   end
 
-  test 'mobile workspace lists pinned bullets' do
+  test 'mobile flat list includes pinned bullet' do
     bullet = @user.bullets.create!(
       bulletable: Task.create!,
       body: 'Pinned bullet'
@@ -35,38 +35,48 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
     get pinned_index_path, headers: { 'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)' }
 
     assert_response :success
-    assert_select '.pinned--workspace .bullet', text: /Pinned bullet/, count: 1
+    assert_select '.pinned--entities .bullet', count: 1
   end
 
-  test 'mobile workspace lists pinned project bullets' do
-    project = create_project!(@user, name: 'footer project')
+  test 'mobile flat list includes pinned project' do
+    project = create_project!(@user, name: 'Pinned project')
     project.pin!
-    bullet = @user.bullets.create!(
-      bulletable: Task.create!,
-      body: 'Project bullet',
-      pops_on: Date.current
-    )
-    bullet.mentions.projects.add!(project_id: project.id)
 
     get pinned_index_path, headers: { 'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)' }
 
     assert_response :success
-    assert_select '.pinned--workspace .bullet', text: /Project bullet/, count: 1
+    assert_select '.pinned--entity-item a[href=?]', project_path(project)
   end
 
-  test 'pinned bullets popover loads bullets on request' do
+  test 'mobile flat list includes pinned bucket' do
+    collection = create_collection!(@user, name: 'Pinned collection')
+    collection.bucket.pin!
+
+    get pinned_index_path, headers: { 'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)' }
+
+    assert_response :success
+    assert_select '.pinned--entity-item a[href=?]', collection_path(collection)
+  end
+
+  test 'pinned list popover loads all entity types' do
     bullet = @user.bullets.create!(
       bulletable: Task.create!,
       body: 'Pinned bullet'
     )
     PinnedEntity.create!(user: @user, pinnable: bullet)
+    project = create_project!(@user, name: 'Popover project')
+    project.pin!
+    collection = create_collection!(@user, name: 'Popover collection')
+    collection.bucket.pin!
 
-    get pinned_index_path, headers: { 'Turbo-Frame' => 'pinned_bullets' }
+    get pinned_index_path, headers: { 'Turbo-Frame' => 'pinned_list' }
 
-    assert_select 'turbo-frame#pinned_bullets[popover].pinned--list' do
-      assert_select '.dropdown--header h2', count: 0
-      assert_select "button.bulk-menu--hide[popovertarget='pinned_bullets'][popovertargetaction='hide'][aria-label='Close pinned bullets']"
-      assert_select '.bullet-compact', text: /Pinned bullet/, count: 1
+    assert_select 'turbo-frame#pinned_list[popover].pinned--list' do
+      assert_select "button.bulk-menu--hide[popovertarget='pinned_list'][popovertargetaction='hide'][aria-label='Close pinned list']"
+      assert_select '.layout--list-item', minimum: 3
+      assert_select '.layout--list-item', text: /Pinned bullet/, count: 1
+      assert_select '.layout--list-item a[href=?]', project_path(project)
+      assert_select '.layout--list-item a[href=?]', collection_path(collection)
     end
   end
 end

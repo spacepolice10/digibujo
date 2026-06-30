@@ -2,7 +2,7 @@
 
 module Bullets
   class PinsController < ApplicationController
-    include PrepareBullets, PreparePinned, DaylogRedirects
+    include PrepareBullets, DaylogRedirects
 
     before_action :prepare_bullets
 
@@ -46,6 +46,5 @@ module Bullets
       end
     end
 
-    helper_method :pinned_bullets
   end
 end

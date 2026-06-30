@@ -63,32 +63,30 @@ export default class extends Controller {
 
 | Controller | Purpose |
 |---|---|
-| `bullet-composer` | Lexxy file-accept interceptor; direct upload via `DirectUpload`; type-select UI (Task/Note/Event); Enter submits Task/Event; `submit_on_command_return` (⌘/Ctrl+Enter) submits Note and closes composer; `/` prompt type switch via `selectType`; form reset on `turbo:submit-end` success |
-| `bulk-menu` | Sticky bulk-action menu; keeps `idListValue: Array`; syncs CSV to every form's hidden `idList` target; opens popover pickers; clears on visit |
+| `composer` | Composer `<turbo-frame>` picker + form: view transitions, Escape cancel, inline Enter / Shift+Enter submit, restore picker after save; standalone edit forms mount the same controller on `.bullet-composer`; Note submit via `keydown.enter+meta/ctrl`; clears editor on "Add another" |
+| `bulk-menu` | Sticky bulk-action menu; keeps `idListValue: Array`; syncs CSV to every form's hidden `idList` target; opens popover pickers for pop/collect (`selectAndOpenCollects` on mobile review rows); `reset()` on navigation and successful bulk submits |
 | `bullet-drag` | Native HTML5 dragstart/dragend for bullets |
 | `combobox` | Accessible combobox behavior |
 | `daylog` | Daylog page glue |
 | `dialog` | `<dialog>` open/close via `commandfor`/`command` (with click fallback) + strips `open` from cached snapshots |
 | `dropdown` | Generic dropdown menu |
 | `grid-navigation` | Arrow-key grid navigation |
-| `hotkey` | Document-wide hotkeys (`data-hotkey="cmd+k"`); ignores inputs, contenteditable, lexxy-editor |
+| `hotkey` | Fizzy-style clicker: `keydown.shift+t@document->hotkey#click` triggers `element.click()`; ignores inputs, contenteditable, lexxy-editor |
 | `menu` | Menu shell |
-| `pop-drop` | Drop target for pop intent (monthly spread + review week strip) |
-| `monthly-recurrencies` | Expand/collapse habits panel on monthly spread |
-| `monthly-tabs` | Mobile monthly spread tabs (days / recurrency / unplanned) |
+| `pops-drop` | Drop target for pop intent (monthly spread + review week strip) |
+| `monthly-sections` | Monthly spread section tabs (days / unplanned) on narrow viewports |
 | `collect-drop` | Drop target for collect intent on review collections panel |
-| `review-actions` | Mobile review actions (collect picker sheet) |
 | `pagination` | Geared pagination; optional `turboFrame` value scopes fetches to a Turbo Frame |
 | `scroll` | Scroll position tracking |
 | `search` | Search field behavior |
 | `section` | Section open/close persistence |
 | `timezone-cookie` | Sets timezone cookie (eager-loaded) |
 | `toasts` | Toast queue |
-| `zoom` | Pinch/scroll zoom |
+| `zoom` | Click-to-zoom overlay on Action Text image attachments (`active_storage/blobs/_blob.html.erb`) |
 
 ## Patterns to copy
 
-- **Pair `connect` / `disconnect` listeners** — see `app/javascript/controllers/hotkey_controller.js`.
+- **Document-level key filters** — chords live in the action descriptor (`keydown.ctrl+k@document->menu#open`), not in the controller; see Fizzy's `hotkey_controller.js` and `shared/_header.html.erb`.
   ```javascript
   connect() {
     this._onKeydown = this.#onKeydown.bind(this)

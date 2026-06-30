@@ -30,13 +30,13 @@
     height: 2rem;
   }
 
-  .public-app-name {
+  .public-application-name {
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-strong);
     color: var(--color-fg-base);
   }
 
-  .public-cta {
+  .public-action {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-vertical);
@@ -72,7 +72,7 @@
       border-block-end: 1px solid var(--color-stroke-base);
     }
 
-    .public-cta {
+    .public-action {
       display: none;
     }
   }

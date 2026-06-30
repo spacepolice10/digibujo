@@ -29,10 +29,8 @@
     left: 0;
     right: 0;
     z-index: var(--z-dropdown);
-    width: min(
-      calc(var(--spacing-horizontal-double) * 18),
-      calc(100% - var(--spacing-horizontal-double))
-    );
+    width: fit-content;
+    max-width: calc(100% - var(--spacing-horizontal-double));
     margin-inline: auto;
     anchor-name: --footer;
     position-area: block-start center;
@@ -50,15 +48,14 @@
     justify-content: flex-start;
     align-items: center;
     gap: var(--spacing-horizontal-half);
-    width: 100%;
+    width: fit-content;
     overflow-x: auto;
     overflow-y: hidden;
     pointer-events: auto;
   }
 
   /* Wrappers are block-level; let dock buttons join the footer flex row. */
-  .footer--dock > #pinned_bullets_dock,
-  .footer--dock > #pinned_buckets_footer {
+  .footer--dock > #pinned_dock {
     display: contents;
   }
 

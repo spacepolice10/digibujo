@@ -5,7 +5,16 @@ export default class extends Controller {
   static values = { active: { type: String, default: "days" } }
 
   connect() {
-    this.show(this.activeValue)
+    let section = this.activeValue
+
+    try {
+      const stored = sessionStorage.getItem("monthly_bucket_section")
+      if (stored && this.#hasSide(stored)) section = stored
+    } catch (_error) {
+    }
+
+    this.activeValue = section
+    this.show(section)
     this.resizeObserver = () => this.show(this.activeValue)
     window.addEventListener("resize", this.resizeObserver)
   }
@@ -29,6 +38,8 @@ export default class extends Controller {
 
   show(section) {
     const narrow = window.matchMedia("(max-width: 799px)").matches
+    const mobilePage = this.element.closest(".monthly-bucket--page-mobile")
+    const tabbed = narrow || mobilePage
 
     this.sectionTargets.forEach((element) => {
       const selected = element.dataset.monthlySectionsSection == section
@@ -40,11 +51,17 @@ export default class extends Controller {
       const side = element.dataset.monthlySectionsSide
       const active = side == section
 
-      if (narrow) {
+      if (tabbed) {
         element.hidden = !active
       } else {
         element.hidden = false
       }
     })
+  }
+
+  #hasSide(section) {
+    return this.sideTargets.some(
+      (element) => element.dataset.monthlySectionsSide == section,
+    )
   }
 }

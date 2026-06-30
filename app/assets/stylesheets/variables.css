@@ -54,47 +54,47 @@
       oklch(0.45 0.08 210)
     );
 
-    /* model colors — electric palette */
+    /* model colors — neon palette (max saturation, same hues) */
     --model-color-1: light-dark(
-      oklch(0.68 0.22 290),
-      oklch(0.76 0.18 290)
-    ); /* Violet */
-    --model-color-1-bg: light-dark(oklch(0.94 0.08 290), oklch(0.3 0.08 290));
+      oklch(0.68 0.26 49),
+      oklch(0.84 0.22 49)
+    ); /* Peach */
+    --model-color-1-bg: light-dark(oklch(0.95 0.14 49), oklch(0.32 0.14 49));
     --model-color-2: light-dark(
-      oklch(0.62 0.2 260),
-      oklch(0.74 0.16 260)
-    ); /* Cobalt */
-    --model-color-2-bg: light-dark(oklch(0.94 0.07 260), oklch(0.3 0.07 260));
+      oklch(0.58 0.26 255),
+      oklch(0.76 0.22 255)
+    ); /* Slate */
+    --model-color-2-bg: light-dark(oklch(0.94 0.12 255), oklch(0.3 0.12 255));
     --model-color-3: light-dark(
-      oklch(0.72 0.16 195),
-      oklch(0.78 0.12 195)
-    ); /* Teal */
-    --model-color-3-bg: light-dark(oklch(0.95 0.06 195), oklch(0.31 0.06 195));
+      oklch(0.66 0.22 175),
+      oklch(0.82 0.18 175)
+    ); /* Moss */
+    --model-color-3-bg: light-dark(oklch(0.95 0.11 175), oklch(0.31 0.11 175));
     --model-color-4: light-dark(
-      oklch(0.72 0.2 155),
-      oklch(0.8 0.14 155)
-    ); /* Emerald */
-    --model-color-4-bg: light-dark(oklch(0.95 0.08 155), oklch(0.31 0.08 155));
+      oklch(0.68 0.26 145),
+      oklch(0.84 0.22 145)
+    ); /* Sage */
+    --model-color-4-bg: light-dark(oklch(0.95 0.13 145), oklch(0.31 0.13 145));
     --model-color-5: light-dark(
-      oklch(0.82 0.18 90),
-      oklch(0.86 0.14 90)
-    ); /* Gold */
-    --model-color-5-bg: light-dark(oklch(0.96 0.08 90), oklch(0.34 0.08 90));
+      oklch(0.78 0.24 89),
+      oklch(0.88 0.2 89)
+    ); /* Butter */
+    --model-color-5-bg: light-dark(oklch(0.96 0.14 89), oklch(0.34 0.14 89));
     --model-color-6: light-dark(
-      oklch(0.68 0.2 25),
-      oklch(0.78 0.15 25)
-    ); /* Vermillion */
-    --model-color-6-bg: light-dark(oklch(0.95 0.08 25), oklch(0.31 0.08 25));
+      oklch(0.64 0.28 22),
+      oklch(0.82 0.24 22)
+    ); /* Rose */
+    --model-color-6-bg: light-dark(oklch(0.95 0.14 22), oklch(0.31 0.14 22));
     --model-color-7: light-dark(
-      oklch(0.6 0.18 340),
-      oklch(0.74 0.14 340)
-    ); /* Magenta */
-    --model-color-7-bg: light-dark(oklch(0.95 0.07 340), oklch(0.3 0.07 340));
+      oklch(0.58 0.28 305),
+      oklch(0.78 0.24 305)
+    ); /* Lilac */
+    --model-color-7-bg: light-dark(oklch(0.95 0.14 305), oklch(0.3 0.14 305));
     --model-color-8: light-dark(
-      oklch(0.3 0.1 260),
-      oklch(0.78 0.06 260)
-    ); /* Ink */
-    --model-color-8-bg: light-dark(oklch(0.94 0.04 260), oklch(0.28 0.04 260));
+      oklch(0.62 0.26 35),
+      oklch(0.8 0.22 35)
+    ); /* Clay */
+    --model-color-8-bg: light-dark(oklch(0.95 0.13 35), oklch(0.31 0.13 35));
 
     /* breakpoints */
     --breakpoint-0: 0px;

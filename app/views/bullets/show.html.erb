@@ -13,7 +13,7 @@
       <%= link_to edit_bullet_path(@bullet), class: "button--secondary", data: { turbo_frame: "_top" } do %>
         <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
         Edit
-      <% end %>
+      <% end unless @bullet.bulletable_type == "Voice" %>
       <% if @bullet.pinned? %>
         <%= button_to pin_path, method: :delete, params: { bullet_ids: @bullet.id }, class: "button--secondary" do %>
           <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
@@ -49,7 +49,11 @@
     <% end %>
     <turbo-frame id="<%= dom_id(@bullet, :content) %>">
       <div class="bullet--read-body">
-        <%= @bullet.body %>
+        <% if @bullet.bulletable_type == "Voice" && @bullet.bulletable.recording.attached? %>
+          <%= render "voices/card", bullet: @bullet %>
+        <% else %>
+          <%= @bullet.body %>
+        <% end %>
       </div>
     </turbo-frame>
   </article>

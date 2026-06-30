@@ -38,8 +38,7 @@ export default class extends Controller {
       method: "POST",
       headers: {
         Accept: "text/vnd.turbo-stream.html",
-        "X-CSRF-Token": token,
-        "X-Requested-With": "review-collect-drop"
+        "X-CSRF-Token": token
       },
       body
     }).catch(() => null)

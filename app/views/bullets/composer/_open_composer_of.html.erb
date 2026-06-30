@@ -1,0 +1,22 @@
+<%= link_to type[:path], class: [
+    "bullet--composer-create-button", "bullet--composer-create-button--#{type[:modifier]}", ("button--hotkey" if type[:hotkey].present?)
+  ].compact, data: {
+    turbo_frame: "_self",
+    composer_transition_type: type[:modifier],
+    controller: ("hotkey" if type[:hotkey].present?),
+    hotkey: type[:hotkey],
+    action: [
+      ("click->composer#markTransition"),
+      (hotkey_click_action(type[:hotkey]) if type[:hotkey].present?)
+    ].compact.join(" ")
+  }.compact, aria: {
+    label: "Add #{type[:name]}",
+    keyshortcuts: type[:hotkey]
+  }.compact do %>
+  <i
+    class="icon"
+    style="--icon-mask: var(--icon-<%= type[:icon].dasherize %>)"
+    aria-hidden="true"
+  ></i>
+  Add <%= type[:name].downcase %>
+<% end %>
