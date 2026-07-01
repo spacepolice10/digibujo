@@ -2,6 +2,9 @@
 <turbo-frame id="<%= dom_id(bullet) %>"
              class="bullet"
              data-bullet-type="<%= bullet.bulletable_type.downcase %>"
+             <% if bullet.bulletable_type == "Note" && bullet.bulletable.mood.present? %>
+             data-note-mood="<%= bullet.bulletable.mood %>"
+             <% end %>
              <% if bullet.completed? %>
              data-bullet-completed
              <% end %>>

@@ -9,12 +9,14 @@
         collections_page: @collections_page %>
 <% end %>
 
-<%= turbo_stream.replace "paginated-collects-sprints" do %>
-  <%= render "bullets/collects/sprints_list",
-        bullet_ids: params[:bullet_ids].to_s,
-        frame_id: frame_id,
-        return_to: @return_to,
-        collects_q: @collects_q,
-        sprints: @sprints,
-        sprints_page: @sprints_page %>
+<% if Sprint.enabled? %>
+  <%= turbo_stream.replace "paginated-collects-sprints" do %>
+    <%= render "bullets/collects/sprints_list",
+          bullet_ids: params[:bullet_ids].to_s,
+          frame_id: frame_id,
+          return_to: @return_to,
+          collects_q: @collects_q,
+          sprints: @sprints,
+          sprints_page: @sprints_page %>
+  <% end %>
 <% end %>

@@ -19,6 +19,10 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match 'Archived', response.body
     assert_match 'Updated', response.body
+    assert_select '.activity--feed-item', minimum: 2
+    assert_select '.layout--surface'
+    assert_select '.activity--day-heading'
+    assert_no_match 'layout--workspace', response.body
   end
 
   test 'index filters by subject' do
@@ -32,6 +36,7 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match 'Keep me visible', response.body
     assert_no_match 'Hidden from filter qxz', response.body
+    assert_select '.activity--header-subtitle', text: 'Activity history'
   end
 
   test 'index returns not found for another users bullet' do
@@ -49,6 +54,13 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  test 'index shows empty state when there is no activity' do
+    get activities_path
+
+    assert_response :success
+    assert_match 'No activity yet', response.body
+  end
+
   test 'rail renders recent activities in home frame' do
     bullet = @user.bullets.create!(bulletable: Task.create!, body: 'Rail visible')
     bullet.record_activity!('updated')
@@ -58,7 +70,7 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select 'turbo-frame#home_activity'
     assert_match 'Rail visible', response.body
-    assert_match 'Updated', response.body
+    assert_select '.activity--rail-item'
   end
 
   test 'rail shows empty state when there is no activity' do

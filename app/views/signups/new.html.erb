@@ -1,7 +1,41 @@
-<%= tag.div(flash[:alert], style: "color:red") if flash[:alert] %>
-<%= tag.div(flash[:notice], style: "color:green") if flash[:notice] %>
+<% content_for(:title) { "Sign up" } %>
 
-<%= form_with url: signup_path do |form| %>
-  <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address] %><br>
-  <%= form.submit "Sign up" %>
-<% end %>
+<div class="session--page">
+  <div class="form--surface">
+    <%= render "sessions/flash" %>
+
+    <%= form_with url: signup_path, class: "form form--strong" do |form| %>
+      <div class="session--intro">
+        <h1 class="session--title">Sign up</h1>
+        <p class="form-hint session--description">Enter your email to get started. We'll send a one-time code to verify it.</p>
+      </div>
+
+      <% if @signup.errors.any? %>
+        <div class="form--errors" role="alert">
+          <ul>
+            <% @signup.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="form-group">
+        <%= form.email_field :email_address,
+              class: "form-input",
+              required: true,
+              autofocus: true,
+              autocomplete: "username",
+              placeholder: "you@example.com",
+              aria: { label: "Email" },
+              value: params[:email_address] %>
+      </div>
+
+      <%= form.submit "Sign up", class: "button--primary form--submit" %>
+    <% end %>
+  </div>
+
+  <%= link_to new_session_path, class: "session--footer-link" do %>
+    Already have an account? Sign in
+  <% end %>
+</div>

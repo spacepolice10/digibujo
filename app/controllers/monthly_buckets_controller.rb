@@ -75,16 +75,6 @@ class MonthlyBucketsController < ApplicationController
                          {}
                        end
     @unplanned_bullets = scoped.where(pops_on: nil).order(created_at: :asc).includes(:bulletable)
-    @recurrency_tracker = if @period_days
-                            RecurrencyTracker.new(
-                              user: Current.user,
-                              from: @monthly_bucket.period_from,
-                              to: @monthly_bucket.period_to
-                            )
-                          end
-    @spread_recurrencies = @recurrency_tracker && @period_days&.any? do |date|
-      @recurrency_tracker.scheduled_for(date).any?
-    end
   end
 
   def monthly_bucket_params

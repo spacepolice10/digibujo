@@ -14,14 +14,16 @@
     <%= render "buckets/pins_button", bucket: @bucket %>
   </div>
 
-  <h2 class="layout--surface-name"><%= @monthly_bucket.name %></h2>
+  <div class="monthly-bucket--heading">
+    <h2 class="layout--surface-name"><%= @monthly_bucket.name %></h2>
 
-  <% if @monthly_bucket.period? %>
-    <p class="monthly-bucket--period utilities--text-sm">
-      <%= @monthly_bucket.period_from.strftime("%b %-d") %> –
-      <%= @monthly_bucket.period_to.strftime("%b %-d, %Y") %>
-    </p>
-  <% end %>
+    <% if @monthly_bucket.period? %>
+      <p class="monthly-bucket--period utilities--text-sm">
+        <%= @monthly_bucket.period_from.strftime("%b %-d") %> –
+        <%= @monthly_bucket.period_to.strftime("%b %-d, %Y") %>
+      </p>
+    <% end %>
+  </div>
 
   <div
     class="monthly-bucket--workspace"
@@ -97,21 +99,6 @@
                     data-pops-drop-pops-on-value="<%= date.iso8601 %>"
                     data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop"
                   >
-                    <% if @spread_recurrencies && @recurrency_tracker.scheduled_for(date).any? %>
-                      <div
-                        class="monthly-bucket--habits"
-                        role="group"
-                        aria-label="Recurrency for <%= date == Date.current ? "this day" : date.strftime("%B %-d") %>"
-                      >
-                        <% @recurrency_tracker.scheduled_for(date).each do |recurrency| %>
-                          <div class="monthly-bucket--habit">
-                            <%= render "recurrencies/cell", recurrency: recurrency, date: date, tracker: @recurrency_tracker, variant: :chip, dom_key: "inline" %>
-                            <span class="monthly-bucket--habit-name"><%= recurrency.name %></span>
-                          </div>
-                        <% end %>
-                      </div>
-                    <% end %>
-
                     <div
                       id="<%= dom_id(@monthly_bucket, "date_#{date.to_date}_bullets") %>"
                       class="monthly-bucket--bullets-list"
@@ -121,14 +108,14 @@
                       <% end %>
                     </div>
 
-                    <turbo-frame
-                      id="<%= dom_id(@monthly_bucket, date) %>"
-                      class="monthly-bucket--date-composer"
-                      data-controller="composer"
-                    >
-                      <%= render "bullets/composer/open_composer_of", type: { path: new_monthly_bucket_bullet_path(@monthly_bucket, pops_on: date, bucket_id: @monthly_bucket.bucket.id, bulletable_type: "Task"), name: "Task", icon: "square", modifier: "task" } %>
-                      <%= render "bullets/composer/open_composer_of", type: { path: new_monthly_bucket_bullet_path(@monthly_bucket, pops_on: date, bucket_id: @monthly_bucket.bucket.id, bulletable_type: "Event"), name: "Event", icon: "circle", modifier: "event" } %>
-                    </turbo-frame>
+                    <div class="monthly-bucket--date-add">
+                      <%= render "bullets/composer/open_composer_of",
+                            path: new_monthly_bucket_bullet_path(@monthly_bucket, pops_on: date, bucket_id: @monthly_bucket.bucket.id, bulletable_type: "Event"),
+                            name: "Event",
+                            icon: "circle",
+                            modifier: "event",
+                            frame: "bullet_composer" %>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -175,11 +162,18 @@
             <% end %>
           </div>
 
-          <% composer_type_options(->(**params) { new_monthly_bucket_bullet_path(@monthly_bucket, bucket_id: @monthly_bucket.bucket.id, **params) }).each do |type| %>
-            <%= render "bullets/composer/open_composer_of", type: type %>
-          <% end %>
+          <%= render "bullets/composer/open_composer_of",
+                path: new_monthly_bucket_bullet_path(@monthly_bucket, bucket_id: @monthly_bucket.bucket.id, bulletable_type: "Task"),
+                name: "Task",
+                icon: "square",
+                modifier: "task",
+                frame: "bullet_composer",
+                hotkey: "Shift+T",
+                hotkey_action: "keydown.shift+t@document->hotkey#click" %>
         </div>
       </section>
     </div>
   </div>
+
+  <%= render "monthly_buckets/composer_dialog" %>
 </div>

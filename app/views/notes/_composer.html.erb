@@ -1,4 +1,4 @@
-<%# locals: (bullet:, bullets_path: nil, editing: false) %>
+<%# locals: (bullet:, bullets_path: nil, editing: false, return_to: nil) %>
 <%= form_with model: bullet,
       **{
         url: bullets_path,
@@ -11,6 +11,7 @@
       }.compact do |fr| %>
   <%= fr.hidden_field :pops_on, value: bullet.pops_on %>
   <%= fr.hidden_field :bucket_id, value: bullet.bucket_id %>
+  <%= hidden_field_tag :return_to, return_to if return_to.present? %>
   <%= render "bullets/composer/action_text", form: fr, bullet: bullet, preset: "note" %>
 
   <div class="bullet-composer--rail">

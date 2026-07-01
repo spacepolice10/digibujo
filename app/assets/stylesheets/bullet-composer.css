@@ -1,4 +1,163 @@
 @layer components {
+  /* ── Type picker (create buttons) ──────────────────────── */
+
+  .bullet--composer {
+    display: flex;
+  }
+
+  .bullet--composer-buttons {
+    display: flex;
+    gap: var(--spacing-vertical-half);
+    padding-block-start: var(--spacing-vertical);
+    margin-block-start: var(--spacing-vertical);
+    border-top: 1px solid var(--color-stroke-base);
+  }
+
+  .layout--surface:has([data-bulk-menu-target="list"][data-mode="select"]) .bullet-composer--dock {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .bullet-composer--dock {
+    container-type: scroll-state;
+    position: sticky;
+    bottom: calc(var(--spacing-vertical-double) + var(--icon-size-base));
+    z-index: var(--z-dropdown);
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-strong);
+    background: var(--color-bg-base);
+    transition: box-shadow 0.15s ease;
+
+    @container scroll-state(stuck: bottom) {
+      box-shadow: var(--shadow-base);
+    }
+
+    .bullet--composer-buttons {
+      margin-block-start: 0;
+      padding-block-start: 0;
+      border-top: none;
+      justify-content: center;
+    }
+
+    .bullet-composer {
+      width: 100%;
+      left: 0;
+      top: 0;
+      padding: 0;
+      border: none;
+      background: transparent;
+      box-shadow: none;
+    }
+  }
+
+  .layout--surface:has(#bullet_composer .bullet-composer) {
+    position: relative;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: oklch(0% 0 0 / 0.06);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .bullet-composer--dock {
+      z-index: 2;
+    }
+  }
+
+  .bullet--composer-create-button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-vertical-half);
+    padding: var(--spacing-vertical-half) 0;
+    font-size: var(--font-size-subtle);
+    color: var(--color-fg-subtle);
+    text-decoration: none;
+    cursor: pointer;
+
+    .icon {
+      width: var(--icon-size-subtle);
+      height: var(--icon-size-subtle);
+    }
+
+    @media (hover: hover) {
+      &:hover {
+        color: var(--color-fg-base);
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .bullet--composer-create-button--task,
+  .bullet--composer-create-button--event,
+  .bullet--composer-create-button--note,
+  .bullet--composer-create-button--voice {
+    text-decoration: none;
+
+    @media (hover: hover) {
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+
+  .bullet--composer-create-button--task {
+    .icon {
+      color: var(--model-color-2);
+    }
+
+    @media (hover: hover) {
+      &:hover {
+        color: var(--model-color-2);
+      }
+    }
+  }
+
+  .bullet--composer-create-button--event {
+    .icon {
+      color: var(--model-color-6);
+    }
+
+    @media (hover: hover) {
+      &:hover {
+        color: var(--model-color-6);
+      }
+    }
+  }
+
+  .bullet--composer-create-button--note {
+    .icon {
+      color: var(--model-color-5);
+    }
+
+    @media (hover: hover) {
+      &:hover {
+        color: var(--model-color-5);
+      }
+    }
+  }
+
+  .bullet--composer-create-button--voice {
+    .icon {
+      color: var(--model-color-4);
+    }
+
+    @media (hover: hover) {
+      &:hover {
+        color: var(--model-color-4);
+      }
+    }
+  }
+
+  /* ── Expanded composer form ────────────────────────────── */
+
   .bullet-composer {
     position: relative;
     display: flex;
@@ -180,8 +339,8 @@
 
   .bullet-composer--rail .voice-recorder--record,
   .bullet-composer--rail .voice-recorder--stop {
-    width: var(--icon-size-base);
     height: var(--icon-size-base);
+    color: var(--model-color-4);
     flex-shrink: 0;
   }
 
@@ -209,8 +368,45 @@
     display: none;
   }
 
-  turbo-frame[data-controller~="composer"] {
+  .bullet-composer--dock turbo-frame[data-controller~="composer"] {
+    display: block;
+    width: 100%;
     view-transition-name: none;
+    scroll-margin-block-end: calc(var(--spacing-vertical-double) * 3 + var(--icon-size-base));
+  }
+
+  .bullet-composer--jump {
+    margin-block-end: var(--spacing-vertical);
+  }
+
+  /* Chromium: sticky dock wraps the turbo frame so picker and form float together */
+  .bullet-composer--jump {
+    display: none !important;
+  }
+
+  /*
+   * Shared element naming for composer view transitions: the type picker
+   * button and the composer's type pill carry the same
+   * data-composer-transition-type value (task/note/event/voice), so the
+   * browser morphs one into the other whenever a transition is in progress
+   * (turbo-frame swap inside the dock/dialog, or a full Drive page
+   * navigation like collections -> bullets/new). Naming is static so no JS
+   * is needed to time it around the swap.
+   */
+  [data-composer-transition-type="task"] {
+    view-transition-name: composer-type-task;
+  }
+
+  [data-composer-transition-type="note"] {
+    view-transition-name: composer-type-note;
+  }
+
+  [data-composer-transition-type="event"] {
+    view-transition-name: composer-type-event;
+  }
+
+  [data-composer-transition-type="voice"] {
+    view-transition-name: composer-type-voice;
   }
 
   ::view-transition-group(composer-type-task),
@@ -224,10 +420,6 @@
     display: flex;
     flex-direction: column;
     gap: var(--spacing-vertical-half);
-  }
-
-  .voice-recorder--preview audio {
-    width: 100%;
   }
 
   .voice-recorder--unsupported {

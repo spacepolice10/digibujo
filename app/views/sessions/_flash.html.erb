@@ -1,0 +1,11 @@
+<% if flash[:alert].present? %>
+  <div class="session--flash session--flash-negative" role="alert">
+    <%= flash[:alert] %>
+  </div>
+<% end %>
+
+<% if flash[:notice].present? %>
+  <div class="session--flash session--flash-positive" role="status">
+    <%= flash[:notice] %>
+  </div>
+<% end %>

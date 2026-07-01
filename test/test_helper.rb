@@ -64,5 +64,12 @@ module ActiveSupport
       )
       monthly_bucket
     end
+
+    def with_sprints_enabled
+      Sprint.enabled = true
+      yield
+    ensure
+      Sprint.enabled = false
+    end
   end
 end

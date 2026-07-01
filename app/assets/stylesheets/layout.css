@@ -26,19 +26,13 @@
   .footer {
     position: fixed;
     bottom: var(--spacing-vertical);
-    left: 0;
-    right: 0;
+    left: auto;
+    right: var(--spacing-horizontal);
     z-index: var(--z-dropdown);
     width: fit-content;
     max-width: calc(100% - var(--spacing-horizontal-double));
-    margin-inline: auto;
+    margin-inline: 0;
     anchor-name: --footer;
-    position-area: block-start center;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    background-color: var(--color-bg-base);
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-strong);
-    box-shadow: var(--shadow-base);
     pointer-events: none;
   }
 
@@ -49,8 +43,7 @@
     align-items: center;
     gap: var(--spacing-horizontal-half);
     width: fit-content;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow: visible;
     pointer-events: auto;
   }
 
@@ -228,7 +221,7 @@
     border: 1px solid var(--color-stroke-base);
     background: var(--color-bg-subtle);
     border-radius: var(--radius-strong);
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    padding: var(--spacing-vertical) var(--spacing-horizontal-half);
   }
 
   .layout--surface-name {

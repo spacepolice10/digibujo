@@ -108,6 +108,7 @@ Rails.application.routes.draw do
   scope module: :home do
     post 'home/sections/:id/expand', to: 'sections#expand', as: :home_expand_section
     post 'home/sections/:id/collapse', to: 'sections#collapse', as: :home_collapse_section
+    post 'home/appearance', to: 'appearances#update', as: :home_appearance
   end
 
   resource :menu, controller: 'menu'

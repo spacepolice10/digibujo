@@ -11,44 +11,39 @@ module MonthlyBuckets
     end
 
     test 'new renders composer form inside matching composer frame' do
-      frame_id = dom_id(@monthly_bucket)
-
       get new_monthly_bucket_bullet_path(@monthly_bucket, bulletable_type: 'Task'),
-          headers: { 'Turbo-Frame' => frame_id }
+          headers: { 'Turbo-Frame' => 'bullet_composer' }
 
       assert_response :success
-      assert_select "turbo-frame##{frame_id} form.bullet-composer"
-      assert_select "turbo-frame##{frame_id} lexxy-editor[preset=?]", 'inline'
-      assert_select "turbo-frame##{frame_id} select.bullet-composer-type-select", count: 0
+      assert_select 'turbo-frame#bullet_composer form.bullet-composer'
+      assert_select 'turbo-frame#bullet_composer lexxy-editor[preset=?]', 'inline'
+      assert_select 'turbo-frame#bullet_composer select.bullet-composer-type-select', count: 0
     end
 
     test 'new note uses note editor in composer form' do
-      frame_id = dom_id(@monthly_bucket)
-
       get new_monthly_bucket_bullet_path(@monthly_bucket, bulletable_type: 'Note'),
-          headers: { 'Turbo-Frame' => frame_id }
+          headers: { 'Turbo-Frame' => 'bullet_composer' }
 
       assert_response :success
-      assert_select "turbo-frame##{frame_id} lexxy-editor[preset=?]", 'note'
-      assert_select "turbo-frame##{frame_id} lexxy-editor[preset=?][autofocus][placeholder]", "note"
-      assert_select "turbo-frame##{frame_id} .mood-picker"
+      assert_select 'turbo-frame#bullet_composer lexxy-editor[preset=?]', 'note'
+      assert_select 'turbo-frame#bullet_composer lexxy-editor[preset=?][autofocus][placeholder]', "note"
+      assert_select 'turbo-frame#bullet_composer .mood-picker'
     end
 
     test 'new with pops_on uses dated composer frame' do
       day = Date.current.beginning_of_month + 2.days
-      frame_id = dom_id(@monthly_bucket, day)
 
       get new_monthly_bucket_bullet_path(@monthly_bucket, pops_on: day.iso8601, bulletable_type: 'Event'),
-          headers: { 'Turbo-Frame' => frame_id }
+          headers: { 'Turbo-Frame' => 'bullet_composer' }
 
       assert_response :success
-      assert_select "turbo-frame##{frame_id} form.bullet-composer"
-      assert_select "turbo-frame##{frame_id} input[name='bullet[pops_on]'][value=?]", day.iso8601
-      assert_select "turbo-frame##{frame_id} input[name='bullet[bulletable_type]'][value=?]", 'Event'
+      assert_select 'turbo-frame#bullet_composer form.bullet-composer'
+      assert_select "turbo-frame#bullet_composer input[name='bullet[pops_on]'][value=?]", day.iso8601
+      assert_select "turbo-frame#bullet_composer input[name='bullet[bulletable_type]'][value=?]", 'Event'
     end
 
-    test 'create appends bullet into composer frame' do
-      frame_id = dom_id(@monthly_bucket)
+    test 'create appends bullet into unplanned list' do
+      list_id = dom_id(@monthly_bucket, :unplanned_bullets)
 
       assert_difference -> { @user.bullets.count }, 1 do
         post monthly_bucket_bullets_path(@monthly_bucket),
@@ -62,12 +57,12 @@ module MonthlyBuckets
       end
 
       assert_response :success
-      assert_turbo_stream action: 'append', target: frame_id
+      assert_turbo_stream action: 'append', target: list_id
       assert_match 'Brain dump idea', response.body
     end
 
     test 'create with another keeps composer open' do
-      frame_id = dom_id(@monthly_bucket)
+      list_id = dom_id(@monthly_bucket, :unplanned_bullets)
 
       post monthly_bucket_bullets_path(@monthly_bucket),
            params: {
@@ -80,7 +75,7 @@ module MonthlyBuckets
            as: :turbo_stream
 
       assert_response :success
-      assert_turbo_stream action: 'append', target: frame_id
+      assert_turbo_stream action: 'append', target: list_id
     end
   end
 end

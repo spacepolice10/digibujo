@@ -23,42 +23,37 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'updated', Activity.order(:created_at).last.action
   end
 
-  test 'create turbo stream appends bullet into bullets container' do
-    collection = create_collection!(@user, name: 'Fresh collection')
-
-    post bullets_path,
-         params: {
-           bullet: {
-             bulletable_type: 'Task',
-             body: 'Fresh task',
-             pops_on: Date.current.iso8601,
-             bucket_id: collection.bucket.id
+  test 'create redirects to the new bullet show page by default' do
+    assert_difference -> { @user.bullets.count }, 1 do
+      post bullets_path,
+           params: {
+             bullet: {
+               bulletable_type: 'Task',
+               body: 'Fresh task',
+               pops_on: Date.current.iso8601
+             }
            }
-         },
-         as: :turbo_stream
+    end
 
-    assert_response :success
-    assert_turbo_stream action: 'append', target: 'bullets'
-    assert_no_turbo_stream action: 'replace', target: 'bullet_composer'
+    bullet = @user.bullets.order(:created_at).last
+    assert_redirected_to bullet_path(bullet)
   end
 
-  test 'create note turbo stream appends bullet into bullets container' do
+  test 'create redirects to return_to when present' do
     post bullets_path,
          params: {
+           return_to: '/daylog',
            bullet: {
              bulletable_type: 'Note',
              body: 'A long note',
              pops_on: Date.current.iso8601
            }
-         },
-         as: :turbo_stream
+         }
 
-    assert_response :success
-    assert_turbo_stream action: 'append', target: 'bullets'
-    assert_no_turbo_stream action: 'replace', target: 'bullet_composer'
+    assert_redirected_to '/daylog'
   end
 
-  test 'create with another keeps composer open' do
+  test 'create with another redirects to a fresh new page for the same type' do
     post bullets_path,
          params: {
            another: '1',
@@ -67,12 +62,9 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
              body: 'Rapid task',
              pops_on: Date.current.iso8601
            }
-         },
-         as: :turbo_stream
+         }
 
-    assert_response :success
-    assert_turbo_stream action: 'append', target: 'bullets'
-    assert_no_turbo_stream action: 'replace', target: 'bullet_composer'
+    assert_redirected_to new_bullet_path(bulletable_type: 'Task', pops_on: Date.current.iso8601)
   end
 
   test 'create tags bullet from project attachment in body' do
@@ -86,10 +78,8 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
              body: body_html,
              pops_on: Date.current.iso8601
            }
-         },
-         as: :turbo_stream
+         }
 
-    assert_response :success
     bullet = @user.bullets.order(:created_at).last
     assert_not_equal @bullet, bullet
     assert_includes bullet.projects, project
@@ -103,8 +93,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
              body: '<h1>Long detail</h1>',
              pops_on: Date.current.iso8601
            }
-         },
-         as: :turbo_stream
+         }
 
     bullet = @user.bullets.order(:created_at).last
     assert_match 'Long detail', bullet.body.to_plain_text
@@ -132,12 +121,10 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'create requires bullet type' do
-    post bullets_path,
-         params: { bullet: { body: 'No type' } },
-         as: :turbo_stream
+    post bullets_path, params: { bullet: { body: 'No type' } }
 
-    assert_response :unprocessable_entity
-    assert_match 'Bullet type is required', response.body
+    assert_redirected_to new_bullet_path
+    assert_equal 'Pick a bullet type first', flash[:alert]
   end
 
   test 'create allows blank body (becomes untitled)' do
@@ -148,16 +135,30 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
                bulletable_type: 'Task',
                body: ''
              }
-           },
-           as: :turbo_stream
+           }
     end
 
-    assert_response :success
-    assert_turbo_stream action: 'append', target: 'bullets'
-    assert_no_turbo_stream action: 'replace', target: 'bullet_composer'
+    bullet = @user.bullets.order(:created_at).last
+    assert_redirected_to bullet_path(bullet)
   end
 
-  test 'new without type renders type picker' do
+  test 'create renders new with errors when invalid' do
+    assert_no_difference -> { @user.bullets.count } do
+      post bullets_path,
+           params: {
+             bullet: {
+               bulletable_type: 'Voice',
+               body: ''
+             }
+           }
+    end
+
+    assert_response :unprocessable_entity
+    assert_select '.form--errors'
+    assert_match 'can&#39;t be blank', response.body
+  end
+
+  test 'new without type renders full page type picker' do
     get new_bullet_path
 
     assert_response :success
@@ -166,33 +167,37 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'a[href*="bulletable_type=Task"]'
     assert_select 'a[href*="bulletable_type=Note"]'
     assert_select 'a[href*="bulletable_type=Event"]'
-    assert_no_match 'bulletable_type=Title', response.body
+    assert_select 'a[href*="bulletable_type=Voice"]'
   end
 
-  test 'new composer renders inline editor with rail layout' do
+  test 'new composer renders full page inline editor without frame-dismiss controls' do
     get new_bullet_path(bulletable_type: 'Task')
 
     assert_response :success
+    assert_select 'form.bullet-composer'
     assert_select 'lexxy-editor[preset=inline]'
     assert_select '.bullet-composer--rail'
     assert_select '.bullet-composer--type-pill[data-bullet-type=?]', 'task', text: /Task/
-    assert_select '.bullet-composer--type-dismiss[data-action=?]', 'composer#cancel'
-    assert_select '.bullet-composer--rail-actions'
-    assert_select 'select.bullet-composer-type-select', count: 0
-    assert_select '.bullet-composer--rail .mood-option', count: 0
+    assert_select '.bullet-composer--type-dismiss', count: 0
     assert_select '.bullet-composer--rail-actions .bullet-composer--rail-submit button[type=submit]'
-    assert_select '.bullet-composer--footer', count: 0
   end
 
   test 'new composer with Note type renders note editor' do
     get new_bullet_path(bulletable_type: 'Note')
 
     assert_response :success
-    assert_select 'form.bullet-composer[data-action*="keydown.enter+meta->composer#submit"]'
     assert_select 'lexxy-editor[preset=note]'
     assert_select 'lexxy-editor[preset=inline]', false
     assert_select '.bullet-composer--type-pill[data-bullet-type=?]', 'note', text: /Note/
     assert_select '.bullet-composer--rail .mood-option', count: 4
+  end
+
+  test 'new composer hides return_to field when absent and includes it when present' do
+    get new_bullet_path(bulletable_type: 'Task')
+    assert_select "input[name='return_to']", count: 0
+
+    get new_bullet_path(bulletable_type: 'Task', return_to: '/daylog')
+    assert_select "input[name='return_to'][value='/daylog']"
   end
 
   test 'create sets note mood from bulletable_attributes' do
@@ -204,10 +209,8 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
              pops_on: Date.current.iso8601,
              bulletable_attributes: { mood: 'inspired' }
            }
-         },
-         as: :turbo_stream
+         }
 
-    assert_response :success
     bullet = @user.bullets.order(:created_at).last
     assert_equal 'Note', bullet.bulletable_type
     assert_equal 'inspired', bullet.bulletable.mood
@@ -241,10 +244,8 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
              pops_on: Date.current.iso8601,
              bulletable_attributes: { mood: 'inspired' }
            }
-         },
-         as: :turbo_stream
+         }
 
-    assert_response :success
     bullet = @user.bullets.order(:created_at).last
     assert_equal 'Task', bullet.bulletable_type
     # Task has no mood column; the per-type permitted attrs stripped it before assignment.

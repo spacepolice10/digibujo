@@ -1,7 +1,22 @@
 @layer components {
+  #bullets-timeline {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .daylog--page #bullets {
+    margin-block-end: var(--spacing-vertical);
+  }
+
+  .daylog--page #bullets .records-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical);
+  }
+
   .daylog--page .bullet {
-    gap: var(--spacing-horizontal-half);
-    margin-block: var(--spacing-vertical-half);
+    gap: var(--spacing-horizontal);
+    margin-block: 0;
   }
 
   .daylog--header {
@@ -9,28 +24,58 @@
     gap: var(--spacing-vertical-half);
   }
 
-  .daylog--header-recurrencies {
+  .daylog--header-navigation {
     flex: 1 1 auto;
-    min-width: 0;
-    justify-content: flex-start;
-  }
-
-  .daylog--header-nav {
-    flex: 0 1 auto;
     justify-content: center;
   }
 
   .daylog--header-today {
-    flex: 1 1 auto;
+    flex: 0 0 auto;
     justify-content: flex-end;
   }
 
-  .daylog--composer {
-    margin-block-start: var(--spacing-vertical-double);
+  .daylog--today.button--accent {
+    background: var(--model-color-2);
+    border-color: color-mix(in oklch, var(--model-color-2) 65%, black);
+    color: var(--color-fg-strong);
+    font-style: normal;
+    text-transform: none;
+    box-shadow:
+      var(--shadow-strong),
+      0 0 var(--spacing-horizontal) color-mix(in oklch, var(--model-color-2) 40%, transparent);
+
+    @media (hover: hover) {
+      &:hover:not(:disabled) {
+        background: color-mix(in oklch, var(--model-color-2) 92%, white);
+        border-color: color-mix(in oklch, var(--model-color-2) 65%, black);
+        box-shadow:
+          0 6px 0 oklch(0% 0 0 / 0.4),
+          0 0 var(--spacing-horizontal-double)
+            color-mix(in oklch, var(--model-color-2) 55%, transparent);
+      }
+    }
+
+    &:active:not(:disabled) {
+      background: color-mix(in oklch, var(--model-color-2) 75%, black);
+      border-color: color-mix(in oklch, var(--model-color-2) 45%, black);
+      box-shadow:
+        0 3px 0 oklch(0% 0 0 / 0.35),
+        0 0 var(--spacing-horizontal-half)
+          color-mix(in oklch, var(--model-color-2) 35%, transparent);
+    }
+
+    &:focus-visible {
+      background: color-mix(in oklch, var(--model-color-2) 85%, black);
+      border-color: var(--color-stroke-strong);
+    }
   }
 
-  .daylog--composer .bullet--composer-buttons {
-    justify-content: center;
-    width: 100%;
+  @media (pointer: fine) {
+    .daylog--hotkey-hint {
+      margin: var(--spacing-vertical) 0 0;
+      text-align: center;
+      font-size: var(--font-size-subtle);
+      color: var(--color-fg-subtle);
+    }
   }
 }

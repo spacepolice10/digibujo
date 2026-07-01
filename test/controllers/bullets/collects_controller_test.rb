@@ -82,7 +82,7 @@ module Bullets
       get new_collect_path, params: { bullet_ids: card.id.to_s }
 
       assert_select '#paginated-collects-collections[data-controller="pagination"]'
-      assert_select '#paginated-collects-sprints[data-controller="pagination"]'
+      assert_select '#paginated-collects-sprints[data-controller="pagination"]', count: 0
     end
 
     test 'new turbo stream replaces list containers for live search' do
@@ -96,7 +96,7 @@ module Bullets
 
       assert_response :success
       assert_match %(turbo-stream action="replace" target="paginated-collects-collections"), response.body
-      assert_match %(turbo-stream action="replace" target="paginated-collects-sprints"), response.body
+      assert_no_match %(turbo-stream action="replace" target="paginated-collects-sprints"), response.body
       assert_match 'alpha', response.body
       assert_no_match 'beta', response.body
     end

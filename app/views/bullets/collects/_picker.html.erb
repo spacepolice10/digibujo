@@ -21,7 +21,7 @@
     <%= search_field_tag :q,
           collects_q,
           class: "form-input",
-          placeholder: "Search collections and sprints",
+          placeholder: Sprint.enabled? ? "Search collections and sprints" : "Search collections",
           autofocus: true,
           autocomplete: "off",
           data: { action: "input->bulk-menu#searchCollects keydown->combobox#navigate" } %>
@@ -46,26 +46,28 @@
           collections_page: collections_page %>
   </div>
 
-  <div class="bulk-menu--collect-section">
-    <div class="bulk-menu--collect-section-heading">
-      <p class="bulk-menu--collect-section-title">Sprints</p>
-      <%= link_to new_sprint_path(bullet_ids: bullet_ids, return_to: return_to),
-            class: "button--tertiary button--icon bulk-menu--collect-section-add",
-            aria: { label: "Create new sprint" },
-            data: { turbo_frame: "_top" } do %>
-        <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
-      <% end %>
+  <% if Sprint.enabled? %>
+    <div class="bulk-menu--collect-section">
+      <div class="bulk-menu--collect-section-heading">
+        <p class="bulk-menu--collect-section-title">Sprints</p>
+        <%= link_to new_sprint_path(bullet_ids: bullet_ids, return_to: return_to),
+              class: "button--tertiary button--icon bulk-menu--collect-section-add",
+              aria: { label: "Create new sprint" },
+              data: { turbo_frame: "_top" } do %>
+          <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
+        <% end %>
+      </div>
+      <%= render "bullets/collects/sprints_list",
+            bullet_ids: bullet_ids,
+            frame_id: frame_id,
+            return_to: return_to,
+            collects_q: collects_q,
+            sprints: sprints,
+            sprints_page: sprints_page %>
     </div>
-    <%= render "bullets/collects/sprints_list",
-          bullet_ids: bullet_ids,
-          frame_id: frame_id,
-          return_to: return_to,
-          collects_q: collects_q,
-          sprints: sprints,
-          sprints_page: sprints_page %>
-  </div>
+  <% end %>
 
-  <% if collections.empty? && sprints.empty? %>
-    <p>No collections or sprints found.</p>
+  <% if collections.empty? && (!Sprint.enabled? || sprints.empty?) %>
+    <p><%= Sprint.enabled? ? "No collections or sprints found." : "No collections found." %></p>
   <% end %>
 </div>

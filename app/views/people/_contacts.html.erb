@@ -1,0 +1,17 @@
+<%# locals: (person:) %>
+<% emails = person.handles.email %>
+<% phones = person.handles.phone %>
+<% if emails.any? || phones.any? %>
+  <ul class="person--contacts-list">
+    <% emails.each do |email| %>
+      <li class="person--contacts-list-item">
+        <%= link_to email.data, "mailto:#{email.data}", class: "person--contact-link" %>
+      </li>
+    <% end %>
+    <% phones.each do |phone| %>
+      <li class="person--contacts-list-item">
+        <%= link_to phone.data, "tel:#{phone.data}", class: "person--contact-link" %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

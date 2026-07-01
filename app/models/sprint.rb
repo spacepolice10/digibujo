@@ -3,6 +3,12 @@
 class Sprint < ApplicationRecord
   include Bucketable
 
+  class_attribute :enabled, default: false
+
+  def self.enabled?
+    enabled
+  end
+
   validates :starts_on, presence: true
   validates :ends_on, presence: true
   validate :ends_on_on_or_after_starts_on

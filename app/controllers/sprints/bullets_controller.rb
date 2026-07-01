@@ -2,7 +2,7 @@
 
 module Sprints
   class BulletsController < ApplicationController
-    include BulletCreation
+    include BulletCreation, SprintAccessible
 
     before_action :set_sprint
 

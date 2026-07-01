@@ -24,6 +24,10 @@ class Bullet
       @type ||= @params[:type].to_s.classify.presence_in(Bullet.bulletable_types)
     end
 
+    def type_param
+      @params[:type].to_s.presence
+    end
+
     def filters
       [[nil, 'All', 'list', nil]] + Bullet.bulletable_types.map do |bulletable_type|
         [bulletable_type.downcase, bulletable_type.pluralize, bulletable_type.constantize.new.marker_icon,

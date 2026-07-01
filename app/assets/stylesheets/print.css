@@ -33,6 +33,10 @@
     border: 1px solid #ddd;
   }
 
+  .bullet[data-bullet-type="note"] .bullet-body::before {
+    transform: none;
+  }
+
   .layout--main {
     max-width: 100%;
   }

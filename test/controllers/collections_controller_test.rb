@@ -90,6 +90,19 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Hold', response.body
   end
 
+  test 'show renders add note button linking to the full page bullet composer' do
+    collection = create_collection!(@user, name: 'Inbox')
+
+    get collection_path(collection)
+
+    assert_response :success
+    assert_select 'a[aria-label=?]', 'Add note' do
+      assert_select '[href=?]', new_bullet_path(
+        bulletable_type: 'Note', bucket_id: collection.bucket.id, return_to: collection_path(collection)
+      )
+    end
+  end
+
   test 'destroy archives collection and hides it from active lists' do
     collection = create_collection!(@user, name: 'Old inbox')
     card = @user.bullets.create!(bulletable: Task.create!, body: 'Stay', bucket_id: collection.bucket.id)

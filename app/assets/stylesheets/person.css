@@ -6,33 +6,29 @@
     flex-shrink: 0;
   }
 
-  .person--handles {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-vertical);
-  }
-
-  .person--handle-rail {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-vertical-half);
-    padding: var(--spacing-vertical-half);
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
-  }
-
-  .person--handle-rail-fields {
+  .person--inline-contacts {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-vertical-half);
   }
 
-  .person--handle-rail-actions {
+  .person--inline-field {
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
   }
 
-  .person--handles-list {
+  .person--inline-field-icon {
+    flex-shrink: 0;
+    color: var(--color-fg-subtle);
+  }
+
+  .person--inline-field-input {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .person--contacts-list {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-vertical-half);
@@ -40,12 +36,8 @@
     list-style: none;
   }
 
-  .person--handle-link {
+  .person--contact-link {
     color: var(--color-accent-alternative);
     text-decoration: underline;
-  }
-
-  .person--handle-text {
-    color: var(--color-fg-subtle);
   }
 }

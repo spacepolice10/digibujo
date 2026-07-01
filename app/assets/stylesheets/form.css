@@ -168,6 +168,30 @@
     margin-top: var(--spacing-vertical-half);
   }
 
+  /* ── Form errors block ────────────────────────────── */
+
+  .form--errors {
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    border-radius: var(--radius-base);
+    background: var(--color-bg-negative);
+    border: 1px solid var(--color-stroke-negative);
+    color: var(--color-fg-negative);
+    font-size: var(--font-size-subtle);
+
+    p {
+      margin: 0 0 var(--spacing-vertical-half);
+    }
+
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-vertical-half);
+    }
+  }
+
   /* ── Inline error ─────────────────────────────────── */
 
   .form-error {
@@ -203,21 +227,21 @@
     }
   }
 
-  /* ── Colour picker ────────────────────────────────── */
+  /* ── Shared picker ────────────────────────────────── */
 
-  .form--colour-picker {
+  .form--picker {
     display: flex;
     gap: var(--spacing-vertical);
     flex-wrap: wrap;
   }
 
-  .form--colour-option {
+  .form--picker-option {
     position: relative;
     cursor: pointer;
     line-height: 0;
   }
 
-  .form--colour-option input {
+  .form--picker-option input {
     position: absolute;
     inset: 0;
     margin: 0;
@@ -225,90 +249,100 @@
     cursor: pointer;
   }
 
-  .form--colour-option input:focus-visible {
+  .form--picker-option input:focus-visible {
     outline: none;
   }
 
-  .form--colour-swatch {
+  .form--picker-control {
     display: block;
-    width: calc(var(--icon-size-base) * 1.4);
-    height: calc(var(--icon-size-base) * 1.4);
-    border-radius: var(--radius-full);
     box-shadow: 0 0 0 1px var(--color-stroke-base);
     transition:
       transform 0.1s ease,
       box-shadow 0.1s ease;
   }
 
-  .form--colour-option:hover .form--colour-swatch {
-    transform: scale(1.08);
+  @media (hover: hover) {
+    .form--picker-option:hover .form--picker-control {
+      transform: scale(1.08);
+    }
   }
 
-  .form--colour-option:has(input:checked) .form--colour-swatch {
+  .form--picker-option:has(input:checked) .form--picker-control {
     box-shadow: 0 0 0 2px var(--color-stroke-strong);
     transform: scale(1.08);
   }
 
-  .form--colour-option:has(input:focus-visible) .form--colour-swatch {
+  .form--picker-option:has(input:focus-visible) .form--picker-control {
     box-shadow:
       0 0 0 2px var(--color-stroke-strong),
       0 0 0 4px color-mix(in oklch, var(--color-stroke-base) 40%, transparent);
     transform: scale(1.08);
   }
 
-  .form--colour-option:has(input:checked:focus-visible) .form--colour-swatch {
+  .form--picker-option:has(input:checked:focus-visible) .form--picker-control {
     box-shadow:
       0 0 0 2px var(--color-fg-base),
       0 0 0 4px color-mix(in oklch, var(--color-stroke-base) 40%, transparent);
   }
 
+  /* ── Colour picker ────────────────────────────────── */
+
+  .form--colour-swatch {
+    width: calc(var(--icon-size-base) * 1.4);
+    height: calc(var(--icon-size-base) * 1.4);
+    border-radius: var(--radius-full);
+  }
+
   /* ── Emoji icon picker ────────────────────────────── */
 
   .form--icon-picker {
-    display: flex;
-    grid-template-columns: repeat(8, 1fr);
     gap: var(--spacing-horizontal);
-    flex-wrap: wrap;
   }
 
   @container page-column (max-width: 600px) {
     .form--icon-picker {
-      grid-template-columns: repeat(6, 1fr);
+      gap: var(--spacing-horizontal-half);
     }
   }
 
-  .form--icon-option {
-    cursor: pointer;
-    line-height: 0;
-  }
-
-  .form--icon-option input {
-    display: none;
-  }
-
   .form--icon-image {
-    display: block;
     width: calc(var(--icon-size-base) * 1.5);
     height: calc(var(--icon-size-base) * 1.5);
     margin-inline: auto;
     padding: var(--spacing-vertical-half);
     border-radius: var(--radius-strong);
-    border: 1px solid var(--color-stroke-base);
     background: var(--color-bg-base);
-    transition:
-      transform 0.1s ease,
-      border-color 0.1s ease;
   }
 
-  .form--icon-option:hover .form--icon-image {
-    transform: scale(1.08);
-    border-color: var(--color-stroke-strong);
+  /* ── Schedule days picker ─────────────────────────── */
+
+  .form--day-picker {
+    gap: var(--spacing-horizontal);
   }
 
-  .form--icon-option:has(input:checked) .form--icon-image {
-    border-color: var(--color-stroke-strong);
-    background: var(--color-bg-subtle);
-    transform: scale(1.05);
+  @container page-column (max-width: 600px) {
+    .form--day-picker {
+      gap: var(--spacing-horizontal-half);
+    }
+  }
+
+  .form--day-control {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: calc(var(--icon-size-base) * 1.5);
+    height: calc(var(--icon-size-base) * 1.5);
+    padding: var(--spacing-vertical-half);
+    border-radius: var(--radius-strong);
+    font-family: inherit;
+    font-size: var(--font-size-subtle);
+    color: var(--color-fg-subtle);
+    background: var(--color-bg-base);
+  }
+
+  .form--picker-option:has(input:checked) .form--day-control {
+    color: var(--color-fg-base);
+    font-weight: var(--font-weight-strong);
   }
 
   /* Emoji icon inside list markers */

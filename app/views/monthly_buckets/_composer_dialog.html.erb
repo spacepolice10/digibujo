@@ -1,0 +1,25 @@
+<div data-controller="monthly-bucket-composer">
+  <dialog
+    id="monthly_bucket_composer"
+    class="dialog dialog--large monthly-bucket--composer-dialog"
+    data-monthly-bucket-composer-target="dialog"
+    data-action="close->monthly-bucket-composer#closed click->monthly-bucket-composer#backdropClose turbo:submit-end->monthly-bucket-composer#submitEnd"
+  >
+    <div class="dialog--body">
+      <button
+        type="button"
+        class="dialog--hide button--primary button--icon button--circle"
+        data-action="monthly-bucket-composer#close"
+        aria-label="Close composer"
+      >
+        <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
+      </button>
+
+      <turbo-frame
+        id="bullet_composer"
+        data-controller="composer"
+        data-action="turbo:frame-load->monthly-bucket-composer#frameLoad"
+      ></turbo-frame>
+    </div>
+  </dialog>
+</div>

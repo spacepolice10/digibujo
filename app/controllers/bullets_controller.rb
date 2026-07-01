@@ -6,12 +6,29 @@ class BulletsController < ApplicationController
   before_action :set_bullet, only: %i[show edit update destroy]
   before_action :redirect_voice_edit, only: %i[edit update]
 
+  # Full-page bullet composer (not the inline/turbo-frame composer used by daylog
+  # and monthly bucket). Renders a real page and redirects on success instead of
+  # responding with a turbo stream.
   def new
-    prepare_bullet
+    @return_to = permitted_return_to(params[:return_to]) || permitted_return_to(request.referer)
+    @bullet = Current.user.bullets.new(
+      bulletable_type: Bullet::Params.resolve_type(params[:bulletable_type]),
+      pops_on: params[:pops_on],
+      bucket_id: params[:bucket_id]
+    )
   end
 
   def create
-    create_bullet
+    @return_to = permitted_return_to(params[:return_to])
+    @bullet = Current.user.bullets.new(bullet_params)
+
+    if @bullet.save
+      redirect_to after_create_path
+    else
+      render :new, status: :unprocessable_entity
+    end
+  rescue Bullet::Params::TypeRequired
+    redirect_to new_bullet_path(return_to: @return_to), alert: 'Pick a bullet type first'
   end
 
   def edit; end
@@ -43,6 +60,19 @@ class BulletsController < ApplicationController
 
   private
 
+  def after_create_path
+    if params[:another].present?
+      new_bullet_path(
+        bulletable_type: @bullet.bulletable_type,
+        pops_on: @bullet.pops_on,
+        bucket_id: @bullet.bucket_id,
+        return_to: @return_to
+      )
+    else
+      @return_to.presence || bullet_path(@bullet)
+    end
+  end
+
   def set_bullet
     @bullet = Current.user.bullets.find(params[:id])
   end
@@ -51,5 +81,16 @@ class BulletsController < ApplicationController
     return unless @bullet.bulletable_type == "Voice"
 
     redirect_to bullet_path(@bullet)
+  end
+
+  def permitted_return_to(url)
+    return if url.blank?
+
+    uri = URI.parse(url.to_s)
+    return if uri.host.present? && uri.host != request.host
+
+    [uri.path, uri.query].compact.join('?').presence
+  rescue URI::InvalidURIError
+    nil
   end
 end

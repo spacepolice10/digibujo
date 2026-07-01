@@ -58,15 +58,6 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Dentist', response.body
   end
 
-  test 'monthly bucket unplanned composer renders unscheduled picker' do
-    monthly_bucket = create_monthly_bucket!(@user, name: 'june')
-    get monthly_bucket_path(monthly_bucket)
-
-    assert_response :success
-    assert_select '.monthly-bucket--unplanned a.bullet--composer-create-button[href*="bulletable_type=Task"]'
-    assert_select '.monthly-bucket--unplanned a.bullet--composer-create-button[href*="bulletable_type=Note"]'
-  end
-
   test 'monthly bucket spread has date add menu and composer frames' do
     monthly_bucket = create_monthly_bucket!(@user, name: 'june')
     day = Date.current.beginning_of_month + 2.days
@@ -80,9 +71,11 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     get monthly_bucket_path(monthly_bucket)
 
     assert_response :success
-    assert_select '.bullet--composer-create-button'
-    assert_match 'Add task', response.body
-    assert_select "turbo-frame##{dom_id(monthly_bucket, day)}[data-controller=?]", 'composer'
+    assert_select 'a[aria-label=?]', 'Add Event'
+    assert_select 'a[aria-label=?]', 'Add Task'
+    assert_select 'dialog#monthly_bucket_composer.monthly-bucket--composer-dialog'
+    assert_select 'dialog#monthly_bucket_composer turbo-frame#bullet_composer[data-controller=?]', 'composer'
+    assert_select "turbo-frame##{dom_id(monthly_bucket, day)}", count: 0
     assert_match 'Planned task', response.body
   end
 
@@ -161,7 +154,6 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
 
   test 'mobile monthly bucket renders planned and unplanned tabs' do
     monthly_bucket = create_monthly_bucket!(@user, name: 'june')
-    create_recurrency!(@user, name: 'Run')
     day = Date.current.beginning_of_month
     @user.bullets.create!(
       bulletable: Task.create!,
@@ -186,7 +178,6 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     assert_select '.monthly-bucket--unplanned[hidden]', count: 1
     assert_match 'Planned mobile task', response.body
     assert_match 'Unplanned mobile note', response.body
-    assert_select '.monthly-bucket--habit .recurrency--chip', minimum: 1
     assert_select '[data-controller=?]', 'pops-drop', count: 0
   end
 
@@ -296,18 +287,5 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'June-only task', response.body
     assert_no_match 'July-only task', response.body
     assert_equal "/monthly_buckets/#{june.id}", monthly_bucket_path(june)
-  end
-
-  test 'monthly spread renders inline recurrency on scheduled days' do
-    monthly_bucket = create_monthly_bucket!(@user, name: 'june')
-    create_recurrency!(@user, name: 'Run')
-    day = Date.current.beginning_of_month
-
-    get monthly_bucket_path(monthly_bucket)
-
-    assert_response :success
-    assert_select '.recurrency--chip'
-    assert_select '.monthly-bucket--habit', minimum: 1
-    assert_select '.hint[popover="hint"]', text: /Run/
   end
 end

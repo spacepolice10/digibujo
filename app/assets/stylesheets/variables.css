@@ -59,42 +59,42 @@
       oklch(0.68 0.26 49),
       oklch(0.84 0.22 49)
     ); /* Peach */
-    --model-color-1-bg: light-dark(oklch(0.95 0.14 49), oklch(0.32 0.14 49));
+    --model-color-1-bg: light-dark(oklch(0.92 0.16 49), oklch(0.35 0.16 49));
     --model-color-2: light-dark(
       oklch(0.58 0.26 255),
       oklch(0.76 0.22 255)
     ); /* Slate */
-    --model-color-2-bg: light-dark(oklch(0.94 0.12 255), oklch(0.3 0.12 255));
+    --model-color-2-bg: light-dark(oklch(0.92 0.16 255), oklch(0.33 0.14 255));
     --model-color-3: light-dark(
       oklch(0.66 0.22 175),
       oklch(0.82 0.18 175)
     ); /* Moss */
-    --model-color-3-bg: light-dark(oklch(0.95 0.11 175), oklch(0.31 0.11 175));
+    --model-color-3-bg: light-dark(oklch(0.92 0.14 175), oklch(0.34 0.13 175));
     --model-color-4: light-dark(
       oklch(0.68 0.26 145),
       oklch(0.84 0.22 145)
     ); /* Sage */
-    --model-color-4-bg: light-dark(oklch(0.95 0.13 145), oklch(0.31 0.13 145));
+    --model-color-4-bg: light-dark(oklch(0.92 0.16 145), oklch(0.34 0.15 145));
     --model-color-5: light-dark(
       oklch(0.78 0.24 89),
       oklch(0.88 0.2 89)
     ); /* Butter */
-    --model-color-5-bg: light-dark(oklch(0.96 0.14 89), oklch(0.34 0.14 89));
+    --model-color-5-bg: light-dark(oklch(0.92 0.12 80), oklch(0.37 0.16 89));
     --model-color-6: light-dark(
       oklch(0.64 0.28 22),
       oklch(0.82 0.24 22)
     ); /* Rose */
-    --model-color-6-bg: light-dark(oklch(0.95 0.14 22), oklch(0.31 0.14 22));
+    --model-color-6-bg: light-dark(oklch(0.92 0.17 22), oklch(0.34 0.16 22));
     --model-color-7: light-dark(
       oklch(0.58 0.28 305),
       oklch(0.78 0.24 305)
     ); /* Lilac */
-    --model-color-7-bg: light-dark(oklch(0.95 0.14 305), oklch(0.3 0.14 305));
+    --model-color-7-bg: light-dark(oklch(0.92 0.17 305), oklch(0.33 0.16 305));
     --model-color-8: light-dark(
       oklch(0.62 0.26 35),
       oklch(0.8 0.22 35)
     ); /* Clay */
-    --model-color-8-bg: light-dark(oklch(0.95 0.13 35), oklch(0.31 0.13 35));
+    --model-color-8-bg: light-dark(oklch(0.92 0.16 35), oklch(0.34 0.15 35));
 
     /* breakpoints */
     --breakpoint-0: 0px;
@@ -165,6 +165,26 @@
     --gradient-october: linear-gradient(135deg, oklch(0.90 0.20 15), oklch(0.84 0.22 30), oklch(0.82 0.14 45));
     --gradient-november: linear-gradient(135deg, oklch(0.84 0.14 335), oklch(0.82 0.16 350), oklch(0.88 0.04 5));
     --gradient-december: linear-gradient(135deg, oklch(0.86 0.16 215), oklch(0.90 0.08 230), oklch(0.95 0.02 245));
+  }
+
+  [data-appearance="warm"] {
+    --color-bg-base: light-dark(oklch(0.97 0.006 78), oklch(0.19 0.008 78));
+    --color-bg-subtle: light-dark(oklch(0.99 0.004 78), oklch(0.24 0.008 78));
+  }
+
+  [data-appearance="cool"] {
+    --color-bg-base: light-dark(oklch(0.97 0.006 250), oklch(0.19 0.008 255));
+    --color-bg-subtle: light-dark(oklch(0.99 0.004 250), oklch(0.24 0.008 255));
+  }
+
+  [data-appearance="nature"] {
+    --color-bg-base: light-dark(oklch(0.97 0.006 145), oklch(0.19 0.008 145));
+    --color-bg-subtle: light-dark(oklch(0.99 0.004 145), oklch(0.24 0.008 145));
+  }
+
+  [data-appearance="cheese"] {
+    --color-bg-base: light-dark(oklch(0.97 0.007 85), oklch(0.19 0.008 85));
+    --color-bg-subtle: light-dark(oklch(0.99 0.005 85), oklch(0.24 0.008 85));
   }
 
   @media (prefers-color-scheme: dark) {

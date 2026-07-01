@@ -1,0 +1,18 @@
+<%# locals: (selected_date:) %>
+<% types = [
+  { name: "Task", icon: "square", modifier: "task", hotkey: "Shift+T", hotkey_action: "keydown.shift+t@document->hotkey#click" },
+  { name: "Note", icon: "line-dashed", modifier: "note", hotkey: "Shift+N", hotkey_action: "keydown.shift+n@document->hotkey#click" },
+  { name: "Event", icon: "circle", modifier: "event", hotkey: "Shift+E", hotkey_action: "keydown.shift+e@document->hotkey#click" },
+  { name: "Voice", icon: "microphone", modifier: "voice", hotkey: "Shift+V", hotkey_action: "keydown.shift+v@document->hotkey#click" }
+] %>
+<div class="bullet-composer--dock">
+  <turbo-frame id="bullet_composer" data-controller="composer">
+    <div class="bullet--composer-buttons">
+      <% types.each do |type| %>
+        <%= render "bullets/composer/open_composer_of",
+              path: new_daylog_bullet_path(date: selected_date, pops_on: selected_date, bulletable_type: type[:name]),
+              **type %>
+      <% end %>
+    </div>
+  </turbo-frame>
+</div>

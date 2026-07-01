@@ -1,11 +1,15 @@
 <div class="pinned--dock">
   <button
     type="button"
-    class="pinned--trigger"
+    class="button--secondary button--circle hotkey-hint pinned--dock-button"
     popovertarget="pinned_list"
+    data-controller="hotkey"
+    data-hotkey="P"
+    data-action="keydown.shift+p@document->hotkey#click"
+    aria-label="Pinned"
+    aria-keyshortcuts="Shift+P"
   >
     <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
-    Pinned
   </button>
   <turbo-frame
     id="pinned_list"

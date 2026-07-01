@@ -144,7 +144,7 @@ export default class extends Controller {
     this.uploading = false
     this.clearSignedId()
     this.revokePreviewUrl()
-    this.previewTarget.removeAttribute("src")
+    this.#resetPreviewPlayer()
     this.previewContainerTarget.hidden = true
     this.recordButtonTarget.hidden = false
     this.stopButtonTarget.hidden = true
@@ -166,11 +166,14 @@ export default class extends Controller {
     const extension = mimeType == "audio/mp4" ? "mp4" : "webm"
     const file = new File([blob], `voice-memo.${extension}`, { type: mimeType })
 
-    this.durationInputTarget.value = Math.min(this.maxDurationValue, Math.max(1, Math.ceil(this.elapsedSeconds)))
+    const duration = Math.min(this.maxDurationValue, Math.max(1, Math.ceil(this.elapsedSeconds)))
+    this.durationInputTarget.value = duration
 
     this.revokePreviewUrl()
     this.previewUrl = URL.createObjectURL(blob)
     this.previewTarget.src = this.previewUrl
+    this.previewTarget.load()
+    this.#syncPreviewDuration(duration)
     this.previewContainerTarget.hidden = false
 
     this.upload(file)
@@ -198,6 +201,29 @@ export default class extends Controller {
       this.setStatus("Ready to save.")
       this.updateSubmitState()
     })
+  }
+
+  #previewPlayer() {
+    return this.previewContainerTarget.querySelector(".voice--playback")
+  }
+
+  #syncPreviewDuration(duration) {
+    const player = this.#previewPlayer()
+    if (!player) return
+
+    player.dataset.voicePlayerDurationValue = duration
+
+    const progress = player.querySelector('[role="slider"]')
+    if (progress) progress.setAttribute("aria-valuemax", duration)
+  }
+
+  #resetPreviewPlayer() {
+    if (!this.hasPreviewTarget) return
+
+    this.previewTarget.pause()
+    this.previewTarget.removeAttribute("src")
+    this.previewTarget.load()
+    this.#syncPreviewDuration(0)
   }
 
   #preferredMimeType() {

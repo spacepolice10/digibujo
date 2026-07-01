@@ -102,7 +102,7 @@ Shorter framework-anchored cheatsheets in `docs/`. Load these before working in 
 - `docs/_rails.md` — Rails 8 patterns and stack (auth, concerns, delegated types, Action Text, Active Storage, variants, SQLite/Solid). Application architecture lives in this file.
 - `docs/_lexxy.md` — Lexxy (Action Text editor) concepts, presets, prompts, attachments, extensions, patching guide.
 - `docs/_turbo.md` — Turbo Drive/Frames/Streams/Morph, conventions in this app, events, stream actions.
-- `docs/_stimulus.md` — Stimulus concepts, lifecycle, all controllers in this app with one-line purpose, patterns.
+- `docs/_stimulus.md` — Stimulus concepts, lifecycle, and patterns (framework reference).
 
 Each doc also links to the **Basecamp reference projects** for idiomatic examples: [Fizzy](https://github.com/basecamp/fizzy), [Writebook](https://github.com/basecamp/writebook), [Campfire](https://github.com/basecamp/campfire), and [Lexxy](https://github.com/basecamp/lexxy). Consult those repos when implementing non-trivial features.
 

@@ -1,35 +1,10 @@
 import { Controller } from "@hotwired/stimulus"
 
-const stashes = new Map()
+// Keyed by the turbo-frame element itself (not its id) so a stash never
+// outlives the DOM node it was captured from, e.g. across a Drive visit
+// that replaces the frame with a fresh element sharing the same id.
+const stashes = new WeakMap()
 let globalsAttached = false
-
-const TRANSITION_PREFIX = "composer-type-"
-
-function sharedElementName(type) {
-  return type ? `${TRANSITION_PREFIX}${type}` : null
-}
-
-function labelSharedElement(container, type) {
-  const name = sharedElementName(type)
-  if (!name) return
-
-  const pill = container.querySelector(`[data-composer-transition-type="${type}"]`)
-  if (pill) pill.style.viewTransitionName = name
-}
-
-function labelPickerButton(container, type) {
-  const name = sharedElementName(type)
-  if (!name) return
-
-  const button = container.querySelector(`.bullet--composer-create-button--${type}`)
-  if (button) button.style.viewTransitionName = name
-}
-
-function clearSharedElements(container) {
-  container.querySelectorAll("[data-composer-transition-type], .bullet--composer-create-button").forEach((element) => {
-    element.style.viewTransitionName = ""
-  })
-}
 
 function attachGlobals() {
   if (globalsAttached) return
@@ -49,20 +24,15 @@ function swapWithViewTransition(update) {
 }
 
 function restorePicker(frame) {
-  const content = stashes.get(frame.id)
+  const content = stashes.get(frame)
   if (!content) return false
-
-  const type = frame.querySelector("[data-composer-transition-type]")?.dataset.composerTransitionType
-  if (type) labelSharedElement(frame, type)
 
   const transition = swapWithViewTransition(() => {
     frame.removeAttribute("src")
     frame.innerHTML = content
-    if (type) labelPickerButton(frame, type)
   })
 
   const finish = () => {
-    clearSharedElements(frame)
     frame.dispatchEvent(new CustomEvent("composer:rebind"))
     frame.querySelector("a, button")?.focus?.()
   }
@@ -74,14 +44,12 @@ function restorePicker(frame) {
 }
 
 function frameToCancel() {
-  const candidates = []
-
-  for (const frameId of stashes.keys()) {
-    const frame = document.getElementById(frameId)
-    if (!frame?.querySelector(".bullet-composer")) continue
-
-    candidates.push(frame)
-  }
+  // Scoped to composer-controlled frames specifically (not just any
+  // turbo-frame containing one), since composer frames can be nested
+  // inside unrelated ancestor frames (e.g. the daylog's page-level frame).
+  const candidates = [...document.querySelectorAll('turbo-frame[data-controller~="composer"]')].filter((frame) =>
+    frame.querySelector(".bullet-composer")
+  )
 
   if (candidates.length == 0) return null
 
@@ -126,7 +94,7 @@ function onSubmitEnd(event) {
   if (submitter?.name == "another") return
 
   const frame = form.closest("turbo-frame")
-  if (!frame || !stashes.has(frame.id)) return
+  if (!frame || !stashes.has(frame)) return
 
   restorePicker(frame)
 }
@@ -230,35 +198,19 @@ export default class extends Controller {
     const onPicker = !this.element.querySelector(".bullet-composer")
 
     if (enteringForm && onPicker) {
-      stashes.set(this.element.id, this.element.innerHTML)
+      stashes.set(this.element, this.element.innerHTML)
     }
-
-    const pendingType = this.pendingTransitionType
-    const frame = this.element
 
     event.detail.render = (currentFrame, newFrame) => {
       const transition = swapWithViewTransition(() => {
         currentFrame.innerHTML = newFrame.innerHTML
-        if (pendingType) labelSharedElement(currentFrame, pendingType)
       })
 
-      const cleanup = () => {
-        clearSharedElements(frame)
-        this.pendingTransitionType = null
-        this.#bindForm()
-      }
+      const cleanup = () => this.#bindForm()
 
       if (transition) transition.finished.then(cleanup)
       else cleanup()
     }
-  }
-
-  markTransition(event) {
-    const type = event.currentTarget.dataset.composerTransitionType
-    if (!type) return
-
-    this.pendingTransitionType = type
-    event.currentTarget.style.viewTransitionName = sharedElementName(type)
   }
 
   #frameLoad(event) {
@@ -267,8 +219,27 @@ export default class extends Controller {
     this.#bindForm()
   }
 
+  // The composer <-> picker/list view transition is intentionally one-way:
+  // entering the composer morphs the trigger into the type pill, but
+  // leaving it (e.g. the full-page composer's "Back" link) should not play
+  // that morph in reverse. Clearing the name right before the click's Drive
+  // visit starts means this document has nothing to pair with the shared
+  // name on the destination, so the browser just fades instead of morphing.
+  skipReturnTransition() {
+    document.querySelectorAll("[data-composer-transition-type]").forEach((element) => {
+      element.style.viewTransitionName = "none"
+    })
+  }
+
   cancel(event) {
     event.preventDefault()
+
+    const dialog = this.element.closest("dialog")
+    if (dialog?.open) {
+      dialog.close()
+      return
+    }
+
     tryCancelFrame(this.element)
   }
 

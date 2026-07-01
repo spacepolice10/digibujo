@@ -1,6 +1,6 @@
 <dialog id="<%= id %>" class="dialog" data-dialog-target="dialog" data-action="click->dialog#backdropHide turbo:submit-end->dialog#submitEnd">
   <div class="dialog--body">
-    <button type="button" class="dialog--hide" commandfor="<%= id %>" command="close">
+    <button type="button" class="dialog--hide button--primary button--icon button--circle" commandfor="<%= id %>" command="close" aria-label="Close">
       <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
     </button>
     <%= yield %>

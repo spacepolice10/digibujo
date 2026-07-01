@@ -22,7 +22,7 @@ Lexxy.configure({
   },
   inline: {
     extensions: [InlinePastingExtension, PromptActionExtension],
-    attachments: false,
+    attachments: true,
     toolbar: false,
     multiLine: false,
     richText: true,

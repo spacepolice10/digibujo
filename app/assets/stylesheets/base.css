@@ -59,13 +59,13 @@
 
   /* Focus — thin soft ring, offset outward; follows border-radius on controls */
   *:focus-visible {
-    border-radius: var(--radius-base);
-    outline: var(--radius-subtle) solid color-mix(
+    border-radius: var(--radius-subtle);
+    outline: 1px solid color-mix(
       in oklch,
       var(--color-stroke-base) 40%,
       transparent
     );
-    outline-offset: var(--radius-subtle);
+    outline-offset: 2px;
     box-shadow: none;
     transition: none;
   }

@@ -1,5 +1,6 @@
 <%# locals: (note:, selected_date: nil) %>
-<turbo-frame id="<%= dom_id(note) %>" class="bullet" data-bullet-type="note">
+<turbo-frame id="<%= dom_id(note) %>" class="bullet" data-bullet-type="note"
+             <% if note.bulletable.mood.present? %>data-note-mood="<%= note.bulletable.mood %>"<% end %>>
   <div class="bullet--marker-slot">
     <%= render "bullets/marker", bullet: note %>
   </div>

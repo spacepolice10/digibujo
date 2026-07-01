@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CollectionsController < ApplicationController
-  include BulletListing, PrepareBullets
+  include PrepareBullets
   before_action :set_collection, only: %i[show destroy]
   before_action :prepare_collect_context, only: %i[new create]
 
@@ -54,7 +54,10 @@ class CollectionsController < ApplicationController
   end
 
   def show
-    set_bullet_listing(@collection)
+    @bullets = set_page_and_extract_portion_from(
+      Current.user.bullets.where(bucket_id: @collection.bucket.id).active.distinct,
+      per_page: [5, 15, 30, 50]
+    )
   end
 
   def destroy

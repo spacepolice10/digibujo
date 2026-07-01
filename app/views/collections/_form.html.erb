@@ -17,15 +17,6 @@
         aria_label: "Collection icon",
         hint: "Pick an emoji to make this collection easy to spot." %>
 
-  <div class="form-group">
-    <%= label_tag "collection[description]", "Description", class: "form-label" %>
-    <small class="form-hint">Optional. A short note about what belongs in this collection.</small>
-    <%= text_area_tag "collection[description]",
-          collection.try(:bucket)&.description,
-          class: "form-input",
-          rows: 3,
-          id: "collection_description" %>
-  </div>
 
   <% if bullet_ids.present? %>
     <%= f.submit "Create and collect", class: "button--primary form--submit" %>

@@ -1,15 +1,18 @@
-<%# locals: (voice:, compact: false, hide_duration: false) %>
+<%# locals: (voice: nil, preview: false, src: nil, duration_seconds: nil, compact: false, hide_duration: false) %>
+<% duration = duration_seconds || voice&.duration_seconds.to_i %>
+<% audio_src = src || (voice&.recording&.attached? ? url_for(voice.recording) : nil) %>
 <div class="voice--playback<%= " voice--playback-compact" if compact %>"
      data-controller="voice-player"
-     data-voice-player-duration-value="<%= voice.duration_seconds.to_i %>">
+     data-voice-player-duration-value="<%= duration %>">
   <audio class="utilities--sr-only"
          data-voice-player-target="audio"
+         <% if preview %>data-voice-recorder-target="preview"<% end %>
          preload="metadata"
-         src="<%= url_for(voice.recording) %>"
+         <% if audio_src.present? %>src="<%= audio_src %>"<% end %>
          aria-hidden="true"></audio>
 
   <button type="button"
-          class="button--secondary button--icon button--circle voice--play"
+          class="button--tertiary button--icon voice--play"
           data-voice-player-target="playButton"
           data-action="voice-player#toggle"
           aria-label="Play">
@@ -23,13 +26,13 @@
        role="slider"
        aria-label="Playback position"
        aria-valuemin="0"
-       aria-valuemax="<%= voice.duration_seconds.to_i %>"
+       aria-valuemax="<%= duration %>"
        aria-valuenow="0"
        tabindex="0">
     <div class="voice--progress-fill" data-voice-player-target="progressFill"></div>
   </div>
 
-  <% if voice.duration_seconds.present? && !hide_duration %>
-    <span class="voice--duration utilities--text-sm"><%= voice.duration_seconds %>s</span>
+  <% if duration.positive? && !hide_duration %>
+    <span class="voice--duration utilities--text-sm"><%= duration %>s</span>
   <% end %>
 </div>

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class SprintsController < ApplicationController
-  include BulletListing, PrepareBullets
+  include BulletListing, PrepareBullets, SprintAccessible
   before_action :set_sprint, only: %i[show destroy]
   before_action :prepare_collect_context, only: %i[new create]
 

@@ -1,8 +1,29 @@
-<%= tag.div(flash[:alert], style: "color:red") if flash[:alert] %>
-<%= tag.div(flash[:notice], style: "color:green") if flash[:notice] %>
+<% content_for(:title) { "Finish signup" } %>
 
-<p>Welcome. Finish signup for <strong><%= @signup.user.email_address %></strong>.</p>
+<div class="session--page">
+  <div class="form--surface">
+    <%= render "sessions/flash" %>
 
-<%= form_with url: signup_completion_path do |form| %>
-  <%= form.submit "Create account" %>
-<% end %>
+    <% if @signup.errors.any? %>
+      <div class="form--errors" role="alert">
+        <ul>
+          <% @signup.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%= form_with url: signup_completion_path, class: "form form--strong" do |form| %>
+      <div class="session--intro">
+        <h1 class="session--title">You're almost there</h1>
+        <p class="form-hint session--description">
+          Finish setting up <strong><%= @signup.user.email_address %></strong>.
+          We'll create your future log and a loose notes collection.
+        </p>
+      </div>
+
+      <%= form.submit "Create account", class: "button--primary form--submit" %>
+    <% end %>
+  </div>
+</div>

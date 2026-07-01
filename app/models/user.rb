@@ -30,6 +30,8 @@ class User < ApplicationRecord
   end
 
   def active_sprints
+    return Sprint.none unless Sprint.enabled?
+
     sprints.merge(Bucket.active).order(starts_on: :desc)
   end
 

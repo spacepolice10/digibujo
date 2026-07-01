@@ -1,4 +1,5 @@
-<%# locals: (bullet:, bullets_path: nil, editing: false) %>
+<%# locals: (bullet:, bullets_path: nil, editing: false, return_to: nil) %>
+<% bullet.body = "Record #{(bullet.pops_on || Date.current).strftime('%a, %b %-d')}" if bullet.body.blank? %>
 <%= form_with model: bullet, url: bullets_path, class: "bullet-composer", data: {
   controller: ("composer voice-recorder" unless editing),
   composer_editing: (editing || nil),
@@ -11,11 +12,12 @@
 }.compact do |fr| %>
   <%= fr.hidden_field :pops_on, value: bullet.pops_on %>
   <%= fr.hidden_field :bucket_id, value: bullet.bucket_id %>
-  <%= render "bullets/composer/action_text", form: fr, bullet: bullet, preset: "inline", placeholder: "Caption this voice memo…" %>
+  <%= hidden_field_tag :return_to, return_to if return_to.present? %>
+  <%= render "bullets/composer/action_text", form: fr, bullet: bullet, preset: "inline", placeholder: "Caption this voice memo…", autofocus: false %>
 
   <div class="voice-recorder">
     <div class="voice-recorder--preview" data-voice-recorder-target="previewContainer" hidden>
-      <audio controls data-voice-recorder-target="preview" aria-label="Recording preview"></audio>
+      <%= render "voices/playback", preview: true, duration_seconds: 0, compact: true, hide_duration: true %>
     </div>
     <p class="voice-recorder--unsupported utilities--text-sm" data-voice-recorder-target="unsupported" hidden>
       Voice recording is not supported in this browser.
@@ -32,11 +34,15 @@
 
     <div class="voice-recorder--controls" aria-label="Voice recording">
       <button type="button"
-              class="button--secondary button--icon voice-recorder--record"
+              class="button--secondary voice-recorder--record hotkey-hint hotkey-hint--always"
+              data-controller="hotkey"
+              data-hotkey="Shift+R"
               data-voice-recorder-target="recordButton"
-              data-action="voice-recorder#start"
-              aria-label="Start recording">
+              data-action="voice-recorder#start keydown.shift+r@document->hotkey#click"
+              aria-label="Start recording"
+              aria-keyshortcuts="Shift+R">
         <i class="icon" style="--icon-mask: var(--icon-microphone)" aria-hidden="true"></i>
+        <p>Record</p>
       </button>
       <button type="button"
               class="button--secondary button--icon voice-recorder--stop"
@@ -47,11 +53,11 @@
         <i class="icon" style="--icon-mask: var(--icon-square)" aria-hidden="true"></i>
       </button>
       <button type="button"
-              class="button--tertiary voice-recorder--discard"
+              class="button--secondary button--icon"
               data-voice-recorder-target="discardButton"
               data-action="voice-recorder#discard"
               hidden>
-        Discard
+        <i class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></i>
       </button>
       <span class="voice-recorder--timer utilities--text-sm" data-voice-recorder-target="timer" aria-live="polite">0:00</span>
       <span class="voice-recorder--status utilities--text-sm" data-voice-recorder-target="status" hidden></span>

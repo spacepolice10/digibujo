@@ -1,6 +1,6 @@
-<%# locals: (form:, bullet:, preset:, placeholder: nil) %>
+<%# locals: (form:, bullet:, preset:, placeholder: nil, autofocus: true) %>
 <% placeholder ||= preset == "note" ? "Add markdown notes, files or images..." : "What need to be done?" %>
-<%= form.rich_text_area :body, preset: preset, autofocus: true, placeholder: placeholder do %>
+<%= form.rich_text_area :body, preset: preset, autofocus: autofocus, placeholder: placeholder do %>
   <lexxy-prompt
     trigger="#"
     name="project"

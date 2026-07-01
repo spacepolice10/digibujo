@@ -13,5 +13,9 @@ class User::Settings < ApplicationRecord
   }.freeze
   SECTIONS = SECTION_COLUMNS.keys.freeze
 
+  APPEARANCES = %w[default warm cool nature cheese].freeze
+
   belongs_to :user
+
+  validates :appearance, inclusion: { in: APPEARANCES }
 end

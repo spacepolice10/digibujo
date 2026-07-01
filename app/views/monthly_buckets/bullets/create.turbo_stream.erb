@@ -1,3 +1,8 @@
-<%= turbo_stream.append dom_id(@monthly_bucket, @bullet.pops_on) do %>
+<% list_id = if @bullet.pops_on.present?
+  dom_id(@monthly_bucket, "date_#{@bullet.pops_on.to_date}_bullets")
+else
+  dom_id(@monthly_bucket, :unplanned_bullets)
+end %>
+<%= turbo_stream.append list_id do %>
   <%= render "monthly_buckets/bullets/bullet", bullet: @bullet %>
 <% end %>

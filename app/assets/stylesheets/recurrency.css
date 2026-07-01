@@ -1,24 +1,4 @@
 @layer components {
-  .recurrency--for-day {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
-  }
-
-  .recurrency--for-day-label {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    color: var(--color-fg-subtle);
-  }
-
-  .recurrency--for-day-label .icon {
-    width: var(--icon-size-subtle);
-    height: var(--icon-size-subtle);
-  }
-
   .recurrency--toggle-form {
     margin: 0;
     padding: 0;

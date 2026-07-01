@@ -4,9 +4,16 @@
       <i class="icon" style="--icon-mask: var(--icon-book)" aria-hidden="true"></i>
       Add collection
     <% end %>
-    <%= link_to new_sprint_path, class: "button--secondary layout--rail-action", data: { turbo_frame: "_top" } do %>
-      <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
-      Add sprint
+    <% if Sprint.enabled? %>
+      <%= link_to new_sprint_path, class: "button--secondary layout--rail-action", data: { turbo_frame: "_top" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
+        Add sprint
+      <% end %>
+    <% else %>
+      <button type="button" class="button--secondary layout--rail-action" disabled>
+        <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
+        Add sprint
+      </button>
     <% end %>
     <%= link_to new_monthly_bucket_path, class: "button--secondary layout--rail-action", data: { turbo_frame: "_top" } do %>
       <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
@@ -24,6 +31,7 @@
       <i class="icon" style="--icon-mask: var(--icon-report-medical)" aria-hidden="true"></i>
       Add recurrency
     <% end %>
+    <%= render "home/appearance" %>
   </aside>
 
   <div class="layout--surface">

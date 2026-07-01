@@ -1,0 +1,51 @@
+<% content_for(:title) { "New bullet" } %>
+<%# Scoped to this page rather than the shared layout so the type-picker ->
+    composer-form view transition doesn't fire on every Drive navigation
+    across the app - Turbo requires the meta tag on both the outgoing and
+    incoming page, and both states here render this same view. %>
+<% content_for(:head) { tag.meta(name: "view-transition", content: "same-origin") } %>
+<div class="layout--page">
+  <header class="layout--header">
+    <%= link_to (@return_to.presence || home_path), class: "button--tertiary",
+          data: { controller: "composer", action: "click->composer#skipReturnTransition" } do %>
+      <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+      Back
+    <% end %>
+  </header>
+
+  <% if @bullet.bulletable_type.blank? %>
+    <% types = [
+      { name: "Task", icon: "square", modifier: "task" },
+      { name: "Note", icon: "line-dashed", modifier: "note" },
+      { name: "Event", icon: "circle", modifier: "event" },
+      { name: "Voice", icon: "microphone", modifier: "voice" }
+    ] %>
+    <div class="bullet--composer-buttons">
+      <% types.each do |type| %>
+        <%= render "bullets/composer/open_composer_of",
+              path: new_bullet_path(bulletable_type: type[:name], pops_on: params[:pops_on], bucket_id: params[:bucket_id], return_to: @return_to),
+              frame: "_top",
+              **type %>
+      <% end %>
+    </div>
+  <% else %>
+    <% if @bullet.errors.any? %>
+      <div class="form--errors" role="alert">
+        <p><%= pluralize(@bullet.errors.count, "error") %> prevented this bullet from being saved:</p>
+        <ul>
+          <% @bullet.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="bullet" data-bullet-type="<%= @bullet.bulletable_type.downcase %>">
+      <%= render Bullet.composer_partial_of(@bullet.bulletable_type),
+            bullet: @bullet,
+            bullets_path: bullets_path,
+            return_to: @return_to,
+            editing: true %>
+    </div>
+  <% end %>
+</div>

@@ -1,22 +1,22 @@
-<%= link_to type[:path], class: [
-    "bullet--composer-create-button", "bullet--composer-create-button--#{type[:modifier]}", ("button--hotkey" if type[:hotkey].present?)
+<%# locals: (path:, name:, icon:, modifier:, hidden: false, frame: "_self", hotkey: nil, hotkey_action: nil) %>
+<%= link_to path, class: [
+    "bullet--composer-create-button", "bullet--composer-create-button--#{modifier}",
+    ("hotkey-hint" if hotkey && !hidden),
+    ("utilities--sr-only" if hidden)
   ].compact, data: {
-    turbo_frame: "_self",
-    composer_transition_type: type[:modifier],
-    controller: ("hotkey" if type[:hotkey].present?),
-    hotkey: type[:hotkey],
-    action: [
-      ("click->composer#markTransition"),
-      (hotkey_click_action(type[:hotkey]) if type[:hotkey].present?)
-    ].compact.join(" ")
+    turbo_frame: frame,
+    composer_transition_type: modifier,
+    controller: ("hotkey" if hotkey),
+    hotkey: hotkey,
+    action: hotkey_action
   }.compact, aria: {
-    label: "Add #{type[:name]}",
-    keyshortcuts: type[:hotkey]
+    label: "Add #{name}",
+    keyshortcuts: hotkey
   }.compact do %>
   <i
     class="icon"
-    style="--icon-mask: var(--icon-<%= type[:icon].dasherize %>)"
+    style="--icon-mask: var(--icon-<%= icon.dasherize %>)"
     aria-hidden="true"
   ></i>
-  Add <%= type[:name].downcase %>
+  Add <%= name.downcase %>
 <% end %>

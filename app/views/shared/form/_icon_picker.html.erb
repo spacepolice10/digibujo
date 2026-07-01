@@ -4,11 +4,12 @@
   <% if hint.present? %>
     <small class="form-hint"><%= hint %></small>
   <% end %>
-  <div class="form--icon-picker" role="radiogroup" aria-label="<%= aria_label %>">
+  <div class="form--picker form--icon-picker" role="radiogroup" aria-label="<%= aria_label %>">
     <% Iconable::ICON_MAPPINGS.each do |key| %>
-      <label class="form--icon-option">
+      <label class="form--picker-option">
         <%= form.radio_button :icon, key %>
-        <%= image_tag "tweemoji/#{key}.svg", alt: "", class: "form--icon-image" %>
+        <%= image_tag "tweemoji/#{key}.svg", alt: "", class: "form--picker-control form--icon-image" %>
+        <span class="utilities--sr-only"><%= key.humanize %></span>
       </label>
     <% end %>
   </div>

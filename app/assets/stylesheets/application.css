@@ -19,6 +19,7 @@
 @import "utilities.css";
 @import "icons.css";
 @import "button.css";
+@import "hotkey-hint.css";
 @import "form.css";
 @import "pill.css";
 @import "hint.css";
@@ -28,6 +29,7 @@
 @import "bullet-composer.css";
 @import "date-picker.css";
 @import "bucket.css";
+@import "collection.css";
 
 @import "daylog.css";
 @import "pinned.css";

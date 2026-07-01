@@ -1,12 +1,31 @@
-<%= tag.div(flash[:alert], style: "color:red") if flash[:alert] %>
-<%= tag.div(flash[:notice], style: "color:green") if flash[:notice] %>
+<% content_for(:title) { "Enter code" } %>
 
-<p>We sent a code to <strong><%= @email %></strong></p>
+<div class="session--page">
+  <div class="form--surface">
+    <%= render "sessions/flash" %>
 
-<%= form_with url: session_code_path do |form| %>
-  <%= form.text_field :code, required: true, autofocus: true, autocomplete: "one-time-code", inputmode: "text", maxlength: 6, placeholder: "Enter 6-character code", style: "font-family: monospace; text-transform: uppercase; letter-spacing: 4px;" %><br>
-  <%= form.submit "Verify code" %>
-<% end %>
-<br>
+    <%= form_with url: session_code_path, class: "form form--strong" do |form| %>
+      <div class="session--intro">
+        <h1 class="session--title">Check your email</h1>
+        <p class="form-hint session--description">We sent a 6-character code to <strong><%= @email %></strong>.</p>
+      </div>
 
-<%= link_to "Didn't receive it? Try again", new_session_path %>
+      <div class="form-group">
+        <%= form.label :code, "Login code", class: "form-label" %>
+        <%= form.text_field :code,
+              class: "form-input session--code-input",
+              required: true,
+              autofocus: true,
+              autocomplete: "one-time-code",
+              inputmode: "text",
+              maxlength: 6,
+              placeholder: "······",
+              aria: { label: "6-character login code" } %>
+      </div>
+
+      <%= form.submit "Verify code", class: "button--primary form--submit" %>
+    <% end %>
+  </div>
+
+  <%= link_to "Didn't receive it? Try again", new_session_path, class: "session--footer-link" %>
+</div>

@@ -25,8 +25,20 @@
     width: auto;
   }
 
+  .monthly-bucket--heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--spacing-horizontal-half);
+    margin-bottom: var(--spacing-vertical);
+  }
+
+  .monthly-bucket--heading .layout--surface-name {
+    margin: 0;
+  }
+
   .monthly-bucket--period {
-    margin: calc(var(--spacing-vertical) * -1) 0 var(--spacing-vertical);
+    margin: 0;
     color: var(--color-fg-subtle);
   }
 
@@ -62,42 +74,6 @@
   .monthly-bucket--calendar-body {
     display: flex;
     flex-direction: column;
-  }
-
-  .monthly-bucket--habits {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
-    margin-block: var(--radius-subtle);
-  }
-
-  .monthly-bucket--habit {
-    display: inline-flex;
-    align-items: center;
-    gap: calc(var(--spacing-horizontal-half) / 2);
-    min-width: 0;
-  }
-
-  .monthly-bucket--habit .recurrency--header-chip {
-    display: contents;
-  }
-
-  .monthly-bucket--habit .recurrency--chip {
-    width: var(--icon-size-base);
-    height: var(--icon-size-base);
-    border: 0;
-    border-radius: var(--radius-subtle);
-    background: transparent;
-  }
-
-  .monthly-bucket--habit .recurrency--chip-neutral {
-    background: transparent;
-  }
-
-  .monthly-bucket--habit-name {
-    font-size: var(--font-size-subtle);
-    color: var(--color-fg-base);
   }
 
   .monthly-bucket--date-band {
@@ -164,16 +140,32 @@
   }
 
   @media (hover: hover) {
-    .monthly-bucket--calendar .monthly-bucket--date-composer:not(:has(.bullet-composer)) {
+    .monthly-bucket--calendar .monthly-bucket--date-add {
       visibility: hidden;
       pointer-events: none;
     }
 
-    .monthly-bucket--calendar .monthly-bucket--date-band:is(:hover, :focus-within) .monthly-bucket--date-composer:not(:has(.bullet-composer)),
-    .monthly-bucket--calendar .monthly-bucket--date-composer:has(.bullet-composer) {
+    .monthly-bucket--calendar .monthly-bucket--date-band:is(:hover, :focus-within) .monthly-bucket--date-add {
       visibility: visible;
       pointer-events: auto;
     }
+  }
+
+  @media (hover: none) {
+    .monthly-bucket--calendar .monthly-bucket--date-add {
+      visibility: visible;
+      pointer-events: auto;
+    }
+  }
+
+  .monthly-bucket--composer-dialog .bullet-composer {
+    width: 100%;
+    left: 0;
+    top: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
   }
 
   .monthly-bucket--divider {

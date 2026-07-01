@@ -1,32 +1,16 @@
 <div class="layout--page daylog--page" data-controller="daylog bulk-menu">
   <turbo-frame id="bullets-timeline">
     <div id="bullets-header" class="layout--header daylog--header">
-      <div class="layout--header-actions daylog--header-recurrencies">
-        <% scheduled_recurrencies = @recurrency_tracker.recurrencies.select { |recurrency| recurrency.scheduled_on?(@selected_date) } %>
-
-        <% if scheduled_recurrencies.any? %>
-          <div
-            class="recurrency--for-day"
-            role="group"
-            aria-label="Recurrency for <%= @selected_date == Date.current ? "this day" : @selected_date.strftime("%B %-d") %>"
-          >
-            <span class="recurrency--for-day-label" aria-hidden="true">
-              <i
-                class="icon"
-                style="--icon-mask: var(--icon-calendar-repeat)"
-                aria-hidden="true"
-              ></i>
-            </span>
-
-            <% scheduled_recurrencies.each do |recurrency| %>
-              <%= render "recurrencies/cell", recurrency: recurrency, date: @selected_date, tracker: @recurrency_tracker, variant: :chip, dom_key: "header" %>
-            <% end %>
-          </div>
-        <% end %>
-      </div>
-
       <div class="layout--header-actions daylog--header-nav">
-        <%= link_to daylog_path(date: (@selected_date - 1.day).iso8601), data: { turbo_action: "advance" }, class: "button--tertiary", aria: { label: "Show previous day" } do %>
+        <%= link_to daylog_path(date: (@selected_date - 1.day).iso8601),
+              data: {
+                turbo_action: "advance",
+                controller: "hotkey",
+                hotkey: "←",
+                action: "keydown.shift+left@document->hotkey#click"
+              },
+              class: "button--tertiary hotkey-hint",
+              aria: { label: "Show previous day", keyshortcuts: "Shift+ArrowLeft" } do %>
           <i
             class="icon"
             style="--icon-mask: var(--icon-arrow-left)"
@@ -58,7 +42,15 @@
           tabindex="-1"
         >
 
-        <%= link_to daylog_path(date: (@selected_date + 1.day).iso8601), data: { turbo_action: "advance" }, class: "button--tertiary", aria: { label: "Show next day" } do %>
+        <%= link_to daylog_path(date: (@selected_date + 1.day).iso8601),
+              data: {
+                turbo_action: "advance",
+                controller: "hotkey",
+                hotkey: "→",
+                action: "keydown.shift+right@document->hotkey#click"
+              },
+              class: "button--tertiary hotkey-hint",
+              aria: { label: "Show next day", keyshortcuts: "Shift+ArrowRight" } do %>
           <i
             class="icon icon--flip-h"
             style="--icon-mask: var(--icon-arrow-right)"
@@ -69,32 +61,28 @@
 
       <div class="layout--header-actions daylog--header-today">
         <% unless @selected_date == Date.current %>
-          <%= link_to "Today", daylog_path, data: { turbo_action: "advance" }, class: "button--tertiary" %>
+          <%= link_to "Today", daylog_path, data: { turbo_action: "advance" }, class: "button--accent daylog--today" %>
         <% end %>
       </div>
     </div>
 
-    <div id="bullets" data-bulk-menu-target="list">
-      <%= render "pagination/paginated_records",
-          page: @page,
-          selected_date: @selected_date,
-          pagination_link_path: ->(next_param) { daylog_path(date: @selected_date.iso8601, page: next_param) } %>
+    <div class="layout--surface bucket--list">
+      <%= render "bullets/composer/jump" %>
+
+      <div id="bullets" data-bulk-menu-target="list">
+        <%= render "pagination/paginated_records",
+            page: @page,
+            selected_date: @selected_date,
+            pagination_link_path: ->(next_param) { daylog_path(date: @selected_date.iso8601, page: next_param) } %>
+      </div>
+
+      <%= render "bullets/composer/dock", selected_date: @selected_date %>
     </div>
+
+    <p class="daylog--hotkey-hint">
+      Hold <span class="hotkey-hint--key">Shift</span> to see hotkeys
+    </p>
 
     <%= render "bullets/bulk_menu" %>
-
-    <turbo-frame
-      id="bullet_composer"
-      class="daylog--composer bullet_pops_on_<%= @selected_date %>"
-      data-controller="composer"
-    >
-      <% options = composer_type_options(->(**params) { new_daylog_bullet_path(date: @selected_date, pops_on: @selected_date, **params) }) %>
-
-      <div class="bullet--composer-buttons">
-        <% options.each do |type| %>
-          <%= render "bullets/composer/open_composer_of", type: type %>
-        <% end %>
-      </div>
-    </turbo-frame>
   </turbo-frame>
 </div>

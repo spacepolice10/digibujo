@@ -1,11 +1,12 @@
 <%# locals: (form:, aria_label:) %>
 <div class="form-group">
   <span class="form-label">Colour</span>
-  <div class="form--colour-picker" role="radiogroup" aria-label="<%= aria_label %>">
+  <div class="form--picker form--colour-picker" role="radiogroup" aria-label="<%= aria_label %>">
     <% Colourable::COLOUR_MAPPINGS.each_key do |name| %>
-      <label class="form--colour-option">
+      <label class="form--picker-option">
         <%= form.radio_button :colour, name %>
-        <span class="form--colour-swatch" style="background: <%= Colourable.colour_bg_variable_for(name) %>" aria-hidden="true"></span>
+        <span class="form--picker-control form--colour-swatch" style="background: <%= Colourable.colour_bg_variable_for(name) %>" aria-hidden="true"></span>
+        <span class="utilities--sr-only"><%= name.capitalize %></span>
       </label>
     <% end %>
   </div>

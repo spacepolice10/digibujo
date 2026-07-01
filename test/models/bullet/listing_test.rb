@@ -43,19 +43,21 @@ class Bullet::ListingTest < ActiveSupport::TestCase
   end
 
   test 'sprint context lists active bullets in bucket' do
-    sprint = create_sprint!(
-      @user,
-      name: 'launch',
-      starts_on: Date.current,
-      ends_on: Date.current + 6.days
-    )
-    collected = create_bullet!(body: 'Collected', bucket_id: sprint.bucket.id)
-    create_bullet!(body: 'Timeline')
+    with_sprints_enabled do
+      sprint = create_sprint!(
+        @user,
+        name: 'launch',
+        starts_on: Date.current,
+        ends_on: Date.current + 6.days
+      )
+      collected = create_bullet!(body: 'Collected', bucket_id: sprint.bucket.id)
+      create_bullet!(body: 'Timeline')
 
-    listing = Bullet::Listing.for(user: @user, context: sprint, params: @params)
+      listing = Bullet::Listing.for(user: @user, context: sprint, params: @params)
 
-    assert_equal [collected], listing.relation.to_a
-    assert_equal sprint_path(sprint), listing.path
+      assert_equal [collected], listing.relation.to_a
+      assert_equal sprint_path(sprint), listing.path
+    end
   end
 
   test 'type filter narrows to bulletable type' do

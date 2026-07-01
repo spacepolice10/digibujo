@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html<% if Current.user %> data-appearance="<%= Current.user.settings!.appearance %>"<% end %> data-controller="hotkey-hint">
   <head>
     <title><%= content_for(:title) || "Digibujo" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">

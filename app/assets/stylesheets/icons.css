@@ -59,6 +59,8 @@
     --icon-pause: url("icon-pause.svg");
     --icon-expand: url("icon-expand.svg");
     --icon-x: url("icon-x.svg");
+    --icon-mail: url("icon-mail.svg");
+    --icon-phone: url("icon-phone.svg");
   }
 
   .icon--spin {

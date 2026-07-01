@@ -1,0 +1,73 @@
+@layer components {
+  /*
+   * Keyboard shortcut badges (::after on .hotkey-hint).
+   * --always: subtle in-flow badge (menu, bulk menu).
+   * Shift-held: popover chrome; absolutely positioned to avoid layout shift.
+   */
+
+  @media (pointer: fine) {
+    .hotkey-hint[data-hotkey]::after {
+      content: attr(data-hotkey);
+      font-size: var(--font-size-subtle);
+      pointer-events: none;
+    }
+
+    .hotkey-hint--always[data-hotkey]::after,
+    .hotkey-hint--key {
+      padding: 0 var(--spacing-horizontal-half);
+      border: 1px solid var(--color-stroke-base);
+      border-radius: var(--radius-subtle);
+      color: var(--color-fg-subtle);
+      opacity: var(--opacity-half);
+    }
+
+    .hotkey-hint--key {
+      font-size: var(--font-size-subtle);
+    }
+
+    .button--primary.hotkey-hint--always[data-hotkey]::after,
+    .button--secondary.hotkey-hint--always[data-hotkey]::after,
+    .button--tertiary.hotkey-hint--always[data-hotkey]::after {
+      margin-inline-start: auto;
+    }
+
+    .menu--navigation-item.hotkey-hint--always[data-hotkey]::after {
+      margin-inline-start: 0;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .hotkey-hint[data-hotkey]:not(.hotkey-hint--always) {
+      position: relative;
+    }
+
+    .hotkey-hint[data-hotkey]:not(.hotkey-hint--always)::after {
+      position: absolute;
+      inset-inline-start: 0;
+      inset-block-start: 0;
+      translate: -0% -50%;
+      z-index: 1;
+      box-sizing: border-box;
+      padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+      background: var(--color-bg-strong);
+      color: var(--color-fg-strong);
+      border: 1px solid var(--color-stroke-strong);
+      border-radius: var(--radius-base);
+      box-shadow: var(--shadow-base);
+      font-weight: var(--font-weight-base);
+      opacity: 0;
+      transform: translateY(var(--spacing-vertical-half));
+      transition:
+        opacity 80ms ease,
+        transform 80ms ease;
+    }
+
+    html.show-hotkey-hint .hotkey-hint[data-hotkey]:not(.hotkey-hint--always)::after {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 0.6s;
+    }
+  }
+}

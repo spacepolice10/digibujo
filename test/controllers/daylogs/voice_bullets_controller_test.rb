@@ -11,7 +11,7 @@ module Daylogs
     end
 
     test 'new voice renders recorder composer' do
-      get new_daylog_bullet_path(date: @selected_date, bulletable_type: 'Voice'),
+      get new_daylog_bullet_path(date: @selected_date, pops_on: @selected_date, bulletable_type: 'Voice'),
           headers: { 'Turbo-Frame' => 'bullet_composer' }
 
       assert_response :success
@@ -19,6 +19,13 @@ module Daylogs
       assert_select 'turbo-frame#bullet_composer .bullet-composer--rail .voice-recorder--controls'
       assert_select 'turbo-frame#bullet_composer .bullet-composer--type-pill[data-bullet-type=?]',
                     'voice', text: /Voice/
+      assert_select 'turbo-frame#bullet_composer lexxy-editor[preset=?]:not([autofocus])', 'inline'
+      assert_select 'turbo-frame#bullet_composer .voice-recorder--record[data-controller=?][data-hotkey=?]',
+                    'hotkey', 'Shift+R'
+      assert_select 'turbo-frame#bullet_composer .voice-recorder--record[data-action*="keydown.shift+r@document->hotkey#click"]'
+      assert_select 'turbo-frame#bullet_composer .voice-recorder--preview [data-controller=?]', 'voice-player'
+      assert_select 'turbo-frame#bullet_composer .voice-recorder--preview audio[controls]', count: 0
+      assert_match "Record #{@selected_date.strftime('%a, %b %-d')}", response.body
     end
 
     test 'create voice appends playable bullet with caption and recording' do

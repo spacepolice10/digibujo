@@ -11,7 +11,8 @@
   }
 
   body > .layout--workspace.layout--workspace-page > .layout--rail:first-of-type .layout--rail-action,
-  body > .layout--workspace.layout--workspace-page > .layout--rail:first-of-type > form {
+  body > .layout--workspace.layout--workspace-page > .layout--rail:first-of-type > form,
+  body > .layout--workspace.layout--workspace-page > .layout--rail:first-of-type .home--appearance {
     margin-inline-start: auto;
   }
 
@@ -79,5 +80,39 @@
 
   .home--section[open] > :not(summary) {
     padding-top: var(--spacing-vertical);
+  }
+
+  .home--appearance {
+    width: fit-content;
+    margin-block-start: var(--spacing-horizontal-half);
+  }
+
+  .home--appearance .form--colour-picker {
+    gap: var(--spacing-horizontal-half);
+  }
+
+  .home--appearance .form--colour-swatch {
+    width: var(--icon-size-subtle);
+    height: var(--icon-size-subtle);
+  }
+
+  .home--appearance-swatch--default {
+    background: light-dark(oklch(0.97 0.004 80), oklch(0.19 0.007 82));
+  }
+
+  .home--appearance-swatch--warm {
+    background: light-dark(oklch(0.97 0.006 78), oklch(0.40 0.06 78));
+  }
+
+  .home--appearance-swatch--cool {
+    background: light-dark(oklch(0.97 0.006 250), oklch(0.40 0.06 255));
+  }
+
+  .home--appearance-swatch--nature {
+    background: light-dark(oklch(0.97 0.006 145), oklch(0.40 0.06 145));
+  }
+
+  .home--appearance-swatch--cheese {
+    background: light-dark(oklch(0.97 0.007 85), oklch(0.40 0.06 85));
   }
 }

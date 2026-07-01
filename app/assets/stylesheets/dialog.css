@@ -83,12 +83,14 @@
   }
 
   .dialog--hide {
-    position: relative;
+    position: absolute;
+    right: var(--spacing-vertical-half);
+    top: var(--spacing-vertical-half);
     z-index: var(--z-dialog);
-    appearance: none;
-    background-color: transparent;
-    border: 0;
-    align-self: flex-end;
+    width: var(--icon-size-base);
+    height: var(--icon-size-base);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-full);
   }
 
   .dialog--header,

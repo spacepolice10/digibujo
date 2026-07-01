@@ -84,10 +84,6 @@
     interest-delay: 0.2s;
   }
 
-  .recurrency--for-day [interestfor] {
-    interest-delay: 0.2s;
-  }
-
   .layout--filter-option {
     display: inline-flex;
     justify-content: center;

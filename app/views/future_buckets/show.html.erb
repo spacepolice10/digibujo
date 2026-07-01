@@ -22,12 +22,6 @@
           <% unplanned = monthly_bucket.bullets.where(pops_on: nil).order(created_at: :asc).includes(:bulletable) %>
           <%= render partial: "bullets/bullet", collection: unplanned, as: :bullet %>
         </div>
-        <%= link_to new_bullet_path(bucket_id: bucket.id, bulletable_type: "Task"),
-              data: { turbo_frame: "bullet_composer" },
-              class: "button--tertiary button--icon",
-              aria: { label: "Add bullet" } do %>
-          <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
-        <% end %>
       </div>
     <% end %>
 
@@ -35,12 +29,6 @@
       <%= link_to "+ Add month", new_monthly_bucket_path, class: "button--primary" %>
     </div>
   </div>
-
-  <turbo-frame id="bullet_composer" data-controller="composer">
-    <% composer_type_options(->(**params) { new_bullet_path(**params) }).each do |type| %>
-      <%= render "bullets/composer/open_composer_of", type: type %>
-    <% end %>
-  </turbo-frame>
 
   <%= render "bullets/bulk_menu" %>
 </div>

@@ -43,8 +43,11 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     get daylog_path(date: selected_date.iso8601)
 
     assert_response :success
-    assert_select "a[href='#{daylog_path(date: (selected_date - 1.day).iso8601)}']"
-    assert_select "a[href='#{daylog_path(date: (selected_date + 1.day).iso8601)}']"
+    assert_select "a[href='#{daylog_path(date: (selected_date - 1.day).iso8601)}']" \
+      "[data-action*='keydown.shift+left@document->hotkey#click'][data-hotkey='←']"
+    assert_select "a[href='#{daylog_path(date: (selected_date + 1.day).iso8601)}']" \
+      "[data-action*='keydown.shift+right@document->hotkey#click'][data-hotkey='→']"
+    assert_select "button[popovertarget='pinned_list'][data-action*='keydown.shift+p@document->hotkey#click'][data-hotkey='P']"
   end
 
   test 'daylog scopes bulk menu controls to the bullets list' do
@@ -86,6 +89,9 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
                       pops_on: selected_date,
                       bulletable_type: 'Note'
                     )
+      assert_select 'a[aria-label=?]', 'Add Task'
+      assert_select 'a[aria-label=?]', 'Add Event'
+      assert_select 'a[aria-label=?]', 'Add Note'
       assert_match(/Add task/, response.body)
       assert_match(/Add event/, response.body)
       assert_match(/Add note/, response.body)
@@ -136,16 +142,5 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Task line', response.body
     assert_match 'Note line', response.body
     assert_match 'Event line', response.body
-  end
-
-  test 'daylog renders recurrency chips in header when scheduled' do
-    create_recurrency!(@user, name: 'Morning run', colour: 'teal', icon: 'muscle')
-
-    get daylog_path
-
-    assert_response :success
-    assert_select '.recurrency--for-day .recurrency--chip.recurrency--chip-neutral'
-    assert_select '.recurrency--chip[data-bucket-colour]', count: 0
-    assert_select '.recurrency--day-panel', count: 0
   end
 end
