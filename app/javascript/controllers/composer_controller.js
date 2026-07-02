@@ -235,12 +235,18 @@ export default class extends Controller {
     event.preventDefault()
 
     const dialog = this.element.closest("dialog")
-    if (dialog?.open) {
+    if (dialog?.open && !dialog.classList.contains("bullet-composer--mobile-dialog")) {
       dialog.close()
       return
     }
 
-    tryCancelFrame(this.element)
+    const frame = this.#isFrame ? this.element : this.element.closest("turbo-frame")
+    if (frame && tryCancelFrame(frame)) return
+  }
+
+  dismiss() {
+    const frame = this.#isFrame ? this.element : this.element.closest("turbo-frame")
+    if (frame) restorePicker(frame)
   }
 
   #inlineSubmitKeydown(event) {

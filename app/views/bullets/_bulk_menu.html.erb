@@ -124,14 +124,14 @@
                    data-bulk-menu-target="collectsDropdown"></turbo-frame>
     </div>
 
-    <% if local_assigns[:review_migrate] %>
-      <%= form_with url: migrate_review_path(from: review_migrate[:from].iso8601, to: review_migrate[:to].iso8601),
-                    method: :post,
-                    data: { turbo_stream: true } do %>
+    <% if local_assigns[:review_period] %>
+      <%= form_with url: mark_as_reviewed_path, method: :post do %>
+        <%= hidden_field_tag :from, review_period[:from].iso8601 %>
+        <%= hidden_field_tag :to, review_period[:to].iso8601 %>
         <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
         <%= button_tag type: :submit, class: "button--secondary" do %>
           <span class="review--migration-mark" aria-hidden="true">›</span>
-          Mark migrated
+          Mark reviewed
         <% end %>
       <% end %>
     <% end %>

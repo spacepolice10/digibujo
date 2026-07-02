@@ -1,14 +1,15 @@
 @layer components {
-  body:has(> .tab-bar) {
+  body:has(> .tabbar--navigation) {
     margin-bottom: 0;
     padding-bottom: calc(var(--spacing-vertical-double) * 3 + env(safe-area-inset-bottom, 0px));
   }
 
-  .tab-bar {
+  .tabbar--navigation {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: var(--spacing-vertical-double);
+    border-radius: var(--radius-strong);
+    left: 50%;
+    transform: translateX(-50%);
     z-index: var(--z-dropdown);
     display: flex;
     align-items: stretch;
@@ -16,11 +17,11 @@
     padding: var(--spacing-vertical-half) var(--spacing-horizontal);
     padding-bottom: max(var(--spacing-vertical-half), env(safe-area-inset-bottom));
     background-color: var(--color-bg-base);
-    border-top: 1px solid var(--color-stroke-base);
+    border: 1px solid var(--color-stroke-base);
     box-shadow: var(--shadow-subtle);
   }
 
-  .tab-bar-item {
+  .tabbar-item {
     flex: 1;
     display: inline-flex;
     align-items: center;
@@ -47,9 +48,9 @@
       color: var(--color-fg-base);
     }
 
-    &.tab-bar-item--active {
+    &.tabbar-item--active {
       color: var(--color-fg-base);
-      background: var(--color-bg-subtle);
+      background: var(--model-color-2-bg);
     }
   }
 }

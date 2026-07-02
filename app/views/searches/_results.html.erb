@@ -9,10 +9,5 @@
     <p class="search--empty">No results for "<%= q %>"</p>
   <% end %>
 <% elsif selections&.any? %>
-  <h4 class="menu--section-heading">Recent</h4>
-  <ul class="layout--list menu--palette-list" role="listbox">
-    <% selections.each do |selection| %>
-      <%= render "searches/palette_item", entity: selection.searchable %>
-    <% end %>
-  </ul>
+  <%= render "searches/recent", selections: selections %>
 <% end %>

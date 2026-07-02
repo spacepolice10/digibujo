@@ -10,8 +10,7 @@
             class: "bucket--list-item-link",
             data: { turbo_frame: "_top" } do %>
         <div class="bucket--list-item-name">
-          <%= render "bullets/marker", bullet: pinnable %>
-          <span class="utilities--line-clamp-1"><%= pinnable.name %></span>
+          <%= render "bullets/search_palette", bullet: pinnable %>
         </div>
       <% end %>
     </li>
@@ -23,23 +22,13 @@
   <% if compact %>
     <li id="<%= dom_id(pinnable, :list_item) %>" class="layout--list-item">
       <%= link_to path, class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
-        <div class="bucket--list-item-name">
-          <div class="bucket--list-item-marker" data-bucket-colour="<%= pinnable.colour %>" aria-hidden="true">
-            <%= image_tag pinnable.icon_path, alt: "", class: "form--list-icon" %>
-          </div>
-          <span class="utilities--line-clamp-1"><%= pinnable.name %></span>
-        </div>
+        <%= render "buckets/search_palette", bucket: pinnable %>
       <% end %>
     </li>
   <% else %>
     <div id="<%= dom_id(pinnable, :list_item) %>" class="pinned--entity-item">
       <%= link_to path, class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
-        <div class="bucket--list-item-name">
-          <div class="bucket--list-item-marker" data-bucket-colour="<%= pinnable.colour %>" aria-hidden="true">
-            <%= image_tag pinnable.icon_path, alt: "", class: "form--list-icon" %>
-          </div>
-          <span class="utilities--line-clamp-1"><%= pinnable.name %></span>
-        </div>
+        <%= render "buckets/search_palette", bucket: pinnable %>
         <div class="bucket--list-item-meta utilities--line-clamp-1">
           <span><%= pinnable.bullets.count %> <%= "bullet".pluralize(pinnable.bullets.count) %></span>
         </div>
@@ -50,12 +39,7 @@
   <% if compact %>
     <li id="<%= dom_id(pinnable, :list_item) %>" class="layout--list-item">
       <%= link_to project_path(pinnable), class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
-        <div class="bucket--list-item-name">
-          <div class="bucket--list-item-marker" data-bucket-colour="<%= pinnable.colour %>" aria-hidden="true">
-            <%= image_tag pinnable.icon_path, alt: "", class: "form--list-icon" %>
-          </div>
-          <span class="utilities--line-clamp-1"><%= pinnable.name %></span>
-        </div>
+        <%= render "projects/search_palette", project: pinnable %>
       <% end %>
     </li>
   <% else %>
@@ -77,16 +61,7 @@
   <% if compact %>
     <li id="<%= dom_id(pinnable, :list_item) %>" class="layout--list-item">
       <%= link_to person_path(pinnable), class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
-        <div class="bucket--list-item-name">
-          <div class="bucket--list-item-marker" data-bucket-colour="<%= pinnable.colour %>" aria-hidden="true">
-            <% if pinnable.avatar.attached? %>
-              <%= image_tag pinnable.avatar, class: "person--avatar", alt: "" %>
-            <% else %>
-              <%= image_tag pinnable.icon_path, alt: "", class: "form--list-icon" %>
-            <% end %>
-          </div>
-          <span class="utilities--line-clamp-1"><%= pinnable.name %></span>
-        </div>
+        <%= render "people/search_palette", person: pinnable %>
       <% end %>
     </li>
   <% else %>

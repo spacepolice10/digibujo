@@ -5,7 +5,7 @@ const SEARCH_DEBOUNCE_MS = 20;
 
 export default class extends Controller {
   static targets = ["form", "textform"];
-  static values = { replaceLink: { type: Boolean, default: true }, historyUrl: String, selectionUrl: String };
+  static values = { selectionUrl: String };
 
   connect() {
     this.abortController = null;
@@ -13,6 +13,7 @@ export default class extends Controller {
       () => this.performSearch(),
       SEARCH_DEBOUNCE_MS,
     );
+    this.syncSearchActive();
   }
 
   disconnect() {
@@ -44,18 +45,19 @@ export default class extends Controller {
     if (!turboStreamHtml) return;
     if (!window.Turbo) return;
     window.Turbo.renderStreamMessage(turboStreamHtml);
-    if (this.replaceLinkValue) {
-      const historyUrl = this.hasHistoryUrlValue
-        ? new URL(this.historyUrlValue, window.location.origin)
-        : url;
-      historyUrl.searchParams.set("q", q);
-      history.replaceState({}, "", historyUrl.toString());
-    }
+    this.syncSearchActive();
   }
 
   cancelPendingRequest() {
     if (this.abortController) this.abortController.abort();
     this.abortController = null;
+  }
+
+  syncSearchActive() {
+    if (!this.hasTextformTarget) return;
+
+    const active = this.textformTarget.value.trim().length > 0;
+    this.element.classList.toggle("menu--search-active", active);
   }
 
   rememberSelection(event) {

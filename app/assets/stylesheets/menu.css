@@ -110,7 +110,6 @@
 
   .menu--palette-list {
     border-radius: var(--radius-strong);
-    padding-inline: var(--spacing-horizontal-half);
   }
 
   .menu--palette-item {
@@ -146,8 +145,13 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    width: var(--icon-size-subtle);
-    height: var(--icon-size-subtle);
+    width: var(--icon-size-base);
+    height: var(--icon-size-base);
+
+    .icon {
+      width: var(--icon-size-subtle);
+      height: var(--icon-size-subtle);
+    }
 
     &[data-bullet-type="task"] {
       color: var(--model-color-2);
@@ -160,5 +164,88 @@
     &[data-bullet-type="note"] {
       color: var(--model-color-4);
     }
+  }
+
+  body:has(.menu--page-mobile) {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+  }
+
+  .menu--page-mobile {
+    flex: 1;
+    min-height: 0;
+    gap: var(--spacing-vertical-double);
+  }
+
+  .menu--page-mobile > .menu--create-bucket {
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  .menu--create-bucket-button {
+    width: var(--icon-size-strong);
+    height: var(--icon-size-strong);
+
+    .icon {
+      width: var(--icon-size-base);
+      height: var(--icon-size-base);
+    }
+  }
+
+  .menu--create-bucket .dropdown-body {
+    left: 50%;
+    right: auto;
+    translate: -50% 0;
+    width: min(
+      calc(100vw - 2 * var(--spacing-horizontal)),
+      calc(var(--spacing-horizontal-double) * 12)
+    );
+    min-width: unset;
+    margin-inline: 0;
+  }
+
+  .menu--page-mobile > nav.menu--navigation {
+    flex-shrink: 0;
+    order: 1;
+  }
+
+  .menu--page-mobile > .menu--search {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    order: 0;
+  }
+
+  .menu--scroll {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical);
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .menu--search-active .menu--sections {
+    display: none;
+  }
+
+  .menu--create-bucket-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical-half);
+    width: 100%;
+  }
+
+  .menu--create-bucket-links {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical-half);
+  }
+
+  .menu--create-bucket-link {
+    width: 100%;
+    justify-content: flex-start;
   }
 }

@@ -68,8 +68,8 @@ class MigratableTest < ActiveSupport::TestCase
     assert_equal 'completed', @bullet.last_migration['action']
   end
 
-  test 'acknowledge_migration! marks acknowledged migration' do
-    @bullet.acknowledge_migration!
+  test 'mark_as_reviewed! marks acknowledged migration' do
+    @bullet.mark_as_reviewed!
 
     @bullet.reload
     assert @bullet.migrated?

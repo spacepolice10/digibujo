@@ -10,38 +10,23 @@ class MenuControllerTest < ActionDispatch::IntegrationTest
     sign_in_as @user
   end
 
-  test "show renders menu page on mobile" do
+  test "show redirects to home on mobile" do
     get menu_path, headers: { "User-Agent" => MOBILE_UA }
 
-    assert_response :success
-    assert_select "nav.menu--navigation[data-controller=?][data-grid-navigation-columns-value=?]", "grid-navigation", "4"
-    assert_select "nav.menu--navigation a.menu--navigation-item[data-grid-navigation-target=?]", "item", count: 4
-    assert_select "nav.menu--navigation a[href=?]", home_path
-    assert_select "nav.menu--navigation a[href=?]", daylog_path
-    assert_select "nav.menu--navigation a[href=?]", review_path
-    assert_select "nav.menu--navigation a[href^=?]", "/future_buckets/", count: 0
-    assert_select "form.search--form[action=?]", search_path
-    assert_select "label.search--label[for=?]", "q", text: "Search bullets, projects, collections, and people"
-    assert_select "input.search--textform[placeholder=?]", "Search…"
-    assert_select "turbo-frame#menu_search[src=?]", search_path(q: "")
+    assert_redirected_to home_path
   end
 
   test "show renders menu page on desktop" do
     get menu_path
 
     assert_response :success
+    assert_select ".menu--page-mobile", count: 0
     assert_select "nav[data-controller=?]", "grid-navigation"
     assert_select "form.search--form[action=?]", search_path
-    assert_select "label.search--label[for=?]", "q", text: "Search bullets, projects, collections, and people"
-    assert_select "input.search--textform[placeholder=?]", "Search…"
-    assert_select "turbo-frame#menu_search[src=?]", search_path(q: "")
-  end
-
-  test "show pre-fills search field from q param" do
-    get menu_path, params: { q: "hello" }
-
-    assert_response :success
-    assert_select "input.search--textform[value=?]", "hello"
-    assert_select "turbo-frame#menu_search[src=?]", search_path(q: "hello")
+    assert_select "label.form-label.utilities--sr-only[for=?]", "q", text: "Search bullets, projects, collections, and people"
+    assert_select "input.form-input[placeholder=?]", "Search…"
+    assert_select "turbo-frame#menu_search[src=?]", search_path
+    assert_select "[data-search-replace-link-value]", count: 0
+    assert_select "[data-search-history-url-value]", count: 0
   end
 end

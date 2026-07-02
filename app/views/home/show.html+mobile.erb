@@ -1,0 +1,120 @@
+<% content_for(:title, "Home") %>
+<div class="layout--page menu--page menu--page-mobile">
+  <details class="dropdown menu--create-bucket"
+           data-controller="dropdown">
+    <summary class="button--primary button--icon button--circle menu--create-bucket-button"
+             aria-label="Create">
+      <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
+    </summary>
+    <div class="dropdown-body menu--create-bucket-body" inert>
+      <%= render "menu/create_bucket" %>
+    </div>
+  </details>
+
+  <%= render "menu/navigation" %>
+
+  <div class="menu--search"
+       data-controller="combobox search"
+       data-search-selection-url-value="<%= search_selection_path %>">
+    <%= render "menu/search" %>
+
+    <div class="menu--scroll">
+      <%= render "menu/search_palette" %>
+
+      <div class="menu--sections">
+        <%= render layout: "menu/expandable_section", locals: { title: "Logs", icon: "calendar" } do %>
+          <ul class="layout--list bucket--list">
+            <li class="layout--list-item">
+              <%= link_to daylog_path, class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
+                <div class="bucket--list-item-name">
+                  <div class="bucket--list-item-marker" aria-hidden="true"></div>
+                  <span class="utilities--line-clamp-1">Today</span>
+                </div>
+
+                <div class="bucket--list-item-meta utilities--line-clamp-1">
+                  <span><%= pluralize(@daylog_bullets_number, "bullet") %></span>
+                </div>
+              <% end %>
+            </li>
+
+            <% if @future %>
+              <li id="<%= dom_id(@future, :list_item) %>" class="layout--list-item">
+                <%= link_to future_bucket_path(@future.bucketable), class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
+                  <div class="bucket--list-item-name">
+                    <div
+                      class="bucket--list-item-marker"
+                      data-bucket-colour="<%= @future.colour %>"
+                      aria-hidden="true"
+                    ></div>
+
+                    <span class="utilities--line-clamp-1"><%= @future.name %></span>
+                  </div>
+
+                  <div class="bucket--list-item-meta utilities--line-clamp-1">
+                    <span><%= @future_monthly_buckets.count %> months</span>
+                  </div>
+                <% end %>
+              </li>
+
+              <% @future_monthly_buckets.each do |monthly_bucket| %>
+                <li class="layout--list-item bucket--list-item-child">
+                  <%= link_to monthly_bucket_path(monthly_bucket),
+                        class: "bucket--list-item-link bucket--list-item-child-link",
+                        data: { turbo_frame: "_top", bucket_colour: monthly_bucket.colour } do %>
+                    <div class="bucket--list-item-name">
+                      <span class="bucket--child-dot-inner" aria-hidden="true"></span>
+
+                      <span class="utilities--line-clamp-1">
+                        <%= monthly_bucket.name %>
+                      </span>
+                    </div>
+                  <% end %>
+                </li>
+              <% end %>
+            <% end %>
+          </ul>
+        <% end %>
+
+        <% if @projects.any? %>
+          <%= render layout: "menu/expandable_section", locals: { title: "Projects", icon: "hash", show_more_path: projects_path } do %>
+            <ul class="layout--list bucket--list">
+              <%= render @projects %>
+            </ul>
+          <% end %>
+        <% end %>
+
+        <% if @collections.any? %>
+          <%= render layout: "menu/expandable_section", locals: { title: "Collections", icon: "book", show_more_path: (@show_collections_more ? collections_path : nil) } do %>
+            <ul class="layout--list bucket--list">
+              <%= render @collections %>
+            </ul>
+          <% end %>
+        <% end %>
+
+        <% if @sprints.any? %>
+          <%= render layout: "menu/expandable_section", locals: { title: "Sprints", icon: "circle-check", show_more_path: (@show_sprints_more ? sprints_path : nil) } do %>
+            <ul class="layout--list bucket--list">
+              <%= render @sprints %>
+            </ul>
+          <% end %>
+        <% end %>
+
+        <% if @people.any? %>
+          <%= render layout: "menu/expandable_section", locals: { title: "People", icon: "face", show_more_path: people_path } do %>
+            <ul class="layout--list bucket--list">
+              <%= render @people %>
+            </ul>
+          <% end %>
+        <% end %>
+
+        <% if @recurrencies.any? %>
+          <%= render layout: "menu/expandable_section", locals: { title: "Recurrency", icon: "calendar-repeat" } do %>
+            <ul class="layout--list bucket--list">
+              <%= render partial: "recurrencies/recurrency", collection: @recurrencies, as: :recurrency, locals: { tracker: @recurrency_tracker } %>
+            </ul>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

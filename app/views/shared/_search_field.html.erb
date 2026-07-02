@@ -1,0 +1,20 @@
+<%# locals: (form: nil, name: :q, value: nil, label:, placeholder:, autofocus: false, autocomplete: "off", input_data: {}) %>
+<% if form %>
+  <%= form.label name, label, class: "form-label utilities--sr-only" %>
+  <%= form.search_field name,
+        value: value,
+        placeholder: placeholder,
+        class: "form-input",
+        autofocus: autofocus,
+        autocomplete: autocomplete,
+        data: input_data %>
+<% else %>
+  <%= label_tag name, label, class: "form-label utilities--sr-only" %>
+  <%= search_field_tag name,
+        value,
+        placeholder: placeholder,
+        class: "form-input",
+        autofocus: autofocus,
+        autocomplete: autocomplete,
+        data: input_data %>
+<% end %>

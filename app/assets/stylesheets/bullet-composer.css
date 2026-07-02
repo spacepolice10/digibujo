@@ -13,7 +13,8 @@
     border-top: 1px solid var(--color-stroke-base);
   }
 
-  .layout--surface:has([data-bulk-menu-target="list"][data-mode="select"]) .bullet-composer--dock {
+  .layout--surface:has([data-bulk-menu-target="list"][data-mode="select"]) .bullet-composer--dock,
+  .bucket--list:has([data-bulk-menu-target="list"][data-mode="select"]) .bullet-composer--dock {
     opacity: 0;
     pointer-events: none;
   }
@@ -54,7 +55,17 @@
     }
   }
 
-  .layout--surface:has(#bullet_composer .bullet-composer) {
+  .bullet-composer--dock-fixed {
+    position: fixed;
+    left: var(--spacing-horizontal);
+    right: var(--spacing-horizontal);
+    bottom: calc(var(--spacing-vertical-double) * 3 + env(safe-area-inset-bottom, 0px));
+    width: auto;
+    box-shadow: var(--shadow-base);
+  }
+
+  .layout--surface:has(#bullet_composer .bullet-composer),
+  .bucket--list:has(#bullet_composer .bullet-composer) {
     position: relative;
 
     &::before {
@@ -297,14 +308,16 @@
     flex-shrink: 0;
   }
 
-  .bullet-composer--rail .mood-picker {
+  .bullet-composer--rail .mood-picker,
+  .bullet-composer--mobile-rail .mood-picker {
     display: flex;
     align-items: center;
     gap: var(--spacing-horizontal-half);
     flex: 0 0 auto;
   }
 
-  .bullet-composer--rail .mood-option {
+  .bullet-composer--rail .mood-option,
+  .bullet-composer--mobile-rail .mood-option {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -319,17 +332,20 @@
     opacity: var(--opacity-half);
   }
 
-  .bullet-composer--rail .mood-option:has(input:checked) {
+  .bullet-composer--rail .mood-option:has(input:checked),
+  .bullet-composer--mobile-rail .mood-option:has(input:checked) {
     opacity: 1;
     border-color: var(--color-fg-base);
     background: var(--color-bg-base);
   }
 
-  .bullet-composer--rail .mood_marker {
+  .bullet-composer--rail .mood_marker,
+  .bullet-composer--mobile-rail .mood_marker {
     pointer-events: none;
   }
 
-  .bullet-composer--rail .voice-recorder--controls {
+  .bullet-composer--rail .voice-recorder--controls,
+  .bullet-composer--mobile-rail .voice-recorder--controls {
     display: flex;
     align-items: center;
     gap: var(--spacing-horizontal-half);
@@ -338,25 +354,30 @@
   }
 
   .bullet-composer--rail .voice-recorder--record,
-  .bullet-composer--rail .voice-recorder--stop {
+  .bullet-composer--rail .voice-recorder--stop,
+  .bullet-composer--mobile-rail .voice-recorder--record,
+  .bullet-composer--mobile-rail .voice-recorder--stop {
     height: var(--icon-size-base);
     color: var(--model-color-4);
     flex-shrink: 0;
   }
 
-  .bullet-composer--rail .voice-recorder--discard {
+  .bullet-composer--rail .voice-recorder--discard,
+  .bullet-composer--mobile-rail .voice-recorder--discard {
     padding: 0;
     font-size: var(--font-size-subtle);
     color: var(--color-fg-subtle);
   }
 
-  .bullet-composer--rail .voice-recorder--timer {
+  .bullet-composer--rail .voice-recorder--timer,
+  .bullet-composer--mobile-rail .voice-recorder--timer {
     color: var(--color-fg-subtle);
     font-variant-numeric: tabular-nums;
     flex-shrink: 0;
   }
 
-  .bullet-composer--rail .voice-recorder--status {
+  .bullet-composer--rail .voice-recorder--status,
+  .bullet-composer--mobile-rail .voice-recorder--status {
     color: var(--color-fg-subtle);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -424,5 +445,118 @@
 
   .voice-recorder--unsupported {
     color: var(--color-fg-subtle);
+  }
+
+  /* ── Mobile fullscreen composer ────────────────────────── */
+
+  .bullet-composer--mobile-dialog {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: var(--spacing-horizontal);
+    border: none;
+    border-radius: 0;
+    background: var(--color-bg-base);
+    opacity: 1;
+    scale: 1;
+    overflow: hidden;
+    z-index: var(--z-dialog);
+
+    &[open] {
+      animation: none;
+    }
+
+    &::backdrop {
+      background: var(--color-bg-base);
+    }
+  }
+
+  .bullet-composer--dock:has(.bullet-composer--mobile-dialog[open]) {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .layout--surface:has(.bullet-composer--mobile-dialog[open])::before,
+  .bucket--list:has(.bullet-composer--mobile-dialog[open])::before {
+    display: none;
+  }
+
+  .bullet-composer.bullet-composer--mobile {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    left: auto;
+    top: auto;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    gap: 0;
+    overflow: hidden;
+  }
+
+  .bullet-composer--mobile-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    font-size: var(--font-size-strong);
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: calc(
+      var(--icon-size-base) + var(--spacing-vertical-double) * 3 +
+        var(--bullet-composer-keyboard-offset, 0px) + env(safe-area-inset-bottom, 0px)
+    );
+  }
+
+  .bullet-composer--mobile-body lexxy-editor[preset="inline"],
+  .bullet-composer--mobile-body lexxy-editor[preset="inline"] .lexxy-editor__content,
+  .bullet-composer--mobile-body lexxy-editor[preset="note"],
+  .bullet-composer--mobile-body lexxy-editor[preset="note"] .lexxy-editor__content {
+    border-radius: 0;
+    font-size: inherit;
+  }
+
+  .bullet-composer--mobile-body .voice-recorder {
+    margin-block-start: var(--spacing-vertical);
+  }
+
+  .bullet-composer--mobile-rail:has(.mood-picker) {
+    row-gap: var(--spacing-vertical-half);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .bullet-composer--mobile-rail {
+    position: fixed;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: calc(100vw - var(--spacing-horizontal) * 4);
+    bottom: calc(
+      var(--bullet-composer-keyboard-offset, 0px) + var(--spacing-vertical-double) +
+        env(safe-area-inset-bottom, 0px)
+    );
+    z-index: var(--z-dialog);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    min-height: calc(var(--icon-size-base) + var(--spacing-vertical));
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-strong);
+    background: var(--color-bg-base);
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .bullet-composer--mobile-rail .bullet-composer--rail-actions {
+    margin-inline-start: auto;
   }
 }

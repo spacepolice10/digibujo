@@ -7,7 +7,7 @@ module Migratable
     migrated_at.present?
   end
 
-  def acknowledge_migration!
+  def mark_as_reviewed!
     mark_migration!(action: 'acknowledged', pops_on: pops_on)
   end
 

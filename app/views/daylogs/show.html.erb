@@ -1,7 +1,7 @@
 <div class="layout--page daylog--page" data-controller="daylog bulk-menu">
   <turbo-frame id="bullets-timeline">
     <div id="bullets-header" class="layout--header daylog--header">
-      <div class="layout--header-actions daylog--header-nav">
+      <div class="layout--header-actions daylog--header-navigation">
         <%= link_to daylog_path(date: (@selected_date - 1.day).iso8601),
               data: {
                 turbo_action: "advance",
@@ -66,7 +66,7 @@
       </div>
     </div>
 
-    <div class="layout--surface bucket--list">
+    <div class="bucket--list">
       <%= render "bullets/composer/jump" %>
 
       <div id="bullets" data-bulk-menu-target="list">
@@ -78,10 +78,6 @@
 
       <%= render "bullets/composer/dock", selected_date: @selected_date %>
     </div>
-
-    <p class="daylog--hotkey-hint">
-      Hold <span class="hotkey-hint--key">Shift</span> to see hotkeys
-    </p>
 
     <%= render "bullets/bulk_menu" %>
   </turbo-frame>

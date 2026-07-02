@@ -21,16 +21,15 @@
 <div class="bulk-menu--collect-picker" data-controller="combobox">
   <%= form_with url: new_collect_path,
         method: :get,
-        class: "bulk-menu--collect-section-search-form" do %>
+        class: "search--form" do %>
     <%= hidden_field_tag :bullet_ids, bullet_ids, data: { bulk_menu_target: "idList" } %>
     <%= hidden_field_tag :return_to, return_to if return_to.present? %>
-    <%= search_field_tag :q,
-          collects_q,
-          class: "form-input",
+    <%= render "shared/search_field",
+          value: collects_q,
+          label: "Search collections",
           placeholder: "Search collections",
           autofocus: true,
-          autocomplete: "off",
-          data: { action: "input->bulk-menu#searchCollects keydown->combobox#navigate" } %>
+          input_data: { action: "input->bulk-menu#searchCollects keydown->combobox#navigate" } %>
   <% end %>
 
   <div class="bulk-menu--collect-section">

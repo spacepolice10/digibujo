@@ -32,7 +32,7 @@ export default class extends Controller {
     const frame = document.getElementById(`bullet_${bulletId}`)
     if (!frame) return
 
-    const revert = this.#applyOptimisticMove(frame)
+    const revert = this.reviewDropValue ? null : this.#applyOptimisticMove(frame)
 
     const body = new FormData()
     body.append("bullet_ids", bulletId)
@@ -55,33 +55,17 @@ export default class extends Controller {
 
     const response = await fetch(this.popsUrlValue, { method, headers, body }).catch(() => null)
     if (!response) {
-      revert()
+      revert?.()
       return
     }
     if (response.ok) return
 
-    revert()
+    revert?.()
     const html = await response.text().catch(() => "")
     if (html && window.Turbo) window.Turbo.renderStreamMessage(html)
   }
 
   #applyOptimisticMove(frame) {
-    if (this.reviewDropValue) {
-      const removeTarget = frame.closest(".review--bullet") || frame
-      const originalParent = removeTarget.parentElement
-      const originalNextSibling = removeTarget.nextSibling
-
-      removeTarget.remove()
-
-      return () => {
-        if (originalNextSibling) {
-          originalParent.insertBefore(removeTarget, originalNextSibling)
-        } else {
-          originalParent.appendChild(removeTarget)
-        }
-      }
-    }
-
     const originalParent = frame.parentElement
     const originalNextSibling = frame.nextSibling
 

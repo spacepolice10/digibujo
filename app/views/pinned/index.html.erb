@@ -7,13 +7,15 @@
   </turbo-frame>
 <% else %>
   <% content_for(:title, "Pinned") %>
-  <div class="layout--page pinned--page" data-controller="bulk-menu">
+  <div class="layout--page pinned--page"<% unless request.variant.include?(:mobile) %> data-controller="bulk-menu"<% end %>>
     <section class="pinned--workspace">
       <%= render "pinned/entities_list",
             pinned_entities: @pinned_entities,
-            compact: false,
+            compact: request.variant.include?(:mobile),
             popover: false %>
     </section>
-    <%= render "bullets/bulk_menu" %>
+    <% unless request.variant.include?(:mobile) %>
+      <%= render "bullets/bulk_menu" %>
+    <% end %>
   </div>
 <% end %>

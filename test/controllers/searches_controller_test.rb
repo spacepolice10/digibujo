@@ -117,7 +117,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_path
 
     assert_response :success
-    assert_select "h4.menu--section-heading", text: "Recent"
+    assert_select "h4.search--section-heading", text: "Recent"
     assert_match "recent alpha", response.body
   end
 
@@ -125,7 +125,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_path
 
     assert_response :success
-    assert_select "h4.menu--section-heading", count: 0
+    assert_select "h4.search--section-heading", count: 0
     assert_select "ul.menu--palette-list", count: 0
   end
 
@@ -140,7 +140,23 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_path, params: { q: "recent" }
 
     assert_response :success
-    assert_select "h4.menu--section-heading", count: 0
+    assert_select "h4.search--section-heading", count: 0
     assert_match "recent beta", response.body
+  end
+
+  test "show with blank query renders expandable recent on mobile" do
+    project = create_project!(@user, name: "recent mobile")
+    Search::Selection.record!(
+      user: @user,
+      searchable_type: "Project",
+      searchable_id: project.id
+    )
+
+    get search_path, headers: { "User-Agent" => "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)" }
+
+    assert_response :success
+    assert_select "h4.search--section-heading", count: 0
+    assert_select "details.home--section summary .home--section-name", text: "Recent"
+    assert_match "recent mobile", response.body
   end
 end

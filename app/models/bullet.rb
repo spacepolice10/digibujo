@@ -40,6 +40,10 @@ class Bullet < ApplicationRecord
     "#{type_name.to_s.underscore.pluralize}/composer"
   end
 
+  scope :in_review_period, lambda { |from, to|
+    active.where(bucket_id: nil, migrated_at: nil, pops_on: from..to)
+  }
+
   private
 
   def bucket_belongs_to_user

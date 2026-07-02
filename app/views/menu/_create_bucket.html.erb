@@ -1,0 +1,38 @@
+<nav class="menu--create-bucket-links">
+  <%= link_to new_collection_path, class: "button--secondary menu--create-bucket-link", data: { turbo_frame: "_top" } do %>
+    <i class="icon" style="--icon-mask: var(--icon-book)" aria-hidden="true"></i>
+    Add collection
+  <% end %>
+
+  <% if Sprint.enabled? %>
+    <%= link_to new_sprint_path, class: "button--secondary menu--create-bucket-link", data: { turbo_frame: "_top" } do %>
+      <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
+      Add sprint
+    <% end %>
+  <% else %>
+    <button type="button" class="button--secondary menu--create-bucket-link" disabled>
+      <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
+      Add sprint
+    </button>
+  <% end %>
+
+  <%= link_to new_monthly_bucket_path, class: "button--secondary menu--create-bucket-link", data: { turbo_frame: "_top" } do %>
+    <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
+    Add monthly log
+  <% end %>
+
+  <%= link_to new_project_path, class: "button--secondary menu--create-bucket-link", data: { turbo_frame: "_top" } do %>
+    <i class="icon" style="--icon-mask: var(--icon-tag)" aria-hidden="true"></i>
+    New project
+  <% end %>
+
+  <%= link_to new_person_path, class: "button--secondary menu--create-bucket-link", data: { turbo_frame: "_top" } do %>
+    <i class="icon" style="--icon-mask: var(--icon-face)" aria-hidden="true"></i>
+    Add contact
+  <% end %>
+
+  <%= link_to new_recurrency_path, class: "button--secondary menu--create-bucket-link", data: { turbo_frame: "_top" } do %>
+    <i class="icon" style="--icon-mask: var(--icon-report-medical)" aria-hidden="true"></i>
+    Add recurrency
+  <% end %>
+</nav>

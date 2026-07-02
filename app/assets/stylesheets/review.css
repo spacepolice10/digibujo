@@ -10,6 +10,28 @@
     .review--page {
       min-height: calc(100vh - var(--spacing-vertical) * 2);
     }
+
+    .review--workspace {
+      align-items: flex-start;
+      flex: none;
+      overflow: visible;
+    }
+
+    .review--collections,
+    .review--week {
+      position: sticky;
+      top: var(--spacing-vertical);
+      flex: 1 1 0;
+      align-self: flex-start;
+      max-height: calc(100vh - var(--spacing-vertical) * 3);
+      overflow-y: auto;
+    }
+
+    .review--to-review {
+      flex: 3 1 auto;
+      align-self: flex-start;
+      overflow: visible;
+    }
   }
 
   .review--header {
@@ -19,7 +41,6 @@
   .review--workspace {
     display: flex;
     align-items: stretch;
-    flex: 1;
     min-height: 0;
     border: 1px solid var(--color-stroke-base);
     background: var(--color-bg-subtle);
@@ -36,8 +57,6 @@
   .review--to-review,
   .review--week {
     min-width: 0;
-    min-height: 0;
-    overflow-y: auto;
     padding: var(--spacing-vertical) var(--spacing-horizontal);
   }
 
@@ -77,6 +96,11 @@
     color: var(--color-fg-subtle);
   }
 
+  .review--to-review-empty {
+    margin: 0;
+    color: var(--color-fg-subtle);
+  }
+
   .review--collections .bucket--list {
     padding-inline: 0;
     margin-top: var(--spacing-vertical);
@@ -95,7 +119,6 @@
     display: flex;
     flex-direction: column;
     gap: var(--spacing-vertical);
-   
   }
 
   .review--to-review-list .bullet {
@@ -130,16 +153,19 @@
     border-radius: var(--radius-base);
   }
 
-  .review--page-mobile .review--review-actions {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
-    padding-inline: var(--spacing-horizontal);
-    padding-bottom: var(--spacing-vertical-half);
+  .review--page-mobile .review--header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--color-bg-base);
   }
 
-  .review--review-action {
-    margin: 0;
+  .review--page-mobile .review--to-review-list {
+    flex: none;
+    align-self: flex-start;
+    overflow: visible;
+    width: 100%;
+    padding-inline: 0;
   }
 
   .review--migration-mark {

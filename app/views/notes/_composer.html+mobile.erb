@@ -1,0 +1,42 @@
+<%# locals: (bullet:, bullets_path: nil, editing: false, return_to: nil) %>
+<% note = bullet.bulletable || Note.new %>
+<dialog
+  class="bullet-composer--mobile-dialog"
+  data-controller="mobile-composer"
+  data-action="cancel->composer#cancel close->composer#dismiss"
+>
+  <%= form_with model: bullet, url: bullets_path, class: "bullet-composer bullet-composer--mobile", data: {
+    controller: ("composer" if editing),
+    composer_editing: (editing || nil),
+    action: "keydown.enter+meta->composer#submit keydown.enter+ctrl->composer#submit turbo:submit-end->composer#clearOnSubmit"
+  }.compact do |fr| %>
+    <%= fr.hidden_field :pops_on, value: bullet.pops_on %>
+    <%= fr.hidden_field :bucket_id, value: bullet.bucket_id %>
+    <%= hidden_field_tag :return_to, return_to if return_to.present? %>
+
+    <div class="bullet-composer--mobile-body">
+      <%= fr.fields_for :bulletable, note do |nf| %>
+        <%= render "bullets/composer/action_text", form: nf, bullet: bullet, preset: "note" %>
+      <% end %>
+    </div>
+
+    <div class="bullet-composer--mobile-rail" data-mobile-composer-target="rail">
+      <%= render "bullets/composer/rail_type", bullet: bullet, editing: editing %>
+      <%= fr.hidden_field :bulletable_type %>
+      <%= fr.fields_for :bulletable, note do |nf| %>
+        <div class="mood-picker" aria-label="Note mood">
+          <% Note::MOOD_MARKERS.each do |name, emoji| %>
+            <label class="mood-option">
+              <%= nf.radio_button :mood, name, class: "utilities--sr-only" %>
+              <span class="mood_marker" title="<%= name.to_s.humanize %>" aria-hidden="true"><%= emoji %></span>
+            </label>
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="bullet-composer--rail-actions">
+        <%= render "bullets/composer/submit_actions", fr: fr, editing: editing %>
+      </div>
+    </div>
+  <% end %>
+</dialog>

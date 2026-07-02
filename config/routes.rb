@@ -66,6 +66,7 @@ Rails.application.routes.draw do
     resource :collect
     resource :pop
     resource :publish, only: %i[create destroy]
+    resource :mark_as_reviewed, only: :create, controller: 'mark_as_reviewed'
   end
 
   resources :bullets, except: :index
@@ -120,7 +121,6 @@ Rails.application.routes.draw do
 
   # --- Workspaces ---
   resource :review, controller: 'reviews' do
-    post :migrate
     scope module: :reviews do
       resources :bullets, only: %i[new create]
     end

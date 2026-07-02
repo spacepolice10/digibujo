@@ -14,30 +14,8 @@
   }
 
   .search--form {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-vertical);
-    flex-shrink: 0;
-    padding-block-start: var(--spacing-vertical-half);
-  }
-
-  .search--label {
-    font-size: var(--font-size-subtle);
-    font-weight: var(--font-weight-base);
-    color: var(--color-fg-subtle);
-  }
-
-  .search--textform {
     width: 100%;
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
-    background: var(--color-bg-subtle);
-    color: var(--color-fg-base);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
-
-    &:focus-visible {
-      outline-offset: 0;
-    }
+    flex-shrink: 0;
   }
 
   .search--results {
@@ -53,6 +31,7 @@
   }
 
   .search--section-heading {
+    margin-block: var(--spacing-vertical) 0;
     font-size: var(--font-size-subtle);
     font-weight: var(--font-weight-base);
     color: var(--color-fg-subtle);

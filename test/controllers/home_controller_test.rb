@@ -3,6 +3,8 @@
 require 'test_helper'
 
 class HomeControllerTest < ActionDispatch::IntegrationTest
+  MOBILE_UA = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)"
+
   setup do
     @user = users(:one)
     @user.create_settings! unless @user.settings
@@ -115,5 +117,23 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     get home_path
     assert_response :success
     assert_select 'details.home--section[data-controller=section][open]', count: 3
+  end
+
+  test 'show renders mobile home with expandable sections and create bucket' do
+    create_project!(@user, name: 'mobile alpha')
+    create_collection!(@user, name: 'mobile reading')
+
+    get home_path, headers: { 'User-Agent' => MOBILE_UA }
+
+    assert_response :success
+    assert_select '.menu--page.menu--page-mobile'
+    assert_select 'details.menu--create-bucket[data-controller=?]', 'dropdown'
+    assert_select 'nav.menu--navigation a[href=?]', activities_path
+    assert_select 'nav.menu--navigation a[href=?]', home_path, count: 0
+    assert_select 'details.home--section[data-controller=?]', 'section', count: 0
+    assert_select 'details.home--section summary .home--section-name', text: 'Projects'
+    assert_select 'details.home--section summary .home--section-name', text: 'Collections'
+    assert_select '.menu--create-bucket-link[href=?]', new_collection_path
+    assert_match 'mobile alpha', response.body
   end
 end

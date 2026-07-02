@@ -14,7 +14,7 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select '.pinned--workspace'
     assert_select 'footer.footer', count: 0
-    assert_select 'nav.tab-bar a.tab-bar-item--active[href=?]', pinned_index_path
+    assert_select 'nav.tabbar--navigation a.tabbar-item--active[href=?]', pinned_index_path
   end
 
   test 'index renders flat list on desktop (direct visit)' do
@@ -35,7 +35,8 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
     get pinned_index_path, headers: { 'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)' }
 
     assert_response :success
-    assert_select '.pinned--entities .bullet', count: 1
+    assert_select '.layout--list-item .menu--palette-marker', count: 1
+    assert_select '.layout--list-item', text: /Pinned bullet/, count: 1
   end
 
   test 'mobile flat list includes pinned project' do
@@ -45,7 +46,7 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
     get pinned_index_path, headers: { 'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)' }
 
     assert_response :success
-    assert_select '.pinned--entity-item a[href=?]', project_path(project)
+    assert_select '.layout--list-item a[href=?]', project_path(project)
   end
 
   test 'mobile flat list includes pinned bucket' do
@@ -55,7 +56,7 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
     get pinned_index_path, headers: { 'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)' }
 
     assert_response :success
-    assert_select '.pinned--entity-item a[href=?]', collection_path(collection)
+    assert_select '.layout--list-item a[href=?]', collection_path(collection)
   end
 
   test 'pinned list popover loads all entity types' do

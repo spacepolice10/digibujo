@@ -5,7 +5,7 @@
   { name: "Event", icon: "circle", modifier: "event", hotkey: "Shift+E", hotkey_action: "keydown.shift+e@document->hotkey#click" },
   { name: "Voice", icon: "microphone", modifier: "voice", hotkey: "Shift+V", hotkey_action: "keydown.shift+v@document->hotkey#click" }
 ] %>
-<div class="bullet-composer--dock">
+<div class="bullet-composer--dock<%= " bullet-composer--dock-fixed" if request.variant.include?(:mobile) %>">
   <turbo-frame id="bullet_composer" data-controller="composer">
     <div class="bullet--composer-buttons">
       <% types.each do |type| %>

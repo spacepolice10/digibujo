@@ -24,11 +24,6 @@
     gap: var(--spacing-vertical-half);
   }
 
-  .daylog--header-navigation {
-    flex: 1 1 auto;
-    justify-content: center;
-  }
-
   .daylog--header-today {
     flex: 0 0 auto;
     justify-content: flex-end;
@@ -70,12 +65,39 @@
     }
   }
 
-  @media (pointer: fine) {
-    .daylog--hotkey-hint {
-      margin: var(--spacing-vertical) 0 0;
-      text-align: center;
-      font-size: var(--font-size-subtle);
-      color: var(--color-fg-subtle);
+  @media (max-width: 799px) {
+    .daylog--header {
+      position: relative;
+    }
+
+    .daylog--header-navigation {
+      flex: 1 1 100%;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .daylog--header-navigation > button[data-action="daylog#openDatePicker"] {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .daylog--header-today:not(:empty) {
+      position: absolute;
+      inset-block: 0;
+      right: 0;
+      align-items: center;
+    }
+
+    .daylog--page .bucket--list {
+      padding-inline: 0;
+    }
+
+    .daylog--page .bucket--list:has(.bullet-composer--dock-fixed) {
+      padding-bottom: calc(
+        var(--spacing-vertical-double) * 3 + var(--icon-size-base) +
+          var(--spacing-vertical) * 3 + env(safe-area-inset-bottom, 0px)
+      );
     }
   }
 }

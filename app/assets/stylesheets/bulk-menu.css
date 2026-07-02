@@ -117,10 +117,6 @@
     margin-block: var(--spacing-vertical) var(--spacing-vertical-half);
   }
 
-  .bulk-menu--collect-section-search-form {
-    width: 100%;
-  }
-
   .bulk-menu--action-menu--collects .bucket--list {
     padding-inline: 0;
   }

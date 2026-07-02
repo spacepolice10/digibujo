@@ -10,12 +10,11 @@
   <div class="bulk-menu--collect-section">
     <%= form_with url: review_path(from: review_from.iso8601, to: review_to.iso8601),
           method: :get,
-          class: "bulk-menu--collect-section-search-form" do %>
-      <%= search_field_tag :q,
-            collections_q,
-            class: "form-input",
-            placeholder: "Search collections",
-            autocomplete: "off" %>
+          class: "search--form" do %>
+      <%= render "shared/search_field",
+            value: collections_q,
+            label: "Search collections",
+            placeholder: "Search collections" %>
     <% end %>
 
     <% if collections.any? %>
