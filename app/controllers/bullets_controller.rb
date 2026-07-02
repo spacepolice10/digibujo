@@ -37,7 +37,6 @@ class BulletsController < ApplicationController
 
   def update
     if @bullet.update(bullet_params)
-      @bullet.record_activity!('updated')
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to bullet_path(@bullet) }

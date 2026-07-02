@@ -11,9 +11,7 @@
     </button>
   <% end %>
   <div class="bullet--body">
-    <div class="bullet-body">
-      <%= task.body %>
-    </div>
+    <%= task.body %>
     <%= render "bullets/metadata", bullet: task, selected_date: selected_date %>
   </div>
   <%= render "bullets/bulk_menu_select", bullet: task %>

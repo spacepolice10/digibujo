@@ -127,7 +127,7 @@ Rails.application.routes.draw do
   end
   resources :activities do
     collection do
-      get :rail
+      get :compact
     end
   end
   resources :pinned

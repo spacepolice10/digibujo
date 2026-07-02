@@ -242,7 +242,7 @@ lexxy-editor[preset="note"] .lexxy-editor__content {
     display: none;
   }
 
-  [data-controller="zoom"] {
+  .rich-text-content figure.attachment--preview img {
     cursor: zoom-in;
   }
 

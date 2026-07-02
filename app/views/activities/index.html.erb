@@ -37,10 +37,10 @@
           <% @page.records.each do |activity| %>
             <% activity_date = activity.created_at.to_date %>
             <% if previous_date != activity_date %>
-              <h3 class="activity--day-heading"><%= Activity.day_heading_for(activity_date) %></h3>
+              <h3 class="activity--date"><%= activity_date.strftime('%A, %B %-d') %></h3>
               <% previous_date = activity_date %>
             <% end %>
-            <%= render "activities/item", activity: activity, density: :feed %>
+            <%= render "activities/activity", activity: activity %>
           <% end %>
         </div>
       <% end %>

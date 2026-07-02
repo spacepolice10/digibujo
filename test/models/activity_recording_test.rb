@@ -82,15 +82,6 @@ class ActivityRecordingTest < ActiveSupport::TestCase
     assert_equal 'project_mentioned', Activity.order(:created_at).last.action
   end
 
-  test 'pin toggle does not record activity' do
-    bullet = @user.bullets.create!(bulletable: Task.create!, body: 'Pin me')
-
-    assert_no_difference -> { Activity.count } do
-      bullet.pin!
-      bullet.unpin!
-    end
-  end
-
   test 'pop records popped when moving to another day with migration metadata' do
     bullet = @user.bullets.create!(bulletable: Event.create!, body: 'Event', pops_on: Date.current)
 
@@ -111,14 +102,6 @@ class ActivityRecordingTest < ActiveSupport::TestCase
     end
 
     assert_equal 'popped', Activity.order(:created_at).last.action
-  end
-
-  test 'direct update does not record activity' do
-    bullet = @user.bullets.create!(bulletable: Note.create!, body: 'Before')
-
-    assert_no_difference -> { Activity.count } do
-      bullet.update!(body: 'After')
-    end
   end
 
   test 'bucket update records updated activity' do

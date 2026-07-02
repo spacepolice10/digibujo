@@ -5,9 +5,7 @@
     <%= render "bullets/marker", bullet: note %>
   </div>
   <div class="bullet--body">
-    <div class="bullet-body">
-      <%= note.body %>
-    </div>
+    <%= note.body %>
     <%= render "bullets/metadata", bullet: note, selected_date: selected_date %>
   </div>
   <%= render "bullets/bulk_menu_select", bullet: note %>

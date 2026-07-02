@@ -1,0 +1,44 @@
+<%# locals: (activity:) %>
+<div
+  id="<%= dom_id(activity) %>"
+  class="activity--item"
+>
+  <% hint_id = dom_id(activity, :hint_action) %>
+  <% hint_anchor = "--hint-activity-#{activity.id}" %>
+
+  <div class="activity--feed-item">
+    <button
+      type="button"
+      class="layout--filter-option activity--action"
+      interestfor="<%= hint_id %>"
+      style="anchor-name: <%= hint_anchor %>"
+      aria-label="<%= activity.action_name %>"
+    >
+      <i
+        class="icon activity--icon"
+        data-type="<%= activity.type_name.downcase %>"
+        style="--icon-mask: <%= activity.icon_mask %>"
+        aria-hidden="true"
+      ></i>
+    </button>
+    <p class="activity--detail utilities--line-clamp-1">
+      <%= activity.detail %>
+      <time class="activity--time" datetime="<%= activity.created_at.to_fs(:db) %>">
+        <span class="activity--time-relative">
+          <%= time_ago_in_words(activity.created_at) %> ago
+        </span>
+      </time>
+    </p>
+
+  </div>
+
+
+  <div
+    id="<%= hint_id %>"
+    class="hint"
+    popover="hint"
+    style="position-anchor: <%= hint_anchor %>"
+  >
+    <%= activity.action_name %>
+  </div>
+</div>

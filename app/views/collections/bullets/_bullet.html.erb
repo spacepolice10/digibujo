@@ -13,12 +13,10 @@
     <%= render "bullets/bulk_menu_select", bullet: bullet %>
   </div>
   <div class="bullet--body">
-    <div class="bullet-body">
-      <% unless bullet.bulletable_type == "Voice" && bullet.bulletable.recording.attached? %>
-        <%= bullet.body %>
-      <% end %>
-      <%= render "voices/playback_for_bullet", bullet: bullet %>
-    </div>
+    <% unless bullet.bulletable_type == "Voice" && bullet.bulletable.recording.attached? %>
+      <%= bullet.body %>
+    <% end %>
+    <%= render "voices/playback_for_bullet", bullet: bullet %>
     <%= render "bullets/metadata", bullet: bullet, selected_date: selected_date %>
   </div>
 </turbo-frame>

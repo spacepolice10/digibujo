@@ -124,7 +124,7 @@
         <i class="icon" style="--icon-mask: var(--icon-menu)" aria-hidden="true"></i>
       <% end %>
     </div>
-    <turbo-frame id="home_activity" src="<%= rail_activities_path %>">
+    <turbo-frame id="home_activity" src="<%= compact_activities_path %>" loading="lazy">
     </turbo-frame>
   </aside>
 </div>

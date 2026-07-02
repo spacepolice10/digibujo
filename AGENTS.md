@@ -32,6 +32,29 @@ User data lives in:
 
 **This rule supersedes any workflow, skill, or "just one command" temptation.** It cannot be overridden by tool defaults, environment hints, or pre-approved paths.
 
+## HARD RULE: Dependencies Are Already Installed (mise)
+
+**The agent must never run `bundle install`, `bundle update`, `gem install`, or any other command to download or reinstall Ruby gems.**
+
+Dependencies are managed by **mise** on the developer's machine and are already available. Re-running Bundler wastes bandwidth (including mobile data), time, and does not fix agent-shell environment mismatches.
+
+**Forbidden (no exceptions, including "tests failed so I'll install deps"):**
+- `bundle install`, `bundle update`, `bundle check` followed by install attempts
+- `gem install …` for project dependencies
+- `bin/setup` to "fix" a missing-gem error in the agent shell (it runs `bundle install`)
+
+**Run tests and Rails commands directly:**
+- `bin/rails test …`
+- `bin/rubocop`, `bin/brakeman`, `bin/ci`
+- `bin/dev`, `bin/rails …`
+
+**If a command fails with `Bundler::GemNotFound` or similar in the agent shell**, that usually means the agent's non-interactive shell does not inherit the user's mise hooks — **not** that gems are missing on the machine. In that case:
+1. Do **not** try to install gems.
+2. Give the user the exact command to run locally.
+3. Continue with code changes; let the user verify tests.
+
+**This rule supersedes default agent instincts to "fix" Bundler errors by installing.**
+
 ## AI Collaboration Rules
 
 ### Code examples
@@ -75,6 +98,8 @@ For very large changes executed in stages, **always make intermediate commits** 
 - **Clean up artifacts** — Remove any files the skill created in `docs/superpowers/` (specs, plans, etc.) once they are no longer needed (e.g., after the plan is fully implemented and merged). Keeps the workspace free of stale cache and outdated plans.
 
 ## Common Commands
+
+**Environment:** Ruby and gems are provided by **mise** — already installed. Never run `bundle install` (see HARD RULE above).
 
 ### Development
 - `bin/setup` — install deps, prepare DB, start server (`--reset` to reset DB, `--skip-server` to skip)

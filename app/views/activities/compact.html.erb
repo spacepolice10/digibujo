@@ -2,7 +2,7 @@
   <div class="activity--rail-list">
     <% if @activities.any? %>
       <% @activities.each do |activity| %>
-        <%= render "activities/item", activity: activity, density: :rail %>
+        <%= render "activities/activity", activity: activity %>
       <% end %>
     <% else %>
       <p class="utilities--text-sm" style="color: var(--color-fg-subtle);">No recent activity</p>

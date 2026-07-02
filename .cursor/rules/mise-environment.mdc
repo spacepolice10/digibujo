@@ -1,0 +1,28 @@
+---
+description: Never reinstall gems; mise already provides the Ruby environment
+alwaysApply: true
+---
+
+# mise environment — do not reinstall gems
+
+Dependencies are **already installed** via mise on the developer's machine.
+
+## Never run
+
+- `bundle install` / `bundle update`
+- `gem install` for project deps
+- `bin/setup` to fix Bundler errors in the agent shell
+
+## Always use
+
+- `bin/rails test …`
+- `bin/rubocop`, `bin/brakeman`, `bin/ci`
+- Other `bin/*` wrappers
+
+## When Bundler fails in the agent shell
+
+`Bundler::GemNotFound` in the agent shell usually means the non-interactive shell lacks mise hooks — **not** that gems are missing locally.
+
+1. Do not install gems.
+2. Tell the user the exact command to run.
+3. Keep working on code; user verifies tests.

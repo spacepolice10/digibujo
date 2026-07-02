@@ -4,12 +4,10 @@
     <%= render "bullets/marker", bullet: voice %>
   </div>
   <div class="bullet--body">
-    <div class="bullet-body">
-      <% unless voice.bulletable_type == "Voice" && voice.bulletable.recording.attached? %>
-        <%= voice.body %>
-      <% end %>
-      <%= render "voices/playback_for_bullet", bullet: voice %>
-    </div>
+    <% unless voice.bulletable_type == "Voice" && voice.bulletable.recording.attached? %>
+      <%= voice.body %>
+    <% end %>
+    <%= render "voices/playback_for_bullet", bullet: voice %>
     <%= render "bullets/metadata", bullet: voice, selected_date: selected_date %>
   </div>
   <%= render "bullets/bulk_menu_select", bullet: voice %>

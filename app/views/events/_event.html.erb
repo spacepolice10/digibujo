@@ -4,10 +4,8 @@
     <i class="icon" style="--icon-mask: var(--icon-circle)" aria-hidden="true"></i>
   </div>
   <div class="bullet--body">
-    <div class="bullet-body">
-      <%= event.body %>
-    </div>
+    <%= event.body %>
     <%= render "bullets/metadata", bullet: event, selected_date: selected_date %>
-</div>
+  </div>
   <%= render "bullets/bulk_menu_select", bullet: event %>
 </turbo-frame>

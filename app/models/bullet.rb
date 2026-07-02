@@ -2,7 +2,7 @@
 
 class Bullet < ApplicationRecord
   include Migratable, Collectable, Poppable, Bullet::Archivable, Pinnable, Publishable, Bullet::Mentionable,
-          Bullet::Searchable, ActivityTrackable
+          Bullet::Searchable, Bullet::ActivityRecording, ActivityTrackable
 
   belongs_to :user
   belongs_to :bucket, optional: true
