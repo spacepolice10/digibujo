@@ -8,4 +8,7 @@
       <p class="utilities--text-sm" style="color: var(--color-fg-subtle);">No recent activity</p>
     <% end %>
   </div>
+  <%= link_to activities_path, class: "button--link activity--show-more-button", data: { turbo_frame: "_top" }, aria: { label: "Earlier activity" } do %>
+  Show more...
+<% end %>
 </turbo-frame>

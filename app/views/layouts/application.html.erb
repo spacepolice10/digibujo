@@ -29,6 +29,7 @@
   </head>
 
   <body data-controller="dialog timezone-cookie">
+    <%= render "shared/svg_filters" %>
 <div id="toasts" class="toasts" data-controller="toasts" aria-live="polite"></div>
     <% unless request.variant.include?(:mobile) %>
       <%= render "shared/header" %>

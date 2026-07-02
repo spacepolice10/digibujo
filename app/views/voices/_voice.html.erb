@@ -1,14 +1,13 @@
 <%# locals: (voice:, selected_date: nil) %>
-<turbo-frame id="<%= dom_id(voice) %>" class="bullet" data-bullet-type="voice">
-  <div class="bullet--marker-slot">
-    <%= render "bullets/marker", bullet: voice %>
-  </div>
+<% bullet = voice %>
+<% voice = bullet.bulletable %>
+<turbo-frame id="<%= dom_id(bullet) %>" class="bullet" data-bullet-type="voice">
+  <%= render "bullets/marker", bullet: bullet %>
   <div class="bullet--body">
-    <% unless voice.bulletable_type == "Voice" && voice.bulletable.recording.attached? %>
+    <% unless voice.recording.attached? %>
       <%= voice.body %>
     <% end %>
-    <%= render "voices/playback_for_bullet", bullet: voice %>
-    <%= render "bullets/metadata", bullet: voice, selected_date: selected_date %>
+    <%= render "voices/playback_for_bullet", bullet: bullet %>
+    <%= render "bullets/metadata", bullet: bullet, selected_date: selected_date %>
   </div>
-  <%= render "bullets/bulk_menu_select", bullet: voice %>
 </turbo-frame>

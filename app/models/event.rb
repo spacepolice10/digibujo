@@ -3,7 +3,7 @@
 class Event < ApplicationRecord
   include Bulletable
 
-  def self.permitted_bullet_attributes = %i[starts_date ends_date]
+  def self.permitted_bullet_attributes = %i[body starts_date ends_date]
 
   def temporal?    = true
   def completable? = false

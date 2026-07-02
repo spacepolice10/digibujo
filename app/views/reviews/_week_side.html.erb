@@ -7,7 +7,7 @@
     </p>
   </header>
 
-  <div class="review--week-dates">
+  <div class="monthly-bucket--calendar-body">
     <% week_days.each do |date| %>
       <%= render "reviews/week_date", date: date, bullets: week_bullets_by_date[date] || [] %>
     <% end %>

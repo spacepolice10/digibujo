@@ -24,7 +24,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'new with bullet_ids renders full page form and preview' do
-    card = @user.bullets.create!(bulletable: Task.create!, body: 'Preview me')
+    card = @user.bullets.create!(bulletable: Task.new(body: 'Preview me'))
 
     get new_collection_path, params: { bullet_ids: card.id.to_s, return_to: review_path }
 
@@ -36,8 +36,8 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'create with bullet_ids collects bullets and returns turbo stream' do
-    first = @user.bullets.create!(bulletable: Task.create!, body: 'One')
-    second = @user.bullets.create!(bulletable: Note.create!, body: 'Two')
+    first = @user.bullets.create!(bulletable: Task.new(body: 'One'))
+    second = @user.bullets.create!(bulletable: Note.new(body: 'Two'))
 
     assert_difference -> { Collection.count }, 1 do
       post collections_path,
@@ -58,7 +58,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'create with bullet_ids redirects back to return_to' do
-    card = @user.bullets.create!(bulletable: Task.create!, body: 'Move me')
+    card = @user.bullets.create!(bulletable: Task.new(body: 'Move me'))
 
     post collections_path,
          params: {
@@ -72,7 +72,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'create with invalid collection and bullet_ids re-renders full page form' do
-    card = @user.bullets.create!(bulletable: Task.create!, body: 'Hold')
+    card = @user.bullets.create!(bulletable: Task.new(body: 'Hold'))
 
     assert_no_difference -> { Collection.count } do
       post collections_path,
@@ -90,6 +90,16 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Hold', response.body
   end
 
+  test 'show renders bucket metadata when collection has no icon' do
+    collection = create_collection!(@user, name: 'Inbox', colour: 'teal')
+    @user.bullets.create!(bulletable: Task.new(body: 'In collection'), bucket_id: collection.bucket.id)
+
+    get collection_path(collection)
+
+    assert_response :success
+    assert_select '.bullet--metadata img[src*="tweemoji/folder"]', minimum: 1
+  end
+
   test 'show renders add note button linking to the full page bullet composer' do
     collection = create_collection!(@user, name: 'Inbox')
 
@@ -105,7 +115,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
 
   test 'destroy archives collection and hides it from active lists' do
     collection = create_collection!(@user, name: 'Old inbox')
-    card = @user.bullets.create!(bulletable: Task.create!, body: 'Stay', bucket_id: collection.bucket.id)
+    card = @user.bullets.create!(bulletable: Task.new(body: 'Stay'), bucket_id: collection.bucket.id)
 
     assert_no_difference -> { Collection.count } do
       delete collection_path(collection)

@@ -53,8 +53,8 @@ class SprintsControllerTest < ActionDispatch::IntegrationTest
 
   test "create with bullet_ids collects bullets and returns turbo stream" do
     with_sprints_enabled do
-      first = @user.bullets.create!(bulletable: Task.create!, body: "One")
-      second = @user.bullets.create!(bulletable: Note.create!, body: "Two")
+      first = @user.bullets.create!(bulletable: Task.new(body: "One"))
+      second = @user.bullets.create!(bulletable: Note.new(body: "Two"))
 
       assert_difference -> { Sprint.count }, 1 do
         post sprints_path,
@@ -84,7 +84,7 @@ class SprintsControllerTest < ActionDispatch::IntegrationTest
   test "destroy archives sprint and hides it from active lists" do
     with_sprints_enabled do
       sprint = create_sprint!(@user, name: "Old sprint", starts_on: Date.current, ends_on: Date.current + 6.days)
-      card = @user.bullets.create!(bulletable: Task.create!, body: "Stay", bucket_id: sprint.bucket.id)
+      card = @user.bullets.create!(bulletable: Task.new(body: "Stay"), bucket_id: sprint.bucket.id)
 
       assert_no_difference -> { Sprint.count } do
         delete sprint_path(sprint)
@@ -100,8 +100,8 @@ class SprintsControllerTest < ActionDispatch::IntegrationTest
   test "show displays sprint progress" do
     with_sprints_enabled do
       sprint = create_sprint!(@user, name: "Active", starts_on: Date.current, ends_on: Date.current + 6.days)
-      @user.bullets.create!(bulletable: Task.create!(completed: true), body: "Done", bucket_id: sprint.bucket.id)
-      @user.bullets.create!(bulletable: Task.create!, body: "Todo", bucket_id: sprint.bucket.id)
+      @user.bullets.create!(bulletable: Task.new(completed: true, body: "Done"), bucket_id: sprint.bucket.id)
+      @user.bullets.create!(bulletable: Task.new(body: "Todo"), bucket_id: sprint.bucket.id)
 
       get sprint_path(sprint)
 

@@ -1,20 +1,14 @@
-<% content_for(:title, @subject ? "Activity — #{@subject.name}" : "Activity") %>
-<% back_path = @subject ? (@subject.is_a?(Bullet) ? bullet_path(@subject) : polymorphic_path(@subject.bucketable)) : home_path %>
+<% content_for(:title, "Activity") %>
 
 <div class="layout--page activity--page">
   <div class="layout--header activity--header">
-    <%= link_to back_path, class: "button--tertiary", data: { turbo_frame: "_top" } do %>
+    <%= link_to home_path, class: "button--tertiary", data: { turbo_frame: "_top" } do %>
       <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
       Back
     <% end %>
 
     <div class="activity--header-title">
-      <% if @subject %>
-        <h2 class="utilities--line-clamp-1"><%= @subject.name %></h2>
-        <p class="activity--header-subtitle utilities--text-sm">Activity history</p>
-      <% else %>
-        <h2>Activity</h2>
-      <% end %>
+      <h2>Activity</h2>
     </div>
   </div>
 
@@ -24,13 +18,7 @@
             locals: {
               page: @page,
               container_id: "activity-feed",
-              pagination_link_path: ->(next_param) {
-                if @subject
-                  activities_path(subject_type: @subject.class.name, subject_id: @subject.id, page: next_param)
-                else
-                  activities_path(page: next_param)
-                end
-              }
+              pagination_link_path: ->(next_param) { activities_path(page: next_param) }
             } do %>
         <div class="activity--feed-list">
           <% previous_date = nil %>

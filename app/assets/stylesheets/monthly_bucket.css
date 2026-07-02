@@ -96,11 +96,13 @@
     pointer-events: none;
   }
 
-  .monthly-bucket--date-row {
+  .monthly-bucket--date-rail {
     display: flex;
     align-items: flex-start;
     gap: var(--spacing-horizontal-half);
     min-width: 0;
+    padding-bottom: var(--spacing-vertical-half);
+    border-bottom: 0.5px solid var(--color-stroke-base);
   }
 
   .monthly-bucket--date-number {

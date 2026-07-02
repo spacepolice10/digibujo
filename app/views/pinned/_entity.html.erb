@@ -16,7 +16,7 @@
       <% end %>
     </li>
   <% else %>
-    <%= render "bullets/bullet", bullet: pinnable %>
+    <%= render_bullet pinnable %>
   <% end %>
 <% when "Bucket" %>
   <% path = polymorphic_path(pinnable.bucketable) %>
@@ -25,7 +25,7 @@
       <%= link_to path, class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
         <div class="bucket--list-item-name">
           <div class="bucket--list-item-marker" data-bucket-colour="<%= pinnable.colour %>" aria-hidden="true">
-            <%= render "shared/entity_icon", record: pinnable %>
+            <%= image_tag pinnable.icon_path, alt: "", class: "form--list-icon" %>
           </div>
           <span class="utilities--line-clamp-1"><%= pinnable.name %></span>
         </div>
@@ -36,7 +36,7 @@
       <%= link_to path, class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
         <div class="bucket--list-item-name">
           <div class="bucket--list-item-marker" data-bucket-colour="<%= pinnable.colour %>" aria-hidden="true">
-            <%= render "shared/entity_icon", record: pinnable %>
+            <%= image_tag pinnable.icon_path, alt: "", class: "form--list-icon" %>
           </div>
           <span class="utilities--line-clamp-1"><%= pinnable.name %></span>
         </div>
@@ -52,7 +52,7 @@
       <%= link_to project_path(pinnable), class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
         <div class="bucket--list-item-name">
           <div class="bucket--list-item-marker" data-bucket-colour="<%= pinnable.colour %>" aria-hidden="true">
-            <%= render "shared/entity_icon", record: pinnable %>
+            <%= image_tag pinnable.icon_path, alt: "", class: "form--list-icon" %>
           </div>
           <span class="utilities--line-clamp-1"><%= pinnable.name %></span>
         </div>
@@ -63,7 +63,7 @@
       <%= link_to project_path(pinnable), class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
         <div class="bucket--list-item-name">
           <div class="bucket--list-item-marker" data-bucket-colour="<%= pinnable.colour %>" aria-hidden="true">
-            <%= render "shared/entity_icon", record: pinnable %>
+            <%= image_tag pinnable.icon_path, alt: "", class: "form--list-icon" %>
           </div>
           <span class="utilities--line-clamp-1"><%= pinnable.name %></span>
         </div>
@@ -82,7 +82,7 @@
             <% if pinnable.avatar.attached? %>
               <%= image_tag pinnable.avatar, class: "person--avatar", alt: "" %>
             <% else %>
-              <%= render "shared/entity_icon", record: pinnable %>
+              <%= image_tag pinnable.icon_path, alt: "", class: "form--list-icon" %>
             <% end %>
           </div>
           <span class="utilities--line-clamp-1"><%= pinnable.name %></span>
@@ -97,7 +97,7 @@
             <% if pinnable.avatar.attached? %>
               <%= image_tag pinnable.avatar, class: "person--avatar", alt: "" %>
             <% else %>
-              <%= render "shared/entity_icon", record: pinnable %>
+              <%= image_tag pinnable.icon_path, alt: "", class: "form--list-icon" %>
             <% end %>
           </div>
           <span class="utilities--line-clamp-1"><%= pinnable.name %></span>

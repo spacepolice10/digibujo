@@ -8,7 +8,7 @@ class Bullet::MentionsTest < ActiveSupport::TestCase
     @project = create_project!(@user, name: 'alpha')
     @other_project = create_project!(@user, name: 'beta')
     @person = @user.people.create!(name: 'ada')
-    @bullet = @user.bullets.create!(bulletable: Task.create!, body: 'Task')
+    @bullet = @user.bullets.create!(bulletable: Task.new(body: 'Task'))
   end
 
   test 'projects.add! mentions project' do
@@ -44,7 +44,7 @@ class Bullet::MentionsTest < ActiveSupport::TestCase
 
   test 'project attachable link renders correct path' do
     content = ActionText::Content.new('Task').append_attachables(@project).to_html
-    bullet = @user.bullets.create!(bulletable: Task.create!, body: content)
+    bullet = @user.bullets.create!(bulletable: Task.new(body: content))
 
     assert_includes bullet.body.to_s, "/projects/#{@project.id}"
   end

@@ -11,8 +11,7 @@ class BucketsControllerTest < ActionDispatch::IntegrationTest
   test 'show loads bucket bullets for footer popover' do
     collection = create_collection!(@user, name: 'bucket list')
     @user.bullets.create!(
-      bulletable: Task.create!,
-      body: 'In bucket',
+      bulletable: Task.new(body: 'In bucket'),
       bucket: collection.bucket,
       pops_on: Date.current
     )

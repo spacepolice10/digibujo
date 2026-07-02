@@ -1,13 +1,12 @@
-<%# locals: (bullet_ids:, frame_id:, return_to:, collects_q:, collections:, collections_page:) %>
+<%# locals: (bullet_ids:, return_to:, collects_q:, collections:, collections_page:) %>
 <%= render layout: "pagination/paginated_list",
       locals: {
         page: collections_page,
         container_id: "paginated-collects-collections",
-        turbo_frame: frame_id,
+        turbo_frame: "collects_picker_dropdown_id",
         pagination_link_path: lambda { |next_param|
           new_collect_path(
             bullet_ids: bullet_ids,
-            frame_id: frame_id,
             return_to: return_to,
             q: collects_q,
             collections_page: next_param

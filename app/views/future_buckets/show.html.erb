@@ -20,7 +20,9 @@
         </div>
         <div id="<%= dom_id(bucket, :unplanned) %>">
           <% unplanned = monthly_bucket.bullets.where(pops_on: nil).order(created_at: :asc).includes(:bulletable) %>
-          <%= render partial: "bullets/bullet", collection: unplanned, as: :bullet %>
+          <% unplanned.each do |bullet| %>
+            <%= render_bullet bullet %>
+          <% end %>
         </div>
       </div>
     <% end %>

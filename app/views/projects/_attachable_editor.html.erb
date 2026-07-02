@@ -1,6 +1,6 @@
 <span class="pill<%= project.colour.present? ? " pill--#{project.colour}" : "" %>">
   <% if project.icon.present? %>
-    <%= render "shared/entity_icon", record: project %>
+    <%= image_tag project.icon_path, alt: "", class: "form--list-icon" %>
   <% end %>
   <span><%= project.name %></span>
 </span>

@@ -9,8 +9,8 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "show filters bullets by query in content" do
-    matching_card = @user.bullets.create!(bulletable: Task.create!, body: "Buy milk today")
-    @user.bullets.create!(bulletable: Task.create!, body: "Call mom tonight")
+    matching_card = @user.bullets.create!(bulletable: Task.new(body: "Buy milk today"))
+    @user.bullets.create!(bulletable: Task.new(body: "Call mom tonight"))
 
     get search_path, params: { q: "milk" }
 
@@ -64,7 +64,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "show returns turbo stream update for menu search frame" do
-    @user.bullets.create!(bulletable: Task.create!, body: "Buy milk today")
+    @user.bullets.create!(bulletable: Task.new(body: "Buy milk today"))
 
     get search_path(format: :turbo_stream), params: { q: "milk" }
 
@@ -86,7 +86,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "show bullet links to bullet show page" do
-    bullet = @user.bullets.create!(bulletable: Task.create!, body: "Menu bullet")
+    bullet = @user.bullets.create!(bulletable: Task.new(body: "Menu bullet"))
 
     get search_path(format: :turbo_stream), params: { q: "Menu" }
 
@@ -96,8 +96,8 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "show finds bullets by link text from rich content as plain text" do
-    @user.bullets.create!(bulletable: Note.create!, body: '<a href="https://example.com/docs">https://example.com/docs</a>')
-    @user.bullets.create!(bulletable: Note.create!, body: "Unrelated content")
+    @user.bullets.create!(bulletable: Note.new(body: '<a href="https://example.com/docs">https://example.com/docs</a>'))
+    @user.bullets.create!(bulletable: Note.new(body: "Unrelated content"))
 
     get search_path, params: { q: "example.com/docs" }
 

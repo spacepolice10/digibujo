@@ -47,7 +47,7 @@
   }
 
   .review--to-review {
-    flex: 2;
+    flex: 3;
   }
 
   .review--collections-header,
@@ -77,25 +77,30 @@
     color: var(--color-fg-subtle);
   }
 
-  .review--collections-more {
-    display: inline-block;
+  .review--collections .bucket--list {
+    padding-inline: 0;
     margin-top: var(--spacing-vertical);
   }
 
-  .review--collections-list {
-    gap: 0;
+  .review--collections-more {
+    display: inline-block;
+    margin-top: var(--spacing-vertical);
   }
 
   .review--collection-drop-target {
     border-radius: var(--radius-base);
   }
 
-  .review--collection-link {
-    width: 100%;
+  .review--to-review-list .records-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical);
+   
   }
 
-  .review--to-review-list {
-    gap: 0;
+  .review--to-review-list .bullet {
+    gap: var(--spacing-horizontal);
+    margin-block: 0;
   }
 
   .review--to-review-footer {
@@ -116,78 +121,6 @@
       opacity: 0.35;
       cursor: grabbing;
     }
-  }
-
-  .review--week-dates {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .review--week-date {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--spacing-horizontal-half);
-    padding-block: var(--spacing-vertical-half);
-  }
-
-  .review--week-date--today {
-    position: relative;
-  }
-
-  .review--week-date--today::before {
-    content: "";
-    position: absolute;
-    left: calc(-1 * var(--spacing-horizontal-half));
-    top: var(--spacing-vertical-half);
-    bottom: var(--spacing-vertical-half);
-    width: var(--radius-base);
-    border-radius: var(--radius-full);
-    background: var(--model-color-4);
-    pointer-events: none;
-  }
-
-  .review--week-date--today .review--week-date-name {
-    color: var(--color-fg-base);
-  }
-
-  .review--week-date-name {
-    position: relative;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    width: var(--spacing-horizontal-double);
-    padding-left: var(--spacing-horizontal-half);
-    box-sizing: border-box;
-    font-size: var(--font-size-subtle);
-    color: var(--color-fg-subtle);
-    text-decoration: none;
-
-    &:hover,
-    &:focus-visible {
-      color: var(--color-fg-base);
-    }
-  }
-
-  .review--week-date-number {
-    font-weight: var(--font-weight-strong);
-    font-size: 0.85em;
-  }
-
-  .review--week-date-weekday {
-    font-weight: var(--font-weight-base);
-    font-size: 0.75em;
-    text-transform: uppercase;
-  }
-
-  .review--week-date-drop {
-    flex: 1;
-    min-width: 0;
-    min-height: calc(var(--spacing-vertical) * 3);
-    align-self: stretch;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
   }
 
   .pops-drop--over,

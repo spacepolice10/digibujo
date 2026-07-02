@@ -10,6 +10,7 @@ class Task < ApplicationRecord
   def ends_date      = nil
   def marker_icon    = completed? ? :check : :square
   def marker_styles  = 'bullet--task-marker'
+  def self.permitted_bullet_attributes = %i[body completed]
 
   def complete!
     update!(completed: true, completed_at: Time.current)

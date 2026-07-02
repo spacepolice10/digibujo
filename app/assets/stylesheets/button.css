@@ -208,4 +208,21 @@
       border-color: var(--color-stroke-strong);
     }
   }
+  /* ── Link ─────────────────────────────────────────── */
+
+  .button--link {
+    display: inline-block;
+    text-decoration: none;
+    color: var(--color-fg-subtle);
+    font-size: var(--font-size-subtle);
+    margin-block: var(--spacing-vertical);
+    &:hover:not(:disabled) {
+      color: var(--color-fg-base);
+      text-decoration: underline;
+    }
+    &[target="_blank"]::after {
+      content: " \2197";
+    }
+  }
 }
+

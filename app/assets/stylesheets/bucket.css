@@ -132,18 +132,6 @@
       var(--color-stroke-base)
     );
   }
-  .bucket--list-item-pin {
-    flex-shrink: 0;
-    margin-inline-end: var(--spacing-horizontal-half);
-  }
-
-  .bucket--list-item-child {
-    padding-inline-start: calc(var(--icon-size-base) + var(--spacing-horizontal-half));
-  }
-
-  .bucket--list-item-child-link {
-    justify-content: flex-start;
-  }
 
   .bucket--child-dot-inner {
     width: calc(var(--icon-size-base) / 3);

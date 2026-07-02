@@ -6,10 +6,12 @@ class PublishedController < ApplicationController
   allow_unauthenticated_access only: ['show']
 
   def index
-    @bullets = Current.user.bullets.published
+    @bullets = Current.user.bullets.published.includes(:published_entity).preload(bulletable: :rich_text_body)
   end
 
   def show
-    @bullet = Bullet.find_by!(public_code: params[:code])
+    entity = PublishedEntity.find_by!(code: params[:code])
+    @bullet = entity.publishable
+    raise ActiveRecord::RecordNotFound unless @bullet.is_a?(Bullet)
   end
 end

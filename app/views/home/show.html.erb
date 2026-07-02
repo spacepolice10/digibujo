@@ -4,33 +4,59 @@
       <i class="icon" style="--icon-mask: var(--icon-book)" aria-hidden="true"></i>
       Add collection
     <% end %>
+
     <% if Sprint.enabled? %>
       <%= link_to new_sprint_path, class: "button--secondary layout--rail-action", data: { turbo_frame: "_top" } do %>
-        <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
+        <i
+          class="icon"
+          style="--icon-mask: var(--icon-circle-check)"
+          aria-hidden="true"
+        ></i>
         Add sprint
       <% end %>
     <% else %>
-      <button type="button" class="button--secondary layout--rail-action" disabled>
-        <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
+      <button
+        type="button"
+        class="button--secondary layout--rail-action"
+        disabled
+      >
+        <i
+          class="icon"
+          style="--icon-mask: var(--icon-circle-check)"
+          aria-hidden="true"
+        ></i>
         Add sprint
       </button>
     <% end %>
+
     <%= link_to new_monthly_bucket_path, class: "button--secondary layout--rail-action", data: { turbo_frame: "_top" } do %>
-      <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
+      <i
+        class="icon"
+        style="--icon-mask: var(--icon-calendar)"
+        aria-hidden="true"
+      ></i>
       Add monthly log
     <% end %>
+
     <%= link_to new_project_path, class: "button--secondary layout--rail-action", data: { turbo_frame: "_top" } do %>
       <i class="icon" style="--icon-mask: var(--icon-tag)" aria-hidden="true"></i>
       New project
     <% end %>
+
     <%= link_to new_person_path, class: "button--secondary layout--rail-action", data: { turbo_frame: "_top" } do %>
       <i class="icon" style="--icon-mask: var(--icon-face)" aria-hidden="true"></i>
       Add contact
     <% end %>
+
     <%= link_to new_recurrency_path, class: "button--secondary layout--rail-action", data: { turbo_frame: "_top" } do %>
-      <i class="icon" style="--icon-mask: var(--icon-report-medical)" aria-hidden="true"></i>
+      <i
+        class="icon"
+        style="--icon-mask: var(--icon-report-medical)"
+        aria-hidden="true"
+      ></i>
       Add recurrency
     <% end %>
+
     <%= render "home/appearance" %>
   </aside>
 
@@ -43,22 +69,31 @@
               <div class="bucket--list-item-marker" aria-hidden="true"></div>
               <span class="utilities--line-clamp-1">Today</span>
             </div>
+
             <div class="bucket--list-item-meta utilities--line-clamp-1">
               <span><%= pluralize(@daylog_bullets_number, "bullet") %></span>
             </div>
           <% end %>
         </li>
+
         <li id="<%= dom_id(@future, :list_item) %>" class="layout--list-item">
           <%= link_to future_bucket_path(@future.bucketable), class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
             <div class="bucket--list-item-name">
-              <div class="bucket--list-item-marker" data-bucket-colour="<%= @future.colour %>" aria-hidden="true"></div>
+              <div
+                class="bucket--list-item-marker"
+                data-bucket-colour="<%= @future.colour %>"
+                aria-hidden="true"
+              ></div>
+
               <span class="utilities--line-clamp-1"><%= @future.name %></span>
             </div>
+
             <div class="bucket--list-item-meta utilities--line-clamp-1">
               <span><%= @future_monthly_buckets.count %> months</span>
             </div>
           <% end %>
         </li>
+
         <% if @future_monthly_buckets.any? %>
           <% @future_monthly_buckets.each do |monthly_bucket| %>
             <li class="layout--list-item bucket--list-item-child">
@@ -67,7 +102,10 @@
                     data: { turbo_frame: "_top", bucket_colour: monthly_bucket.colour } do %>
                 <div class="bucket--list-item-name">
                   <span class="bucket--child-dot-inner" aria-hidden="true"></span>
-                  <span class="utilities--line-clamp-1"><%= monthly_bucket.name %></span>
+
+                  <span class="utilities--line-clamp-1">
+                    <%= monthly_bucket.name %>
+                  </span>
                 </div>
               <% end %>
             </li>
@@ -118,13 +156,12 @@
   </div>
 
   <aside class="layout--rail">
-    <div class="layout--rail-header">
-      <h4 class="layout--rail-heading">Activity</h4>
-      <%= link_to activities_path, class: "button--tertiary button--icon", data: { turbo_frame: "_top" }, aria: { label: "Earlier activity" } do %>
-        <i class="icon" style="--icon-mask: var(--icon-menu)" aria-hidden="true"></i>
-      <% end %>
-    </div>
-    <turbo-frame id="home_activity" src="<%= compact_activities_path %>" loading="lazy">
-    </turbo-frame>
+    <h4 class="layout--rail-heading">Activity</h4>
+
+    <turbo-frame
+      id="home_activity"
+      src="<%= compact_activities_path %>"
+      loading="lazy"
+    ></turbo-frame>
   </aside>
 </div>

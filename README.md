@@ -1,24 +1,28 @@
-# README
+# digibujo
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Source-available Rails application. Licensed under the [O'Saasy License](LICENSE) — see [osaasy.dev](https://osaasy.dev) for terms.
 
-Things you may want to cover:
+## Setup
 
-* Ruby version
+Prerequisites: Ruby (see `.ruby-version`), SQLite, [mise](https://mise.jdx.dev) recommended.
 
-* System dependencies
+```bash
+bin/setup
+bin/dev
+```
 
-* Configuration
+## Tests and CI
 
-* Database creation
+```bash
+bin/rails test
+bin/ci
+```
 
-* Database initialization
+## Security
 
-* How to run the test suite
+Report vulnerabilities: [SECURITY.md](SECURITY.md)
 
-* Services (job queues, cache servers, search engines, etc.)
+## Documentation
 
-* Deployment instructions
-
-* ...
+- **Application architecture and conventions:** [AGENTS.md](AGENTS.md)
+- **Framework reference (Rails, Turbo, Stimulus, Lexxy):** [docs/](docs/)

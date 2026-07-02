@@ -7,20 +7,32 @@ class Bullet < ApplicationRecord
   belongs_to :user
   belongs_to :bucket, optional: true
 
-  delegated_type :bulletable, types: %w[Task Note Event Voice], dependent: :destroy, optional: true
+  delegated_type :bulletable, types: %w[Task Note Event Voice], dependent: :destroy, optional: true, inverse_of: :bullet
 
   delegate :completable?, :temporal?, :name,
            :marker_icon, :marker_styles, :completed?, :mood_marker,
-           :starts_date, :ends_date,
+           :starts_date, :ends_date, :body,
            to: :bulletable
+
+  def assign_attributes(new_attributes)
+    attrs = new_attributes.stringify_keys
+    body_content = attrs.delete('body')
+    super(attrs)
+    return unless body_content && bulletable
+
+    bulletable.body = body_content
+    bulletable.save! if persisted? && bulletable.persisted?
+  end
+
+  def body=(value)
+    bulletable.body = value if bulletable
+  end
 
   accepts_nested_attributes_for :bulletable
 
-  has_rich_text :body
-
   validates :bulletable_type, inclusion: { in: ->(bullet) { bullet.class.bulletable_types } }
   validates :bulletable, presence: true
-  validate :voice_caption_present, if: -> { bulletable_type == "Voice" }
+  validate :bucket_belongs_to_user
 
   def to_partial_path = bulletable.to_partial_path
 
@@ -30,9 +42,10 @@ class Bullet < ApplicationRecord
 
   private
 
-  def voice_caption_present
-    return if body.present? && body.to_plain_text.strip.present?
+  def bucket_belongs_to_user
+    return if bucket_id.blank?
+    return if bucket&.user_id == user_id
 
-    errors.add(:body, :blank)
+    errors.add(:bucket_id, :invalid)
   end
 end

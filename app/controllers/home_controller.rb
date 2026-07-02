@@ -12,8 +12,8 @@ class HomeController < ApplicationController
     @sprints = Current.user.active_sprints.limit(SPRINTS_LIMIT)
     @show_sprints_more = Current.user.active_sprints.count > SPRINTS_LIMIT
     @people = recent_people
-    @future = Current.user.future_buckets.first.bucket
-    @future_monthly_buckets = Current.user.future_buckets.first.monthly_buckets.includes(:bucket)
+    @future = Current.user.future_buckets.first&.bucket
+    @future_monthly_buckets = Current.user.future_buckets.first&.monthly_buckets&.includes(:bucket) || MonthlyBucket.none
     @daylog_bullets_number = daylog_bullets_number
     @recurrencies = Current.user.recurrencies.chronological
     @recurrency_tracker = RecurrencyTracker.new(

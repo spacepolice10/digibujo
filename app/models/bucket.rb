@@ -16,6 +16,10 @@ class Bucket < ApplicationRecord
 
   private
 
+  def record_created_activity
+    record_activity!('created')
+  end
+
   def record_updated_activity
     record_activity!('updated')
   end

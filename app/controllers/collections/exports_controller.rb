@@ -23,8 +23,8 @@ module Collections
     def prepare_export_bullets
       listing = Bullet::Listing.for(user: Current.user, context: @collection, params: {})
       @bullets = listing.relation
-                        .includes(:bulletable, bucket: :bucketable)
-                        .with_rich_text_body
+                        .includes(bucket: :bucketable)
+                        .preload(bulletable: :rich_text_body)
                         .reorder(created_at: :asc)
     end
 

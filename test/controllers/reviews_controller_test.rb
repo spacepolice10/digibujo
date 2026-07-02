@@ -34,7 +34,7 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show desktop renders three-column workspace' do
-    @user.bullets.create!(bulletable: Task.create!, body: 'Review me', pops_on: @today)
+    @user.bullets.create!(bulletable: Task.new(body: 'Review me'), pops_on: @today)
     create_collection!(@user, name: 'Work')
 
     get review_path(from: @today.iso8601, to: @today.iso8601)
@@ -43,7 +43,9 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
     assert_select '.review--collections'
     assert_select '.review--to-review'
     assert_select '.review--week'
-    assert_select '.review--week-dates'
+    assert_select '.monthly-bucket--calendar-body'
+    assert_select '.bulk-menu--collect-section'
+    assert_select '.bulk-menu--collect-item-link', minimum: 1
     assert_select '[data-controller="pops-drop"]', minimum: 1
     assert_select '[data-controller="collect-drop"]', minimum: 1
     assert_select '.review--bullet[draggable="true"]', minimum: 1
@@ -52,18 +54,18 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
 
   test 'show desktop week strip lists scheduled bullets for each day' do
     week_start = @today + 2.days
-    @user.bullets.create!(bulletable: Event.create!, body: 'Team standup', pops_on: week_start)
-    @user.bullets.create!(bulletable: Task.create!, body: 'Inbox only', pops_on: @today)
+    @user.bullets.create!(bulletable: Event.new(body: 'Team standup'), pops_on: week_start)
+    @user.bullets.create!(bulletable: Task.new(body: 'Inbox only'), pops_on: @today)
 
     get review_path(from: @today.iso8601, to: @today.iso8601)
 
     assert_response :success
     assert_match 'Team standup', response.body
-    assert_select '.review--week-date-drop .bullet--monthly-bucket', text: /Team standup/
+    assert_select '.monthly-bucket--date-entries .bullet--monthly-bucket', text: /Team standup/
   end
 
   test 'show mobile renders review actions without week strip' do
-    @user.bullets.create!(bulletable: Task.create!, body: 'Mobile review', pops_on: @today)
+    @user.bullets.create!(bulletable: Task.new(body: 'Mobile review'), pops_on: @today)
 
     get review_path(from: @today.iso8601, to: @today.iso8601), headers: { 'User-Agent' => MOBILE_UA }
 
@@ -74,13 +76,13 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
     assert_select '.review--review-actions', minimum: 1
     assert_select '.review--bullet[draggable="true"]', count: 0
     assert_select '[data-action="bulk-menu#selectAndOpenCollects"]', minimum: 1
-    assert_select '#collects_picker_frame[popover]'
+    assert_select '#collects_picker_dropdown_id[popover]'
   end
 
   test 'show defaults to the last seven days through today' do
-    @user.bullets.create!(bulletable: Task.create!, body: 'Today task', pops_on: @today)
-    @user.bullets.create!(bulletable: Note.create!, body: 'Earlier this week', pops_on: @today - 5.days)
-    @user.bullets.create!(bulletable: Event.create!, body: 'Too old', pops_on: @today - 8.days)
+    @user.bullets.create!(bulletable: Task.new(body: 'Today task'), pops_on: @today)
+    @user.bullets.create!(bulletable: Note.new(body: 'Earlier this week'), pops_on: @today - 5.days)
+    @user.bullets.create!(bulletable: Event.new(body: 'Too old'), pops_on: @today - 8.days)
 
     get review_path
 
@@ -91,13 +93,13 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show excludes archived migrated and unplanned bullets from inbox' do
-    @user.bullets.create!(bulletable: Task.create!, body: 'In review', pops_on: @today)
-    archived = @user.bullets.create!(bulletable: Task.create!, body: 'Archived', pops_on: @today)
+    @user.bullets.create!(bulletable: Task.new(body: 'In review'), pops_on: @today)
+    archived = @user.bullets.create!(bulletable: Task.new(body: 'Archived'), pops_on: @today)
     archived.archive!
-    migrated = @user.bullets.create!(bulletable: Task.create!, body: 'Migrated', pops_on: @today)
+    migrated = @user.bullets.create!(bulletable: Task.new(body: 'Migrated'), pops_on: @today)
     migrated.pop!(pops_on: @today + 1.day)
     migrated.update!(pops_on: @today)
-    @user.bullets.create!(bulletable: Task.create!, body: 'Unplanned', pops_on: nil)
+    @user.bullets.create!(bulletable: Task.new(body: 'Unplanned'), pops_on: nil)
 
     get review_path(from: @today.iso8601, to: @today.iso8601)
 
@@ -117,8 +119,8 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'migrate marks all bullets in review period' do
-    in_review = @user.bullets.create!(bulletable: Task.create!, body: 'Keep as is', pops_on: @today)
-    @user.bullets.create!(bulletable: Note.create!, body: 'Already migrated', pops_on: @today).tap(&:acknowledge_migration!)
+    in_review = @user.bullets.create!(bulletable: Task.new(body: 'Keep as is'), pops_on: @today)
+    @user.bullets.create!(bulletable: Note.new(body: 'Already migrated'), pops_on: @today).tap(&:acknowledge_migration!)
 
     get review_path(from: @today.iso8601, to: @today.iso8601)
     assert_select '.review--to-review', text: /Keep as is/
@@ -135,8 +137,8 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'migrate with bullet_ids marks only selected bullets' do
-    first = @user.bullets.create!(bulletable: Task.create!, body: 'First', pops_on: @today)
-    second = @user.bullets.create!(bulletable: Task.create!, body: 'Second', pops_on: @today)
+    first = @user.bullets.create!(bulletable: Task.new(body: 'First'), pops_on: @today)
+    second = @user.bullets.create!(bulletable: Task.new(body: 'Second'), pops_on: @today)
 
     post migrate_review_path(from: @today.iso8601, to: @today.iso8601),
          params: { bullet_ids: first.id.to_s },

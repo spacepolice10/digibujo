@@ -19,30 +19,30 @@ module Bullet::Mentionable
     @mentions ||= Bullet::Mentions.new(self)
   end
 
-  def sync_mentions_from_body!(rich_text_record:)
+  def sync_mentions_from_body!
     return if @syncing_mentions
 
     @syncing_mentions = true
+    attachables = bulletable.body.body.attachables
     MENTION_TYPES.each do |config|
-      attachables = rich_text_record.body.attachables.grep(config[:attachable_class])
-      public_send("#{config[:ids_attribute]}=", attachables.map(&:id).uniq)
+      mentioned = attachables.grep(config[:attachable_class])
+      public_send("#{config[:ids_attribute]}=", mentioned.map(&:id).uniq)
     end
   ensure
     @syncing_mentions = false
   end
-
 end
 
 ActiveSupport.on_load(:action_text_rich_text) do
-  after_save :sync_bullet_mentions_from_body, if: :bullet_body_changed?
+  after_save :sync_bullet_mentions_from_body, if: :bulletable_body_changed?
 
   private
 
-  def bullet_body_changed?
-    record.is_a?(Bullet) && name == 'body' && saved_change_to_body?
+  def bulletable_body_changed?
+    record.is_a?(Bulletable) && name == 'body' && saved_change_to_body?
   end
 
   def sync_bullet_mentions_from_body
-    record.sync_mentions_from_body!(rich_text_record: self)
+    record.bullet&.sync_mentions_from_body!
   end
 end

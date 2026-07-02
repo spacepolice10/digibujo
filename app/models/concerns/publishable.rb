@@ -5,6 +5,7 @@ module Publishable
 
   included do
     has_one :published_entity, as: :publishable, dependent: :destroy
+    scope :published, -> { joins(:published_entity) }
   end
 
   def publish!

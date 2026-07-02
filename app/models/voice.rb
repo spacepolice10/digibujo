@@ -4,25 +4,27 @@
 class Voice < ApplicationRecord
   include Bulletable
 
-  MAX_DURATION_SECONDS = 60
+  DURATION_SECONDS = 60
 
   has_one_attached :recording
 
-  validates :duration_seconds, numericality: { only_integer: true, in: 1..MAX_DURATION_SECONDS }
+  validates :duration_seconds, numericality: { only_integer: true, in: 1..DURATION_SECONDS }
   validate :recording_must_be_present
   validate :recording_must_be_allowed_type
+  validate :caption_present
 
   def self.permitted_bullet_attributes = %i[recording duration_seconds]
 
-  def temporal?     = false
-  def completable?  = false
-  def starts_date   = nil
-  def ends_date     = nil
   def marker_icon   = :microphone
   def marker_styles = 'bullet--voice-marker'
-  def name          = bullet.body.to_plain_text.strip.presence || 'Voice memo'
 
   private
+
+  def caption_present
+    return if body.present? && body.to_plain_text.strip.present?
+
+    errors.add(:body, :blank)
+  end
 
   def recording_must_be_present
     errors.add(:recording, :blank) unless recording.attached?

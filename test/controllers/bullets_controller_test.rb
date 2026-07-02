@@ -6,7 +6,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @user = users(:one)
     sign_in_as @user
-    @bullet = @user.bullets.create!(bulletable: Task.create!, body: 'Original')
+    @bullet = @user.bullets.create!(bulletable: Task.new(body: 'Original'))
   end
 
   test 'update turbo stream replaces bullet only' do
@@ -101,7 +101,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show renders note body' do
-    note = @user.bullets.create!(bulletable: Note.create!, body: '<p>Expanded content</p>')
+    note = @user.bullets.create!(bulletable: Note.new(body: '<p>Expanded content</p>'))
 
     get bullet_path(note)
 
@@ -111,7 +111,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'edit renders note body editor for note with saved content' do
-    note = @user.bullets.create!(bulletable: Note.create!, body: '<p>Expanded content</p>')
+    note = @user.bullets.create!(bulletable: Note.new(body: '<p>Expanded content</p>'))
 
     get edit_bullet_path(note)
 
@@ -217,7 +217,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'update changes note mood via bulletable_attributes' do
-    note = @user.bullets.create!(bulletable: Note.create!(mood: 'positive'), body: 'Existing note')
+    note = @user.bullets.create!(bulletable: Note.new(mood: 'positive', body: 'Existing note'))
 
     patch bullet_path(note),
           params: {

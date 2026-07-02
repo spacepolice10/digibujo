@@ -7,7 +7,7 @@ module Bullets
     setup do
       @user = users(:one)
       sign_in_as @user
-      @bullet = @user.bullets.create!(bulletable: Task.create!, body: 'Pin me')
+      @bullet = @user.bullets.create!(bulletable: Task.new(body: 'Pin me'))
     end
 
     test 'create pins bullet via turbo stream' do
@@ -22,7 +22,7 @@ module Bullets
     end
 
     test 'create pins multiple bullets' do
-      other = @user.bullets.create!(bulletable: Note.create!, body: 'Too')
+      other = @user.bullets.create!(bulletable: Note.new(body: 'Too'))
 
       post pin_path, params: { bullet_ids: "#{@bullet.id},#{other.id}" }
 
@@ -32,7 +32,7 @@ module Bullets
     end
 
     test 'destroy unpins bullet via turbo stream' do
-      @user.bullets.create!(bulletable: Task.create!, body: 'Still pinned')
+      @user.bullets.create!(bulletable: Task.new(body: 'Still pinned'))
       @bullet.pin!
 
       delete pin_path,
@@ -59,7 +59,7 @@ module Bullets
       assert_response :success
       assert bullet.reload.pinned?
       assert_match %(turbo-stream action="replace" targets="#bullet_#{bullet.id}"), response.body
-      assert_match 'bullet--marker-slot', response.body
+      assert_match 'bullet--marker-select', response.body
       assert_no_match 'bullet-compact', response.body
     end
   end

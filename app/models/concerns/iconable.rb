@@ -8,16 +8,14 @@ module Iconable
     cooking airplane muscle cart music camera money calendar
   ].freeze
 
+  DEFAULT_ICON = 'folder'
+
   included do
     validates :icon, inclusion: { in: ICON_MAPPINGS }, allow_nil: true
   end
 
-  def icon_mask
-    key = icon.presence || "tag"
-    "var(--icon-#{key})"
-  end
-
   def icon_path
-    "tweemoji/#{icon}.svg" if icon.in?(ICON_MAPPINGS)
+    key = icon.in?(ICON_MAPPINGS) ? icon : DEFAULT_ICON
+    "tweemoji/#{key}.svg"
   end
 end

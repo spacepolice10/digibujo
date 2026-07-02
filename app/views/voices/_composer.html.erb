@@ -1,10 +1,11 @@
 <%# locals: (bullet:, bullets_path: nil, editing: false, return_to: nil) %>
-<% bullet.body = "Record #{(bullet.pops_on || Date.current).strftime('%a, %b %-d')}" if bullet.body.blank? %>
+<% voice = bullet.bulletable || Voice.new %>
+<% voice.body = "Record #{(bullet.pops_on || Date.current).strftime('%a, %b %-d')}" if voice.body.blank? %>
 <%= form_with model: bullet, url: bullets_path, class: "bullet-composer", data: {
   controller: ("composer voice-recorder" unless editing),
   composer_editing: (editing || nil),
   voice_recorder_direct_upload_url_value: rails_direct_uploads_path,
-  voice_recorder_max_duration_value: Voice::MAX_DURATION_SECONDS,
+  voice_recorder_duration_seconds_value: Voice::DURATION_SECONDS,
   action: [
     ("turbo:submit-end->composer#clearOnSubmit" if editing),
     "turbo:submit-end->voice-recorder#clearOnSubmit"
@@ -13,7 +14,9 @@
   <%= fr.hidden_field :pops_on, value: bullet.pops_on %>
   <%= fr.hidden_field :bucket_id, value: bullet.bucket_id %>
   <%= hidden_field_tag :return_to, return_to if return_to.present? %>
-  <%= render "bullets/composer/action_text", form: fr, bullet: bullet, preset: "inline", placeholder: "Caption this voice memo…", autofocus: false %>
+  <%= fr.fields_for :bulletable, voice do |vf| %>
+    <%= render "bullets/composer/action_text", form: vf, bullet: bullet, preset: "inline", placeholder: "Caption this voice memo…", autofocus: false %>
+  <% end %>
 
   <div class="voice-recorder">
     <div class="voice-recorder--preview" data-voice-recorder-target="previewContainer" hidden>
@@ -27,7 +30,7 @@
   <div class="bullet-composer--rail">
     <%= render "bullets/composer/rail_type", bullet: bullet, editing: editing %>
     <%= fr.hidden_field :bulletable_type %>
-    <%= fr.fields_for :bulletable, bullet.bulletable || Voice.new do |vf| %>
+    <%= fr.fields_for :bulletable, voice do |vf| %>
       <%= vf.hidden_field :recording, data: { voice_recorder_target: "signedIdInput" } %>
       <%= vf.hidden_field :duration_seconds, data: { voice_recorder_target: "durationInput" } %>
     <% end %>

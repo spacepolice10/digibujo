@@ -5,15 +5,15 @@ module Bullet::ActivityRecording
 end
 
 ActiveSupport.on_load(:action_text_rich_text) do
-  after_save :record_bullet_body_updated_activity, if: :bullet_body_update?
+  after_save :record_bullet_body_updated_activity, if: :bulletable_body_update?
 
   private
 
-  def bullet_body_update?
-    record.is_a?(Bullet) && name == 'body' && saved_change_to_body? && !previously_new_record?
+  def bulletable_body_update?
+    record.is_a?(Bulletable) && name == 'body' && saved_change_to_body? && !previously_new_record?
   end
 
   def record_bullet_body_updated_activity
-    record.record_activity!('updated')
+    record.bullet&.record_activity!('updated')
   end
 end

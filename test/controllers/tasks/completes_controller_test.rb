@@ -7,11 +7,11 @@ module Tasks
     setup do
       @user = users(:one)
       sign_in_as @user
-      @bullet = @user.bullets.create!(bulletable: Task.create!, body: 'Finish me')
+      @bullet = @user.bullets.create!(bulletable: Task.new(body: 'Finish me'))
     end
 
     test 'bulk create completes selected tasks via turbo stream' do
-      second = @user.bullets.create!(bulletable: Task.create!, body: 'Also finish')
+      second = @user.bullets.create!(bulletable: Task.new(body: 'Also finish'))
 
       post complete_path,
            params: { bullet_ids: "#{@bullet.id},#{second.id}" },
@@ -39,8 +39,7 @@ module Tasks
     test 'bulk complete replaces monthly bucket bullet with unified row' do
       monthly_bucket = create_monthly_bucket!(@user, name: 'june')
       bullet = @user.bullets.create!(
-        bulletable: Task.create!,
-        body: 'Spread task',
+        bulletable: Task.new(body: 'Spread task'),
         bucket_id: monthly_bucket.bucket.id
       )
 
@@ -50,8 +49,8 @@ module Tasks
 
       assert_response :success
       assert bullet.reload.bulletable.completed?
-      assert_match 'data-bullet-completed', response.body
-      assert_match 'bullet--marker-slot', response.body
+      assert_match 'data-task-completed="true"', response.body
+      assert_match 'bullet--marker-select', response.body
     end
   end
 end

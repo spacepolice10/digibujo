@@ -124,34 +124,48 @@ For very large changes executed in stages, **always make intermediate commits** 
 
 Shorter framework-anchored cheatsheets in `docs/`. Load these before working in their area — they're the fastest way to learn conventions, patterns, and where things live in this app.
 
-- `docs/_rails.md` — Rails 8 patterns and stack (auth, concerns, delegated types, Action Text, Active Storage, variants, SQLite/Solid). Application architecture lives in this file.
+- `docs/_rails.md` — Rails 8 framework patterns (concerns, delegated types, Action Text, SQLite/Solid). Generic reference only.
 - `docs/_lexxy.md` — Lexxy (Action Text editor) concepts, presets, prompts, attachments, extensions, patching guide.
-- `docs/_turbo.md` — Turbo Drive/Frames/Streams/Morph, conventions in this app, events, stream actions.
+- `docs/_turbo.md` — Turbo Drive/Frames/Streams/Morph, events, stream actions. Generic reference only.
 - `docs/_stimulus.md` — Stimulus concepts, lifecycle, and patterns (framework reference).
+
+**Application architecture and app-specific conventions live in this file (`AGENTS.md`), not in `docs/`.**
 
 Each doc also links to the **Basecamp reference projects** for idiomatic examples: [Fizzy](https://github.com/basecamp/fizzy), [Writebook](https://github.com/basecamp/writebook), [Campfire](https://github.com/basecamp/campfire), and [Lexxy](https://github.com/basecamp/lexxy). Consult those repos when implementing non-trivial features.
 
 ## Architecture
 
 ### Authentication
-Custom session-based auth built with an `Authentication` concern (not Devise). Uses `has_secure_password`, signed httponly cookies, and `Current.user` via `ActiveSupport::CurrentAttributes`. Controllers opt out of auth with `allow_unauthenticated_access`. Rate limiting is applied to login and password reset endpoints.
+Custom session-based auth built with an `Authentication` concern (not Devise). **Passwordless:** users sign in with email + one-time code (`LoginCode`). `SessionsController#create` emails a code and stores `session[:login_email]`; `Sessions::CodesController#create` verifies the code and starts a session. Signup uses `SignupsController` → OTP → `Signups::CompletionsController` to finish profile setup (`session[:auth_flow] == 'signup'`). Sessions are persisted in the `sessions` table; the signed httponly cookie holds `session_id`. `Current.user` / `Current.session` via `ActiveSupport::CurrentAttributes`. Controllers opt out of auth with `allow_unauthenticated_access`. Rate limiting is applied to session create, code create, and signup create.
 
 ### User Settings
-Per-user settings live in a dedicated `user_settings` table (one row per user), accessed via `User::Configurable` concern. `User` `has_one :settings, class_name: "User::Settings"`; the row is created automatically on user create. `User::Settings` exposes typed columns (current: `logs_open`, `projects_open`, `collections_open`, `spreads_open` — all booleans) and a `SECTIONS` constant. Add new settings as real columns and extend the model; avoid JSON columns. UI state (e.g. home page section open/close) is updated via `PATCH /home/sections/:id` (`Home::SectionsController`), which guards against unknown keys using `User::Settings::SECTIONS`. The concern also exposes `User#settings!` which lazy-creates the row on first access; use it from controllers so users created before the row existed (or created via raw SQL) still get a settings record.
+Per-user settings live in a dedicated `user_settings` table (one row per user), accessed via `User::Configurable` concern. `User` `has_one :settings, class_name: "User::Settings"`; the row is created automatically on user create. `User::Settings` exposes typed columns and a `SECTIONS` / `SECTION_COLUMNS` map (current sections: `logs`, `projects`, `collections`, `sprints`, `people`, `recurrencies` → `*_expanded` booleans). **`appearance`** (`default`, `warm`, `cool`, `nature`, `cheese`) drives the home background tint. Add new settings as real columns and extend the model; avoid JSON columns. Home section expand/collapse is updated via `POST /home/sections/:id/expand` and `POST /home/sections/:id/collapse` (`Home::SectionsController`), which guards unknown keys using `User::Settings::SECTION_COLUMNS`. Appearance is updated via `POST /home/appearance` (`Home::AppearancesController`). The concern also exposes `User#settings!` which lazy-creates the row on first access; use it from controllers so users created before the row existed (or created via raw SQL) still get a settings record.
 
 ### Delegated Type Pattern (Bullets)
-`Bullet` uses `delegated_type :bulletable` for polymorphism. The `bullets` table holds `bulletable_type`/`bulletable_id`. Implemented bulletable types:
+`Bullet` uses `delegated_type :bulletable` with `inverse_of: :bullet` for polymorphism. The `bullets` table holds `bulletable_type`/`bulletable_id`. Implemented bulletable types:
 
-| Type    | Concerns                       | Notes                              |
-|---------|--------------------------------|------------------------------------|
-| `Task`  | `Bulletable`                   | Completable + temporal |
-| `Note`  | `Bulletable`                   | Long-form/reference entry |
-| `Event` | `Bulletable`                   | Temporal (not completable) |
+| Type    | Concerns     | Notes                              |
+|---------|--------------|------------------------------------|
+| `Task`  | `Bulletable` | Completable + temporal |
+| `Note`  | `Bulletable` | Long-form/reference entry; mood enum |
+| `Event` | `Bulletable` | Temporal (not completable); date range |
+| `Voice` | `Bulletable` | Short audio memo (`has_one_attached :recording`); inline caption body |
 
-Bullets have a single **`body`** (`has_rich_text :body` — Action Text via Lexxy). Task and Event composers use preset **`inline`** (single-line, `#` / `@` prompts, compact inline attachment chips). Note composer uses preset **`note`** (multi-line, toolbar, markdown, file/image attachments via paste/drop/`/` picker). Rendered rich text uses `.rich-text-content` alongside Lexxy's `.lexxy-content`. **Project tags** use `bullet_projects` → `projects`; `Projectable` syncs join rows from `#` attachments in `body` on save (pills inline via `projects/_attachable`). **Person tags** use `bullet_people` → `people`; `Personable` syncs from `@` attachments in `body`. Type-specific composer partials live under `tasks/_composer`, `notes/_composer`, and `events/_composer`; shared Lexxy markup is `bullets/composer/_action_text.html.erb`. Note mood picker submits `bulletable_attributes[:mood]` through `accepts_nested_attributes_for :bulletable`; each bulletable type declares permitted attributes via `Bulletable.permitted_bullet_attributes` (Note: `%i[mood]`, others: `[]`). Lexxy hydrates attachment pills on load via `rich_text_area` (gem `render_custom_attachments_in`); new `#` / `@` picks embed editor partials from prompt templates. Image attachments render via `active_storage/blobs/_blob.html.erb` (click-to-zoom via `zoom` Stimulus on preview blobs). **Bucket membership**: `Bullet` optionally `belongs_to :bucket` for **Collection** and **TimeSpread** only. **`Collectable`** sets or clears `bullets.bucket_id`; bulk collect picks a collection via `POST /bullets/collect` with `bucket_id`. Other intents (`Poppable`, etc.) update `pops_on`, `bucket`, and migration state without type conversion.
+Each bulletable includes **`Bulletable`**, which declares `has_rich_text :body` (Action Text via Lexxy) and `has_one :bullet, inverse_of: :bulletable`. **`Bullet` delegates `:body`** (and type-specific display helpers) to the bulletable. Legacy create/update params may still pass `body:` on the bullet — `Bullet#assign_attributes` / `#body=` forward to the bulletable. Existing installs repoint rich-text rows via `MoveBulletBodyRichTextsToBulletables`.
+
+Task, Event, and Voice composers use preset **`inline`** (single-line, `#` / `@` prompts, compact inline attachment chips). Note composer uses preset **`note`** (multi-line, toolbar, markdown, file/image attachments via paste/drop/`/` picker). Rendered rich text uses `.rich-text-content` alongside Lexxy's `.lexxy-content`. **Project and person tags** use `bullet_projects` / `bullet_people`; **`Bullet::Mentionable`** syncs join rows from `#` / `@` attachments in `body` on rich-text save (pills inline via `projects/_attachable` and person attachables). Type-specific composer partials live under `tasks/_composer`, `notes/_composer`, `events/_composer`, and `voices/_composer`; shared Lexxy markup is `bullets/composer/_action_text.html.erb`. Note mood picker submits `bulletable_attributes[:mood]` through `accepts_nested_attributes_for :bulletable`; each bulletable type declares permitted attributes via `Bulletable.permitted_bullet_attributes`. Lexxy hydrates attachment pills on load via `rich_text_area` (gem `render_custom_attachments_in`); new `#` / `@` picks embed editor partials from prompt templates. Image attachments render via `active_storage/blobs/_blob.html.erb` (click-to-zoom via `zoom` Stimulus on preview blobs).
+
+**Bucket membership:** `Bullet` optionally `belongs_to :bucket` (Collection, Sprint, FutureBucket, or MonthlyBucket). **`bucket_id` must belong to the same user** (`bucket_belongs_to_user` validation). **`Collectable`** sets or clears `bullets.bucket_id`; bulk collect picks a bucket via `POST /bullets/collect` with `bucket_id` (collections and sprints when `Sprint.enabled?`). Other intents (`Poppable`, etc.) update `pops_on`, `bucket`, and migration state without type conversion.
+
+### Bullet row rendering
+There is no shared `bullets/_bullet` partial. Each type renders via **`{type}s/_{type}.html.erb`** (e.g. `tasks/_task`), sharing `bullets/_marker` and `bullets/_metadata`.
+
+- **`Bullet#to_partial_path`** delegates to the bulletable, so **`render bullet`** works in non-namespaced list views (e.g. daylog pagination, review inbox).
+- **`BulletsHelper#render_bullet`** renders the absolute partial path (`/tasks/task`, etc.) and passes the bullet as the type local (`task: bullet`). Use this in **namespaced turbo-stream templates** where relative lookup would resolve incorrectly.
+- **Exceptions:** `monthly_buckets/bullets/_bullet` (spread calendar drag row with dot marker) and `reviews/_bullet` (drag wrapper that inner-`render`s the type partial).
 
 ### Bullet Status
-`Bullet` has a `pinned` boolean column (`default: false, null: false`). Archive state is **not** a column — it lives in a separate polymorphic `Archive` entity (see **Archive entity** below). There is no `status` enum. `Pinnable` adds a `pinned` scope and `pin!` / `unpin!` helpers (used by bullets and buckets; no pin count limit). `Bullet::Archivable` (namespaced concern) adds `archived` / `active` scopes backed by the `archives` join. The `timeline` scope returns all bullets (`all`) — pinned and archived bullets remain visible in the timeline and are distinguished by icons in the bullet partial.
+`Bullet` has a `pinned` boolean column (`default: false, null: false`). Archive state is **not** a column — it lives in a separate polymorphic `Archive` entity (see **Archive entity** below). There is no `status` enum. `Pinnable` adds a `pinned` scope and `pin!` / `unpin!` helpers (used by bullets and buckets; no pin count limit). `Bullet::Archivable` (namespaced concern) adds `archived` / `active` scopes backed by the `archives` join. The `timeline` scope returns all bullets (`all`) — pinned and archived bullets remain visible in the timeline and are distinguished by icons in the type partial / marker.
 
 `Bullet` tracks **`migrated_at`** (`datetime`, nullable) and **`last_migration`** (json, default `{}`): set by **`Migratable#stamp_migration!`** when the user schedules (pop with date change), collects, completes, or archives. `migrated?` drives the `›` marker on bullet rows. Full history lives in **`activities.metadata`** (same payload shape). Project/person tags do **not** stamp migration.
 
@@ -166,7 +180,7 @@ State access is split into two **namespaced** concerns (no shared module — Bul
 Because archive/unarchive is now an INSERT/DELETE into `archives` (not an `update!` of the subject), **`Bucket#after_update :record_updated_activity` no longer double-logs** on archive transitions. Activity is recorded exactly once, inside the transaction. `archives_on` is exposed as a shim (`archive&.created_at&.to_date`) for views and tests.
 
 ### Activity
-`Activity` is a polymorphic audit log: **`subject`** (`Bullet` or `Bucket`), **`action`** (string), **`metadata`** (json), **`user_id`**. Recording goes through **`ActivityTrackable#record_activity!`** on subjects. Bullet actions: `updated`, `collected`, `popped`, `archived`, `unarchived`, `completed`, `uncompleted`, `project_tagged` / `project_untagged`, `person_tagged` / `person_untagged`. Bucket actions: `created`, `updated`, `pinned`, `unpinned`, `archived`, `unarchived`. Migration intents write bullet activities with migration payload in `metadata`. Pin/unpin on bullets does **not** record activity. **`GET /activities`** lists the user's feed; filter with `?subject_type=Bullet&subject_id=` (or `Bucket`).
+`Activity` is a polymorphic audit log: **`subject`** (`Bullet` or `Bucket`), **`action`** (string), **`metadata`** (json), **`user_id`**. Recording goes through **`ActivityTrackable#record_activity!`** on subjects. Bullet actions: `updated`, `collected`, `popped`, `archived`, `unarchived`, `completed`, `uncompleted`, `project_tagged` / `project_untagged`, `person_tagged` / `person_untagged`. Bucket actions: `created`, `updated`, `pinned`, `unpinned`, `archived`, `unarchived`. Migration intents write bullet activities with migration payload in `metadata`. Pin/unpin on bullets does **not** record activity. **`GET /activities`** lists the user's global feed (no subject filter). **`GET /activities/compact`** returns the latest six activities for the home rail.
 
 ### Recurrency
 `Recurrency` tracks repeating actions per user (`belongs_to :user`). One mark per calendar day via **`RecurrencyCompletion`** (`recurrency_id`, `date`, unique index). Not a bullet — no bucket, migration, or sweep. Identity uses **`Colourable`** / **`Iconable`** (`colour`, `icon` columns) like collections.
@@ -183,19 +197,19 @@ Because archive/unarchive is now an INSERT/DELETE into `archives` (not an `updat
 **Review UI:** Desktop (`show.html.erb`, ≥800px) is a 3-column workspace in `review.css`: collections (left, drop → collect via `collect-drop` Stimulus), inbox (center, draggable bullets + bulk-menu), 7-day week strip anchored at `review_to` (right, drop → pop via `pops-drop` with `reviewDrop`). Mobile web (`show.html+mobile.erb`) shows inbox only with per-row actions (`review-row`: tomorrow pop, collect picker sheet, complete/archive) plus bulk-menu; native swipes are out of scope. Drop handlers POST with optimistic client removal; collect drop still accepts turbo-stream responses (errors re-render via stream). Pops drop uses `X-Requested-With: review-pops-drop` / `pops-drop`; pops controller returns `head :no_content` for drop requests.
 
 ### Daily log and `pops_on`
-Bullets use `pops_on` (`date`) as the primary day bucket: which daily log page the bullet appears on. `Bullet.pops_on_date(date)` matches bullets for that calendar day per the model rules. The daily log is at `/daylog` (today) or `/daylog?date=YYYY-MM-DD`; pass `date:` to `daylog_path` when linking to another day.
+Bullets use `pops_on` (`date`) as the primary day bucket: which daily log page the bullet appears on. `Bullet.pops_on_date(date)` matches bullets for that calendar day per the model rules. The daily log is at **`GET /daylog`** (today) or **`GET /daylog?date=YYYY-MM-DD`**; pass `date:` to `daylog_path` when linking to another day. New bullets for a day are created via nested **`POST /daylog/bullets`** (voice memos and other types).
 
 ### Monthly log spread
-`MonthlyBucket` is a `bucketable` type (thin model + `Bucketable`). The spread period lives on the monthly bucket itself (`period_from`, `period_to`, `period_days`, `period_ranges_correct`). `period_from` is snapped to the 1st of the month; each user may have at most one spread per calendar month (`user_id` + `period_from` unique). Spreads must cover a full calendar month (`period_from` through `period_to.end_of_month`). **`MonthlyBucket.current(user)`** returns the spread for the current calendar month (`find_by(period_from: …)`), or `nil` (no auto-create). **`covers_date?(date)`** checks whether a date falls in that spread's month. **`MonthlyBucket`** may belong to a **`FutureBucket`** (a user may have multiple future logs over time). Nested under **`GET /future`** in routes; monthly spreads live at **`/future/monthly_buckets/:id`**. Shortcut **`GET /monthly_bucket`** still opens the current calendar month. Left area: two-column calendar (`recurrency` slot per day aligned with matching date row) plus bullets; right column: unplanned (`pops_on` nil). `pops_on` still places bullets on the daily log when set.
+`MonthlyBucket` is a `bucketable` type (thin model + `Bucketable`). The spread period lives on the monthly bucket itself (`period_from`, `period_to`, `period_days`, `period_ranges_correct`). `period_from` is snapped to the 1st of the month; each user may have at most one spread per calendar month (`user_id` + `period_from` unique). Spreads must cover a full calendar month (`period_from` through `period_to.end_of_month`). **`MonthlyBucket.current(user)`** returns the spread for the current calendar month (`find_by(period_from: …)`), or `nil` (no auto-create). **`covers_date?(date)`** checks whether a date falls in that spread's month. **`MonthlyBucket`** may belong to a **`FutureBucket`** (a user may have multiple future logs over time). Routes: **`GET /monthly_buckets/:id`**, **`GET /monthly_bucket`** (current month shortcut), **`GET /future_buckets/:id`**. Left area: two-column calendar (`recurrency` slot per day aligned with matching date row) plus bullets; right column: unplanned (`pops_on` nil). `pops_on` still places bullets on the daily log when set. Spread calendar rows use the dedicated **`monthly_buckets/bullets/_bullet`** partial (not the generic type row).
 
 ### Organizing from the timeline
-Select bullets via row checkboxes; the sticky **`_bulk_menu`** (styled in `bulk-menu.css`, driven by `bulk-menu` Stimulus on the page wrapper) keeps selection in **`idListValue`** and syncs a comma-separated `bullet_ids` CSV into every `data-bulk-menu-target="idList"` hidden field.
+Select bullets via the marker checkbox in **`bullets/_marker.html.erb`** (`bullet--marker-select` label over a screen-reader checkbox with `data-bulk-menu-target="checkbox"`). The sticky **`_bulk_menu`** (styled in `bulk-menu.css`, driven by `bulk-menu` Stimulus on the page wrapper) keeps selection in **`idListValue`** and syncs a comma-separated `bullet_ids` CSV into every `data-bulk-menu-target="idList"` hidden field.
 
 **Direct intents (no UI fetch):** **pin**, **archive** — `POST`/`DELETE` with `turbo_stream` from menu forms.
 
 **UI fetch then intent:** **pop** and **collect** — `openPopsPicker` / `openCollectsPicker` set frame `src` with `bullet_ids` from `idListValue`, then `showPopover()` (lazy turbo-frame + popover, like pinned footer); picker POST/search forms use `data-bulk-menu-target="idList"` (synced on `idListTargetConnected` and `idListValueChanged`). Collect picker search reloads the `collects_picker_frame` via GET with `q`. Menu embeds search via `turbo-frame#menu_search` (`GET /search`, turbo-stream for live input); menu shell is `GET /menu`. Lexxy `#` / `@` suggestions use `filter`.
 
-**Pop intent:** `POST /bullets/pop` with `pops_on` (`DELETE` to restore previous day). **Collect intent:** `POST /bullets/collect` with `bucket_id` (`DELETE` uncollects the selection). **Postpone** on the daylog is `POST /bullets/pop` with `pops_on` = viewing day + 1. Pin/Unpin buttons hide when the selection includes a pinned or unpinned bullet respectively (`data-pinned` on checkboxes). Activity records `popped` and `collected`; reports infer moves from `pops_on` changes. Project/person tag changes from Lexxy attachments record `project_tagged` / `project_untagged` and `person_tagged` / `person_untagged`. Responses use Turbo Streams where applicable, with HTML fallbacks.
+**Pop intent:** `POST /bullets/pop` with `pops_on` (`DELETE` to restore previous day). **Collect intent:** `POST /bullets/collect` with `bucket_id` (`DELETE` uncollects the selection). **Postpone** on the daylog is `POST /bullets/pop` with `pops_on` = viewing day + 1. Pin/Unpin and complete/uncomplete buttons hide based on selection state (`data-bulk-pinnable`, `data-bulk-completable` on marker checkboxes). Activity records `popped` and `collected`; reports infer moves from `pops_on` changes. Project/person tag changes from Lexxy attachments record `project_tagged` / `project_untagged` and `person_tagged` / `person_untagged`. Responses use Turbo Streams where applicable, with HTML fallbacks.
 
 `Collectable` and `Poppable` are intent-focused concerns; they do not force bullet type conversion.
 
@@ -216,7 +230,7 @@ Planned bullet recycling (not yet in code):
 ### Analog BuJo Alignment
 The architecture is intentionally closer to analog Bullet Journal behavior:
 
-- **Rapid logging** uses type-specific composers (Task / Note / Event) sharing `bullets/composer/_action_text.html.erb`; Task/Event use preset `inline`, Note uses preset `note`
+- **Rapid logging** uses type-specific composers (Task / Note / Event / Voice) sharing `bullets/composer/_action_text.html.erb`; Task/Event/Voice use preset `inline`, Note uses preset `note`
 - **Daily focus** is explicit (`/daylog` and dated daylog paths show the daily log)
 - **Migration over rewrite** happens where needed by editing or changing bullet type
 - **Deferred decisions** are supported by moving `pops_on` forward (postpone) or tagging a project
@@ -226,71 +240,77 @@ The architecture is intentionally closer to analog Bullet Journal behavior:
 `Project` is a first-class model (`belongs_to :user`) with `name`, `colour`, `icon`, and `pinned` (`Colourable`, `Iconable`, `Pinnable`, `ActionText::Attachable`). Bullets link via `bullet_projects` (many-to-many; a bullet may have several project tags). `GET /projects/:id` lists bullets joined through `bullet_projects`. Project show composer passes `default_project_id` so new bullets hydrate with that tag in the editor. Pin/unpin uses `POST`/`DELETE` on `projects/pin`. `Person` mirrors the same pin/unpin pattern via `people/pin` on the person show page.
 
 ### Buckets and memberships
-`Bucket` belongs to a user and uses `delegated_type :bucketable` (`Collection`, `FutureBucket`, `MonthlyBucket`). `MonthlyBucket` stores its spread period on `period_from` / `period_to`. Each bullet has **zero or one** bucket via `bullets.bucket_id` for collection/bucket membership. `Collection` rows do not store `user_id`; ownership is the bucket’s `user_id`, with `creation_user_id` on the bucketable for attribution where needed. Bucket **identity** (`name`, `colour`, `icon`) is stored on `buckets` (`name` required; `colour` / `icon` optional via `Colourable` and `Iconable`; no auto-assign). Collection bucket names are unique per user. `Collection` is a thin delegated type (no identity columns); it delegates `name`, `colour`, `icon`, and colour CSS helpers to `bucket` for display. Create forms pass identity fields on the bucketable param object; controllers persist them on the bucket row. The home hub is at `GET /home` (linked from the app header). **Streams** (saved filtered views) were removed; use projects, collections, and timeline filters instead.
+`Bucket` belongs to a user and uses `delegated_type :bucketable` (`Collection`, `FutureBucket`, `MonthlyBucket`, **`Sprint`**). `MonthlyBucket` stores its spread period on `period_from` / `period_to`. **`Sprint`** stores `starts_on` / `ends_on`, exposes `status` and `task_progress`, and is gated by **`Sprint.enabled?`** (class attribute, off by default in production; enabled in tests). Each bullet has **zero or one** bucket via `bullets.bucket_id` for collection/sprint/spread membership. `Collection` rows do not store `user_id`; ownership is the bucket’s `user_id`, with `creation_user_id` on the bucketable for attribution where needed. Bucket **identity** (`name`, `colour`, `icon`, optional `description`) is stored on `buckets` (`name` required; `colour` / `icon` optional via `Colourable` and `Iconable`; no auto-assign). Collection bucket names are unique per user. `Collection` is a thin delegated type (no identity columns); it delegates `name`, `colour`, `icon`, and colour CSS helpers to `bucket` for display. Create forms pass identity fields on the bucketable param object; controllers persist them on the bucket row. The home hub is at `GET /home` (also **`root`**). **Streams** (saved filtered views) were removed; use projects, collections, and timeline filters instead.
 
 **Collection archive:** all bucket types are archivable (`Bucket#archive!` / `#unarchive!` via `Bucket::Archivable`). `DELETE /collections/:id` soft-archives the bucket by inserting an `Archive` row; archived collections are hidden from home, review collect panel, and collect picker (`User#active_collections` filters via `Bucket.active`). Collect into an archived bucket is rejected (`Collectable` uses the `.active` scope, surfacing 404). Activity records `archived` / `unarchived` on the bucket. Purge after retention is handled by `CleanSoftDeletedRecordsJob` (see Sweep Rules).
 
 ### Pinned workspace
-Desktop footer has a single **Pinned** button (pin icon) in [`shared/_footer.html.erb`](app/views/shared/_footer.html.erb) (`#pinned_dock`). Clicking opens a lazy popover (`turbo-frame#pinned_list`) that loads a flat list of all pinned entities (Bullet, Bucket, Project, Person) via [`pinned#index`](app/controllers/pinned_controller.rb) with `Turbo-Frame: pinned_list`. Mobile uses the bottom tab bar via [`shared/_footer.html+mobile.erb`](app/views/shared/_footer.html+mobile.erb) and **`GET /pinned`** for the same flat list in full-page mode (with bulk menu for bullets). Pin/unpin Turbo Streams update bullet rows and entity pin buttons only — the footer button is static.
+Desktop footer has a single **Pinned** button (pin icon) in [`shared/_footer.html.erb`](app/views/shared/_footer.html.erb) (`#pinned_dock`). Clicking opens a lazy popover (`turbo-frame#pinned_list`) that loads a flat list of all pinned entities (Bullet, Bucket, Project, Person) via [`pinned#index`](app/controllers/pinned_controller.rb) with `Turbo-Frame: pinned_list`. Mobile uses the bottom tab bar via [`shared/_footer.html+mobile.erb`](app/views/shared/_footer.html+mobile.erb) and **`GET /pinned`** for the same flat list in full-page mode (with bulk menu for bullets). Pin/unpin Turbo Streams update bullet rows (`render_bullet`) and entity pin buttons only — the footer button is static.
+
+### Publishing
+Bullets include **`Publishable`**: a `published_entities` row holds a public **`code`**. **`publish!`** / **`unpublish!`** create or destroy that row. **`GET /published`** (authenticated) lists the user's published bullets. **`GET /published/:code`** (unauthenticated, `layout: public`) shows a single published bullet via `PublishedEntity.find_by!(code:)`. Publish/unpublish bulk intent: `POST`/`DELETE /bullets/publish`.
 
 ### Turbo Streams
-Mutating bullet actions (`create`, `update`, `destroy`, and bullet sub-resources) respond to `format.turbo_stream` for inline updates where applicable. HTML fallback redirects are provided. Bulk intents use the shared `_bulk_menu` forms; row checkboxes are unstyled (native inputs).
+Mutating bullet actions (`create`, `update`, `destroy`, and bullet sub-resources) respond to `format.turbo_stream` for inline updates where applicable. HTML fallback redirects are provided. Bulk intents use the shared `_bulk_menu` forms; selection checkboxes live in `bullets/_marker` (screen-reader only, toggled via marker label).
 
 ### Routes
 
 ```
-root                                         → daylogs#show (today)
+root                                         → home#show
 
 # Auth
-resource :session                            → sessions#new/create/show/destroy
-resource :session/code                       → sessions/codes#new/create
+resource :session                           → sessions#new/create/destroy
+resource :session/code                      → sessions/codes#new/create
+resource :signup                            → signups#new/create
+resource :signup/completion                 → signups/completions#new/create
 
-# Logs (?date=YYYY-MM-DD for a specific day)
-GET    /daylog                               → daylogs#show
-GET    /monthly_bucket                       → monthly_buckets#current (current spread or empty)
+# Logs
+resource :daylog                            → daylogs#show
+  nested: daylog/bullets                    → daylogs/bullets#new/create
+GET    /monthly_bucket                      → monthly_buckets#current
 GET    /future_buckets/:id                 → future_buckets#show
 GET    /monthly_buckets/new                → monthly_buckets#new
 POST   /monthly_buckets                    → monthly_buckets#create
 GET    /monthly_buckets/:id                → monthly_buckets#show
-GET    /monthly_buckets/:monthly_bucket_id/bullets/new → monthly_buckets/bullets#new
-POST   /monthly_buckets/:monthly_bucket_id/bullets     → monthly_buckets/bullets#create
+  nested: monthly_buckets/:id/bullets       → monthly_buckets/bullets#new/create
 
 # Bullets CRUD (no index — daily log is /daylog)
-GET    /bullets/:id                          → bullets#show
-GET    /bullets/new                          → bullets#new
-POST   /bullets                              → bullets#create
-GET    /bullets/:id/edit                     → bullets#edit
-PATCH  /bullets/:id                          → bullets#update
-DELETE /bullets/:id                          → bullets#destroy
+GET    /bullets/:id                         → bullets#show
+GET    /bullets/new                         → bullets#new
+POST   /bullets                             → bullets#create
+GET    /bullets/:id/edit                    → bullets#edit
+PATCH  /bullets/:id                         → bullets#update
+DELETE /bullets/:id                         → bullets#destroy
 
 # Bullet bulk intents (collection; `bullet_ids` comma-separated)
-POST   /bullets/pin                          → bullets/pins#create
-DELETE /bullets/pin                          → bullets/pins#destroy
-POST   /bullets/archive                      → bullets/archives#create
-DELETE /bullets/archive                      → bullets/archives#destroy
-POST   /bullets/collect                      → bullets/collects#create (collect into collection; `bucket_id`)
-GET    /bullets/collect/new                  → bullets/collects#new
-DELETE /bullets/collect                      → bullets/collects#destroy (uncollect)
+POST   /bullets/pin                         → bullets/pins#create
+DELETE /bullets/pin                         → bullets/pins#destroy
+POST   /bullets/archive                     → bullets/archives#create
+DELETE /bullets/archive                     → bullets/archives#destroy
+POST   /bullets/collect                     → bullets/collects#create (`bucket_id`)
+GET    /bullets/collect/new                 → bullets/collects#new
+DELETE /bullets/collect                     → bullets/collects#destroy
 POST   /bullets/pop                          → bullets/pops#create
 DELETE /bullets/pop                          → bullets/pops#destroy
-POST   /tasks/complete                       → tasks/completes#create
-DELETE /tasks/complete                       → tasks/completes#destroy
-POST   /bullets/publish                      → bullets/publishes#create
-DELETE /bullets/publish                      → bullets/publishes#destroy
+POST   /bullets/publish                     → bullets/publishes#create
+DELETE /bullets/publish                     → bullets/publishes#destroy
 
-# Search & menu
-GET    /search                               → searches#show (?q=; turbo-stream updates menu_search frame)
-GET    /menu                                 → menu#show (?q= pre-fills search field)
+# Tasks
+POST   /tasks/complete                      → tasks/completes#create
+DELETE /tasks/complete                      → tasks/completes#destroy
 
-# Home, buckets
-GET    /home                                 → home#show (navigation hub)
-PATCH  /home/sections/:id                    → home/sections#update (persist section open/close state)
+# Collections & sprints
+resources :collections                       → CRUD + nested bullets#new/create
+GET    /collections/:id/export              → collections/exports#show
+resources :sprints                           → CRUD + nested bullets#new/create (404 when Sprint disabled)
+
+# Buckets
 GET    /buckets/:id                          → buckets#show (footer popover bullet list)
 POST   /buckets/pin                          → buckets/pins#create
 DELETE /buckets/pin                          → buckets/pins#destroy
 
 # Tags
-GET    /projects/suggestions                 → projects/suggestions#index (Lexxy `#` prompt items)
+GET    /projects/suggestions                 → projects/suggestions#index
 POST   /projects/pin                         → projects/pins#create
 DELETE /projects/pin                         → projects/pins#destroy
 resources :projects, only: %i[index new create show destroy]
@@ -298,23 +318,35 @@ GET    /people/suggestions                   → people/suggestions#index
 POST   /people/pin                           → people/pins#create
 DELETE /people/pin                           → people/pins#destroy
 resources :people, only: %i[index new create show destroy]
-resources :collections, only: %i[index new create show destroy]
-GET    /collections/:collection_id/export    → collections/exports#show
 
-# Recurrency
-resources :recurrencies do
-  resource :completion, only: %i[create destroy], module: :recurrencies
-end
+# Recurrencies
+resources :recurrencies, except: :index
+  nested: recurrencies/:id/completion        → recurrencies/completions#create/destroy
 
-# Views
+# Home & navigation
+GET    /home                                 → home#show
+POST   /home/sections/:id/expand             → home/sections#expand
+POST   /home/sections/:id/collapse           → home/sections#collapse
+POST   /home/appearance                      → home/appearances#update
+GET    /menu                                 → menu#show
+GET    /search                               → searches#show (?q=)
+POST   /search/selection                     → searches/selections#create
+
+# Workspaces
 GET    /review                               → reviews#show (?from= &to=YYYY-MM-DD)
-GET    /activities                           → activities#index (?subject_type= &subject_id= optional)
+POST   /review/migrate                       → reviews#migrate
+  nested: review/bullets                     → reviews/bullets#new/create
+GET    /activities                           → activities#index
+GET    /activities/compact                   → activities#compact
 resources :pinned, only: :index
 resources :archived, only: :index
-resources :published, param: :code
+GET    /published                            → published#index
+GET    /published/:code                      → published#show (public)
 
-# Health check
+# Health / PWA
 GET    /up                                   → rails/health#show
+GET    /manifest                               → rails/pwa#manifest
+GET    /service-worker                         → rails/pwa#service_worker
 ```
 
 ### Database Strategy

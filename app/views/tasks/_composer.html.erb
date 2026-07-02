@@ -7,7 +7,9 @@
   <%= fr.hidden_field :pops_on, value: bullet.pops_on %>
   <%= fr.hidden_field :bucket_id, value: bullet.bucket_id %>
   <%= hidden_field_tag :return_to, return_to if return_to.present? %>
-  <%= render "bullets/composer/action_text", form: fr, bullet: bullet, preset: "inline" %>
+  <%= fr.fields_for :bulletable, bullet.bulletable || Task.new do |bf| %>
+    <%= render "bullets/composer/action_text", form: bf, bullet: bullet, preset: "inline" %>
+  <% end %>
 
   <div class="bullet-composer--rail">
     <%= render "bullets/composer/rail_type", bullet: bullet, editing: editing %>

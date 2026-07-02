@@ -1,9 +1,4 @@
 <% content_for(:title) { "New bullet" } %>
-<%# Scoped to this page rather than the shared layout so the type-picker ->
-    composer-form view transition doesn't fire on every Drive navigation
-    across the app - Turbo requires the meta tag on both the outgoing and
-    incoming page, and both states here render this same view. %>
-<% content_for(:head) { tag.meta(name: "view-transition", content: "same-origin") } %>
 <div class="layout--page">
   <header class="layout--header">
     <%= link_to (@return_to.presence || home_path), class: "button--tertiary",

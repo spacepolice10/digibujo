@@ -1,7 +1,7 @@
 <div class="dropdown--header">
   <div class="bucket--list-item-name">
     <span class="bucket--list-item-marker" data-bucket-colour="<%= bucket.colour %>" aria-hidden="true">
-      <%= render "shared/entity_icon", record: bucket %>
+      <%= image_tag bucket.icon_path, alt: "", class: "form--list-icon" %>
     </span>
     <h2><%= bucket.name %></h2>
   </div>
@@ -17,6 +17,6 @@
 </div>
 <div class="layout--list bucket--list">
 <% bullets.each do |bullet| %>
-  <%= render "bullets/bullet", bullet: bullet %>
+  <%= render_bullet bullet %>
 <% end %>
 </div>

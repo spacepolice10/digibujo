@@ -7,7 +7,7 @@ module Bullets
     setup do
       @user = users(:one)
       sign_in_as @user
-      @bullet = @user.bullets.create!(bulletable: Task.create!, body: 'Archive me')
+      @bullet = @user.bullets.create!(bulletable: Task.new(body: 'Archive me'))
     end
 
     test 'create archives bullet via collection path' do
@@ -18,7 +18,7 @@ module Bullets
     end
 
     test 'create archives multiple bullets in one transaction' do
-      other = @user.bullets.create!(bulletable: Note.create!, body: 'Also')
+      other = @user.bullets.create!(bulletable: Note.new(body: 'Also'))
       post archive_path, params: { bullet_ids: "#{@bullet.id},#{other.id}" }
 
       assert_redirected_to daylog_path(date: Date.current.iso8601)
@@ -35,7 +35,7 @@ module Bullets
     end
 
     test 'create returns not found for foreign bullet id' do
-      foreign = users(:two).bullets.create!(bulletable: Task.create!, body: 'Nope')
+      foreign = users(:two).bullets.create!(bulletable: Task.new(body: 'Nope'))
 
       post archive_path, params: { bullet_ids: foreign.id.to_s }
 

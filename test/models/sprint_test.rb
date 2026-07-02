@@ -51,9 +51,9 @@ class SprintTest < ActiveSupport::TestCase
   end
 
   test "task_progress counts completed tasks in bucket" do
-    @user.bullets.create!(bulletable: Task.create!, body: "One", bucket_id: @sprint.bucket.id)
-    @user.bullets.create!(bulletable: Task.create!(completed: true), body: "Two", bucket_id: @sprint.bucket.id)
-    @user.bullets.create!(bulletable: Note.create!, body: "Note", bucket_id: @sprint.bucket.id)
+    @user.bullets.create!(bulletable: Task.new(body: "One"), bucket_id: @sprint.bucket.id)
+    @user.bullets.create!(bulletable: Task.new(completed: true, body: "Two"), bucket_id: @sprint.bucket.id)
+    @user.bullets.create!(bulletable: Note.new(body: "Note"), bucket_id: @sprint.bucket.id)
 
     progress = @sprint.task_progress
 

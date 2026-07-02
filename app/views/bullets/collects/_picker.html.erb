@@ -1,9 +1,17 @@
-<%# locals: (bullet_ids:, frame_id:, return_to:, collects_q:, collections:, collections_page:, sprints:, sprints_page:) %>
+<%# locals: (bullet_ids:, return_to:, collects_q:, collections:, collections_page:, sprints:, sprints_page:) %>
 <div class="bulk-menu--action-header">
-  <p class="bulk-menu--action-name"></p>
+  <p class="bulk-menu--action-name">
+    Save to collection
+  </p>
+  <%= link_to new_collection_path(bullet_ids: bullet_ids, return_to: return_to),
+    class: "button--secondary button--icon button--circle",
+    aria: { label: "Create new collection" },
+    data: { turbo_frame: "_top" } do %>
+<i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
+<% end %>
   <button type="button"
           class="button--primary button--icon button--circle"
-          popovertarget="<%= frame_id %>"
+          popovertarget="collects_picker_dropdown_id"
           popovertargetaction="hide"
           aria-label="Close collect picker">
     <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
@@ -13,15 +21,13 @@
 <div class="bulk-menu--collect-picker" data-controller="combobox">
   <%= form_with url: new_collect_path,
         method: :get,
-        class: "search-form",
-        data: { turbo_frame: frame_id } do %>
+        class: "bulk-menu--collect-section-search-form" do %>
     <%= hidden_field_tag :bullet_ids, bullet_ids, data: { bulk_menu_target: "idList" } %>
-    <%= hidden_field_tag :frame_id, frame_id if frame_id != "collects_picker_frame" %>
     <%= hidden_field_tag :return_to, return_to if return_to.present? %>
     <%= search_field_tag :q,
           collects_q,
           class: "form-input",
-          placeholder: Sprint.enabled? ? "Search collections and sprints" : "Search collections",
+          placeholder: "Search collections",
           autofocus: true,
           autocomplete: "off",
           data: { action: "input->bulk-menu#searchCollects keydown->combobox#navigate" } %>
@@ -29,43 +35,16 @@
 
   <div class="bulk-menu--collect-section">
     <div class="bulk-menu--collect-section-heading">
-      <p class="bulk-menu--collect-section-title">Collections</p>
-      <%= link_to new_collection_path(bullet_ids: bullet_ids, return_to: return_to),
-            class: "button--tertiary button--icon bulk-menu--collect-section-add",
-            aria: { label: "Create new collection" },
-            data: { turbo_frame: "_top" } do %>
-        <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
-      <% end %>
+
     </div>
     <%= render "bullets/collects/collections_list",
           bullet_ids: bullet_ids,
-          frame_id: frame_id,
           return_to: return_to,
           collects_q: collects_q,
           collections: collections,
           collections_page: collections_page %>
   </div>
 
-  <% if Sprint.enabled? %>
-    <div class="bulk-menu--collect-section">
-      <div class="bulk-menu--collect-section-heading">
-        <p class="bulk-menu--collect-section-title">Sprints</p>
-        <%= link_to new_sprint_path(bullet_ids: bullet_ids, return_to: return_to),
-              class: "button--tertiary button--icon bulk-menu--collect-section-add",
-              aria: { label: "Create new sprint" },
-              data: { turbo_frame: "_top" } do %>
-          <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
-        <% end %>
-      </div>
-      <%= render "bullets/collects/sprints_list",
-            bullet_ids: bullet_ids,
-            frame_id: frame_id,
-            return_to: return_to,
-            collects_q: collects_q,
-            sprints: sprints,
-            sprints_page: sprints_page %>
-    </div>
-  <% end %>
 
   <% if collections.empty? && (!Sprint.enabled? || sprints.empty?) %>
     <p><%= Sprint.enabled? ? "No collections or sprints found." : "No collections found." %></p>

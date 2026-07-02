@@ -11,7 +11,7 @@ module Bullets
 
     test 'create redirects to daylog and collects into collection' do
       collection = create_collection!(@user, name: 'Ideas')
-      card = @user.bullets.create!(bulletable: Task.create!, body: 'Move me')
+      card = @user.bullets.create!(bulletable: Task.new(body: 'Move me'))
 
       post collect_path, params: { bullet_ids: card.id.to_s, bucket_id: collection.bucket.id }
 
@@ -22,43 +22,27 @@ module Bullets
 
     test 'new renders collection picker for selected bullets' do
       collection = create_collection!(@user, name: 'Ideas')
-      card = @user.bullets.create!(bulletable: Task.create!, body: 'Move me')
+      card = @user.bullets.create!(bulletable: Task.new(body: 'Move me'))
 
       get new_collect_path, params: { bullet_ids: card.id.to_s }
 
       assert_response :success
-      assert_select 'turbo-frame#collects_picker_frame'
-      assert_select 'form[action=?][data-turbo-frame=?]', new_collect_path, 'collects_picker_frame'
+      assert_select 'turbo-frame#collects_picker_dropdown_id'
+      assert_select 'form[action=?]', new_collect_path
       assert_select 'input[name="bullet_ids"][data-bulk-menu-target="idList"]'
-      assert_match collection.name, response.body
-    end
-
-    test 'new renders picker for custom frame id' do
-      collection = create_collection!(@user, name: 'Ideas')
-      card = @user.bullets.create!(bulletable: Task.create!, body: 'Move me')
-
-      get new_collect_path,
-          params: {
-            bullet_ids: card.id.to_s,
-            frame_id: 'custom_collects_frame'
-          },
-          headers: { 'Turbo-Frame' => 'custom_collects_frame' }
-
-      assert_response :success
-      assert_select 'turbo-frame#custom_collects_frame[popover]'
       assert_match collection.name, response.body
     end
 
     test 'new renders picker content inside turbo frame request' do
       collection = create_collection!(@user, name: 'Ideas')
-      card = @user.bullets.create!(bulletable: Task.create!, body: 'Move me')
+      card = @user.bullets.create!(bulletable: Task.new(body: 'Move me'))
 
       get new_collect_path,
           params: { bullet_ids: card.id.to_s },
-          headers: { 'Turbo-Frame' => 'collects_picker_frame' }
+          headers: { 'Turbo-Frame' => 'collects_picker_dropdown_id' }
 
       assert_response :success
-      assert_select 'turbo-frame#collects_picker_frame .bulk-menu--action-header'
+      assert_select 'turbo-frame#collects_picker_dropdown_id .bulk-menu--action-header'
       assert_select 'input[name="bullet_ids"][data-bulk-menu-target="idList"]'
       assert_match collection.name, response.body
     end
@@ -66,7 +50,7 @@ module Bullets
     test 'new filters collections by search query' do
       create_collection!(@user, name: 'alpha')
       create_collection!(@user, name: 'beta')
-      card = @user.bullets.create!(bulletable: Task.create!, body: 'Move me')
+      card = @user.bullets.create!(bulletable: Task.new(body: 'Move me'))
 
       get new_collect_path, params: { bullet_ids: card.id.to_s, q: 'alp' }
 
@@ -77,7 +61,7 @@ module Bullets
 
     test 'new renders paginated collections list' do
       create_collection!(@user, name: 'Ideas')
-      card = @user.bullets.create!(bulletable: Task.create!, body: 'Move me')
+      card = @user.bullets.create!(bulletable: Task.new(body: 'Move me'))
 
       get new_collect_path, params: { bullet_ids: card.id.to_s }
 
@@ -88,7 +72,7 @@ module Bullets
     test 'new turbo stream replaces list containers for live search' do
       create_collection!(@user, name: 'alpha')
       create_collection!(@user, name: 'beta')
-      card = @user.bullets.create!(bulletable: Task.create!, body: 'Move me')
+      card = @user.bullets.create!(bulletable: Task.new(body: 'Move me'))
 
       get new_collect_path,
           params: { bullet_ids: card.id.to_s, q: 'alp' },
@@ -102,7 +86,7 @@ module Bullets
     end
 
     test 'picker heading links to full page create collection with bullet context' do
-      card = @user.bullets.create!(bulletable: Task.create!, body: 'Move me')
+      card = @user.bullets.create!(bulletable: Task.new(body: 'Move me'))
 
       get new_collect_path, params: { bullet_ids: card.id.to_s, return_to: daylog_path }
 
@@ -113,7 +97,7 @@ module Bullets
     end
 
     test 'create collects bullet into selected collection' do
-      card = @user.bullets.create!(bulletable: Note.create!, body: 'Solo')
+      card = @user.bullets.create!(bulletable: Note.new(body: 'Solo'))
       collection = create_collection!(@user, name: 'scratchpad')
 
       post collect_path, params: { bullet_ids: card.id.to_s, bucket_id: collection.bucket.id }
@@ -124,8 +108,8 @@ module Bullets
 
     test 'create collects multiple bullets into one collection' do
       collection = create_collection!(@user, name: 'Batch')
-      first = @user.bullets.create!(bulletable: Task.create!, body: 'One')
-      second = @user.bullets.create!(bulletable: Note.create!, body: 'Two')
+      first = @user.bullets.create!(bulletable: Task.new(body: 'One'))
+      second = @user.bullets.create!(bulletable: Note.new(body: 'Two'))
 
       post collect_path,
            params: { bullet_ids: "#{first.id},#{second.id}", bucket_id: collection.bucket.id }
@@ -137,7 +121,7 @@ module Bullets
 
     test 'create turbo stream removes collected bullets' do
       collection = create_collection!(@user, name: 'Ideas')
-      card = @user.bullets.create!(bulletable: Task.create!, body: 'Collect me')
+      card = @user.bullets.create!(bulletable: Task.new(body: 'Collect me'))
 
       post collect_path,
            params: { bullet_ids: card.id.to_s, bucket_id: collection.bucket.id },
@@ -153,8 +137,8 @@ module Bullets
 
     test 'destroy uncollects multiple bullets' do
       collection = create_collection!(@user, name: 'Clear')
-      first = @user.bullets.create!(bulletable: Task.create!, body: 'A', bucket_id: collection.bucket.id)
-      second = @user.bullets.create!(bulletable: Note.create!, body: 'B', bucket_id: collection.bucket.id)
+      first = @user.bullets.create!(bulletable: Task.new(body: 'A'), bucket_id: collection.bucket.id)
+      second = @user.bullets.create!(bulletable: Note.new(body: 'B'), bucket_id: collection.bucket.id)
 
       delete collect_path, params: { bullet_ids: "#{first.id},#{second.id}" }
 
@@ -166,7 +150,7 @@ module Bullets
     test 'create rejects collect into archived collection' do
       collection = create_collection!(@user, name: 'Closed')
       collection.bucket.archive!
-      card = @user.bullets.create!(bulletable: Task.create!, body: 'Move me')
+      card = @user.bullets.create!(bulletable: Task.new(body: 'Move me'))
 
       post collect_path, params: { bullet_ids: card.id.to_s, bucket_id: collection.bucket.id }
 

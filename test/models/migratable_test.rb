@@ -5,7 +5,7 @@ require 'test_helper'
 class MigratableTest < ActiveSupport::TestCase
   setup do
     @user = users(:one)
-    @bullet = @user.bullets.create!(bulletable: Task.create!, body: 'Task', pops_on: Date.current)
+    @bullet = @user.bullets.create!(bulletable: Task.new(body: 'Task'), pops_on: Date.current)
   end
 
   test 'mark_migration! sets migrated_at and last_migration' do

@@ -1,22 +1,26 @@
 <%# locals: (date:, bullets: []) %>
-<div class="review--week-date<%= " review--week-date--today" if date == Date.current %>">
-  <%= link_to daylog_path(date: date.iso8601),
-        class: "review--week-date-label",
-        aria: { label: "Open #{date.strftime('%B %-d')} on daily log" },
-        data: { turbo_frame: "_top" } do %>
-    <span class="review--week-date-number"><%= date.day %></span>
-    <span class="review--week-date-weekday"><%= date.strftime("%a") %></span>
-  <% end %>
-
-  <div class="review--week-date-drop"
-       data-controller="pops-drop"
-       data-drop-zone-value="<%= date.iso8601 %>"
-       data-pops-drop-pops-url-value="<%= pop_path %>"
-       data-pops-drop-pops-on-value="<%= date.iso8601 %>"
-       data-pops-drop-review-drop-value="true"
-       data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop">
-    <% bullets.each do |bullet| %>
-      <%= render "monthly_buckets/bullets/bullet", bullet: bullet %>
+<div class="monthly-bucket--date-band<%= " monthly-bucket--date-band-current" if date == Date.current %>">
+  <div class="monthly-bucket--date-rail">
+    <%= link_to daylog_path(date: date.iso8601),
+          class: "monthly-bucket--date-number",
+          aria: { label: "Open #{date.strftime('%B %-d')} on daily log" },
+          data: { turbo_frame: "_top" } do %>
+      <span class="monthly-bucket--date-day"><%= date.day %></span>
+      <span class="monthly-bucket--date-weekday"><%= date.strftime("%a") %></span>
     <% end %>
+
+    <div class="monthly-bucket--date-entries"
+         data-controller="pops-drop"
+         data-drop-zone-value="<%= date.iso8601 %>"
+         data-pops-drop-pops-url-value="<%= pop_path %>"
+         data-pops-drop-pops-on-value="<%= date.iso8601 %>"
+         data-pops-drop-review-drop-value="true"
+         data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop">
+      <div class="monthly-bucket--bullets-list">
+        <% bullets.each do |bullet| %>
+          <%= render "monthly_buckets/bullets/bullet", bullet: bullet %>
+        <% end %>
+      </div>
+    </div>
   </div>
 </div>

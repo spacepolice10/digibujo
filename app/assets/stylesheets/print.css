@@ -33,7 +33,8 @@
     border: 1px solid #ddd;
   }
 
-  .bullet[data-bullet-type="note"] .bullet--body > .rich-text-content::before {
+  .bullet[data-bullet-type="note"] .bullet--note-surface::before,
+  .bullet[data-bullet-type="note"] .bullet--note-surface::after {
     transform: none;
   }
 

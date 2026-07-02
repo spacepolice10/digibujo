@@ -2,12 +2,11 @@
   <%= link_to sprint_path(sprint), class: "bucket--list-item-link" do %>
     <div class="bucket--list-item-name">
       <div class="bucket--list-item-marker" data-bucket-colour="<%= sprint.bucket.colour %>" aria-hidden="true">
-        <%= render "shared/entity_icon", record: sprint %>
+        <%= image_tag sprint.icon_path, alt: "", class: "form--list-icon" %>
       </div>
       <span class="utilities--line-clamp-1"><%= sprint.name %></span>
     </div>
     <div class="bucket--list-item-meta utilities--line-clamp-1">
-      <span class="sprint--status sprint--status-<%= sprint.status %>"><%= render "sprints/status_hint", sprint: sprint %></span>,
       <span><%= sprint.starts_on.strftime("%b %-d") %> – <%= sprint.ends_on.strftime("%b %-d") %></span>
     </div>
   <% end %>

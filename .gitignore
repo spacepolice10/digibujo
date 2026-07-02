@@ -37,7 +37,6 @@
 /.direnv
 
 *.DS_Store
-l
 
 # Git worktrees
 /.worktrees

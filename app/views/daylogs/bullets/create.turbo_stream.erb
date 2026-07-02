@@ -1,5 +1,5 @@
 <%= turbo_stream.append "bullets" do %>
-  <%= render partial: @bullet.to_partial_path, object: @bullet %>
+  <%= render_bullet @bullet %>
 <% end %>
 
 <% if @bullet.pops_on.present? && @bullet.pops_on > Date.current %>

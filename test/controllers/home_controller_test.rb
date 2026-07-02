@@ -23,7 +23,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   test 'show returns success' do
     get home_path
     assert_response :success
-    assert_select 'turbo-frame#home_activity[src=?]', rail_activities_path
+    assert_select 'turbo-frame#home_activity[src=?]', compact_activities_path
   end
 
   test 'show renders disabled add sprint button when sprints are disabled' do

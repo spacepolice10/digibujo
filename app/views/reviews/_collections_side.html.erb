@@ -2,44 +2,46 @@
 <aside class="review--collections" aria-label="Collections">
   <header class="review--collections-header">
     <h3 class="review--side-name">Collections</h3>
-    <%= link_to new_collection_path, class: "button--tertiary utilities--text-sm", data: { turbo_frame: "_top" } do %>
-    +
+    <%= link_to new_collection_path, class: "button--primary button--icon button--circle", data: { turbo_frame: "_top" } do %>
+    <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
     <% end %>
   </header>
 
-  <%= form_with url: review_path(from: review_from.iso8601, to: review_to.iso8601),
-        method: :get,
-        class: "search-form" do %>
-    <%= search_field_tag :q,
-          collections_q,
-          class: "form-input",
-          placeholder: "Search collections",
-          autocomplete: "off" %>
-  <% end %>
-
-  <% if collections.any? %>
-    <%= render layout: "pagination/paginated_list",
-          locals: {
-            page: collections_page,
-            container_id: "paginated-review-collections",
-            pagination_link_path: lambda { |next_param|
-              review_path(
-                from: review_from.iso8601,
-                to: review_to.iso8601,
-                collections_page: next_param,
-                q: collections_q
-              )
-            }
-          } do %>
-      <ul class="layout--list bucket--list review--collections-list">
-        <% collections.each do |collection| %>
-          <%= render "reviews/collection_drop_target", collection: collection %>
-        <% end %>
-      </ul>
+  <div class="bulk-menu--collect-section">
+    <%= form_with url: review_path(from: review_from.iso8601, to: review_to.iso8601),
+          method: :get,
+          class: "bulk-menu--collect-section-search-form" do %>
+      <%= search_field_tag :q,
+            collections_q,
+            class: "form-input",
+            placeholder: "Search collections",
+            autocomplete: "off" %>
     <% end %>
-  <% else %>
-    <p class="review--collections-empty utilities--text-sm">
-      <%= collections_q.present? ? "No collections found." : "No collections yet." %>
-    </p>
-  <% end %>
+
+    <% if collections.any? %>
+      <%= render layout: "pagination/paginated_list",
+            locals: {
+              page: collections_page,
+              container_id: "paginated-review-collections",
+              pagination_link_path: lambda { |next_param|
+                review_path(
+                  from: review_from.iso8601,
+                  to: review_to.iso8601,
+                  collections_page: next_param,
+                  q: collections_q
+                )
+              }
+            } do %>
+        <ul class="layout--list bucket--list">
+          <% collections.each do |collection| %>
+            <%= render "reviews/collection_drop_target", collection: collection %>
+          <% end %>
+        </ul>
+      <% end %>
+    <% else %>
+      <p class="review--collections-empty utilities--text-sm">
+        <%= collections_q.present? ? "No collections found." : "No collections yet." %>
+      </p>
+    <% end %>
+  </div>
 </aside>

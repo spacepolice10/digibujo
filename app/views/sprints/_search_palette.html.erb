@@ -1,6 +1,6 @@
 <div class="bucket--list-item-name">
   <div class="bucket--list-item-marker" data-bucket-colour="<%= sprint.colour %>" aria-hidden="true">
-    <%= render "shared/entity_icon", record: sprint %>
+    <%= image_tag sprint.icon_path, alt: "", class: "form--list-icon" %>
   </div>
   <span class="utilities--line-clamp-1"><%= sprint.name %></span>
 </div>

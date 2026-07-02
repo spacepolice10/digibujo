@@ -9,15 +9,18 @@
           action: "keydown.enter+meta->composer#submit keydown.enter+ctrl->composer#submit turbo:submit-end->composer#clearOnSubmit"
         }.compact
       }.compact do |fr| %>
+  <% note = bullet.bulletable || Note.new %>
   <%= fr.hidden_field :pops_on, value: bullet.pops_on %>
   <%= fr.hidden_field :bucket_id, value: bullet.bucket_id %>
   <%= hidden_field_tag :return_to, return_to if return_to.present? %>
-  <%= render "bullets/composer/action_text", form: fr, bullet: bullet, preset: "note" %>
+  <%= fr.fields_for :bulletable, note do |nf| %>
+    <%= render "bullets/composer/action_text", form: nf, bullet: bullet, preset: "note" %>
+  <% end %>
 
   <div class="bullet-composer--rail">
     <%= render "bullets/composer/rail_type", bullet: bullet, editing: editing %>
     <%= fr.hidden_field :bulletable_type %>
-    <%= fr.fields_for :bulletable, bullet.bulletable || Note.new do |nf| %>
+    <%= fr.fields_for :bulletable, note do |nf| %>
       <div class="mood-picker" aria-label="Note mood">
         <% Note::MOOD_MARKERS.each do |name, emoji| %>
           <label class="mood-option">

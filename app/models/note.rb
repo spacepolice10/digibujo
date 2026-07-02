@@ -12,19 +12,21 @@ class Note < ApplicationRecord
     frustrated: '😣'
   }.freeze
 
-  def self.permitted_bullet_attributes = %i[mood]
+  def self.permitted_bullet_attributes = %i[body mood]
 
   def temporal?                = false
   def completable?             = false
   def starts_date              = nil
   def ends_date                = nil
   def marker_styles            = 'bullet--note-marker'
-  def body
-    text = bullet.body.to_plain_text
-    if text.length > 400
-      text.truncate(400) || 'Untitled'
+  def marker_icon              = :line_dashed
+
+  def excerpt
+    text = body.to_plain_text
+    if text.length > 800
+      text.truncate(800) || 'Untitled'
     else
-      bullet.body
+      body
     end
   end
 

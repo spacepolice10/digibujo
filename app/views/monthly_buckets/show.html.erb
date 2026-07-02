@@ -78,7 +78,7 @@
           <div class="monthly-bucket--calendar-body">
             <% @period_days.each do |date| %>
               <div class="monthly-bucket--date-band<%= " monthly-bucket--date-band-current" if date == Date.current %>" <% if date == Date.current %> data-scroll-target="current" <% end %>>
-                <div class="monthly-bucket--date-row">
+                <div class="monthly-bucket--date-rail">
                   <%= link_to daylog_path(date: date.iso8601),
                         class: "monthly-bucket--date-number",
                         aria: { label: "Open #{date.strftime('%B %-d')} on daily log" } do %>

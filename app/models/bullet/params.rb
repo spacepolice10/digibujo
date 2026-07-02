@@ -6,7 +6,7 @@ class Bullet
       def initialize = super('Bullet type is required')
     end
 
-    CREATE_KEYS = %i[body pops_on bulletable_type bucket_id].freeze
+    CREATE_KEYS = %i[pops_on bulletable_type bucket_id].freeze
 
     def self.resolve_type(name)
       name.to_s.presence_in(Bullet.bulletable_types)

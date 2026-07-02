@@ -57,7 +57,7 @@
                 style: "anchor-name: #{monthly_bucket_anchor}",
                 data: { turbo_frame: "_top" },
                 aria: { label: "Monthly spread: #{bucket.name}" } do %>
-            <%= render "shared/entity_icon", record: bucket %>
+            <%= image_tag bucket.icon_path, alt: "", class: "form--list-icon" %>
           <% end %>
         <% elsif bucket.bucketable_type == "Collection" %>
           <% coll_hint_id = dom_id(bullet, "hint_collection_#{bucket.id}") %>
@@ -68,7 +68,7 @@
                 style: "anchor-name: #{coll_anchor}",
                 data: { turbo_frame: "_top" },
                 aria: { label: "Collection: #{bucket.name}" } do %>
-            <%= render "shared/entity_icon", record: bucket %>
+            <%= image_tag bucket.icon_path, alt: "", class: "form--list-icon" %>
           <% end %>
         <% elsif bucket.bucketable_type == "Sprint" %>
           <% sprint_hint_id = dom_id(bullet, "hint_sprint_#{bucket.id}") %>
@@ -81,14 +81,14 @@
                   style: "anchor-name: #{sprint_anchor}",
                   data: { turbo_frame: "_top" },
                   aria: { label: "Sprint: #{bucket.name}" } do %>
-              <%= render "shared/entity_icon", record: bucket %>
+              <%= image_tag bucket.icon_path, alt: "", class: "form--list-icon" %>
             <% end %>
           <% else %>
             <span class="<%= sprint_pill_class %>"
                   interestfor="<%= sprint_hint_id %>"
                   style="anchor-name: <%= sprint_anchor %>"
                   aria-label="Sprint: <%= bucket.name %>">
-              <%= render "shared/entity_icon", record: bucket %>
+              <%= image_tag bucket.icon_path, alt: "", class: "form--list-icon" %>
             </span>
           <% end %>
         <% end %>

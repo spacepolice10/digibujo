@@ -10,14 +10,14 @@ module Bullets
     end
 
     test 'new renders pop picker for selected bullets' do
-      card = @user.bullets.create!(bulletable: Task.create!, body: 'Schedule me')
+      card = @user.bullets.create!(bulletable: Task.new(body: 'Schedule me'))
 
       get new_pop_path, params: { bullet_ids: card.id.to_s }
 
       assert_response :success
-      assert_select 'turbo-frame#pops_picker_frame'
-      assert_select 'turbo-frame#pops_picker_frame button[data-grid-navigation-target=?]', 'item', count: 3
-      assert_select 'turbo-frame#pops_picker_frame label[data-grid-navigation-target=?]', 'item', count: 1
+      assert_select 'turbo-frame#pops_picker_dropdown_id'
+      assert_select 'turbo-frame#pops_picker_dropdown_id button[data-grid-navigation-target=?]', 'item', count: 3
+      assert_select 'turbo-frame#pops_picker_dropdown_id label[data-grid-navigation-target=?]', 'item', count: 1
       assert_select 'input[name="bullet_ids"][data-bulk-menu-target="idList"]', count: 4
       assert_select 'input[type=date][name=pops_on]'
       assert_match 'ASAP', response.body
@@ -27,15 +27,15 @@ module Bullets
     end
 
     test 'new renders picker content inside turbo frame request' do
-      card = @user.bullets.create!(bulletable: Task.create!, body: 'Schedule me')
+      card = @user.bullets.create!(bulletable: Task.new(body: 'Schedule me'))
 
       get new_pop_path,
           params: { bullet_ids: card.id.to_s },
-          headers: { 'Turbo-Frame' => 'pops_picker_frame' }
+          headers: { 'Turbo-Frame' => 'pops_picker_dropdown_id' }
 
       assert_response :success
-      assert_select 'turbo-frame#pops_picker_frame .bulk-menu--action-header'
-      assert_select 'turbo-frame#pops_picker_frame button[data-grid-navigation-target=?]', 'item', count: 3
+      assert_select 'turbo-frame#pops_picker_dropdown_id .bulk-menu--action-header'
+      assert_select 'turbo-frame#pops_picker_dropdown_id button[data-grid-navigation-target=?]', 'item', count: 3
       assert_select 'input[name="bullet_ids"][data-bulk-menu-target="idList"]', count: 4
     end
 
@@ -46,7 +46,7 @@ module Bullets
     end
 
     test 'create redirects to daylog and sets pop day' do
-      card = @user.bullets.create!(bulletable: Task.create!, body: 'Plan me')
+      card = @user.bullets.create!(bulletable: Task.new(body: 'Plan me'))
       target = 3.days.from_now.to_date
 
       post pop_path, params: { bullet_ids: card.id.to_s, pops_on: target.iso8601 }
@@ -57,7 +57,7 @@ module Bullets
 
     test 'create ignores bucket_id' do
       collection = create_collection!(@user, name: 'Deep work')
-      card = @user.bullets.create!(bulletable: Event.create!, body: 'Workshop')
+      card = @user.bullets.create!(bulletable: Event.new(body: 'Workshop'))
       target = 1.week.from_now.to_date
 
       post pop_path,
@@ -98,7 +98,7 @@ module Bullets
 
     test 'create with pops_on one week ahead' do
       view_day = Date.current
-      card = @user.bullets.create!(bulletable: Event.create!, body: 'Later', pops_on: nil)
+      card = @user.bullets.create!(bulletable: Event.new(body: 'Later'), pops_on: nil)
 
       post pop_path, params: { bullet_ids: card.id.to_s, pops_on: (view_day + 1.week).iso8601 }
 
@@ -108,8 +108,8 @@ module Bullets
 
     test 'create pops multiple bullets to same day' do
       target = 4.days.from_now.to_date
-      first = @user.bullets.create!(bulletable: Task.create!, body: 'A')
-      second = @user.bullets.create!(bulletable: Note.create!, body: 'B')
+      first = @user.bullets.create!(bulletable: Task.new(body: 'A'))
+      second = @user.bullets.create!(bulletable: Note.new(body: 'B'))
 
       post pop_path, params: { bullet_ids: "#{first.id},#{second.id}", pops_on: target.iso8601 }
 
@@ -119,7 +119,7 @@ module Bullets
     end
 
     test 'create turbo stream removes popped bullets and shows scheduled notice' do
-      card = @user.bullets.create!(bulletable: Task.create!, body: 'Plan me')
+      card = @user.bullets.create!(bulletable: Task.new(body: 'Plan me'))
       target = 3.days.from_now.to_date
 
       post pop_path,
@@ -149,7 +149,7 @@ module Bullets
     end
 
     test 'create returns unprocessable entity for invalid pops_on' do
-      card = @user.bullets.create!(bulletable: Task.create!, body: 'Bad date')
+      card = @user.bullets.create!(bulletable: Task.new(body: 'Bad date'))
 
       post pop_path,
            params: { bullet_ids: card.id.to_s, pops_on: 'not-a-date' },

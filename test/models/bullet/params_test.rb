@@ -6,28 +6,28 @@ class Bullet::ParamsTest < ActiveSupport::TestCase
   test 'permit resolves type from bullet params and permits type-specific nested attributes' do
     params = ActionController::Parameters.new(
       bullet: {
-        body: 'Moody note',
         bulletable_type: 'Note',
-        bulletable_attributes: { mood: 'inspired', hacker: 'ignored' }
+        bulletable_attributes: { body: 'Moody note', mood: 'inspired', hacker: 'ignored' }
       }
     )
 
     permitted = Bullet::Params.permit(params)
 
-    assert_equal 'Moody note', permitted[:body]
+    assert_equal 'Moody note', permitted.dig(:bulletable_attributes, :body)
     assert_equal 'Note', permitted[:bulletable_type]
     assert_equal 'inspired', permitted.dig(:bulletable_attributes, :mood)
+    assert_nil permitted.dig(:bulletable_attributes, :hacker)
   end
 
   test 'permit raises when bulletable_type is omitted' do
-    params = ActionController::Parameters.new(bullet: { body: 'Quick task' })
+    params = ActionController::Parameters.new(bullet: { bulletable_attributes: { body: 'Quick task' } })
 
     assert_raises(Bullet::Params::TypeRequired) { Bullet::Params.permit(params) }
   end
 
   test 'permit raises for unknown bulletable type' do
     params = ActionController::Parameters.new(
-      bullet: { body: 'Safe', bulletable_type: 'Evil', bulletable_attributes: { mood: 'inspired' } }
+      bullet: { bulletable_type: 'Evil', bulletable_attributes: { body: 'Safe', mood: 'inspired' } }
     )
 
     assert_raises(Bullet::Params::TypeRequired) { Bullet::Params.permit(params) }

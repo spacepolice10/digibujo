@@ -8,7 +8,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
   end
 
   test 'complete records completed with migration metadata' do
-    bullet = @user.bullets.create!(bulletable: Task.create!, body: 'Task', pops_on: Date.current)
+    bullet = @user.bullets.create!(bulletable: Task.new(body: 'Task'), pops_on: Date.current)
     task = bullet.bulletable
 
     assert_difference -> { Activity.count }, 1 do
@@ -23,7 +23,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
   end
 
   test 'uncomplete records uncompleted' do
-    bullet = @user.bullets.create!(bulletable: Task.create!, body: 'Task')
+    bullet = @user.bullets.create!(bulletable: Task.new(body: 'Task'))
     task = bullet.bulletable
     task.complete!
 
@@ -35,7 +35,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
   end
 
   test 'archive records archived with migration metadata' do
-    bullet = @user.bullets.create!(bulletable: Note.create!, body: 'Note', pops_on: Date.current)
+    bullet = @user.bullets.create!(bulletable: Note.new(body: 'Note'), pops_on: Date.current)
 
     assert_difference -> { Activity.count }, 1 do
       bullet.archive!
@@ -47,7 +47,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
   end
 
   test 'unarchive records unarchived activity' do
-    bullet = @user.bullets.create!(bulletable: Note.create!, body: 'Note')
+    bullet = @user.bullets.create!(bulletable: Note.new(body: 'Note'))
     bullet.archive!
 
     assert_difference -> { Activity.count }, 1 do
@@ -59,7 +59,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
 
   test 'collect records collected with migration metadata' do
     collection = create_collection!(@user, name: 'Inbox')
-    bullet = @user.bullets.create!(bulletable: Task.create!, body: 'Move')
+    bullet = @user.bullets.create!(bulletable: Task.new(body: 'Move'))
 
     assert_difference -> { Activity.count }, 1 do
       bullet.collect!(bucket_id: collection.bucket.id)
@@ -73,7 +73,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
 
   test 'mention project records project_mentioned' do
     project = create_project!(@user, name: 'Inbox')
-    bullet = @user.bullets.create!(bulletable: Task.create!, body: 'Move')
+    bullet = @user.bullets.create!(bulletable: Task.new(body: 'Move'))
 
     assert_difference -> { Activity.count }, 1 do
       bullet.mentions.projects.add!(project_id: project.id)
@@ -83,7 +83,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
   end
 
   test 'pop records popped when moving to another day with migration metadata' do
-    bullet = @user.bullets.create!(bulletable: Event.create!, body: 'Event', pops_on: Date.current)
+    bullet = @user.bullets.create!(bulletable: Event.new(body: 'Event'), pops_on: Date.current)
 
     assert_difference -> { Activity.count }, 1 do
       bullet.pop!(pops_on: Date.current + 1)
@@ -95,7 +95,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
   end
 
   test 'pop records popped' do
-    bullet = @user.bullets.create!(bulletable: Task.create!, body: 'Later')
+    bullet = @user.bullets.create!(bulletable: Task.new(body: 'Later'))
 
     assert_difference -> { Activity.count }, 1 do
       bullet.pop!(pops_on: Date.current + 3)

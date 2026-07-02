@@ -9,7 +9,7 @@ export default class extends Controller {
   ]
 
   static values = {
-    maxDuration: { type: Number, default: 60 },
+    durationSeconds: { type: Number, default: 60 },
     directUploadUrl: String
   }
 

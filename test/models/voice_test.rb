@@ -20,11 +20,11 @@ class VoiceTest < ActiveSupport::TestCase
   end
 
   test 'rejects duration over max' do
-    voice = Voice.new(duration_seconds: Voice::MAX_DURATION_SECONDS + 1)
+    voice = Voice.new(duration_seconds: Voice::DURATION_SECONDS + 1)
     voice.recording.attach(@blob)
 
     assert voice.invalid?
-    assert_includes voice.errors[:duration_seconds], "must be in 1..#{Voice::MAX_DURATION_SECONDS}"
+    assert_includes voice.errors[:duration_seconds], "must be in 1..#{Voice::DURATION_SECONDS}"
   end
 
   test 'rejects zero duration' do
