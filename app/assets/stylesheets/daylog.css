@@ -89,6 +89,13 @@
       align-items: center;
     }
 
+    .daylog--page .layout--surface.bucket--list {
+      padding-inline: 0;
+      border: 0;
+      background: transparent;
+      border-radius: 0;
+    }
+
     .daylog--page .bucket--list {
       padding-inline: 0;
     }

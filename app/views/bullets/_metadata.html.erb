@@ -13,7 +13,9 @@
             interestfor="<%= migration_hint_id %>"
             style="anchor-name: <%= migration_anchor %>"
             aria-label="Migrated"
-          >›</button>
+          >
+        <i class="icon" style="--icon-mask: var(--icon-arrow-right)" aria-hidden="true"></i>
+        </button>
         </span>
       <% end %>
       <% if bullet.pops_on && selected_date && bullet.pops_on > selected_date %>

@@ -14,6 +14,9 @@
   <div class="bullet--body">
     <div class="bullet--note-surface">
       <%= note.excerpt %>
+      <span class="bullet--mood-marker">
+        <%= note.mood_marker %>
+      </span>
     </div>
     <%= render "bullets/metadata", bullet: bullet, selected_date: selected_date %>
   </div>

@@ -79,7 +79,7 @@
       oklch(0.78 0.24 89),
       oklch(0.88 0.2 89)
     ); /* Butter */
-    --model-color-5-bg: light-dark(oklch(0.92 0.12 80), oklch(0.37 0.16 89));
+    --model-color-5-bg: light-dark(oklch(0.92 0.12 80), oklch(0.10 0.16 94));
     --model-color-6: light-dark(
       oklch(0.64 0.28 22),
       oklch(0.82 0.24 22)

@@ -107,7 +107,7 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select '.bullet--monthly-bucket .bullet--line', text: 'Pinned spread task'
-    assert_select '.bullet--monthly-bucket .bullet--monthly-bucket-dot', count: 1
+    assert_select '.bullet--monthly-bucket .bullet--monthly-bucket-marker', count: 1
     assert_select '.bullet--monthly-bucket .bullet--marker', count: 0
     assert_select '.bullet--monthly-bucket .bullet--tags', count: 0
     assert_select '.bullet--monthly-bucket .bullet--metadata', count: 0

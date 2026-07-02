@@ -10,7 +10,7 @@
              data-bullet-drag-id-value="<%= bullet.id %>"
              data-action="dragstart->bullet-drag#dragstart dragend->bullet-drag#dragend">
   <div class="bullet--marker-slot">
-    <span class="bullet--monthly-bucket-dot" aria-hidden="true"></span>
+    <span class="bullet--monthly-bucket-marker" aria-hidden="true"></span>
   </div>
   <div class="bullet--body">
     <% if bullet.bulletable_type == "Voice" && bullet.bulletable.recording.attached? %>
