@@ -1,4 +1,0 @@
-<%= form_with url: projects_path, method: :get, class: "search-form", data: { turbo_frame: "projects" } do %>
-  <%= text_field_tag :q, params[:q], placeholder: "Search projects" %>
-  <%= submit_tag "Search" %>
-<% end %>

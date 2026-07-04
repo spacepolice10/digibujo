@@ -1,0 +1,45 @@
+<%# locals: (fr:, bullet:, bulletable:) %>
+<% voice = bulletable %>
+<% voice.body = "Record #{(bullet.pops_on || Date.current).strftime('%a, %b %-d')}" if voice.body.blank? %>
+<div class="voice-recorder">
+  <div class="voice-recorder--preview" data-voice-recorder-target="previewContainer" hidden>
+    <%= render "voices/playback", preview: true, duration_seconds: 0, compact: true, hide_duration: true %>
+  </div>
+  <p class="voice-recorder--unsupported utilities--text-sm" data-voice-recorder-target="unsupported" hidden>
+    Voice recording is not supported in this browser.
+  </p>
+</div>
+<%= fr.fields_for :bulletable, voice do |vf| %>
+  <%= vf.file_field :recording, accept: "audio/webm,audio/mp4", hidden: true, data: { voice_recorder_target: "fileInput" } %>
+  <%= vf.hidden_field :duration_seconds, data: { voice_recorder_target: "durationInput" } %>
+<% end %>
+<div class="voice-recorder--controls" aria-label="Voice recording">
+  <button type="button"
+          class="button--secondary voice-recorder--record hotkey-hint hotkey-hint--always"
+          data-controller="hotkey"
+          data-hotkey="Shift+R"
+          data-voice-recorder-target="recordButton"
+          data-action="voice-recorder#start keydown.shift+r@document->hotkey#click"
+          aria-label="Start recording"
+          aria-keyshortcuts="Shift+R">
+    <i class="icon" style="--icon-mask: var(--icon-microphone)" aria-hidden="true"></i>
+    <p>Record</p>
+  </button>
+  <button type="button"
+          class="button--secondary button--icon voice-recorder--stop"
+          data-voice-recorder-target="stopButton"
+          data-action="voice-recorder#stop"
+          hidden
+          aria-label="Stop recording">
+    <i class="icon" style="--icon-mask: var(--icon-square)" aria-hidden="true"></i>
+  </button>
+  <button type="button"
+          class="button--secondary button--icon"
+          data-voice-recorder-target="discardButton"
+          data-action="voice-recorder#discard"
+          hidden>
+    <i class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></i>
+  </button>
+  <span class="voice-recorder--timer utilities--text-sm" data-voice-recorder-target="timer" aria-live="polite">0:00</span>
+  <span class="voice-recorder--status utilities--text-sm" data-voice-recorder-target="status" hidden></span>
+</div>

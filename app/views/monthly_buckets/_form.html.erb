@@ -3,9 +3,8 @@
 <% occupied_months = Array(occupied_months) %>
 <% available_months = months.reject { |m| occupied_months.include?(m) } %>
 <% selected_month = available_months.first || months.first %>
-<% all_occupied = months.all? { |m| occupied_months.include?(m) } %>
 
-<%= form_with url: monthly_buckets_path, scope: :monthly_bucket, class: "form form--strong" do |f| %>
+<%= form_with url: monthly_buckets_path, scope: :monthly_bucket, class: "form" do |f| %>
   <% errors = (monthly_bucket.errors.any? ? monthly_bucket.errors.full_messages : []) +
               (monthly_bucket.bucket&.errors&.any? ? monthly_bucket.bucket.errors.full_messages : []) %>
   <% if errors.any? %>
@@ -21,14 +20,14 @@
   <div class="form-group">
     <%= field_set_tag "Month", class: "monthly-bucket--period-picker" do %>
       <%= f.collection_radio_buttons :month, months, :iso8601, ->(m) { m.strftime("%B %Y") },
-            { checked: (all_occupied ? nil : selected_month.iso8601), item_wrapper_tag: false } do |b| %>
+            { checked: selected_month.iso8601, item_wrapper_tag: false } do |b| %>
         <% month_date = Date.parse(b.value) %>
         <% disabled = occupied_months.include?(month_date) %>
         <%= b.label class: ["monthly-bucket--period-option", ("monthly-bucket--period-option--disabled" if disabled)].compact.join(" "),
                     data: { month: month_date.month } do %>
-          <%= b.radio_button class: "utilities--sr-only monthly-bucket--period-input", disabled: disabled %>
+          <%= b.radio_button class: "utilities--sr-only monthly-bucket--period-checkbox", disabled: disabled %>
           <span class="monthly-bucket--period-card">
-            <span class="monthly-bucket--period-label"><%= month_date.strftime("%b") %></span>
+            <span class="monthly-bucket--period-name"><%= month_date.strftime("%b") %></span>
             <span class="monthly-bucket--period-meta"><%= month_date.year %></span>
           </span>
         <% end %>
@@ -36,5 +35,5 @@
     <% end %>
   </div>
 
-  <%= f.submit "Create monthly spread", class: "button--primary form--submit", disabled: all_occupied %>
+  <%= f.submit "Create monthly spread", class: "button--primary form--submit" %>
 <% end %>

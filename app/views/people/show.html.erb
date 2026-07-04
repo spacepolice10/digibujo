@@ -1,14 +1,7 @@
 <% content_for(:title) { @person.name } %>
 
 <div class="layout--page" data-controller="bulk-menu">
-  <div class="layout--header">
-    <div class="layout--header-actions">
-      <%= link_to people_path, class: "button--secondary" do %>
-        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
-        People
-      <% end %>
-    </div>
-    <div class="layout--header-info">
+      <div class="layout--header-info">
       <% if @person.avatar.attached? %>
         <%= image_tag @person.avatar, class: "person--avatar", alt: "" %>
       <% end %>
@@ -17,30 +10,39 @@
         <%= render "contacts", person: @person %>
       </div>
     </div>
-  </div>
-
-  <div class="layout--workspace">
-    <aside class="layout--rail">
+  <div class="layout--header">
+    <div class="layout--header-actions">
+      <%= link_to home_path, class: "button--secondary" do %>
+        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+        People
+      <% end %>
       <%= link_to edit_person_path(@person), class: "button--secondary layout--rail-action" do %>
-        <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
-        Edit
-      <% end %>
-      <%= render "people/pins_button", person: @person %>
-      <%= button_to @person,
-            method: :delete,
-            class: "button--secondary button--danger layout--rail-action",
-            form: { data: { turbo_confirm: "Delete this person and remove them from all bullets?" } } do %>
-        <i class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></i>
-        Delete
-      <% end %>
-      <%= render "bullet/listing/type_filters", listing: @listing %>
-    </aside>
-
-    <div class="layout--surface bucket--list">
-      <%= render "bullet/listing/list", listing: @listing, page: @page %>
-      <%= render "bullets/bulk_menu" %>
+      <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
+      Edit
+    <% end %>
+    <%= render "people/pins_button", person: @person %>
+    <%= button_to @person,
+          method: :delete,
+          class: "button--secondary button--danger layout--rail-action",
+          form: { data: { turbo_confirm: "Delete this person and remove them from all bullets?" } } do %>
+      <i class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></i>
+      Delete
+    <% end %>
     </div>
 
-    <aside class="layout--rail" aria-hidden="true"></aside>
+
+  </div>
+
+  <div class="layout--surface">
+    <div class="layout--list">
+      <% if @bullets.any? %>
+        <%= render "pagination/paginated_records",
+            page: @page,
+            pagination_link_path: ->(next_param) { person_path(@person, page: next_param) } %>
+      <% else %>
+        <p>No bullets yet. Pop a bullet to get started.</p>
+      <% end %>
+      <%= render "bullets/bulk_menu" %>
+    </div>
   </div>
 </div>

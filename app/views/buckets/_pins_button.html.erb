@@ -3,7 +3,7 @@
     <%= button_to buckets_pin_path,
           method: :delete,
           params: { bucket_id: bucket.id },
-          class: "button--secondary layout--rail-action",
+          class: "button--secondary",
           form: { data: { turbo_stream: true } },
           aria: { label: "Unpin #{bucket.name}" } do %>
       <i class="icon" style="--icon-mask: var(--icon-unpin)" aria-hidden="true"></i>
@@ -13,7 +13,7 @@
     <%= button_to buckets_pin_path,
           method: :post,
           params: { bucket_id: bucket.id },
-          class: "button--secondary layout--rail-action",
+          class: "button--secondary",
           form: { data: { turbo_stream: true } },
           aria: { label: "Pin #{bucket.name}" } do %>
       <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>

@@ -1,16 +1,14 @@
 import { Controller } from "@hotwired/stimulus"
-import { DirectUpload } from "@rails/activestorage"
 
 export default class extends Controller {
   static targets = [
     "recordButton", "stopButton", "discardButton", "timer", "status",
-    "preview", "previewContainer", "signedIdInput", "durationInput",
+    "preview", "previewContainer", "fileInput", "durationInput",
     "unsupported"
   ]
 
   static values = {
-    durationSeconds: { type: Number, default: 60 },
-    directUploadUrl: String
+    durationSeconds: { type: Number, default: 60 }
   }
 
   connect() {
@@ -21,7 +19,6 @@ export default class extends Controller {
     this.stream = null
     this.previewUrl = null
     this.ready = false
-    this.uploading = false
 
     this.boundReset = this.reset.bind(this)
     this.boundUpdateSubmitState = this.updateSubmitState.bind(this)
@@ -55,7 +52,7 @@ export default class extends Controller {
 
   async start(event) {
     event.preventDefault()
-    if (!this.supported || this.uploading) return
+    if (!this.supported) return
 
     try {
       this.stream = await navigator.mediaDevices.getUserMedia({ audio: true })
@@ -67,7 +64,7 @@ export default class extends Controller {
     this.chunks = []
     this.elapsedSeconds = 0
     this.ready = false
-    this.clearSignedId()
+    this.clearRecording()
     this.updateTimerDisplay()
 
     const mimeType = this.#preferredMimeType()
@@ -90,7 +87,7 @@ export default class extends Controller {
       this.elapsedSeconds += 1
       this.updateTimerDisplay()
 
-      if (this.elapsedSeconds >= this.maxDurationValue) this.stop()
+      if (this.elapsedSeconds >= this.durationSecondsValue) this.stop()
     }, 1000)
   }
 
@@ -130,7 +127,7 @@ export default class extends Controller {
 
   updateSubmitState() {
     const captionPresent = this.#captionPresent()
-    const canSubmit = this.ready && captionPresent && !this.uploading
+    const canSubmit = this.ready && captionPresent
 
     this.element.querySelectorAll('button[type="submit"]').forEach((button) => {
       button.disabled = !canSubmit
@@ -141,8 +138,7 @@ export default class extends Controller {
     this.chunks = []
     this.elapsedSeconds = 0
     this.ready = false
-    this.uploading = false
-    this.clearSignedId()
+    this.clearRecording()
     this.revokePreviewUrl()
     this.#resetPreviewPlayer()
     this.previewContainerTarget.hidden = true
@@ -166,7 +162,7 @@ export default class extends Controller {
     const extension = mimeType == "audio/mp4" ? "mp4" : "webm"
     const file = new File([blob], `voice-memo.${extension}`, { type: mimeType })
 
-    const duration = Math.min(this.maxDurationValue, Math.max(1, Math.ceil(this.elapsedSeconds)))
+    const duration = Math.min(this.durationSecondsValue, Math.max(1, Math.ceil(this.elapsedSeconds)))
     this.durationInputTarget.value = duration
 
     this.revokePreviewUrl()
@@ -176,31 +172,17 @@ export default class extends Controller {
     this.#syncPreviewDuration(duration)
     this.previewContainerTarget.hidden = false
 
-    this.upload(file)
+    this.#appendRecording(file)
   }
 
-  upload(file) {
-    this.uploading = true
-    this.setStatus("Uploading…")
+  #appendRecording(file) {
+    const data = new DataTransfer()
+    data.items.add(file)
+    this.fileInputTarget.files = data.files
+
+    this.ready = true
+    this.setStatus("Ready to save.")
     this.updateSubmitState()
-
-    const upload = new DirectUpload(file, this.directUploadUrlValue, this)
-
-    upload.create((error, blob) => {
-      this.uploading = false
-
-      if (error) {
-        this.setStatus("Upload failed.")
-        this.ready = false
-        this.updateSubmitState()
-        return
-      }
-
-      this.signedIdInputTarget.value = blob.signed_id
-      this.ready = true
-      this.setStatus("Ready to save.")
-      this.updateSubmitState()
-    })
   }
 
   #previewPlayer() {
@@ -244,7 +226,7 @@ export default class extends Controller {
   }
 
   updateTimerDisplay() {
-    const remaining = Math.max(0, this.maxDurationValue - this.elapsedSeconds)
+    const remaining = Math.max(0, this.durationSecondsValue - this.elapsedSeconds)
     const minutes = Math.floor(remaining / 60)
     const seconds = remaining % 60
     this.timerTarget.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`
@@ -257,8 +239,8 @@ export default class extends Controller {
     this.statusTarget.hidden = message.length == 0
   }
 
-  clearSignedId() {
-    this.signedIdInputTarget.value = ""
+  clearRecording() {
+    this.fileInputTarget.value = ""
     this.durationInputTarget.value = ""
   }
 

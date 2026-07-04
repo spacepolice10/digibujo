@@ -5,7 +5,7 @@
   <%= render "bullets/marker", bullet: bullet %>
   <div class="bullet--body">
     <% unless voice.recording.attached? %>
-      <%= voice.body %>
+      <span class="bullet--content"><%= voice.body %></span>
     <% end %>
     <%= render "voices/playback_for_bullet", bullet: bullet %>
     <%= render "bullets/metadata", bullet: bullet, selected_date: selected_date %>

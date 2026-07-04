@@ -1,24 +1,12 @@
 <% content_for(:title) { @bullet.bulletable.name } %>
-<div class="layout--column">
-  <header class="layout--header">
-    <h2 data-bullet-type="<%= @bullet.bulletable_type.downcase %>"><%= @bullet.name %></h2>
-    <% if @bullet.bucket.present? %>
-      <% bucket = @bullet.bucket %>
-      <% bucketable = bucket.bucketable %>
-      <% if bucketable %>
-        <div class="layout--header-actions">
-          <span class="<%= ["pill", bucket.colour.present? ? "pill--#{bucket.colour}" : nil].compact.join(" ") %>"><%= bucketable.name %></span>
-        </div>
-      <% end %>
-    <% end %>
-  </header>
 
-  <article class="layout--main">
-    <div class="bullet--read-body">
+  <article class="layout--surface">
+    <div class="utilities--text-lg">
       <%= @bullet.body %>
     </div>
+
     <footer class="public--published-footer">
       <time class="public--published-date" datetime="<%= @bullet.created_at.iso8601 %>"><%= @bullet.created_at.strftime("%-d %b %Y") %></time>
     </footer>
+
   </article>
-</div>

@@ -1,25 +1,21 @@
-<%# locals: (form:, aria_label:, hint: nil, field_name: "schedule_days") %>
+<%# locals: (form:) %>
 <% schedule_days = form.object.schedule_days %>
 <div class="form-group">
   <span class="form-label">Days</span>
-  <% if hint.present? %>
-    <small class="form-hint"><%= hint %></small>
-  <% end %>
-  <div class="form--picker form--day-picker"
+  <div class="form--picker form--repeat-date-picker"
        role="group"
-       aria-label="<%= aria_label %>"
        data-controller="grid-navigation"
        data-grid-navigation-columns-value="7"
        data-action="keydown->grid-navigation#navigate">
     <% Date::ABBR_DAYNAMES.each_with_index do |label, wday| %>
       <label class="form--picker-option">
         <input type="checkbox"
-               name="<%= form.object_name %>[<%= field_name %>][]"
+               name="<%= form.object_name %>[schedule_days][]"
                value="<%= wday %>"
                <% if schedule_days.include?(wday) %>checked<% end %>
                data-grid-navigation-target="item"
                data-action="focus->grid-navigation#syncPosition">
-        <span class="form--picker-control form--day-control" aria-hidden="true"><%= label %></span>
+        <span class="form--picker-control form--repeat-date-control" aria-hidden="true"><%= label %></span>
         <span class="utilities--sr-only"><%= Date::DAYNAMES[wday] %></span>
       </label>
     <% end %>

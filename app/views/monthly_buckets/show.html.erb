@@ -103,19 +103,25 @@
                       id="<%= dom_id(@monthly_bucket, "date_#{date.to_date}_bullets") %>"
                       class="monthly-bucket--bullets-list"
                     >
-                      <% (@bullets_by_date[date] || []).each do |bullet| %>
-                        <%= render "monthly_buckets/bullets/bullet", bullet: bullet %>
+                      <%= turbo_frame_tag "date_#{date.to_date}_bullets_container" do %>
+                        <% (@bullets_by_date[date] || []).each do |bullet| %>
+                          <%= render "monthly_buckets/bullets/bullet", bullet: bullet %>
+                        <% end %>
                       <% end %>
                     </div>
 
-                    <div class="monthly-bucket--date-add">
-                      <%= render "bullets/composer/open_composer_of",
-                            path: new_monthly_bucket_bullet_path(@monthly_bucket, pops_on: date, bucket_id: @monthly_bucket.bucket.id, bulletable_type: "Event"),
-                            name: "Event",
-                            icon: "circle",
-                            modifier: "event",
-                            frame: "bullet_composer" %>
-                    </div>
+                    <%= turbo_frame_tag "date_#{date.to_date}_bullets" do %>
+                      <%= tag.div class: "monthly-bucket--date-composer" do %>
+                        <%= link_to new_bullet_path(pops_on: date, bucket_id: @monthly_bucket.bucket.id, bulletable_type: "Event"), data: { turbo_frame: "date_#{date.to_date}_bullets" }, class: "bullet--composer-create-button bullet--composer-create-button--event" do %>
+                          <i
+                            class="icon"
+                            style="--icon-mask: var(--icon-circle)"
+                            aria-hidden="true"
+                          ></i>
+                          Add Event
+                        <% end %>
+                      <% end %>
+                    <% end %>
                   </div>
                 </div>
               </div>
@@ -154,22 +160,25 @@
           data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop"
         >
           <div
-            id="<%= dom_id(@monthly_bucket, :unplanned_bullets) %>"
+            id="unplanned_bullets_container"
             class="monthly-bucket--bullets-list"
           >
             <% @unplanned_bullets.each do |bullet| %>
               <%= render "monthly_buckets/bullets/bullet", bullet: bullet %>
             <% end %>
           </div>
-
-          <%= render "bullets/composer/open_composer_of",
-                path: new_monthly_bucket_bullet_path(@monthly_bucket, bucket_id: @monthly_bucket.bucket.id, bulletable_type: "Task"),
-                name: "Task",
-                icon: "square",
-                modifier: "task",
-                frame: "bullet_composer",
-                hotkey: "Shift+T",
-                hotkey_action: "keydown.shift+t@document->hotkey#click" %>
+          <%= turbo_frame_tag "unplanned_bullets" do %>
+            <%= tag.div class: "monthly-bucket--unplanned-composer" do %>
+              <%= link_to new_bullet_path(bucket_id: @monthly_bucket.bucket.id, bulletable_type: "Task"), data: { turbo_frame: "unplanned_bullets" }, class: "bullet--composer-create-button bullet--composer-create-button--task" do %>
+                <i
+                  class="icon"
+                  style="--icon-mask: var(--icon-square)"
+                  aria-hidden="true"
+                ></i>
+                Add Task
+              <% end %>
+            <% end %>
+          <% end %>
         </div>
       </section>
     </div>

@@ -97,22 +97,22 @@
   }
 
   .home--appearance-swatch--default {
-    background: light-dark(oklch(0.97 0.004 80), oklch(0.19 0.007 82));
+    background: light-dark(oklch(0.97 0.006 80), oklch(0.25 0.015 82));
   }
 
   .home--appearance-swatch--warm {
-    background: light-dark(oklch(0.97 0.006 78), oklch(0.40 0.06 78));
+    background: light-dark(oklch(0.95 0.06 78), oklch(0.35 0.12 78));
   }
 
   .home--appearance-swatch--cool {
-    background: light-dark(oklch(0.97 0.006 250), oklch(0.40 0.06 255));
+    background: light-dark(oklch(0.95 0.06 250), oklch(0.35 0.12 255));
   }
 
   .home--appearance-swatch--nature {
-    background: light-dark(oklch(0.97 0.006 145), oklch(0.40 0.06 145));
+    background: light-dark(oklch(0.95 0.06 145), oklch(0.35 0.12 145));
   }
 
   .home--appearance-swatch--cheese {
-    background: light-dark(oklch(0.97 0.007 85), oklch(0.40 0.06 85));
+    background: light-dark(oklch(0.95 0.07 85), oklch(0.35 0.14 85));
   }
 }

@@ -11,10 +11,7 @@ module Bullets
         @bullets.lock.find_each(&:publish!)
       end
 
-      respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to @bullets.first }
-      end
+      redirect_to @bullets.first
     end
 
     def destroy
@@ -22,10 +19,7 @@ module Bullets
         @bullets.lock.find_each(&:unpublish!)
       end
 
-      respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to @bullets.first }
-      end
+      redirect_to @bullets.first
     end
   end
 end

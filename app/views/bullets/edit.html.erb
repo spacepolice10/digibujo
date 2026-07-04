@@ -12,7 +12,7 @@
 <turbo-frame id="<%= dom_id(@bullet) %>"
              class="bullet"
              data-bullet-type="<%= @bullet.bulletable_type.downcase %>">
-  <%= render Bullet.composer_partial_of(@bullet.bulletable_type),
+  <%= render "bullets/form",
         bullet: @bullet,
         bullets_path: bullet_path(@bullet),
         editing: true %>

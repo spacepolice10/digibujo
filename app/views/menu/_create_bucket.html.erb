@@ -4,20 +4,25 @@
     Add collection
   <% end %>
 
-  <% if Sprint.enabled? %>
-    <%= link_to new_sprint_path, class: "button--secondary menu--create-bucket-link", data: { turbo_frame: "_top" } do %>
-      <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
-      Add sprint
-    <% end %>
-  <% else %>
-    <button type="button" class="button--secondary menu--create-bucket-link" disabled>
-      <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
-      Add sprint
-    </button>
-  <% end %>
+  <button
+    type="button"
+    class="button--secondary menu--create-bucket-link"
+    disabled
+  >
+    <i
+      class="icon"
+      style="--icon-mask: var(--icon-circle-check)"
+      aria-hidden="true"
+    ></i>
+    Add sprint
+  </button>
 
   <%= link_to new_monthly_bucket_path, class: "button--secondary menu--create-bucket-link", data: { turbo_frame: "_top" } do %>
-    <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
+    <i
+      class="icon"
+      style="--icon-mask: var(--icon-calendar)"
+      aria-hidden="true"
+    ></i>
     Add monthly log
   <% end %>
 
@@ -32,7 +37,11 @@
   <% end %>
 
   <%= link_to new_recurrency_path, class: "button--secondary menu--create-bucket-link", data: { turbo_frame: "_top" } do %>
-    <i class="icon" style="--icon-mask: var(--icon-report-medical)" aria-hidden="true"></i>
+    <i
+      class="icon"
+      style="--icon-mask: var(--icon-report-medical)"
+      aria-hidden="true"
+    ></i>
     Add recurrency
   <% end %>
 </nav>

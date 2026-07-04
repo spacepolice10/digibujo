@@ -1,6 +1,6 @@
 <% content_for(:title) { "Future Log" } %>
 
-<div class="layout--page future--page" data-controller="bulk-menu">
+<div class="layout--page" data-controller="bulk-menu">
   <div class="layout--header">
     <div class="layout--header-actions">
       <%= link_to home_path, class: "button--secondary" do %>
@@ -21,15 +21,13 @@
         <div id="<%= dom_id(bucket, :unplanned) %>">
           <% unplanned = monthly_bucket.bullets.where(pops_on: nil).order(created_at: :asc).includes(:bulletable) %>
           <% unplanned.each do |bullet| %>
-            <%= render_bullet bullet %>
+            <%= render "future_buckets/bullets/bullet", bullet: bullet %>
           <% end %>
         </div>
       </div>
     <% end %>
 
-    <div class="future--add-month">
-      <%= link_to "+ Add month", new_monthly_bucket_path, class: "button--primary" %>
-    </div>
+    <%= link_to "+ Add month", new_monthly_bucket_path, class: "future--create-monthly-bucket" %>
   </div>
 
   <%= render "bullets/bulk_menu" %>

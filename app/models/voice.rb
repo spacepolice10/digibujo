@@ -13,10 +13,9 @@ class Voice < ApplicationRecord
   validate :recording_must_be_allowed_type
   validate :caption_present
 
-  def self.permitted_bullet_attributes = %i[recording duration_seconds]
+  def self.permitted_bullet_attributes = %i[body recording duration_seconds]
 
   def marker_icon   = :microphone
-  def marker_styles = 'bullet--voice-marker'
 
   private
 

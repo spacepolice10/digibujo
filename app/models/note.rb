@@ -18,16 +18,20 @@ class Note < ApplicationRecord
   def completable?             = false
   def starts_date              = nil
   def ends_date                = nil
-  def marker_styles            = 'bullet--note-marker'
   def marker_icon              = :line_dashed
+
+  def long?
+    body.to_plain_text.length > 400
+  end
+
+  def name
+    body.to_plain_text.lines.first&.strip
+  end
 
   def excerpt
     text = body.to_plain_text
-    if text.length > 800
-      text.truncate(800) || 'Untitled'
-    else
-      body
-    end
+    excerpt_text = text.lines[1..]&.join('') || ''
+    long? ? excerpt_text.truncate(400) : body
   end
 
   def mood_marker

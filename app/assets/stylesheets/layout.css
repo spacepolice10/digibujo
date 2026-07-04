@@ -108,6 +108,12 @@
   .layout--list {
     display: flex;
     flex-direction: column;
+    gap: var(--spacing-vertical-half);
+    &>.records-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-vertical);
+    }
   }
 
   .layout--list-item {
@@ -136,6 +142,12 @@
   body > .layout--workspace {
     margin-inline: auto;
     padding: var(--spacing-vertical) var(--spacing-horizontal);
+  }
+
+  :is(.layout--surface, .layout--filter-surface, .form--surface, .review--workspace) {
+    border: 1px solid var(--color-stroke-base);
+    background: var(--color-bg-subtle);
+    border-radius: var(--radius-strong);
   }
 
   @media (min-width: 800px) {
@@ -218,9 +230,6 @@
   .layout--surface {
     flex: 2 1 0%;
     min-width: 0;
-    border: 1px solid var(--color-stroke-base);
-    background: var(--color-bg-subtle);
-    border-radius: var(--radius-strong);
     padding: var(--spacing-vertical) var(--spacing-horizontal-half);
   }
 
@@ -244,27 +253,5 @@
     .layout--workspace-page .layout--surface {
       flex: 1 1 0%;
     }
-  }
-
-  /* Filters: view narrowing in rails */
-  .layout--filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-vertical-half);
-    align-items: stretch;
-    width: 100%;
-  }
-
-  .layout--filter-surface {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
-    width: 100%;
-    border: 1px solid var(--color-stroke-base);
-    background: var(--color-bg-subtle);
-    border-radius: var(--radius-strong);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
   }
 }

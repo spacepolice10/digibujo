@@ -9,12 +9,12 @@
   <%= form_with model: bullet, url: bullets_path, class: "bullet-composer bullet-composer--mobile", data: {
     controller: ("composer voice-recorder" unless editing),
     composer_editing: (editing || nil),
-    voice_recorder_direct_upload_url_value: rails_direct_uploads_path,
     voice_recorder_duration_seconds_value: Voice::DURATION_SECONDS,
-    action: [
-      ("turbo:submit-end->composer#clearOnSubmit" if editing),
-      "turbo:submit-end->voice-recorder#clearOnSubmit"
-    ].compact.join(" ")
+  composer_form: true,
+  action: [
+    ("turbo:submit-end->composer#clearOnSubmit" if editing),
+    "turbo:submit-end->voice-recorder#clearOnSubmit"
+  ].compact.join(" ")
   }.compact do |fr| %>
     <%= fr.hidden_field :pops_on, value: bullet.pops_on %>
     <%= fr.hidden_field :bucket_id, value: bullet.bucket_id %>
@@ -39,7 +39,7 @@
       <%= render "bullets/composer/rail_type", bullet: bullet, editing: editing %>
       <%= fr.hidden_field :bulletable_type %>
       <%= fr.fields_for :bulletable, voice do |vf| %>
-        <%= vf.hidden_field :recording, data: { voice_recorder_target: "signedIdInput" } %>
+        <%= vf.file_field :recording, accept: "audio/webm,audio/mp4", hidden: true, data: { voice_recorder_target: "fileInput" } %>
         <%= vf.hidden_field :duration_seconds, data: { voice_recorder_target: "durationInput" } %>
       <% end %>
 

@@ -10,7 +10,7 @@ class Bullet < ApplicationRecord
   delegated_type :bulletable, types: %w[Task Note Event Voice], dependent: :destroy, optional: true, inverse_of: :bullet
 
   delegate :completable?, :temporal?, :name,
-           :marker_icon, :marker_styles, :completed?, :mood_marker,
+           :marker_icon, :completed?, :mood_marker,
            :starts_date, :ends_date, :body,
            to: :bulletable
 

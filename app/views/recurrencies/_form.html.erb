@@ -11,22 +11,16 @@
     </div>
   <% end %>
 
-  <small class="form-hint">Recurrencies are repeating habits you want to build — mark them off each day on your daily log and track your consistency over time.</small>
+  <small class="form-small">Recurrencies are repeating habits you want to build — mark them off each day on your daily log and track your consistency over time.</small>
 
   <div class="form-group">
     <%= f.label :name, class: "form-label" %>
-    <small class="form-hint">Give your recurrency a name. Examples: Morning run, Meditate, Drink water.</small>
+    <small class="form-small">Give your recurrency a name. Examples: Morning run, Meditate, Drink water.</small>
     <%= f.text_field :name, class: "form-input", required: true, autofocus: true %>
   </div>
 
-  <%= render "shared/form/colour_picker", form: f, aria_label: "Recurrency colour" %>
-  <%= render "shared/form/icon_picker", form: f,
-        aria_label: "Recurrency icon",
-        hint: "Pick an emoji to spot this recurrency in your daily log." %>
-
-  <%= render "shared/form/schedule_days_picker", form: f,
-        aria_label: "Schedule days",
-        hint: "Choose which days this recurrency appears on your daily log." %>
-
+  <%= render "shared/form/colour_picker", form: f %>
+  <%= render "shared/form/icon_picker", form: f %>
+  <%= render "shared/form/schedule_days_picker", form: f %>
   <%= f.submit class: "button--primary form--submit" %>
 <% end %>

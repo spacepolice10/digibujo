@@ -1,13 +1,5 @@
 @layer components {
-  .pill,
-  .pill--violet,
-  .pill--cobalt,
-  .pill--teal,
-  .pill--emerald,
-  .pill--gold,
-  .pill--vermillion,
-  .pill--magenta,
-  .pill--inks {
+  .pill {
     display: inline-flex !important;
     justify-content: center;
     align-items: center;
@@ -22,36 +14,8 @@
     color: var(--color-fg-subtle);
   }
 
-  .pill--violet {
-    color: var(--model-color-1);
-  }
-
-  .pill--cobalt {
-    color: var(--model-color-2);
-  }
-
-  .pill--teal {
-    color: var(--model-color-3);
-  }
-
-  .pill--emerald {
-    color: var(--model-color-4);
-  }
-
-  .pill--gold {
-    color: var(--model-color-5);
-  }
-
-  .pill--vermillion {
-    color: var(--model-color-6);
-  }
-
-  .pill--magenta {
-    color: var(--model-color-7);
-  }
-
-  .pill--inks {
-    color: var(--model-color-8);
+  .pill[data-colour] {
+    color: var(--entity-color);
   }
 
   .pill .icon {

@@ -6,9 +6,6 @@ import * as ActiveStorage from "@rails/activestorage";
 ActiveStorage.start();
 
 import * as Lexxy from "lexxy";
-import { InlinePastingExtension } from "extensions/inline_pasting";
-import { PromptActionExtension } from "extensions/prompt_actions";
-import { TrimToolbarExtension } from "extensions/trim_toolbar";
 
 /**
  * Configure Lexxy editors for 'inline' and 'note' presets.
@@ -18,10 +15,10 @@ import { TrimToolbarExtension } from "extensions/trim_toolbar";
  */
 Lexxy.configure({
   global: {
-    extensions: [PromptActionExtension, TrimToolbarExtension],
+
   },
   inline: {
-    extensions: [InlinePastingExtension, PromptActionExtension],
+
     attachments: true,
     toolbar: false,
     multiLine: false,
@@ -29,7 +26,6 @@ Lexxy.configure({
     markdown: false,
   },
   note: {
-    extensions: [PromptActionExtension, TrimToolbarExtension],
     attachments: true,
     toolbar: true,
     multiLine: true,

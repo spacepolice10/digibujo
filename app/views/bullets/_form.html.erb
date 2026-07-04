@@ -1,0 +1,78 @@
+<%# locals: (bullet:, bullets_path: nil, editing: false, return_to: nil) %>
+<% composer = CreateComposer.new(bullet: bullet, bulletable_type: bullet.bulletable_type) %>
+
+<%= form_with model: bullet, url: bullets_path, class: "bullet-composer", data: {
+  composer_form: true,
+  controller: composer.stimulus_controller.presence,
+  action: composer.stimulus_actions
+}.compact do |fr| %>
+  <%= fr.hidden_field :pops_on, value: bullet.pops_on %>
+  <%= fr.hidden_field :bucket_id, value: bullet.bucket_id %>
+  <%= hidden_field_tag :return_to, return_to if return_to.present? %>
+  <%= fr.hidden_field :bulletable_type %>
+
+  <%= fr.fields_for :bulletable, composer.bulletable do |bf| %>
+    <%= bf.rich_text_area :body, toolbar_id: composer.toolbar_id, preset: composer.preset, autofocus: composer.focusing_on_render?, placeholder: composer.placeholder, **composer.editor_html_options do %>
+      <lexxy-prompt
+        trigger="#"
+        name="project"
+        src="<%= project_suggestions_path %>"
+        remote-filtering
+        supports-space-in-searches
+      ></lexxy-prompt>
+
+      <lexxy-prompt
+        trigger="@"
+        name="person"
+        src="<%= person_suggestions_path %>"
+        remote-filtering
+        supports-space-in-searches
+      ></lexxy-prompt>
+    <% end %>
+  <% end %>
+
+  <div class="bullet-composer--rail">
+    <span
+      class="bullet-composer--type-pill"
+      data-bullet-type="<%= bullet.bulletable_type.downcase %>"
+      data-composer-transition-type="<%= bullet.bulletable_type.downcase %>"
+    >
+      <%= bullet.bulletable_type %>
+
+      <button
+        type="button"
+        class="button--tertiary button--icon-subtle bullet-composer--type-dismiss"
+        data-action="composer#cancel"
+        aria-label="Close composer"
+      >
+        <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
+      </button>
+    </span>
+
+    <%= render composer.form_extras, fr: fr, bullet: bullet, bulletable: composer.bulletable if composer.form_extras.present? %>
+
+    <div id="toolbar_id"></div>
+
+    <div class="bullet-composer--rail-actions">
+      <div class="bullet-composer--rail-submit">
+        <%= fr.button type: "submit",
+              class: "button--primary button--icon button--circle",
+              aria: { label: "Save" } do %>
+          <i
+            class="icon"
+            style="--icon-mask: var(--icon-arrow-up)"
+            aria-hidden="true"
+          ></i>
+        <% end %>
+
+        <%= fr.button type: "submit",
+                name: "another",
+                value: "1",
+                class: "button--tertiary",
+                aria: { label: "Save and add another" } do %>
+          + one more
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

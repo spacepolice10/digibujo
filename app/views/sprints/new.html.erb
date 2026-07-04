@@ -22,11 +22,11 @@
           return_to: @return_to %>
 
     <% if @bullets.present? %>
-      <section class="form--collect-preview">
-        <h3 class="form--collect-preview-title">
+      <section class="bucket--collect-preview">
+        <h3 class="bucket--collect-preview-title">
           <%= pluralize(@bullets.size, "bullet") %> will be added
         </h3>
-        <ul class="form--collect-preview-list">
+        <ul class="bucket--collect-preview-list">
           <%= render partial: "collections/bullet_preview", collection: @bullets, as: :bullet %>
         </ul>
       </section>

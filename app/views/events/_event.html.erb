@@ -11,7 +11,7 @@
   <%= render "bullets/marker", bullet: bullet %>
 
   <div class="bullet--body">
-    <%= event.excerpt %>
+    <span class="bullet--content"><%= event.excerpt %></span>
     <%= render "bullets/metadata", bullet: bullet, selected_date: selected_date %>
   </div>
 </turbo-frame>

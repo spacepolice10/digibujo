@@ -1,5 +1,5 @@
 <div id="<%= dom_id(bullet, :pops_notice) %>" class="bullet--pops-notice">
-  <p class="pill pill--cobalt">Scheduled on <%= pops_on.strftime("%B %d") %></p>
+  <p class="pill" data-colour="cobalt">Scheduled on <%= pops_on.strftime("%B %d") %></p>
   <%= form_with url: pop_path, method: :delete, data: { turbo_stream: true } do %>
     <%= hidden_field_tag :bullet_ids, bullet.id %>
     <%= hidden_field_tag :pops_on, previous_pops_on %>

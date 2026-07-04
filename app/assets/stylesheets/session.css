@@ -6,6 +6,7 @@
     justify-content: center;
     min-height: 100vh;
     min-height: 100dvh;
+    height: 100%;
     padding: var(--spacing-horizontal-double);
     gap: var(--spacing-vertical-double);
   }
@@ -19,6 +20,18 @@
   .session-layout--main {
     width: 100%;
     max-width: 24rem;
+    height: 100%;
+  }
+
+  .session-layout--app {
+    flex: 1;
+    min-height: 0;
+    justify-content: center;
+    padding-block: var(--spacing-vertical-double);
+  }
+
+  .session-layout--main-wide {
+    max-width: min(var(--breakpoint-tablet), 100%);
   }
 
   .session--page {
@@ -72,7 +85,7 @@
   }
 
   .session--code-input {
-    font-family: "JetBrains Mono", monospace;
+    font-family: var(--font-family-mono);
     text-transform: uppercase;
     letter-spacing: 0.25em;
     text-align: center;

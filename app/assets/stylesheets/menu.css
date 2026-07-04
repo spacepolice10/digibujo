@@ -153,16 +153,8 @@
       height: var(--icon-size-subtle);
     }
 
-    &[data-bullet-type="task"] {
-      color: var(--model-color-2);
-    }
-
-    &[data-bullet-type="event"] {
-      color: var(--model-color-6);
-    }
-
-    &[data-bullet-type="note"] {
-      color: var(--model-color-4);
+    &[data-bullet-type] {
+      color: var(--bullet-type-color);
     }
   }
 

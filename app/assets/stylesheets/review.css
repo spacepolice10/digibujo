@@ -42,9 +42,6 @@
     display: flex;
     align-items: stretch;
     min-height: 0;
-    border: 1px solid var(--color-stroke-base);
-    background: var(--color-bg-subtle);
-    border-radius: var(--radius-strong);
     overflow: hidden;
   }
 
@@ -128,7 +125,8 @@
 
   .review--to-review-footer {
     padding: var(--spacing-vertical) var(--spacing-horizontal);
-    border-top: 1px solid var(--color-stroke-base);
+    width: fit-content;
+    margin-inline: auto;
   }
 
   .review--bullet {

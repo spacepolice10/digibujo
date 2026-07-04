@@ -4,11 +4,11 @@
     flex-direction: column;
   }
 
-  .daylog--page #bullets {
+  .daylog--page #bullets_container {
     margin-block-end: var(--spacing-vertical);
   }
 
-  .daylog--page #bullets .records-list {
+  .daylog--page #bullets_container .records-list {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-vertical);
@@ -29,40 +29,29 @@
     justify-content: flex-end;
   }
 
-  .daylog--today.button--accent {
-    background: var(--model-color-2);
-    border-color: color-mix(in oklch, var(--model-color-2) 65%, black);
-    color: var(--color-fg-strong);
-    font-style: normal;
-    text-transform: none;
-    box-shadow:
-      var(--shadow-strong),
-      0 0 var(--spacing-horizontal) color-mix(in oklch, var(--model-color-2) 40%, transparent);
+  .daylog--today-indicator {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--model-color-2);
+    pointer-events: none;
+    user-select: none;
+  }
 
-    @media (hover: hover) {
-      &:hover:not(:disabled) {
-        background: color-mix(in oklch, var(--model-color-2) 92%, white);
-        border-color: color-mix(in oklch, var(--model-color-2) 65%, black);
-        box-shadow:
-          0 6px 0 oklch(0% 0 0 / 0.4),
-          0 0 var(--spacing-horizontal-double)
-            color-mix(in oklch, var(--model-color-2) 55%, transparent);
-      }
-    }
+  .daylog--today-indicator-ring {
+    position: absolute;
+    inset: -0.35em -0.6em;
+    width: calc(100% + 1.2em);
+    height: calc(100% + 0.7em);
+    opacity: 0.85;
+  }
 
-    &:active:not(:disabled) {
-      background: color-mix(in oklch, var(--model-color-2) 75%, black);
-      border-color: color-mix(in oklch, var(--model-color-2) 45%, black);
-      box-shadow:
-        0 3px 0 oklch(0% 0 0 / 0.35),
-        0 0 var(--spacing-horizontal-half)
-          color-mix(in oklch, var(--model-color-2) 35%, transparent);
-    }
-
-    &:focus-visible {
-      background: color-mix(in oklch, var(--model-color-2) 85%, black);
-      border-color: var(--color-stroke-strong);
-    }
+  .daylog--today-indicator-label {
+    position: relative;
+    font-size: var(--font-size-strong);
+    font-weight: var(--font-weight-base);
+    text-transform: lowercase;
   }
 
   @media (max-width: 799px) {

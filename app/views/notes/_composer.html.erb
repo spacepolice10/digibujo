@@ -4,6 +4,7 @@
         url: bullets_path,
         class: "bullet-composer",
         data: {
+          composer_form: true,
           controller: ("composer" if editing),
           composer_editing: (editing || nil),
           action: "keydown.enter+meta->composer#submit keydown.enter+ctrl->composer#submit turbo:submit-end->composer#clearOnSubmit"

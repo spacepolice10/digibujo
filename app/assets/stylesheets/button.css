@@ -1,19 +1,17 @@
 @layer components {
   .button--primary,
   .button--secondary,
-  .button--tertiary {
+  .button--tertiary,
+  .button--accent {
     display: inline-flex;
     justify-content: center;
     align-items: center;
     gap: var(--spacing-vertical-half);
-    padding: var(--spacing-vertical) var(--spacing-horizontal-half);
-    border-radius: var(--radius-strong);
     font-family: inherit;
     font-size: var(--font-size-subtle);
     cursor: pointer;
     white-space: nowrap;
     flex-shrink: 0;
-    width: fit-content;
     text-decoration: none;
     transition:
       background 0.1s ease,
@@ -24,6 +22,14 @@
       opacity: var(--opacity-half);
       cursor: not-allowed;
     }
+  }
+
+  .button--primary,
+  .button--secondary,
+  .button--tertiary {
+    padding: var(--spacing-vertical) var(--spacing-horizontal-half);
+    border-radius: var(--radius-strong);
+    width: fit-content;
   }
 
   .button--icon {
@@ -42,32 +48,17 @@
   }
 
   .button--accent {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    gap: var(--spacing-vertical-half);
     padding: var(--spacing-vertical-half) var(--spacing-horizontal);
     border-radius: var(--radius-base);
-    font-family: inherit;
-    font-size: var(--font-size-subtle);
     font-weight: var(--font-weight-strong);
     font-style: italic;
     text-transform: uppercase;
-    cursor: pointer;
-    white-space: nowrap;
-    flex-shrink: 0;
-    text-decoration: none;
     background: var(--color-accent);
     border: 1px solid color-mix(in oklch, var(--color-accent) 65%, black);
     color: var(--color-bg-base);
     box-shadow: 0 4px 0 oklch(0% 0 0 / 0.35);
     transition: background 0.1s ease, color 0.1s ease, border-color 0.1s ease,
       box-shadow 0.1s ease;
-
-    &:disabled {
-      opacity: var(--opacity-half);
-      cursor: not-allowed;
-    }
 
     @media (hover: hover) {
       &:hover:not(:disabled) {
@@ -120,7 +111,7 @@
   /* ── Secondary ────────────────────────────────────── */
 
   .button--secondary {
-    background: transparent;
+    background: var(--color-bg-subtle);
     border: 1px solid var(--color-stroke-base);
     color: var(--color-fg-subtle);
 
@@ -225,4 +216,3 @@
     }
   }
 }
-

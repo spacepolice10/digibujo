@@ -1,7 +1,10 @@
-<%# locals: (form:, aria_label:) %>
+<%# locals: (form:) %>
 <div class="form-group">
   <span class="form-label">Colour</span>
-  <div class="form--picker form--colour-picker" role="radiogroup" aria-label="<%= aria_label %>">
+  <small class="form-small">
+    Pick a colour to make this record easy to spot.
+  </small>
+  <div class="form--picker form--colour-picker" role="radiogroup" aria-label="Colour picker">
     <% Colourable::COLOUR_MAPPINGS.each_key do |name| %>
       <label class="form--picker-option">
         <%= form.radio_button :colour, name %>

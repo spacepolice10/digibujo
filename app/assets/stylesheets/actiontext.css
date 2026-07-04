@@ -56,7 +56,7 @@ lexxy-editor[preset="note"] lexxy-toolbar {
   font-size: var(--font-size-subtle);
   padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
   margin-block-start: var(--spacing-vertical-half);
-  margin-block-end: 0;
+  margin-block-end: var(--spacing-vertical);
   border-block-end: none;
   background: var(--color-bg-base);
   border: 1px solid var(--color-stroke-base);

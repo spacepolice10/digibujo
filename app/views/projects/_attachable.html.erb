@@ -1,9 +1,9 @@
 <%= link_to project_path(project),
-      class: ["pill", project.colour.present? ? "pill--#{project.colour}" : nil].compact.join(" "),
-      data: { turbo_frame: "_top" },
+      class: "pill",
+      data: { turbo_frame: "_top", colour: project.colour }.compact,
       aria: { label: "Project: #{project.name}" } do %>
   <% if project.icon.present? %>
-    <%= image_tag project.icon_path, alt: "", class: "form--list-icon" %>
+    <%= image_tag project.icon_path, alt: "" %>
   <% end %>
   <span><%= project.name %></span>
 <% end %>

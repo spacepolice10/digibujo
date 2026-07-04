@@ -2,7 +2,7 @@
   <%= link_to sprint_path(sprint), class: "bucket--list-item-link" do %>
     <div class="bucket--list-item-name">
       <div class="bucket--list-item-marker" data-bucket-colour="<%= sprint.bucket.colour %>" aria-hidden="true">
-        <%= image_tag sprint.icon_path, alt: "", class: "form--list-icon" %>
+        <%= image_tag sprint.icon_path, alt: "", class: "icons--list" %>
       </div>
       <span class="utilities--line-clamp-1"><%= sprint.name %></span>
     </div>

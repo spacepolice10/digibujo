@@ -1,6 +1,7 @@
 <%# locals: (bullet:) %>
 <turbo-frame id="<%= dom_id(bullet) %>"
-             class="bullet bullet--monthly-bucket"
+             class="bullet"
+             data-layout="spread"
              data-bullet-type="<%= bullet.bulletable_type.downcase %>"
              <% if bullet.completed? %>
              data-bullet-completed
@@ -9,20 +10,11 @@
              data-controller="bullet-drag"
              data-bullet-drag-id-value="<%= bullet.id %>"
              data-action="dragstart->bullet-drag#dragstart dragend->bullet-drag#dragend">
-  <div class="bullet--marker-slot">
-    <span class="bullet--monthly-bucket-marker" aria-hidden="true"></span>
-  </div>
+  <span class="bullet--marker" aria-hidden="true"></span>
   <div class="bullet--body">
-    <% if bullet.bulletable_type == "Voice" && bullet.bulletable.recording.attached? %>
-      <%= render "voices/playback_for_bullet", bullet: bullet %>
-    <% else %>
-      <%= link_to bullet_path(bullet),
-            class: "bullet--monthly-bucket-link",
+    <%= link_to bullet.name,
+            bullet_path(bullet),
             data: { turbo_frame: "_top" },
-            draggable: "false" do %>
-        <span class="bullet--line"><%= bullet.name %></span>
-      <% end %>
-      <%= render "voices/playback_for_bullet", bullet: bullet %>
-    <% end %>
+            draggable: "false" %>
   </div>
 </turbo-frame>

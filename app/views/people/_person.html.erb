@@ -5,7 +5,7 @@
       <% if person.avatar.attached? %>
         <%= image_tag person.avatar, class: "person--avatar", alt: "" %>
       <% else %>
-        <%= image_tag person.icon_path, alt: "", class: "form--list-icon" %>
+        <%= image_tag person.icon_path, alt: "", class: "icons--list" %>
       <% end %>
     </div>
       <span class="utilities--line-clamp-1"><%= person.name %></span>

@@ -6,20 +6,17 @@
       <% if bullet.migrated? %>
         <% migration_hint_id = dom_id(bullet, :hint_migration) %>
         <% migration_anchor = "--hint-#{bullet.id}-migration" %>
-        <span class="bullet--migration">
-          <button
-            type="button"
-            class="bullet--migration-mark"
-            interestfor="<%= migration_hint_id %>"
-            style="anchor-name: <%= migration_anchor %>"
-            aria-label="Migrated"
-          >
-        <i class="icon" style="--icon-mask: var(--icon-arrow-right)" aria-hidden="true"></i>
+        <button
+          type="button"
+          interestfor="<%= migration_hint_id %>"
+          style="anchor-name: <%= migration_anchor %>"
+          aria-label="Migrated"
+        >
+          <i class="icon" style="--icon-mask: var(--icon-arrow-right)" aria-hidden="true"></i>
         </button>
-        </span>
       <% end %>
       <% if bullet.pops_on && selected_date && bullet.pops_on > selected_date %>
-        <span class="pill pill--emerald">
+        <span class="pill" data-colour="emerald">
           <p>Scheduled on <%= bullet.pops_on.strftime("%B %d") %></p>
         </span>
       <% end %>
@@ -54,43 +51,43 @@
           <% monthly_bucket_hint_id = dom_id(bullet, "hint_monthly_bucket_#{bucket.id}") %>
           <% monthly_bucket_anchor = "--hint-#{bullet.id}-monthly_bucket-#{bucket.id}" %>
           <%= link_to monthly_bucket_path(bucketable),
-                class: ["pill", bucket.colour.present? ? "pill--#{bucket.colour}" : nil].compact.join(" "),
+                class: "pill",
                 interestfor: monthly_bucket_hint_id,
                 style: "anchor-name: #{monthly_bucket_anchor}",
-                data: { turbo_frame: "_top" },
+                data: { turbo_frame: "_top", colour: bucket.colour }.compact,
                 aria: { label: "Monthly spread: #{bucket.name}" } do %>
-            <%= image_tag bucket.icon_path, alt: "", class: "form--list-icon" %>
+            <%= image_tag bucket.icon_path, alt: "", class: "icons--list" %>
           <% end %>
         <% elsif bucket.bucketable_type == "Collection" %>
           <% coll_hint_id = dom_id(bullet, "hint_collection_#{bucket.id}") %>
           <% coll_anchor = "--hint-#{bullet.id}-collection-#{bucket.id}" %>
           <%= link_to collection_path(bucketable),
-                class: ["pill", bucket.colour.present? ? "pill--#{bucket.colour}" : nil].compact.join(" "),
+                class: "pill",
                 interestfor: coll_hint_id,
                 style: "anchor-name: #{coll_anchor}",
-                data: { turbo_frame: "_top" },
+                data: { turbo_frame: "_top", colour: bucket.colour }.compact,
                 aria: { label: "Collection: #{bucket.name}" } do %>
-            <%= image_tag bucket.icon_path, alt: "", class: "form--list-icon" %>
+            <%= image_tag bucket.icon_path, alt: "", class: "icons--list" %>
           <% end %>
         <% elsif bucket.bucketable_type == "Sprint" %>
           <% sprint_hint_id = dom_id(bullet, "hint_sprint_#{bucket.id}") %>
           <% sprint_anchor = "--hint-#{bullet.id}-sprint-#{bucket.id}" %>
-          <% sprint_pill_class = ["pill", bucket.colour.present? ? "pill--#{bucket.colour}" : nil].compact.join(" ") %>
           <% if Sprint.enabled? %>
             <%= link_to sprint_path(bucketable),
-                  class: sprint_pill_class,
+                  class: "pill",
                   interestfor: sprint_hint_id,
                   style: "anchor-name: #{sprint_anchor}",
-                  data: { turbo_frame: "_top" },
+                  data: { turbo_frame: "_top", colour: bucket.colour }.compact,
                   aria: { label: "Sprint: #{bucket.name}" } do %>
-              <%= image_tag bucket.icon_path, alt: "", class: "form--list-icon" %>
+              <%= image_tag bucket.icon_path, alt: "", class: "icons--list" %>
             <% end %>
           <% else %>
-            <span class="<%= sprint_pill_class %>"
+            <span class="pill"
+                  <% if bucket.colour.present? %>data-colour="<%= bucket.colour %>"<% end %>
                   interestfor="<%= sprint_hint_id %>"
                   style="anchor-name: <%= sprint_anchor %>"
                   aria-label="Sprint: <%= bucket.name %>">
-              <%= image_tag bucket.icon_path, alt: "", class: "form--list-icon" %>
+              <%= image_tag bucket.icon_path, alt: "", class: "icons--list" %>
             </span>
           <% end %>
         <% end %>

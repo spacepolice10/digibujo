@@ -60,21 +60,39 @@
       </div>
 
       <div class="layout--header-actions daylog--header-today">
-        <% unless @selected_date == Date.current %>
-          <%= link_to "Today", daylog_path, data: { turbo_action: "advance" }, class: "button--accent daylog--today" %>
+        <% if @selected_date == Date.current %>
+          <div class="daylog--today-indicator" aria-hidden="true">
+            <svg
+              class="daylog--today-indicator-ring"
+              viewBox="0 0 88 36"
+              aria-hidden="true"
+            >
+              <path
+                d="M10 22 C14 10, 74 8, 78 18 C74 28, 18 30, 10 22"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+
+            <span class="daylog--today-indicator-label utilities--handwriting">
+              today
+            </span>
+          </div>
         <% end %>
       </div>
     </div>
 
-    <div class="layout--surface bucket--list">
+    <div data-bulk-menu-target="list" class="layout--surface layout--list">
       <%= render "bullets/composer/jump" %>
 
-      <div id="bullets" data-bulk-menu-target="list">
-        <%= render "pagination/paginated_records",
-            page: @page,
-            selected_date: @selected_date,
-            pagination_link_path: ->(next_param) { daylog_path(date: @selected_date.iso8601, page: next_param) } %>
-      </div>
+      <%= render "pagination/paginated_records",
+          page: @page,
+          pagination_link_path: ->(next_param) { daylog_path(date: @selected_date.iso8601, page: next_param) },
+          selected_date: @selected_date,
+          container_id: "bullets_container" %>
 
       <%= render "bullets/composer/dock", selected_date: @selected_date %>
     </div>

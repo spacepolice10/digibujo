@@ -1,6 +1,6 @@
-<span class="pill<%= person.colour.present? ? " pill--#{person.colour}" : "" %>">
+<span class="pill"<% if person.colour.present? %> data-colour="<%= person.colour %>"<% end %>>
   <% if person.icon.present? %>
-    <%= image_tag person.icon_path, alt: "", class: "form--list-icon" %>
+    <%= image_tag person.icon_path, alt: "" %>
   <% end %>
   <span><%= person.name %></span>
 </span>

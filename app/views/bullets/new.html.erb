@@ -1,13 +1,6 @@
 <% content_for(:title) { "New bullet" } %>
-<div class="layout--page">
-  <header class="layout--header">
-    <%= link_to (@return_to.presence || home_path), class: "button--tertiary",
-          data: { controller: "composer", action: "click->composer#skipReturnTransition" } do %>
-      <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
-      Back
-    <% end %>
-  </header>
 
+<turbo-frame id="<%= request.headers["Turbo-Frame"] %>" >
   <% if @bullet.bulletable_type.blank? %>
     <% types = [
       { name: "Task", icon: "square", modifier: "task" },
@@ -24,23 +17,6 @@
       <% end %>
     </div>
   <% else %>
-    <% if @bullet.errors.any? %>
-      <div class="form--errors" role="alert">
-        <p><%= pluralize(@bullet.errors.count, "error") %> prevented this bullet from being saved:</p>
-        <ul>
-          <% @bullet.errors.full_messages.each do |message| %>
-            <li><%= message %></li>
-          <% end %>
-        </ul>
-      </div>
-    <% end %>
-
-    <div class="bullet" data-bullet-type="<%= @bullet.bulletable_type.downcase %>">
-      <%= render Bullet.composer_partial_of(@bullet.bulletable_type),
-            bullet: @bullet,
-            bullets_path: bullets_path,
-            return_to: @return_to,
-            editing: true %>
-    </div>
+    <%= render "bullets/form", bullet: @bullet, bullets_path: bullets_path, return_to: @return_to, editing: true %>
   <% end %>
-</div>
+</turbo-frame>

@@ -64,6 +64,12 @@
     --icon-phone: url("icon-phone.svg");
   }
 
+  .icons--list {
+    display: block;
+    width: calc(var(--icon-size-subtle) + 2px);
+    height: calc(var(--icon-size-subtle) + 2px);
+  }
+
   .icon--spin {
     animation: spin 0.8s linear infinite;
   }

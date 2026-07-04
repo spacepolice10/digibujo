@@ -1,14 +1,10 @@
 # frozen_string_literal: true
 
 class ProjectsController < ApplicationController
-  include BulletListing
-
   before_action :set_project, only: %i[show destroy]
 
   def index
     @projects = Current.user.projects.order(created_at: :desc)
-
-    @projects = @projects.where('name LIKE ?', "%#{sanitized_string}%") if sanitized_string.present?
   end
 
   def new
@@ -25,7 +21,10 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    set_bullet_listing(@project)
+    @bullets = set_page_and_extract_portion_from(
+      @project.bullets.order(created_at: :desc),
+      per_page: [5, 15, 30, 50]
+    )
   end
 
   def destroy
@@ -37,10 +36,6 @@ class ProjectsController < ApplicationController
 
   def set_project
     @project = Current.user.projects.find(params[:id])
-  end
-
-  def sanitized_string
-    @sanitized_string ||= ActiveRecord::Base.sanitize_sql_like(params[:q].to_s.strip.downcase)
   end
 
   def project_params

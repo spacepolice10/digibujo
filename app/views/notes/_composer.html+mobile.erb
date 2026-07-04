@@ -8,7 +8,8 @@
   <%= form_with model: bullet, url: bullets_path, class: "bullet-composer bullet-composer--mobile", data: {
     controller: ("composer" if editing),
     composer_editing: (editing || nil),
-    action: "keydown.enter+meta->composer#submit keydown.enter+ctrl->composer#submit turbo:submit-end->composer#clearOnSubmit"
+    composer_form: true,
+  action: "keydown.enter+meta->composer#submit keydown.enter+ctrl->composer#submit turbo:submit-end->composer#clearOnSubmit"
   }.compact do |fr| %>
     <%= fr.hidden_field :pops_on, value: bullet.pops_on %>
     <%= fr.hidden_field :bucket_id, value: bullet.bucket_id %>

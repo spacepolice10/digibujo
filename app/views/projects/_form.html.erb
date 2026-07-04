@@ -6,9 +6,7 @@
     <small class="form-hint">Name the project you are working on. Examples: Website redesign, Book draft, Home renovation.</small>
     <%= f.text_field :name, class: "form-input", required: true %>
   </div>
-  <%= render "shared/form/colour_picker", form: f, aria_label: "Project colour" %>
-  <%= render "shared/form/icon_picker", form: f,
-        aria_label: "Project icon",
-        hint: "Pick an emoji to make this project easy to spot." %>
+  <%= render "shared/form/colour_picker", form: f %>
+  <%= render "shared/form/icon_picker", form: f %>
   <%= f.submit class: "button--primary form--submit" %>
 <% end %>

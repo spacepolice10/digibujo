@@ -11,13 +11,14 @@
 
   .form-label {
     display: block;
-    font-size: var(--font-size-subtle);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-strong);
     color: var(--color-fg-subtle);
-    margin-bottom: var(--spacing-vertical-half);
   }
 
   .form-small {
     display: flex;
+    font-size: var(--font-size-subtle);
   }
 
   /* ── Shared input base ────────────────────────────── */
@@ -159,15 +160,6 @@
     gap: var(--spacing-vertical);
   }
 
-  /* ── Hint text ────────────────────────────────────── */
-
-  .form-hint {
-    font-size: var(--font-size-subtle);
-    color: var(--color-fg-subtle);
-    opacity: var(--opacity-half);
-    margin-top: var(--spacing-vertical-half);
-  }
-
   /* ── Form errors block ────────────────────────────── */
 
   .form--errors {
@@ -181,41 +173,6 @@
     p {
       margin: 0 0 var(--spacing-vertical-half);
     }
-
-    ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      gap: var(--spacing-vertical-half);
-    }
-  }
-
-  /* ── Inline error ─────────────────────────────────── */
-
-  .form-error {
-    font-size: var(--font-size-subtle);
-    color: var(--color-fg-negative);
-    margin-top: var(--spacing-vertical-half);
-  }
-
-  /* ── Floating error message ───────────────────────── */
-
-  .form-errmsg {
-    position: absolute;
-    top: 2px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: var(--z-dialog);
-    background: var(--color-bg-negative);
-    border: 1px solid var(--color-stroke-negative);
-    border-radius: var(--radius-strong);
-    padding: var(--spacing-vertical) var(--spacing-horizontal-double);
-    box-shadow: var(--shadow-base);
-    white-space: nowrap;
-    color: var(--color-fg-negative);
-    font-size: var(--font-size-subtle);
 
     ul {
       list-style: none;
@@ -291,6 +248,7 @@
     width: calc(var(--icon-size-base) * 1.4);
     height: calc(var(--icon-size-base) * 1.4);
     border-radius: var(--radius-full);
+    background: var(--color-bg-base);
   }
 
   /* ── Emoji icon picker ────────────────────────────── */
@@ -314,19 +272,19 @@
     background: var(--color-bg-base);
   }
 
-  /* ── Schedule days picker ─────────────────────────── */
+  /* ── Repeat schedule date picker ──────────────────── */
 
-  .form--day-picker {
+  .form--repeat-date-picker {
     gap: var(--spacing-horizontal);
   }
 
   @container page-column (max-width: 600px) {
-    .form--day-picker {
+    .form--repeat-date-picker {
       gap: var(--spacing-horizontal-half);
     }
   }
 
-  .form--day-control {
+  .form--repeat-date-control {
     display: inline-flex;
     justify-content: center;
     align-items: center;
@@ -340,16 +298,9 @@
     background: var(--color-bg-base);
   }
 
-  .form--picker-option:has(input:checked) .form--day-control {
+  .form--picker-option:has(input:checked) .form--repeat-date-control {
     color: var(--color-fg-base);
     font-weight: var(--font-weight-strong);
-  }
-
-  /* Emoji icon inside list markers */
-  .form--list-icon {
-    display: block;
-    width: calc(var(--icon-size-subtle) + 2px);
-    height: calc(var(--icon-size-subtle) + 2px);
   }
 
   /* ── Form page layout ─────────────────────────────── */
@@ -371,65 +322,13 @@
   /* ── Form surface card ────────────────────────────── */
 
   .form--surface {
-    border: 1px solid var(--color-stroke-base);
-    background: var(--color-bg-subtle);
-    border-radius: var(--radius-strong);
     padding: var(--spacing-vertical-double) var(--spacing-horizontal);
   }
-
-  /* ── Strong labels & hints ────────────────────────── */
-
-  .form--strong .form-label {
-    color: var(--color-fg-base);
-    font-weight: var(--font-weight-strong);
-    opacity: var(--opacity-full);
-  }
-
-  .form--strong .form-hint {
-    opacity: var(--opacity-full);
-  }
-
   /* ── Submit button ────────────────────────────────── */
 
   .form--submit {
     width: fit-content;
     margin-inline: auto;
     margin-top: var(--spacing-vertical-double);
-  }
-
-  .form--collect-preview {
-    margin-top: var(--spacing-vertical-double);
-    padding-top: var(--spacing-vertical-double);
-    border-top: 1px solid var(--color-stroke-base);
-  }
-
-  .form--collect-preview-title {
-    margin-bottom: var(--spacing-vertical);
-    font-size: var(--font-size-subtle);
-    color: var(--color-fg-subtle);
-  }
-
-  .form--collect-preview-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-vertical-half);
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .form--collect-preview-item {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
-    min-width: 0;
-  }
-
-  .form--collect-preview-marker {
-    flex-shrink: 0;
-  }
-
-  .form--collect-preview-name {
-    min-width: 0;
   }
 }

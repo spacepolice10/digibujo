@@ -1,14 +1,11 @@
 # frozen_string_literal: true
 
 class PeopleController < ApplicationController
-  include BulletListing
-
   before_action :set_person, only: %i[show edit update destroy]
   before_action :prepare_contact_fields, only: %i[edit]
 
   def index
     @people = Current.user.people.order(created_at: :desc)
-    @people = @people.where('name LIKE ?', "%#{sanitized_string}%") if sanitized_string.present?
   end
 
   def new
@@ -26,8 +23,7 @@ class PeopleController < ApplicationController
     end
   end
 
-  def edit
-  end
+  def edit; end
 
   def update
     if @person.update(person_params)
@@ -39,7 +35,10 @@ class PeopleController < ApplicationController
   end
 
   def show
-    set_bullet_listing(@person)
+    @bullets = set_page_and_extract_portion_from(
+      @person.bullets.order(created_at: :desc),
+      per_page: [5, 15, 30, 50]
+    )
   end
 
   def destroy
@@ -60,25 +59,21 @@ class PeopleController < ApplicationController
     @phone_handle = @person.handles.phone.first || @person.handles.build(kind: :phone)
     @email_handle_index = @email_handle.persisted? ? @email_handle.id : 0
     @phone_handle_index = if @phone_handle.persisted?
-      @phone_handle.id
-    elsif @email_handle.persisted?
-      @email_handle.id + 1
-    else
-      1
-    end
-  end
-
-  def sanitized_string
-    @sanitized_string ||= ActiveRecord::Base.sanitize_sql_like(params[:q].to_s.strip.downcase)
+                            @phone_handle.id
+                          elsif @email_handle.persisted?
+                            @email_handle.id + 1
+                          else
+                            1
+                          end
   end
 
   def person_params
     params.require(:person).permit(
       :name, :colour, :icon, :avatar,
-      handles_attributes: [ :id, :kind, :platform, :data, :position, :_destroy ]
+      handles_attributes: %i[id kind platform data position _destroy]
     ).tap do |permitted|
       permitted[:handles_attributes]&.each do |_key, attrs|
-        attrs[:_destroy] = "1" if attrs[:id].present? && attrs[:data].blank?
+        attrs[:_destroy] = '1' if attrs[:id].present? && attrs[:data].blank?
       end
     end
   end

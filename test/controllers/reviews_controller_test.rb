@@ -61,7 +61,7 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_match 'Team standup', response.body
-    assert_select '.monthly-bucket--date-entries .bullet--monthly-bucket', text: /Team standup/
+    assert_select '.monthly-bucket--date-entries .bullet[data-layout="spread"]', text: /Team standup/
   end
 
   test 'show mobile renders inbox list with bulk menu' do

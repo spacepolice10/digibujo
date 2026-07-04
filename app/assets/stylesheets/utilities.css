@@ -20,6 +20,11 @@
     font-size: var(--font-size-subtle);
   }
 
+  .utilities--handwriting {
+    font-family: var(--font-family-base);
+    font-variation-settings: "CRSV" 1, "slnt" -10;
+  }
+
   @keyframes spin {
     to {
       rotate: 360deg;

@@ -142,19 +142,19 @@
   }
 
   @media (hover: hover) {
-    .monthly-bucket--calendar .monthly-bucket--date-add {
+    .monthly-bucket--calendar .monthly-bucket--date-composer {
       visibility: hidden;
       pointer-events: none;
     }
 
-    .monthly-bucket--calendar .monthly-bucket--date-band:is(:hover, :focus-within) .monthly-bucket--date-add {
+    .monthly-bucket--calendar .monthly-bucket--date-band:is(:hover, :focus-within) .monthly-bucket--date-composer {
       visibility: visible;
       pointer-events: auto;
     }
   }
 
   @media (hover: none) {
-    .monthly-bucket--calendar .monthly-bucket--date-add {
+    .monthly-bucket--calendar .monthly-bucket--date-composer {
       visibility: visible;
       pointer-events: auto;
     }
@@ -442,10 +442,10 @@
       transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
       border-color 0.22s ease,
       box-shadow 0.22s ease,
-      background-position 0.35s ease;
+      background 0.22s ease;
   }
 
-  .monthly-bucket--period-label {
+  .monthly-bucket--period-name {
     font-size: var(--font-size-strong);
     font-weight: var(--font-weight-strong);
     color: var(--color-fg-base);
@@ -458,13 +458,13 @@
     line-height: 1;
   }
 
-  .monthly-bucket--period-option:hover .monthly-bucket--period-card {
+  .monthly-bucket--period-checkbox:hover + .monthly-bucket--period-card {
     transform: translateY(-1px) scale(1.02);
     border-color: var(--color-stroke-strong);
     box-shadow: var(--shadow-base);
   }
 
-  .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card {
+  .monthly-bucket--period-checkbox:focus-visible + .monthly-bucket--period-card {
     transform: scale(1.05);
     border-color: var(--color-stroke-strong);
     outline: 2px solid var(--color-stroke-strong);
@@ -474,7 +474,7 @@
       var(--shadow-strong);
   }
 
-  .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card::after {
+  .monthly-bucket--period-checkbox:focus-visible + .monthly-bucket--period-card::after {
     content: "";
     position: absolute;
     top: var(--spacing-vertical-half);
@@ -486,94 +486,21 @@
     box-shadow: 0 0 0 2px var(--color-bg-base);
   }
 
-  .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
+  .monthly-bucket--period-checkbox:checked + .monthly-bucket--period-card {
     border-color: var(--color-stroke-strong);
     transform: scale(1.02);
   }
 
-  @keyframes monthly-bucket-gradient-shift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
-
-  .monthly-bucket--period-option[data-month]:hover .monthly-bucket--period-card,
-  .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
-  .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
-    background-size: 200% 200%;
+  .monthly-bucket--period-checkbox[data-month]:hover .monthly-bucket--period-card,
+  .monthly-bucket--period-option .monthly-bucket--period-checkbox:focus-visible + .monthly-bucket--period-card,
+  .monthly-bucket--period-option .monthly-bucket--period-checkbox:checked + .monthly-bucket--period-card {
+    background: var(--entity-color-bg);
+    border-color: color-mix(
+      in oklch,
+      var(--entity-color) 40%,
+      var(--color-stroke-base)
+    );
     box-shadow: var(--shadow-base);
-    animation: monthly-bucket-gradient-shift 8s ease infinite;
-  }
-
-  .monthly-bucket--period-option[data-month="1"]:hover .monthly-bucket--period-card,
-  .monthly-bucket--period-option[data-month="1"] .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
-  .monthly-bucket--period-option[data-month="1"] .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
-    background-image: var(--gradient-january);
-  }
-
-  .monthly-bucket--period-option[data-month="2"]:hover .monthly-bucket--period-card,
-  .monthly-bucket--period-option[data-month="2"] .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
-  .monthly-bucket--period-option[data-month="2"] .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
-    background-image: var(--gradient-february);
-  }
-
-  .monthly-bucket--period-option[data-month="3"]:hover .monthly-bucket--period-card,
-  .monthly-bucket--period-option[data-month="3"] .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
-  .monthly-bucket--period-option[data-month="3"] .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
-    background-image: var(--gradient-march);
-  }
-
-  .monthly-bucket--period-option[data-month="4"]:hover .monthly-bucket--period-card,
-  .monthly-bucket--period-option[data-month="4"] .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
-  .monthly-bucket--period-option[data-month="4"] .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
-    background-image: var(--gradient-april);
-  }
-
-  .monthly-bucket--period-option[data-month="5"]:hover .monthly-bucket--period-card,
-  .monthly-bucket--period-option[data-month="5"] .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
-  .monthly-bucket--period-option[data-month="5"] .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
-    background-image: var(--gradient-may);
-  }
-
-  .monthly-bucket--period-option[data-month="6"]:hover .monthly-bucket--period-card,
-  .monthly-bucket--period-option[data-month="6"] .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
-  .monthly-bucket--period-option[data-month="6"] .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
-    background-image: var(--gradient-june);
-  }
-
-  .monthly-bucket--period-option[data-month="7"]:hover .monthly-bucket--period-card,
-  .monthly-bucket--period-option[data-month="7"] .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
-  .monthly-bucket--period-option[data-month="7"] .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
-    background-image: var(--gradient-july);
-  }
-
-  .monthly-bucket--period-option[data-month="8"]:hover .monthly-bucket--period-card,
-  .monthly-bucket--period-option[data-month="8"] .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
-  .monthly-bucket--period-option[data-month="8"] .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
-    background-image: var(--gradient-august);
-  }
-
-  .monthly-bucket--period-option[data-month="9"]:hover .monthly-bucket--period-card,
-  .monthly-bucket--period-option[data-month="9"] .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
-  .monthly-bucket--period-option[data-month="9"] .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
-    background-image: var(--gradient-september);
-  }
-
-  .monthly-bucket--period-option[data-month="10"]:hover .monthly-bucket--period-card,
-  .monthly-bucket--period-option[data-month="10"] .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
-  .monthly-bucket--period-option[data-month="10"] .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
-    background-image: var(--gradient-october);
-  }
-
-  .monthly-bucket--period-option[data-month="11"]:hover .monthly-bucket--period-card,
-  .monthly-bucket--period-option[data-month="11"] .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
-  .monthly-bucket--period-option[data-month="11"] .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
-    background-image: var(--gradient-november);
-  }
-
-  .monthly-bucket--period-option[data-month="12"]:hover .monthly-bucket--period-card,
-  .monthly-bucket--period-option[data-month="12"] .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
-  .monthly-bucket--period-option[data-month="12"] .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
-    background-image: var(--gradient-december);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -581,7 +508,6 @@
     .monthly-bucket--period-option[data-month]:hover .monthly-bucket--period-card,
     .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
     .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
-      animation: none;
       transform: none;
     }
   }

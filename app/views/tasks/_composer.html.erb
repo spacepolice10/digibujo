@@ -1,5 +1,6 @@
 <%# locals: (bullet:, bullets_path: nil, editing: false, return_to: nil) %>
 <%= form_with model: bullet, url: bullets_path, class: "bullet-composer", data: {
+  composer_form: true,
   controller: ("composer" if editing),
   composer_editing: (editing || nil),
   action: "turbo:submit-end->composer#clearOnSubmit"

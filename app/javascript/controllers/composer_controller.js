@@ -48,7 +48,7 @@ function frameToCancel() {
   // turbo-frame containing one), since composer frames can be nested
   // inside unrelated ancestor frames (e.g. the daylog's page-level frame).
   const candidates = [...document.querySelectorAll('turbo-frame[data-controller~="composer"]')].filter((frame) =>
-    frame.querySelector(".bullet-composer")
+    frame.querySelector("[data-composer-form]")
   )
 
   if (candidates.length == 0) return null
@@ -66,7 +66,7 @@ function frameToCancel() {
 function tryCancelFrame(frame) {
   if (document.querySelector("dialog[open]")) return false
 
-  const form = frame.querySelector(".bullet-composer")
+  const form = frame.querySelector("[data-composer-form]")
   if (!form) return false
   if (form.dataset.composerEditing == "true") return false
 
@@ -88,7 +88,7 @@ function onSubmitEnd(event) {
   if (!event.detail.success) return
 
   const form = event.target
-  if (!form?.classList?.contains("bullet-composer")) return
+  if (!form?.hasAttribute("data-composer-form")) return
 
   const submitter = event.detail.formSubmission?.submitter
   if (submitter?.name == "another") return
@@ -135,8 +135,8 @@ export default class extends Controller {
   }
 
   get #form() {
-    if (this.#isFrame) return this.element.querySelector(".bullet-composer")
-    if (this.element.classList.contains("bullet-composer")) return this.element
+    if (this.#isFrame) return this.element.querySelector("[data-composer-form]")
+    if (this.element.hasAttribute("data-composer-form")) return this.element
 
     return null
   }
@@ -194,8 +194,8 @@ export default class extends Controller {
     if (event.target != this.element) return
 
     const newFrame = event.detail.newFrame
-    const enteringForm = newFrame?.querySelector(".bullet-composer")
-    const onPicker = !this.element.querySelector(".bullet-composer")
+    const enteringForm = newFrame?.querySelector("[data-composer-form]")
+    const onPicker = !this.element.querySelector("[data-composer-form]")
 
     if (enteringForm && onPicker) {
       stashes.set(this.element, this.element.innerHTML)

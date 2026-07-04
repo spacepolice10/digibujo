@@ -132,6 +132,10 @@
     --font-size-base: clamp(0.9375rem, 0.875rem + 0.2vw, 1rem);
     --font-size-subtle: clamp(0.8125rem, 0.775rem + 0.15vw, 0.875rem);
 
+    /* font families */
+    --font-family-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-family-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
     /* font weights */
     --font-weight-strong: 800;
     --font-weight-base: 400;
@@ -151,56 +155,111 @@
     --icon-size-subtle: 1rem;
     --icon-size-base: 1.5rem;
     --icon-size-strong: 2rem;
-
-    /* monthly picker gradients — seasonal color wheel progression, 135° 3-stop */
-    --gradient-january: linear-gradient(135deg, oklch(0.88 0.14 210), oklch(0.82 0.20 225), oklch(0.93 0.08 240));
-    --gradient-february: linear-gradient(135deg, oklch(0.88 0.18 245), oklch(0.84 0.22 260), oklch(0.90 0.14 275));
-    --gradient-march: linear-gradient(135deg, oklch(0.88 0.16 145), oklch(0.88 0.24 155), oklch(0.94 0.10 165));
-    --gradient-april: linear-gradient(135deg, oklch(0.93 0.06 170), oklch(0.88 0.14 185), oklch(0.90 0.10 200));
-    --gradient-may: linear-gradient(135deg, oklch(0.90 0.16 95), oklch(0.90 0.20 110), oklch(0.95 0.14 125));
-    --gradient-june: linear-gradient(135deg, oklch(0.90 0.16 65), oklch(0.94 0.22 80), oklch(0.92 0.14 95));
-    --gradient-july: linear-gradient(135deg, oklch(0.90 0.22 25), oklch(0.86 0.28 40), oklch(0.92 0.18 55));
-    --gradient-august: linear-gradient(135deg, oklch(0.86 0.18 355), oklch(0.90 0.24 10), oklch(0.88 0.20 25));
-    --gradient-september: linear-gradient(135deg, oklch(0.93 0.22 40), oklch(0.88 0.26 55), oklch(0.86 0.18 70));
-    --gradient-october: linear-gradient(135deg, oklch(0.90 0.20 15), oklch(0.84 0.22 30), oklch(0.82 0.14 45));
-    --gradient-november: linear-gradient(135deg, oklch(0.84 0.14 335), oklch(0.82 0.16 350), oklch(0.88 0.04 5));
-    --gradient-december: linear-gradient(135deg, oklch(0.86 0.16 215), oklch(0.90 0.08 230), oklch(0.95 0.02 245));
   }
 
   [data-appearance="warm"] {
-    --color-bg-base: light-dark(oklch(0.97 0.006 78), oklch(0.19 0.008 78));
-    --color-bg-subtle: light-dark(oklch(0.99 0.004 78), oklch(0.24 0.008 78));
+    --color-bg-base: light-dark(oklch(0.97 0.015 78), oklch(0.19 0.025 78));
+    --color-bg-subtle: light-dark(oklch(0.99 0.01 78), oklch(0.24 0.018 78));
   }
 
   [data-appearance="cool"] {
-    --color-bg-base: light-dark(oklch(0.97 0.006 250), oklch(0.19 0.008 255));
-    --color-bg-subtle: light-dark(oklch(0.99 0.004 250), oklch(0.24 0.008 255));
+    --color-bg-base: light-dark(oklch(0.97 0.015 250), oklch(0.19 0.025 255));
+    --color-bg-subtle: light-dark(oklch(0.99 0.01 250), oklch(0.24 0.018 255));
   }
 
   [data-appearance="nature"] {
-    --color-bg-base: light-dark(oklch(0.97 0.006 145), oklch(0.19 0.008 145));
-    --color-bg-subtle: light-dark(oklch(0.99 0.004 145), oklch(0.24 0.008 145));
+    --color-bg-base: light-dark(oklch(0.97 0.015 145), oklch(0.19 0.025 145));
+    --color-bg-subtle: light-dark(oklch(0.99 0.01 145), oklch(0.24 0.018 145));
   }
 
   [data-appearance="cheese"] {
-    --color-bg-base: light-dark(oklch(0.97 0.007 85), oklch(0.19 0.008 85));
-    --color-bg-subtle: light-dark(oklch(0.99 0.005 85), oklch(0.24 0.008 85));
+    --color-bg-base: light-dark(oklch(0.97 0.02 85), oklch(0.19 0.03 85));
+    --color-bg-subtle: light-dark(oklch(0.99 0.014 85), oklch(0.24 0.022 85));
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --gradient-january: linear-gradient(135deg, oklch(0.26 0.14 210), oklch(0.20 0.20 225), oklch(0.30 0.08 240));
-      --gradient-february: linear-gradient(135deg, oklch(0.26 0.18 245), oklch(0.22 0.22 260), oklch(0.28 0.14 275));
-      --gradient-march: linear-gradient(135deg, oklch(0.26 0.16 145), oklch(0.26 0.24 155), oklch(0.32 0.10 165));
-      --gradient-april: linear-gradient(135deg, oklch(0.31 0.06 170), oklch(0.26 0.14 185), oklch(0.28 0.10 200));
-      --gradient-may: linear-gradient(135deg, oklch(0.28 0.16 95), oklch(0.28 0.20 110), oklch(0.33 0.14 125));
-      --gradient-june: linear-gradient(135deg, oklch(0.28 0.16 65), oklch(0.32 0.22 80), oklch(0.30 0.14 95));
-      --gradient-july: linear-gradient(135deg, oklch(0.28 0.22 25), oklch(0.24 0.28 40), oklch(0.30 0.18 55));
-      --gradient-august: linear-gradient(135deg, oklch(0.24 0.18 355), oklch(0.28 0.24 10), oklch(0.26 0.20 25));
-      --gradient-september: linear-gradient(135deg, oklch(0.31 0.22 40), oklch(0.26 0.26 55), oklch(0.24 0.18 70));
-      --gradient-october: linear-gradient(135deg, oklch(0.28 0.20 15), oklch(0.22 0.22 30), oklch(0.20 0.14 45));
-      --gradient-november: linear-gradient(135deg, oklch(0.22 0.14 335), oklch(0.20 0.16 350), oklch(0.26 0.04 5));
-      --gradient-december: linear-gradient(135deg, oklch(0.24 0.16 215), oklch(0.28 0.08 230), oklch(0.32 0.02 245));
-    }
+  /* entity colours — mirrors Colourable::COLOUR_MAPPINGS */
+  [data-colour="violet"],
+  [data-bucket-colour="violet"] {
+    --entity-color: var(--model-color-1);
+    --entity-color-bg: var(--model-color-1-bg);
   }
+
+  [data-colour="cobalt"],
+  [data-bucket-colour="cobalt"] {
+    --entity-color: var(--model-color-2);
+    --entity-color-bg: var(--model-color-2-bg);
+  }
+
+  [data-colour="teal"],
+  [data-bucket-colour="teal"] {
+    --entity-color: var(--model-color-3);
+    --entity-color-bg: var(--model-color-3-bg);
+  }
+
+  [data-colour="emerald"],
+  [data-bucket-colour="emerald"] {
+    --entity-color: var(--model-color-4);
+    --entity-color-bg: var(--model-color-4-bg);
+  }
+
+  [data-colour="gold"],
+  [data-bucket-colour="gold"] {
+    --entity-color: var(--model-color-5);
+    --entity-color-bg: var(--model-color-5-bg);
+  }
+
+  [data-colour="vermillion"],
+  [data-bucket-colour="vermillion"] {
+    --entity-color: var(--model-color-6);
+    --entity-color-bg: var(--model-color-6-bg);
+  }
+
+  [data-colour="magenta"],
+  [data-bucket-colour="magenta"] {
+    --entity-color: var(--model-color-7);
+    --entity-color-bg: var(--model-color-7-bg);
+  }
+
+  [data-colour="inks"],
+  [data-bucket-colour="inks"] {
+    --entity-color: var(--model-color-8);
+    --entity-color-bg: var(--model-color-8-bg);
+  }
+
+  [data-bullet-type="task"],
+  .bullet--composer-create-button--task {
+    --bullet-type-color: var(--model-color-2);
+    --bullet-type-color-bg: var(--model-color-2-bg);
+  }
+
+  [data-bullet-type="event"],
+  .bullet--composer-create-button--event {
+    --bullet-type-color: var(--model-color-6);
+    --bullet-type-color-bg: var(--model-color-6-bg);
+  }
+
+  [data-bullet-type="note"],
+  .bullet--composer-create-button--note {
+    --bullet-type-color: var(--model-color-5);
+    --bullet-type-color-bg: var(--model-color-5-bg);
+  }
+
+  [data-bullet-type="voice"],
+  .bullet--composer-create-button--voice {
+    --bullet-type-color: var(--model-color-4);
+    --bullet-type-color-bg: var(--model-color-4-bg);
+  }
+
+  [data-month="1"] { --entity-color: var(--model-color-1); --entity-color-bg: var(--model-color-1-bg); }
+  [data-month="2"] { --entity-color: var(--model-color-2); --entity-color-bg: var(--model-color-2-bg); }
+  [data-month="3"] { --entity-color: var(--model-color-3); --entity-color-bg: var(--model-color-3-bg); }
+  [data-month="4"] { --entity-color: var(--model-color-4); --entity-color-bg: var(--model-color-4-bg); }
+  [data-month="5"] { --entity-color: var(--model-color-5); --entity-color-bg: var(--model-color-5-bg); }
+  [data-month="6"] { --entity-color: var(--model-color-6); --entity-color-bg: var(--model-color-6-bg); }
+  [data-month="7"] { --entity-color: var(--model-color-7); --entity-color-bg: var(--model-color-7-bg); }
+  [data-month="8"] { --entity-color: var(--model-color-8); --entity-color-bg: var(--model-color-8-bg); }
+  [data-month="9"] { --entity-color: var(--model-color-1); --entity-color-bg: var(--model-color-1-bg); }
+  [data-month="10"] { --entity-color: var(--model-color-2); --entity-color-bg: var(--model-color-2-bg); }
+  [data-month="11"] { --entity-color: var(--model-color-3); --entity-color-bg: var(--model-color-3-bg); }
+  [data-month="12"] { --entity-color: var(--model-color-4); --entity-color-bg: var(--model-color-4-bg); }
 }

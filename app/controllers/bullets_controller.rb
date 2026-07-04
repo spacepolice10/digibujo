@@ -4,7 +4,6 @@ class BulletsController < ApplicationController
   include BulletCreation
 
   before_action :set_bullet, only: %i[show edit update destroy]
-  before_action :redirect_voice_edit, only: %i[edit update]
 
   # Full-page bullet composer (not the inline/turbo-frame composer used by daylog
   # and monthly bucket). Renders a real page and redirects on success instead of
@@ -23,12 +22,15 @@ class BulletsController < ApplicationController
     @bullet = Current.user.bullets.new(bullet_params)
 
     if @bullet.save
-      redirect_to after_create_path
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to bullet_path(@bullet) }
+      end
     else
-      render :new, status: :unprocessable_entity
+      respond_to do |format|
+        format.html { render :new, status: :unprocessable_entity }
+      end
     end
-  rescue Bullet::Params::TypeRequired
-    redirect_to new_bullet_path(return_to: @return_to), alert: 'Pick a bullet type first'
   end
 
   def edit; end
@@ -59,27 +61,8 @@ class BulletsController < ApplicationController
 
   private
 
-  def after_create_path
-    if params[:another].present?
-      new_bullet_path(
-        bulletable_type: @bullet.bulletable_type,
-        pops_on: @bullet.pops_on,
-        bucket_id: @bullet.bucket_id,
-        return_to: @return_to
-      )
-    else
-      @return_to.presence || bullet_path(@bullet)
-    end
-  end
-
   def set_bullet
     @bullet = Current.user.bullets.find(params[:id])
-  end
-
-  def redirect_voice_edit
-    return unless @bullet.bulletable_type == "Voice"
-
-    redirect_to bullet_path(@bullet)
   end
 
   def permitted_return_to(url)

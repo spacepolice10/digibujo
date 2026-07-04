@@ -106,11 +106,11 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     get monthly_bucket_path(monthly_bucket)
 
     assert_response :success
-    assert_select '.bullet--monthly-bucket .bullet--line', text: 'Pinned spread task'
-    assert_select '.bullet--monthly-bucket .bullet--monthly-bucket-marker', count: 1
-    assert_select '.bullet--monthly-bucket .bullet--marker', count: 0
-    assert_select '.bullet--monthly-bucket .bullet--tags', count: 0
-    assert_select '.bullet--monthly-bucket .bullet--metadata', count: 0
+    assert_select '.bullet[data-layout="spread"]', text: /Pinned spread task/
+    assert_select '.bullet[data-layout="spread"] > .bullet--marker', count: 1
+    assert_select '.bullet[data-layout="spread"] .bullet--marker-select', count: 0
+    assert_select '.bullet[data-layout="spread"] .bullet--tags', count: 0
+    assert_select '.bullet[data-layout="spread"] .bullet--metadata', count: 0
   end
 
   test 'monthly bucket bullets link to show page' do
@@ -129,9 +129,8 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     get monthly_bucket_path(monthly_bucket)
 
     assert_response :success
-    assert_select "a.bullet--monthly-bucket-link[href='#{bullet_path(plain)}']", text: /Plain task/
-    assert_select "a.bullet--monthly-bucket-link[href='#{bullet_path(with_rich_body)}']", text: /Expanded detail/
-    assert_select '.bullet--monthly-bucket-extra', count: 0
+    assert_select ".bullet[data-layout='spread'] a[href='#{bullet_path(plain)}']", text: /Plain task/
+    assert_select ".bullet[data-layout='spread'] a[href='#{bullet_path(with_rich_body)}']", text: /Expanded detail/
   end
 
   test 'completed monthly bucket tasks are marked completed' do
@@ -149,7 +148,7 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "turbo-frame##{dom_id(bullet)}[data-bullet-completed]"
-    assert_select "a.bullet--monthly-bucket-link[href='#{bullet_path(bullet)}']", text: /Buy ointment/
+    assert_select ".bullet[data-layout='spread'] a[href='#{bullet_path(bullet)}']", text: /Buy ointment/
   end
 
   test 'mobile monthly bucket renders planned and unplanned tabs' do
@@ -193,9 +192,9 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_match 'Mobile spread task', response.body
-    assert_select '.bullet--monthly-bucket', count: 0
+    assert_select '.bullet[data-layout="spread"]', count: 0
     assert_select 'turbo-frame.bullet[draggable="true"]', count: 0
-    assert_select '.bullet--task-marker', count: 1
+    assert_select '.bullet--marker', minimum: 1
   end
 
   test 'monthly bucket date labels link to daylog' do

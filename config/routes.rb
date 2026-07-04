@@ -80,7 +80,6 @@ Rails.application.routes.draw do
   resources :collections do
     scope module: :collections do
       resource :export, only: :show
-      resources :bullets, only: %i[new create]
     end
   end
 

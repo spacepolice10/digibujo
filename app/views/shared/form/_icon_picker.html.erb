@@ -1,10 +1,10 @@
-<%# locals: (form:, aria_label:, hint: nil) %>
+<%# locals: (form:) %>
 <div class="form-group">
   <span class="form-label">Icon</span>
-  <% if hint.present? %>
-    <small class="form-hint"><%= hint %></small>
-  <% end %>
-  <div class="form--picker form--icon-picker" role="radiogroup" aria-label="<%= aria_label %>">
+  <small class="form-small">
+    Pick an emoji to make this record easy to spot.
+  </small>
+  <div class="form--picker form--icon-picker" role="radiogroup" aria-label="Icon picker">
     <% Iconable::ICON_MAPPINGS.each do |key| %>
       <label class="form--picker-option">
         <%= form.radio_button :icon, key %>

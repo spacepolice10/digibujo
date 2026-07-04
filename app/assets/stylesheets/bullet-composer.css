@@ -13,6 +13,24 @@
     border-top: 1px solid var(--color-stroke-base);
   }
 
+  .bullet--composer-buttons-page {
+    flex-direction: column;
+    align-items: stretch;
+    margin-block-start: 0;
+    padding-block-start: 0;
+    border-top: none;
+  }
+
+  .session-layout--app .bullet-composer {
+    width: 100%;
+    left: auto;
+    top: auto;
+    padding: 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+  }
+
   .layout--surface:has([data-bulk-menu-target="list"][data-mode="select"]) .bullet-composer--dock,
   .bucket--list:has([data-bulk-menu-target="list"][data-mode="select"]) .bullet-composer--dock {
     opacity: 0;
@@ -64,8 +82,8 @@
     box-shadow: var(--shadow-base);
   }
 
-  .layout--surface:has(#bullet_composer .bullet-composer),
-  .bucket--list:has(#bullet_composer .bullet-composer) {
+  .layout--surface:has(#bullet_composer .bullet-composer, #bullets .bullet-composer),
+  .bucket--list:has(#bullet_composer .bullet-composer, #bullets .bullet-composer) {
     position: relative;
 
     &::before {
@@ -112,57 +130,14 @@
   .bullet--composer-create-button--voice {
     text-decoration: none;
 
+    .icon {
+      color: var(--bullet-type-color);
+    }
+
     @media (hover: hover) {
       &:hover {
         text-decoration: none;
-      }
-    }
-  }
-
-  .bullet--composer-create-button--task {
-    .icon {
-      color: var(--model-color-2);
-    }
-
-    @media (hover: hover) {
-      &:hover {
-        color: var(--model-color-2);
-      }
-    }
-  }
-
-  .bullet--composer-create-button--event {
-    .icon {
-      color: var(--model-color-6);
-    }
-
-    @media (hover: hover) {
-      &:hover {
-        color: var(--model-color-6);
-      }
-    }
-  }
-
-  .bullet--composer-create-button--note {
-    .icon {
-      color: var(--model-color-5);
-    }
-
-    @media (hover: hover) {
-      &:hover {
-        color: var(--model-color-5);
-      }
-    }
-  }
-
-  .bullet--composer-create-button--voice {
-    .icon {
-      color: var(--model-color-4);
-    }
-
-    @media (hover: hover) {
-      &:hover {
-        color: var(--model-color-4);
+        color: var(--bullet-type-color);
       }
     }
   }
@@ -213,26 +188,13 @@
     padding-inline-end: var(--spacing-horizontal-half);
     border-radius: var(--radius-full);
     flex: 0 0 auto;
+    font-size: var(--font-size-subtle);
+    white-space: nowrap;
   }
 
-  .bullet-composer--type-pill[data-bullet-type="task"] {
-    color: var(--model-color-2);
-    background: var(--model-color-2-bg);
-  }
-
-  .bullet-composer--type-pill[data-bullet-type="event"] {
-    color: var(--model-color-6);
-    background: var(--model-color-6-bg);
-  }
-
-  .bullet-composer--type-pill[data-bullet-type="note"] {
-    color: var(--model-color-5);
-    background: var(--model-color-5-bg);
-  }
-
-  .bullet-composer--type-pill[data-bullet-type="voice"] {
-    color: var(--model-color-4);
-    background: var(--model-color-4-bg);
+  .bullet-composer--type-pill[data-bullet-type] {
+    color: var(--bullet-type-color);
+    background: var(--bullet-type-color-bg);
   }
 
   .bullet-composer--type-dismiss {

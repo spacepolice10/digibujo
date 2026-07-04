@@ -4,24 +4,36 @@
   <div class="layout--header">
     <div class="layout--header-actions">
       <%= link_to home_path, class: "button--secondary" do %>
-        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
-        Projects
+      <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+      Projects
+      <% end %>
+      <%= link_to edit_project_path(@project), class: "button--secondary layout--rail-action" do %>
+        <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
+        Edit
+      <% end %>
+      <%= render "projects/pins_button", project: @project %>
+      <%= button_to @project,
+            method: :delete,
+            class: "button--secondary button--danger layout--rail-action",
+            form: { data: { turbo_confirm: "Delete this project and remove it from all bullets?" } } do %>
+        <i class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></i>
+        Delete
       <% end %>
     </div>
-    <h2 class="project"><%= @project.name %></h2>
+    <h2 class="layout--surface-name"><%= @project.name %></h2>
   </div>
 
-  <div class="layout--workspace">
-    <aside class="layout--rail">
-      <%= render "projects/pins_button", project: @project %>
-      <%= render "bullet/listing/type_filters", listing: @listing %>
-    </aside>
 
-    <div class="layout--surface bucket--list">
-      <%= render "bullet/listing/list", listing: @listing, page: @page %>
+  <div class="layout--surface">
+    <div class="layout--list" data-bulk-menu-target="list">
+      <% if @bullets.any? %>
+        <%= render "pagination/paginated_records",
+            page: @page,
+            pagination_link_path: ->(next_param) { project_path(@project, page: next_param) } %>
+      <% else %>
+        <p>No bullets yet. Pop a bullet to get started.</p>
+      <% end %>
       <%= render "bullets/bulk_menu" %>
     </div>
-
-    <aside class="layout--rail" aria-hidden="true"></aside>
   </div>
 </div>

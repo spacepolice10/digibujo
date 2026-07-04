@@ -1,51 +1,70 @@
 <% content_for(:title) { @recurrency.name } %>
 
-<div class="layout--page recurrency--show-page">
-  <div class="layout--header">
-    <div class="layout--header-actions">
-      <%= link_to home_path, class: "button--secondary" do %>
-        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
-        Home
-      <% end %>
-    </div>
-    <div class="layout--header-info">
-      <h2><%= @recurrency.name %></h2>
-    </div>
-    <div class="layout--header-actions">
-      <%= link_to "Edit", edit_recurrency_path(@recurrency), class: "button--secondary" %>
-      <%= button_to @recurrency,
-            method: :delete,
-            class: "button--secondary button--danger",
-            form: { data: { turbo_confirm: "Delete this recurrency?" } } do %>
-        Delete
-      <% end %>
-    </div>
-  </div>
+<div class="session-layout session-layout--app">
+  <main class="session-layout--main session-layout--main-wide">
+    <div class="session--page">
+      <div class="form--surface">
+        <h2 class="layout--surface-name"><%= @recurrency.name %></h2>
+        <header class="recurrency--show-header">
+          <div class="layout--header-actions">
+            <%= link_to home_path, class: "button--secondary" do %>
+              <i
+                class="icon"
+                style="--icon-mask: var(--icon-arrow-left)"
+                aria-hidden="true"
+              ></i>
+              Back
+            <% end %>
 
-  <% statistics = @tracker.statistics(@recurrency) %>
-  <dl class="recurrency--statistics">
-    <div>
-      <dt>Current streak</dt>
-      <dd><%= statistics[:streak] %></dd>
-    </div>
-    <div>
-      <dt>Best streak</dt>
-      <dd><%= statistics[:best_streak] %></dd>
-    </div>
-    <div>
-      <dt>Total days</dt>
-      <dd><%= statistics[:total] %></dd>
-    </div>
-  </dl>
 
-  <section class="recurrency--heatmap" aria-label="Last 30 days">
-    <h3 class="recurrency--heading">Last 30 days</h3>
-    <div class="recurrency--heatmap-days">
-      <% @heatmap_days.each do |day| %>
-        <% done = @heatmap_completions.include?(day) && @recurrency.scheduled_on?(day) %>
-        <span class="recurrency--heatmap-day<%= " recurrency--heatmap-day-done" if done %>"
-              title="<%= day.strftime("%a, %b %-d") %>"></span>
-      <% end %>
+          </div>
+
+          <div class="recurrency--show-actions">
+            <%= link_to "Edit", edit_recurrency_path(@recurrency), class: "button--secondary" %>
+
+            <%= button_to @recurrency,
+                  method: :delete,
+                  class: "button--secondary button--danger",
+                  form: { data: { turbo_confirm: "Delete this recurrency?" } } do %>
+              Delete
+            <% end %>
+          </div>
+        </header>
+
+        <% statistics = @tracker.statistics(@recurrency) %>
+
+        <dl class="recurrency--statistics">
+          <div>
+            <dt>Current streak</dt>
+            <dd><%= statistics[:streak] %></dd>
+          </div>
+
+          <div>
+            <dt>Best streak</dt>
+            <dd><%= statistics[:best_streak] %></dd>
+          </div>
+
+          <div>
+            <dt>Total days</dt>
+            <dd><%= statistics[:total] %></dd>
+          </div>
+        </dl>
+
+        <section class="recurrency--heatmap" aria-label="Last 30 days">
+          <h2 class="recurrency--heading">Last 30 days</h2>
+
+          <div class="recurrency--heatmap-days">
+            <% @heatmap_days.each do |day| %>
+              <% done = @heatmap_completions.include?(day) && @recurrency.scheduled_on?(day) %>
+
+              <span
+                class="recurrency--heatmap-day<%= " recurrency--heatmap-day-done" if done %>"
+                title="<%= day.strftime("%a, %b %-d") %>"
+              ></span>
+            <% end %>
+          </div>
+        </section>
+      </div>
     </div>
-  </section>
+  </main>
 </div>

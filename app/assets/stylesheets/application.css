@@ -9,10 +9,11 @@
  * Consider organizing styles into separate files for maintainability.
  */
 
-@layer reset, variables, base, layout, utilities, components;
+@layer reset, variables, base, layout, components, utilities;
 
 @import "_reset.css";
 @import "variables.css";
+@import "fonts.css";
 @import "base.css";
 @import "layout.css";
 @import "tabbar.css";
@@ -27,9 +28,8 @@
 @import "dialog.css";
 @import "bullet.css";
 @import "bullet-composer.css";
-@import "date-picker.css";
 @import "bucket.css";
-@import "collection.css";
+@import "person.css";
 
 @import "daylog.css";
 @import "pinned.css";
@@ -43,8 +43,6 @@
 @import "print.css";
 @import "future.css";
 @import "monthly_bucket.css";
-@import "person.css";
 @import "home.css";
 @import "review.css";
 @import "recurrency.css";
-@import "sprint.css";

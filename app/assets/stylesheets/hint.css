@@ -4,29 +4,9 @@
    * Trigger carries anchor-name; panel carries matching position-anchor (inline).
    */
 
-  .bullet--metadata [interestfor] {
-    interest-delay: 0.2s;
-  }
-
-  .bullet--migration {
-    display: contents;
-  }
-
-  .bullet--migration-mark {
-    flex-shrink: 0;
-    align-self: flex-start;
-    margin-top: var(--radius-subtle);
-    padding: 0;
-    border: none;
-    background: none;
-    font: inherit;
-    font-size: var(--font-size-subtle);
-    line-height: 1;
-    color: var(--color-fg-subtle);
-    cursor: default;
-  }
-
-  .bullet--migration-mark[interestfor] {
+  .bullet--metadata [interestfor],
+  .layout--filter-group [interestfor],
+  .activity--rail-list [interestfor] {
     interest-delay: 0.2s;
   }
 
@@ -75,15 +55,6 @@
     }
   }
 
-  /* Filter icon triggers in workspace rails */
-  .layout--filter-group [interestfor] {
-    interest-delay: 0.2s;
-  }
-
-  .activity--rail-list [interestfor] {
-    interest-delay: 0.2s;
-  }
-
   .layout--filter-option {
     display: inline-flex;
     justify-content: center;
@@ -113,16 +84,8 @@
     background: var(--color-accent-bg);
   }
 
-  .layout--filter-option[data-bullet-type="task"] {
-    color: var(--model-color-2);
-  }
-
-  .layout--filter-option[data-bullet-type="note"] {
-    color: var(--model-color-4);
-  }
-
-  .layout--filter-option[data-bullet-type="event"] {
-    color: var(--model-color-6);
+  .layout--filter-option[data-bullet-type] {
+    color: var(--bullet-type-color);
   }
 
   .layout--filter-option[aria-current="page"][data-bullet-type] {

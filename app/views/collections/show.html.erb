@@ -1,9 +1,13 @@
 <% content_for(:title) { @collection.name } %>
 
-<div class="layout--page collection--page">
-  <div class="collection--actions">
+<div class="layout--page">
+  <div class="layout--header-actions">
     <%= link_to home_path, class: "button--secondary" do %>
-      <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+      <i
+        class="icon"
+        style="--icon-mask: var(--icon-arrow-left)"
+        aria-hidden="true"
+      ></i>
       Back
     <% end %>
 
@@ -17,26 +21,42 @@
     <% end %>
   </div>
 
-  <div class="collection--heading">
-    <h2 class="layout--surface-name"><%= @collection.name %></h2>
-    <% if @collection.bucket.description.present? %>
-      <p class="bucket--description utilities--text-sm"><%= @collection.bucket.description %></p>
-    <% end %>
-  </div>
-
   <div class="layout--surface bucket--list" data-controller="bulk-menu">
-    <div class="collection--add-bullet">
-      <%= link_to new_bullet_path(bulletable_type: "Note", bucket_id: @collection.bucket.id, return_to: collection_path(@collection)),
-            class: "button--primary button--icon button--circle",
-            aria: { label: "Add note" } do %>
-        <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
+    <div class="layout--header-content">
+      <h2 class="layout--surface-name"><%= @collection.name %></h2>
+
+      <% if @collection.bucket.description.present? %>
+        <p class="layout--header-description utilities--text-sm">
+          <%= @collection.bucket.description %>
+        </p>
       <% end %>
+
+      <div class="collection--create-bullet">
+        <%= link_to new_bullet_path(bulletable_type: "Note", bucket_id: @collection.bucket.id, return_to: collection_path(@collection)),
+        class: "button--tertiary",
+        aria: { label: "Add note" } do %>
+          <i
+            class="icon"
+            style="--icon-mask: var(--icon-plus)"
+            aria-hidden="true"
+          ></i>
+
+          <p>Add note</p>
+        <% end %>
+      </div>
     </div>
 
-    <div id="bullets" data-bulk-menu-target="list">
-      <%= render "pagination/paginated_records",
-            page: @page,
-            pagination_link_path: ->(next_param) { collection_path(@collection, page: next_param) } %>
+    <div class="layout--surface">
+      <div id="<%= dom_id(@collection, :bullets_container) %>" data-bulk-menu-target="list">
+        <% if @bullets.any? %>
+          <%= render "pagination/paginated_records",
+              page: @page,
+              pagination_link_path: ->(next_param) { collection_path(@collection, page: next_param) } %>
+        <% else %>
+          <p>No bullets yet. Pop a bullet to get started.</p>
+        <% end %>
+      </div>
+
     </div>
 
     <%= render "bullets/bulk_menu" %>

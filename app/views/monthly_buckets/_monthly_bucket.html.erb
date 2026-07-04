@@ -1,16 +1,7 @@
 <%# locals: (monthly_bucket:) %>
 <li id="<%= dom_id(monthly_bucket.bucket, :list_item) %>" class="layout--list-item">
-  <%= link_to monthly_bucket_path(monthly_bucket), data: { turbo_frame: "_top" }, class: "bucket--list-item-link" do %>
-    <div class="bucket--list-item-name">
-      <div class="bucket--list-item-marker" data-bucket-colour="<%= monthly_bucket.colour %>" aria-hidden="true">
-        <%= image_tag monthly_bucket.bucket.icon_path, alt: "", class: "form--list-icon" %>
-      </div>
-      <span class="utilities--line-clamp-1"><%= monthly_bucket.name %></span>
-    </div>
-    <div class="bucket--list-item-meta utilities--line-clamp-1">
-      <% if monthly_bucket.period? %>
-        <span><%= monthly_bucket.period_from.strftime("%b %-d") %> – <%= monthly_bucket.period_to.strftime("%b %-d") %></span>
-      <% end %>
-    </div>
+  <%= link_to monthly_bucket, monthly_bucket_path(monthly_bucket), data: { turbo_frame: "_top" }, class: "layout--list-item-link" do %>
+    <span class="layout--list-item-name"><%= monthly_bucket.name %></span>
+    <span class="layout--list-item-meta"><%= monthly_bucket.period_from.strftime("%b %-d") %> – <%= monthly_bucket.period_to.strftime("%b %-d") %></span>
   <% end %>
 </li>

@@ -1,10 +1,7 @@
 <%# locals: (bullet:) %>
-<li class="form--collect-preview-item">
-  <span class="bullet--marker form--collect-preview-marker <%= bullet.marker_styles %>" aria-hidden="true">
+<li class="bucket--collect-preview-item" data-bullet-type="<%= bullet.bulletable_type.downcase %>">
+  <span class="bullet--marker bucket--collect-preview-marker" aria-hidden="true">
     <i class="icon" style="--icon-mask: var(--icon-<%= bullet.marker_icon %>)" aria-hidden="true"></i>
-    <% if bullet.mood_marker.present? %>
-      <span class="bullet--mood-emoji"><%= bullet.mood_marker %></span>
-    <% end %>
   </span>
-  <span class="form--collect-preview-name utilities--line-clamp-1"><%= bullet.name %></span>
+  <span class="bucket--collect-preview-name utilities--line-clamp-1"><%= bullet.name %></span>
 </li>
