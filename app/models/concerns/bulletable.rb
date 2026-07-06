@@ -38,9 +38,6 @@ module Bulletable
     'inline'
   end
 
-  # nil == unrestricted (files + mentions). An array == allowlist of
-  # attachment content types, which blocks file uploads while still
-  # accepting the custom # / @ attachables listed.
   def permitted_attachment_types
     MENTION_ATTACHMENT_TYPES
   end

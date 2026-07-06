@@ -50,3 +50,5 @@
 
 # Accidental duplicate migrate folders (e.g. Finder copy)
 /db/migrate */
+
+/ignored/

@@ -9,7 +9,7 @@
   <%= fr.hidden_field :bucket_id, value: bullet.bucket_id %>
   <%= fr.hidden_field :bulletable_type %>
   <%= fr.fields_for :bulletable, bulletable do |bf| %>
-    <%= bf.rich_text_area :body, value: bullet.body, toolbar_id: bulletable.toolbar_id, preset: bulletable.preset, autofocus: bulletable.focusing_on_render?, placeholder: bulletable.placeholder, **bulletable.editor_html_options do %>
+    <%= bf.rich_text_area :body, value: bulletable.body, toolbar_id: bulletable.toolbar_id, preset: bulletable.preset, autofocus: bulletable.focusing_on_render?, placeholder: bulletable.placeholder, **bulletable.editor_html_options do %>
       <lexxy-prompt
         trigger="#"
         name="project"
