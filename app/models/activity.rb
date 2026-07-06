@@ -42,8 +42,14 @@ class Activity < ApplicationRecord
   belongs_to :user
   belongs_to :subject, polymorphic: true
 
+  RETENTION_DAYS = 30
+
   validates :action, inclusion: { in: ->(activity) { SUBJECT_ACTIONS.fetch(activity.subject_type) } }
   validates :subject, presence: true
+
+  def self.sweep
+    where(created_at: ...RETENTION_DAYS.days.ago).delete_all
+  end
 
   def action_name
     action.humanize

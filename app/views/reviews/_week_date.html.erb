@@ -16,11 +16,9 @@
          data-pops-drop-pops-on-value="<%= date.iso8601 %>"
          data-pops-drop-review-drop-value="true"
          data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop">
-      <div class="monthly-bucket--bullets-list">
-        <% bullets.each do |bullet| %>
-          <%= render bullet %>
-        <% end %>
-      </div>
+      <% bullets.each do |bullet| %>
+        <%= render bullet %>
+      <% end %>
     </div>
   </div>
 </div>

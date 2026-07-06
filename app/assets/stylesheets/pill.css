@@ -4,22 +4,60 @@
     justify-content: center;
     align-items: center;
     gap: var(--spacing-vertical-half);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     font-family: inherit;
     font-size: var(--font-size-subtle);
     white-space: nowrap;
     flex-shrink: 0;
     text-decoration: none;
     cursor: default;
-    background: transparent;
+    background: var(--color-bg-subtle);
     color: var(--color-fg-subtle);
-  }
-
-  .pill[data-colour] {
-    color: var(--entity-color);
+    border-radius: var(--radius-subtle);
   }
 
   .pill .icon {
     width: var(--icon-size-subtle);
     height: var(--icon-size-subtle);
+  }
+
+  .pill--avatar,
+  .pill--icon,
+  .pill--placeholder {
+    flex-shrink: 0;
+    width: var(--icon-size-subtle);
+    height: var(--icon-size-subtle);
+    border: none;
+    background: transparent;
+    border-radius: var(--radius-full);
+  }
+
+  .pill--avatar {
+    object-fit: cover;
+  }
+
+  .pill--icon {
+    object-fit: contain;
+  }
+
+  .pill--placeholder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-stroke-base);
+    color: var(--color-fg-subtle);
+    font-size: var(--font-size-subtle);
+    text-transform: uppercase;
+  }
+
+  .pill--label {
+    min-width: 0;
+  }
+
+  .lexxy-prompt-menu__item .pill--avatar,
+  .lexxy-prompt-menu__item .pill--icon,
+  .lexxy-prompt-menu__item .pill--placeholder {
+    width: var(--icon-size-base);
+    height: var(--icon-size-base);
   }
 }

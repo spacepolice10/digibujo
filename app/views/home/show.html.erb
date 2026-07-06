@@ -121,6 +121,14 @@
         </ul>
       <% end %>
     <% end %>
+
+    <% if @published_bullets.any? %>
+      <%= render layout: "home/section", locals: { key: "published", title: "Published", icon: "link", show_more_path: (@show_published_more ? published_index_path : nil), expanded: @section_expanded_status["published"] } do %>
+        <ul class="layout--list bucket--list">
+          <%= render partial: "published/bullet", collection: @published_bullets, as: :bullet %>
+        </ul>
+      <% end %>
+    <% end %>
   </div>
 
   <aside class="layout--rail">

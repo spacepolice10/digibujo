@@ -12,20 +12,29 @@ export default class extends Controller {
   connect() {
     this.previousContent = null
 
-    this.beforeFrameRender = this.#beforeFrameRender.bind(this)
-    this.submitEnd = this.#submitEnd.bind(this)
+    this.handleRender = this.#handleRender.bind(this)
+    this.handleSubmit = this.#handleSubmit.bind(this)
     this.onKeydown = this.#onKeydown.bind(this)
     this.onInlineEnter = this.#onInlineEnter.bind(this)
 
-    this.element.addEventListener("turbo:before-frame-render", this.beforeFrameRender)
-    this.element.addEventListener("turbo:submit-end", this.submitEnd, true)
+
+    window.addEventListener("beforeunload", (event) => {
+      if (this.#preventDismissIfContentExists()) {
+        event.preventDefault();
+        event.returnValue = "";
+        return "";
+      }
+    });
+
+    this.element.addEventListener("turbo:before-frame-render", this.handleRender)
+    this.element.addEventListener("turbo:submit-end", this.handleSubmit, true)
     this.element.addEventListener("keydown", this.onInlineEnter, true)
     document.addEventListener("keydown", this.onKeydown)
   }
 
   disconnect() {
-    this.element.removeEventListener("turbo:before-frame-render", this.beforeFrameRender)
-    this.element.removeEventListener("turbo:submit-end", this.submitEnd, true)
+    this.element.removeEventListener("turbo:before-frame-render", this.handleRender)
+    this.element.removeEventListener("turbo:submit-end", this.handleSubmit, true)
     this.element.removeEventListener("keydown", this.onInlineEnter, true)
     document.removeEventListener("keydown", this.onKeydown)
   }
@@ -35,6 +44,9 @@ export default class extends Controller {
 
     const form = this.#form
     if (!form) return
+
+    const editor = form.querySelector("lexxy-editor")
+    if (editor.hasOpenPrompt) return
 
     event?.preventDefault()
     form.requestSubmit()
@@ -52,10 +64,14 @@ export default class extends Controller {
 
   cancel(event) {
     event?.preventDefault()
+    if (this.#preventDismissIfContentExists()) return
+
     this.restore()
   }
 
   dismiss() {
+    if (this.#preventDismissIfContentExists()) return
+
     this.restore()
   }
 
@@ -71,7 +87,7 @@ export default class extends Controller {
     })
   }
 
-  #beforeFrameRender(event) {
+  #handleRender(event) {
     if (event.target != this.element) return
 
     const enteringForm = event.detail.newFrame?.querySelector("[data-composer-form]")
@@ -93,7 +109,7 @@ export default class extends Controller {
     }
   }
 
-  #submitEnd(event) {
+  #handleSubmit(event) {
     const form = event.target
     if (!form?.hasAttribute("data-composer-form")) return
     if (!this.element.contains(form)) return
@@ -101,14 +117,28 @@ export default class extends Controller {
 
     const submitter = event.detail.formSubmission?.submitter
     if (submitter?.name == "another") {
-      this.#clearForNextEntry()
+      this.#clientSideRestore()
       return
     }
 
     this.restore()
   }
 
-  #clearForNextEntry() {
+  #preventDismissIfContentExists() {
+    const form = this.#form
+    if (!form) return false
+
+    const editor = form.querySelector("lexxy-editor")
+
+    if ((editor?.toString().trim().length ?? 0) > 0) {
+      const confirmed = confirm("Are you sure you want to dismiss the composer? Any unsaved content will be lost.")
+      if (!confirmed) return true
+    }
+
+    return false
+  }
+
+  #clientSideRestore() {
     const form = this.#form
     if (!form) return
 
@@ -121,6 +151,7 @@ export default class extends Controller {
 
   #onKeydown(event) {
     if (event.key != "Escape") return
+    if (this.#preventDismissIfContentExists()) return
 
     event.preventDefault()
     this.restore()

@@ -91,13 +91,13 @@ class MigratableTest < ActiveSupport::TestCase
 
     assert_includes @bullet.migration_hint, from.strftime('%a, %b %-d')
     assert_includes @bullet.migration_hint, to.strftime('%a, %b %-d')
-    assert_match(/Moved — rescheduled/, @bullet.migration_hint)
+    assert_match(/Rescheduled from/, @bullet.migration_hint)
   end
 
   test 'migration_hint describes collection' do
     @bullet.mark_migration!(action: 'collected', bucket_id: 1, bucket_name: 'Reading list')
 
-    assert_equal 'Collected — moved into Reading list.', @bullet.migration_hint
+    assert_equal 'Moved into Reading list.', @bullet.migration_hint
   end
 
   test 'migration_hint describes completion' do
@@ -109,13 +109,13 @@ class MigratableTest < ActiveSupport::TestCase
   test 'migration_hint describes archive' do
     @bullet.mark_migration!(action: 'archived', pops_on: Date.current)
 
-    assert_match(/Archived — removed from/, @bullet.migration_hint)
+    assert_match(/Removed from/, @bullet.migration_hint)
   end
 
   test 'migration_hint describes acknowledged review' do
     @bullet.mark_migration!(action: 'acknowledged', pops_on: Date.current)
 
-    assert_match(/Reviewed — kept on/, @bullet.migration_hint)
+    assert_match(/Kept on/, @bullet.migration_hint)
   end
 
   test 'migration_hint is nil when not migrated' do

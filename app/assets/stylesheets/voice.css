@@ -1,0 +1,105 @@
+@layer components {
+  .bullet[data-bullet-type="voice"] .bullet--body {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: var(--spacing-vertical-half);
+    white-space: normal;
+  }
+
+  .bullet[data-bullet-type="voice"] {
+    .voice--card {
+      width: 100%;
+      border: 1px solid var(--color-stroke-base);
+      border-radius: var(--radius-base);
+      overflow: hidden;
+      background: var(--color-bg-subtle);
+    }
+
+    .voice--playback-zone {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .voice--playback-header {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-horizontal-half);
+      padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+      border-bottom: 1px solid var(--color-stroke-base);
+      background: var(--color-bg-base);
+      min-width: 0;
+    }
+
+    .voice--rec-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--radius-full);
+      background: var(--color-fg-negative);
+      flex-shrink: 0;
+    }
+
+    .voice--caption {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .voice--playback {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-horizontal-half);
+      margin-top: var(--spacing-vertical-half);
+      width: 100%;
+    }
+
+    .voice--playback-zone .voice--playback {
+      margin-top: 0;
+      padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+    }
+
+    .voice--playback-compact {
+      gap: var(--spacing-horizontal-half);
+    }
+
+    .voice--play .icon {
+      width: var(--icon-size-base);
+      height: var(--icon-size-base);
+    }
+
+    .voice--pause-icon {
+      margin-inline-start: 0;
+    }
+
+    .voice--progress {
+      flex: 1;
+      min-width: 0;
+      height: 4px;
+      border-radius: var(--radius-full);
+      background: var(--color-stroke-base);
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .voice--progress-fill {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: var(--bullet-type-color);
+      pointer-events: none;
+      transition: width 0.05s linear;
+    }
+
+    .voice--duration {
+      color: var(--color-fg-subtle);
+      flex-shrink: 0;
+    }
+
+    .voice--playback-header .voice--duration {
+      font-variant-numeric: tabular-nums;
+    }
+  }
+}

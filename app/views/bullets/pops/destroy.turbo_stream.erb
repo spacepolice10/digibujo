@@ -3,8 +3,4 @@
     <% messages = @failed_bullet.respond_to?(:errors) && @failed_bullet.errors.any? ? @failed_bullet.errors.full_messages : ["Invalid date"] %>
     <%= render "shared/toasts", type: "errmsg", messages: messages %>
   <% end %>
-<% else %>
-  <% @bullets.each do |bullet| %>
-    <%= turbo_stream.remove dom_id(bullet, :pops_notice) %>
-  <% end %>
 <% end %>

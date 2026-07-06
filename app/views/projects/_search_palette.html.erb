@@ -1,6 +1,4 @@
 <div class="bucket--list-item-name">
-      <div class="bucket--list-item-marker" data-bucket-colour="<%= project.colour %>" aria-hidden="true">
-        <%= image_tag project.icon_path, alt: "", class: "icons--list" %>
-      </div>
+  <%= render "projects/pill_graphic", project: project %>
   <span class="utilities--line-clamp-1"><%= project.name %></span>
 </div>

@@ -1,0 +1,5 @@
+<% if project.icon.present? %>
+  <%= image_tag project.icon_path, class: "pill--icon", alt: "" %>
+<% else %>
+  <span class="pill--placeholder" aria-hidden="true"><%= project.name.first %></span>
+<% end %>

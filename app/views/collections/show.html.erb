@@ -1,6 +1,15 @@
 <% content_for(:title) { @collection.name } %>
 
 <div class="layout--page">
+  <div class="layout--header-info">
+    <%= image_tag @collection.bucket.icon_path, class: "icon", alt: "" %>
+
+      <h2><%= @collection.name %></h2>
+      <% if @collection.bucket.description.present? %>
+        <p><%= @collection.bucket.description %></p>
+      <% end %>
+
+  </div>
   <div class="layout--header-actions">
     <%= link_to home_path, class: "button--secondary" do %>
       <i
@@ -23,14 +32,6 @@
 
   <div class="layout--surface bucket--list">
     <div class="layout--header-content">
-      <h2 class="layout--surface-name"><%= @collection.name %></h2>
-
-      <% if @collection.bucket.description.present? %>
-        <p class="layout--header-description utilities--text-sm">
-          <%= @collection.bucket.description %>
-        </p>
-      <% end %>
-
       <%= render "bullets/composer/dock", bucket: @collection.bucket, selected_date: nil, composer_id: dom_id(@collection, :bullets_composer) %>
 
       <div class="layout--surface">

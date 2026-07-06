@@ -20,7 +20,7 @@
 
         <button
           type="button"
-          class="button--tertiary"
+          class="button--tertiary button--lg"
           data-action="daylog#openDatePicker"
           aria-label="Pick a date"
         >
@@ -88,6 +88,7 @@
     <div data-bulk-menu-target="list" class="layout--surface layout--list">
       <%= render "bullets/composer/jump" %>
 
+      <% if @page.records.any? %>
       <%= render layout: "pagination/paginated_list",
             locals: {
               page: @page,
@@ -97,6 +98,11 @@
         <% @page.records.each do |bullet| %>
           <%= render bullet, selected_date: @selected_date %>
         <% end %>
+      <% end %>
+      <% else %>
+        <div class="layout--surface layout--list-empty">
+          <p>No bullets yet, check your monthly bucket, references or start a braindumping session.</p>
+        </div>
       <% end %>
 
       <%= render "bullets/composer/dock", 

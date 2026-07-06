@@ -3,11 +3,14 @@
 # Navigation hub: projects, collections, monthly spreads, and future log.
 class HomeController < ApplicationController
   COLLECTIONS_LIMIT = 8
+  PUBLISHED_LIMIT = 8
 
   def show
     @projects = recent_projects
     @collections = Current.user.active_collections.limit(COLLECTIONS_LIMIT)
     @show_collections_more = Current.user.active_collections.count > COLLECTIONS_LIMIT
+    @published_bullets = published_bullets_preview
+    @show_published_more = published_bullets_scope.count > PUBLISHED_LIMIT
     @people = recent_people
     @future = Current.user.future_buckets.first&.bucket
     @future_monthly_buckets = Current.user.future_buckets.first&.monthly_buckets&.includes(:bucket) || MonthlyBucket.none
@@ -33,6 +36,17 @@ class HomeController < ApplicationController
 
   def daylog_bullets_number
     Current.user.bullets.where(pops_on: Date.current).active.count
+  end
+
+  def published_bullets_scope
+    Current.user.bullets.published
+      .includes(:published_entity)
+      .preload(bulletable: :rich_text_body)
+      .order(published_entities: { published_at: :desc })
+  end
+
+  def published_bullets_preview
+    published_bullets_scope.limit(PUBLISHED_LIMIT)
   end
 
   def section_expanded_status

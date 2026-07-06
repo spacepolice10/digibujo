@@ -99,7 +99,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select '.bullet--metadata button[aria-label=?]', 'Collected', minimum: 1
-    assert_match 'Collected — moved into Inbox.', response.body
+    assert_match 'Moved into Inbox.', response.body
   end
 
   test 'show renders add note button linking to the full page bullet composer' do

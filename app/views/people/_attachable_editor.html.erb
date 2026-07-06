@@ -1,6 +1,1 @@
-<span class="pill"<% if person.colour.present? %> data-colour="<%= person.colour %>"<% end %>>
-  <% if person.icon.present? %>
-    <%= image_tag person.icon_path, alt: "" %>
-  <% end %>
-  <span><%= person.name %></span>
-</span>
+<%= render "people/pill_inline", person: person %>

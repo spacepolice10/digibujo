@@ -2,26 +2,18 @@
 
 require 'test_helper'
 
-class ActivityTest < ActiveSupport::TestCase
+class SweepActivityLogsJobTest < ActiveJob::TestCase
   setup do
     @user = users(:one)
     @bullet = @user.bullets.create!(bulletable: Task.new(body: 'Task'))
   end
 
-  test 'sweep deletes activities older than retention' do
+  test 'perform sweeps expired activities' do
     stale = @bullet.record_activity!('updated')
     stale.update_column(:created_at, (Activity::RETENTION_DAYS + 1).days.ago)
 
     assert_difference -> { Activity.count }, -1 do
-      Activity.sweep
-    end
-  end
-
-  test 'sweep keeps recent activities' do
-    @bullet.record_activity!('updated')
-
-    assert_no_difference -> { Activity.count } do
-      Activity.sweep
+      SweepActivityLogsJob.perform_now
     end
   end
 end

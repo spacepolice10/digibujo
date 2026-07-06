@@ -22,6 +22,32 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Morning run', response.body
   end
 
+  test 'show lists published bullets in section' do
+    published = @user.bullets.create!(bulletable: Note.new(body: 'Public note'))
+    published.publish!
+    @user.bullets.create!(bulletable: Note.new(body: 'Private note'))
+
+    get home_path
+
+    assert_response :success
+    assert_select '.home--section-name', text: 'Published'
+    assert_match 'Public note', response.body
+    assert_no_match 'Private note', response.body
+    assert_select 'a.home--section-more[href=?]', published_index_path, count: 0
+  end
+
+  test 'show published section links to index when more than eight published bullets' do
+    9.times do |index|
+      bullet = @user.bullets.create!(bulletable: Note.new(body: "Published #{index}"))
+      bullet.publish!
+    end
+
+    get home_path
+
+    assert_response :success
+    assert_select 'a.home--section-more[href=?]', published_index_path, count: 1
+  end
+
   test 'show returns success' do
     get home_path
     assert_response :success

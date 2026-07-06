@@ -199,6 +199,25 @@
       border-color: var(--color-stroke-strong);
     }
   }
+
+  /* ── Width ──────────────────────────────────────── */
+
+  .button--auto {
+    width: fit-content;
+  }
+
+  .button--wide {
+    width: 100%;
+  }
+
+  .button--sm {
+    width: calc(var(--spacing-horizontal) * 6);
+  }
+
+  .button--lg {
+    width: calc(var(--spacing-horizontal) * 12);
+  }
+
   /* ── Link ─────────────────────────────────────────── */
 
   .button--link {

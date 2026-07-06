@@ -1,0 +1,45 @@
+@layer components {
+  .bullet[data-bullet-type="note"] .bullet--body {
+    position: relative;
+    isolation: isolate;
+    display: inline-block;
+    vertical-align: middle;
+    max-width: 100%;
+    color: var(--color-fg-base);
+    background: var(--color-bg-base);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+    border-radius: var(--radius-base);
+    border: 0.5px solid var(--color-stroke-base);
+
+    & .bullet--name {
+      font-size: inherit;
+      font-weight: var(--font-weight-strong);
+      color: var(--color-fg-base);
+      margin-bottom: var(--spacing-vertical-half);
+      border-bottom: 1px solid var(--color-stroke-base);
+      padding-bottom: var(--spacing-vertical-half);
+    }
+
+    & .read-more {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-horizontal-half);
+      font-size: inherit;
+      color: var(--color-fg-subtle);
+    }
+
+    & > a:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+
+  .bullet[data-bullet-type="note"] .bullet--mood {
+    display: inline-block;
+    font-size: var(--icon-size-base);
+    position: absolute;
+    top: var(--spacing-vertical);
+    right: 0;
+    rotate: 45deg;
+  }
+}

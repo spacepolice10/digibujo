@@ -106,6 +106,14 @@
             </ul>
           <% end %>
         <% end %>
+
+        <% if @published_bullets.any? %>
+          <%= render layout: "menu/expandable_section", locals: { title: "Published", icon: "link", show_more_path: (@show_published_more ? published_index_path : nil) } do %>
+            <ul class="layout--list bucket--list">
+              <%= render partial: "published/bullet", collection: @published_bullets, as: :bullet %>
+            </ul>
+          <% end %>
+        <% end %>
       </div>
     </div>
   </div>

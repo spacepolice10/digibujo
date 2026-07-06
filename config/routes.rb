@@ -27,64 +27,58 @@ Rails.application.routes.draw do
   get 'monthly_bucket', to: 'monthly_buckets#current', as: :current_monthly_bucket
 
   resources :future_buckets, only: :show
-
-  resources :monthly_buckets, only: %i[show new create]
+  resources :monthly_buckets
 
   # --- Tags ---
   scope 'projects', module: :projects, as: :projects do
     resource :pin, only: %i[create destroy]
   end
-
   scope module: :projects, path: 'projects', as: :project do
     resources :suggestions
   end
-
   resources :projects
 
   scope 'people', module: :people, as: :people do
     resource :pin, only: %i[create destroy]
   end
-
   scope module: :people, path: 'people', as: :person do
     resources :suggestions
   end
-
   resources :people
 
   # --- Bullets ---
   scope 'bullets', module: :bullets do
-    resource :pin, only: %i[create destroy]
-    resource :archive, only: %i[create destroy]
-    resource :collect
+    resource :pin
     resource :pop
-    resource :publish, only: %i[create destroy]
-    resource :mark_as_reviewed, only: :create, controller: 'mark_as_reviewed'
+    resource :archive
+    resource :collect
+    resource :publish
+    resource :mark_as_reviewed
   end
 
   resources :bullets, except: :index
 
   # --- Tasks ---
   scope 'tasks', module: :tasks do
-    resource :complete, only: %i[create destroy]
+    resource :complete
   end
 
   # --- Buckets & collections ---
   resources :collections do
     scope module: :collections do
-      resource :export, only: :show
+      resource :export
     end
   end
 
   scope 'buckets', module: :buckets, as: :buckets do
-    resource :pin, only: %i[create destroy]
+    resource :pin
   end
-
   resources :buckets, only: :show
 
   # --- Recurrencies ---
   resources :recurrencies, except: :index do
     scope module: :recurrencies do
-      resource :completion, only: %i[create destroy]
+      resource :completion
     end
   end
 
@@ -115,5 +109,5 @@ Rails.application.routes.draw do
   resources :archived
 
   # --- Publishing ---
-  resources :published, param: :code, only: %i[index show]
+  resources :published, param: :code
 end

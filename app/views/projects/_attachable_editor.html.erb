@@ -1,6 +1,1 @@
-<span class="pill"<% if project.colour.present? %> data-colour="<%= project.colour %>"<% end %>>
-  <% if project.icon.present? %>
-    <%= image_tag project.icon_path, alt: "" %>
-  <% end %>
-  <span><%= project.name %></span>
-</span>
+<%= render "projects/pill_inline", project: project %>

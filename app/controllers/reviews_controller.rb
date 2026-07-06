@@ -22,7 +22,7 @@ class ReviewsController < ApplicationController
   private
 
   def review_bullets
-    Current.user.bullets.in_review_period(@review_from, @review_to).order(created_at: :asc)
+    Current.user.bullets.where(pops_on: @review_from..@review_to).where(migrated_at: nil).order(created_at: :asc)
   end
 
   def set_review_period

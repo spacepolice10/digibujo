@@ -2,8 +2,6 @@
       class: "pill",
       data: { turbo_frame: "_top", colour: project.colour }.compact,
       aria: { label: "Project: #{project.name}" } do %>
-  <% if project.icon.present? %>
-    <%= image_tag project.icon_path, alt: "" %>
-  <% end %>
+  <%= render "projects/pill_graphic", project: project %>
   <span><%= project.name %></span>
 <% end %>

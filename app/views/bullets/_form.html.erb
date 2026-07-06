@@ -1,18 +1,15 @@
-<%# locals: (bullet:, bullets_path: nil, editing: false, return_to: nil) %>
-<% bulletable = bullet.composer_bulletable %>
+<% bulletable = bullet.bulletable_type.constantize.new %>
 
-<%= form_with model: bullet, url: bullets_path, class: "bullet-composer", data: {
+<%= form_with model: bullet, class: "bullet-composer", data: {
   composer_form: true,
-  controller: bulletable.stimulus_controller.presence,
+  controller: bulletable.stimulus_controller,
   action: bulletable.stimulus_actions
 }.compact do |fr| %>
   <%= fr.hidden_field :pops_on, value: bullet.pops_on %>
   <%= fr.hidden_field :bucket_id, value: bullet.bucket_id %>
-  <%= hidden_field_tag :return_to, return_to if return_to.present? %>
   <%= fr.hidden_field :bulletable_type %>
-
   <%= fr.fields_for :bulletable, bulletable do |bf| %>
-    <%= bf.rich_text_area :body, toolbar_id: bulletable.toolbar_id, preset: bulletable.preset, autofocus: bulletable.focusing_on_render?, placeholder: bulletable.placeholder, **bulletable.editor_html_options do %>
+    <%= bf.rich_text_area :body, value: bullet.body, toolbar_id: bulletable.toolbar_id, preset: bulletable.preset, autofocus: bulletable.focusing_on_render?, placeholder: bulletable.placeholder, **bulletable.editor_html_options do %>
       <lexxy-prompt
         trigger="#"
         name="project"

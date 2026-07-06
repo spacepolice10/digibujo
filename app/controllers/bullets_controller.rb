@@ -1,11 +1,17 @@
 # frozen_string_literal: true
 
 class BulletsController < ApplicationController
+  class BulletTypeRequired < ArgumentError
+    def initialize = super('Bullet type is required')
+  end
+
+  BULLET_PARAM_KEYS = %i[pops_on bulletable_type bucket_id].freeze
+
   before_action :set_bullet, only: %i[show edit update destroy]
 
   def new
     @bullet = Current.user.bullets.new(
-      bulletable_type: Bullet::Params.resolve_type(params[:bulletable_type]),
+      bulletable_type: resolve_bulletable_type(params[:bulletable_type]),
       pops_on: params[:pops_on],
       bucket_id: params[:bucket_id]
     )
@@ -59,7 +65,32 @@ class BulletsController < ApplicationController
   end
 
   def bullet_params
-    Bullet::Params.permit(params, bullet: @bullet)
+    type_class = bulletable_class_for_params
+
+    params.require(:bullet).permit(
+      *BULLET_PARAM_KEYS,
+      bulletable_attributes: type_class.permitted_bullet_attributes
+    ).then { |permitted| ensure_bulletable_defaults!(permitted, type_class) }
+  end
+
+  def resolve_bulletable_type(name)
+    name.to_s.presence_in(Bullet.bulletable_types)
+  end
+
+  def bulletable_class_for_params
+    type_name = resolve_bulletable_type(params.dig(:bullet, :bulletable_type))
+    type_name ||= @bullet&.bulletable_type
+    raise BulletTypeRequired if type_name.blank?
+
+    type_name.constantize
+  end
+
+  # accepts_nested_attributes_for :bulletable needs both bulletable_type and
+  # bulletable_attributes present, even when the form submits neither.
+  def ensure_bulletable_defaults!(permitted, type_class)
+    permitted[:bulletable_type] = type_class.name if permitted[:bulletable_type].blank?
+    permitted[:bulletable_attributes] = {} if permitted[:bulletable_attributes].blank?
+    permitted
   end
 
   def notify_failure

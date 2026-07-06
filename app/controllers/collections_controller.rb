@@ -56,7 +56,7 @@ class CollectionsController < ApplicationController
   def show
     @bullets = set_page_and_extract_portion_from(
       Current.user.bullets.where(bucket_id: @collection.bucket.id).active.distinct,
-      per_page: [5, 15, 30, 50]
+      per_page: [15, 30, 50, 100]
     )
   end
 

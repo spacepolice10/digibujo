@@ -13,13 +13,7 @@
 
   <article class="layout--column bucket--list">
     <ul class="layout--list">
-      <% @bullets.each do |bullet| %>
-        <li class="layout--list-item">
-          <%= link_to published_path(bullet.public_code), class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
-            <span class="utilities--line-clamp-1"><%= bullet.bulletable.name %></span>
-          <% end %>
-        </li>
-      <% end %>
+      <%= render partial: "published/bullet", collection: @bullets, as: :bullet %>
     </ul>
   </article>
 </div>

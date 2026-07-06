@@ -2,10 +2,6 @@
       class: "pill",
       data: { turbo_frame: "_top", colour: person.colour }.compact,
       aria: { label: "Person: #{person.name}" } do %>
-  <% if person.avatar.attached? %>
-    <%= image_tag person.avatar, class: "person--avatar", alt: "" %>
-  <% elsif person.icon.present? %>
-    <%= image_tag person.icon_path, alt: "" %>
-  <% end %>
+  <%= render "people/pill_graphic", person: person %>
   <span><%= person.name %></span>
 <% end %>

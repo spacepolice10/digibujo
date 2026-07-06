@@ -8,7 +8,7 @@ module Bulletable
     application/vnd.actiontext.person
   ].freeze
 
-  COMPOSER_STIMULUS_ACTIONS = "keydown.enter+meta->composer#submit keydown.enter+ctrl->composer#submit"
+  COMPOSER_STIMULUS_ACTIONS = 'keydown.enter+meta->composer#submit keydown.enter+ctrl->composer#submit'
 
   included do
     has_one :bullet, as: :bulletable, dependent: :destroy, inverse_of: :bulletable
@@ -27,7 +27,7 @@ module Bulletable
   def mood_marker      = nil
 
   def to_partial_body_path
-    self.class.model_name.route_key + '/body'
+    "#{self.class.model_name.route_key}/body"
   end
 
   def to_toolbar_path
@@ -59,11 +59,11 @@ module Bulletable
   end
 
   def placeholder
-    raise NotImplementedError, "#{self.class} must implement ##{__method__}"
+    "What's on your mind?"
   end
 
   def stimulus_controller
-    nil
+    'composer'
   end
 
   def stimulus_actions

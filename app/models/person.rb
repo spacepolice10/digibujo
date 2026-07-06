@@ -17,6 +17,16 @@ class Person < ApplicationRecord
 
   normalizes :name, with: ->(name) { name.strip.downcase }
 
+  def avatar_path
+    if avatar.attached?
+      avatar.url
+    elsif icon.present?
+      icon_path
+    else
+      nil
+    end
+  end
+
   def content_type
     'application/vnd.actiontext.person'
   end
