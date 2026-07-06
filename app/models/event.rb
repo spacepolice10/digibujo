@@ -8,4 +8,5 @@ class Event < ApplicationRecord
   def temporal?    = true
   def completable? = false
   def marker_icon  = :circle
+  def placeholder  = 'What is upcoming?'
 end

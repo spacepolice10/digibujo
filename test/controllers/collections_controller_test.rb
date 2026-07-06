@@ -90,14 +90,16 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Hold', response.body
   end
 
-  test 'show renders bucket metadata when collection has no icon' do
+  test 'show renders collected migration hint when bullet was collected into the collection' do
     collection = create_collection!(@user, name: 'Inbox', colour: 'teal')
-    @user.bullets.create!(bulletable: Task.new(body: 'In collection'), bucket_id: collection.bucket.id)
+    bullet = @user.bullets.create!(bulletable: Task.new(body: 'Collected in'), pops_on: Date.current)
+    bullet.collect!(bucket_id: collection.bucket.id)
 
     get collection_path(collection)
 
     assert_response :success
-    assert_select '.bullet--metadata img[src*="tweemoji/folder"]', minimum: 1
+    assert_select '.bullet--metadata button[aria-label=?]', 'Collected', minimum: 1
+    assert_match 'Collected — moved into Inbox.', response.body
   end
 
   test 'show renders add note button linking to the full page bullet composer' do

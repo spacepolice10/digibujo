@@ -28,18 +28,6 @@ module ActiveSupport
       collection
     end
 
-    def create_sprint!(user, name:, starts_on:, ends_on:, colour: nil, icon: nil, description: nil)
-      sprint = Sprint.create!(starts_on: starts_on, ends_on: ends_on)
-      user.buckets.create!(
-        bucketable: sprint,
-        name: name,
-        colour: colour,
-        icon: icon,
-        description: description
-      )
-      sprint
-    end
-
     def ensure_future_bucket!(user)
       future_bucket = user.future_buckets.first
       return if future_bucket&.bucket.present?
@@ -65,11 +53,5 @@ module ActiveSupport
       monthly_bucket
     end
 
-    def with_sprints_enabled
-      Sprint.enabled = true
-      yield
-    ensure
-      Sprint.enabled = false
-    end
   end
 end

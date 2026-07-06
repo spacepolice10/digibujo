@@ -7,6 +7,14 @@ module Migratable
     migrated_at.present?
   end
 
+  def collected_migration?
+    migrated? && last_migration['action'] == 'collected'
+  end
+
+  def popped_migration?
+    migrated? && last_migration['action'] == 'popped'
+  end
+
   def mark_as_reviewed!
     mark_migration!(action: 'acknowledged', pops_on: pops_on)
   end
@@ -27,7 +35,7 @@ module Migratable
     when 'archived' then migration_archived_hint
     when 'acknowledged' then migration_acknowledged_hint
     else
-      'Migrated — moved from another log or collection.'
+      'Moved from another log or collection.'
     end
   end
 
@@ -38,17 +46,17 @@ module Migratable
     to = migration_date_name(pops_on)
 
     if from && to
-      "Moved — rescheduled from #{from} to #{to}."
+      "Rescheduled from #{from} to #{to}."
     elsif to
-      "Scheduled — set for #{to}."
+      "Scheduled for #{to}."
     else
-      'Moved — rescheduled to another day.'
+      'Rescheduled to another day.'
     end
   end
 
   def migration_collected_hint
     bucket_name = last_migration['bucket_name'].presence || bucket&.name || 'a collection'
-    "Collected — moved into #{bucket_name}."
+    "Moved into #{bucket_name}."
   end
 
   def migration_completed_hint
@@ -58,12 +66,12 @@ module Migratable
 
   def migration_archived_hint
     date = migration_date_name(pops_on)
-    date ? "Archived — removed from #{date}." : 'Archived — removed from the daily log.'
+    date ? "Removed from #{date}." : 'Removed from the daily log.'
   end
 
   def migration_acknowledged_hint
     date = migration_date_name(pops_on)
-    date ? "Reviewed — kept on #{date}." : 'Reviewed — no changes during review.'
+    date ? "Kept on #{date}." : 'No changes during review.'
   end
 
   def migration_date_name(date)

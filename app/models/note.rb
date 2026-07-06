@@ -18,7 +18,7 @@ class Note < ApplicationRecord
   def completable?             = false
   def starts_date              = nil
   def ends_date                = nil
-  def marker_icon              = :line_dashed
+  def marker_icon              = :text
 
   def long?
     body.to_plain_text.length > 400
@@ -36,5 +36,14 @@ class Note < ApplicationRecord
 
   def mood_marker
     MOOD_MARKERS[mood&.to_sym]
+  end
+
+  def preset = 'note'
+  def permitted_attachment_types = nil
+  def placeholder = 'Add markdown notes, files or images...'
+  def to_toolbar_path = "notes/toolbar"
+
+  def data_attributes
+    mood.present? ? { note_mood: mood } : {}
   end
 end

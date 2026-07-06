@@ -39,32 +39,21 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to bullet_path(bullet)
   end
 
-  test 'create redirects to return_to when present' do
-    post bullets_path,
-         params: {
-           return_to: '/daylog',
-           bullet: {
-             bulletable_type: 'Note',
-             body: 'A long note',
-             pops_on: Date.current.iso8601
+  test 'create with another redirects to the new bullet show page' do
+    assert_difference -> { @user.bullets.count }, 1 do
+      post bullets_path,
+           params: {
+             another: '1',
+             bullet: {
+               bulletable_type: 'Task',
+               body: 'Rapid task',
+               pops_on: Date.current.iso8601
+             }
            }
-         }
+    end
 
-    assert_redirected_to '/daylog'
-  end
-
-  test 'create with another redirects to a fresh new page for the same type' do
-    post bullets_path,
-         params: {
-           another: '1',
-           bullet: {
-             bulletable_type: 'Task',
-             body: 'Rapid task',
-             pops_on: Date.current.iso8601
-           }
-         }
-
-    assert_redirected_to new_bullet_path(bulletable_type: 'Task', pops_on: Date.current.iso8601)
+    bullet = @user.bullets.order(:created_at).last
+    assert_redirected_to bullet_path(bullet)
   end
 
   test 'create tags bullet from project attachment in body' do
@@ -192,12 +181,9 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_select '.bullet-composer--rail .mood-option', count: 4
   end
 
-  test 'new composer hides return_to field when absent and includes it when present' do
+  test 'new composer renders without return_to field' do
     get new_bullet_path(bulletable_type: 'Task')
     assert_select "input[name='return_to']", count: 0
-
-    get new_bullet_path(bulletable_type: 'Task', return_to: '/daylog')
-    assert_select "input[name='return_to'][value='/daylog']"
   end
 
   test 'create sets note mood from bulletable_attributes' do

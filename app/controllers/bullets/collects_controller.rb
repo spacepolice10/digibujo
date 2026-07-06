@@ -10,7 +10,6 @@ module Bullets
     def new
       @collects_q = Collection.sanitized_name_query(params[:q])
       @collections, @collections_page = collectables_page(Current.user.active_collections, :collections_page)
-      @sprints, @sprints_page = collectables_page(Current.user.active_sprints, :sprints_page)
 
       respond_to do |format|
         format.html

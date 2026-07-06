@@ -1,6 +1,0 @@
-<%# locals: (sprint:, on: Date.current) %>
-<% case sprint.status(on: on) %>
-<% when :upcoming %>Starts in <%= sprint.days_remaining(on: on) %>d
-<% when :active %><%= sprint.days_remaining(on: on) %>d left
-<% when :ended %>Ended
-<% end %>

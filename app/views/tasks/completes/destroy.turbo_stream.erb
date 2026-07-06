@@ -1,5 +1,5 @@
 <% @bullets.each do |bullet| %>
   <%= turbo_stream.replace_all bullet do %>
-    <%= render_bullet bullet %>
+    <%= render bullet %>
   <% end %>
 <% end %>

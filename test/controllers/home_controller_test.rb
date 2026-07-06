@@ -28,14 +28,6 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     assert_select 'turbo-frame#home_activity[src=?]', compact_activities_path
   end
 
-  test 'show renders disabled add sprint button when sprints are disabled' do
-    get home_path
-
-    assert_response :success
-    assert_select 'button.layout--rail-action[disabled]', text: /Add sprint/
-    assert_select 'a[href=?]', new_sprint_path, count: 0
-  end
-
   test 'show renders saved appearance on html' do
     @user.settings.update!(appearance: 'warm')
 

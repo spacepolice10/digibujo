@@ -13,7 +13,6 @@ class User < ApplicationRecord
   has_many :future_buckets, dependent: :destroy
   has_many :collections, through: :buckets, source: :bucketable, source_type: 'Collection'
   has_many :monthly_buckets, through: :buckets, source: :bucketable, source_type: 'MonthlyBucket'
-  has_many :sprints, through: :buckets, source: :bucketable, source_type: 'Sprint'
   has_many :projects, dependent: :destroy
   has_many :people, dependent: :destroy
   has_many :pinned_entities, dependent: :destroy
@@ -27,12 +26,6 @@ class User < ApplicationRecord
 
   def active_collections
     collections.merge(Bucket.active).order('buckets.name')
-  end
-
-  def active_sprints
-    return Sprint.none unless Sprint.enabled?
-
-    sprints.merge(Bucket.active).order(starts_on: :desc)
   end
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }

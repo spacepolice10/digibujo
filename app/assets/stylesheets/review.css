@@ -21,14 +21,19 @@
     .review--week {
       position: sticky;
       top: var(--spacing-vertical);
-      flex: 1 1 0;
       align-self: flex-start;
       max-height: calc(100vh - var(--spacing-vertical) * 3);
       overflow-y: auto;
     }
+    .review--collections {
+      flex: 1 1 0;
+    }
+    .review--week {
+      flex: 2 1 0;
+    }
 
     .review--to-review {
-      flex: 3 1 auto;
+      flex: 2 1 auto;
       align-self: flex-start;
       overflow: visible;
     }
@@ -57,13 +62,15 @@
     padding: var(--spacing-vertical) var(--spacing-horizontal);
   }
 
-  .review--collections,
-  .review--week {
+  .review--collections{
     flex: 1;
+  }
+  .review--week {
+    flex: 2;
   }
 
   .review--to-review {
-    flex: 3;
+    flex: 2;
   }
 
   .review--collections-header,

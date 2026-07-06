@@ -1,11 +1,14 @@
-<%# locals: (bullet_ids: "", asap:, tomorrow:, next_monday:) %>
+<%# locals: (bullet_ids: "", asap:, tomorrow:, next_monday:, next_weekends:) %>
 <div class="bulk-menu--action-header">
   <p class="bulk-menu--action-name">Schedule</p>
-  <button type="button"
-          class="button--primary button--icon button--circle"
-          popovertarget="pops_picker_dropdown_id"
-          popovertargetaction="hide"
-          aria-label="Close schedule picker">
+
+  <button
+    type="button"
+    class="button--primary button--icon button--circle"
+    popovertarget="pops_picker_dropdown_id"
+    popovertargetaction="hide"
+    aria-label="Close schedule picker"
+  >
     <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
   </button>
 </div>
@@ -14,13 +17,18 @@
   <%= form_with url: pop_path, method: :post, data: { turbo_stream: true } do %>
     <%= hidden_field_tag :bullet_ids, bullet_ids, data: { bulk_menu_target: "idList" } %>
     <%= hidden_field_tag :pops_on, asap %>
+
     <%= button_tag type: :submit,
           class: "button--tertiary bulk-menu--action-option",
           data: {
             grid_navigation_target: "item",
             action: "focus->grid-navigation#syncPosition"
           } do %>
-      <i class="icon" style="--icon-mask: var(--icon-arrow-up)" aria-hidden="true"></i>
+      <i
+        class="icon"
+        style="--icon-mask: var(--icon-arrow-up)"
+        aria-hidden="true"
+      ></i>
       ASAP · <%= asap.strftime("%a, %b %-d") %>
     <% end %>
   <% end %>
@@ -28,13 +36,18 @@
   <%= form_with url: pop_path, method: :post, data: { turbo_stream: true } do %>
     <%= hidden_field_tag :bullet_ids, bullet_ids, data: { bulk_menu_target: "idList" } %>
     <%= hidden_field_tag :pops_on, tomorrow %>
+
     <%= button_tag type: :submit,
           class: "button--tertiary bulk-menu--action-option",
           data: {
             grid_navigation_target: "item",
             action: "focus->grid-navigation#syncPosition"
           } do %>
-      <i class="icon" style="--icon-mask: var(--icon-arrow-right)" aria-hidden="true"></i>
+      <i
+        class="icon"
+        style="--icon-mask: var(--icon-arrow-right)"
+        aria-hidden="true"
+      ></i>
       Tomorrow · <%= tomorrow.strftime("%a, %b %-d") %>
     <% end %>
   <% end %>
@@ -42,30 +55,69 @@
   <%= form_with url: pop_path, method: :post, data: { turbo_stream: true } do %>
     <%= hidden_field_tag :bullet_ids, bullet_ids, data: { bulk_menu_target: "idList" } %>
     <%= hidden_field_tag :pops_on, next_monday %>
+
     <%= button_tag type: :submit,
           class: "button--tertiary bulk-menu--action-option",
           data: {
             grid_navigation_target: "item",
             action: "focus->grid-navigation#syncPosition"
           } do %>
-      <i class="icon" style="--icon-mask: var(--icon-calendar-repeat)" aria-hidden="true"></i>
+      <i
+        class="icon"
+        style="--icon-mask: var(--icon-calendar-repeat)"
+        aria-hidden="true"
+      ></i>
       Next week · <%= next_monday.strftime("%a, %b %-d") %>
+    <% end %>
+  <% end %>
+
+  <%= form_with url: pop_path, method: :post, data: { turbo_stream: true } do %>
+    <%= hidden_field_tag :bullet_ids, bullet_ids, data: { bulk_menu_target: "idList" } %>
+    <%= hidden_field_tag :pops_on, next_weekends %>
+
+    <%= button_tag type: :submit,
+          class: "button--tertiary bulk-menu--action-option",
+          data: {
+            grid_navigation_target: "item",
+            action: "focus->grid-navigation#syncPosition"
+          } do %>
+      <i
+        class="icon"
+        style="--icon-mask: var(--icon-calendar-repeat)"
+        aria-hidden="true"
+      ></i>
+      Next weekend · <%= next_weekends.strftime("%a, %b %-d") %>
     <% end %>
   <% end %>
 </div>
 
 <div class="bulk-menu--action-date-picker">
-  <label for="pops_on_date_picker"
-         class="button--tertiary bulk-menu--action-option"
-         data-grid-navigation-target="item"
-         data-action="focus->grid-navigation#syncPosition">
-    <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
+  <label
+    for="pops_on_date_picker"
+    class="button--tertiary bulk-menu--action-option"
+    data-grid-navigation-target="item"
+    data-action="focus->grid-navigation#syncPosition"
+  >
+    <i
+      class="icon"
+      style="--icon-mask: var(--icon-calendar)"
+      aria-hidden="true"
+    ></i>
+
     <span>Pick a date</span>
-    <input type="checkbox" id="pops_on_date_picker" name="pops_on_date_picker" class="utilities--sr-only">
+
+    <input
+      type="checkbox"
+      id="pops_on_date_picker"
+      name="pops_on_date_picker"
+      class="utilities--sr-only"
+    >
   </label>
+
   <%= form_with url: pop_path, method: :post, class: "bulk-menu--action-form", data: { turbo_stream: true } do %>
     <%= hidden_field_tag :bullet_ids, bullet_ids, data: { bulk_menu_target: "idList" } %>
     <%= date_field_tag :pops_on, asap, class: "form-input" %>
+
     <%= button_tag type: :submit, class: "button--primary" do %>
       Confirm
     <% end %>

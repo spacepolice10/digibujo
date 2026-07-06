@@ -18,7 +18,7 @@
          data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop">
       <div class="monthly-bucket--bullets-list">
         <% bullets.each do |bullet| %>
-          <%= render "monthly_buckets/bullets/bullet", bullet: bullet %>
+          <%= render bullet %>
         <% end %>
       </div>
     </div>

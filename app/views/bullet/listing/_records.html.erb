@@ -1,3 +1,9 @@
-<%= render "pagination/paginated_records",
-      page: page,
-      pagination_link_path: ->(next_param) { listing.path(page: next_param) } %>
+<%= render layout: "pagination/paginated_list",
+      locals: {
+        page: page,
+        pagination_link_path: ->(next_param) { listing.path(page: next_param) }
+      } do %>
+  <% page.records.each do |bullet| %>
+    <%= render bullet %>
+  <% end %>
+<% end %>

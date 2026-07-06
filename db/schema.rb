@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_02_090000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_06_140000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -285,13 +285,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_02_090000) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
-  create_table "sprints", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.date "ends_on"
-    t.date "starts_on"
-    t.datetime "updated_at", null: false
-  end
-
   create_table "tasks", force: :cascade do |t|
     t.boolean "completed", default: false, null: false
     t.datetime "completed_at"
@@ -306,7 +299,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_02_090000) do
     t.boolean "projects_expanded", default: true, null: false
     t.boolean "recurrencies_expanded", default: true, null: false
     t.boolean "spreads_expanded", default: true, null: false
-    t.boolean "sprints_expanded", default: true, null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["user_id"], name: "index_user_settings_on_user_id", unique: true

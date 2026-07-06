@@ -70,12 +70,15 @@ export default class extends Controller {
       this.amountTarget.textContent = `${this.idListValue.length} selected`;
     }
 
+    if (this.hasMenuTarget && this.idListValue.length > 0) {
+      this.menuTarget.focus();
+    }
+
     this.selectModeValue = this.idListValue.length > 0;
     this.#updateBulkActions();
   }
 
   selectModeValueChanged() {
-    this.menuTarget.focus();
     this.#syncSelectMode();
   }
 
@@ -140,7 +143,7 @@ export default class extends Controller {
 
     params.set("q", input.value.trim());
     params.delete("collections_page");
-    params.delete("sprints_page");
+
     url.search = params.toString();
 
     const response = await fetch(url.toString(), {

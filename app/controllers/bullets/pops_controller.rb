@@ -10,6 +10,7 @@ module Bullets
       @asap = Date.current
       @tomorrow = Date.current + 1.day
       @next_monday = Date.current.next_occurring(:monday)
+      @next_weekends = Date.current.next_occurring(:saturday)
     end
 
     def create

@@ -1,0 +1,15 @@
+<%# locals: (activity:) %>
+<%= link_to activity_path(activity), class: "activity--history-item", data: { turbo_frame: "_top" } do %>
+  <i
+    class="icon activity--icon"
+    data-type="<%= activity.type_name %>"
+    style="--icon-mask: <%= activity.icon_mask %>"
+    aria-hidden="true"
+  ></i>
+  <span class="activity--history-item-body">
+    <span class="activity--history-item-summary utilities--line-clamp-1"><%= activity.summary %></span>
+    <time class="activity--time" datetime="<%= activity.created_at.to_fs(:db) %>">
+      <span class="activity--time-relative"><%= time_ago_in_words(activity.created_at) %> ago</span>
+    </time>
+  </span>
+<% end %>

@@ -15,7 +15,7 @@
       <% end %>
     </li>
   <% else %>
-    <%= render_bullet pinnable %>
+    <%= render pinnable %>
   <% end %>
 <% when "Bucket" %>
   <% path = polymorphic_path(pinnable.bucketable) %>

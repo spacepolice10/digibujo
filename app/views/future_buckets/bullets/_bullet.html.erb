@@ -11,15 +11,7 @@
              data-bullet-drag-id-value="<%= bullet.id %>"
              data-action="dragstart->bullet-drag#dragstart dragend->bullet-drag#dragend">
   <span class="bullet--marker" aria-hidden="true"></span>
-  <div class="bullet--body">
-    <% if bullet.bulletable_type == "Voice" && bullet.bulletable.recording.attached? %>
-      <%= render "voices/playback_for_bullet", bullet: bullet %>
-    <% else %>
-      <%= link_to bullet.name,
-            bullet_path(bullet),
-            data: { turbo_frame: "_top" },
-            draggable: "false" %>
-      <%= render "voices/playback_for_bullet", bullet: bullet %>
-    <% end %>
+  <div class="bullet--body utilities--text-sm utilities--line-clamp-1">
+    <%= render partial: bullet.bulletable.to_partial_body_path, locals: { bullet: bullet } %>
   </div>
 </turbo-frame>

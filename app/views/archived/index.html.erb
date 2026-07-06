@@ -1,13 +1,18 @@
 <% content_for(:title) { "Archived" } %>
-<div class="layout--page" data-controller="bulk-menu">
+<div class="layout--page">
 <div class="layout--header">
   <h2>Archived</h2>
   <span><strong><%= @amount_of_archived %></strong> total</span>
 </div>
   <article class="layout--column layout--list" data-bulk-menu-target="list">
-    <%= render "pagination/paginated_records",
-          page: @page,
-          pagination_link_path: ->(next_param) { archived_index_path(page: next_param) } %>
+    <%= render layout: "pagination/paginated_list",
+          locals: {
+            page: @page,
+            pagination_link_path: ->(next_param) { archived_index_path(page: next_param) }
+          } do %>
+      <% @page.records.each do |bullet| %>
+        <%= render bullet %>
+      <% end %>
+    <% end %>
   </article>
-  <%= render "bullets/bulk_menu" %>
 </div>

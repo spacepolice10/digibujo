@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 class ActivitiesController < ApplicationController
+  def show
+    @activity = Current.user.activities.includes(subject: :bulletable).find(params[:id])
+    @history = @activity.subject_history if @activity.bullet_subject?
+  end
+
   def index
     activities = Current.user.activities.includes(:subject).order(created_at: :desc)
     @activities = set_page_and_extract_portion_from(activities, per_page: [30, 50, 100])

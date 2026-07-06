@@ -7,11 +7,15 @@ module Searchable
     after_create_commit :create_in_search_index
     after_update_commit :update_in_search_index
     after_destroy_commit :remove_from_search_index
-    before_destroy :remove_search_selections
+    before_destroy :forget_search_selections!
   end
 
   def reindex
     update_in_search_index
+  end
+
+  def forget_search_selections!
+    Search::Selection.where(searchable_type: self.class.name, searchable_id: id).delete_all
   end
 
   private
@@ -33,10 +37,6 @@ module Searchable
       searchable_type: self.class.name,
       searchable_id: id
     )&.destroy
-  end
-
-  def remove_search_selections
-    Search::Selection.where(searchable_type: self.class.name, searchable_id: id).delete_all
   end
 
   def search_record_attributes

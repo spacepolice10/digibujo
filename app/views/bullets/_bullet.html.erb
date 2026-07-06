@@ -1,0 +1,11 @@
+<%# locals: (bullet:, selected_date: nil) %>
+<%= tag.turbo_frame id: dom_id(bullet), class: "bullet",
+      data: { bullet_type: bullet.bulletable_type.downcase,
+              **(bullet.data_attributes) } do %>
+  <%= render "bullets/marker", bullet: bullet %>
+  <div class="bullet--body">
+    <%= render "bullets/metadata", bullet: bullet, selected_date: selected_date %>
+    <%= render partial: bullet.bulletable.to_partial_body_path,
+               locals: { bullet: bullet, selected_date: selected_date } %>
+  </div>
+<% end %>

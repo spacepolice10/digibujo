@@ -9,11 +9,14 @@ class Task < ApplicationRecord
   def starts_date    = nil
   def ends_date      = nil
   def marker_icon    = completed? ? :check : :square
+  def placeholder    = 'What need to be done?'
+  def data_attributes = { task_completed: completed? }
   def self.permitted_bullet_attributes = %i[body completed]
 
   def complete!
     update!(completed: true, completed_at: Time.current)
     bullet.mark_migration!(action: 'completed', pops_on: bullet.pops_on)
+    bullet.forget_search_selections!
   end
 
   def uncomplete!

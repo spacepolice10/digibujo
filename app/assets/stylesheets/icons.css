@@ -13,6 +13,7 @@
     --icon-mask: none;
     -webkit-mask-image: var(--icon-mask);
     mask-image: var(--icon-mask);
+    flex-shrink: 0;
   }
 
   :root {
@@ -62,6 +63,7 @@
     --icon-x: url("icon-x.svg");
     --icon-mail: url("icon-mail.svg");
     --icon-phone: url("icon-phone.svg");
+    --icon-text: url("icon-text.svg");
   }
 
   .icons--list {

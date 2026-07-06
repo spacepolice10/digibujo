@@ -7,7 +7,7 @@
 
   .bullet--composer-buttons {
     display: flex;
-    gap: var(--spacing-vertical-half);
+    gap: var(--spacing-vertical-double);
     padding-block-start: var(--spacing-vertical);
     margin-block-start: var(--spacing-vertical);
     border-top: 1px solid var(--color-stroke-base);
@@ -201,11 +201,13 @@
     flex: 0 0 auto;
     opacity: var(--opacity-half);
     color: inherit;
+    flex-shrink: 0;
   }
 
   .bullet-composer--type-dismiss .icon {
     width: var(--icon-size-subtle);
     height: var(--icon-size-subtle);
+    flex-shrink: 0;
   }
 
   .bullet-composer--rail-actions {

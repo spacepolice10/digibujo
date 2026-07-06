@@ -4,19 +4,6 @@
     Add collection
   <% end %>
 
-  <button
-    type="button"
-    class="button--secondary menu--create-bucket-link"
-    disabled
-  >
-    <i
-      class="icon"
-      style="--icon-mask: var(--icon-circle-check)"
-      aria-hidden="true"
-    ></i>
-    Add sprint
-  </button>
-
   <%= link_to new_monthly_bucket_path, class: "button--secondary menu--create-bucket-link", data: { turbo_frame: "_top" } do %>
     <i
       class="icon"

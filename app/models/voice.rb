@@ -16,6 +16,11 @@ class Voice < ApplicationRecord
   def self.permitted_bullet_attributes = %i[body recording duration_seconds]
 
   def marker_icon   = :microphone
+  def placeholder   = 'Caption this voice memo…'
+  def focusing_on_render? = false
+  def stimulus_controller = "voice-recorder"
+  def stimulus_actions = 'turbo:submit-end->voice-recorder#clearOnSubmit'
+  def to_toolbar_path = "voices/toolbar"
 
   private
 

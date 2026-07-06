@@ -91,14 +91,6 @@
           <% end %>
         <% end %>
 
-        <% if @sprints.any? %>
-          <%= render layout: "menu/expandable_section", locals: { title: "Sprints", icon: "circle-check", show_more_path: (@show_sprints_more ? sprints_path : nil) } do %>
-            <ul class="layout--list bucket--list">
-              <%= render @sprints %>
-            </ul>
-          <% end %>
-        <% end %>
-
         <% if @people.any? %>
           <%= render layout: "menu/expandable_section", locals: { title: "People", icon: "face", show_more_path: people_path } do %>
             <ul class="layout--list bucket--list">

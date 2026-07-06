@@ -1,22 +1,7 @@
 <% content_for(:title) { "New bullet" } %>
 
-<turbo-frame id="<%= request.headers["Turbo-Frame"] %>" >
-  <% if @bullet.bulletable_type.blank? %>
-    <% types = [
-      { name: "Task", icon: "square", modifier: "task" },
-      { name: "Note", icon: "line-dashed", modifier: "note" },
-      { name: "Event", icon: "circle", modifier: "event" },
-      { name: "Voice", icon: "microphone", modifier: "voice" }
-    ] %>
-    <div class="bullet--composer-buttons">
-      <% types.each do |type| %>
-        <%= render "bullets/composer/open_composer_of",
-              path: new_bullet_path(bulletable_type: type[:name], pops_on: params[:pops_on], bucket_id: params[:bucket_id], return_to: @return_to),
-              frame: "_top",
-              **type %>
-      <% end %>
-    </div>
-  <% else %>
+<div class="session-layout">
+<turbo-frame id="<%= turbo_frame_request_id %>" data-controller="composer">
     <%= render "bullets/form", bullet: @bullet, bullets_path: bullets_path, return_to: @return_to, editing: true %>
-  <% end %>
 </turbo-frame>
+</div>

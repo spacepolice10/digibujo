@@ -1,171 +1,55 @@
 <%# locals: (bullet:, selected_date: nil) %>
-<% bucket_tags = bullet.bucket.present? ? [bullet.bucket] : [] %>
-<% if bullet.migrated? || bullet.pinned? || bullet.archived? || bullet.ends_date.present? || bucket_tags.any? %>
+<% if bullet.collected_migration? || bullet.popped_migration? %>
   <div class="bullet--metadata">
     <span class="bullet--tags">
-      <% if bullet.migrated? %>
-        <% migration_hint_id = dom_id(bullet, :hint_migration) %>
-        <% migration_anchor = "--hint-#{bullet.id}-migration" %>
-        <button
-          type="button"
-          interestfor="<%= migration_hint_id %>"
-          style="anchor-name: <%= migration_anchor %>"
-          aria-label="Migrated"
-        >
+      <% if bullet.collected_migration? && (activity = bullet.migration_activity) %>
+        <% collected_hint_id = dom_id(bullet, :hint_collected) %>
+        <% collected_anchor = "--hint-#{bullet.id}-collected" %>
+        <%= link_to activity_path(activity),
+              class: "bullet--metadata-link",
+              data: { turbo_frame: "_top" },
+              interestfor: collected_hint_id,
+              style: "anchor-name: #{collected_anchor}",
+              aria: { label: "Collected" } do %>
+          <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+        <% end %>
+      <% end %>
+      <% if bullet.popped_migration? && (activity = bullet.migration_activity) %>
+        <% popped_hint_id = dom_id(bullet, :hint_popped) %>
+        <% popped_anchor = "--hint-#{bullet.id}-popped" %>
+        <%= link_to activity_path(activity),
+              class: "bullet--metadata-link",
+              data: { turbo_frame: "_top" },
+              interestfor: popped_hint_id,
+              style: "anchor-name: #{popped_anchor}",
+              aria: { label: "Rescheduled" } do %>
           <i class="icon" style="--icon-mask: var(--icon-arrow-right)" aria-hidden="true"></i>
-        </button>
-      <% end %>
-      <% if bullet.pops_on && selected_date && bullet.pops_on > selected_date %>
-        <span class="pill" data-colour="emerald">
-          <p>Scheduled on <%= bullet.pops_on.strftime("%B %d") %></p>
-        </span>
-      <% end %>
-      <% if bullet.pinned? %>
-        <% pinned_hint_id = dom_id(bullet, :hint_pinned) %>
-        <% pinned_anchor = "--hint-#{bullet.id}-pinned" %>
-        <span
-          class="pill"
-          interestfor="<%= pinned_hint_id %>"
-          style="anchor-name: <%= pinned_anchor %>"
-          aria-label="Pinned"
-        >
-          <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
-        </span>
-      <% end %>
-      <% if bullet.archived? %>
-        <% archived_hint_id = dom_id(bullet, :hint_archived) %>
-        <% archived_anchor = "--hint-#{bullet.id}-archived" %>
-        <span
-          class="pill"
-          interestfor="<%= archived_hint_id %>"
-          style="anchor-name: <%= archived_anchor %>"
-          aria-label="Archived"
-        >
-          <i class="icon" style="--icon-mask: var(--icon-archive)" aria-hidden="true"></i>
-        </span>
-      <% end %>
-      <% bucket_tags.each do |bucket| %>
-        <% bucketable = bucket.bucketable %>
-        <% next unless bucketable %>
-        <% if bucket.bucketable_type == "MonthlyBucket" %>
-          <% monthly_bucket_hint_id = dom_id(bullet, "hint_monthly_bucket_#{bucket.id}") %>
-          <% monthly_bucket_anchor = "--hint-#{bullet.id}-monthly_bucket-#{bucket.id}" %>
-          <%= link_to monthly_bucket_path(bucketable),
-                class: "pill",
-                interestfor: monthly_bucket_hint_id,
-                style: "anchor-name: #{monthly_bucket_anchor}",
-                data: { turbo_frame: "_top", colour: bucket.colour }.compact,
-                aria: { label: "Monthly spread: #{bucket.name}" } do %>
-            <%= image_tag bucket.icon_path, alt: "", class: "icons--list" %>
-          <% end %>
-        <% elsif bucket.bucketable_type == "Collection" %>
-          <% coll_hint_id = dom_id(bullet, "hint_collection_#{bucket.id}") %>
-          <% coll_anchor = "--hint-#{bullet.id}-collection-#{bucket.id}" %>
-          <%= link_to collection_path(bucketable),
-                class: "pill",
-                interestfor: coll_hint_id,
-                style: "anchor-name: #{coll_anchor}",
-                data: { turbo_frame: "_top", colour: bucket.colour }.compact,
-                aria: { label: "Collection: #{bucket.name}" } do %>
-            <%= image_tag bucket.icon_path, alt: "", class: "icons--list" %>
-          <% end %>
-        <% elsif bucket.bucketable_type == "Sprint" %>
-          <% sprint_hint_id = dom_id(bullet, "hint_sprint_#{bucket.id}") %>
-          <% sprint_anchor = "--hint-#{bullet.id}-sprint-#{bucket.id}" %>
-          <% if Sprint.enabled? %>
-            <%= link_to sprint_path(bucketable),
-                  class: "pill",
-                  interestfor: sprint_hint_id,
-                  style: "anchor-name: #{sprint_anchor}",
-                  data: { turbo_frame: "_top", colour: bucket.colour }.compact,
-                  aria: { label: "Sprint: #{bucket.name}" } do %>
-              <%= image_tag bucket.icon_path, alt: "", class: "icons--list" %>
-            <% end %>
-          <% else %>
-            <span class="pill"
-                  <% if bucket.colour.present? %>data-colour="<%= bucket.colour %>"<% end %>
-                  interestfor="<%= sprint_hint_id %>"
-                  style="anchor-name: <%= sprint_anchor %>"
-                  aria-label="Sprint: <%= bucket.name %>">
-              <%= image_tag bucket.icon_path, alt: "", class: "icons--list" %>
-            </span>
-          <% end %>
         <% end %>
       <% end %>
     </span>
-    <% if bullet.migrated? %>
-      <% migration_hint_id = dom_id(bullet, :hint_migration) %>
-      <% migration_anchor = "--hint-#{bullet.id}-migration" %>
+    <% if bullet.collected_migration? %>
+      <% collected_hint_id = dom_id(bullet, :hint_collected) %>
+      <% collected_anchor = "--hint-#{bullet.id}-collected" %>
       <div
-        id="<%= migration_hint_id %>"
+        id="<%= collected_hint_id %>"
         class="hint"
         popover="hint"
-        style="position-anchor: <%= migration_anchor %>"
+        style="position-anchor: <%= collected_anchor %>"
       >
         <%= bullet.migration_hint %>
       </div>
     <% end %>
-    <% if bullet.pinned? %>
-      <% pinned_hint_id = dom_id(bullet, :hint_pinned) %>
-      <% pinned_anchor = "--hint-#{bullet.id}-pinned" %>
+    <% if bullet.popped_migration? %>
+      <% popped_hint_id = dom_id(bullet, :hint_popped) %>
+      <% popped_anchor = "--hint-#{bullet.id}-popped" %>
       <div
-        id="<%= pinned_hint_id %>"
+        id="<%= popped_hint_id %>"
         class="hint"
         popover="hint"
-        style="position-anchor: <%= pinned_anchor %>"
+        style="position-anchor: <%= popped_anchor %>"
       >
-        Pinned — stays at the top of your timeline.
+        <%= bullet.migration_hint %>
       </div>
-    <% end %>
-    <% if bullet.archived? %>
-      <% archived_hint_id = dom_id(bullet, :hint_archived) %>
-      <% archived_anchor = "--hint-#{bullet.id}-archived" %>
-      <div
-        id="<%= archived_hint_id %>"
-        class="hint"
-        popover="hint"
-        style="position-anchor: <%= archived_anchor %>"
-      >
-        Archived — hidden from the main timeline until restored.
-      </div>
-    <% end %>
-    <% bucket_tags.each do |bucket| %>
-      <% bucketable = bucket.bucketable %>
-      <% next unless bucketable %>
-      <% if bucket.bucketable_type == "MonthlyBucket" %>
-        <% monthly_bucket_hint_id = dom_id(bullet, "hint_monthly_bucket_#{bucket.id}") %>
-        <% monthly_bucket_anchor = "--hint-#{bullet.id}-monthly_bucket-#{bucket.id}" %>
-        <div
-          id="<%= monthly_bucket_hint_id %>"
-          class="hint"
-          popover="hint"
-          style="position-anchor: <%= monthly_bucket_anchor %>"
-        >
-          <%= bucket.name %>
-        </div>
-      <% elsif bucket.bucketable_type == "Collection" %>
-        <% coll_hint_id = dom_id(bullet, "hint_collection_#{bucket.id}") %>
-        <% coll_anchor = "--hint-#{bullet.id}-collection-#{bucket.id}" %>
-        <div
-          id="<%= coll_hint_id %>"
-          class="hint"
-          popover="hint"
-          style="position-anchor: <%= coll_anchor %>"
-        >
-          <%= bucket.name %>
-        </div>
-      <% elsif bucket.bucketable_type == "Sprint" %>
-        <% sprint_hint_id = dom_id(bullet, "hint_sprint_#{bucket.id}") %>
-        <% sprint_anchor = "--hint-#{bullet.id}-sprint-#{bucket.id}" %>
-        <div
-          id="<%= sprint_hint_id %>"
-          class="hint"
-          popover="hint"
-          style="position-anchor: <%= sprint_anchor %>"
-        >
-          <%= bucket.name %> · <%= render "sprints/status_label", sprint: bucketable %>
-        </div>
-      <% end %>
     <% end %>
   </div>
 <% end %>

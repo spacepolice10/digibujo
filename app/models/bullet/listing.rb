@@ -45,7 +45,6 @@ class Bullet
       when Project then project_path(@context, **query)
       when Person then person_path(@context, **query)
       when Collection then collection_path(@context, **query)
-      when Sprint then sprint_path(@context, **query)
       else
         raise ArgumentError, "unsupported listing context: #{@context.class.name}"
       end
@@ -60,8 +59,6 @@ class Bullet
       when Project
         @user.bullets.joins(:projects).where(projects: { id: @context.id })
       when Collection
-        @user.bullets.where(bucket_id: @context.bucket.id)
-      when Sprint
         @user.bullets.where(bucket_id: @context.bucket.id)
       else
         raise ArgumentError, "unsupported listing context: #{@context.class.name}"

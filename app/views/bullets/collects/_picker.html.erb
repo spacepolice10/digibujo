@@ -1,4 +1,4 @@
-<%# locals: (bullet_ids:, return_to:, collects_q:, collections:, collections_page:, sprints:, sprints_page:) %>
+<%# locals: (bullet_ids:, return_to:, collects_q:, collections:, collections_page:) %>
 <div class="bulk-menu--action-header">
   <p class="bulk-menu--action-name">
     Save to collection
@@ -45,7 +45,7 @@
   </div>
 
 
-  <% if collections.empty? && (!Sprint.enabled? || sprints.empty?) %>
-    <p><%= Sprint.enabled? ? "No collections or sprints found." : "No collections found." %></p>
+  <% if collections.empty? %>
+    <p>No collections found.</p>
   <% end %>
 </div>

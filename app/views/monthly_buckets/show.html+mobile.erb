@@ -69,11 +69,10 @@
                     </div>
                     <div class="monthly-bucket--date-add">
                       <%= render "bullets/composer/open_composer_of",
-                            path: new_monthly_bucket_bullet_path(@monthly_bucket, pops_on: date, bucket_id: @monthly_bucket.bucket.id, bulletable_type: "Event"),
+                            path: new_bullet_path(pops_on: date, bucket_id: @monthly_bucket.bucket.id, bulletable_type: "Event"),
                             name: "Event",
                             icon: "circle",
-                            modifier: "event",
-                            frame: "bullet_composer" %>
+                            modifier: "event" %>
                     </div>
                   </div>
                 </div>
@@ -105,11 +104,10 @@
           </div>
 
           <%= render "bullets/composer/open_composer_of",
-                path: new_monthly_bucket_bullet_path(@monthly_bucket, bucket_id: @monthly_bucket.bucket.id, bulletable_type: "Task"),
+                path: new_bullet_path(bucket_id: @monthly_bucket.bucket.id, bulletable_type: "Task"),
                 name: "Task",
                 icon: "square",
                 modifier: "task",
-                frame: "bullet_composer",
                 hotkey: "Shift+T",
                 hotkey_action: "keydown.shift+t@document->hotkey#click" %>
         </div>
@@ -117,5 +115,4 @@
     </div>
   </div>
 
-  <%= render "monthly_buckets/composer_dialog" %>
 </div>

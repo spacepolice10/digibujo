@@ -124,7 +124,7 @@
                    data-bulk-menu-target="collectsDropdown"></turbo-frame>
     </div>
 
-    <% if local_assigns[:review_period] %>
+    <% if (review_period = bulk_menu_review_period) %>
       <%= form_with url: mark_as_reviewed_path, method: :post do %>
         <%= hidden_field_tag :from, review_period[:from].iso8601 %>
         <%= hidden_field_tag :to, review_period[:to].iso8601 %>

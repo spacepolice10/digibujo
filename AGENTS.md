@@ -87,6 +87,7 @@ For very large changes executed in stages, **always make intermediate commits** 
 - Ask clarifying questions before starting non-trivial tasks
 - Prefer explicit over implicit
 - Match the conventions already in the codebase
+- **Be concise and terse.** Answer in the fewest words/sentences possible. Don't restate what the user said. Don't narrate tool usage. Don't summarize what you just did. Say it once, short, and stop.
 
 ### Skills (Superpowers)
 - Before any implementation task, check if a skill applies

@@ -1,0 +1,16 @@
+<%# locals: (bullet:, selected_date: nil) %>
+<% note = bullet.bulletable %>
+<div class="bullet--document">
+  <% if note.long? %>
+    <h3 class="bullet--name"><%= note.name %></h3>
+    <p><%= note.excerpt %></p>
+    <div class="read-more">
+      <%= link_to "Read more", bullet_path(bullet), class: "", data: { turbo_frame: "_top" } %>
+    </div>
+  <% else %>
+    <div class="bullet--note"><%= note.excerpt %></div>
+  <% end %>
+</div>
+<% if note.mood_marker.present? %>
+  <span class="bullet--mood" aria-hidden="true"><%= note.mood_marker %></span>
+<% end %>

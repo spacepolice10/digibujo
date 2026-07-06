@@ -23,13 +23,16 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body data-controller="dialog timezone-cookie">
+  <body data-controller="dialog timezone-cookie bulk-menu">
     <%= render "shared/svg_filters" %>
 <div id="toasts" class="toasts" data-controller="toasts" aria-live="polite"></div>
     <% unless request.variant.include?(:mobile) %>
       <%= render "shared/header" %>
     <% end %>
     <%= yield %>
+    <% if Current.user %>
+      <%= render "bullets/bulk_menu" %>
+    <% end %>
     <%= render "shared/footer" %>
     <%= render "shared/dialog", id: "dialog" do %>
       <%= turbo_frame_tag "modal" %>

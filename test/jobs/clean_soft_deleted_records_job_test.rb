@@ -7,24 +7,6 @@ class CleanSoftDeletedRecordsJobTest < ActiveJob::TestCase
     @user = users(:one)
   end
 
-  test "destroys expired archived sprint buckets" do
-    sprint = create_sprint!(
-      @user,
-      name: "Stale",
-      starts_on: Date.current - 30.days,
-      ends_on: Date.current - 20.days
-    )
-    bucket = sprint.bucket
-    bucket.archive!
-    bucket.archive.update!(created_at: (Bucket::Archivable::RETENTION_DAYS + 1).days.ago)
-
-    assert_difference -> { Bucket.count }, -1 do
-      assert_difference -> { Sprint.count }, -1 do
-        CleanSoftDeletedRecordsJob.perform_now
-      end
-    end
-  end
-
   test "destroys expired archived collection buckets" do
     collection = create_collection!(@user, name: "Stale")
     bucket = collection.bucket

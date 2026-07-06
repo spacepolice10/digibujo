@@ -1,6 +1,6 @@
 <% content_for(:title) { "Review" } %>
 
-<div class="layout--page review--page review--page-mobile" data-controller="bulk-menu">
+<div class="layout--page review--page review--page-mobile">
   <%= render "reviews/header",
         review_from: @review_from,
         review_to: @review_to,
@@ -17,14 +17,11 @@
               }
             } do %>
         <% @page.records.each do |bullet| %>
-          <%= render_bullet bullet %>
+          <%= render "reviews/bullet", bullet: bullet %>
         <% end %>
       <% end %>
     <% else %>
       <p class="review--to-review-empty utilities--text-sm">Nothing to review</p>
     <% end %>
   </article>
-
-  <%= render "bullets/bulk_menu",
-        review_period: { from: @review_from, to: @review_to } %>
 </div>

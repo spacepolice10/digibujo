@@ -1,6 +1,6 @@
 <% content_for(:title) { "Review" } %>
 
-<div class="layout--page review--page" data-controller="bulk-menu">
+<div class="layout--page review--page">
   <%= render "reviews/header",
         review_from: @review_from,
         review_to: @review_to,
@@ -23,6 +23,4 @@
           week_days: @week_days,
           week_bullets_by_date: @week_bullets_by_date %>
   </div>
-
-  <%= render "bullets/bulk_menu", review_period: { from: @review_from, to: @review_to } %>
 </div>

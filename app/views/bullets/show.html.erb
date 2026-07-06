@@ -32,9 +32,9 @@
           Publish
         <% end %>
       <% end %>
-      <%= button_to bullet_path(@bullet), method: :delete, class: "button--secondary button--danger", form: { data: { turbo_confirm: "Are you sure?" } } do %>
+      <%= button_to archive_path(@bullet), method: :post, class: "button--secondary button--danger", form: { data: { turbo_confirm: "Are you sure?" } } do %>
         <i class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></i>
-        Delete
+        Archive
       <% end %>
     </div>
   </header>

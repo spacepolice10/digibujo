@@ -1,4 +1,4 @@
-<div class="layout--page daylog--page" data-controller="daylog bulk-menu">
+<div class="layout--page daylog--page" data-controller="daylog">
   <turbo-frame id="bullets-timeline">
     <div id="bullets-header" class="layout--header daylog--header">
       <div class="layout--header-actions daylog--header-navigation">
@@ -88,15 +88,21 @@
     <div data-bulk-menu-target="list" class="layout--surface layout--list">
       <%= render "bullets/composer/jump" %>
 
-      <%= render "pagination/paginated_records",
-          page: @page,
-          pagination_link_path: ->(next_param) { daylog_path(date: @selected_date.iso8601, page: next_param) },
-          selected_date: @selected_date,
-          container_id: "bullets_container" %>
+      <%= render layout: "pagination/paginated_list",
+            locals: {
+              page: @page,
+              container_id: "daylog_bullets_container",
+              pagination_link_path: ->(next_param) { daylog_path(date: @selected_date.iso8601, page: next_param) }
+            } do %>
+        <% @page.records.each do |bullet| %>
+          <%= render bullet, selected_date: @selected_date %>
+        <% end %>
+      <% end %>
 
-      <%= render "bullets/composer/dock", selected_date: @selected_date %>
+      <%= render "bullets/composer/dock", 
+      selected_date: @selected_date, 
+      bucket: nil,
+      composer_id: "daylog_bullets_composer" %>
     </div>
-
-    <%= render "bullets/bulk_menu" %>
   </turbo-frame>
 </div>

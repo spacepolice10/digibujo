@@ -79,6 +79,20 @@ class Search::SelectionTest < ActiveSupport::TestCase
     assert_equal kept, selections.first.searchable
   end
 
+  test 'complete! removes bullet from recent selections' do
+    bullet = @user.bullets.create!(bulletable: Task.new(body: 'Finish me'))
+
+    Search::Selection.record!(
+      user: @user,
+      searchable_type: 'Bullet',
+      searchable_id: bullet.id
+    )
+
+    bullet.bulletable.complete!
+
+    assert_empty Search::Selection.in_menu(@user)
+  end
+
   test 'in_menu returns selections with searchable loaded' do
     Search::Selection.record!(
       user: @user,

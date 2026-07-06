@@ -1,0 +1,86 @@
+<% content_for(:title, @activity.action_name) %>
+
+<div class="layout--page activity--page">
+  <div class="layout--header activity--header">
+    <%= link_to activities_path, class: "button--tertiary", data: { turbo_frame: "_top" } do %>
+      <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+      Back
+    <% end %>
+
+    <div class="activity--header-name">
+      <h2><%= @activity.action_name %></h2>
+    </div>
+  </div>
+
+  <div class="layout--surface activity--show">
+    <div class="activity--show-summary">
+      <i
+        class="icon activity--icon"
+        data-type="<%= @activity.type_name %>"
+        style="--icon-mask: <%= @activity.icon_mask %>"
+        aria-hidden="true"
+      ></i>
+
+      <div class="activity--show-summary-body">
+        <p class="activity--show-summary-text"><%= @activity.summary %></p>
+        <time class="activity--time" datetime="<%= @activity.created_at.to_fs(:db) %>">
+          <%= @activity.created_at.strftime('%A, %B %-d at %-l:%M %p') %>
+          <span class="activity--time-relative">
+            (<%= time_ago_in_words(@activity.created_at) %> ago)
+          </span>
+        </time>
+      </div>
+    </div>
+
+    <% if @activity.bullet_subject? %>
+      <div class="activity--show-form">
+        <span class="activity--show-name">Bullet</span>
+        <%= link_to @activity.subject.name, bullet_path(@activity.subject), class: "activity--subject-name" %>
+      </div>
+
+      <% if @activity.action == 'popped' %>
+        <% if @activity.from_day %>
+          <div class="activity--show-form">
+            <span class="activity--show-name">From</span>
+            <%= link_to @activity.from_day_name,
+                  daylog_path(date: @activity.from_day.iso8601),
+                  class: "activity--subject-name" %>
+          </div>
+        <% end %>
+        <% if @activity.to_day %>
+          <div class="activity--show-form">
+            <span class="activity--show-name">To</span>
+            <%= link_to @activity.to_day_name,
+                  daylog_path(date: @activity.to_day.iso8601),
+                  class: "activity--subject-name" %>
+          </div>
+        <% end %>
+      <% elsif @activity.action == 'collected' %>
+        <div class="activity--show-form">
+          <span class="activity--show-name">Collection</span>
+          <% if @activity.destination_bucket %>
+            <%= link_to @activity.bucket_label, bucket_path(@activity.destination_bucket), class: "activity--subject-name" %>
+          <% else %>
+            <span class="activity--subject-name"><%= @activity.bucket_label %></span>
+          <% end %>
+        </div>
+      <% end %>
+    <% elsif @activity.subject_type == 'Bucket' %>
+      <div class="activity--show-form">
+        <span class="activity--show-name">Bucket</span>
+        <%= link_to @activity.subject.name, bucket_path(@activity.subject), class: "activity--subject-name" %>
+      </div>
+    <% end %>
+
+    <% if @history&.any? %>
+      <section class="activity--history">
+        <h3 class="activity--history-title">History</h3>
+        <div class="activity--history-list">
+          <% @history.each do |activity| %>
+            <%= render "activities/history_item", activity: activity %>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+  </div>
+</div>

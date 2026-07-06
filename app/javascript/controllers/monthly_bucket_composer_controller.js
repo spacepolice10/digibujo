@@ -3,16 +3,23 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["dialog"]
 
+  beforeFrameLoad(event) {
+    if (event.target.id != "bullet_composer") return
+    if (this.dialogTarget.open) return
+    this.dialogTarget.showModal()
+  }
+
   frameLoad(event) {
     if (event.target.id != "bullet_composer") return
-    if (!event.target.querySelector(".bullet-composer")) return
-
-    this.dialogTarget.showModal()
     event.target.querySelector("lexxy-editor")?.focus()
   }
 
   close() {
     if (this.dialogTarget.open) this.dialogTarget.close()
+  }
+
+  cancel(event) {
+    this.close()
   }
 
   closed() {

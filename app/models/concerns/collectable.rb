@@ -5,9 +5,8 @@ module Collectable
 
   def collect!(bucket_id:)
     bucket = user.buckets.active.find(bucket_id)
-    raise ActiveRecord::RecordNotFound if bucket.bucketable_type == 'Sprint' && !Sprint.enabled?
 
-    update!(bucket: bucket)
+    update!(bucket: bucket, pops_on: nil)
     mark_migration!(
       action: 'collected',
       bucket_id: bucket.id,

@@ -1,6 +1,6 @@
 <% content_for(:title) { @project.name } %>
 
-<div class="layout--page" data-controller="bulk-menu">
+<div class="layout--page">
   <div class="layout--header">
     <div class="layout--header-actions">
       <%= link_to home_path, class: "button--secondary" do %>
@@ -27,13 +27,18 @@
   <div class="layout--surface">
     <div class="layout--list" data-bulk-menu-target="list">
       <% if @bullets.any? %>
-        <%= render "pagination/paginated_records",
-            page: @page,
-            pagination_link_path: ->(next_param) { project_path(@project, page: next_param) } %>
+        <%= render layout: "pagination/paginated_list",
+              locals: {
+                page: @page,
+                pagination_link_path: ->(next_param) { project_path(@project, page: next_param) }
+              } do %>
+          <% @page.records.each do |bullet| %>
+            <%= render bullet %>
+          <% end %>
+        <% end %>
       <% else %>
         <p>No bullets yet. Pop a bullet to get started.</p>
       <% end %>
-      <%= render "bullets/bulk_menu" %>
     </div>
   </div>
 </div>

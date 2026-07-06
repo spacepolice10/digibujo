@@ -22,21 +22,13 @@ Rails.application.routes.draw do
   end
 
   # --- Logs ---
-  resource :daylog, only: :show, controller: 'daylogs' do
-    scope module: :daylogs do
-      resources :bullets, only: %i[new create]
-    end
-  end
+  resource :daylog, only: :show, controller: 'daylogs'
 
   get 'monthly_bucket', to: 'monthly_buckets#current', as: :current_monthly_bucket
 
   resources :future_buckets, only: :show
 
-  resources :monthly_buckets, only: %i[show new create] do
-    scope module: :monthly_buckets do
-      resources :bullets, only: %i[new create]
-    end
-  end
+  resources :monthly_buckets, only: %i[show new create]
 
   # --- Tags ---
   scope 'projects', module: :projects, as: :projects do
@@ -83,12 +75,6 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :sprints do
-    scope module: :sprints do
-      resources :bullets, only: %i[new create]
-    end
-  end
-
   scope 'buckets', module: :buckets, as: :buckets do
     resource :pin, only: %i[create destroy]
   end
@@ -119,11 +105,7 @@ Rails.application.routes.draw do
   end
 
   # --- Workspaces ---
-  resource :review, controller: 'reviews' do
-    scope module: :reviews do
-      resources :bullets, only: %i[new create]
-    end
-  end
+  resource :review, controller: 'reviews'
   resources :activities do
     collection do
       get :compact

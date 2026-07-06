@@ -1,0 +1,6 @@
+<%# locals: (bullet:, selected_date: nil) %>
+<% voice = bullet.bulletable %>
+<% unless voice.recording.attached? %>
+  <span class="bullet--content"><%= voice.body %></span>
+<% end %>
+<%= render "voices/playback_for_bullet", bullet: bullet %>

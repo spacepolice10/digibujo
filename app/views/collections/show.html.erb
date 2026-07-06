@@ -21,7 +21,7 @@
     <% end %>
   </div>
 
-  <div class="layout--surface bucket--list" data-controller="bulk-menu">
+  <div class="layout--surface bucket--list">
     <div class="layout--header-content">
       <h2 class="layout--surface-name"><%= @collection.name %></h2>
 
@@ -31,34 +31,28 @@
         </p>
       <% end %>
 
-      <div class="collection--create-bullet">
-        <%= link_to new_bullet_path(bulletable_type: "Note", bucket_id: @collection.bucket.id, return_to: collection_path(@collection)),
-        class: "button--tertiary",
-        aria: { label: "Add note" } do %>
-          <i
-            class="icon"
-            style="--icon-mask: var(--icon-plus)"
-            aria-hidden="true"
-          ></i>
+      <%= render "bullets/composer/dock", bucket: @collection.bucket, selected_date: nil, composer_id: dom_id(@collection, :bullets_composer) %>
 
-          <p>Add note</p>
-        <% end %>
+      <div class="layout--surface">
+        <div
+          id="<%= dom_id(@collection, :bullets_container) %>"
+          data-bulk-menu-target="list"
+        >
+          <% if @bullets.any? %>
+            <%= render layout: "pagination/paginated_list",
+                  locals: {
+                    page: @page,
+                    pagination_link_path: ->(next_param) { collection_path(@collection, page: next_param) }
+                  } do %>
+              <% @page.records.each do |bullet| %>
+                <%= render bullet %>
+              <% end %>
+            <% end %>
+          <% else %>
+            <p>No bullets yet. Pop a bullet to get started.</p>
+          <% end %>
+        </div>
       </div>
     </div>
-
-    <div class="layout--surface">
-      <div id="<%= dom_id(@collection, :bullets_container) %>" data-bulk-menu-target="list">
-        <% if @bullets.any? %>
-          <%= render "pagination/paginated_records",
-              page: @page,
-              pagination_link_path: ->(next_param) { collection_path(@collection, page: next_param) } %>
-        <% else %>
-          <p>No bullets yet. Pop a bullet to get started.</p>
-        <% end %>
-      </div>
-
-    </div>
-
-    <%= render "bullets/bulk_menu" %>
   </div>
 </div>

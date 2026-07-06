@@ -11,7 +11,7 @@ class Bullet < ApplicationRecord
 
   delegate :completable?, :temporal?, :name,
            :marker_icon, :completed?, :mood_marker,
-           :starts_date, :ends_date, :body,
+           :starts_date, :ends_date, :body, :data_attributes,
            to: :bulletable
 
   def assign_attributes(new_attributes)
@@ -34,15 +34,21 @@ class Bullet < ApplicationRecord
   validates :bulletable, presence: true
   validate :bucket_belongs_to_user
 
-  def to_partial_path = bulletable.to_partial_path
+  def to_partial_path = 'bullets/bullet'
 
-  def self.composer_partial_of(type_name)
-    "#{type_name.to_s.underscore.pluralize}/composer"
+  def composer_bulletable
+    bulletable || bulletable_type.constantize.new
   end
 
   scope :in_review_period, lambda { |from, to|
     active.where(bucket_id: nil, migrated_at: nil, pops_on: from..to)
   }
+
+  def migration_activity
+    return unless migrated?
+
+    activities.where(action: last_migration['action']).order(created_at: :desc).first
+  end
 
   private
 
