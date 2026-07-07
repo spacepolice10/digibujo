@@ -2,8 +2,8 @@
 <% bulletable = bullet.composer_bulletable %>
 <dialog
   class="bullet-composer--mobile-dialog"
-  data-controller="mobile-composer"
-  data-action="cancel->composer#cancel close->composer#dismiss"
+  data-controller="mobile-composer composer"
+  data-action="cancel->composer#dialogCancel close->composer#dismiss"
 >
   <%= form_with model: bullet, url: bullets_path, class: "bullet-composer bullet-composer--mobile", data: {
     composer_form: true,

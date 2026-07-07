@@ -5,7 +5,7 @@
     <p class="review--side-description utilities--text-sm">Timeline bullets for this period.</p>
   </header>
 
-  <article class="bucket--list review--to-review-list" data-bulk-menu-target="list">
+  <article class="review--to-review-body review--to-review-list" data-bulk-menu-target="list">
     <% if page.records.any? %>
       <%= render layout: "pagination/paginated_list",
             locals: {

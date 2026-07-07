@@ -88,6 +88,30 @@ lexxy-editor[preset="note"] .lexxy-editor__content {
   min-width: 0;
 }
 
+.lexxy-prompt-menu__item kbd.key {
+  margin-inline-start: auto;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 0.4rem;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-tiny);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-fg-base);
+  background: var(--color-bg-base);
+  border: 1px solid var(--color-stroke-base);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-base);
+  opacity: 0;
+  transition: opacity 80ms ease;
+}
+
+.lexxy-prompt-menu__item[aria-selected] kbd.key {
+  opacity: 1;
+}
+
 @layer components {
   .attachment--preview {
     display: inline;

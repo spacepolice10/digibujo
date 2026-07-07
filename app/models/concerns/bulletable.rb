@@ -60,7 +60,7 @@ module Bulletable
   end
 
   def stimulus_controller
-    'composer'
+    nil
   end
 
   def stimulus_actions

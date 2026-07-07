@@ -1,48 +1,95 @@
 import { Controller } from "@hotwired/stimulus"
 
-function swapWithViewTransition(update) {
-  if (document.startViewTransition && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    return document.startViewTransition(update)
-  }
-  update()
-}
-
+let dismissHintIdCounter = 0
 
 export default class extends Controller {
   connect() {
-    this.previousContent = null
-
-    this.handleRender = this.#handleRender.bind(this)
-    this.handleSubmit = this.#handleSubmit.bind(this)
-    this.onKeydown = this.#onKeydown.bind(this)
-    this.onInlineEnter = this.#onInlineEnter.bind(this)
-
-
-    window.addEventListener("beforeunload", (event) => {
-      if (this.#preventDismissIfContentExists()) {
-        event.preventDefault();
-        event.returnValue = "";
-        return "";
-      }
-    });
-
-    this.element.addEventListener("turbo:before-frame-render", this.handleRender)
-    this.element.addEventListener("turbo:submit-end", this.handleSubmit, true)
-    this.element.addEventListener("keydown", this.onInlineEnter, true)
-    document.addEventListener("keydown", this.onKeydown)
+    this.abortController = new AbortController()
+    this.dismissConfirmActive = false
+    this.dismissConfirmElement = null
+    this.dismissHint = null
+    this.dismissHintId = `dismiss-confirm-${++dismissHintIdCounter}`
+    window.addEventListener("beforeunload", this.beforeUnload, { signal: this.abortController.signal })
   }
 
   disconnect() {
-    this.element.removeEventListener("turbo:before-frame-render", this.handleRender)
-    this.element.removeEventListener("turbo:submit-end", this.handleSubmit, true)
-    this.element.removeEventListener("keydown", this.onInlineEnter, true)
-    document.removeEventListener("keydown", this.onKeydown)
+    this.abortController.abort()
+    this.abortDismiss()
+  }
+
+  beforeUnload = (event) => {
+    if (!this.hasUnsavedContent) return
+
+    event.preventDefault()
+    event.returnValue = ""
+  }
+
+  dispatchRestore() {
+    const target = this.element.closest("turbo-frame") || this.element
+    target.dispatchEvent(new CustomEvent("composer:restore", { bubbles: true }))
+  }
+
+  submitEnd(event) {
+    if (!event.detail.success) return
+
+    if (event.detail.formSubmission?.submitter?.name == "another") {
+      this.resetForm()
+      return
+    }
+
+    this.dispatchRestore()
+  }
+
+  escape(event) {
+    if (!this.form) return
+    if (this.form.closest("dialog[open]")) return
+
+    event.preventDefault()
+    event.stopPropagation()
+
+    if (this.hasUnsavedContent) {
+      this.attemptDismiss(this.form)
+      return
+    }
+
+    this.dispatchRestore()
+    this.keepEditorFocus()
+  }
+
+  inlineEnter(event) {
+    if (event.key != "Enter") return
+    if (event.defaultPrevented || event.isComposing) return
+
+    const form = this.form
+    if (!form) return
+
+    const editor = form.querySelector("lexxy-editor")
+    if (!editor?.contains(event.target)) return
+
+    const chordSubmit = event.metaKey || event.ctrlKey
+
+    if (chordSubmit) {
+      if (event.altKey) return
+    } else {
+      if (event.metaKey || event.ctrlKey || event.altKey) return
+      if (editor.getAttribute("preset") != "inline") return
+    }
+
+    event.preventDefault()
+    event.stopPropagation()
+
+    if (event.shiftKey) this.submitWithMakeAnother(event)
+    else this.submit(event)
+  }
+
+  editorInput() {
+    if (!this.hasUnsavedContent) this.abortDismiss()
   }
 
   submit(event) {
     if (event?.isComposing) return
 
-    const form = this.#form
+    const form = this.form
     if (!form) return
 
     const editor = form.querySelector("lexxy-editor")
@@ -55,131 +102,143 @@ export default class extends Controller {
   submitWithMakeAnother(event) {
     if (event?.isComposing) return
 
-    const form = this.#form
+    const form = this.form
     if (!form) return
 
     event?.preventDefault()
     form.requestSubmit(form.querySelector('button[name="another"]'))
   }
 
-  cancel(event) {
-    event?.preventDefault()
-    if (this.#preventDismissIfContentExists()) return
-
-    this.restore()
-  }
-
-  dismiss() {
-    if (this.#preventDismissIfContentExists()) return
-
-    this.restore()
-  }
-
-  restore() {
-    if (this.previousContent == null) return
-
-    swapWithViewTransition(() => {
-      this.element.removeAttribute("src")
-      this.element.innerHTML = this.previousContent
-      this.previousContent = null
-      this.#rebind()
-      this.element.querySelector("a, button")?.focus()
-    })
-  }
-
-  #handleRender(event) {
-    if (event.target != this.element) return
-
-    const enteringForm = event.detail.newFrame?.querySelector("[data-composer-form]")
-    const onTrigger = !this.#form
-
-    if (!enteringForm || !onTrigger) return
-
-    this.previousContent = this.element.innerHTML
-
-    event.detail.render = (currentFrame, newFrame) => {
-      const transition = swapWithViewTransition(() => {
-        currentFrame.innerHTML = newFrame.innerHTML
-      })
-
-      const focus = () => currentFrame.querySelector("lexxy-editor")?.focus()
-
-      if (transition) transition.finished.then(focus)
-      else focus()
-    }
-  }
-
-  #handleSubmit(event) {
-    const form = event.target
-    if (!form?.hasAttribute("data-composer-form")) return
-    if (!this.element.contains(form)) return
-    if (!event.detail.success) return
-
-    const submitter = event.detail.formSubmission?.submitter
-    if (submitter?.name == "another") {
-      this.#clientSideRestore()
+  cancel() {
+    if (this.hasUnsavedContent) {
+      this.attemptDismiss(this.form)
       return
     }
 
-    this.restore()
+    this.dispatchRestore()
   }
 
-  #preventDismissIfContentExists() {
-    const form = this.#form
-    if (!form) return false
+  dialogCancel(event) {
+    event.preventDefault()
+    if (this.hasUnsavedContent) {
+      this.attemptDismiss(this.form)
+    } else {
+      this.dispatchRestore()
+      this.keepEditorFocus()
+    }
+  }
 
-    const editor = form.querySelector("lexxy-editor")
+  dismiss() {
+    if (this.hasUnsavedContent && !this.isDismissConfirming) return
+    this.dispatchRestore()
+  }
 
-    if ((editor?.toString().trim().length ?? 0) > 0) {
-      const confirmed = confirm("Are you sure you want to dismiss the composer? Any unsaved content will be lost.")
-      if (!confirmed) return true
+  attemptDismiss(element) {
+    if (this.dismissConfirmActive) {
+      this.clearDismiss()
+      this.dispatchRestore()
+      return false
     }
 
-    return false
+    this.dismissConfirmActive = true
+    this.dismissConfirmElement = element
+    this.showDismissHint()
+    this.shakeDismissElement()
+    return true
   }
 
-  #clientSideRestore() {
-    const form = this.#form
-    if (!form) return
+  abortDismiss() {
+    if (this.dismissConfirmActive) this.clearDismiss()
+  }
 
-    const editor = form.querySelector("lexxy-editor")
+  get isDismissConfirming() {
+    return this.dismissConfirmActive
+  }
+
+  showDismissHint() {
+    if (this.dismissHint?.isConnected) return
+
+    const toasts = document.getElementById("toasts")
+    if (!toasts) return
+
+    this.dismissHint = document.createElement("div")
+    this.dismissHint.id = this.dismissHintId
+    this.dismissHint.className = "toasts--message toasts--notify bullet-composer--dismiss-hint"
+    this.dismissHint.setAttribute("role", "status")
+    this.dismissHint.textContent = "Press Esc again to close the editor"
+    toasts.appendChild(this.dismissHint)
+    this.setDismissAttributes()
+  }
+
+  setDismissAttributes() {
+    const el = this.dismissConfirmElement
+    if (!el) return
+
+    el.setAttribute("aria-describedby", this.dismissHintId)
+    el.setAttribute("aria-keyshortcuts", "Escape")
+    el.querySelector("lexxy-editor")?.setAttribute("aria-describedby", this.dismissHintId)
+    el.closest("dialog[open]")?.setAttribute("aria-describedby", this.dismissHintId)
+  }
+
+  shakeDismissElement() {
+    const el = this.dismissConfirmElement
+    if (!el) return
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return
+
+    el.classList.remove("utilities--shaking")
+    void el.offsetWidth
+    el.classList.add("utilities--shaking")
+    el.addEventListener("animationend", () => {
+      el.classList.remove("utilities--shaking")
+    }, { once: true })
+  }
+
+  clearDismiss() {
+    this.dismissConfirmActive = false
+    this.clearDismissAttributes()
+    this.removeDismissHint()
+  }
+
+  clearDismissAttributes() {
+    const el = this.dismissConfirmElement
+    if (!el) return
+
+    el.removeAttribute("aria-describedby")
+    el.removeAttribute("aria-keyshortcuts")
+    el.querySelector("lexxy-editor")?.removeAttribute("aria-describedby")
+    el.closest("dialog")?.removeAttribute("aria-describedby")
+    this.dismissConfirmElement = null
+  }
+
+  removeDismissHint() {
+    this.dismissHint?.remove()
+    this.dismissHint = null
+  }
+
+  resetForm() {
+    const editor = this.form?.querySelector("lexxy-editor")
     if (editor) editor.value = ""
 
+    this.abortDismiss()
     editor?.focus()
-    this.#rebind()
+    this.rebind()
   }
 
-  #onKeydown(event) {
-    if (event.key != "Escape") return
-    if (this.#preventDismissIfContentExists()) return
-
-    event.preventDefault()
-    this.restore()
+  keepEditorFocus() {
+    this.form?.querySelector("lexxy-editor")?.focus({ preventScroll: true })
   }
 
-  #onInlineEnter(event) {
-    if (event.key != "Enter") return
-    if (event.defaultPrevented || event.isComposing) return
-    if (event.metaKey || event.ctrlKey || event.altKey) return
-
-    const form = this.#form
-    if (!form) return
-
-    const editor = form.querySelector('lexxy-editor[preset="inline"]')
-    if (!editor?.contains(event.target)) return
-
-    event.preventDefault()
-    event.stopPropagation()
-
-    if (event.shiftKey) this.submitWithMakeAnother(event)
-    else this.submit(event)
-  }
-
-  #rebind() {
+  rebind() {
     this.element.dispatchEvent(new CustomEvent("composer:rebind"))
   }
 
-  get #form() {
+  get form() {
+    if (this.element.matches("[data-composer-form]")) return this.element
     return this.element.querySelector("[data-composer-form]")
+  }
+
+  get hasUnsavedContent() {
+    const editor = this.form?.querySelector("lexxy-editor")
+    return (editor?.toString().trim().length ?? 0) > 0
   }
 }

@@ -1,14 +1,19 @@
 <%# locals: (collection:) %>
-<li class="layout--list-item">
-  <div class="bulk-menu--collect-form review--collection-drop-target"
+<li class="review--collections-item">
+  <div class="review--collections-drop-form review--collection-drop-target"
        data-controller="collect-drop"
        data-collect-drop-collect-url-value="<%= collect_path %>"
        data-collect-drop-bucket-id-value="<%= collection.bucket.id %>"
        data-action="dragover->collect-drop#dragover dragleave->collect-drop#dragleave drop->collect-drop#drop">
     <%= link_to collection_path(collection),
-          class: "bulk-menu--collect-item-link",
+          class: "review--collections-link",
           data: { turbo_frame: "_top" } do %>
-      <%= render "collections/search_palette", collection: collection %>
+      <div class="review--collections-item-name">
+        <div class="review--collections-item-marker" data-bucket-colour="<%= collection.colour %>" aria-hidden="true">
+          <%= image_tag collection.bucket.icon_path, alt: "#{collection.bucket.name} icon", class: "icons--list" %>
+        </div>
+        <span class="utilities--line-clamp-1"><%= collection.name %></span>
+      </div>
     <% end %>
   </div>
 </li>

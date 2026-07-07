@@ -17,19 +17,8 @@ module Projects
 
       assert_response :success
       assert_select 'lexxy-prompt-item[search=?]', project.name
-      assert_select '.bucket--list-item-name', text: project.name
+      assert_select '.utilities--line-clamp-1', text: project.name
       assert_no_match other_user_project.name, response.body
-    end
-
-    test 'index filters html project suggestions by query' do
-      create_project!(@user, name: 'alpha')
-      create_project!(@user, name: 'beta')
-
-      get project_suggestions_path, params: { q: 'alp' }
-
-      assert_response :success
-      assert_match 'alpha', response.body
-      assert_no_match 'beta', response.body
     end
 
     test 'index filters project suggestions by lexxy filter param' do

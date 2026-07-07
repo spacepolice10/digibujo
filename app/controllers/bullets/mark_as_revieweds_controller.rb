@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 module Bullets
-  class MarkAsReviewedController < ApplicationController
+  class MarkAsReviewedsController < ApplicationController
     include PrepareBullets
 
-    before_action :set_review_period
-
     def create
+      @review_to = params[:to].present? ? params[:to].to_date : Date.current
+      @review_from = params[:from].present? ? params[:from].to_date : @review_to - 6.days
+
       bullets = bullets_to_mark
 
       Bullet.transaction do
@@ -18,14 +19,8 @@ module Bullets
 
     private
 
-    def set_review_period
-      @review_to = params[:to].present? ? params[:to].to_date : Date.current
-      @review_from = params[:from].present? ? params[:from].to_date : @review_to - 6.days
-      @review_from, @review_to = @review_to, @review_from if @review_from > @review_to
-    end
-
     def review_bullets
-      Current.user.bullets.in_review_period(@review_from, @review_to).order(created_at: :asc)
+      Current.user.bullets.where(pops_on: @review_from..@review_to).where(migrated_at: nil).order(created_at: :asc)
     end
 
     def bullets_to_mark

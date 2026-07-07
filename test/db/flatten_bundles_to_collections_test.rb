@@ -31,8 +31,7 @@ class FlattenBundlesToCollectionsTest < ActiveSupport::TestCase
     bundle_name = "bundle-subfolder-#{SecureRandom.hex(4)}"
     _bundle_id, old_bucket_id = insert_bundle!(name: bundle_name, colour: "teal")
     bullet = @user.bullets.create!(
-      body: "In bundle",
-      bulletable: Task.create!,
+      bulletable: Task.create!(body: "In bundle"),
       bucket_id: old_bucket_id
     )
     @user.pinned_entities.create!(pinnable_type: "Bucket", pinnable_id: old_bucket_id)

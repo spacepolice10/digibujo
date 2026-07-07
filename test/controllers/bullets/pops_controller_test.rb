@@ -186,8 +186,7 @@ module Bullets
       monthly_bucket = create_monthly_bucket!(@user, name: 'june')
       day = Date.current.beginning_of_month + 2.days
       card = @user.bullets.create!(
-        bulletable: Event.create!,
-        body: 'Unplan me',
+        bulletable: Event.create!(body: 'Unplan me'),
         bucket_id: monthly_bucket.bucket.id,
         pops_on: day
       )

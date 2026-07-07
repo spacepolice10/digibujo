@@ -1,26 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  connect() {
-    this.onDocumentClick = this.onDocumentClick.bind(this);
-    this.onKeydown = this.onKeydown.bind(this);
-    this.onToggle = this.onToggle.bind(this);
-    this.beforeVisit = this.close.bind(this);
-    document.addEventListener("click", this.onDocumentClick);
-    document.addEventListener("keydown", this.onKeydown);
-    document.addEventListener("turbo:before-visit", this.beforeVisit);
-    this.element.addEventListener("toggle", this.onToggle);
-    this.syncClosedState();
-  }
-
-  disconnect() {
-    document.removeEventListener("click", this.onDocumentClick);
-    document.removeEventListener("keydown", this.onKeydown);
-    document.removeEventListener("turbo:before-visit", this.beforeVisit);
-    this.element.removeEventListener("toggle", this.onToggle);
-  }
-
-  onDocumentClick(event) {
+  onDocumentClick = (event) => {
     if (!this.element.open) return;
     if (this.element.contains(event.target)) return;
 
@@ -29,24 +10,30 @@ export default class extends Controller {
         this.close();
       }
     });
-  }
+  };
 
-  onKeydown(event) {
+  onKeydown = (event) => {
     if (event.key == "Escape" && this.element.open) {
       event.preventDefault();
       this.close();
     }
+  };
+
+  connect() {
+    this.abortController = new AbortController()
+    document.addEventListener("click", this.onDocumentClick, { signal: this.abortController.signal });
+    document.addEventListener("keydown", this.onKeydown, { signal: this.abortController.signal });
+  }
+
+  disconnect() {
+    this.abortController.abort()
   }
 
   close() {
     this.element.removeAttribute("open");
   }
 
-  onToggle() {
-    this.syncClosedState();
-  }
-
-  syncClosedState() {
+  syncClosedStatusWithBody() {
     const body = this.element.querySelector(".dropdown-body");
     if (!body) return;
 

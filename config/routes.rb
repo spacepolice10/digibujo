@@ -99,7 +99,12 @@ Rails.application.routes.draw do
   end
 
   # --- Workspaces ---
-  resource :review, controller: 'reviews'
+  resource :review, controller: 'reviews' do
+    scope module: :reviews do
+      resources :collections, only: :index
+      resource :scheduled, only: :show, controller: 'scheduled'
+    end
+  end
   resources :activities do
     collection do
       get :compact

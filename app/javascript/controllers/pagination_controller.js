@@ -24,9 +24,9 @@ export default class extends Controller {
       headers["Turbo-Frame"] = this.turboFrameValue
     }
 
-    const response = await fetch(url, { headers })
-    const html = await response.text()
-    const doc = new DOMParser().parseFromString(html, "text/html")
+    // window.fetch, not request.js: Turbo.fetch consumes frame responses before we can parse HTML.
+    const response = await window.fetch(url, { headers })
+    const doc = new DOMParser().parseFromString(await response.text(), "text/html")
     const container = this.#paginationContainerFrom(doc)
     return container ? container.innerHTML.trim() : ""
   }

@@ -21,11 +21,10 @@ module Collections
     end
 
     def prepare_export_bullets
-      listing = Bullet::Listing.for(user: Current.user, context: @collection, params: {})
-      @bullets = listing.relation
-                        .includes(bucket: :bucketable)
-                        .preload(bulletable: :rich_text_body)
-                        .reorder(created_at: :asc)
+      @bullets = @collection.bucket.bullets.active
+                            .includes(bucket: :bucketable)
+                            .preload(bulletable: :rich_text_body)
+                            .reorder(created_at: :asc)
     end
 
     def export_filename

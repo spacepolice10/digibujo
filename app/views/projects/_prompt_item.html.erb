@@ -1,6 +1,10 @@
 <lexxy-prompt-item search="<%= project.name %>" sgid="<%= project.attachable_sgid %>">
   <template type="menu">
-    <%= render "projects/search_palette", project: project %>
+    <div class="bucket--list-item-name">
+      <%= render "projects/pill_graphic", project: project %>
+      <span class="utilities--line-clamp-1"><%= project.name %></span>
+      <kbd class="key">Tab</kbd>
+    </div>
   </template>
   <template type="editor" content-type="application/vnd.actiontext.project">
     <%= render "projects/attachable_editor", project: project %>

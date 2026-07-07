@@ -1,15 +1,15 @@
 <%# locals: (date:, bullets: []) %>
-<div class="monthly-bucket--date-band<%= " monthly-bucket--date-band-current" if date == Date.current %>">
-  <div class="monthly-bucket--date-rail">
+<div class="review--date-band<%= " review--date-band-current" if date == Date.current %>">
+  <div class="review--date-rail">
     <%= link_to daylog_path(date: date.iso8601),
-          class: "monthly-bucket--date-number",
+          class: "review--date-number",
           aria: { label: "Open #{date.strftime('%B %-d')} on daily log" },
           data: { turbo_frame: "_top" } do %>
-      <span class="monthly-bucket--date-day"><%= date.day %></span>
-      <span class="monthly-bucket--date-weekday"><%= date.strftime("%a") %></span>
+      <span class="review--date-day"><%= date.day %></span>
+      <span class="review--date-weekday"><%= date.strftime("%a") %></span>
     <% end %>
 
-    <div class="monthly-bucket--date-entries"
+    <div class="review--date-entries"
          data-controller="pops-drop"
          data-drop-zone-value="<%= date.iso8601 %>"
          data-pops-drop-pops-url-value="<%= pop_path %>"
@@ -17,7 +17,7 @@
          data-pops-drop-review-drop-value="true"
          data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop">
       <% bullets.each do |bullet| %>
-        <%= render bullet %>
+        <%= render partial: 'bullets/bullet', object: bullet %>
       <% end %>
     </div>
   </div>

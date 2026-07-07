@@ -184,8 +184,6 @@
     @media (hover: hover) {
       &:hover:not(:disabled) {
         color: var(--model-color-2);
-        background: var(--color-bg-subtle);
-        border-color: var(--color-stroke-base);
       }
     }
 

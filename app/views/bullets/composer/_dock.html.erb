@@ -6,7 +6,12 @@
   { name: "Voice", icon: "microphone", modifier: "voice", hotkey: "Shift+V", hotkey_action: "keydown.shift+v@document->hotkey#click" }
 ] %>
 <div class="bullet-composer--dock<%= " bullet-composer--dock-fixed" if request.variant.include?(:mobile) %>">
-  <turbo-frame id="<%= composer_id %>" data-controller="composer">
+  <turbo-frame
+    id="<%= composer_id %>"
+    data-controller="composer-picker"
+    data-action="turbo:before-frame-render->composer-picker#beforeFrameRender"
+    class="utilities--contents"
+  >
     <div class="bullet--composer-buttons">
       <% types.each do |type| %>
         <%= link_to new_bullet_path(pops_on: selected_date, bucket_id: bucket&.id, bulletable_type: type[:name]),

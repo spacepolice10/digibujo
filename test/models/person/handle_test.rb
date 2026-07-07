@@ -55,14 +55,14 @@ class Person::HandleTest < ActiveSupport::TestCase
     handle = @person.handles.create!(kind: :handle, platform: "instagram", data: "@alex")
 
     assert_equal "https://instagram.com/alex", handle.href
-    assert_equal "Instagram: alex", handle.display_label
+    assert_equal "Instagram: alex", handle.display_name
   end
 
   test "href is nil for platforms without url template" do
     handle = @person.handles.create!(kind: :handle, platform: "signal", data: "alex.42")
 
     assert_nil handle.href
-    assert_equal "Signal: alex.42", handle.display_label
+    assert_equal "Signal: alex.42", handle.display_name
   end
 
   test "touching handle updates person search index" do

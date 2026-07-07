@@ -2,8 +2,14 @@
 
 <%= form_with model: bullet, class: "bullet-composer", data: {
   composer_form: true,
-  controller: bulletable.stimulus_controller,
-  action: bulletable.stimulus_actions
+  controller: [bulletable.stimulus_controller, "composer"].compact.join(" "),
+  action: [
+    bulletable.stimulus_actions,
+    "turbo:submit-end->composer#submitEnd",
+    "keydown->composer#inlineEnter:capture",
+    "input->composer#editorInput",
+    "keydown.esc@document->composer#escape:capture"
+  ].compact.join(" ")
 }.compact do |fr| %>
   <%= fr.hidden_field :pops_on, value: bullet.pops_on %>
   <%= fr.hidden_field :bucket_id, value: bullet.bucket_id %>

@@ -52,23 +52,25 @@
           <% end %>
         </li>
 
-        <li id="<%= dom_id(@future, :list_item) %>" class="layout--list-item">
-          <%= link_to future_bucket_path(@future.bucketable), class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
-            <div class="bucket--list-item-name">
-              <div
-                class="bucket--list-item-marker"
-                data-bucket-colour="<%= @future.colour %>"
-                aria-hidden="true"
-              ></div>
+        <% if @future %>
+          <li id="<%= dom_id(@future, :list_item) %>" class="layout--list-item">
+            <%= link_to future_bucket_path(@future.bucketable), class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
+              <div class="bucket--list-item-name">
+                <div
+                  class="bucket--list-item-marker"
+                  data-bucket-colour="<%= @future.colour %>"
+                  aria-hidden="true"
+                ></div>
 
-              <span class="utilities--line-clamp-1"><%= @future.name %></span>
-            </div>
+                <span class="utilities--line-clamp-1"><%= @future.name %></span>
+              </div>
 
-            <div class="bucket--list-item-meta utilities--line-clamp-1">
-              <span><%= @future_monthly_buckets.count %> months</span>
-            </div>
-          <% end %>
-        </li>
+              <div class="bucket--list-item-meta utilities--line-clamp-1">
+                <span><%= @future_monthly_buckets.count %> months</span>
+              </div>
+            <% end %>
+          </li>
+        <% end %>
 
         <% if @future_monthly_buckets.any? %>
           <% @future_monthly_buckets.each do |monthly_bucket| %>

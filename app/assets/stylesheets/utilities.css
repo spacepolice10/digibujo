@@ -20,9 +20,8 @@
     font-size: var(--font-size-subtle);
   }
 
-  .utilities--handwriting {
-    font-family: var(--font-family-base);
-    font-variation-settings: "CRSV" 1, "slnt" -10;
+  .utilities--contents {
+    display: contents;
   }
 
   @keyframes spin {
@@ -36,12 +35,36 @@
       opacity: 0;
       scale: 0.88;
     }
+
     40% {
       scale: 1.04;
     }
+
     to {
       opacity: 1;
       scale: 1;
     }
+  }
+
+  @keyframes shaking {
+
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+
+    20%,
+    60% {
+      transform: translateX(-4px);
+    }
+
+    40%,
+    80% {
+      transform: translateX(4px);
+    }
+  }
+
+  .utilities--shaking {
+    animation: shaking 0.3s ease-in-out;
   }
 }

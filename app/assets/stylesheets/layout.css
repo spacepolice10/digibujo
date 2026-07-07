@@ -63,12 +63,6 @@
     margin-inline: auto;
   }
 
-  .layout--page:has(.layout--workspace),
-  .layout--page:has(.review--workspace),
-  .layout--page:has(.monthly-bucket--spread) {
-    max-width: none;
-  }
-
   .layout--column {
     display: flex;
     flex-direction: column;
@@ -144,7 +138,7 @@
     padding: var(--spacing-vertical) var(--spacing-horizontal);
   }
 
-  :is(.layout--surface, .layout--filter-surface, .form--surface, .review--workspace) {
+  :is(.layout--surface, .form--surface) {
     border: 1px solid var(--color-stroke-base);
     background: var(--color-bg-subtle);
     border-radius: var(--radius-strong);
@@ -155,11 +149,6 @@
       flex-direction: row;
       align-items: stretch;
       gap: var(--spacing-horizontal-double);
-    }
-
-    .layout--page:has(.layout--workspace),
-    .layout--page:has(.review--workspace) {
-      min-height: calc(100vh - var(--spacing-vertical) * 2);
     }
 
     .layout--page:has(.layout--workspace) .layout--workspace {

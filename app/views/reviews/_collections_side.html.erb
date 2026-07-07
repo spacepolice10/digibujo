@@ -7,40 +7,49 @@
     <% end %>
   </header>
 
-  <div class="bulk-menu--collect-section">
-    <%= form_with url: review_path(from: review_from.iso8601, to: review_to.iso8601),
+  <div class="review--collections-section">
+    <%= form_with url: review_collections_path(from: review_from.iso8601, to: review_to.iso8601),
           method: :get,
-          class: "search--form" do %>
-      <%= render "shared/search_field",
-            value: collections_q,
-            label: "Search collections",
-            placeholder: "Search collections" %>
+          class: "review--collections-search",
+          data: {
+            controller: "combobox",
+            combobox_target: "searchForm",
+            combobox_path_value: review_collections_path(from: review_from.iso8601, to: review_to.iso8601)
+          } do %>
+      <%= label_tag :q, "Search collections", class: "form-label utilities--sr-only" %>
+      <%= search_field_tag :q, collections_q,
+            placeholder: "Search collections",
+            class: "form-input",
+            data: {
+              combobox_target: "searchField",
+              action: "input->combobox#search keydown->combobox#navigate"
+            } %>
     <% end %>
 
-    <% if collections.any? %>
-      <%= render layout: "pagination/paginated_list",
-            locals: {
-              page: collections_page,
-              container_id: "paginated-review-collections",
-              pagination_link_path: lambda { |next_param|
-                review_path(
-                  from: review_from.iso8601,
-                  to: review_to.iso8601,
-                  collections_page: next_param,
-                  q: collections_q
-                )
-              }
-            } do %>
-        <ul class="layout--list bucket--list">
+    <%= render layout: "pagination/paginated_list",
+          locals: {
+            page: collections_page,
+            container_id: "paginated-review-collections",
+            pagination_link_path: lambda { |next_param|
+              review_collections_path(
+                from: review_from.iso8601,
+                to: review_to.iso8601,
+                collections_page: next_param,
+                q: collections_q
+              )
+            }
+          } do %>
+      <% if collections.any? %>
+        <ul class="review--collections-list">
           <% collections.each do |collection| %>
             <%= render "reviews/collection_drop_target", collection: collection %>
           <% end %>
         </ul>
+      <% else %>
+        <p class="review--collections-empty utilities--text-sm">
+          <%= collections_q.present? ? "No collections found." : "No collections yet." %>
+        </p>
       <% end %>
-    <% else %>
-      <p class="review--collections-empty utilities--text-sm">
-        <%= collections_q.present? ? "No collections found." : "No collections yet." %>
-      </p>
     <% end %>
   </div>
 </aside>

@@ -4,8 +4,8 @@ require 'test_helper'
 
 class EventTest < ActiveSupport::TestCase
   test 'stores date range on event' do
-    event = Event.create!(starts_date: Date.current, ends_date: Date.current + 2)
-    bullet = users(:one).bullets.create!(bulletable: event, body: 'Conference')
+    event = Event.create!(starts_date: Date.current, ends_date: Date.current + 2, body: 'Conference')
+    bullet = users(:one).bullets.create!(bulletable: event)
 
     assert_equal Date.current, bullet.starts_date
     assert_equal Date.current + 2, bullet.ends_date

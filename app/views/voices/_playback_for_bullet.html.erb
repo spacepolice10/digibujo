@@ -1,4 +1,0 @@
-<%# locals: (bullet:, compact: true) %>
-<% if bullet.bulletable_type == "Voice" && bullet.bulletable.recording.attached? %>
-  <%= render "voices/card", bullet: bullet %>
-<% end %>

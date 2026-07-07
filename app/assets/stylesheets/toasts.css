@@ -53,6 +53,15 @@
     color: var(--color-fg-positive);
   }
 
+  .bullet-composer--dismiss-hint {
+    display: inline-block;
+    width: auto;
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+    font-size: var(--font-size-subtle);
+    text-align: left;
+    animation: none;
+  }
+
   @keyframes toasts--shaking {
     0% {
       opacity: var(--opacity-half);

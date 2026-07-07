@@ -1,7 +1,4 @@
 import { Controller } from "@hotwired/stimulus";
-import { debounce } from "helpers/debounce";
-
-const SEARCH_DEBOUNCE_MS = 150;
 
 const ACTION_REQUIREMENTS = {
   requirePinnable: "pinnable",
@@ -23,14 +20,12 @@ export default class extends Controller {
   static values = {
     idList: { type: Array, default: [] },
     selectMode: { type: Boolean, default: false },
-    popsPickerUrl: { type: String, default: "/bullets/pop/new" },
-    collectsPickerUrl: { type: String, default: "/bullets/collect/new" },
+    popsPickerPath: { type: String, default: "/bullets/pop/new" },
+    collectsPickerPath: { type: String, default: "/bullets/collect/new" },
   };
 
-  #searchAbort = null;
-
   connect() {
-    this.beforeVisitHandler = () => this.#reset();
+    this.beforeVisitHandler = () => this.#restore();
     this.submitEndHandler = (event) => this.#handleSubmitEnd(event);
     document.addEventListener("turbo:before-visit", this.beforeVisitHandler);
     document.addEventListener("turbo:submit-end", this.submitEndHandler);
@@ -40,7 +35,6 @@ export default class extends Controller {
   disconnect() {
     document.removeEventListener("turbo:before-visit", this.beforeVisitHandler);
     document.removeEventListener("turbo:submit-end", this.submitEndHandler);
-    this.#cancelPendingSearch();
   }
 
   toggle(event) {
@@ -92,39 +86,47 @@ export default class extends Controller {
   }
 
   openPopsPicker() {
-    this.#openPopsPicker();
+    this.#openPicker(this.popsDropdownTarget, this.popsPickerPathValue);
   }
 
   openCollectsPicker() {
-    this.#openCollectsPicker();
-  }
-
-  searchCollects(event) {
-    this.#cancelPendingSearch();
-    this.#searchAbort = new AbortController();
-    this.#debouncedSearchCollects(event.target);
-  }
-
-  selectAndOpenCollects({ params: { bulletId } }) {
-    if (!bulletId) return;
-
-    this.idListValue = [bulletId];
-    this.checkboxTargets.forEach((checkbox) => {
-      checkbox.checked = checkbox.value == bulletId;
-    });
-    this.#openCollectsPicker();
+    this.#openPicker(this.collectsDropdownTarget, this.collectsPickerPathValue);
   }
 
   clear() {
-    this.#reset();
+    this.#restore();
   }
 
   escape(event) {
-    if (event?.defaultPrevented) return;
+    if (event.defaultPrevented) return;
     if (this.idListValue.length == 0) return;
-    if (this.#isPickerOpen()) return;
+
+    if (this.#isPickerOpen()) {
+      this.#closePicker(this.popsDropdownTarget);
+      this.#closePicker(this.collectsDropdownTarget);
+      return;
+    }
 
     this.#clearSelection();
+  }
+
+  // =====================================================================
+  // Picker popovers
+  // =====================================================================
+
+  #openPicker(element, path) {
+    if (!element) return;
+    if (this.idListValue.length == 0) return;
+
+    const url = new URL(path, window.location.origin);
+    url.searchParams.set("bullet_ids", this.idListValue.join(","));
+    element.src = url.pathname + url.search;
+
+    if (!element.matches(":popover-open")) element.showPopover();
+  }
+
+  #closePicker(element) {
+    if (element?.matches(":popover-open")) element.hidePopover();
   }
 
   #isPickerOpen() {
@@ -134,78 +136,9 @@ export default class extends Controller {
     return pickers.some((picker) => picker.matches(":popover-open"));
   }
 
-  #debouncedSearchCollects = debounce((input) => this.#performCollectsSearch(input), SEARCH_DEBOUNCE_MS);
-
-  async #performCollectsSearch(input) {
-    const form = input.form;
-    const url = new URL(form.action, window.location.origin);
-    const params = new URLSearchParams(new FormData(form));
-
-    params.set("q", input.value.trim());
-    params.delete("collections_page");
-
-    url.search = params.toString();
-
-    const response = await fetch(url.toString(), {
-      signal: this.#searchAbort.signal,
-      headers: { Accept: "text/vnd.turbo-stream.html" },
-    }).catch(() => null);
-    if (!response || !response.ok) return;
-
-    const stream = await response.text().catch(() => "");
-    if (stream && window.Turbo) window.Turbo.renderStreamMessage(stream);
-  }
-
-  #cancelPendingSearch() {
-    this.#searchAbort?.abort();
-    this.#searchAbort = null;
-  }
-
-  #openPopsPicker() {
-    this.#loadPicker(this.popsDropdownTarget, this.popsPickerUrlValue);
-  }
-
-  #openCollectsPicker() {
-    this.#loadPicker(this.collectsDropdownTarget, this.collectsPickerUrlValue);
-  }
-
-  #loadPicker(frame, baseUrl) {
-    if (this.idListValue.length == 0) return;
-
-    this.#openPicker(frame, this.#pickerLink(baseUrl, this.idListValue));
-  }
-
-  #pickerLink(baseUrl, bulletIds, params = {}) {
-    const url = new URL(baseUrl, window.location.origin);
-    url.searchParams.set("bullet_ids", bulletIds.join(","));
-    Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, value));
-    return `${url.pathname}${url.search}`;
-  }
-
-  #openPicker(frame, src) {
-    if (!frame) return;
-
-    if (frame.src != src) frame.src = src;
-    if (!frame.hasAttribute("popover")) return;
-    if (!frame.matches(":popover-open")) frame.showPopover();
-  }
-
-  #closePicker(frame) {
-    if (frame?.matches(":popover-open")) frame.hidePopover();
-  }
-
-  #reset() {
-    this.#closePicker(this.popsDropdownTarget);
-    this.#closePicker(this.collectsDropdownTarget);
-    this.#clearSelection();
-  }
-
-  #clearSelection() {
-    this.idListValue = [];
-    this.checkboxTargets.forEach((checkbox) => {
-      checkbox.checked = false;
-    });
-  }
+  // =====================================================================
+  // Form submit + selection reset
+  // =====================================================================
 
   #handleSubmitEnd(event) {
     if (!event.detail.success) return;
@@ -222,8 +155,25 @@ export default class extends Controller {
       this.menuTarget.contains(form) &&
       form.method?.toLowerCase() != "get";
 
-    if (isCollect || isPop || isMenuBulk) this.#reset();
+    if (isCollect || isPop || isMenuBulk) this.#restore();
   }
+
+  #restore() {
+    this.#closePicker(this.popsDropdownTarget);
+    this.#closePicker(this.collectsDropdownTarget);
+    this.#clearSelection();
+  }
+
+  #clearSelection() {
+    this.idListValue = [];
+    this.checkboxTargets.forEach((checkbox) => {
+      checkbox.checked = false;
+    });
+  }
+
+  // =====================================================================
+  // Conditional bulk actions
+  // =====================================================================
 
   #updateBulkActions() {
     const traits = this.#selectionTraits();
@@ -244,10 +194,10 @@ export default class extends Controller {
   }
 
   #uniformTrait(checkboxes, datasetKey) {
-    const values = checkboxes.map((checkbox) => checkbox.dataset[datasetKey]);
-    if (values.some((value) => !value)) return null;
-    if (values.some((value) => value != values[0])) return null;
-    return values[0];
+    const values = new Set(
+      checkboxes.map((checkbox) => checkbox.dataset[datasetKey])
+    );
+    return values.size == 1 ? [...values][0] : null;
   }
 
   #actionApplies(action, traits) {

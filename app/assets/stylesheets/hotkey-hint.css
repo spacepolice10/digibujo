@@ -14,15 +14,24 @@
 
     .hotkey-hint--always[data-hotkey]::after,
     .hotkey-hint--key {
-      padding: 0 var(--spacing-horizontal-half);
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-width: 1.5rem;
+      height: 1.5rem;
+      padding: 0 0.4rem;
+      font-family: var(--font-family-mono);
+      font-size: var(--font-size-tiny);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-fg-base);
+      background: var(--color-bg-base);
       border: 1px solid var(--color-stroke-base);
-      border-radius: var(--radius-subtle);
-      color: var(--color-fg-subtle);
-      opacity: var(--opacity-half);
+      border-bottom-width: 2px;
+      border-radius: var(--radius-base);
     }
 
     .hotkey-hint--key {
-      font-size: var(--font-size-subtle);
+      font-size: var(--font-size-tiny);
     }
 
     .button--primary.hotkey-hint--always[data-hotkey]::after,
@@ -32,11 +41,14 @@
     }
 
     .menu--navigation-item.hotkey-hint--always[data-hotkey]::after {
+      position: absolute;
       margin-inline-start: 0;
       max-width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      inset: -0.2em;
+      width:fit-content;
     }
 
     .hotkey-hint[data-hotkey]:not(.hotkey-hint--always) {
@@ -45,9 +57,7 @@
 
     .hotkey-hint[data-hotkey]:not(.hotkey-hint--always)::after {
       position: absolute;
-      inset-inline-start: 0;
-      inset-block-start: 0;
-      translate: -0% -50%;
+      translate: 0 -75%;
       z-index: 1;
       box-sizing: border-box;
       padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);

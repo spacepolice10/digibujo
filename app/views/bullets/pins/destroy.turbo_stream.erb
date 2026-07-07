@@ -5,7 +5,7 @@
 <% else %>
   <% @bullets.each do |bullet| %>
     <%= turbo_stream.replace_all bullet do %>
-      <%= render bullet %>
+      <%= render "bullets/bullet", bullet: bullet %>
     <% end %>
   <% end %>
 <% end %>

@@ -1,53 +1,88 @@
-import { Controller } from "@hotwired/stimulus";
-import { navigateCombobox } from "helpers/combobox";
+import { Controller } from "@hotwired/stimulus"
+import { get } from "@rails/request.js"
+import { debounce } from "helpers/debounce"
+import { navigateCombobox } from "helpers/combobox"
+
+const DEFAULT_DEBOUNCE_MS = 80
 
 export default class extends Controller {
-  static targets = ["item"];
+  static targets = ["searchForm", "searchField", "item"]
+
+  static values = {
+    path: String,
+    debounceMs: { type: Number, default: DEFAULT_DEBOUNCE_MS },
+  }
+
+  #abort = null
+  #debouncedSearch = null
 
   connect() {
-    this.currentPosition = -1;
+    this.#debouncedSearch = debounce(
+      (input) => this.#performSearch(input),
+      this.debounceMsValue,
+    )
+  }
+
+  disconnect() {
+    this.#cancelPendingSearch()
+  }
+
+  search() {
+    if (!this.hasPathValue) return
+    if (!this.hasSearchFieldTarget) return
+    this.#cancelPendingSearch()
+    this.#abort = new AbortController()
+    this.#debouncedSearch(this.searchFieldTarget)
   }
 
   navigate(event) {
     if (event.key == "ArrowDown") {
-      event.preventDefault();
-      this._move("down");
+      event.preventDefault()
+      this._move("down")
     } else if (event.key == "ArrowUp") {
-      event.preventDefault();
-      this._move("up");
+      event.preventDefault()
+      this._move("up")
     } else if (event.key == "Enter" || event.key == " ") {
-      this._activate(event);
+      this._activate(event)
     } else if (event.key == "Escape") {
-      this.currentPosition = -1;
-      this._updateItems();
+      this.currentPosition = -1
+      this._updateItems()
+      if (!this.hasSearchFieldTarget || !this.hasPathValue) return
+      if (!this.searchFieldTarget.value.trim()) return
+
+      this.searchFieldTarget.value = ""
+      this.#cancelPendingSearch()
+      this.#abort = new AbortController()
+      this.#performSearch(this.searchFieldTarget)
+      event.stopPropagation()
     }
   }
 
   itemTargetConnected() {
-    this.currentPosition = -1;
-    this._updateItems();
+    this.currentPosition = -1
+    this._updateItems()
   }
 
   itemTargetDisconnected() {
-    this.currentPosition = -1;
-    this._updateItems();
+    this.currentPosition = -1
+    this._updateItems()
   }
 
   _activate(event) {
-    if (this.currentPosition < 0) return;
+    if (this.currentPosition < 0) return
 
-    const item = this.itemTargets[this.currentPosition];
-    const activatable = this._activatable(item);
-    if (!activatable) return;
+    const item = this.itemTargets[this.currentPosition]
+    const activatable = this._activatable(item)
+    if (!activatable) return
 
-    event.preventDefault();
-    activatable.click();
+    event.preventDefault()
+    activatable.click()
   }
 
   _activatable(item) {
-    if (!item) return null;
-    if (item.matches("a, button")) return item;
-    return item.querySelector("a, button");
+    if (!item) return null
+    if (item.matches("a, button")) return item
+    return item.querySelector("a, button")
   }
 
   _move(direction) {
@@ -55,14 +90,39 @@ export default class extends Controller {
       this.currentPosition,
       direction,
       this.itemTargets.length,
-    );
-    this._updateItems();
+    )
+    this._updateItems()
   }
 
   _updateItems() {
     this.itemTargets.forEach((item, index) => {
-      item.classList.toggle("is-active", index == this.currentPosition);
-      item.setAttribute("aria-selected", index == this.currentPosition);
-    });
+      item.classList.toggle("is-active", index == this.currentPosition)
+      item.setAttribute("aria-selected", index == this.currentPosition)
+    })
+  }
+
+  async #performSearch(input) {
+    const otherFields = {}
+    if (this.hasSearchFormTarget) {
+      for (const [key, value] of new FormData(this.searchFormTarget)) {
+        if (key == "q" || key == input.name) continue
+        otherFields[key] = value
+      }
+    }
+
+    try {
+      await get(this.pathValue, {
+        query: { ...otherFields, q: input.value.trim() },
+        signal: this.#abort.signal,
+        responseKind: "turbo-stream",
+      })
+    } catch (error) {
+      if (error.name != "AbortError") console.error("Search failed:", error)
+    }
+  }
+
+  #cancelPendingSearch() {
+    this.#abort?.abort()
+    this.#abort = null
   }
 }

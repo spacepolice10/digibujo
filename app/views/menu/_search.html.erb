@@ -1,16 +1,16 @@
 <%= form_with url: search_path,
       method: :get,
-      local: true,
       class: "search--form",
-      data: { search_target: "form", turbo_frame: "menu_search" } do |form| %>
-  <%= render "shared/search_field",
-        form: form,
+      data: { combobox_target: "searchForm" } do |form| %>
+  <%= form.label :q, "Search bullets, projects, collections, and people", class: "form-label utilities--sr-only" %>
+  <%= form.search_field :q,
         value: "",
-        label: "Search bullets, projects, collections, and people",
         placeholder: "Search…",
-        input_data: {
+        class: "form-input",
+        data: {
           menu_target: "focus",
           search_target: "textform",
-          action: "input->search#search keydown->combobox#navigate"
+          combobox_target: "searchField",
+          action: "input->combobox#search keydown->combobox#navigate"
         } %>
 <% end %>

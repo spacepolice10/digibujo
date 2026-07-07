@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { post, destroy } from "@rails/request.js"
 
 export default class extends Controller {
   static values = {
@@ -36,33 +37,30 @@ export default class extends Controller {
 
     const body = new FormData()
     body.append("bullet_ids", bulletId)
+    body.append("pops_on", targetPopsOn || "")
 
-    let method
-    if (targetPopsOn) {
-      method = "POST"
-      body.append("pops_on", targetPopsOn)
-    } else {
-      method = "DELETE"
-      body.append("pops_on", "")
+    const options = {
+      body,
+      responseKind: "turbo-stream",
+      headers: {
+        "X-Requested-With": this.reviewDropValue ? "review-pops-drop" : "pops-drop"
+      }
     }
 
-    const token = document.querySelector("meta[name='csrf-token']")?.content
-    const headers = {
-      Accept: "text/vnd.turbo-stream.html",
-      "X-CSRF-Token": token,
-      "X-Requested-With": this.reviewDropValue ? "review-pops-drop" : "pops-drop"
-    }
+    try {
+      const response = targetPopsOn
+        ? await post(this.popsUrlValue, options)
+        : await destroy(this.popsUrlValue, options)
 
-    const response = await fetch(this.popsUrlValue, { method, headers, body }).catch(() => null)
-    if (!response) {
+      if (response.ok) return
+
       revert?.()
-      return
+      if (!response.unprocessableEntity && response.isTurboStream) {
+        await response.renderTurboStream()
+      }
+    } catch {
+      revert?.()
     }
-    if (response.ok) return
-
-    revert?.()
-    const html = await response.text().catch(() => "")
-    if (html && window.Turbo) window.Turbo.renderStreamMessage(html)
   }
 
   #applyOptimisticMove(frame) {

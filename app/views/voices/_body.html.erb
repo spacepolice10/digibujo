@@ -3,4 +3,4 @@
 <% unless voice.recording.attached? %>
   <span class="bullet--content"><%= voice.body %></span>
 <% end %>
-<%= render "voices/playback_for_bullet", bullet: bullet %>
+<%= render "voices/playback", bullet: bullet %>

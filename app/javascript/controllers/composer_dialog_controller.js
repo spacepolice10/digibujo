@@ -1,12 +1,14 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["dialog"]
+  connect() {
+    this.element.addEventListener("composer:restore", this.close)
+  }
 
-  beforeFrameLoad(event) {
+  beforeFrameRender(event) {
     if (event.target.id != "bullet_composer") return
-    if (this.dialogTarget.open) return
-    this.dialogTarget.showModal()
+    if (this.element.open) return
+    this.element.showModal()
   }
 
   frameLoad(event) {
@@ -14,31 +16,30 @@ export default class extends Controller {
     event.target.querySelector("lexxy-editor")?.focus()
   }
 
-  close() {
-    if (this.dialogTarget.open) this.dialogTarget.close()
+  close = () => {
+    if (this.element.open) this.element.close()
   }
 
-  cancel(event) {
+  cancel() {
     this.close()
   }
 
   closed() {
-    const frame = document.getElementById("bullet_composer")
+    const frame = this.element.querySelector("#bullet_composer")
     if (!frame) return
-
     frame.removeAttribute("src")
     frame.innerHTML = ""
     frame.dispatchEvent(new CustomEvent("composer:rebind"))
   }
 
   backdropClose(event) {
-    if (event.target == this.dialogTarget) this.close()
+    if (event.target == this.element) this.close()
   }
 
   submitEnd(event) {
     if (!event.detail.success) return
     if (!event.target.classList?.contains("bullet-composer")) return
-
+    if (event.detail.formSubmission?.submitter?.name == "another") return
     this.close()
   }
 }

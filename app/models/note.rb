@@ -41,7 +41,7 @@ class Note < ApplicationRecord
   def preset = 'note'
   def permitted_attachment_types = nil
   def placeholder = 'Add markdown notes, files or images...'
-  def to_toolbar_path = "notes/toolbar"
+  def to_toolbar_path = 'notes/toolbar'
 
   def data_attributes
     mood.present? ? { note_mood: mood } : {}

@@ -12,7 +12,7 @@ module People
     private
 
     def sanitized_string
-      @sanitized_string ||= ActiveRecord::Base.sanitize_sql_like(params[:q].to_s.strip.downcase)
+      @sanitized_string ||= ActiveRecord::Base.sanitize_sql_like(params[:filter].to_s.strip.downcase)
     end
   end
 end

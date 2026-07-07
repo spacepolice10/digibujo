@@ -2,12 +2,13 @@
   .monthly-bucket--page {
     display: flex;
     flex-direction: column;
-    max-width: none;
+    max-width: var(--breakpoint-laptop);
     min-height: 0;
   }
 
   @media (min-width: 800px) {
     .monthly-bucket--page {
+
       min-height: calc(100vh - var(--spacing-vertical) * 2);
     }
   }
@@ -49,12 +50,6 @@
     flex: 1;
     min-height: 0;
     overflow: hidden;
-  }
-
-  .monthly-bucket--workspace .monthly-bucket--spread {
-    border: 0;
-    border-radius: 0;
-    background: transparent;
   }
 
   .monthly-bucket--by-date {
@@ -319,7 +314,6 @@
     .monthly-bucket--by-date,
     .monthly-bucket--calendar,
     .monthly-bucket--unplanned {
-      min-height: 0;
       overflow-y: auto;
       padding: var(--spacing-vertical) var(--spacing-horizontal);
     }

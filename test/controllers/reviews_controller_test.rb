@@ -33,35 +33,18 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
     assert_select '[data-bulk-menu-target="list"]'
   end
 
-  test 'show desktop renders three-column workspace' do
+  test 'show desktop renders three-column workspace with lazy frames' do
     @user.bullets.create!(bulletable: Task.new(body: 'Review me'), pops_on: @today)
     create_collection!(@user, name: 'Work')
 
     get review_path(from: @today.iso8601, to: @today.iso8601)
 
     assert_response :success
-    assert_select '.review--collections'
+    assert_select 'turbo-frame#review_collections_frame[src=?]', review_collections_path(from: @today.iso8601, to: @today.iso8601)
+    assert_select 'turbo-frame#review_scheduled_frame[src=?]', review_scheduled_path(from: @today.iso8601, to: @today.iso8601)
     assert_select '.review--to-review'
-    assert_select '.review--week'
-    assert_select '.monthly-bucket--calendar-body'
-    assert_select '.bulk-menu--collect-section'
-    assert_select '.bulk-menu--collect-item-link', minimum: 1
-    assert_select '[data-controller="pops-drop"]', minimum: 1
-    assert_select '[data-controller="collect-drop"]', minimum: 1
-    assert_select '.review--bullet[draggable="true"]', minimum: 1
+    assert_select '[data-bulk-menu-target="list"]'
     assert_select '.review--review-actions', count: 0
-  end
-
-  test 'show desktop week strip lists scheduled bullets for each day' do
-    week_start = @today + 2.days
-    @user.bullets.create!(bulletable: Event.new(body: 'Team standup'), pops_on: week_start)
-    @user.bullets.create!(bulletable: Task.new(body: 'Inbox only'), pops_on: @today)
-
-    get review_path(from: @today.iso8601, to: @today.iso8601)
-
-    assert_response :success
-    assert_match 'Team standup', response.body
-    assert_select '.monthly-bucket--date-entries .bullet[data-layout="spread"]', text: /Team standup/
   end
 
   test 'show mobile renders inbox list with bulk menu' do
@@ -72,8 +55,6 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match 'Mobile review', response.body
     assert_select '.review--to-review', count: 0
-    assert_select '.review--week', count: 0
-    assert_select '.review--collections', count: 0
     assert_select '.review--to-review-list'
     assert_select '.review--review-actions', count: 0
     assert_select '.review--bullet[draggable="true"]', count: 0

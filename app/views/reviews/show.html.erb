@@ -7,20 +7,20 @@
         amount_in_review: @amount_in_review %>
 
   <div class="review--workspace">
-    <%= render "reviews/collections_side",
-          review_from: @review_from,
-          review_to: @review_to,
-          collections_q: @collections_q,
-          collections: @collections,
-          collections_page: @collections_page %>
+    <turbo-frame id="review_collections_frame" src="<%= review_collections_path(from: @review_from, to: @review_to) %>">
+    </turbo-frame>
+
+    <div class="review--divider" aria-hidden="true"></div>
+
     <%= render "reviews/to_review",
           review_from: @review_from,
           review_to: @review_to,
           page: @page,
           amount_in_review: @amount_in_review %>
-    <%= render "reviews/week_side",
-          review_to: @review_to,
-          week_days: @week_days,
-          week_bullets_by_date: @week_bullets_by_date %>
+
+    <div class="review--divider" aria-hidden="true"></div>
+
+    <turbo-frame id="review_scheduled_frame" src="<%= review_scheduled_path(from: @review_from, to: @review_to) %>">
+    </turbo-frame>
   </div>
 </div>

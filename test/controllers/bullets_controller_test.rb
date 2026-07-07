@@ -12,7 +12,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   test 'update turbo stream replaces bullet only' do
     assert_difference -> { Activity.count }, 1 do
       patch bullet_path(@bullet),
-            params: { bullet: { body: 'Updated' } },
+            params: { bullet: { bulletable_attributes: { body: 'Updated' } } },
             as: :turbo_stream
     end
 
@@ -29,7 +29,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
            params: {
              bullet: {
                bulletable_type: 'Task',
-               body: 'Fresh task',
+               bulletable_attributes: { body: 'Fresh task' },
                pops_on: Date.current.iso8601
              }
            }
@@ -46,7 +46,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
              another: '1',
              bullet: {
                bulletable_type: 'Task',
-               body: 'Rapid task',
+               bulletable_attributes: { body: 'Rapid task' },
                pops_on: Date.current.iso8601
              }
            }
@@ -60,14 +60,14 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     project = create_project!(@user, name: 'Tagged')
     body_html = ActionText::Content.new('').append_attachables(project).to_html
 
-    post bullets_path,
-         params: {
-           bullet: {
-             bulletable_type: 'Task',
-             body: body_html,
-             pops_on: Date.current.iso8601
+      post bullets_path,
+           params: {
+             bullet: {
+               bulletable_type: 'Task',
+               bulletable_attributes: { body: body_html },
+               pops_on: Date.current.iso8601
+             }
            }
-         }
 
     bullet = @user.bullets.order(:created_at).last
     assert_not_equal @bullet, bullet
@@ -75,14 +75,14 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'create persists rich content in note body' do
-    post bullets_path,
-         params: {
-           bullet: {
-             bulletable_type: 'Note',
-             body: '<h1>Long detail</h1>',
-             pops_on: Date.current.iso8601
+      post bullets_path,
+           params: {
+             bullet: {
+               bulletable_type: 'Note',
+               bulletable_attributes: { body: '<h1>Long detail</h1>' },
+               pops_on: Date.current.iso8601
+             }
            }
-         }
 
     bullet = @user.bullets.order(:created_at).last
     assert_match 'Long detail', bullet.body.to_plain_text
@@ -110,7 +110,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'create requires bullet type' do
-    post bullets_path, params: { bullet: { body: 'No type' } }
+    post bullets_path, params: { bullet: { bulletable_attributes: { body: 'No type' } } }
 
     assert_redirected_to new_bullet_path
     assert_equal 'Pick a bullet type first', flash[:alert]
@@ -122,7 +122,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
            params: {
              bullet: {
                bulletable_type: 'Task',
-               body: ''
+               bulletable_attributes: { body: '' }
              }
            }
     end
@@ -137,7 +137,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
            params: {
              bullet: {
                bulletable_type: 'Voice',
-               body: ''
+               bulletable_attributes: { body: '' }
              }
            }
     end
@@ -191,9 +191,8 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
          params: {
            bullet: {
              bulletable_type: 'Note',
-             body: 'Moody note',
-             pops_on: Date.current.iso8601,
-             bulletable_attributes: { mood: 'inspired' }
+             bulletable_attributes: { body: 'Moody note', mood: 'inspired' },
+             pops_on: Date.current.iso8601
            }
          }
 
@@ -209,8 +208,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
           params: {
             bullet: {
               bulletable_type: 'Note',
-              body: 'Updated body',
-              bulletable_attributes: { mood: 'frustrated' }
+              bulletable_attributes: { body: 'Updated body', mood: 'frustrated' }
             }
           },
           as: :turbo_stream
@@ -222,15 +220,14 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
   test 'create with non-Note type ignores stale bulletable_attributes' do
     # Simulates user picking a mood (Note), then switching to Task in the same form.
-    post bullets_path,
-         params: {
-           bullet: {
-             bulletable_type: 'Task',
-             body: 'Stale mood',
-             pops_on: Date.current.iso8601,
-             bulletable_attributes: { mood: 'inspired' }
+      post bullets_path,
+           params: {
+             bullet: {
+               bulletable_type: 'Task',
+               bulletable_attributes: { body: 'Stale mood', mood: 'inspired' },
+               pops_on: Date.current.iso8601
+             }
            }
-         }
 
     bullet = @user.bullets.order(:created_at).last
     assert_equal 'Task', bullet.bulletable_type
@@ -242,8 +239,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     blob = create_blob!(filename: 'voice.webm', content_type: 'audio/webm')
     bullet = @user.bullets.create!(
       bulletable_type: 'Voice',
-      body: 'Voice caption',
-      bulletable_attributes: { recording: blob.signed_id, duration_seconds: 5 }
+      bulletable_attributes: { body: 'Voice caption', recording: blob.signed_id, duration_seconds: 5 }
     )
 
     get edit_bullet_path(bullet)
@@ -255,11 +251,10 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     blob = create_blob!(filename: 'voice.webm', content_type: 'audio/webm')
     bullet = @user.bullets.create!(
       bulletable_type: 'Voice',
-      body: 'Voice caption',
-      bulletable_attributes: { recording: blob.signed_id, duration_seconds: 5 }
+      bulletable_attributes: { body: 'Voice caption', recording: blob.signed_id, duration_seconds: 5 }
     )
 
-    patch bullet_path(bullet), params: { bullet: { body: 'Changed' } }
+    patch bullet_path(bullet), params: { bullet: { bulletable_attributes: { body: 'Changed' } } }
 
     assert_redirected_to bullet_path(bullet)
     assert_equal 'Voice caption', bullet.reload.body.to_plain_text

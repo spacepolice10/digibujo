@@ -62,8 +62,8 @@ class VoiceTest < ActiveSupport::TestCase
   test 'saves through bullet with caption and recording' do
     bullet = @user.bullets.new(
       bulletable_type: 'Voice',
-      body: 'Morning memo',
       bulletable_attributes: {
+        body: 'Morning memo',
         recording: @blob.signed_id,
         duration_seconds: 12
       }

@@ -1,7 +1,9 @@
 <% content_for(:title) { "New bullet" } %>
 
 <div class="session-layout">
-<turbo-frame id="<%= turbo_frame_request_id %>" data-controller="composer">
+<turbo-frame
+  id="<%= turbo_frame_request_id %>"
+>
     <%= render "bullets/form", bullet: @bullet, bullets_path: bullets_path, return_to: @return_to, editing: true %>
 </turbo-frame>
 </div>

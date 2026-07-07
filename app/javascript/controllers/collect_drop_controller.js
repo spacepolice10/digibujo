@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { post } from "@rails/request.js"
 
 export default class extends Controller {
   static values = {
@@ -33,25 +34,20 @@ export default class extends Controller {
     body.append("bullet_ids", bulletId)
     body.append("bucket_id", this.bucketIdValue)
 
-    const token = document.querySelector("meta[name='csrf-token']")?.content
-    const response = await fetch(this.collectUrlValue, {
-      method: "POST",
-      headers: {
-        Accept: "text/vnd.turbo-stream.html",
-        "X-CSRF-Token": token
-      },
-      body
-    }).catch(() => null)
+    try {
+      const response = await post(this.collectUrlValue, {
+        body,
+        responseKind: "turbo-stream"
+      })
+      if (response.ok) return
 
-    if (!response) {
       revert()
-      return
+      if (!response.unprocessableEntity && response.isTurboStream) {
+        await response.renderTurboStream()
+      }
+    } catch {
+      revert()
     }
-    if (response.ok) return
-
-    revert()
-    const html = await response.text().catch(() => "")
-    if (html && window.Turbo) window.Turbo.renderStreamMessage(html)
   }
 
   #removeOptimistically(frame) {

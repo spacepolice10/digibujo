@@ -1,0 +1,22 @@
+# frozen_string_literal: true
+
+module Reviews
+  class CollectionsController < ApplicationController
+    include PaginatedRecords
+
+    def index
+      @review_to = params[:to].present? ? params[:to].to_date : Date.current
+      @review_from = params[:from].present? ? params[:from].to_date : @review_to - 6.days
+
+      @collections_q = params[:q].to_s.strip.presence
+      collections = Current.user.active_collections.matching_bucket_name(@collections_q)
+      @collections, @collections_page = paginated_portion_from(collections, page_param: :collections_page,
+                                                                            per_page: [8, 16, 24])
+
+      respond_to do |format|
+        format.html
+        format.turbo_stream
+      end
+    end
+  end
+end

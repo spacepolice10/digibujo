@@ -1,7 +1,8 @@
 <% content_for(:title, "Home") %>
 <div class="layout--page menu--page menu--page-mobile">
   <details class="dropdown menu--create-bucket"
-           data-controller="dropdown">
+           data-controller="dropdown"
+           data-action="toggle->dropdown#syncClosedStatusWithBody turbo:before-visit@document->dropdown#close">
     <summary class="button--primary button--icon button--circle menu--create-bucket-button"
              aria-label="Create">
       <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
@@ -15,7 +16,8 @@
 
   <div class="menu--search"
        data-controller="combobox search"
-       data-search-selection-url-value="<%= search_selection_path %>">
+       data-search-selection-path-value="<%= search_selection_path %>"
+       data-dropdown-sync-closed-status-with-body-value="true">
     <%= render "menu/search" %>
 
     <div class="menu--scroll">

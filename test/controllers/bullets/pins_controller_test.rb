@@ -47,8 +47,7 @@ module Bullets
     test 'create turbo stream replaces monthly bucket bullet with unified row' do
       monthly_bucket = create_monthly_bucket!(@user, name: 'june')
       bullet = @user.bullets.create!(
-        bulletable: Task.create!,
-        body: 'Spread task',
+        bulletable: Task.create!(body: 'Spread task'),
         bucket_id: monthly_bucket.bucket.id
       )
 
