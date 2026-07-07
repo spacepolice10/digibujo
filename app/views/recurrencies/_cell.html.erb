@@ -1,25 +1,40 @@
 <%# locals: (recurrency:, date:, tracker:) %>
 <% scheduled = recurrency.scheduled_on?(date) %>
 <% completed = tracker.completed?(recurrency, date) %>
-<% button_id = dom_id(recurrency, "date_#{date.iso8601}") %>
+<% cell_id = dom_id(recurrency, "date_#{date.iso8601}") %>
+<% hint_id = dom_id(recurrency, "hint_date_#{date.iso8601}") %>
+<% hint_anchor = "--hint-recurrency-#{recurrency.id}-date-#{date.iso8601}" %>
+<% date_label = date.strftime("%a, %b %-d") %>
+<% status = scheduled ? (completed ? "Done" : "Not done") : "Not scheduled" %>
 
-<% if scheduled %>
-  <%= form_with url: recurrency_completion_path(recurrency),
-        method: completed ? :delete : :post,
-        id: button_id,
-        class: "recurrency--heatmap-form",
-        data: { turbo_stream: true } do %>
-    <%= hidden_field_tag :date, date.iso8601 %>
-    <%= hidden_field_tag :dom_key, "date" %>
-    <button type="submit"
-            class="recurrency--heatmap-day<%= " recurrency--heatmap-day-done" if completed %>"
-            aria-label="<%= completed ? "Mark #{recurrency.name} incomplete on #{date}" : "Mark #{recurrency.name} complete on #{date}" %>"
-            aria-pressed="<%= completed %>">
+<div id="<%= cell_id %>" class="recurrency--heatmap-cell">
+  <% if scheduled %>
+    <%= form_with url: recurrency_completion_path(recurrency),
+          method: completed ? :delete : :post,
+          class: "recurrency--heatmap-form",
+          data: { turbo_stream: true } do %>
+      <%= hidden_field_tag :date, date.iso8601 %>
+      <%= hidden_field_tag :dom_key, "date" %>
+      <button type="submit"
+              class="recurrency--heatmap-date<%= " recurrency--heatmap-date-done" if completed %>"
+              aria-label="<%= completed ? "Mark #{recurrency.name} incomplete on #{date}" : "Mark #{recurrency.name} complete on #{date}" %>"
+              aria-pressed="<%= completed %>"
+              interestfor="<%= hint_id %>"
+              style="anchor-name: <%= hint_anchor %>">
+      </button>
+    <% end %>
+  <% else %>
+    <button class="recurrency--heatmap-date recurrency--heatmap-date-disabled"
+            disabled
+            aria-label="<%= recurrency.name %> not scheduled on <%= date %>"
+            interestfor="<%= hint_id %>"
+            style="anchor-name: <%= hint_anchor %>">
     </button>
   <% end %>
-<% else %>
-  <button class="recurrency--heatmap-day recurrency--heatmap-day-muted"
-          disabled
-          aria-label="<%= recurrency.name %> not scheduled on <%= date %>">
-  </button>
-<% end %>
+  <div id="<%= hint_id %>"
+       class="hint"
+       popover="hint"
+       style="position-anchor: <%= hint_anchor %>">
+    <%= date_label %> — <%= status %>
+  </div>
+</div>

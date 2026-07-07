@@ -9,7 +9,7 @@ class RecurrenciesControllerTest < ActionDispatch::IntegrationTest
     @recurrency = create_recurrency!(@user, name: "Run")
   end
 
-  test "show renders lifetime statistics and 30-day heatmap" do
+  test "show renders lifetime statistics and 90-day heatmap" do
     @recurrency.completions.create!(date: Date.current, completed_at: Time.current)
 
     get recurrency_path(@recurrency)
@@ -19,12 +19,12 @@ class RecurrenciesControllerTest < ActionDispatch::IntegrationTest
     assert_select ".recurrency--statistics dt", text: "Best streak"
     assert_select ".recurrency--statistics dt", text: "Total days"
     assert_select ".recurrency--statistics dt", text: "This month", count: 0
-    assert_select ".recurrency--heatmap-day", count: 30
+    assert_select ".recurrency--heatmap-date", count: 90
     assert_select ".recurrency--month-nav", count: 0
     assert_select ".recurrency--grid", count: 0
   end
 
-  test "show heatmap reflects completions from the full 30-day range" do
+  test "show heatmap reflects completions from the full 90-day range" do
     @recurrency.update!(created_at: 10.days.ago)
     past_date = Date.current - 5.days
     @recurrency.completions.create!(date: past_date, completed_at: 1.day.ago)
@@ -32,32 +32,34 @@ class RecurrenciesControllerTest < ActionDispatch::IntegrationTest
     get recurrency_path(@recurrency)
 
     assert_response :success
-    assert_select "form##{dom_id(@recurrency, "date_#{past_date.iso8601}")} button.recurrency--heatmap-day-done"
+    assert_select "##{dom_id(@recurrency, "date_#{past_date.iso8601}")} button.recurrency--heatmap-date-done"
   end
 
   test "show renders clickable heatmap buttons" do
     get recurrency_path(@recurrency)
 
     assert_response :success
-    heatmap_days = (Date.current - 29.days)..Date.current
+    heatmap_days = (Date.current - 89.days)..Date.current
     scheduled_count = heatmap_days.count { |day| @recurrency.scheduled_on?(day) }
 
-    assert_select ".recurrency--heatmap-day", count: 30
+    assert_select ".recurrency--heatmap-date", count: 90
     assert_select ".recurrency--heatmap-form", count: scheduled_count
-    assert_select ".recurrency--heatmap-day[disabled]", count: 30 - scheduled_count
+    assert_select ".recurrency--heatmap-date-disabled", count: 90 - scheduled_count
+    assert_select ".recurrency--heatmap-cell [popover='hint']", count: 90
   end
 
   test "show disables heatmap buttons for unscheduled days" do
-    @recurrency.update!(schedule: { "days" => [Date.current.wday] }, created_at: 30.days.ago)
+    @recurrency.update!(schedule: { "days" => [Date.current.wday] }, created_at: 90.days.ago)
 
     get recurrency_path(@recurrency)
 
     assert_response :success
-    heatmap_days = (Date.current - 29.days)..Date.current
+    heatmap_days = (Date.current - 89.days)..Date.current
     scheduled_count = heatmap_days.count { |day| @recurrency.scheduled_on?(day) }
 
     assert_select ".recurrency--heatmap-form", count: scheduled_count
-    assert_select ".recurrency--heatmap-day[disabled]", count: 30 - scheduled_count
+    assert_select ".recurrency--heatmap-date-disabled", count: 90 - scheduled_count
+    assert_select ".recurrency--heatmap-cell [popover='hint']", text: /Not scheduled/
   end
 
   test "create recurrency" do
