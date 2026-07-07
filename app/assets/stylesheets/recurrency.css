@@ -54,7 +54,6 @@
     display: flex;
     flex-wrap: wrap;
     gap: 2px;
-    overflow-x: auto;
   }
 
   .recurrency--heatmap-cell {
@@ -94,10 +93,16 @@
   }
 
   .recurrency--heatmap-date-disabled {
-    background: var(--color-stroke-subtle);
+    background: var(--color-stroke-base);
     border-color: var(--color-stroke-subtle);
     cursor: not-allowed;
     opacity: 0.5;
+  }
+
+  .recurrency--heatmap-date-current {
+    border-color: var(--color-accent);
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
   }
 
   .recurrency--heatmap .recurrency--heading {

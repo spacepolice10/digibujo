@@ -15,18 +15,17 @@ class RecurrenciesController < ApplicationController
   def create
     @recurrency = Current.user.recurrencies.build(recurrency_attributes)
     if @recurrency.save
-      redirect_to home_path, notice: "Recurrency created"
+      redirect_to home_path, notice: 'Recurrency created'
     else
       render :new, status: :unprocessable_entity
     end
   end
 
-  def edit
-  end
+  def edit; end
 
   def update
     if @recurrency.update(recurrency_attributes)
-      redirect_to recurrency_path(@recurrency), notice: "Recurrency updated"
+      redirect_to recurrency_path(@recurrency), notice: 'Recurrency updated'
     else
       render :edit, status: :unprocessable_entity
     end
@@ -34,9 +33,9 @@ class RecurrenciesController < ApplicationController
 
   def destroy
     if @recurrency.destroy
-      redirect_to home_path, notice: "Recurrency deleted"
+      redirect_to home_path, notice: 'Recurrency deleted'
     else
-      redirect_to recurrency_path(@recurrency), alert: "Cannot delete — remove completions first"
+      redirect_to recurrency_path(@recurrency), alert: 'Cannot delete — remove completions first'
     end
   end
 
@@ -53,7 +52,7 @@ class RecurrenciesController < ApplicationController
     attrs = {
       name: permitted[:name],
       schedule: {
-        "days" => Array(permitted[:schedule_days]).reject(&:blank?).map(&:to_i).uniq.sort
+        'days' => Array(permitted[:schedule_days]).reject(&:blank?).map(&:to_i).uniq.sort
       }
     }
     attrs[:colour] = permitted[:colour].presence if permitted.key?(:colour)

@@ -9,9 +9,7 @@ module Recurrencies
     before_action :set_dom_key
 
     def create
-      unless @recurrency.scheduled_on?(@date)
-        return respond_unprocessable
-      end
+      return respond_unprocessable unless @recurrency.scheduled_on?(@date)
 
       @completion = @recurrency.completions.find_or_initialize_by(date: @date)
       @completion.completed_at = Time.current
@@ -50,13 +48,13 @@ module Recurrencies
     end
 
     def set_dom_key
-      @dom_key = params[:dom_key].presence_in(COMPLETION_DOM_KEYS) || "header"
+      @dom_key = params[:dom_key].presence_in(COMPLETION_DOM_KEYS) || 'header'
     end
 
     def respond_unprocessable
       respond_to do |format|
         format.turbo_stream { head :unprocessable_entity }
-        format.html { redirect_back fallback_location: home_path, alert: "Cannot mark this day" }
+        format.html { redirect_back fallback_location: home_path, alert: 'Cannot mark this day' }
         format.any { head :unprocessable_entity }
       end
     end
