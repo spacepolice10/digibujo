@@ -24,6 +24,16 @@ class RecurrenciesControllerTest < ActionDispatch::IntegrationTest
     assert_select ".recurrency--grid", count: 0
   end
 
+  test "show heatmap reflects completions from the full 30-day range" do
+    past_date = Date.current - 5.days
+    @recurrency.completions.create!(date: past_date, completed_at: 1.day.ago)
+
+    get recurrency_path(@recurrency)
+
+    assert_response :success
+    assert_select "form##{dom_id(@recurrency, "date_#{past_date.iso8601}")} button.recurrency--heatmap-day-done"
+  end
+
   test "create recurrency" do
     assert_difference -> { @user.recurrencies.count }, 1 do
       post recurrencies_path, params: {

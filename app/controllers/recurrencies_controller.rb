@@ -4,7 +4,7 @@ class RecurrenciesController < ApplicationController
   before_action :set_recurrency, only: %i[show edit update destroy]
 
   def show
-    @tracker = RecurrencyTracker.new(user: Current.user, from: Date.current, to: Date.current)
+    @tracker = RecurrencyTracker.new(user: Current.user, from: Date.current - 29.days, to: Date.current)
     @heatmap_days = (Date.current - 29.days)..Date.current
     @heatmap_completions = @recurrency.completions.pluck(:date).to_set
   end
