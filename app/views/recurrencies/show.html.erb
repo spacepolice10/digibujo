@@ -55,12 +55,7 @@
 
           <div class="recurrency--heatmap-days">
             <% @heatmap_days.each do |day| %>
-              <% done = @heatmap_completions.include?(day) && @recurrency.scheduled_on?(day) %>
-
-              <span
-                class="recurrency--heatmap-day<%= " recurrency--heatmap-day-done" if done %>"
-                title="<%= day.strftime("%a, %b %-d") %>"
-              ></span>
+              <%= render "cell", recurrency: @recurrency, date: day, tracker: @tracker %>
             <% end %>
           </div>
         </section>
