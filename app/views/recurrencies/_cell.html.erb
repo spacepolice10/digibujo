@@ -1,50 +1,25 @@
-<%# locals: (recurrency:, date:, tracker:, variant: :grid, dom_key: nil, content_only: false) %>
+<%# locals: (recurrency:, date:, tracker:) %>
 <% scheduled = recurrency.scheduled_on?(date) %>
-<% chip = variant == :chip %>
-<% dom_key ||= chip ? "header" : "cell" %>
 <% completed = tracker.completed?(recurrency, date) %>
-<% hint_id = dom_id(recurrency, :"hint_#{dom_key}_#{date.iso8601}") if chip %>
-<% hint_anchor = "--hint-recurrency-#{recurrency.id}-#{dom_key}-#{date.iso8601}" if chip %>
-<% chip_button_styles = chip && hint_anchor.present? ? [ "anchor-name: #{hint_anchor}" ] : [] %>
-<% toggle = capture do %>
+<% button_id = dom_id(recurrency, "date_#{date.iso8601}") %>
+
+<% if scheduled %>
   <%= form_with url: recurrency_completion_path(recurrency),
         method: completed ? :delete : :post,
-        **(chip || content_only ? {} : { id: dom_id(recurrency, "#{dom_key}_#{date.iso8601}") }),
-        class: "recurrency--toggle-form#{' recurrency--toggle-form-cell' unless chip}",
+        id: button_id,
+        class: "recurrency--heatmap-form",
         data: { turbo_stream: true } do %>
     <%= hidden_field_tag :date, date.iso8601 %>
-    <%= hidden_field_tag :dom_key, dom_key %>
+    <%= hidden_field_tag :dom_key, "date" %>
     <button type="submit"
-            class="<%= chip ? "recurrency--chip bucket--list-item-marker#{' recurrency--chip-done' if completed}#{' recurrency--chip-neutral' unless completed}" : "recurrency--cell#{' recurrency--cell-done' if completed}" %>"
-            <% if chip && completed && recurrency.colour.present? %>data-bucket-colour="<%= recurrency.colour %>"<% end %>
-            <% if chip && hint_id.present? %>interestfor="<%= hint_id %>"<% end %>
-            <% if chip_button_styles.any? %>style="<%= chip_button_styles.join("; ") %>"<% end %>
-            aria-label="<%= completed ? "Mark #{recurrency.name} incomplete#{" on #{date}" unless chip}" : "Mark #{recurrency.name} complete#{" on #{date}" unless chip}" %>"
+            class="recurrency--heatmap-day<%= " recurrency--heatmap-day-done" if completed %>"
+            aria-label="<%= completed ? "Mark #{recurrency.name} incomplete on #{date}" : "Mark #{recurrency.name} complete on #{date}" %>"
             aria-pressed="<%= completed %>">
-      <% if chip %>
-        <%= image_tag recurrency.icon_path, alt: "", class: "recurrency--chip-image" %>
-      <% end %>
     </button>
   <% end %>
-<% end %>
-<% if chip %>
-  <% if content_only %>
-    <%= toggle %>
-  <% else %>
-    <div id="<%= dom_id(recurrency, "#{dom_key}_#{date.iso8601}") %>" class="recurrency--header-chip">
-      <%= toggle %>
-      <div id="<%= hint_id %>"
-           class="hint"
-           popover="hint"
-           style="position-anchor: <%= hint_anchor %>">
-        <%= render "recurrencies/hint", recurrency: recurrency, tracker: tracker, date: date %>
-      </div>
-    </div>
-  <% end %>
-<% elsif content_only %>
-  <%= toggle if scheduled %>
 <% else %>
-  <td class="recurrency--grid-cell<%= " recurrency--grid-cell-today" if date == Date.current %><%= " recurrency--grid-cell-muted" unless scheduled %>">
-    <%= toggle if scheduled %>
-  </td>
+  <button class="recurrency--heatmap-day recurrency--heatmap-day-muted"
+          disabled
+          aria-label="<%= recurrency.name %> not scheduled on <%= date %>">
+  </button>
 <% end %>

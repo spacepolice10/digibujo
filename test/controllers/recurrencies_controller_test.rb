@@ -34,6 +34,26 @@ class RecurrenciesControllerTest < ActionDispatch::IntegrationTest
     assert_select "form##{dom_id(@recurrency, "date_#{past_date.iso8601}")} button.recurrency--heatmap-day-done"
   end
 
+  test "show renders clickable heatmap buttons" do
+    get recurrency_path(@recurrency)
+
+    assert_response :success
+    assert_select ".recurrency--heatmap-day", count: 30
+    assert_select ".recurrency--heatmap-day[disabled]", count: 0
+    assert_select ".recurrency--heatmap-form", count: 30
+  end
+
+  test "show disables heatmap buttons for unscheduled days" do
+    @recurrency.update!(schedule: { "days" => [Date.current.wday] })
+
+    get recurrency_path(@recurrency)
+
+    assert_response :success
+    scheduled_count = @recurrency.scheduled_on?(Date.current) ? 1 : 0
+    assert_select ".recurrency--heatmap-form", count: scheduled_count
+    assert_select ".recurrency--heatmap-day[disabled]", count: 30 - scheduled_count
+  end
+
   test "create recurrency" do
     assert_difference -> { @user.recurrencies.count }, 1 do
       post recurrencies_path, params: {
