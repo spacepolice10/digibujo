@@ -13,13 +13,13 @@ class Recurrencies::CompletionsControllerTest < ActionDispatch::IntegrationTest
   test "create completion" do
     assert_difference -> { @recurrency.completions.count }, 1 do
       post recurrency_completion_path(@recurrency),
-        params: { date: @date.iso8601, dom_key: "header" },
+        params: { date: @date.iso8601, dom_key: "date" },
         as: :turbo_stream
     end
 
     assert_response :success
     assert @recurrency.completions.exists?(date: @date)
-    assert_select "turbo-stream[action=replace][target=#{dom_id(@recurrency, "header_#{@date.iso8601}")}]", count: 1
+    assert_select "turbo-stream[action=replace][target=#{dom_id(@recurrency, "date_#{@date.iso8601}")}]", count: 1
     assert_select "turbo-stream[action=replace]", count: 1
   end
 
@@ -28,7 +28,7 @@ class Recurrencies::CompletionsControllerTest < ActionDispatch::IntegrationTest
 
     assert_no_difference -> { @recurrency.completions.count } do
       post recurrency_completion_path(@recurrency),
-        params: { date: @date.iso8601, dom_key: "inline" },
+        params: { date: @date.iso8601, dom_key: "date" },
         as: :turbo_stream
     end
 
@@ -40,7 +40,7 @@ class Recurrencies::CompletionsControllerTest < ActionDispatch::IntegrationTest
 
     assert_no_difference -> { @recurrency.completions.count } do
       post recurrency_completion_path(@recurrency),
-        params: { date: @date.iso8601, dom_key: "inline" },
+        params: { date: @date.iso8601, dom_key: "date" },
         as: :turbo_stream
     end
 
@@ -52,11 +52,11 @@ class Recurrencies::CompletionsControllerTest < ActionDispatch::IntegrationTest
 
     assert_difference -> { @recurrency.completions.count }, -1 do
       delete recurrency_completion_path(@recurrency),
-        params: { date: @date.iso8601, dom_key: "header" },
+        params: { date: @date.iso8601, dom_key: "date" },
         as: :turbo_stream
     end
 
     assert_response :success
-    assert_select "turbo-stream[action=replace][target=#{dom_id(@recurrency, "header_#{@date.iso8601}")}]", count: 1
+    assert_select "turbo-stream[action=replace][target=#{dom_id(@recurrency, "date_#{@date.iso8601}")}]", count: 1
   end
 end

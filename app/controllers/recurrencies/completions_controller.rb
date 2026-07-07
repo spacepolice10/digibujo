@@ -2,7 +2,7 @@
 
 module Recurrencies
   class CompletionsController < ApplicationController
-    COMPLETION_DOM_KEYS = %w[header inline cell].freeze
+    COMPLETION_DOM_KEYS = %w[date].freeze
 
     before_action :set_recurrency
     before_action :set_date
