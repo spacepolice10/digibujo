@@ -41,7 +41,6 @@
     container-type: scroll-state;
     position: sticky;
     bottom: calc(var(--spacing-vertical-double) + var(--icon-size-base));
-    z-index: var(--z-dropdown);
     display: flex;
     justify-content: center;
     width: 100%;
