@@ -48,7 +48,7 @@
 
   .session--title {
     margin: 0;
-    font-size: var(--font-size-strong);
+    font-size: var(--font-size-huge);
     font-weight: var(--font-weight-strong);
     color: var(--color-fg-base);
   }
@@ -103,5 +103,10 @@
         color: var(--color-fg-base);
       }
     }
+  }
+
+  .user--sign-out-form {
+    display: flex;
+    justify-content: center;
   }
 }

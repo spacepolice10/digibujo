@@ -144,7 +144,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     assert_match "recent beta", response.body
   end
 
-  test "show with blank query renders expandable recent on mobile" do
+  test "show with blank query renders recent list on mobile" do
     project = create_project!(@user, name: "recent mobile")
     Search::Selection.record!(
       user: @user,
@@ -156,7 +156,8 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h4.search--section-heading", count: 0
-    assert_select "details.home--section summary .home--section-name", text: "Recent"
+    assert_select "details.home--section summary .home--section-name", text: "Recent", count: 0
+    assert_select "ul.menu--palette-list", count: 1
     assert_match "recent mobile", response.body
   end
 end

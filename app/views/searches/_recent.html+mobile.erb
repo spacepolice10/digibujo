@@ -1,7 +1,0 @@
-<%= render layout: "menu/expandable_section", locals: { title: "Recent", expanded: true } do %>
-  <ul class="layout--list menu--palette-list" role="listbox">
-    <% selections.each do |selection| %>
-      <%= render "searches/palette_item", entity: selection.searchable %>
-    <% end %>
-  </ul>
-<% end %>

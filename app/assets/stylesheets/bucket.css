@@ -78,6 +78,10 @@
     height: calc(var(--icon-size-base) * 0.5);
   }
 
+  .bucket--list-item-marker[data-bucket-colour] .icon {
+    color: var(--entity-color);
+  }
+
   .bucket--child-dot-inner {
     width: calc(var(--icon-size-base) / 3);
     height: calc(var(--icon-size-base) / 3);
@@ -118,7 +122,7 @@
 
   .collection--heading .layout--surface-name {
     margin-left: var(--spacing-horizontal-half);
-    font-size: var(--font-size-strong);
+    font-size: var(--font-size-huge);
   }
 
   .collection--heading .bucket--description {

@@ -9,7 +9,7 @@
     flex-direction: column;
     align-items: stretch;
     gap: var(--spacing-vertical-half);
-    width: fit-content;
+    width: 90%;
     max-width: min(100%, calc(var(--spacing-horizontal-double) * 20));
     margin-inline: auto;
     padding: var(--spacing-vertical) var(--spacing-horizontal-half);
@@ -34,6 +34,10 @@
     form {
       display: inline-flex;
       margin: 0;
+    }
+
+    @media (min-width: 621px) {
+      width: fit-content
     }
   }
 

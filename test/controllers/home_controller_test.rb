@@ -52,6 +52,8 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     get home_path
     assert_response :success
     assert_select 'turbo-frame#home_activity[src=?]', compact_activities_path
+    assert_select '.account--dock a.menu--account-button[href=?][aria-label=?]', user_path, 'Account'
+    assert_select '.menu--account-initial', text: @user.email_address.first.upcase
   end
 
   test 'show renders saved appearance on html' do
@@ -145,6 +147,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select '.menu--page.menu--page-mobile'
+    assert_select '.menu--search[data-combobox-path-value=?]', search_path
     assert_select 'details.menu--create-bucket[data-controller=?]', 'dropdown'
     assert_select 'nav.menu--navigation a[href=?]', activities_path
     assert_select 'nav.menu--navigation a[href=?]', home_path, count: 0
@@ -152,6 +155,9 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     assert_select 'details.home--section summary .home--section-name', text: 'Projects'
     assert_select 'details.home--section summary .home--section-name', text: 'Collections'
     assert_select '.menu--create-bucket-link[href=?]', new_collection_path
+    assert_select 'a.menu--account-button[href=?][aria-label=?]', user_path, 'Account'
+    assert_select '.menu--account-initial', text: @user.email_address.first.upcase
+    assert_select '.account--dock', count: 0
     assert_match 'mobile alpha', response.body
   end
 end

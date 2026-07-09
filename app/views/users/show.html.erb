@@ -1,0 +1,28 @@
+<% content_for(:title) { "Account" } %>
+
+<div class="session-layout session-layout--app">
+  <main class="session-layout--main">
+    <div class="session--page">
+      <div class="form--surface">
+        <div class="session--intro">
+          <h1 class="session--title">Account</h1>
+          <p class="form-hint session--description">
+            Signed in as <strong><%= Current.user.email_address %></strong>.
+          </p>
+        </div>
+
+        <%= button_to session_path,
+              method: :delete,
+              class: "button--secondary button--danger form--submit",
+              form: { class: "user--sign-out-form", data: { turbo_confirm: "Sign out of Digibujo?" } } do %>
+          <i class="icon" style="--icon-mask: var(--icon-sign-out)" aria-hidden="true"></i>
+          Sign out
+        <% end %>
+      </div>
+
+      <%= link_to home_path, class: "session--footer-link" do %>
+        Back to menu
+      <% end %>
+    </div>
+  </main>
+</div>

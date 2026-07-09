@@ -1,8 +1,8 @@
-<details class="home--section"<% if expanded %> open<% end %>
+<details class="home--section"<% if expanded %> open<% end %><% if local_assigns[:key].present? %>
         data-controller="section"
         data-action="toggle->section#onToggle"
         data-section-expand-url-value="<%= home_expand_section_path(key) %>"
-        data-section-collapse-url-value="<%= home_collapse_section_path(key) %>">
+        data-section-collapse-url-value="<%= home_collapse_section_path(key) %>"<% end %>>
   <summary class="home--section-summary">
     <span class="home--section-name">
       <% if local_assigns[:icon].present? %>

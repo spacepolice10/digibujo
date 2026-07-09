@@ -155,16 +155,6 @@
     }
   }
 
-  .monthly-bucket--composer-dialog .bullet-composer {
-    width: 100%;
-    left: 0;
-    top: 0;
-    padding: 0;
-    border: none;
-    background: transparent;
-    box-shadow: none;
-  }
-
   .monthly-bucket--divider {
     background: var(--color-stroke-base);
   }
@@ -440,7 +430,7 @@
   }
 
   .monthly-bucket--period-name {
-    font-size: var(--font-size-strong);
+    font-size: var(--font-size-huge);
     font-weight: var(--font-weight-strong);
     color: var(--color-fg-base);
     line-height: 1;

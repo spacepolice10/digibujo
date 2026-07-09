@@ -33,7 +33,12 @@ module ActiveSupport
       return if future_bucket&.bucket.present?
 
       future_bucket = FutureBucket.create!(user: user)
-      user.buckets.create!(bucketable: future_bucket, name: Signup::FUTURE_BUCKET_NAME)
+      user.buckets.create!(
+        bucketable: future_bucket,
+        name: Signup::FUTURE_BUCKET_NAME,
+        icon: Signup::FUTURE_BUCKET_ICON,
+        colour: Signup::FUTURE_BUCKET_COLOUR
+      )
     end
 
     def create_monthly_bucket!(user, name:, period_from: nil, period_to: nil, colour: nil, icon: nil)

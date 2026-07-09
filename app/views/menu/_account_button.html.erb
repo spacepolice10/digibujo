@@ -1,0 +1,6 @@
+<%= link_to user_path,
+      class: "button--secondary button--circle menu--account-button",
+      data: { turbo_frame: "_top" },
+      aria: { label: "Account" } do %>
+  <span class="menu--account-initial" aria-hidden="true"><%= Current.user.email_address.first.upcase %></span>
+<% end %>

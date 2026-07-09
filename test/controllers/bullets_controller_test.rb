@@ -186,6 +186,18 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_select "input[name='return_to']", count: 0
   end
 
+  test 'new composer turbo frame request on mobile renders shared form in matching frame' do
+    mobile_ua = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)'
+
+    get new_bullet_path(bulletable_type: 'Task', pops_on: Date.current),
+        headers: { 'Turbo-Frame' => 'bullet_composer', 'User-Agent' => mobile_ua }
+
+    assert_response :success
+    assert_select 'turbo-frame#bullet_composer form.bullet-composer'
+    assert_select 'lexxy-editor[preset=inline]'
+    assert_select 'dialog', count: 0
+  end
+
   test 'create sets note mood from bulletable_attributes' do
     post bullets_path,
          params: {

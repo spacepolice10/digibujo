@@ -16,6 +16,7 @@
   .search--form {
     width: 100%;
     flex-shrink: 0;
+    background: var(--color-bg-subtle);
   }
 
   .search--results {

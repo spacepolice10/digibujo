@@ -30,8 +30,8 @@
     grid-column: 1;
     grid-row: 1;
     justify-self: center;
-    width: calc(var(--icon-size-subtle) / 2);
-    height: calc(var(--icon-size-subtle) / 2);
+    width: var(--icon-size-base);
+    height: var(--icon-size-base);
     border-radius: var(--radius-full);
     background: var(--color-stroke-base);
   }
@@ -59,7 +59,7 @@
   .activity--detail {
     margin: 0;
     min-width: 0;
-    font-size: var(--font-size-subtle);
+    font-size: var(--font-size-base);
     color: var(--color-fg-subtle);
   }
 

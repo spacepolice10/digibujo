@@ -31,7 +31,6 @@
     padding: var(--spacing-vertical) var(--spacing-horizontal);
     border-radius: var(--radius-base);
     font-family: inherit;
-    font-size: var(--font-size-subtle);
     background: transparent;
     border: 1px solid var(--color-stroke-base);
     color: var(--color-fg-base);
@@ -315,7 +314,7 @@
   }
 
   .form--page .layout--header h2 {
-    font-size: var(--font-size-strong);
+    font-size: var(--font-size-huge);
     color: var(--color-fg-base);
   }
 

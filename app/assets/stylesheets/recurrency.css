@@ -32,7 +32,7 @@
 
   .recurrency--statistics dd {
     margin: var(--spacing-vertical-half) 0 0;
-    font-size: var(--font-size-strong);
+    font-size: var(--font-size-huge);
     font-weight: var(--font-weight-strong);
   }
 

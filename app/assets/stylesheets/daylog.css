@@ -29,9 +29,8 @@
     justify-content: flex-end;
   }
 
-  .daylog--today-indicator {
+  .daylog--todays-indicator {
     position: relative;
-    display: inline-flex;
     align-items: center;
     justify-content: center;
     color: var(--model-color-2);
@@ -39,7 +38,7 @@
     user-select: none;
   }
 
-  .daylog--today-indicator-ring {
+  .daylog--todays-indicator-ring {
     position: absolute;
     inset: -0.35em -0.6em;
     width: calc(100% + 1.2em);
@@ -49,7 +48,7 @@
 
   .daylog--today-indicator-label {
     position: relative;
-    font-size: var(--font-size-strong);
+    font-size: var(--font-size-huge);
     font-weight: var(--font-weight-base);
     text-transform: lowercase;
   }
@@ -63,12 +62,7 @@
       flex: 1 1 100%;
       justify-content: space-between;
       position: relative;
-    }
-
-    .daylog--header-navigation > button[data-action="daylog#openDatePicker"] {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
+      font-size: var(--font-size-base);
     }
 
     .daylog--header-today:not(:empty) {
@@ -78,21 +72,14 @@
       align-items: center;
     }
 
-    .daylog--page .layout--surface.bucket--list {
-      padding-inline: 0;
-      border: 0;
-      background: transparent;
-      border-radius: 0;
-    }
-
     .daylog--page .bucket--list {
       padding-inline: 0;
     }
 
     .daylog--page .bucket--list:has(.bullet-composer--dock-fixed) {
       padding-bottom: calc(
-        var(--spacing-vertical-double) * 3 + var(--icon-size-base) +
-          var(--spacing-vertical) * 3 + env(safe-area-inset-bottom, 0px)
+        var(--tabbar-scroll-padding, calc(var(--spacing-vertical-double) * 3 + env(safe-area-inset-bottom, 0px)))
+        + var(--icon-size-base) + var(--spacing-vertical) * 2
       );
     }
   }

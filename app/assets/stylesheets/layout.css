@@ -138,7 +138,7 @@
     padding: var(--spacing-vertical) var(--spacing-horizontal);
   }
 
-  :is(.layout--surface, .form--surface) {
+  .form--surface {
     border: 1px solid var(--color-stroke-base);
     background: var(--color-bg-subtle);
     border-radius: var(--radius-strong);
@@ -219,7 +219,16 @@
   .layout--surface {
     flex: 2 1 0%;
     min-width: 0;
-    padding: var(--spacing-vertical) var(--spacing-horizontal-half);
+  }
+
+  /* matches --breakpoint-surface (640px); var() not valid in @media width */
+  @media (min-width: 640px) {
+    .layout--surface {
+      border: 1px solid var(--color-stroke-base);
+      background: var(--color-bg-subtle);
+      border-radius: var(--radius-strong);
+      padding: var(--spacing-vertical) var(--spacing-horizontal-half);
+    }
   }
 
   .layout--surface-name {

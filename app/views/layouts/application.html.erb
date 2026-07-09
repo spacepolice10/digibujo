@@ -28,6 +28,7 @@
 <div id="toasts" class="toasts" data-controller="toasts" aria-live="polite"></div>
     <% unless request.variant.include?(:mobile) %>
       <%= render "shared/header" %>
+      <%= render "shared/account_dock" %>
     <% end %>
     <%= yield %>
     <% if Current.user %>

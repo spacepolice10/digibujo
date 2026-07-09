@@ -64,24 +64,27 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'daylog renders composer with quick add links for task event and note' do
+  test 'desktop daylog renders inline composer dock with quick add links' do
     selected_date = Date.current - 2.days
 
     get daylog_path(date: selected_date.iso8601)
 
     assert_response :success
-    assert_select 'turbo-frame#bullet_composer[data-controller=?]', 'composer' do
-      assert_select 'a[href=?]',
+    assert_select 'turbo-frame#daylog_bullets_composer[data-controller=?]', 'composer-picker' do
+      assert_select 'a[data-turbo-frame=?][href=?]',
+                    'daylog_bullets_composer',
                     new_bullet_path(
                       pops_on: selected_date,
                       bulletable_type: 'Task'
                     )
-      assert_select 'a[href=?]',
+      assert_select 'a[data-turbo-frame=?][href=?]',
+                    'daylog_bullets_composer',
                     new_bullet_path(
                       pops_on: selected_date,
                       bulletable_type: 'Event'
                     )
-      assert_select 'a[href=?]',
+      assert_select 'a[data-turbo-frame=?][href=?]',
+                    'daylog_bullets_composer',
                     new_bullet_path(
                       pops_on: selected_date,
                       bulletable_type: 'Note'
@@ -89,11 +92,26 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
       assert_select 'a[aria-label=?]', 'Add Task'
       assert_select 'a[aria-label=?]', 'Add Event'
       assert_select 'a[aria-label=?]', 'Add Note'
-      assert_match(/Add task/, response.body)
-      assert_match(/Add event/, response.body)
-      assert_match(/Add note/, response.body)
     end
     assert_no_match(/Add bullet/, response.body)
+  end
+
+  test 'mobile daylog renders composer dialog and dock links into bullet_composer frame' do
+    selected_date = Date.current - 2.days
+    mobile_ua = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)'
+
+    get daylog_path(date: selected_date.iso8601), headers: { 'User-Agent' => mobile_ua }
+
+    assert_response :success
+    assert_select 'dialog#daylog_composer.bullet-composer--dialog'
+    assert_select 'dialog#daylog_composer turbo-frame#bullet_composer'
+    assert_select 'turbo-frame#daylog_bullets_composer', count: 0
+    assert_select 'a[data-turbo-frame=?][href=?]',
+                  'bullet_composer',
+                  new_bullet_path(
+                    pops_on: selected_date,
+                    bulletable_type: 'Task'
+                  )
   end
 
   test 'root shows today daylog' do

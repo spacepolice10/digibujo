@@ -101,12 +101,13 @@
     --breakpoint-fold: 120px;
     --breakpoint-mobile: 360px;
     --breakpoint-tablet: 600px;
+    --breakpoint-surface: 640px;
     --breakpoint-laptop: 800px;
     --breakpoint-pc: 1040px;
 
     /* spacing */
     --spacing-vertical: 1ch;
-    --spacing-horizontal: 1rem;
+    --spacing-horizontal: 0.75rem;
     --spacing-vertical-half: calc(var(--spacing-vertical) / 2);
     --spacing-horizontal-half: calc(var(--spacing-horizontal) / 2);
     --spacing-vertical-double: calc(var(--spacing-vertical) * 2);
@@ -127,10 +128,10 @@
     --z-dialog: 3;
     --z-toast: 4;
 
-    /* font sizes — fluid */
-    --font-size-strong: clamp(1.375rem, 1.1rem + 0.85vw, 1.75rem);
-    --font-size-base: clamp(0.9375rem, 0.875rem + 0.2vw, 1rem);
-    --font-size-subtle: clamp(0.8125rem, 0.775rem + 0.15vw, 0.875rem);
+    /* font sizes */
+    --font-size-huge: 1.25rem;   /* 20px */
+    --font-size-base: 1rem;      /* 16px */
+    --font-size-subtle: 0.75rem; /* 12px */
 
     /* font families */
     --font-family-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;

@@ -8,7 +8,7 @@
     align-items: center;
     gap: var(--spacing-vertical-half);
     font-family: inherit;
-    font-size: var(--font-size-subtle);
+    font-size: var(--font-size-base);
     cursor: pointer;
     white-space: nowrap;
     flex-shrink: 0;
@@ -222,7 +222,7 @@
     display: inline-block;
     text-decoration: none;
     color: var(--color-fg-subtle);
-    font-size: var(--font-size-subtle);
+    font-size: var(--font-size-base);
     margin-block: var(--spacing-vertical);
     &:hover:not(:disabled) {
       color: var(--color-fg-base);

@@ -1,7 +1,10 @@
 .future--grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(1, 1fr);
   gap: 16px;
+  @media (min-width: 621px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .future--card {
@@ -10,6 +13,11 @@
   padding: var(--spacing-vertical);
   overflow: hidden;
   background: var(--color-bg-subtle);
+  height: calc(var(--spacing-vertical-double) * 8);
+  @media (min-width: 621px) {
+    height: auto;
+    max-height: calc(var(--spacing-vertical-double) * 16);
+  }
 }
 
 .future--card-header {

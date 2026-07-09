@@ -9,7 +9,7 @@ import * as Lexxy from "lexxy";
 
 /**
  * Configure Lexxy editors for 'inline' and 'note' presets.
- * autofocus, placeholder, etc. are HTML attributes on <lexxy-editor> — see bullets/composer/_action_text.html.erb.
+ * autofocus, placeholder, etc. are HTML attributes on <lexxy-editor> — see bullets/_form.html.erb.
  *
  * Reference: https://github.com/basecamp/lexxy?tab=readme-ov-file#lexxyconfigurepresets
  */

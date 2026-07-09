@@ -8,7 +8,7 @@
     width: 100%;
     gap: var(--radius-subtle);
     margin-block: var(--radius-subtle);
-    font-size: clamp(var(--font-size-subtle), 0.5rem + 1cqw, var(--font-size-base));
+    font-size: var(--font-size-base);
 
     @supports (corner-shape: squircle) {
       corner-shape: squircle;
@@ -100,7 +100,6 @@
     align-items: center;
     gap: var(--radius-subtle);
     padding: var(--radius-subtle);
-    background-color: var(--color-bg-subtle);
     border-radius: var(--radius-base);
 
     .pill,

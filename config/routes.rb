@@ -91,6 +91,8 @@ Rails.application.routes.draw do
     post 'home/appearance', to: 'appearances#update', as: :home_appearance
   end
 
+  resource :user, only: :show
+
   resource :menu, controller: 'menu'
   resource :search do
     scope module: :searches do

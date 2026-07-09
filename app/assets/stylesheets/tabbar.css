@@ -1,20 +1,29 @@
 @layer components {
   body:has(> .tabbar--navigation) {
+    --tabbar-scroll-padding: calc(
+      var(--spacing-vertical-double) * 2 +
+      var(--icon-size-base) +
+      var(--spacing-vertical) +
+      max(var(--spacing-vertical-half), env(safe-area-inset-bottom, 0px)) +
+      var(--spacing-vertical-double)
+    );
+
     margin-bottom: 0;
-    padding-bottom: calc(var(--spacing-vertical-double) * 3 + env(safe-area-inset-bottom, 0px));
+    padding-bottom: var(--tabbar-scroll-padding);
+    scroll-padding-bottom: var(--tabbar-scroll-padding);
   }
 
   .tabbar--navigation {
     position: fixed;
     bottom: var(--spacing-vertical-double);
-    border-radius: var(--radius-strong);
+    border-radius: 9999px;
     left: 50%;
     transform: translateX(-50%);
     z-index: var(--z-dropdown);
     display: flex;
     align-items: stretch;
     gap: var(--spacing-horizontal-half);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     padding-bottom: max(var(--spacing-vertical-half), env(safe-area-inset-bottom));
     background-color: var(--color-bg-base);
     border: 1px solid var(--color-stroke-base);
@@ -26,9 +35,10 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: calc(var(--icon-size-base) + var(--spacing-vertical));
+    height: 100%;
+    width: 100%;
     padding: var(--spacing-vertical-half);
-    border-radius: var(--radius-base);
+    border-radius: 9999px;
     color: var(--color-fg-subtle);
     text-decoration: none;
 

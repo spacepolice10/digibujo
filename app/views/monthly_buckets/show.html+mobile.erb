@@ -68,11 +68,13 @@
                       <% end %>
                     </div>
                     <div class="monthly-bucket--date-add">
-                      <%= render "bullets/composer/open_composer_of",
-                            path: new_bullet_path(pops_on: date, bucket_id: @monthly_bucket.bucket.id, bulletable_type: "Event"),
-                            name: "Event",
-                            icon: "circle",
-                            modifier: "event" %>
+                      <%= link_to new_bullet_path(pops_on: date, bucket_id: @monthly_bucket.bucket.id, bulletable_type: "Event"),
+                            data: { turbo_frame: "bullet_composer" },
+                            class: "bullet--composer-create-button bullet--composer-create-button--event",
+                            aria: { label: "Add Event" } do %>
+                        <i class="icon" style="--icon-mask: var(--icon-circle)" aria-hidden="true"></i>
+                        Event
+                      <% end %>
                     </div>
                   </div>
                 </div>
@@ -103,16 +105,22 @@
             <% end %>
           </div>
 
-          <%= render "bullets/composer/open_composer_of",
-                path: new_bullet_path(bucket_id: @monthly_bucket.bucket.id, bulletable_type: "Task"),
-                name: "Task",
-                icon: "square",
-                modifier: "task",
-                hotkey: "Shift+T",
-                hotkey_action: "keydown.shift+t@document->hotkey#click" %>
+          <%= link_to new_bullet_path(bucket_id: @monthly_bucket.bucket.id, bulletable_type: "Task"),
+                data: {
+                  turbo_frame: "bullet_composer",
+                  controller: "hotkey",
+                  hotkey: "Shift+T",
+                  action: "keydown.shift+t@document->hotkey#click"
+                },
+                class: "bullet--composer-create-button bullet--composer-create-button--task hotkey-hint",
+                aria: { label: "Add Task", keyshortcuts: "Shift+T" } do %>
+            <i class="icon" style="--icon-mask: var(--icon-square)" aria-hidden="true"></i>
+            Task
+          <% end %>
         </div>
       </section>
     </div>
   </div>
 
+  <%= render "monthly_buckets/composer_dialog" %>
 </div>

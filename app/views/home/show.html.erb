@@ -39,37 +39,10 @@
   <div class="layout--surface">
     <%= render layout: "home/section", locals: { key: "logs", title: "Logs", icon: "calendar", expanded: @section_expanded_status["logs"] } do %>
       <ul class="layout--list bucket--list">
-        <li class="layout--list-item">
-          <%= link_to daylog_path, class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
-            <div class="bucket--list-item-name">
-              <div class="bucket--list-item-marker" aria-hidden="true"></div>
-              <span class="utilities--line-clamp-1">Today</span>
-            </div>
-
-            <div class="bucket--list-item-meta utilities--line-clamp-1">
-              <span><%= pluralize(@daylog_bullets_number, "bullet") %></span>
-            </div>
-          <% end %>
-        </li>
+        <%= render "home/daylog_list_item", bullets_number: @daylog_bullets_number %>
 
         <% if @future %>
-          <li id="<%= dom_id(@future, :list_item) %>" class="layout--list-item">
-            <%= link_to future_bucket_path(@future.bucketable), class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
-              <div class="bucket--list-item-name">
-                <div
-                  class="bucket--list-item-marker"
-                  data-bucket-colour="<%= @future.colour %>"
-                  aria-hidden="true"
-                ></div>
-
-                <span class="utilities--line-clamp-1"><%= @future.name %></span>
-              </div>
-
-              <div class="bucket--list-item-meta utilities--line-clamp-1">
-                <span><%= @future_monthly_buckets.count %> months</span>
-              </div>
-            <% end %>
-          </li>
+          <%= render "home/future_list_item", future: @future, monthly_buckets: @future_monthly_buckets %>
         <% end %>
 
         <% if @future_monthly_buckets.any? %>

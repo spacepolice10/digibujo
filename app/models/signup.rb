@@ -4,6 +4,8 @@ class Signup
   include ActiveModel::Validations, ActiveModel::Attributes, ActiveModel::Model
 
   FUTURE_BUCKET_NAME = 'Future Log'
+  FUTURE_BUCKET_ICON = 'calendar'
+  FUTURE_BUCKET_COLOUR = 'gold'
   LOOSE_NOTES_NAME = 'Loose Notes'
 
   attr_accessor :email_address, :user
@@ -49,7 +51,12 @@ class Signup
     future_bucket = FutureBucket.find_or_create_by!(user: user)
     return if future_bucket.bucket.present?
 
-    user.buckets.create!(bucketable: future_bucket, name: FUTURE_BUCKET_NAME)
+    user.buckets.create!(
+      bucketable: future_bucket,
+      name: FUTURE_BUCKET_NAME,
+      icon: FUTURE_BUCKET_ICON,
+      colour: FUTURE_BUCKET_COLOUR
+    )
   end
 
   def ensure_loose_notes!
