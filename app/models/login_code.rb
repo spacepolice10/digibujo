@@ -17,6 +17,7 @@ class LoginCode < ApplicationRecord
   end
 
   def self.create_for(user)
+    user.login_codes.delete_all
     code = generate_code
     record = user.login_codes.create!(code_digest: digest(code))
     [record, code]

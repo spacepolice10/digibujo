@@ -10,4 +10,6 @@
   <% end %>
 <% elsif selections&.any? %>
   <%= render "searches/recent", selections: selections %>
+<% else %>
+  <p class="search--empty">No recents yet.</p>
 <% end %>

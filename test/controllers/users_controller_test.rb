@@ -14,7 +14,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select '.session--title', text: 'Account'
     assert_select '.session--description strong', text: @user.email_address
-    assert_select 'form.user--sign-out-form[action=?][data-turbo-confirm=?]', session_path, 'Sign out of Digibujo?'
+    assert_select 'form.user--sign-out-form[action=?][data-turbo-confirm=?]', authentication_path, 'Sign out of Digibujo?'
     assert_select 'button.form--submit', text: /Sign out/
   end
 
@@ -23,6 +23,6 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
 
     get user_path
 
-    assert_redirected_to new_session_path
+    assert_redirected_to new_authentication_path
   end
 end

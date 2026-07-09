@@ -2,9 +2,15 @@
 
 <div class="session--page">
   <div class="form--surface">
-    <%= render "sessions/flash" %>
+    <%= render "authentication/flash" %>
 
-    <%= form_with url: session_code_path, class: "form form--strong" do |form| %>
+    <%= form_with url: authentication_confirmation_path,
+          class: "form form--strong",
+          data: {
+            controller: "form-submit",
+            form_submit_loading_text_value: "Verifying…",
+            action: "turbo:submit-start->form-submit#start turbo:submit-end->form-submit#end"
+          } do |form| %>
       <div class="session--intro">
         <h1 class="session--title">Check your email</h1>
         <p class="form-hint session--description">We sent a 6-character code to <strong><%= @email %></strong>.</p>
@@ -23,9 +29,9 @@
               aria: { label: "6-character login code" } %>
       </div>
 
-      <%= form.submit "Verify code", class: "button--primary form--submit" %>
+      <%= render "authentication/submit_button", form: form, label: "Verify code" %>
     <% end %>
   </div>
 
-  <%= link_to "Didn't receive it? Try again", new_session_path, class: "session--footer-link" %>
+  <%= link_to "Didn't receive it? Try again", new_authentication_path, class: "session--footer-link" %>
 </div>

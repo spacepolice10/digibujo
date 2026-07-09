@@ -121,12 +121,13 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     assert_match "recent alpha", response.body
   end
 
-  test "show with blank query and no selections renders empty palette" do
+  test "show with blank query and no selections renders recents placeholder" do
     get search_path
 
     assert_response :success
     assert_select "h4.search--section-heading", count: 0
     assert_select "ul.menu--palette-list", count: 0
+    assert_match "No recents yet.", response.body
   end
 
   test "show with query does not render recent selections" do

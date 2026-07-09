@@ -34,11 +34,12 @@ module Authentication
 
   def request_authentication
     session[:return_to_after_authenticating] = request.url
-    redirect_to new_session_path
+    redirect_to new_authentication_path
   end
 
   def after_authentication_url
-    session.delete(:return_to_after_authenticating) || root_url
+    return_to = session.delete(:return_to_after_authenticating)
+    url_from(return_to) || root_url
   end
 
   def start_new_session_for(user)
@@ -49,7 +50,27 @@ module Authentication
   end
 
   def terminate_session
-    Current.session.destroy
+    Current.session&.destroy
     cookies.delete(:session_id)
+  end
+
+  def grant_onboarding_access(user)
+    session[:authenticated_user_id] = user.id
+    session[:authenticated_user_at] = Time.current.to_i
+  end
+
+  def clear_onboarding_access
+    session.delete(:authenticated_user_id)
+    session.delete(:authenticated_user_at)
+  end
+
+  def resume_onboarding_user
+    user_id = session[:authenticated_user_id]
+    authenticated_at = session[:authenticated_user_at]
+
+    return unless user_id.present?
+    return unless authenticated_at.present? && Time.at(authenticated_at) >= LoginCode::EXPIRY.ago
+
+    User.find_by(id: user_id)
   end
 end

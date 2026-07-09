@@ -19,7 +19,7 @@
         <img src="/icon.svg" alt="" class="public-logo">
         <span class="public-app-name">Digibujo</span>
       </header>
-      <main class="session-layout--main">
+      <main class="session-layout--main <%= content_for(:main_class) %>">
         <%= yield %>
       </main>
     </div>

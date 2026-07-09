@@ -3,6 +3,17 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
+  test 'needs_onboarding? is true without a future bucket' do
+    assert_predicate users(:one), :needs_onboarding?
+  end
+
+  test 'needs_onboarding? is false with a future bucket' do
+    user = users(:one)
+    FutureBucket.create!(user: user)
+
+    assert_not user.needs_onboarding?
+  end
+
   test 'downcases and strips email_address' do
     user = User.new(email_address: ' DOWNCASED@EXAMPLE.COM ')
     assert_equal('downcased@example.com', user.email_address)

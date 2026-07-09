@@ -45,7 +45,7 @@ module Reviews
     test 'show requires authentication' do
       sign_out
       get review_scheduled_path(from: @today.iso8601, to: @today.iso8601)
-      assert_redirected_to new_session_path
+      assert_redirected_to new_authentication_path
     end
   end
 end

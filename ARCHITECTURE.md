@@ -6,7 +6,7 @@ Framework-agnostic references live in [`docs/`](docs/). Agent workflow rules liv
 
 ## Authentication
 
-Custom session-based auth built with an `Authentication` concern (not Devise). **Passwordless:** users sign in with email + one-time code (`LoginCode`). `SessionsController#create` emails a code and stores `session[:login_email]`; `Sessions::CodesController#create` verifies the code and starts a session. Signup uses `SignupsController` → OTP → `Signups::CompletionsController` to finish profile setup (`session[:auth_flow] == 'signup'`). Sessions are persisted in the `sessions` table; the signed httponly cookie holds `session_id`. `Current.user` / `Current.session` via `ActiveSupport::CurrentAttributes`. Controllers opt out of auth with `allow_unauthenticated_access`. Rate limiting is applied to session create, code create, and signup create.
+Custom session-based auth built with an `Authentication` concern (not Devise). **Passwordless:** users continue with email + one-time code (`LoginCode`). `AuthenticationController#create` validates email, creates the user when needed, sends a code, and stores `session[:login_email]`; `Authentications::ConfirmationsController#create` verifies the code. Users without a future bucket are sent to `OnboardingController` to provision defaults (`Future Log`, current monthly spread, `Loose Notes`); returning users start a session immediately. Logout via `DELETE /authentication`. Persisted sessions live in the `sessions` table; the signed httponly cookie holds `session_id`. `Current.user` / `Current.session` via `ActiveSupport::CurrentAttributes`. Controllers opt out of auth with `allow_unauthenticated_access`. Rate limiting is applied to authentication create, confirmation create, and onboarding create. Auth forms use a `form-submit` Stimulus controller for submit loading state.
 
 ## User Settings
 
@@ -180,10 +180,9 @@ Mutating bullet actions (`create`, `update`, `destroy`, and bullet sub-resources
 root                                         → home#show
 
 # Auth
-resource :session                           → sessions#new/create/destroy
-resource :session/code                      → sessions/codes#new/create
-resource :signup                            → signups#new/create
-resource :signup/completion                 → signups/completions#new/create
+resource :authentication                    → authentication#new/create/destroy
+resource :authentication/confirmation      → authentications/confirmations#new/create
+resource :onboarding                        → onboarding#new/create
 
 # Logs
 resource :daylog                            → daylogs#show

@@ -28,6 +28,10 @@ class User < ApplicationRecord
     collections.merge(Bucket.active).order('buckets.name')
   end
 
+  def needs_onboarding?
+    future_buckets.none?
+  end
+
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
   validates :email_address, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }

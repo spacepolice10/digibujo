@@ -36,6 +36,7 @@ class Signup
 
     ActiveRecord::Base.transaction do
       ensure_future_bucket!
+      ensure_current_monthly_bucket!
       ensure_loose_notes!
     end
 
@@ -56,6 +57,22 @@ class Signup
       name: FUTURE_BUCKET_NAME,
       icon: FUTURE_BUCKET_ICON,
       colour: FUTURE_BUCKET_COLOUR
+    )
+  end
+
+  def ensure_current_monthly_bucket!
+    future_bucket = user.future_buckets.first!
+    period = MonthlyBucket.default_period
+    return if future_bucket.monthly_buckets.exists?(period_from: period[:period_from])
+
+    monthly_bucket = future_bucket.monthly_buckets.create!(
+      user: user,
+      **period
+    )
+    user.buckets.create!(
+      bucketable: monthly_bucket,
+      name: monthly_bucket.period_from.strftime('%B %Y'),
+      icon: 'calendar'
     )
   end
 

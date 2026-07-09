@@ -1,13 +1,19 @@
-<% content_for(:title) { "Sign up" } %>
+<% content_for(:title) { "Continue" } %>
 
 <div class="session--page">
   <div class="form--surface">
-    <%= render "sessions/flash" %>
+    <%= render "authentication/flash" %>
 
-    <%= form_with url: signup_path, class: "form form--strong" do |form| %>
+    <%= form_with url: authentication_path,
+          class: "form form--strong",
+          data: {
+            controller: "form-submit",
+            form_submit_loading_text_value: "Sending code…",
+            action: "turbo:submit-start->form-submit#start turbo:submit-end->form-submit#end"
+          } do |form| %>
       <div class="session--intro">
-        <h1 class="session--title">Sign up</h1>
-        <p class="form-hint session--description">Enter your email to get started. We'll send a one-time code to verify it.</p>
+        <h1 class="session--title">Continue with email</h1>
+        <p class="form-hint session--description">Enter your email and we'll send you a one-time code to sign in or create an account.</p>
       </div>
 
       <% if @signup.errors.any? %>
@@ -31,11 +37,7 @@
               value: params[:email_address] %>
       </div>
 
-      <%= form.submit "Sign up", class: "button--primary form--submit" %>
+      <%= render "authentication/submit_button", form: form, label: "Continue" %>
     <% end %>
   </div>
-
-  <%= link_to new_session_path, class: "session--footer-link" do %>
-    Already have an account? Sign in
-  <% end %>
 </div>

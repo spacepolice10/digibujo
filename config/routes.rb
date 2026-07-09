@@ -9,17 +9,13 @@ Rails.application.routes.draw do
   root 'home#show'
 
   # --- Authentication ---
-  resource :session do
-    scope module: :sessions do
-      resource :code, only: %i[new create]
+  resource :authentication, only: %i[new create destroy], controller: 'authentication' do
+    scope module: :authentications do
+      resource :confirmation, only: %i[new create]
     end
   end
 
-  resource :signup, only: %i[new create] do
-    scope module: :signups do
-      resource :completion, only: %i[new create]
-    end
-  end
+  resource :onboarding, only: %i[new create], controller: 'onboarding'
 
   # --- Logs ---
   resource :daylog, only: :show, controller: 'daylogs'

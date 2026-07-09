@@ -88,19 +88,21 @@
   .layout--surface:has([data-composer-form]) {
     position: relative;
 
-    &::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      background: oklch(0% 0 0 / 0.15);
-      pointer-events: none;
-      z-index: 1;
-      opacity: 1;
-      transition: opacity 150ms ease;
+    @media (min-width: 621px) {
+      &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: oklch(0% 0 0 / 0.15);
+        pointer-events: none;
+        z-index: 1;
+        opacity: 1;
+        transition: opacity 150ms ease;
 
-      @starting-style {
-        opacity: 0;
+        @starting-style {
+          opacity: 0;
+        }
       }
     }
 

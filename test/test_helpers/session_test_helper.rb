@@ -14,6 +14,23 @@ module SessionTestHelper
     Current.session&.destroy!
     cookies.delete('session_id')
   end
+
+  def request_login_code(email_address)
+    ActionMailer::Base.deliveries.clear
+    post authentication_path, params: { email_address: email_address }
+    perform_enqueued_jobs
+    login_code_from_last_email
+  end
+
+  def login_code_from_last_email
+    mail = ActionMailer::Base.deliveries.last
+    assert mail, 'expected a login code email'
+    mail.body.encoded[/\b[A-Z0-9]{#{LoginCode::CODE_LENGTH}}\b/]
+  end
+
+  def confirm_login_code(code)
+    post authentication_confirmation_path, params: { code: code }
+  end
 end
 
 ActiveSupport.on_load(:action_dispatch_integration_test) do

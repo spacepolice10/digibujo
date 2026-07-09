@@ -25,24 +25,28 @@ class SignupTest < ActiveSupport::TestCase
     end
   end
 
-  test 'complete provisions future bucket and loose notes' do
+  test 'complete provisions future bucket, monthly spread, and loose notes' do
     user = users(:one)
     signup = Signup.new(user: user)
+    period = MonthlyBucket.default_period
 
     assert signup.complete
     assert user.buckets.exists?(bucketable_type: 'FutureBucket', name: 'future log')
+    assert user.monthly_buckets.exists?(period_from: period[:period_from])
     assert user.buckets.exists?(bucketable_type: 'Collection', name: 'loose notes')
   end
 
   test 'complete is idempotent' do
     user = users(:two)
     signup = Signup.new(user: user)
+    period = MonthlyBucket.default_period
 
     assert signup.complete
     assert signup.complete
 
     assert_equal 1, FutureBucket.where(user: user).count
     assert_equal 1, user.buckets.where(bucketable_type: 'FutureBucket', name: 'future log').count
+    assert_equal 1, user.monthly_buckets.where(period_from: period[:period_from]).count
     assert_equal 1, user.buckets.where(bucketable_type: 'Collection', name: 'loose notes').count
   end
 end

@@ -109,4 +109,64 @@
     display: flex;
     justify-content: center;
   }
+
+  .form--submit .form-submit--spinner {
+    width: var(--icon-size-subtle);
+    height: var(--icon-size-subtle);
+  }
+
+  .form--submit[aria-busy="true"] .form-submit--spinner:not([hidden]) {
+    display: inline-block;
+  }
+
+  .onboarding--page .session--description {
+    min-height: auto;
+    display: block;
+    -webkit-line-clamp: unset;
+  }
+
+  .onboarding--lede {
+    margin-block-end: var(--spacing-vertical);
+  }
+
+  .onboarding--setup-label {
+    margin: 0 0 var(--spacing-vertical-half);
+    font-weight: var(--font-weight-strong);
+    color: var(--color-fg-base);
+  }
+
+  .onboarding--basics {
+    margin: 0 0 var(--spacing-vertical-double);
+    padding-inline-start: var(--spacing-horizontal);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical);
+    font-size: var(--font-size-subtle);
+    color: var(--color-fg-subtle);
+  }
+
+  .onboarding--basics li {
+    padding-inline-start: var(--spacing-horizontal-half);
+  }
+
+  .onboarding--basics strong {
+    color: var(--color-fg-base);
+    font-weight: var(--font-weight-strong);
+  }
+
+  .onboarding--external-link {
+    color: var(--color-fg-base);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+
+    @media (hover: hover) {
+      &:hover {
+        color: var(--color-fg-subtle);
+      }
+    }
+  }
+
+  .onboarding--form {
+    margin-block-start: 0;
+  }
 }

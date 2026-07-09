@@ -19,6 +19,18 @@ class LoginCodeTest < ActiveSupport::TestCase
     assert record.code_matches?(code)
   end
 
+  test 'create_for replaces previous codes' do
+    _first_record, first_code = LoginCode.create_for(@user)
+    first_record_id = @user.login_codes.last.id
+
+    _second_record, second_code = LoginCode.create_for(@user)
+
+    assert_equal 1, @user.login_codes.count
+    assert_not LoginCode.exists?(id: first_record_id)
+    assert @user.login_codes.sole.code_matches?(second_code)
+    assert_not @user.login_codes.sole.code_matches?(first_code)
+  end
+
   test 'code_matches? returns true for correct code' do
     record, code = LoginCode.create_for(@user)
     assert record.code_matches?(code)

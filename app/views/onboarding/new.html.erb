@@ -1,0 +1,56 @@
+<% content_for(:title) { "Welcome" } %>
+<% content_for(:main_class) { "session-layout--main-wide" } %>
+
+<div class="session--page onboarding--page">
+  <div class="form--surface">
+    <%= render "authentication/flash" %>
+
+    <% if @signup.errors.any? %>
+      <div class="form--errors" role="alert">
+        <ul>
+          <% @signup.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="session--intro">
+      <h1 class="session--title">Welcome to Digibujo</h1>
+      <p class="form-hint session--description onboarding--lede">
+        You're signed in as <strong><%= @signup.user.email_address %></strong>.
+        Digibujo follows the
+        <%= link_to "Bullet Journal", "https://bulletjournal.com/", target: "_blank", rel: "noopener noreferrer", class: "onboarding--external-link" %>
+        method — rapid logging on paper, adapted for a digital workflow.
+      </p>
+    </div>
+
+    <p class="form-hint onboarding--setup-label">We'll set up:</p>
+
+    <ul class="onboarding--basics">
+      <li>
+        <strong>Monthly spread</strong> — your calendar for <%= Date.current.strftime("%B") %>.
+        Plan days, park ideas in the unplanned column, then assign them when you're ready.
+      </li>
+      <li>
+        <strong>Future log</strong> — hold tasks and events for months you have not opened yet.
+      </li>
+      <li>
+        <strong>Loose Notes</strong> — a catch-all collection for quick captures before you sort them.
+      </li>
+      <li>
+        <strong>Daily log</strong> — open the daylog anytime to see what is on today's page and add bullets as you go.
+      </li>
+    </ul>
+
+    <%= form_with url: onboarding_path,
+          class: "form form--strong onboarding--form",
+          data: {
+            controller: "form-submit",
+            form_submit_loading_text_value: "Setting up…",
+            action: "turbo:submit-start->form-submit#start turbo:submit-end->form-submit#end"
+          } do |form| %>
+      <%= render "authentication/submit_button", form: form, label: "Start my journal" %>
+    <% end %>
+  </div>
+</div>

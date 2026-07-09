@@ -98,7 +98,7 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
 
     get review_path
 
-    assert_redirected_to new_session_path
+    assert_redirected_to new_authentication_path
   end
 
   test 'show renders empty state when nothing is in review' do

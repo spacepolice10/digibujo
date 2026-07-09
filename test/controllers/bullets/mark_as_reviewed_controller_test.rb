@@ -56,6 +56,6 @@ class Bullets::MarkAsReviewedControllerTest < ActionDispatch::IntegrationTest
 
     post mark_as_reviewed_path, params: { from: @today.iso8601, to: @today.iso8601 }
 
-    assert_redirected_to new_session_path
+    assert_redirected_to new_authentication_path
   end
 end
