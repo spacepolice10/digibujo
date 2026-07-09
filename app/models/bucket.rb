@@ -12,6 +12,7 @@ class Bucket < ApplicationRecord
 
   normalizes :name, with: ->(name) { name.strip.downcase }
 
+  after_create :record_created_activity
   after_update :record_updated_activity
 
   private

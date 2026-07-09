@@ -46,6 +46,9 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
     assert @user.buckets.exists?(bucketable_type: 'FutureBucket', name: 'future log')
     assert @user.monthly_buckets.exists?(period_from: MonthlyBucket.default_period[:period_from])
     assert @user.buckets.exists?(bucketable_type: 'Collection', name: 'loose notes')
-    assert @user.activities.exists?
+    future_bucket = @user.buckets.find_by!(bucketable_type: 'FutureBucket')
+    monthly_bucket = @user.buckets.find_by!(bucketable_type: 'MonthlyBucket')
+    assert future_bucket.activities.exists?(action: 'created')
+    assert monthly_bucket.activities.exists?(action: 'created')
   end
 end

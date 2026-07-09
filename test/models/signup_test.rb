@@ -34,10 +34,10 @@ class SignupTest < ActiveSupport::TestCase
     assert user.buckets.exists?(bucketable_type: 'FutureBucket', name: 'future log')
     assert user.monthly_buckets.exists?(period_from: period[:period_from])
     assert user.buckets.exists?(bucketable_type: 'Collection', name: 'loose notes')
-    assert user.activities.exists?
-    assert_includes user.activities.pluck(:action), 'completed'
-    assert_includes user.activities.pluck(:action), 'collected'
-    assert_includes user.activities.pluck(:action), 'popped'
+    future_bucket = user.buckets.find_by!(bucketable_type: 'FutureBucket')
+    monthly_bucket = user.buckets.find_by!(bucketable_type: 'MonthlyBucket')
+    assert future_bucket.activities.exists?(action: 'created')
+    assert monthly_bucket.activities.exists?(action: 'created')
   end
 
   test 'complete is idempotent' do
@@ -52,6 +52,6 @@ class SignupTest < ActiveSupport::TestCase
     assert_equal 1, user.buckets.where(bucketable_type: 'FutureBucket', name: 'future log').count
     assert_equal 1, user.monthly_buckets.where(period_from: period[:period_from]).count
     assert_equal 1, user.buckets.where(bucketable_type: 'Collection', name: 'loose notes').count
-    assert_equal 5, user.activities.count
+    assert_equal 3, user.activities.where(action: 'created').count
   end
 end

@@ -38,7 +38,6 @@ class Signup
       ensure_future_bucket!
       ensure_current_monthly_bucket!
       ensure_loose_notes!
-      seed_sample_activities!
     end
 
     true
@@ -85,24 +84,4 @@ class Signup
     user.buckets.create!(bucketable: collection, name: LOOSE_NOTES_NAME)
   end
 
-  def seed_sample_activities!
-    return if user.activities.exists?
-
-    today = Date.current
-    loose_notes = user.buckets.find_by!(bucketable_type: 'Collection', name: LOOSE_NOTES_NAME.downcase)
-
-    explore = user.bullets.create!(bulletable: Task.new(body: 'Welcome'), pops_on: today)
-    explore.bulletable.update!(body: 'Explore your monthly spread')
-
-    journal = user.bullets.create!(bulletable: Task.new(body: 'Set up your journal'), pops_on: today)
-    journal.bulletable.complete!
-
-    idea = user.bullets.create!(bulletable: Note.new(body: 'Capture ideas here before you sort them'))
-    idea.collect!(bucket_id: loose_notes.id)
-
-    daily = user.bullets.create!(bulletable: Task.new(body: 'Try the daily log'), pops_on: today - 1)
-    daily.pop!(pops_on: today)
-
-    loose_notes.update!(description: 'Quick captures before you sort them')
-  end
 end
