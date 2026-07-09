@@ -128,7 +128,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select 'header.header details.dropdown.header--menu' do
-      assert_select 'summary.button--accent', text: 'Bullet Drop'
+      assert_select 'summary.button--accent', text: 'Digibujo'
       assert_select '.dropdown-body[inert]'
       assert_select 'form.search--form[action=?]', search_path
       assert_select 'turbo-frame#menu_search'

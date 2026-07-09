@@ -1,7 +1,7 @@
 @layer components {
   body:has(> .tabbar--navigation) {
     --tabbar-scroll-padding: calc(
-      var(--spacing-vertical-double) * 2 +
+      var(--spacing-vertical-double) +
       var(--icon-size-base) +
       var(--spacing-vertical) +
       max(var(--spacing-vertical-half), env(safe-area-inset-bottom, 0px)) +
@@ -42,9 +42,11 @@
     color: var(--color-fg-subtle);
     text-decoration: none;
 
-    .icon {
+    .icon,
+    .tabbar-item--logo {
       width: var(--icon-size-base);
       height: var(--icon-size-base);
+      flex-shrink: 0;
     }
 
     @media (hover: hover) {
@@ -60,7 +62,7 @@
 
     &.tabbar-item--active {
       color: var(--color-fg-base);
-      background: var(--model-color-2-bg);
+      background: var(--color-accent-bg);
     }
   }
 }

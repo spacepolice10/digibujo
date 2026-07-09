@@ -6,7 +6,7 @@
   }
 
   body > .layout--workspace {
-    max-width: var(--breakpoint-pc);
+    max-width: var(--breakpoint-laptop);
     width: 100%;
   }
 

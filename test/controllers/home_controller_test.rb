@@ -150,6 +150,10 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     assert_select '.menu--search[data-combobox-path-value=?]', search_path
     assert_select 'details.menu--create-bucket[data-controller=?]', 'dropdown'
     assert_select 'nav.menu--navigation a[href=?]', activities_path
+    assert_select 'nav.menu--navigation a[href=?]', review_path
+    assert_select 'nav.menu--navigation a[href=?]', archived_index_path
+    assert_select 'nav.menu--navigation a[href=?]', published_index_path
+    assert_select 'nav.menu--navigation a[href=?]', daylog_path, count: 0
     assert_select 'nav.menu--navigation a[href=?]', home_path, count: 0
     assert_select 'details.home--section[data-controller=?]', 'section', count: 0
     assert_select 'details.home--section summary .home--section-name', text: 'Projects'

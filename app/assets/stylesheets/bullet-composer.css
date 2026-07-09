@@ -73,11 +73,11 @@
     }
   }
 
-  .bullet-composer--dock-fixed {
+  .bullet-composer--dock-mobile {
     position: fixed;
     left: var(--spacing-horizontal);
     right: var(--spacing-horizontal);
-    bottom: var(--tabbar-scroll-padding, calc(var(--spacing-vertical-double) * 3 + env(safe-area-inset-bottom, 0px)));
+    bottom: calc(var(--tabbar-scroll-padding ) * 0.75);
     width: auto;
 
     @media (min-width: 621px) {
