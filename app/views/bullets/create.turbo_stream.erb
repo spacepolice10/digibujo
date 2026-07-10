@@ -6,13 +6,7 @@
                "bullets/bullet"
               end %>
 
-<% if prefix.present? && prefix != id %>
-  <% target = id.sub(/composer/, 'container') %>
-<% elsif @bullet&.pops_on %>
-  <% target = "monthly_bucket_bullets_#{@bullet.pops_on.to_date}_container" %>
-<% else %>
-  <% target = "monthly_bucket_bullets_unplanned_container" %>
-<% end %>
+<% target = id.sub(/composer/, 'container') if prefix.present? && prefix != id %>
 
 <%= turbo_stream.append target do %>
   <%= render partial: partial, locals: { bullet: @bullet } %>

@@ -73,8 +73,24 @@ class MonthlyBucketsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select 'a[aria-label=?]', 'Add Event'
     assert_select 'a[aria-label=?]', 'Add Task'
-    assert_select 'dialog#monthly_bucket_composer.bullet-composer--dialog'
-    assert_select 'dialog#monthly_bucket_composer turbo-frame#bullet_composer'
+    assert_select 'dialog#monthly_bucket_composer', count: 0
+    assert_select "turbo-frame#monthly_bucket_bullets_#{day.to_date}_composer[data-controller=?]", 'composer-picker' do
+      assert_select 'a[data-turbo-frame=?][href=?]',
+                    "monthly_bucket_bullets_#{day.to_date}_composer",
+                    new_bullet_path(
+                      pops_on: day,
+                      bucket_id: monthly_bucket.bucket.id,
+                      bulletable_type: 'Event'
+                    )
+    end
+    assert_select 'turbo-frame#monthly_bucket_bullets_unplanned_composer[data-controller=?]', 'composer-picker' do
+      assert_select 'a[data-turbo-frame=?][href=?]',
+                    'monthly_bucket_bullets_unplanned_composer',
+                    new_bullet_path(
+                      bucket_id: monthly_bucket.bucket.id,
+                      bulletable_type: 'Task'
+                    )
+    end
     assert_select "turbo-frame##{dom_id(monthly_bucket, day)}", count: 0
     assert_match 'Planned task', response.body
   end
