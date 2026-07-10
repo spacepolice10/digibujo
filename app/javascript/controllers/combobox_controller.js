@@ -4,9 +4,10 @@ import { debounce } from "helpers/debounce"
 import { navigateCombobox } from "helpers/combobox"
 
 const DEFAULT_DEBOUNCE_MS = 80
+const MOBILE_DEACTIVATE_MS = 200
 
 export default class extends Controller {
-  static targets = ["searchForm", "searchField", "item"]
+  static targets = ["searchForm", "searchField", "item", "palette"]
 
   static values = {
     path: String,
@@ -15,8 +16,13 @@ export default class extends Controller {
 
   #abort = null
   #debouncedSearch = null
+  #deactivateTimer = null
 
   connect() {
+    this.mobileSearch =
+      this.element.closest(".menu--page-mobile")?.querySelector(".menu--search") ===
+      this.element
+
     this.#debouncedSearch = debounce(
       (input) => this.#performSearch(input),
       this.debounceMsValue,
@@ -24,7 +30,51 @@ export default class extends Controller {
   }
 
   disconnect() {
+    this.#cancelDeactivate()
     this.#cancelPendingSearch()
+  }
+
+  activate() {
+    if (!this.mobileSearch) return
+
+    this.#cancelDeactivate()
+    this.element.classList.add("menu--search-active")
+  }
+
+  deactivate() {
+    if (!this.mobileSearch) return
+
+    this.#cancelDeactivate()
+    this.#deactivateTimer = window.setTimeout(() => {
+      this.element.classList.remove("menu--search-active")
+      this.#deactivateTimer = null
+    }, MOBILE_DEACTIVATE_MS)
+  }
+
+  keepFocus(event) {
+    if (!this.mobileSearch) return
+
+    event.preventDefault()
+  }
+
+  dismiss(event) {
+    if (!this.mobileSearch) return
+
+    event.preventDefault()
+    this.#cancelDeactivate()
+    this.element.classList.remove("menu--search-active")
+
+    if (!this.hasSearchFieldTarget) return
+
+    this.searchFieldTarget.value = ""
+    this.#cancelPendingSearch()
+
+    if (this.hasPathValue) {
+      this.#abort = new AbortController()
+      this.#performSearch(this.searchFieldTarget)
+    }
+
+    this.searchFieldTarget.blur()
   }
 
   search() {
@@ -124,5 +174,12 @@ export default class extends Controller {
   #cancelPendingSearch() {
     this.#abort?.abort()
     this.#abort = null
+  }
+
+  #cancelDeactivate() {
+    if (this.#deactivateTimer == null) return
+
+    window.clearTimeout(this.#deactivateTimer)
+    this.#deactivateTimer = null
   }
 }

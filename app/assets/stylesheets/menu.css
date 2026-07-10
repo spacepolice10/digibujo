@@ -224,15 +224,15 @@
     min-height: 0;
   }
 
-  .menu--page-mobile:has(.menu--search:focus-within)>.menu--search {
+  .menu--page-mobile:has(.menu--search-active)>.menu--search {
     flex: 1;
   }
 
-  .menu--page-mobile:has(.menu--search:focus-within)>.menu--scroll {
+  .menu--page-mobile:has(.menu--search-active)>.menu--scroll {
     display: none;
   }
 
-  .menu--page-mobile .menu--search:not(:focus-within) .menu--palette {
+  .menu--page-mobile .menu--search:not(.menu--search-active) .menu--palette {
     display: none;
   }
 

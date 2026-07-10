@@ -26,6 +26,7 @@ class MenuControllerTest < ActionDispatch::IntegrationTest
     assert_select "label.form-label.utilities--sr-only[for=?]", "q", text: "Search bullets, projects, collections, and people"
     assert_select "input.form-input[placeholder=?]", "Search…"
     assert_select "turbo-frame#menu_search[src=?]", search_path
+    assert_select "button.search--dismiss", count: 0
     assert_select "[data-search-replace-link-value]", count: 0
     assert_select "[data-search-history-url-value]", count: 0
   end

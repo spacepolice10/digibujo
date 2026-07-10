@@ -11,6 +11,6 @@
           menu_target: "focus",
           search_target: "textform",
           combobox_target: "searchField",
-          action: "input->combobox#search keydown->combobox#navigate"
+          action: "focus->combobox#activate blur->combobox#deactivate input->combobox#search keydown->combobox#navigate"
         } %>
 <% end %>
