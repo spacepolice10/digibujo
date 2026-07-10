@@ -5,7 +5,8 @@
              else
                "bullets/bullet"
               end %>
-<% target = id.sub(/composer/, 'container') if prefix.present? && prefix != id %>
+<% target = id.sub("bullets_composer", "bullets_container").sub(/_composer\z/, "_container") if id.present? %>
+
 
 <%= turbo_stream.remove "no_bullets_container" %>
 

@@ -1,4 +1,4 @@
-<%# locals: (id:) %>
+<%# locals: (id:, composer_id: "bullet_composer") %>
 <dialog
   id="<%= id %>"
   class="dialog dialog--large bullet-composer--dialog"
@@ -25,6 +25,6 @@
   </div>
 
   <div class="dialog--body">
-    <turbo-frame id="bullet_composer"></turbo-frame>
+    <turbo-frame id="<%= composer_id %>"></turbo-frame>
   </div>
 </dialog>

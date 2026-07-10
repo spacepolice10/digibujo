@@ -61,7 +61,7 @@
     </div>
 
     <div data-bulk-menu-target="list" class="layout--surface layout--list">
-      <%= render "bullets/composer/jump" %>
+      <%= render "bullets/composer/jump", composer_id: "daylog_bullets_composer" %>
 
 
         <%= render layout: "pagination/paginated_list",
@@ -89,7 +89,9 @@
             composer_id: "daylog_bullets_composer" %>
 
       <% if request.variant.include?(:mobile) %>
-        <%= render "bullets/composer/dialog", id: "daylog_composer" %>
+        <%= render "bullets/composer/dialog",
+              id: "daylog_composer",
+              composer_id: "daylog_bullets_composer" %>
       <% end %>
     </div>
   </turbo-frame>

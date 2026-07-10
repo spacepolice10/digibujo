@@ -6,13 +6,13 @@ export default class extends Controller {
   }
 
   beforeFrameRender(event) {
-    if (event.target.id != "bullet_composer") return
+    if (event.target != this.composerFrame) return
     if (this.element.open) return
     this.element.showModal()
   }
 
   frameLoad(event) {
-    if (event.target.id != "bullet_composer") return
+    if (event.target != this.composerFrame) return
     event.target.querySelector("lexxy-editor")?.focus()
   }
 
@@ -25,7 +25,7 @@ export default class extends Controller {
   }
 
   closed() {
-    const frame = this.element.querySelector("#bullet_composer")
+    const frame = this.composerFrame
     if (!frame) return
     frame.removeAttribute("src")
     frame.innerHTML = ""
@@ -41,5 +41,9 @@ export default class extends Controller {
     if (!event.target.classList?.contains("bullet-composer")) return
     if (event.detail.formSubmission?.submitter?.name == "another") return
     this.close()
+  }
+
+  get composerFrame() {
+    return this.element.querySelector(".dialog--body turbo-frame")
   }
 }

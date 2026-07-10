@@ -96,7 +96,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match(/Add bullet/, response.body)
   end
 
-  test 'mobile daylog renders composer dialog and dock links into bullet_composer frame' do
+  test 'mobile daylog renders composer dialog and dock links into daylog_bullets_composer frame' do
     selected_date = Date.current - 2.days
     mobile_ua = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)'
 
@@ -104,10 +104,9 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select 'dialog#daylog_composer.bullet-composer--dialog'
-    assert_select 'dialog#daylog_composer turbo-frame#bullet_composer'
-    assert_select 'turbo-frame#daylog_bullets_composer', count: 0
+    assert_select 'dialog#daylog_composer turbo-frame#daylog_bullets_composer'
     assert_select 'a[data-turbo-frame=?][href=?]',
-                  'bullet_composer',
+                  'daylog_bullets_composer',
                   new_bullet_path(
                     pops_on: selected_date,
                     bulletable_type: 'Task'

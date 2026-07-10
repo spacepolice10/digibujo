@@ -1,6 +1,7 @@
-<%= link_to "#bullet_composer",
+<%# locals: (composer_id:) %>
+<%= link_to "##{composer_id}",
       class: "button--primary bullet-composer--jump",
-      data: { controller: "composer-jump", action: "composer-jump#scroll:prevent" },
+      data: { controller: "composer-jump", composer_jump_composer_id_value: composer_id, action: "composer-jump#scroll:prevent" },
       aria: { label: "Jump to add options" } do %>
   <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
   Add bullet

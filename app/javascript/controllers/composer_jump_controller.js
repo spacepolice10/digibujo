@@ -1,8 +1,10 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
+  static values = { composerId: String }
+
   scroll() {
-    const composer = document.getElementById("bullet_composer")
+    const composer = document.getElementById(this.composerIdValue)
     if (!composer) return
 
     composer.scrollIntoView({ block: "nearest" })

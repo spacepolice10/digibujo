@@ -6,7 +6,6 @@
   { name: "Voice", icon: "microphone", modifier: "voice", hotkey: "Shift+V", hotkey_action: "keydown.shift+v@document->hotkey#click" }
 ] %>
 <% mobile = request.variant.include?(:mobile) %>
-<% frame_target = mobile ? "bullet_composer" : composer_id %>
 <% buttons = capture do %>
   <div class="bullet--composer-buttons">
     <% types.each do |type| %>
@@ -15,7 +14,7 @@
               ("hotkey-hint" if type[:hotkey]),
             ].compact,
             data: {
-              turbo_frame: frame_target,
+              turbo_frame: composer_id,
               composer_transition_type: type[:modifier],
               controller: ("hotkey" if type[:hotkey]),
               hotkey: type[:hotkey],

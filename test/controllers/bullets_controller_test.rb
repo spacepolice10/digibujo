@@ -198,6 +198,49 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'dialog', count: 0
   end
 
+  test 'create turbo stream appends bullet to daylog list from mobile composer frame' do
+    mobile_ua = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)'
+
+    assert_difference -> { @user.bullets.count }, 1 do
+      post bullets_path,
+           params: {
+             bullet: {
+               bulletable_type: 'Task',
+               bulletable_attributes: { body: 'Mobile daylog task' },
+               pops_on: Date.current.iso8601
+             }
+           },
+           headers: { 'Turbo-Frame' => 'daylog_bullets_composer', 'User-Agent' => mobile_ua },
+           as: :turbo_stream
+    end
+
+    assert_response :success
+    assert_match(/turbo-stream action="append" target="daylog_bullets_container"/, response.body)
+    assert_match(/turbo-stream action="remove" target="no_bullets_container"/, response.body)
+  end
+
+  test 'create turbo stream appends bullet to collection list from composer frame' do
+    collection = create_collection!(@user, name: 'Inbox')
+    composer_frame = ActionView::RecordIdentifier.dom_id(collection, :bullets_composer)
+    container_id = ActionView::RecordIdentifier.dom_id(collection, :bullets_container)
+
+    assert_difference -> { @user.bullets.count }, 1 do
+      post bullets_path,
+           params: {
+             bullet: {
+               bulletable_type: 'Task',
+               bulletable_attributes: { body: 'Collection task' },
+               bucket_id: collection.bucket.id
+             }
+           },
+           headers: { 'Turbo-Frame' => composer_frame },
+           as: :turbo_stream
+    end
+
+    assert_response :success
+    assert_match(/turbo-stream action="append" target="#{container_id}"/, response.body)
+  end
+
   test 'create sets note mood from bulletable_attributes' do
     post bullets_path,
          params: {

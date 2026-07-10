@@ -36,13 +36,13 @@
 
       <div class="layout--surface">
         <div
-          id="<%= dom_id(@collection, :bullets_container) %>"
           data-bulk-menu-target="list"
         >
           <% if @bullets.any? %>
             <%= render layout: "pagination/paginated_list",
                   locals: {
                     page: @page,
+                    container_id: dom_id(@collection, :bullets_container),
                     pagination_link_path: ->(next_param) { collection_path(@collection, page: next_param) }
                   } do %>
               <% @page.records.each do |bullet| %>
@@ -58,6 +58,8 @@
   </div>
 
   <% if request.variant.include?(:mobile) %>
-    <%= render "bullets/composer/dialog", id: dom_id(@collection, :composer) %>
+    <%= render "bullets/composer/dialog",
+          id: dom_id(@collection, :composer),
+          composer_id: dom_id(@collection, :bullets_composer) %>
   <% end %>
 </div>
