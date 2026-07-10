@@ -6,5 +6,6 @@ class FutureBucketsController < ApplicationController
     @future = future_bucket.bucket
     @future_bucket = future_bucket
     @children = future_bucket.monthly_buckets.includes(:bucket)
+    @bullets = future_bucket.bullets.order(created_at: :asc).includes(:bulletable)
   end
 end

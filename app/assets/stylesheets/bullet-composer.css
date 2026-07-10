@@ -42,14 +42,13 @@
     position: sticky;
     bottom: calc(var(--spacing-vertical-double) + var(--icon-size-base));
     display: flex;
-    background: var(--color-bg-base);
+    background: var(--color-bg-subtle);
     justify-content: center;
     width: 100%;
     padding: var(--spacing-vertical) var(--spacing-horizontal);
     margin-block: var(--spacing-vertical);
     border: 1px solid var(--color-stroke-base);
     border-radius: var(--radius-strong);
-    background: var(--color-bg-base);
     transition: box-shadow 0.15s ease;
 
     @container scroll-state(stuck: bottom) {
@@ -76,7 +75,7 @@
 
   .bullet-composer--dock-mobile {
     position: fixed;
-    background: var(--color-bg-base);
+    background: var(--color-bg-subtle);
     z-index: var(--z-dropdown);
     left: var(--spacing-horizontal);
     right: var(--spacing-horizontal);

@@ -1,17 +1,30 @@
 <!DOCTYPE html>
-<html<% if Current.user %> data-appearance="<%= Current.user.settings!.appearance %>"<% end %> data-controller="hotkey-hint">
+
+<html
+  <% if Current.user %>
+    data-appearance="<%= Current.user.settings!.appearance %>"
+  <% end %>
+  data-controller="hotkey-hint"
+>
   <head>
     <title><%= content_for(:title) || "Digibujo" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    >
+
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Digibujo">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="turbo-refresh-method" content="morph">
     <meta name="turbo-refresh-scroll" content="preserve">
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= yield :head %>
     <%= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
@@ -25,16 +38,27 @@
 
   <body data-controller="dialog timezone-cookie bulk-menu">
     <%= render "shared/svg_filters" %>
-<div id="toasts" class="toasts" data-controller="toasts" aria-live="polite"></div>
+
+    <div
+      id="toasts"
+      class="toasts"
+      data-controller="toasts"
+      aria-live="polite"
+    ></div>
+
     <% unless request.variant.include?(:mobile) %>
       <%= render "shared/header" %>
       <%= render "shared/account_dock" %>
     <% end %>
+
     <%= yield %>
+
     <% if Current.user %>
       <%= render "bullets/bulk_menu" %>
     <% end %>
+
     <%= render "shared/footer" %>
+
     <%= render "shared/dialog", id: "dialog" do %>
       <%= turbo_frame_tag "modal" %>
     <% end %>

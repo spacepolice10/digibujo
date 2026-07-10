@@ -4,6 +4,11 @@
     flex-direction: column;
   }
 
+.layout--page.daylog {
+  padding: var(--spacing-vertical) var(--spacing-horizontal);
+  max-width: var(--breakpoint-laptop);
+}
+
   .daylog--page #bullets_container {
     margin-block-end: var(--spacing-vertical);
   }

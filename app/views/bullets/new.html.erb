@@ -1,9 +1,20 @@
 <% content_for(:title) { "New bullet" } %>
 
 <div class="session-layout">
-<turbo-frame
-  id="<%= turbo_frame_request_id %>"
->
+  <div class="layout--header">
+    <%= link_to daylog_path, class: "button--secondary" do %>
+      <i
+        class="icon"
+        style="--icon-mask: var(--icon-arrow-left)"
+        aria-hidden="true"
+      ></i>
+      Back
+    <% end %>
+
+    <div></div>
+  </div>
+
+  <turbo-frame id="<%= turbo_frame_request_id %>" class="utilities--contents">
     <%= render "bullets/form", bullet: @bullet, bullets_path: bullets_path, return_to: @return_to, editing: true %>
-</turbo-frame>
+  </turbo-frame>
 </div>

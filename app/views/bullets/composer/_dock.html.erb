@@ -14,7 +14,6 @@
               ("hotkey-hint" if type[:hotkey]),
             ].compact,
             data: {
-              turbo_frame: composer_id,
               composer_transition_type: type[:modifier],
               controller: ("hotkey" if type[:hotkey]),
               hotkey: type[:hotkey],
@@ -29,9 +28,7 @@
   </div>
 <% end %>
 <div class="bullet-composer--dock<%= " bullet-composer--dock-mobile" if mobile %>">
-  <% if mobile %>
-    <%= buttons %>
-  <% else %>
+
     <turbo-frame
       id="<%= composer_id %>"
       data-controller="composer-picker"
@@ -40,5 +37,4 @@
     >
       <%= buttons %>
     </turbo-frame>
-  <% end %>
 </div>

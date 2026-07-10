@@ -16,10 +16,6 @@
     -webkit-line-clamp: 1;
   }
 
-  .utilities--text-sm {
-    font-size: var(--font-size-subtle);
-  }
-
   .utilities--contents {
     display: contents;
   }

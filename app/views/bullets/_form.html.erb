@@ -35,6 +35,15 @@
   <% end %>
 
   <div class="bullet-composer--rail">
+
+    <button
+    type="button"
+    class="button--tertiary button--icon-subtle bullet-composer--type-dismiss"
+    data-action="composer#cancel"
+    aria-label="Close composer"
+  >
+    <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+  </button>
     <span
       class="bullet-composer--type-pill"
       data-bullet-type="<%= bullet.bulletable_type.downcase %>"
@@ -42,14 +51,6 @@
     >
       <%= bullet.bulletable_type %>
 
-      <button
-        type="button"
-        class="button--tertiary button--icon-subtle bullet-composer--type-dismiss"
-        data-action="composer#cancel"
-        aria-label="Close composer"
-      >
-        <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
-      </button>
     </span>
 
     <%= render bulletable.to_toolbar_path, fr: fr, bullet: bullet, bulletable: bulletable if bulletable.to_toolbar_path.present? %>

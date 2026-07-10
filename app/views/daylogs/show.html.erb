@@ -1,4 +1,4 @@
-<div class="layout--page daylog--page" data-controller="daylog">
+<div class="layout--page daylog" data-controller="daylog">
   <turbo-frame id="bullets-timeline">
     <div id="bullets-header" class="layout--header daylog--header">
       <div class="layout--header-actions daylog--header-navigation">
@@ -63,17 +63,17 @@
     <div data-bulk-menu-target="list" class="layout--surface layout--list">
       <%= render "bullets/composer/jump", composer_id: "daylog_bullets_composer" %>
 
-
-        <%= render layout: "pagination/paginated_list",
+      <%= render layout: "pagination/paginated_list",
             locals: {
               page: @page,
               container_id: "daylog_bullets_container",
               pagination_link_path: ->(next_param) { daylog_path(date: @selected_date.iso8601, page: next_param) }
             } do %>
-          <% @page.records.each do |bullet| %>
-            <%= render bullet, selected_date: @selected_date %>
-          <% end %>
+        <% @page.records.each do |bullet| %>
+          <%= render bullet, selected_date: @selected_date %>
         <% end %>
+      <% end %>
+
       <% unless @page.records.any? %>
         <div id="no_bullets_container" class="layout--surface">
           <p>
@@ -82,17 +82,17 @@
           </p>
         </div>
       <% end %>
-
       <%= render "bullets/composer/dock",
-            selected_date: @selected_date,
-            bucket: nil,
-            composer_id: "daylog_bullets_composer" %>
-
-      <% if request.variant.include?(:mobile) %>
-        <%= render "bullets/composer/dialog",
-              id: "daylog_composer",
-              composer_id: "daylog_bullets_composer" %>
-      <% end %>
+        selected_date: @selected_date,
+        bucket: nil,
+        composer_id: "daylog_bullets_composer" %>
     </div>
   </turbo-frame>
+
+
+  <% if request.variant.include?(:mobile) %>
+    <%= render "bullets/composer/dialog",
+              id: "daylog_composer",
+              composer_id: "daylog_bullets_composer" %>
+  <% end %>
 </div>
