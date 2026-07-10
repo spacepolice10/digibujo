@@ -63,7 +63,7 @@
     <div data-bulk-menu-target="list" class="layout--surface layout--list">
       <%= render "bullets/composer/jump" %>
 
-      <% if @page.records.any? %>
+
         <%= render layout: "pagination/paginated_list",
             locals: {
               page: @page,
@@ -74,8 +74,8 @@
             <%= render bullet, selected_date: @selected_date %>
           <% end %>
         <% end %>
-      <% else %>
-        <div class="layout--surface layout--list-empty">
+      <% unless @page.records.any? %>
+        <div id="no_bullets_container" class="layout--surface">
           <p>
             No bullets yet, check your monthly bucket, references or start a
             braindumping session.

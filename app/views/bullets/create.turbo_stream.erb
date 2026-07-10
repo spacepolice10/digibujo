@@ -5,8 +5,9 @@
              else
                "bullets/bullet"
               end %>
-
 <% target = id.sub(/composer/, 'container') if prefix.present? && prefix != id %>
+
+<%= turbo_stream.remove "no_bullets_container" %>
 
 <%= turbo_stream.append target do %>
   <%= render partial: partial, locals: { bullet: @bullet } %>
