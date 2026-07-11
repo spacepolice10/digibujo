@@ -340,7 +340,7 @@ lexxy-editor[preset="note"] .lexxy-editor__content {
   .attachment--preview img.attachment--zoomed {
     position: fixed;
     inset: 0;
-    z-index: calc(var(--z-dialog) + 1);
+    z-index: calc(var(--z-dropdown) + 1);
     block-size: auto;
     inline-size: auto;
     max-width: 90vw;
@@ -350,11 +350,4 @@ lexxy-editor[preset="note"] .lexxy-editor__content {
     cursor: zoom-out;
   }
 
-  .zoom-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: var(--z-dialog);
-    background: oklch(0% 0 0 / 0.8);
-    cursor: zoom-out;
-  }
 }

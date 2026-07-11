@@ -23,6 +23,8 @@ Rails.application.routes.draw do
   get 'monthly_bucket', to: 'monthly_buckets#current', as: :current_monthly_bucket
 
   resources :future_buckets, only: :show
+  get 'future_buckets/:id/unplanned', to: 'future_buckets#unplanned', as: :unplanned
+  get 'future_buckets/:id/monthly_grid', to: 'future_buckets#monthly_grid', as: :monthly_grid
   resources :monthly_buckets
 
   # --- Tags ---
