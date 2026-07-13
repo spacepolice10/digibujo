@@ -1,4 +1,6 @@
-<div class="layout--page form--page">
+<% content_for(:title) { "New monthly spread" } %>
+
+<div class="layout--page">
   <div class="layout--header">
     <div class="layout--header-actions">
       <%= link_to home_path, class: "button--secondary", onclick: "if (history.length > 1) { event.preventDefault(); history.back(); }" do %>
@@ -8,7 +10,7 @@
     </div>
     <h2>New monthly spread</h2>
   </div>
-  <div class="form--surface">
+  <div class="layout--surface">
     <%= render "form", monthly_bucket: @monthly_bucket, occupied_months: @occupied_months %>
   </div>
 </div>

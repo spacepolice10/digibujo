@@ -92,13 +92,22 @@
     min-height: 0;
   }
 
-  .home--appearance .form--colour-picker {
+  .home--appearance .colour-picker {
+    display: flex;
+    align-items: center;
     gap: var(--spacing-horizontal-half);
   }
 
-  .home--appearance .form--colour-swatch {
-    width: var(--icon-size-subtle);
-    height: var(--icon-size-subtle);
+  .home--appearance .colour-swatch {
+    display: block;
+    border: 1px solid transparent;
+    border-radius: var(--radius-full);
+    width: var(--icon-size-base);
+    height: var(--icon-size-base);
+    cursor: pointer;
+    &:hover {
+      border: 1px solid var(--color-stroke-strong);
+    }
   }
 
   .home--appearance-swatch--default {

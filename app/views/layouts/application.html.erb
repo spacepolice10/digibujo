@@ -37,8 +37,6 @@
   </head>
 
   <body data-controller="dialog timezone-cookie bulk-menu">
-    <%= render "shared/svg_filters" %>
-
     <div
       id="toasts"
       class="toasts"
@@ -48,7 +46,7 @@
 
     <% unless request.variant.include?(:mobile) %>
       <%= render "shared/header" %>
-      <%= render "shared/account_dock" %>
+
     <% end %>
 
     <%= yield %>

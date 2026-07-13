@@ -1,6 +1,6 @@
 <% content_for(:title) { "New tracker" } %>
 
-<div class="layout--page form--page">
+<div class="layout--page">
   <div class="layout--header">
     <div class="layout--header-actions">
       <%= link_to home_path, class: "button--secondary", onclick: "if (history.length > 1) { event.preventDefault(); history.back(); }" do %>
@@ -10,7 +10,7 @@
     </div>
     <h2>New tracker</h2>
   </div>
-  <div class="form--surface">
+  <div class="layout--surface">
     <%= render "form", tracker: @tracker %>
   </div>
 </div>

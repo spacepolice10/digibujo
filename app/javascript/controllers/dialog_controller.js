@@ -15,10 +15,10 @@ export default class extends Controller {
     // Fallback for browsers without native invoker commands support
     if (!("commandForElement" in HTMLButtonElement.prototype)) {
       this.invokerHandler = (event) => {
-        const btn = event.target.closest("[commandfor]")
-        if (!btn) return
-        if (!this.dialogTarget.id || this.dialogTarget.id !== btn.getAttribute("commandfor")) return
-        const command = btn.getAttribute("command")
+        const button = event.target.closest("[commandfor]")
+        if (!button) return
+        if (!this.dialogTarget.id || this.dialogTarget.id !== button.getAttribute("commandfor")) return
+        const command = button.getAttribute("command")
         if (command == "show-modal") this.open()
         else if (command == "close") this.close()
       }
@@ -51,9 +51,9 @@ export default class extends Controller {
     }
   }
 
-  // Close after a successful turbo stream submission from within the dialog
-  submitEnd(event) {
-    if (event.detail.success) {
+
+  submitSuccess(ev) {
+    if (ev.detail.success) {
       this.dialogTarget.close()
     }
   }

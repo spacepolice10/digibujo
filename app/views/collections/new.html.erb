@@ -1,4 +1,6 @@
-<div class="layout--page form--page">
+<% content_for(:title) { "New collection" } %>
+
+<div class="layout--page">
   <div class="layout--header">
     <div class="layout--header-actions">
       <% if @bullet_ids.present? && @return_to.present? %>
@@ -15,7 +17,7 @@
     </div>
     <h2>New collection</h2>
   </div>
-  <div class="form--surface">
+  <div class="layout--surface">
     <%= render "form",
           collection: @collection,
           bullet_ids: @bullet_ids,
@@ -23,7 +25,7 @@
 
     <% if @bullets.present? %>
       <section class="bucket--collect-preview">
-        <h3 class="bucket--collect-preview-title">
+        <h3 class="bucket--collect-preview-heading">
           <%= pluralize(@bullets.size, "bullet") %> will be added
         </h3>
         <ul class="bucket--collect-preview-list">

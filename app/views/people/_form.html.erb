@@ -1,5 +1,8 @@
 <%= form_with model: person, class: "form form--strong" do |f| %>
-  <small class="form-hint">People let you tag bullets with a contact, so you can quickly pull up every task, note, or event tied to that person.</small>
+  <small class="form-hint">
+    People let you tag bullets with a contact, so you can quickly pull up every
+    task, note, or event tied to that person.
+  </small>
 
   <div class="form-group">
     <%= f.label :name, class: "form-label" %>
@@ -16,7 +19,13 @@
         <div class="person--inline-field" data-controller="valid-email">
           <%= email_form.hidden_field :kind, value: "email" %>
           <%= email_form.hidden_field :id if @email_handle.persisted? %>
-          <i class="icon person--inline-field-icon" style="--icon-mask: var(--icon-mail)" aria-hidden="true"></i>
+
+          <i
+            class="icon person--inline-field-icon"
+            style="--icon-mask: var(--icon-mail)"
+            aria-hidden="true"
+          ></i>
+
           <%= email_form.email_field :data,
                 class: "form-input person--inline-field-input",
                 autocomplete: "email",
@@ -33,7 +42,13 @@
         <div class="person--inline-field" data-controller="valid-phone">
           <%= phone_form.hidden_field :kind, value: "phone" %>
           <%= phone_form.hidden_field :id if @phone_handle.persisted? %>
-          <i class="icon person--inline-field-icon" style="--icon-mask: var(--icon-phone)" aria-hidden="true"></i>
+
+          <i
+            class="icon person--inline-field-icon"
+            style="--icon-mask: var(--icon-phone)"
+            aria-hidden="true"
+          ></i>
+
           <%= phone_form.telephone_field :data,
                 class: "form-input person--inline-field-input",
                 autocomplete: "tel",

@@ -54,7 +54,6 @@
 
   .form-textarea {
     resize: vertical;
-    min-height: calc(var(--spacing-vertical) * 6);
   }
 
   /* ── Select ───────────────────────────────────────── */
@@ -97,47 +96,45 @@
   /* ── Checkbox & Radio ─────────────────────────────── */
 
   .form-check {
+    position: relative;
+    overflow: hidden;
     display: inline-flex;
     align-items: center;
     gap: var(--spacing-horizontal-half);
     cursor: pointer;
     font-size: var(--font-size-subtle);
     color: var(--color-fg-subtle);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-base);
+
+    &:has(input:checked) {
+      border-color: var(--color-fg-base);
+
+      &::after {
+        content: "*";
+        position: absolute;
+        height: 50%;
+        width: 50%;
+        right: 2px;
+        bottom: 2px;
+        background: var(--color-bg-strong);
+        -webkit-mask-image: var(--icon-check);
+        -webkit-mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-image: var(--icon-check);
+        mask-size: contain;
+        mask-repeat: no-repeat;
+        mask-position: center;
+      }
+    }
 
     input[type="checkbox"],
     input[type="radio"] {
-      appearance: none;
-      width: var(--spacing-horizontal);
-      height: var(--spacing-horizontal);
-      border: 1px solid var(--color-stroke-base);
-      border-radius: var(--radius-base);
-      background: transparent;
-      cursor: pointer;
-      flex-shrink: 0;
-      transition:
-        border-color 0.1s ease,
-        background 0.1s ease;
-      position: relative;
-
-      &:checked {
-        background: var(--color-fg-base);
-        border-color: var(--color-fg-base);
-
-        &::after {
-          content: "";
-          position: absolute;
-          inset: 2px;
-          background: var(--color-bg-base);
-          -webkit-mask-image: var(--icon-check);
-          -webkit-mask-size: contain;
-          -webkit-mask-repeat: no-repeat;
-          -webkit-mask-position: center;
-          mask-image: var(--icon-check);
-          mask-size: contain;
-          mask-repeat: no-repeat;
-          mask-position: center;
-        }
-      }
+      position: absolute;
+      right: var(--spacing-horizontal-half);
+      top: var(--spacing-vertical-half);
+      opacity: 0;
     }
 
     input[type="radio"] {
@@ -147,6 +144,7 @@
         mask-image: none;
         -webkit-mask-image: none;
         border-radius: 50%;
+        background: var(--color-fg-base);
       }
     }
   }
@@ -194,7 +192,7 @@
   .form--picker-option {
     position: relative;
     cursor: pointer;
-    line-height: 0;
+    border: 1px solid transparent;
   }
 
   .form--picker-option input {
@@ -205,124 +203,38 @@
     cursor: pointer;
   }
 
-  .form--picker-option input:focus-visible {
-    outline: none;
-  }
-
-  .form--picker-control {
-    display: block;
-    box-shadow: 0 0 0 1px var(--color-stroke-base);
-    transition:
-      transform 0.1s ease,
-      box-shadow 0.1s ease;
-  }
-
-  @media (hover: hover) {
-    .form--picker-option:hover .form--picker-control {
-      transform: scale(1.08);
-    }
-  }
-
   .form--picker-option:has(input:checked) .form--picker-control {
-    box-shadow: 0 0 0 2px var(--color-stroke-strong);
-    transform: scale(1.08);
-  }
+    background: var(--color-bg-subtle);
+    border-color: var(--color-stroke-base);
 
-  .form--picker-option:has(input:focus-visible) .form--picker-control {
-    box-shadow:
-      0 0 0 2px var(--color-stroke-strong),
-      0 0 0 4px color-mix(in oklch, var(--color-stroke-base) 40%, transparent);
-    transform: scale(1.08);
-  }
-
-  .form--picker-option:has(input:checked:focus-visible) .form--picker-control {
-    box-shadow:
-      0 0 0 2px var(--color-fg-base),
-      0 0 0 4px color-mix(in oklch, var(--color-stroke-base) 40%, transparent);
   }
 
   /* ── Colour picker ────────────────────────────────── */
 
   .form--colour-swatch {
-    width: calc(var(--icon-size-base) * 1.4);
-    height: calc(var(--icon-size-base) * 1.4);
-    border-radius: var(--radius-full);
-    background: var(--color-bg-base);
+    width: calc(var(--icon-size-strong));
+    height: calc(var(--icon-size-strong));
   }
 
-  /* ── Emoji icon picker ────────────────────────────── */
+  /* ── Icon icon picker ────────────────────────────── */
 
-  .form--icon-picker {
-    gap: var(--spacing-horizontal);
-  }
-
-  @container page-column (max-width: 600px) {
-    .form--icon-picker {
-      gap: var(--spacing-horizontal-half);
-    }
-  }
-
-  .form--icon-image {
-    width: calc(var(--icon-size-base) * 1.5);
-    height: calc(var(--icon-size-base) * 1.5);
-    margin-inline: auto;
-    padding: var(--spacing-vertical-half);
-    border-radius: var(--radius-strong);
-    background: var(--color-bg-base);
+  .form--icon {
+    width: calc(var(--icon-size-strong));
+    height: calc(var(--icon-size-strong));
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    border-radius: var(--radius-base);
   }
 
   /* ── Repeat schedule date picker ──────────────────── */
 
   .form--repeat-date-picker {
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-base);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     gap: var(--spacing-horizontal);
+    width: fit-content;
   }
 
-  @container page-column (max-width: 600px) {
-    .form--repeat-date-picker {
-      gap: var(--spacing-horizontal-half);
-    }
-  }
-
-  .form--repeat-date-control {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    width: calc(var(--icon-size-base) * 1.5);
-    height: calc(var(--icon-size-base) * 1.5);
-    padding: var(--spacing-vertical-half);
-    border-radius: var(--radius-strong);
-    font-family: inherit;
-    font-size: var(--font-size-subtle);
-    color: var(--color-fg-subtle);
-    background: var(--color-bg-base);
-  }
-
-  .form--picker-option:has(input:checked) .form--repeat-date-control {
-    color: var(--color-fg-base);
-    font-weight: var(--font-weight-strong);
-  }
-
-  /* ── Form page layout ─────────────────────────────── */
-
-  .form--page {
-    max-width: var(--breakpoint-tablet);
-    gap: var(--spacing-vertical);
-  }
-
-  .form--page > .layout--header {
-    padding-block: 0;
-  }
-
-  .form--page .layout--header h2 {
-    font-size: var(--font-size-huge);
-    color: var(--color-fg-base);
-  }
-
-  /* ── Form surface card ────────────────────────────── */
-
-  .form--surface {
-    padding: var(--spacing-vertical-double) var(--spacing-horizontal);
-  }
   /* ── Submit button ────────────────────────────────── */
 
   .form--submit {

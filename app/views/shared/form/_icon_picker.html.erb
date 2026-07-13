@@ -1,15 +1,15 @@
-<%# locals: (form:) %>
+
 <div class="form-group">
   <span class="form-label">Icon</span>
   <small class="form-small">
     Pick an emoji to make this record easy to spot.
   </small>
   <div class="form--picker form--icon-picker" role="radiogroup" aria-label="Icon picker">
-    <% Iconable::ICON_MAPPINGS.each do |key| %>
-      <label class="form--picker-option">
-        <%= form.radio_button :icon, key %>
-        <%= image_tag "tweemoji/#{key}.svg", alt: "", class: "form--picker-control form--icon-image" %>
-        <span class="utilities--sr-only"><%= key.humanize %></span>
+    <% Iconable::ICON_MAPPINGS.each do |icon| %>
+      <label class="form-check">
+        <%= form.radio_button :icon, icon %>
+        <%= image_tag "tweemoji/#{icon}.svg", alt: "", class: "form--icon" %>
+        <span class="utilities--sr-only"><%= icon.humanize %></span>
       </label>
     <% end %>
   </div>

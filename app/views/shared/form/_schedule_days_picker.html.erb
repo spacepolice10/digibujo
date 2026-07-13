@@ -1,22 +1,22 @@
-<%# locals: (form:) %>
 <% schedule_days = form.object.schedule_days %>
+
 <div class="form-group">
   <span class="form-label">Days</span>
-  <div class="form--picker form--repeat-date-picker"
-       role="group"
-       data-controller="grid-navigation"
-       data-grid-navigation-columns-value="7"
-       data-action="keydown->grid-navigation#navigate">
-    <% Date::ABBR_DAYNAMES.each_with_index do |label, wday| %>
-      <label class="form--picker-option">
-        <input type="checkbox"
-               name="<%= form.object_name %>[schedule_days][]"
-               value="<%= wday %>"
-               <% if schedule_days.include?(wday) %>checked<% end %>
-               data-grid-navigation-target="item"
-               data-action="focus->grid-navigation#syncPosition">
-        <span class="form--picker-control form--repeat-date-control" aria-hidden="true"><%= label %></span>
-        <span class="utilities--sr-only"><%= Date::DAYNAMES[wday] %></span>
+  <small class="form-small">
+    Pick the days of the week that this record should repeat on.
+  </small>
+  <div
+    class="form--picker form--repeat-date-picker"
+    role="group"
+    data-controller="grid-navigation"
+    data-grid-navigation-columns-value="7"
+    data-action="keydown->grid-navigation#navigate"
+  >
+    <% Date::ABBR_DAYNAMES.each_with_index do |name, wday| %>
+      <label class="form-check">
+        <%= form.check_box :schedule_days, { multiple: true }, wday, nil %>
+        <span class="form--icon" aria-hidden="true"><%= name %></span>
+        <span class="utilities--sr-only"><%= name %></span>
       </label>
     <% end %>
   </div>

@@ -1,6 +1,6 @@
 <div class="button--secondary home--rail-action home--appearance">
   <div
-    class="form--picker form--colour-picker"
+    class="home--appearance colour-picker"
     role="radiogroup"
     aria-label="Background appearance"
     data-controller="appearance"
@@ -8,13 +8,12 @@
     data-action="change->appearance#changeAppearance"
   >
     <% User::Settings::APPEARANCES.each do |name| %>
-      <label class="form--picker-option">
-        <%= radio_button_tag :appearance, name, appearance == name %>
+      <label class="colour-picker-option">
+        <%= radio_button_tag :appearance, name, appearance == name, class: "utilities--sr-only" %>
         <span
           class="
             <%= class_names(
-            'form--picker-control',
-            'form--colour-swatch',
+            'colour-swatch',
             "home--appearance-swatch--#{name}"
             ) %>
           "
