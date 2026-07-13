@@ -1,23 +1,22 @@
 @layer components {
-  html:has(> body > .layout--workspace.layout--workspace-page),
-  body:has(> .layout--workspace.layout--workspace-page) {
-    height: auto;
-    min-height: 100%;
+
+  .home--side {
+    min-width: 0;
+    top: var(--spacing-vertical);
+    display: flex;
+    gap: var(--spacing-vertical-half);
+    flex-wrap: wrap;
+
+    @media (min-width: 800px) {
+      position: sticky;
+      flex-direction: column;
+    }
   }
 
-  body > .layout--workspace {
-    max-width: var(--breakpoint-laptop);
-    width: 100%;
-  }
-
-  body > .layout--workspace.layout--workspace-page > .layout--rail:first-of-type .layout--rail-action,
-  body > .layout--workspace.layout--workspace-page > .layout--rail:first-of-type > form,
-  body > .layout--workspace.layout--workspace-page > .layout--rail:first-of-type .home--appearance {
-    margin-inline-start: auto;
-  }
-
-  .home--section {
-    margin-bottom: var(--spacing-vertical);
+  .home--rail-action {
+    @media (min-width: 800px) {
+      margin-inline-start: auto;
+    }
   }
 
   .home--section-summary {
@@ -25,7 +24,8 @@
     align-items: center;
     gap: var(--spacing-horizontal-half);
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    border-radius: var(--radius-strong);
+    border-radius: var(--radius-subtle);
+    margin-block: var(--spacing-vertical-half);
     cursor: pointer;
     list-style: none;
 
@@ -41,7 +41,7 @@
   }
 
   .home--section-name {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: var(--spacing-horizontal-half);
     font-size: var(--font-size-base);
@@ -50,9 +50,8 @@
   }
 
   .home--section-icon {
-    width: var(--icon-size-subtle);
-    height: var(--icon-size-subtle);
-    color: var(--color-fg-subtle);
+    width: var(--icon-size-base);
+    height: var(--icon-size-base);
   }
 
   .home--section-chevron {
@@ -78,13 +77,19 @@
     }
   }
 
-  .home--section[open] > :not(summary) {
-    padding-top: var(--spacing-vertical);
+  .home--section::details-content {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition:
+      grid-template-rows 0.2s ease,
+      content-visibility 0.2s allow-discrete;
   }
-
-  .home--appearance {
-    width: fit-content;
-    margin-block-start: var(--spacing-horizontal-half);
+  .home--section[open]::details-content {
+    grid-template-rows: 1fr;
+  }
+  .home--section-content-wrapper {
+    overflow: hidden;
+    min-height: 0;
   }
 
   .home--appearance .form--colour-picker {
@@ -115,4 +120,5 @@
   .home--appearance-swatch--cheese {
     background: light-dark(oklch(0.95 0.07 85), oklch(0.35 0.14 85));
   }
+
 }

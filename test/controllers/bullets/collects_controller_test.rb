@@ -15,7 +15,7 @@ module Bullets
 
       post collect_path, params: { bullet_ids: card.id.to_s, bucket_id: collection.bucket.id }
 
-      assert_redirected_to daylog_path(date: Date.current.iso8601)
+      assert_redirected_to daylog_path
       assert_equal collection.bucket.id, card.reload.bucket_id
       assert_empty card.projects
     end
@@ -100,7 +100,7 @@ module Bullets
 
       post collect_path, params: { bullet_ids: card.id.to_s, bucket_id: collection.bucket.id }
 
-      assert_redirected_to daylog_path(date: Date.current.iso8601)
+      assert_redirected_to daylog_path
       assert_equal collection.bucket.id, card.reload.bucket_id
     end
 
@@ -112,7 +112,7 @@ module Bullets
       post collect_path,
            params: { bullet_ids: "#{first.id},#{second.id}", bucket_id: collection.bucket.id }
 
-      assert_redirected_to daylog_path(date: Date.current.iso8601)
+      assert_redirected_to daylog_path
       assert_equal collection.bucket.id, first.reload.bucket_id
       assert_equal collection.bucket.id, second.reload.bucket_id
     end
@@ -140,7 +140,7 @@ module Bullets
 
       delete collect_path, params: { bullet_ids: "#{first.id},#{second.id}" }
 
-      assert_redirected_to daylog_path(date: Date.current.iso8601)
+      assert_redirected_to daylog_path
       assert_nil first.reload.bucket_id
       assert_nil second.reload.bucket_id
     end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_06_180000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_13_080000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -228,28 +228,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_06_180000) do
     t.index ["user_id"], name: "index_published_entities_on_user_id"
   end
 
-  create_table "recurrencies", force: :cascade do |t|
-    t.string "colour"
-    t.datetime "created_at", null: false
-    t.string "icon"
-    t.string "name", null: false
-    t.json "schedule", default: {"days" => [0, 1, 2, 3, 4, 5, 6]}, null: false
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["user_id", "created_at"], name: "index_recurrencies_on_user_id_and_created_at"
-    t.index ["user_id"], name: "index_recurrencies_on_user_id"
-  end
-
-  create_table "recurrency_completions", force: :cascade do |t|
-    t.datetime "completed_at", null: false
-    t.datetime "created_at", null: false
-    t.date "date", null: false
-    t.integer "recurrency_id", null: false
-    t.datetime "updated_at", null: false
-    t.index ["recurrency_id", "date"], name: "index_recurrency_completions_on_recurrency_id_and_date", unique: true
-    t.index ["recurrency_id"], name: "index_recurrency_completions_on_recurrency_id"
-  end
-
   create_table "search_records", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "search_body"
@@ -290,6 +268,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_06_180000) do
     t.datetime "completed_at"
   end
 
+  create_table "tracker_completions", force: :cascade do |t|
+    t.datetime "completed_at", null: false
+    t.datetime "created_at", null: false
+    t.date "date", null: false
+    t.integer "tracker_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tracker_id", "date"], name: "index_tracker_completions_on_tracker_id_and_date", unique: true
+    t.index ["tracker_id"], name: "index_tracker_completions_on_tracker_id"
+  end
+
+  create_table "trackers", force: :cascade do |t|
+    t.string "colour"
+    t.datetime "created_at", null: false
+    t.string "icon"
+    t.string "name", null: false
+    t.json "schedule", default: {"days" => [0, 1, 2, 3, 4, 5, 6]}, null: false
+    t.date "stopped_on"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id", "created_at"], name: "index_trackers_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_trackers_on_user_id"
+  end
+
   create_table "user_settings", force: :cascade do |t|
     t.string "appearance", default: "default", null: false
     t.boolean "collections_expanded", default: true, null: false
@@ -298,8 +299,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_06_180000) do
     t.boolean "people_expanded", default: true, null: false
     t.boolean "projects_expanded", default: true, null: false
     t.boolean "published_expanded", default: true, null: false
-    t.boolean "recurrencies_expanded", default: true, null: false
     t.boolean "spreads_expanded", default: true, null: false
+    t.boolean "trackers_expanded", default: true, null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["user_id"], name: "index_user_settings_on_user_id", unique: true
@@ -338,11 +339,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_06_180000) do
   add_foreign_key "pinned_entities", "users"
   add_foreign_key "projects", "users"
   add_foreign_key "published_entities", "users"
-  add_foreign_key "recurrencies", "users"
-  add_foreign_key "recurrency_completions", "recurrencies"
   add_foreign_key "search_records", "users"
   add_foreign_key "search_selections", "users"
   add_foreign_key "sessions", "users"
+  add_foreign_key "tracker_completions", "trackers"
+  add_foreign_key "trackers", "users"
   add_foreign_key "user_settings", "users"
 
   # Virtual tables defined in this database.

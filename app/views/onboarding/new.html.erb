@@ -5,10 +5,10 @@
   <div class="form--surface">
     <%= render "authentication/flash" %>
 
-    <% if @signup.errors.any? %>
+    <% if @onboarding.errors.any? %>
       <div class="form--errors" role="alert">
         <ul>
-          <% @signup.errors.full_messages.each do |message| %>
+          <% @onboarding.errors.full_messages.each do |message| %>
             <li><%= message %></li>
           <% end %>
         </ul>
@@ -18,7 +18,7 @@
     <div class="session--intro">
       <h1 class="session--title">Welcome to Digibujo</h1>
       <p class="form-hint session--description onboarding--lede">
-        You're signed in as <strong><%= @signup.user.email_address %></strong>.
+        You're signed in as <strong><%= @onboarding.user.email_address %></strong>.
         Digibujo follows the
         <%= link_to "Bullet Journal", "https://bulletjournal.com/", target: "_blank", rel: "noopener noreferrer", class: "onboarding--external-link" %>
         method — rapid logging on paper, adapted for a digital workflow.

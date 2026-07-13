@@ -53,24 +53,4 @@ module Authentication
     Current.session&.destroy
     cookies.delete(:session_id)
   end
-
-  def grant_onboarding_access(user)
-    session[:authenticated_user_id] = user.id
-    session[:authenticated_user_at] = Time.current.to_i
-  end
-
-  def clear_onboarding_access
-    session.delete(:authenticated_user_id)
-    session.delete(:authenticated_user_at)
-  end
-
-  def resume_onboarding_user
-    user_id = session[:authenticated_user_id]
-    authenticated_at = session[:authenticated_user_at]
-
-    return unless user_id.present?
-    return unless authenticated_at.present? && Time.at(authenticated_at) >= LoginCode::EXPIRY.ago
-
-    User.find_by(id: user_id)
-  end
 end

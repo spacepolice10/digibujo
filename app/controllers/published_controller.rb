@@ -7,9 +7,9 @@ class PublishedController < ApplicationController
 
   def index
     @bullets = Current.user.bullets.published
-      .includes(:published_entity)
-      .preload(bulletable: :rich_text_body)
-      .order(published_entities: { published_at: :desc })
+                      .includes(:published_entity)
+                      .preload(bulletable: :rich_text_body)
+                      .order(published_entities: { published_at: :desc })
   end
 
   def show

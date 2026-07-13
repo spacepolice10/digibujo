@@ -13,7 +13,7 @@ module Bullets
     test 'create archives bullet via collection path' do
       post archive_path, params: { bullet_ids: @bullet.id.to_s }
 
-      assert_redirected_to daylog_path(date: Date.current.iso8601)
+      assert_redirected_to daylog_path
       assert @bullet.reload.archived?
     end
 
@@ -21,7 +21,7 @@ module Bullets
       other = @user.bullets.create!(bulletable: Note.new(body: 'Also'))
       post archive_path, params: { bullet_ids: "#{@bullet.id},#{other.id}" }
 
-      assert_redirected_to daylog_path(date: Date.current.iso8601)
+      assert_redirected_to daylog_path
       assert @bullet.reload.archived?
       assert other.reload.archived?
     end
@@ -30,7 +30,7 @@ module Bullets
       @bullet.archive!
       delete archive_path, params: { bullet_ids: @bullet.id.to_s }
 
-      assert_redirected_to daylog_path(date: Date.current.iso8601)
+      assert_redirected_to daylog_path
       assert_not @bullet.reload.archived?
     end
 

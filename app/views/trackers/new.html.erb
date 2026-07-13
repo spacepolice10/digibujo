@@ -1,0 +1,16 @@
+<% content_for(:title) { "New tracker" } %>
+
+<div class="layout--page form--page">
+  <div class="layout--header">
+    <div class="layout--header-actions">
+      <%= link_to home_path, class: "button--secondary", onclick: "if (history.length > 1) { event.preventDefault(); history.back(); }" do %>
+        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+        Back
+      <% end %>
+    </div>
+    <h2>New tracker</h2>
+  </div>
+  <div class="form--surface">
+    <%= render "form", tracker: @tracker %>
+  </div>
+</div>

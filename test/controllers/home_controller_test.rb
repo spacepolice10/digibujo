@@ -12,13 +12,13 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     sign_in_as @user
   end
 
-  test 'show lists recurrencies in section' do
-    create_recurrency!(@user, name: 'Morning run')
+  test 'show lists trackers in section' do
+    create_tracker!(@user, name: 'Morning run')
 
     get home_path
 
     assert_response :success
-    assert_select '.home--section-name', text: 'Recurrency'
+    assert_select '.home--section-name', text: 'Trackers'
     assert_match 'Morning run', response.body
   end
 

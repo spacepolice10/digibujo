@@ -24,11 +24,10 @@ module Authentications
         user.login_codes.delete_all
         session.delete(:login_email)
 
+        start_new_session_for(user)
         if user.needs_onboarding?
-          grant_onboarding_access(user)
           redirect_to new_onboarding_path
         else
-          start_new_session_for(user)
           redirect_to after_authentication_url
         end
       else

@@ -16,7 +16,7 @@ class User::SettingsTest < ActiveSupport::TestCase
     assert_equal :projects_expanded,     User::Settings::SECTION_COLUMNS['projects']
     assert_equal :collections_expanded,  User::Settings::SECTION_COLUMNS['collections']
     assert_equal :people_expanded,       User::Settings::SECTION_COLUMNS['people']
-    assert_equal :recurrencies_expanded, User::Settings::SECTION_COLUMNS['recurrencies']
+    assert_equal :trackers_expanded, User::Settings::SECTION_COLUMNS['trackers']
     assert_equal :published_expanded,    User::Settings::SECTION_COLUMNS['published']
   end
 

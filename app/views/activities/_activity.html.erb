@@ -5,13 +5,13 @@
 >
   <%= link_to activity_path(activity), class: "activity--feed-item", data: { turbo_frame: "_top" } do %>
     <i
-      class="icon activity--icon"
+      class="icon"
       data-type="<%= activity.type_name %>"
       style="--icon-mask: <%= activity.icon_mask %>"
       aria-hidden="true"
     ></i>
     <p class="activity--detail utilities--line-clamp-1">
-      <%= activity.detail %>
+      <%= activity.detail %>,
       <time class="activity--time" datetime="<%= activity.created_at.to_fs(:db) %>">
         <span class="activity--time-relative">
           <%= time_ago_in_words(activity.created_at) %> ago

@@ -1,0 +1,43 @@
+@layer components {
+  .support--container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical);
+
+    h1 {
+      font-size: var(--font-size-strong);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-fg-base);
+      line-height: 1.15;
+      text-wrap: balance;
+    }
+
+    > p {
+      color: var(--color-fg-subtle);
+      font-size: var(--font-size-base);
+      max-width: 50ch;
+    }
+
+    ul {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-vertical-half);
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    a {
+      color: var(--color-fg-base);
+      text-decoration: underline;
+      text-decoration-color: var(--color-stroke-base);
+      text-underline-offset: 3px;
+
+      @media (hover: hover) {
+        &:hover {
+          text-decoration-color: var(--color-fg-base);
+        }
+      }
+    }
+  }
+}

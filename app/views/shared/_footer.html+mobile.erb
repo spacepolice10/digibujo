@@ -1,11 +1,11 @@
 <nav class="tabbar--navigation">
-  <%= link_to home_path, class: "tabbar-item #{'tabbar-item--active' if controller_name == 'home'}", aria: { label: "Menu" } do %>
-    <i class="icon" style="--icon-mask: var(--icon-home)" aria-hidden="true"></i>
+  <%= link_to home_path, class: "tabbar--item #{'tabbar--item-active' if controller_name == 'home'}", aria: { label: "Menu" } do %>
+    <i class="icon tabbar--item-icon" style="--icon-mask: var(--icon-home)" aria-hidden="true"></i>
   <% end %>
-  <%= link_to daylog_path, class: "tabbar-item #{'tabbar-item--active' if controller_name == 'daylogs'}", aria: { label: "Daily log" } do %>
-    <%= image_tag "/icon.svg", alt: "", class: "tabbar-item--logo", aria: { hidden: true } %>
+  <%= link_to daylog_path, class: "tabbar--item #{'tabbar--item-active' if controller_name == 'daylogs'}", aria: { label: "Daily log" } do %>
+    <%= image_tag "/icon.svg", alt: "", class: "tabbar--item-icon", aria: { hidden: true } %>
   <% end %>
-  <%= link_to pinned_index_path, class: "tabbar-item #{'tabbar-item--active' if controller_name == 'pinned'}", aria: { label: "Pinned" } do %>
-    <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
+  <%= link_to pinned_index_path, class: "tabbar--item #{'tabbar--item-active' if controller_name == 'pinned'}", aria: { label: "Pinned" } do %>
+      <i class="icon tabbar--item-icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
   <% end %>
 </nav>

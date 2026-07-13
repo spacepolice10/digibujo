@@ -2,7 +2,7 @@
 
 module Tasks
   class CompletesController < ApplicationController
-    include PrepareBullets, DaylogRedirects
+    include PrepareBullets
 
     before_action :prepare_bullets
 
@@ -15,7 +15,7 @@ module Tasks
 
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to daylog_path(date: daylog_redirect_date.iso8601) }
+        format.html { redirect_to daylog_path }
       end
     end
 
@@ -28,7 +28,7 @@ module Tasks
 
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to daylog_path(date: daylog_redirect_date.iso8601) }
+        format.html { redirect_to daylog_path }
       end
     end
   end

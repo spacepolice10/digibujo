@@ -1,12 +1,12 @@
 <li id="<%= dom_id(project, :list_item) %>" class="layout--list-item">
-  <%= link_to project_path(project), { data: { turbo_frame: "_top" }, class: "bucket--list-item-link" } do %>
-    <div class="bucket--list-item-name">
-      <div class="bucket--list-item-marker" data-bucket-colour="<%= project.colour %>" aria-hidden="true">
-        <%= image_tag project.icon_path, alt: "", class: "icons--list" %>
-      </div>
-      <span class="utilities--line-clamp-1"><%= project.name %></span>
-    </div>
-    <div class="bucket--list-item-meta utilities--line-clamp-1">
+  <%= link_to project_path(project), { data: { turbo_frame: "_top" }, class: "layout--list-item-link" } do %>
+    <span aria-hidden="true">
+      <%= image_tag project.icon_path, alt: "", style: "background-color: transparent", class: "icon" %>
+    </span>
+
+    <span class="utilities--line-clamp-1"><%= project.name %></span>
+
+    <div class="typography-description utilities--line-clamp-1">
       <span><%= project.bullets.count %> <%= "bullet".pluralize(project.bullets.count) %></span>,
       <span><%= project.created_at.strftime("%b %d") %></span>
     </div>

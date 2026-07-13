@@ -1,7 +1,0 @@
-<%# locals: (recurrency:, tracker:, date:) %>
-<%
-  days = recurrency.schedule_days.sort
-  schedule = days.size == 7 ? "Every day" : days.map { |wday| Date::ABBR_DAYNAMES[wday] }.join(", ")
-  statistics = tracker.statistics(recurrency, as_of: date)
-%>
-<%= recurrency.name %> — <%= schedule %><% if statistics[:streak] > 0 %> · <%= statistics[:streak] %> day streak<% end %><% if tracker.completed?(recurrency, date) %> · Done today<% end %>

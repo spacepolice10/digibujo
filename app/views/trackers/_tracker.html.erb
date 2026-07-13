@@ -1,0 +1,14 @@
+<%# locals: (tracker:) %>
+<li id="<%= dom_id(tracker, :list_item) %>" class="layout--list-item">
+  <%= link_to tracker_path(tracker), class: "layout--list-item-link", data: { turbo_frame: "_top" } do %>
+      <span data-bucket-colour="<%= tracker.colour %>" aria-hidden="true">
+        <%= image_tag tracker.icon_path, alt: "", class: "icons--list" %>
+      </span>
+      <span class="utilities--line-clamp-1"><%= tracker.name %></span>
+      <span class="typography-description utilities--line-clamp-1">
+        <% if tracker.statistics[:streak] > 0 %><%= tracker.statistics[:streak] %> streak · <% end %>
+        <%= tracker.statistics[:total] %> total ·
+        <%= tracker.statistics[:period_scheduled].zero? ? 0 : ((tracker.statistics[:period_completed] * 100.0) / tracker.statistics[:period_scheduled]).round %>%
+      </span>
+  <% end %>
+</li>

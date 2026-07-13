@@ -1,0 +1,4 @@
+<%# locals: (tracker:, date:) %>
+<%= turbo_stream.replace dom_id(tracker, "date_#{date.iso8601}") do %>
+  <%= render "trackers/cell", tracker: tracker, date: date %>
+<% end %>

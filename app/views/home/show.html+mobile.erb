@@ -5,31 +5,29 @@
     <h1 class="button--accent">Digibujo</h1>
 
     <div class="menu--page-mobile-header-actions">
-      <%= render "menu/account_button" %>
+      <%= render "account_button" %>
 
-      <details
-      class="dropdown menu--create-bucket"
-      data-controller="dropdown"
-      data-action="toggle->dropdown#syncClosedStatusWithBody turbo:before-visit@document->dropdown#close"
-    >
-      <summary
-        class="
-          button--primary button--icon button--circle
-          menu--create-bucket-button
-        "
-        aria-label="Create"
-      >
-        <i
-          class="icon"
-          style="--icon-mask: var(--icon-plus)"
-          aria-hidden="true"
-        ></i>
-      </summary>
+      <div class="menu--create-bucket" data-controller="dialog">
+        <button
+          type="button"
+          class="button--primary button--icon-strong button--circle"
+          commandfor="home_create"
+          command="show-modal"
+          aria-label="Create"
+        >
+          <i
+            class="icon"
+            style="--icon-mask: var(--icon-plus)"
+            aria-hidden="true"
+          ></i>
+        </button>
 
-      <div class="dropdown-body menu--create-bucket-body" inert>
-        <%= render "menu/create_bucket" %>
+        <%= render "shared/dialog", id: "home_create" do %>
+          <div class="menu--create-bucket-body">
+            <%= render "home_actions" %>
+          </div>
+        <% end %>
       </div>
-    </details>
     </div>
   </div>
 
@@ -44,74 +42,12 @@
   >
     <%= render "menu/search" %>
     <%= render "menu/search_palette" %>
-
-
   </div>
+
   <div class="menu--scroll">
     <div class="menu--sections">
-      <%= render layout: "home/section", locals: { key: "logs", title: "Logs", icon: "calendar", expanded: @section_expanded_status["logs"] } do %>
-        <ul class="layout--list bucket--list">
-          <%= render "home/daylog_list_item", bullets_number: @daylog_bullets_number %>
-
-          <% if @future %>
-            <%= render "home/future_list_item", future: @future, monthly_buckets: @future_monthly_buckets %>
-            <% @future_monthly_buckets.each do |monthly_bucket| %>
-              <li class="layout--list-item bucket--list-item-child">
-                <%= link_to monthly_bucket_path(monthly_bucket),
-                      class: "bucket--list-item-link bucket--list-item-child-link",
-                      data: { turbo_frame: "_top", bucket_colour: monthly_bucket.colour } do %>
-                  <div class="bucket--list-item-name">
-                    <span class="bucket--child-dot-inner" aria-hidden="true"></span>
-
-                    <span class="utilities--line-clamp-1">
-                      <%= monthly_bucket.name %>
-                    </span>
-                  </div>
-                <% end %>
-              </li>
-            <% end %>
-          <% end %>
-        </ul>
-      <% end %>
-
-      <% if @projects.any? %>
-        <%= render layout: "home/section", locals: { key: "projects", title: "Projects", icon: "hash", show_more_path: projects_path, expanded: @section_expanded_status["projects"] } do %>
-          <ul class="layout--list bucket--list">
-            <%= render @projects %>
-          </ul>
-        <% end %>
-      <% end %>
-
-      <% if @collections.any? %>
-        <%= render layout: "home/section", locals: { key: "collections", title: "Collections", icon: "book", show_more_path: (@show_collections_more ? collections_path : nil), expanded: @section_expanded_status["collections"] } do %>
-          <ul class="layout--list bucket--list">
-            <%= render @collections %>
-          </ul>
-        <% end %>
-      <% end %>
-
-      <% if @people.any? %>
-        <%= render layout: "home/section", locals: { key: "people", title: "People", icon: "face", show_more_path: people_path, expanded: @section_expanded_status["people"] } do %>
-          <ul class="layout--list bucket--list">
-            <%= render @people %>
-          </ul>
-        <% end %>
-      <% end %>
-
-      <% if @recurrencies.any? %>
-        <%= render layout: "home/section", locals: { key: "recurrencies", title: "Recurrency", icon: "calendar-repeat", expanded: @section_expanded_status["recurrencies"] } do %>
-          <ul class="layout--list bucket--list">
-            <%= render partial: "recurrencies/recurrency", collection: @recurrencies, as: :recurrency, locals: { tracker: @recurrency_tracker } %>
-          </ul>
-        <% end %>
-      <% end %>
-
-      <% if @published_bullets.any? %>
-        <%= render layout: "home/section", locals: { key: "published", title: "Published", icon: "link", show_more_path: (@show_published_more ? published_index_path : nil), expanded: @section_expanded_status["published"] } do %>
-          <ul class="layout--list bucket--list">
-            <%= render partial: "published/bullet", collection: @published_bullets, as: :bullet %>
-          </ul>
-        <% end %>
+      <% @sections.each do |section| %>
+        <%= render "home_section", section: section %>
       <% end %>
     </div>
   </div>

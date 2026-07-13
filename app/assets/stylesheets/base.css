@@ -14,8 +14,7 @@
     font-family: var(--font-family-base);
     font-size: var(--font-size-base);
     background: var(--color-bg-base);
-    color: var(--color-fg-base);
-    margin-bottom: calc(var(--spacing-vertical-double) * 6);
+    color: var(--color-fg-base);;
   }
 
   /* Named container: body width is the centered page column. */
@@ -62,7 +61,7 @@
     border-radius: var(--radius-subtle);
     outline: 1px solid color-mix(
       in oklch,
-      var(--color-stroke-base) 40%,
+      var(--color-accent) 80%,
       transparent
     );
     outline-offset: 2px;

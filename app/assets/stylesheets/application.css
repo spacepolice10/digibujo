@@ -43,10 +43,12 @@
 @import "menu.css";
 @import "activity.css";
 @import "public.css";
+@import "features.css";
+@import "support.css";
 @import "session.css";
 @import "print.css";
 @import "future.css";
 @import "monthly_bucket.css";
 @import "home.css";
 @import "review.css";
-@import "recurrency.css";
+@import "tracker.css";

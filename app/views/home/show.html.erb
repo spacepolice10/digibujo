@@ -1,112 +1,16 @@
-<div class="layout--workspace layout--workspace-page">
-  <aside class="layout--rail">
-    <%= link_to new_collection_path, class: "button--secondary layout--rail-action", data: { turbo_frame: "_top" } do %>
-      <i class="icon" style="--icon-mask: var(--icon-book)" aria-hidden="true"></i>
-      Add collection
-    <% end %>
-
-    <%= link_to new_monthly_bucket_path, class: "button--secondary layout--rail-action", data: { turbo_frame: "_top" } do %>
-      <i
-        class="icon"
-        style="--icon-mask: var(--icon-calendar)"
-        aria-hidden="true"
-      ></i>
-      Add monthly log
-    <% end %>
-
-    <%= link_to new_project_path, class: "button--secondary layout--rail-action", data: { turbo_frame: "_top" } do %>
-      <i class="icon" style="--icon-mask: var(--icon-tag)" aria-hidden="true"></i>
-      New project
-    <% end %>
-
-    <%= link_to new_person_path, class: "button--secondary layout--rail-action", data: { turbo_frame: "_top" } do %>
-      <i class="icon" style="--icon-mask: var(--icon-face)" aria-hidden="true"></i>
-      Add contact
-    <% end %>
-
-    <%= link_to new_recurrency_path, class: "button--secondary layout--rail-action", data: { turbo_frame: "_top" } do %>
-      <i
-        class="icon"
-        style="--icon-mask: var(--icon-report-medical)"
-        aria-hidden="true"
-      ></i>
-      Add recurrency
-    <% end %>
-
-    <%= render "home/appearance" %>
+<div class="layout--container layout--grid cols-3">
+  <aside class="home--side">
+    <%= render "home_actions" %>
+    <%= render "appearance_picker", appearance: @appearance %>
   </aside>
 
-  <div class="layout--surface">
-    <%= render layout: "home/section", locals: { key: "logs", title: "Logs", icon: "calendar", expanded: @section_expanded_status["logs"] } do %>
-      <ul class="layout--list bucket--list">
-        <%= render "home/daylog_list_item", bullets_number: @daylog_bullets_number %>
-
-        <% if @future %>
-          <%= render "home/future_list_item", future: @future, monthly_buckets: @future_monthly_buckets %>
-        <% end %>
-
-        <% if @future_monthly_buckets.any? %>
-          <% @future_monthly_buckets.each do |monthly_bucket| %>
-            <li class="layout--list-item bucket--list-item-child">
-              <%= link_to monthly_bucket_path(monthly_bucket),
-                    class: "bucket--list-item-link bucket--list-item-child-link",
-                    data: { turbo_frame: "_top", bucket_colour: monthly_bucket.colour } do %>
-                <div class="bucket--list-item-name">
-                  <span class="bucket--child-dot-inner" aria-hidden="true"></span>
-
-                  <span class="utilities--line-clamp-1">
-                    <%= monthly_bucket.name %>
-                  </span>
-                </div>
-              <% end %>
-            </li>
-          <% end %>
-        <% end %>
-      </ul>
-    <% end %>
-
-    <% if @projects.any? %>
-      <%= render layout: "home/section", locals: { key: "projects", title: "Projects", icon: "hash", show_more_path: projects_path, expanded: @section_expanded_status["projects"] } do %>
-        <ul class="layout--list bucket--list">
-          <%= render @projects %>
-        </ul>
-      <% end %>
-    <% end %>
-
-    <% if @collections.any? %>
-      <%= render layout: "home/section", locals: { key: "collections", title: "Collections", icon: "book", show_more_path: (@show_collections_more ? collections_path : nil), expanded: @section_expanded_status["collections"] } do %>
-        <ul class="layout--list bucket--list">
-          <%= render @collections %>
-        </ul>
-      <% end %>
-    <% end %>
-
-    <% if @people.any? %>
-      <%= render layout: "home/section", locals: { key: "people", title: "People", icon: "face", show_more_path: people_path, expanded: @section_expanded_status["people"] } do %>
-        <ul class="layout--list bucket--list">
-          <%= render @people %>
-        </ul>
-      <% end %>
-    <% end %>
-
-    <% if @recurrencies.any? %>
-      <%= render layout: "home/section", locals: { key: "recurrencies", title: "Recurrency", icon: "calendar-repeat", expanded: @section_expanded_status["recurrencies"] } do %>
-        <ul class="layout--list bucket--list">
-          <%= render partial: "recurrencies/recurrency", collection: @recurrencies, as: :recurrency, locals: { tracker: @recurrency_tracker } %>
-        </ul>
-      <% end %>
-    <% end %>
-
-    <% if @published_bullets.any? %>
-      <%= render layout: "home/section", locals: { key: "published", title: "Published", icon: "link", show_more_path: (@show_published_more ? published_index_path : nil), expanded: @section_expanded_status["published"] } do %>
-        <ul class="layout--list bucket--list">
-          <%= render partial: "published/bullet", collection: @published_bullets, as: :bullet %>
-        </ul>
-      <% end %>
+  <div class="layout--surface layout--grid-item span-1 home--section-list">
+    <% @sections.each do |section| %>
+      <%= render "home_section", section: section %>
     <% end %>
   </div>
 
-  <aside class="layout--rail">
+  <aside class="home--activities">
     <h4 class="layout--rail-heading">Activity</h4>
 
     <turbo-frame

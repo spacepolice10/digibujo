@@ -4,7 +4,16 @@
     height: var(--icon-size-base);
     object-fit: cover;
     flex-shrink: 0;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-stroke-strong);
+    background: var(--color-bg-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    font-weight: var(--font-weight-strong);
   }
+
 
   .person--inline-contacts {
     display: flex;

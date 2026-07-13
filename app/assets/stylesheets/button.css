@@ -27,7 +27,7 @@
   .button--primary,
   .button--secondary,
   .button--tertiary {
-    padding: var(--spacing-vertical) var(--spacing-horizontal-half);
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
     border-radius: var(--radius-strong);
     width: fit-content;
   }
@@ -36,6 +36,11 @@
     padding: 0;
     width: var(--icon-size-base);
     height: var(--icon-size-base);
+  }
+
+  .button--icon-strong {
+    width: var(--icon-size-strong);
+    height: var(--icon-size-strong);
   }
 
   .button--icon-subtle {

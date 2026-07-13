@@ -91,9 +91,18 @@
     text-align: center;
   }
 
+  .session--footer-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-horizontal);
+  }
+
   .session--footer-link {
-    display: block;
-    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
     font-size: var(--font-size-subtle);
     color: var(--color-fg-subtle);
     text-decoration: none;

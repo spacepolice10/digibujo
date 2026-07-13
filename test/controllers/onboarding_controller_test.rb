@@ -7,23 +7,13 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
     @user = users(:one)
   end
 
-  test 'new redirects when authenticated user session is missing' do
+  test 'new redirects when not signed in' do
     get new_onboarding_path
 
     assert_redirected_to new_authentication_path
   end
 
-  test 'new redirects when authenticated user session expired' do
-    session[:authenticated_user_id] = @user.id
-    session[:authenticated_user_at] = LoginCode::EXPIRY.ago.to_i
-
-    get new_onboarding_path
-
-    assert_redirected_to new_authentication_path
-    assert_nil session[:authenticated_user_id]
-  end
-
-  test 'new renders when authenticated user session is present' do
+  test 'new renders for signed-in user' do
     code = request_login_code(@user.email_address)
     confirm_login_code(code)
 
@@ -35,7 +25,7 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
     assert_select 'a.onboarding--external-link[href=?]', 'https://bulletjournal.com/'
   end
 
-  test 'create provisions defaults and starts session' do
+  test 'create provisions defaults' do
     code = request_login_code(@user.email_address)
     confirm_login_code(code)
 

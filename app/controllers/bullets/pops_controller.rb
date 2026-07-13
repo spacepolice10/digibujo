@@ -2,7 +2,7 @@
 
 module Bullets
   class PopsController < ApplicationController
-    include PrepareBullets, DaylogRedirects
+    include PrepareBullets
 
     before_action :prepare_bullets, only: %i[new create destroy]
 
@@ -23,14 +23,14 @@ module Bullets
 
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_back fallback_location: daylog_path(date: daylog_redirect_date.iso8601) }
+        format.html { redirect_back fallback_location: daylog_path }
       end
     rescue ArgumentError
       @failed_bullet = @bullets.first
       respond_to do |format|
         format.turbo_stream { render :create, status: :unprocessable_entity }
         format.html do
-          redirect_back fallback_location: daylog_path(date: daylog_redirect_date.iso8601), alert: 'Invalid date'
+          redirect_back fallback_location: daylog_path, alert: 'Invalid date'
         end
       end
     rescue ActiveRecord::RecordInvalid => e
@@ -38,7 +38,7 @@ module Bullets
       respond_to do |format|
         format.turbo_stream { render :create, status: :unprocessable_entity }
         format.html do
-          redirect_back fallback_location: daylog_path(date: daylog_redirect_date.iso8601),
+          redirect_back fallback_location: daylog_path,
                         alert: e.record.errors.full_messages.to_sentence
         end
       end
@@ -54,14 +54,14 @@ module Bullets
 
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_back fallback_location: daylog_path(date: daylog_redirect_date.iso8601) }
+        format.html { redirect_back fallback_location: daylog_path }
       end
     rescue ArgumentError
       @failed_bullet = @bullets.first
       respond_to do |format|
         format.turbo_stream { render :destroy, status: :unprocessable_entity }
         format.html do
-          redirect_back fallback_location: daylog_path(date: daylog_redirect_date.iso8601), alert: 'Invalid date'
+          redirect_back fallback_location: daylog_path, alert: 'Invalid date'
         end
       end
     rescue ActiveRecord::RecordInvalid => e
@@ -69,7 +69,7 @@ module Bullets
       respond_to do |format|
         format.turbo_stream { render :destroy, status: :unprocessable_entity }
         format.html do
-          redirect_back fallback_location: daylog_path(date: daylog_redirect_date.iso8601),
+          redirect_back fallback_location: daylog_path,
                         alert: e.record.errors.full_messages.to_sentence
         end
       end

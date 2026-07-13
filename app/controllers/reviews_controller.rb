@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ReviewsController < ApplicationController
-  include PaginatedRecords, PrepareBullets
+  include PrepareBullets
 
   def show
     @review_to = params[:to].present? ? params[:to].to_date : Date.current

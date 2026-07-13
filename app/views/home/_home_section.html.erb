@@ -1,0 +1,40 @@
+<details
+  class="home--section"
+  <% if section.expanded %>
+    open
+  <% end %>
+  <% if section.name.present? %>
+    data-controller="section"
+    data-action="toggle->section#onToggle"
+    data-section-expand-path-value="<%= home_expand_section_path(section.name.downcase) %>"
+    data-section-collapse-path-value="<%= home_collapse_section_path(section.name.downcase) %>"
+  <% end %>
+>
+  <summary class="home--section-summary">
+    <span class="home--section-name"><%= section.name %></span>
+
+    <i
+      class="icon home--section-chevron"
+      style="--icon-mask: var(--icon-chevron-down)"
+      aria-hidden="true"
+    ></i>
+
+    <% if section.show_path.present? %>
+      <%= link_to "Show more",
+          section.show_path,
+          class: "home--section-more",
+          data: { turbo_frame: "_top" },
+          "aria-label": "All #{section.name.downcase}" %>
+    <% end %>
+  </summary>
+
+  <div class="home--section-content-wrapper">
+    <div class="home--section-content layout--surface-sunken">
+      <ul class="layout--surface layout--surface-sunken">
+        <% Array.wrap(section.records).each do |record| %>
+          <%= render record %>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</details>

@@ -1,0 +1,26 @@
+<%# locals: (tracker:) %>
+<%= form_with model: tracker, class: "form form--strong" do |f| %>
+  <% if tracker.errors.any? %>
+    <div class="form--errors" role="alert">
+      <p><%= pluralize(tracker.errors.count, "error") %> prevented this tracker from being saved:</p>
+      <ul>
+        <% tracker.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <small class="form-small">Trackers are repeating habits you want to build — mark them off each day and track your consistency over time.</small>
+
+  <div class="form-group">
+    <%= f.label :name, class: "form-label" %>
+    <small class="form-small">Give your tracker a name. Examples: Morning run, Meditate, Drink water.</small>
+    <%= f.text_field :name, class: "form-input", required: true, autofocus: true %>
+  </div>
+
+  <%= render "shared/form/colour_picker", form: f %>
+  <%= render "shared/form/icon_picker", form: f %>
+  <%= render "shared/form/schedule_days_picker", form: f %>
+  <%= f.submit class: "button--primary form--submit" %>
+<% end %>

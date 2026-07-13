@@ -1,12 +1,14 @@
 <li id="<%= dom_id(collection.bucket, :list_item) %>" class="layout--list-item">
-  <%= link_to collection_path(collection), class: "bucket--list-item-link" do %>
-    <div class="bucket--list-item-name">
-      <div class="bucket--list-item-marker" data-bucket-colour="<%= collection.bucket.colour %>" aria-hidden="true">
-        <%= image_tag collection.bucket.icon_path, alt: "", class: "icons--list" %>
-      </div>
-      <span class="utilities--line-clamp-1"><%= collection.name %></span>
-    </div>
-    <div class="bucket--list-item-meta utilities--line-clamp-1">
+  <%= link_to collection_path(collection), class: "layout--list-item-link" do %>
+    <span
+      aria-hidden="true"
+    >
+      <%= image_tag collection.bucket.icon_path, alt: "", style: "background-color: transparent", class: "icon" %>
+    </span>
+
+    <span class="utilities--line-clamp-1"><%= collection.name %></span>
+
+    <div class="typography-description utilities--line-clamp-1">
       <span><%= collection.bullets.count %> <%= "bullet".pluralize(collection.bullets.count) %></span>,
       <span><%= collection.created_at.strftime("%b %d") %></span>
     </div>

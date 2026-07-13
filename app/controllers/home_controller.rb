@@ -1,55 +1,91 @@
-# frozen_string_literal: true
-
-# Navigation hub: projects, collections, monthly spreads, and future log.
 class HomeController < ApplicationController
-  COLLECTIONS_LIMIT = 8
-  PUBLISHED_LIMIT = 8
-
   def show
-    @projects = recent_projects
-    @collections = Current.user.active_collections.limit(COLLECTIONS_LIMIT)
-    @show_collections_more = Current.user.active_collections.count > COLLECTIONS_LIMIT
-    @published_bullets = published_bullets_preview
-    @show_published_more = published_bullets_scope.count > PUBLISHED_LIMIT
-    @people = recent_people
-    @future = Current.user.future_buckets.first&.bucket
-    @future_monthly_buckets = Current.user.future_buckets.first&.monthly_buckets&.includes(:bucket) || MonthlyBucket.none
-    @daylog_bullets_number = daylog_bullets_number
-    @recurrencies = Current.user.recurrencies.chronological
-    @recurrency_tracker = RecurrencyTracker.new(
-      user: Current.user,
-      from: Date.current.beginning_of_month,
-      to: Date.current.end_of_month
-    )
-    @section_expanded_status = section_expanded_status
+    @sections = sections.select(&:visible?)
+    @appearance = appearance
   end
 
   private
 
-  def recent_projects
-    Current.user.projects.first(8)
+  def sections
+    [
+      Section.new(
+        name: 'Logs',
+        records: logs_records,
+        show_path: nil,
+        expanded: section_expanded?(:logs)
+      ),
+      Section.new(
+        name: 'Projects',
+        records: project_records,
+        show_path: projects_path,
+        expanded: section_expanded?(:projects)
+      ),
+      Section.new(
+        name: 'People',
+        records: person_records,
+        show_path: people_path,
+        expanded: section_expanded?(:people)
+      ),
+      Section.new(
+        name: 'Collections',
+        records: collection_records,
+        show_path: collections_path,
+        expanded: section_expanded?(:collections)
+      ),
+      Section.new(
+        name: 'Trackers',
+        records: tracker_records,
+        show_path: trackers_path,
+        expanded: section_expanded?(:trackers)
+      ),
+      Section.new(
+        name: 'Published',
+        records: published_records,
+        show_path: published_index_path,
+        expanded: section_expanded?(:published)
+      )
+    ]
   end
 
-  def recent_people
-    Current.user.people.first(8)
+  def logs_records
+    Current.user.future_buckets.limit(5).to_a + Current.user.monthly_buckets.limit(5).to_a
   end
 
-  def daylog_bullets_number
-    Current.user.bullets.where(pops_on: Date.current).active.count
+  def collection_records
+    Current.user.active_collections.limit(5)
   end
 
-  def published_bullets_scope
-    Current.user.bullets.published
-      .includes(:published_entity)
-      .preload(bulletable: :rich_text_body)
-      .order(published_entities: { published_at: :desc })
+  def person_records
+    Current.user.people.limit(5)
   end
 
-  def published_bullets_preview
-    published_bullets_scope.limit(PUBLISHED_LIMIT)
+  def project_records
+    Current.user.projects.limit(5)
   end
 
-  def section_expanded_status
-    User::Settings::SECTION_COLUMNS.transform_values { |column| Current.user.settings![column] }
+  def tracker_records
+    Current.user.trackers.open.chronological.limit(5)
+  end
+
+  def published_records
+    Current.user.published_entities
+           .includes(publishable: { bulletable: :rich_text_body })
+           .order(published_at: :desc)
+           .limit(5)
+  end
+
+  def appearance
+    Current.user.settings!.appearance
+  end
+
+  def section_expanded?(section_name)
+    column = User::Settings::SECTION_COLUMNS[section_name.to_s] || User::Settings::SECTION_COLUMNS[section_name]
+    Current.user.settings![column]
+  end
+
+  Section = Struct.new(:name, :records, :show_path, :expanded, keyword_init: true) do
+    def visible?
+      records.present?
+    end
   end
 end

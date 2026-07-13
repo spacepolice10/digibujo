@@ -147,9 +147,9 @@
     --opacity-half: 0.5;
 
     /* radius */
-    --radius-subtle: 2px;
-    --radius-base: 4px;
-    --radius-strong: 8px;
+    --radius-subtle: 4px;
+    --radius-base: 8px;
+    --radius-strong: 12px;
     --radius-full: 9999px;
 
     /* icon sizes */

@@ -6,11 +6,11 @@ Framework-agnostic references live in [`docs/`](docs/). Agent workflow rules liv
 
 ## Authentication
 
-Custom session-based auth built with an `Authentication` concern (not Devise). **Passwordless:** users continue with email + one-time code (`LoginCode`). `AuthenticationController#create` validates email, creates the user when needed, sends a code, and stores `session[:login_email]`; `Authentications::ConfirmationsController#create` verifies the code. Users without a future bucket are sent to `OnboardingController` to provision defaults (`Future Log`, current monthly spread, `Loose Notes`); returning users start a session immediately. Logout via `DELETE /authentication`. Persisted sessions live in the `sessions` table; the signed httponly cookie holds `session_id`. `Current.user` / `Current.session` via `ActiveSupport::CurrentAttributes`. Controllers opt out of auth with `allow_unauthenticated_access`. Rate limiting is applied to authentication create, confirmation create, and onboarding create. Auth forms use a `form-submit` Stimulus controller for submit loading state.
+Custom session-based auth built with an `Authentication` concern (not Devise). **Passwordless:** users continue with email + one-time code (`LoginCode`). `AuthenticationController#create` finds or creates the `User`, sends a code, and stores `session[:login_email]`; `Authentications::ConfirmationsController#create` verifies the code and always starts a session. Users without a future bucket are then sent to `OnboardingController` (authenticated); `Onboarding#complete` provisions defaults (`Future Log`, current monthly spread, `Loose Notes`). Returning users go straight to the app. Logout via `DELETE /authentication`. Persisted sessions live in the `sessions` table; the signed httponly cookie holds `session_id`. `Current.user` / `Current.session` via `ActiveSupport::CurrentAttributes`. Controllers opt out of auth with `allow_unauthenticated_access`. The continue-with-email form links to **`GET /features`** (`FeaturesController#show`) and **`GET /support`** (`SupportController#show`), both unauthenticated with `layout: public`. Rate limiting is applied to authentication create, confirmation create, and onboarding create. Auth forms use a `form-submit` Stimulus controller for submit loading state.
 
 ## User Settings
 
-Per-user settings live in a dedicated `user_settings` table (one row per user), accessed via `User::Configurable` concern. `User` `has_one :settings, class_name: "User::Settings"`; the row is created automatically on user create. `User::Settings` exposes typed columns and a `SECTIONS` / `SECTION_COLUMNS` map (current sections: `logs`, `projects`, `collections`, `people`, `recurrencies`, `published` → `*_expanded` booleans). **`appearance`** (`default`, `warm`, `cool`, `nature`, `cheese`) drives the home background tint. Add new settings as real columns and extend the model; avoid JSON columns. Home section expand/collapse is updated via `POST /home/sections/:id/expand` and `POST /home/sections/:id/collapse` (`Home::SectionsController`), which guards unknown keys using `User::Settings::SECTION_COLUMNS`. Appearance is updated via `POST /home/appearance` (`Home::AppearancesController`). The concern also exposes `User#settings!` which lazy-creates the row on first access; use it from controllers so users created before the row existed (or created via raw SQL) still get a settings record.
+Per-user settings live in a dedicated `user_settings` table (one row per user), accessed via `User::Configurable` concern. `User` `has_one :settings, class_name: "User::Settings"`; the row is created automatically on user create. `User::Settings` exposes typed columns and a `SECTIONS` / `SECTION_COLUMNS` map (current sections: `logs`, `projects`, `collections`, `people`, `trackers`, `published` → `*_expanded` booleans). **`appearance`** (`default`, `warm`, `cool`, `nature`, `cheese`) drives the home background tint. Add new settings as real columns and extend the model; avoid JSON columns. Home section expand/collapse is updated via `POST /home/sections/:id/expand` and `POST /home/sections/:id/collapse` (`Home::SectionsController`), which guards unknown keys using `User::Settings::SECTION_COLUMNS`. Appearance is updated via `POST /home/appearance` (`Home::AppearancesController`). The concern also exposes `User#settings!` which lazy-creates the row on first access; use it from controllers so users created before the row existed (or created via raw SQL) still get a settings record.
 
 ## Delegated Type Pattern (Bullets)
 
@@ -68,15 +68,15 @@ Because archive/unarchive is now an INSERT/DELETE into `archives` (not an `updat
 
 `Activity` is a polymorphic audit log: **`subject`** (`Bullet` or `Bucket`), **`action`** (string), **`metadata`** (json), **`user_id`**. Recording goes through **`ActivityTrackable#record_activity!`** on subjects. Bullet actions: `updated`, `collected`, `popped`, `archived`, `unarchived`, `completed`, `uncompleted`, `acknowledged`, `pinned`, `unpinned`, `project_mentioned` / `project_unmentioned`, `person_mentioned` / `person_unmentioned`. Bucket actions: `created`, `updated`, `pinned`, `unpinned`, `archived`, `unarchived`. Migration intents write bullet activities with migration payload in `metadata`. **`GET /activities`** lists the user's global feed (no subject filter). **`GET /activities/compact`** returns the latest six activities for the home rail.
 
-## Recurrency
+## Tracker
 
-`Recurrency` tracks repeating actions per user (`belongs_to :user`). One mark per calendar day via **`RecurrencyCompletion`** (`recurrency_id`, `date`, unique index). Not a bullet — no bucket, migration, or sweep. Identity uses **`Colourable`** / **`Iconable`** (`colour`, `icon` columns) like collections.
+`Tracker` tracks repeating habits per user (`belongs_to :user`). One mark per calendar day via **`Tracker::Completion`** (`tracker_id`, `date`, unique index). Not a bullet — no bucket, migration, or sweep. Identity uses **`Colourable`** / **`Iconable`** (`colour`, `icon` columns) like collections.
 
-**Schedule** (`schedule` json): `daily`, `weekdays`, or `custom` (`days` = Ruby `wday` 0–6). **Lifecycle:** `active_from` / `active_to` (nullable); set `active_to` to retire without deleting history. **Destroy** is blocked when completions exist (`dependent: :restrict_with_error`).
+**Schedule** (`schedule` json): `{ "days" => […] }` with Ruby `wday` 0–6. **Lifecycle:** `active_from` is the creation date; `stopped_on` (nullable) retires the habit. While open, the upper bound is today. **`stop!`** sets `stopped_on`; `POST /trackers/:tracker_id/stop` (`Trackers::StopsController`). Destroy removes completions (`dependent: :destroy`).
 
-**`RecurrencyTracker`** (plain object) loads recurrencies + completions for a date range; exposes `completed?`, `statistics` (streak, best streak, total, period %).
+**API on the record:** after `Current.user.trackers.open.chronological.with_completions`, views call `tracker.completed?(date)` and `tracker.statistics` (streak, best streak, total, period % over `active_from..active_to`). No separate tracker/query PORO.
 
-**UI:** `resources :recurrencies, except: :index` (home is the entry point; show/edit/destroy per recurrency). Show page renders a **90-day heatmap** (`Date.current - 89.days..Date.current`); create/edit form includes colour + icon pickers like collections. Daylog: compact clickable icon chips in the page header (`recurrencies/_header_chips`). Monthly spread: dedicated recurrency column aligned per day via `monthly-bucket--day-band` (recurrency slot + date row share one row); unplanned in the third column. Mobile tabs: days vs unplanned. Toggle: each chip is a `form_with` (`recurrencies/_toggle`) posting to `POST`/`DELETE /recurrencies/:id/completion` with `date` + `dom_key`; turbo-stream replaces only that form. Home rail links to individual recurrencies.
+**UI:** `resources :trackers, except: :index` (home is the entry point; show/edit/destroy per tracker). Show page renders a **90-day heatmap** (`Date.current - 89.days..Date.current`); create/edit form includes colour + icon pickers like collections. Toggle posts to `POST`/`DELETE /trackers/:id/completion` with `date` + `dom_key`; turbo-stream replaces only that cell.
 
 ## Review
 
@@ -111,7 +111,7 @@ Bullets use `pops_on` (`date`) as the primary day bucket: which daily log page t
 
 ## Monthly log spread
 
-`MonthlyBucket` is a `bucketable` type (thin model + `Bucketable`). The spread period lives on the monthly bucket itself (`period_from`, `period_to`, `period_days`, `period_ranges_correct`). `period_from` is snapped to the 1st of the month; each user may have at most one spread per calendar month (`user_id` + `period_from` unique). Spreads must cover a full calendar month (`period_from` through `period_to.end_of_month`). **`MonthlyBucket.current(user)`** returns the spread for the current calendar month (`find_by(period_from: …)`), or `nil` (no auto-create). **`covers_date?(date)`** checks whether a date falls in that spread's month. **`MonthlyBucket`** may belong to a **`FutureBucket`** (a user may have multiple future logs over time). Routes: **`GET /monthly_buckets/:id`**, **`GET /monthly_bucket`** (current month shortcut), **`GET /future_buckets/:id`**. Left area: two-column calendar (`recurrency` slot per day aligned with matching date row) plus bullets; right column: unplanned (`pops_on` nil). `pops_on` still places bullets on the daily log when set. Calendar rows use **`monthly_buckets/bullets/_bullet`** (drag + body partial). New bullets open in the **`monthly_bucket_composer`** dialog (`composer-dialog` Stimulus + `bullet_composer` turbo-frame).
+`MonthlyBucket` is a `bucketable` type (thin model + `Bucketable`). The spread period lives on the monthly bucket itself (`period_from`, `period_to`, `period_days`, `period_ranges_correct`). `period_from` is snapped to the 1st of the month; each user may have at most one spread per calendar month (`user_id` + `period_from` unique). Spreads must cover a full calendar month (`period_from` through `period_to.end_of_month`). **`MonthlyBucket.current(user)`** returns the spread for the current calendar month (`find_by(period_from: …)`), or `nil` (no auto-create). **`covers_date?(date)`** checks whether a date falls in that spread's month. **`MonthlyBucket`** may belong to a **`FutureBucket`** (a user may have multiple future logs over time). Routes: **`GET /monthly_buckets/:id`**, **`GET /monthly_bucket`** (current month shortcut), **`GET /future_buckets/:id`**. Left area: two-column calendar plus bullets; right column: unplanned (`pops_on` nil). `pops_on` still places bullets on the daily log when set. Calendar rows use **`monthly_buckets/bullets/_bullet`** (drag + body partial). New bullets open in the **`monthly_bucket_composer`** dialog (`composer-dialog` Stimulus + `bullet_composer` turbo-frame).
 
 ## Organizing from the timeline
 
@@ -183,6 +183,8 @@ root                                         → home#show
 resource :authentication                    → authentication#new/create/destroy
 resource :authentication/confirmation      → authentications/confirmations#new/create
 resource :onboarding                        → onboarding#new/create
+resource :features                          → features#show (unauthenticated, layout: public)
+resource :support                           → support#show (unauthenticated, layout: public)
 
 # Logs
 resource :daylog                            → daylogs#show
@@ -235,9 +237,10 @@ POST   /people/pin                           → people/pins#create
 DELETE /people/pin                           → people/pins#destroy
 resources :people
 
-# Recurrencies
-resources :recurrencies, except: :index
-  nested: recurrencies/:id/completion        → recurrencies/completions#create/destroy
+# Trackers
+resources :trackers, except: :index
+  nested: trackers/:tracker_id/completion     → trackers/completions#create/destroy
+  nested: trackers/:tracker_id/stop           → trackers/stops#create
 
 # Home & navigation
 GET    /home                                 → home#show

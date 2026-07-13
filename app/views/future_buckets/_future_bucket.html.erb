@@ -1,0 +1,6 @@
+<%# locals: (future_bucket:) %>
+<li id="<%= dom_id(future_bucket.bucket, :list_item) %>" class="layout--list-item">
+  <%= link_to future_bucket_path(future_bucket), data: { turbo_frame: "_top" }, class: "layout--list-item-link" do %>
+    <span class="layout--list-item-name"><%= future_bucket.name %></span>
+  <% end %>
+</li>

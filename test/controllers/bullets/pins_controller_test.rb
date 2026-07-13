@@ -26,7 +26,7 @@ module Bullets
 
       post pin_path, params: { bullet_ids: "#{@bullet.id},#{other.id}" }
 
-      assert_redirected_to daylog_path(date: Date.current.iso8601)
+      assert_redirected_to daylog_path
       assert @bullet.reload.pinned?
       assert other.reload.pinned?
     end

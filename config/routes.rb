@@ -16,6 +16,8 @@ Rails.application.routes.draw do
   end
 
   resource :onboarding, only: %i[new create], controller: 'onboarding'
+  resource :features, only: :show, controller: 'features'
+  resource :support, only: :show, controller: 'support'
 
   # --- Logs ---
   resource :daylog, only: :show, controller: 'daylogs'
@@ -73,10 +75,11 @@ Rails.application.routes.draw do
   end
   resources :buckets, only: :show
 
-  # --- Recurrencies ---
-  resources :recurrencies, except: :index do
-    scope module: :recurrencies do
+  # --- Trackers ---
+  resources :trackers, except: :index do
+    scope module: :trackers do
       resource :completion
+      resource :stop, only: :create
     end
   end
 

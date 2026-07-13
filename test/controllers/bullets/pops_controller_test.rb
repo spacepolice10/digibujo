@@ -51,7 +51,7 @@ module Bullets
 
       post pop_path, params: { bullet_ids: card.id.to_s, pops_on: target.iso8601 }
 
-      assert_redirected_to daylog_path(date: Date.current.iso8601)
+      assert_redirected_to daylog_path
       assert_equal target, card.reload.pops_on
     end
 
@@ -63,7 +63,7 @@ module Bullets
       post pop_path,
            params: { bullet_ids: card.id.to_s, pops_on: target.iso8601, bucket_id: collection.bucket.id }
 
-      assert_redirected_to daylog_path(date: Date.current.iso8601)
+      assert_redirected_to daylog_path
       assert_equal target, card.reload.pops_on
       assert_nil card.bucket_id
     end
@@ -78,7 +78,7 @@ module Bullets
 
       post pop_path, params: { bullet_ids: card.id.to_s, pops_on: (anchor + 1.day).iso8601 }
 
-      assert_redirected_to daylog_path(date: Date.current.iso8601)
+      assert_redirected_to daylog_path
       assert_equal anchor + 1.day, card.reload.pops_on
     end
 
@@ -92,7 +92,7 @@ module Bullets
 
       post pop_path, params: { bullet_ids: card.id.to_s, pops_on: (view_day + 1.day).iso8601 }
 
-      assert_redirected_to daylog_path(date: Date.current.iso8601)
+      assert_redirected_to daylog_path
       assert_equal view_day + 1.day, card.reload.pops_on
     end
 
@@ -102,7 +102,7 @@ module Bullets
 
       post pop_path, params: { bullet_ids: card.id.to_s, pops_on: (view_day + 1.week).iso8601 }
 
-      assert_redirected_to daylog_path(date: Date.current.iso8601)
+      assert_redirected_to daylog_path
       assert_equal view_day + 1.week, card.reload.pops_on
     end
 
@@ -113,7 +113,7 @@ module Bullets
 
       post pop_path, params: { bullet_ids: "#{first.id},#{second.id}", pops_on: target.iso8601 }
 
-      assert_redirected_to daylog_path(date: Date.current.iso8601)
+      assert_redirected_to daylog_path
       assert_equal target, first.reload.pops_on
       assert_equal target, second.reload.pops_on
     end
@@ -144,7 +144,7 @@ module Bullets
 
       delete pop_path, params: { bullet_ids: card.id.to_s, pops_on: '' }
 
-      assert_redirected_to daylog_path(date: Date.current.iso8601)
+      assert_redirected_to daylog_path
       assert_nil card.reload.pops_on
     end
 

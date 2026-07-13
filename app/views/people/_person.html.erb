@@ -1,16 +1,17 @@
 <li id="<%= dom_id(person, :list_item) %>" class="layout--list-item">
-  <%= link_to person_path(person), { data: { turbo_frame: "_top" }, class: "bucket--list-item-link" } do %>
-    <div class="bucket--list-item-name">
-    <div class="bucket--list-item-marker" data-bucket-colour="<%= person.colour %>" aria-hidden="true">
+  <%= link_to person_path(person), { data: { turbo_frame: "_top" }, class: "layout--list-item-link" } do %>
+
+    <span aria-hidden="true">
       <% if person.avatar.attached? %>
-        <%= image_tag person.avatar, class: "person--avatar", alt: "" %>
+        <%= image_tag person.avatar, style: "background-color: transparent", class: "person--avatar", alt: "" %>
       <% else %>
-        <%= image_tag person.icon_path, alt: "", class: "icons--list" %>
+        <div class="person--avatar" aria-hidden="true">
+          <%= person.initial %>
+        </div>
       <% end %>
-    </div>
-      <span class="utilities--line-clamp-1"><%= person.name %></span>
-    </div>
-    <div class="bucket--list-item-meta utilities--line-clamp-1">
+    </span>
+    <span class="utilities--line-clamp-1"><%= person.name %></span>
+    <div class="typography-description utilities--line-clamp-1">
       <span><%= person.bullets.count %> <%= "bullet".pluralize(person.bullets.count) %></span>,
       <span><%= person.created_at.strftime("%b %d") %></span>
     </div>

@@ -7,7 +7,6 @@
       max(var(--spacing-vertical-half), env(safe-area-inset-bottom, 0px)) +
       var(--spacing-vertical-double)
     );
-
     margin-bottom: 0;
     padding-bottom: var(--tabbar-scroll-padding);
     scroll-padding-bottom: var(--tabbar-scroll-padding);
@@ -25,25 +24,25 @@
     gap: var(--spacing-horizontal-half);
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     padding-bottom: max(var(--spacing-vertical-half), env(safe-area-inset-bottom));
-    background-color: var(--color-bg-base);
+    background-color: var(--color-bg-subtle);
     border: 1px solid var(--color-stroke-base);
     box-shadow: var(--shadow-subtle);
   }
 
-  .tabbar-item {
+  .tabbar--item {
     flex: 1;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     height: 100%;
     width: 100%;
-    padding: var(--spacing-vertical-half);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
     border-radius: 9999px;
     color: var(--color-fg-subtle);
     text-decoration: none;
 
-    .icon,
-    .tabbar-item--logo {
+    & .icon,
+    & .tabbar--item-icon {
       width: var(--icon-size-base);
       height: var(--icon-size-base);
       flex-shrink: 0;
@@ -60,7 +59,7 @@
       color: var(--color-fg-base);
     }
 
-    &.tabbar-item--active {
+    &.tabbar--item-active {
       color: var(--color-fg-base);
       background: var(--color-accent-bg);
     }

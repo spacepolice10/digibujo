@@ -3,20 +3,16 @@ import { post } from "@rails/request.js";
 
 export default class extends Controller {
   static values = {
-    expandUrl: String,
-    collapseUrl: String
+    expandPath: String,
+    collapsePath: String
   };
-
-  preventToggle(event) {
-    event.stopPropagation();
-  }
 
   onToggle() {
     this.persist(this.element.open);
   }
 
   persist(open) {
-    const url = open ? this.expandUrlValue : this.collapseUrlValue;
+    const url = open ? this.expandPathValue : this.collapsePathValue;
     if (!url) return;
 
     post(url).catch((error) => console.error("Section persist failed:", error));

@@ -16,10 +16,10 @@
         <p class="form-hint session--description">Enter your email and we'll send you a one-time code to sign in or create an account.</p>
       </div>
 
-      <% if @signup.errors.any? %>
+      <% if @user&.errors&.any? %>
         <div class="form--errors" role="alert">
           <ul>
-            <% @signup.errors.full_messages.each do |message| %>
+            <% @user.errors.full_messages.each do |message| %>
               <li><%= message %></li>
             <% end %>
           </ul>
@@ -40,4 +40,15 @@
       <%= render "authentication/submit_button", form: form, label: "Continue" %>
     <% end %>
   </div>
+
+  <nav class="session--footer-links" aria-label="About">
+    <%= link_to features_path, class: "session--footer-link" do %>
+      <i class="icon" style="--icon-mask: var(--icon-list)" aria-hidden="true"></i>
+      Features
+    <% end %>
+    <%= link_to support_path, class: "session--footer-link" do %>
+      <i class="icon" style="--icon-mask: var(--icon-mail)" aria-hidden="true"></i>
+      Support
+    <% end %>
+  </nav>
 </div>

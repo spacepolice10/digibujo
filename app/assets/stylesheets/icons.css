@@ -8,8 +8,8 @@
     mask-repeat: no-repeat;
     -webkit-mask-position: center;
     mask-position: center;
-    width: var(--icon-size-subtle);
-    height: var(--icon-size-subtle);
+    min-width: var(--icon-size-subtle);
+    min-height: var(--icon-size-subtle);
     --icon-mask: none;
     -webkit-mask-image: var(--icon-mask);
     mask-image: var(--icon-mask);

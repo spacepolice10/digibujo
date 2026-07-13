@@ -18,7 +18,7 @@ class User < ApplicationRecord
   has_many :pinned_entities, dependent: :destroy
   has_many :published_entities, dependent: :destroy
   has_many :search_selections, class_name: 'Search::Selection', dependent: :destroy
-  has_many :recurrencies, dependent: :destroy
+  has_many :trackers, dependent: :destroy
 
   def settings!
     settings || create_settings!

@@ -18,8 +18,8 @@ module ActiveSupport
       user.projects.create!(name: name, colour: colour, icon: icon)
     end
 
-    def create_recurrency!(user, name:, schedule: Recurrency::DEFAULT_SCHEDULE.dup, colour: nil, icon: nil)
-      user.recurrencies.create!(name: name, schedule: schedule, colour: colour, icon: icon)
+    def create_tracker!(user, name:, schedule: Tracker::DEFAULT_SCHEDULE.dup, colour: nil, icon: nil)
+      user.trackers.create!(name: name, schedule: schedule, colour: colour, icon: icon)
     end
 
     def create_collection!(user, name:, colour: nil, icon: nil)
@@ -35,9 +35,9 @@ module ActiveSupport
       future_bucket = FutureBucket.create!(user: user)
       user.buckets.create!(
         bucketable: future_bucket,
-        name: Signup::FUTURE_BUCKET_NAME,
-        icon: Signup::FUTURE_BUCKET_ICON,
-        colour: Signup::FUTURE_BUCKET_COLOUR
+        name: Onboarding::FUTURE_BUCKET_NAME,
+        icon: Onboarding::FUTURE_BUCKET_ICON,
+        colour: Onboarding::FUTURE_BUCKET_COLOUR
       )
     end
 

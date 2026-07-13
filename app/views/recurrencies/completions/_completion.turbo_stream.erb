@@ -1,4 +1,0 @@
-<%# locals: (recurrency:, date:, tracker:) %>
-<%= turbo_stream.replace dom_id(recurrency, "date_#{date.iso8601}") do %>
-  <%= render "recurrencies/cell", recurrency: recurrency, date: date, tracker: tracker %>
-<% end %>
