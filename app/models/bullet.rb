@@ -12,13 +12,18 @@ class Bullet < ApplicationRecord
   delegate :completable?, :temporal?, :name,
            :marker_icon, :completed?, :mood_marker,
            :starts_date, :ends_date, :body, :data_attributes,
-           :icon,
+           :icon, :colour,
            to: :bulletable
 
   accepts_nested_attributes_for :bulletable
 
   validates :bulletable_type, inclusion: { in: ->(bullet) { bullet.class.bulletable_types } }
   validates :bulletable, presence: true
+
+  def to_partial_path
+    bulletable.to_partial_path if bulletable.respond_to?(:to_partial_path)
+    'bullets/bullet'
+  end
 
   def migration_activity
     return unless migrated?

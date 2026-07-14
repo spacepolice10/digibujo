@@ -1,6 +1,7 @@
 @layer components {
   .icon {
-    display: inline-block;
+    display: flex;
+    margin-block: auto;
     background: currentColor;
     -webkit-mask-size: contain;
     mask-size: contain;
@@ -67,12 +68,22 @@
     --icon-phone: url("icon-phone.svg");
     --icon-text: url("icon-text.svg");
     --icon-webhook: url("icon-webhook.svg");
-  }
-
-  .icons--list {
-    display: block;
-    width: calc(var(--icon-size-subtle) + 2px);
-    height: calc(var(--icon-size-subtle) + 2px);
+    --icon-folder: url("icon-folder.svg");
+    --icon-briefcase: url("icon-briefcase.svg");
+    --icon-house: url("icon-house.svg");
+    --icon-books: url("icon-books.svg");
+    --icon-lightbulb: url("icon-lightbulb.svg");
+    --icon-heart: url("icon-heart.svg");
+    --icon-target: url("icon-target.svg");
+    --icon-memo: url("icon-memo.svg");
+    --icon-art: url("icon-art.svg");
+    --icon-cooking: url("icon-cooking.svg");
+    --icon-airplane: url("icon-airplane.svg");
+    --icon-muscle: url("icon-muscle.svg");
+    --icon-cart: url("icon-cart.svg");
+    --icon-music: url("icon-music.svg");
+    --icon-camera: url("icon-camera.svg");
+    --icon-money: url("icon-money.svg");
   }
 
   .icon--spin {

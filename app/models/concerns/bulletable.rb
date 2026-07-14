@@ -26,6 +26,7 @@ module Bulletable
   def completed?       = false
   def mood_marker      = nil
   def icon             = nil
+  def colour           = nil
 
   def to_partial_body_path
     "#{self.class.model_name.route_key}/body"

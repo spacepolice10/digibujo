@@ -1,56 +1,64 @@
 <% content_for(:title) { "Bullet #{@bullet.bulletable.name}" } %>
-<div class="layout--column">
+
+<div class="layout--container layout--container-md layout--grid grid-cols-1">
   <header class="layout--header">
     <button class="button--tertiary" onclick="history.back()">
-      <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+      <i
+        class="icon"
+        style="--icon-mask: var(--icon-arrow-left)"
+        aria-hidden="true"
+      ></i>
       Back
     </button>
+
     <div class="layout--header-actions">
       <%= link_to edit_bullet_path(@bullet), class: "button--secondary", data: { turbo_frame: "_top" } do %>
-        <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
-        Edit
+        <%= icon_tag(:pencil) %> Edit
       <% end unless @bullet.bulletable_type == "Voice" %>
+
       <% if @bullet.pinned? %>
         <%= button_to pin_path, method: :delete, params: { bullet_ids: @bullet.id }, class: "button--secondary" do %>
-          <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
-          Unpin
+          <%= icon_tag(:unpin) %> Unpin
         <% end %>
       <% else %>
         <%= button_to pin_path, method: :post, params: { bullet_ids: @bullet.id }, class: "button--secondary" do %>
-          <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
-          Pin
+          <%= icon_tag(:pin) %> Pin
         <% end %>
       <% end %>
+
       <% if @bullet.published? %>
         <%= button_to publish_path, method: :delete, params: { bullet_ids: @bullet.id }, class: "button--secondary" do %>
-          <i class="icon" style="--icon-mask: var(--icon-link)" aria-hidden="true"></i>
-          Unpublish
+          <%= icon_tag(:link) %> Unpublish
         <% end %>
       <% else %>
         <%= button_to publish_path, method: :post, params: { bullet_ids: @bullet.id }, class: "button--secondary" do %>
-          <i class="icon" style="--icon-mask: var(--icon-link)" aria-hidden="true"></i>
-          Publish
+          <%= icon_tag(:link) %> Publish
         <% end %>
       <% end %>
+
       <%= button_to archive_path(@bullet), method: :post, class: "button--secondary button--danger", form: { data: { turbo_confirm: "Are you sure?" } } do %>
-        <i class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></i>
-        Archive
+        <%= icon_tag(:trash) %> Archive
       <% end %>
     </div>
   </header>
 
-  <article class="layout--main">
+  <article class="layout--surface">
     <% if @bullet.published? %>
-      <input type="text" class="bullet--published-link" value="<%= published_url(@bullet.public_code) %>" readonly onclick="this.select()"> <%# herb:disable html-input-require-autocomplete %>
+      <input <%# herb:disable html-input-require-autocomplete %>
+        type="text"
+        class="bullet--published-link"
+        value="<%= published_url(@bullet.public_code) %>"
+        readonly
+        onclick="this.select()"
+      >
     <% end %>
-    <turbo-frame id="<%= dom_id(@bullet, :content) %>">
-      <div class="bullet--read-body">
-        <% if @bullet.bulletable_type == "Voice" && @bullet.bulletable.recording.attached? %>
-          <%= render "voices/card", bullet: @bullet %>
-        <% else %>
-          <%= @bullet.body %>
-        <% end %>
-      </div>
-    </turbo-frame>
+
+    <div>
+      <% if @bullet.bulletable_type == "Voice" && @bullet.bulletable.recording.attached? %>
+        <%= render "voices/card", bullet: @bullet %>
+      <% else %>
+        <%= @bullet.body %>
+      <% end %>
+    </div>
   </article>
 </div>

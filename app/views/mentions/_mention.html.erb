@@ -1,10 +1,8 @@
 <li id="<%= dom_id(mention, :list_item) %>" class="layout--list-item">
   <%= link_to public_send(:"#{mention.kind}_path", mention),
         { data: { turbo_frame: "_top" }, class: "layout--list-item-link" } do %>
-    <span aria-hidden="true">
-      <%= render "mentions/mark", mention: mention %>
-    </span>
 
+    <%= icon_tag(mention.icon, colour: mention.colour) %>
     <span class="utilities--line-clamp-1"><%= mention.name %></span>
 
     <div class="typography--paragraph-sm utilities--line-clamp-1">

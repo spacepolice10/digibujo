@@ -6,6 +6,7 @@ class Mention < ApplicationRecord
     'project' => {
       trigger: '#',
       mark: 'hash',
+      icon: 'hash',
       name: 'Project',
       content_type: 'application/vnd.actiontext.mention.project',
       activity_mentioned: 'project_mentioned',
@@ -14,6 +15,7 @@ class Mention < ApplicationRecord
     'person' => {
       trigger: '@',
       mark: 'at',
+      icon: 'at',
       name: 'Person',
       content_type: 'application/vnd.actiontext.mention.person',
       activity_mentioned: 'person_mentioned',
@@ -44,6 +46,10 @@ class Mention < ApplicationRecord
 
   def mark
     kind_config[:mark]
+  end
+
+  def icon
+    kind_config[:icon]
   end
 
   def kind_name

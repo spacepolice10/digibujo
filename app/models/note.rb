@@ -18,6 +18,7 @@ class Note < ApplicationRecord
   def ends_date                = nil
   def marker_icon              = :text
   def icon                     = :text
+  def colour                   = 'gold'
 
   def long?
     body.to_plain_text.length > 400

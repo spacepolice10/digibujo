@@ -14,8 +14,11 @@ module Iconable
     validates :icon, inclusion: { in: ICON_MAPPINGS }, allow_nil: true
   end
 
-  def icon_path
-    key = icon.in?(ICON_MAPPINGS) ? icon : DEFAULT_ICON
-    "tweemoji/#{key}.svg"
+  def icon_key
+    icon.in?(ICON_MAPPINGS) ? icon : DEFAULT_ICON
+  end
+
+  def icon_mask
+    "var(--icon-#{icon_key})"
   end
 end

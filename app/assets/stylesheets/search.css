@@ -6,6 +6,12 @@
     padding: var(--spacing-vertical) var(--spacing-horizontal);
   }
 
+  .search--no-results {
+    text-align: center;
+    color: var(--color-fg-subtle);
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
+  }
+
   .search--header {
     display: flex;
     justify-content: space-between;
@@ -28,7 +34,6 @@
   .search--form {
     width: 100%;
     flex-shrink: 0;
-    background: var(--color-bg-subtle);
   }
 
   .search--dismiss {
@@ -43,7 +48,6 @@
   .search--results {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-vertical);
   }
 
   .search--section {
@@ -57,5 +61,21 @@
     font-size: var(--font-size-subtle);
     font-weight: var(--font-weight-base);
     color: var(--color-fg-subtle);
+  }
+
+  .search--item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal);
+    padding: var(--spacing-vertical) var(--spacing-horizontal-half);
+    flex: 1;
+    min-width: 0;
+    text-decoration: none;
+    color: inherit;
+
+    &:hover,
+    &.is-active {
+      background-color: var(--color-bg-base);
+    }
   }
 }

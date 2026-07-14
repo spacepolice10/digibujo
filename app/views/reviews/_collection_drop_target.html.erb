@@ -10,7 +10,7 @@
           data: { turbo_frame: "_top" } do %>
       <div class="review--collections-item-name">
         <div class="review--collections-item-marker" data-bucket-colour="<%= collection.colour %>" aria-hidden="true">
-          <%= image_tag collection.bucket.icon_path, alt: "#{collection.bucket.name} icon", class: "icons--list" %>
+          <i class="icon" style="--icon-mask: <%= collection.bucket.icon_mask %>"></i>
         </div>
         <span class="utilities--line-clamp-1"><%= collection.name %></span>
       </div>

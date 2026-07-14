@@ -125,17 +125,6 @@
                    data-bulk-menu-target="collectsDropdown"></turbo-frame>
     </div>
 
-    <% if (review_period = bulk_menu_review_period) %>
-      <%= form_with url: mark_as_reviewed_path, method: :post do %>
-        <%= hidden_field_tag :from, review_period[:from].iso8601 %>
-        <%= hidden_field_tag :to, review_period[:to].iso8601 %>
-        <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
-        <%= button_tag type: :submit, class: "button--secondary" do %>
-          <span class="review--migration-mark" aria-hidden="true">›</span>
-          Mark reviewed
-        <% end %>
-      <% end %>
-    <% end %>
 
     <button type="button"
             class="button--primary button--icon button--circle bulk-menu--hide"

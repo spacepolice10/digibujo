@@ -2,7 +2,7 @@
 
 <div class="layout--page">
   <div class="layout--header-info">
-    <%= image_tag @collection.bucket.icon_path, class: "icon", alt: "" %>
+    <i class="icon" style="--icon-mask: <%= @collection.bucket.icon_mask %>" aria-hidden="true"></i>
 
       <h2><%= @collection.name %></h2>
       <% if @collection.bucket.description.present? %>

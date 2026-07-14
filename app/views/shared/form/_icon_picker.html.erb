@@ -2,13 +2,13 @@
 <div class="form-group">
   <span class="form-label">Icon</span>
   <small class="form-small">
-    Pick an emoji to make this record easy to spot.
+    Pick an icon to make this record easy to spot.
   </small>
   <div class="form--picker form--icon-picker" role="radiogroup" aria-label="Icon picker">
     <% Iconable::ICON_MAPPINGS.each do |icon| %>
       <label class="form-check">
         <%= form.radio_button :icon, icon %>
-        <%= image_tag "tweemoji/#{icon}.svg", alt: "", class: "form--icon" %>
+        <%= icon_tag(icon, class: "form--icon") %>
         <span class="utilities--sr-only"><%= icon.humanize %></span>
       </label>
     <% end %>

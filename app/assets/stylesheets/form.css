@@ -219,10 +219,12 @@
   /* ── Icon icon picker ────────────────────────────── */
 
   .form--icon {
-    width: calc(var(--icon-size-strong));
-    height: calc(var(--icon-size-strong));
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    border-radius: var(--radius-base);
+    width: calc(var(--icon-size-base));
+    height: calc(var(--icon-size-base));
+    min-width: calc(var(--icon-size-base));
+    min-height: calc(var(--icon-size-base));
+    margin: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    color: var(--color-fg-base);
   }
 
   /* ── Repeat schedule date picker ──────────────────── */

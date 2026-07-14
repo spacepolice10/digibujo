@@ -1,9 +1,7 @@
 <%# locals: (monthly_bucket:) %>
 <li id="<%= dom_id(monthly_bucket.bucket, :list_item) %>" class="layout--list-item">
   <%= link_to monthly_bucket_path(monthly_bucket), data: { turbo_frame: "_top" }, class: "layout--list-item-link" do %>
-  <span aria-hidden="true">
-    <%= image_tag(monthly_bucket.icon_path, alt: "", style: "background-color: transparent", class: "icon") %>
-  </span>
+    <%= icon_tag(monthly_bucket.icon, colour: monthly_bucket.colour_variable) %>
     <span class="layout--list-item-name"><%= monthly_bucket.name %></span>
   <% end %>
 </li>

@@ -55,8 +55,12 @@ class Activity < ApplicationRecord
     action.humanize
   end
 
-  def icon_mask
-    "var(--icon-#{ACTION_ICON_MAPPINGS.fetch(action)})"
+  def icon
+    ACTION_ICON_MAPPINGS.fetch(action)
+  end
+
+  def colour
+    Colourable.colour_variable_of(subject.colour)
   end
 
   def type_name

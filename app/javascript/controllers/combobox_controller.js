@@ -39,6 +39,7 @@ export default class extends Controller {
 
     this.#cancelDeactivate()
     this.element.classList.add("menu--search-active")
+    
   }
 
   deactivate() {
@@ -141,6 +142,7 @@ export default class extends Controller {
       direction,
       this.itemTargets.length,
     )
+    this.itemTargets[this.currentPosition].scrollIntoView({ behavior: "smooth", block: "center" })
     this._updateItems()
   }
 

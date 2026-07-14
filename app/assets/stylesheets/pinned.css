@@ -8,11 +8,24 @@
   }
 
   .pinned--entity-item {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal);
+    padding: var(--spacing-vertical) var(--spacing-horizontal-half);
+    border-radius: var(--radius-base);
+    flex: 1;
+    min-width: 0;
+    text-decoration: none;
+    color: inherit;
+    &:hover {
+      background-color: var(--color-bg-subtle);
+    }
   }
 
-  .pinned--empty {
+  .pinned--no-entities {
+    text-align: center;
     color: var(--color-fg-subtle);
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
   }
 
   .pinned--dock {

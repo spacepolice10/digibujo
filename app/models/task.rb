@@ -10,6 +10,7 @@ class Task < ApplicationRecord
   def ends_date      = nil
   def marker_icon    = completed? ? :check : :square
   def icon           = completed? ? :check : :square
+  def colour         = 'cobalt'
   def placeholder    = 'What need to be done?'
   def data_attributes = { task_completed: completed? }
 

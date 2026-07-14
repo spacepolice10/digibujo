@@ -1,8 +1,8 @@
 <%# locals: (tracker:) %>
 <li id="<%= dom_id(tracker, :list_item) %>" class="layout--list-item">
   <%= link_to tracker_path(tracker), class: "layout--list-item-link", data: { turbo_frame: "_top" } do %>
-      <span data-bucket-colour="<%= tracker.colour %>" aria-hidden="true">
-        <%= image_tag tracker.icon_path, alt: "", class: "icons--list" %>
+      <span class="bucket--list-item-marker" data-bucket-colour="<%= tracker.colour %>" aria-hidden="true">
+        <i class="icon" style="--icon-mask: <%= tracker.icon_mask %>"></i>
       </span>
       <span class="utilities--line-clamp-1"><%= tracker.name %></span>
       <span class="typography--paragraph-sm utilities--line-clamp-1">

@@ -1,21 +1,6 @@
-<% pinnable = pinned_entity.pinnable %>
-<% path = case pinnable
-   when Mention then public_send(:"#{pinnable.kind}_path", pinnable)
-   when Bucket then polymorphic_path(pinnable.bucketable)
-   else polymorphic_path(pinnable)
-   end %>
-
-<li id="<%= dom_id(pinnable, :list_item) %>" class="layout--list-item">
-  <%= link_to path, class: "layout--list-item-link" do %>
-    <div class="pointer-events-none">
-      <% if pinnable.is_a?(Bullet) %>
-        <i class="icon bullet--marker-type" style="--icon-mask: var(--icon-<%= pinnable.icon.to_s.dasherize %>)" aria-hidden="true"></i>
-      <% elsif pinnable.is_a?(Mention) %>
-        <%= render "mentions/mark", mention: pinnable %>
-      <% else %>
-        <%= image_tag pinnable.icon_path, alt: "", style: "background-color: transparent", class: "icon" %>
-      <% end %>
-      <%= pinnable.name %>
-    </div>
+<li class="layout--list-item" role="option">
+  <%= link_to polymorphic_path(pinned_entity.pinnable), class: "pinned--entity-item", data: { turbo_frame: "_top" } do %>
+    <%= icon_tag(pinned_entity.pinnable.icon, colour: Colourable.colour_variable_of(pinned_entity.pinnable.colour)) %>
+    <%= pinned_entity.pinnable.name %>
   <% end %>
 </li>

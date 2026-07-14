@@ -14,7 +14,7 @@ class ProjectsController < ApplicationController
   def create
     @project = Current.user.mentions.project.build(project_params)
     if @project.save
-      redirect_to home_path, notice: "Project created"
+      redirect_to home_path, notice: 'Project created'
     else
       render :new, status: :unprocessable_entity
     end
@@ -23,13 +23,13 @@ class ProjectsController < ApplicationController
   def show
     @bullets = set_page_and_extract_portion_from(
       @project.bullets.order(created_at: :desc),
-      per_page: [ 5, 15, 30, 50 ]
+      per_page: [5, 15, 30, 50]
     )
   end
 
   def destroy
     @project.destroy
-    redirect_back fallback_location: projects_path, notice: "Project deleted"
+    redirect_back fallback_location: projects_path, notice: 'Project deleted'
   end
 
   private

@@ -1,16 +1,16 @@
 <% content_for(:title) { "New collection" } %>
 
-<div class="layout--page">
+<div class="layout--container layout--container-md">
   <div class="layout--header">
     <div class="layout--header-actions">
       <% if @bullet_ids.present? && @return_to.present? %>
         <%= link_to @return_to, class: "button--secondary" do %>
-          <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+          <%= icon_tag("arrow-left") %>
           Back
         <% end %>
       <% else %>
         <%= link_to home_path, class: "button--secondary", onclick: "if (history.length > 1) { event.preventDefault(); history.back(); }" do %>
-          <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+          <%= icon_tag("arrow-left") %>
           Back
         <% end %>
       <% end %>

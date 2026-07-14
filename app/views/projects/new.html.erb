@@ -1,10 +1,10 @@
 <% content_for(:title) { "New project" } %>
 
-<div class="layout--page">
+<div class="layout--container layout--container-md">
   <div class="layout--header">
     <div class="layout--header-actions">
       <%= link_to projects_path, class: "button--secondary", onclick: "if (history.length > 1) { event.preventDefault(); history.back(); }" do %>
-        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+        <%= icon_tag("arrow-left") %>
         Back
       <% end %>
     </div>

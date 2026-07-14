@@ -39,7 +39,8 @@ class BucketTest < ActiveSupport::TestCase
     @bucket.update!(colour: nil, icon: nil)
     assert_nil @bucket.colour
     assert_nil @bucket.icon
-    assert_equal 'tweemoji/folder.svg', @bucket.icon_path
+    assert_equal 'folder', @bucket.icon_key
+    assert_equal 'var(--icon-folder)', @bucket.icon_mask
   end
 
   test 'rejects invalid colour' do

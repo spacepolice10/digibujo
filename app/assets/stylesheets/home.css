@@ -130,4 +130,12 @@
     background: light-dark(oklch(0.95 0.07 85), oklch(0.35 0.14 85));
   }
 
+  .home--activity {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical-half);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    max-width: 280px;
+  }
+
 }

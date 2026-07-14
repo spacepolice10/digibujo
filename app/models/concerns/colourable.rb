@@ -22,11 +22,15 @@ module Colourable
     COLOUR_MAPPINGS[colour]
   end
 
+  def self.colour_variable_of(colour)
+    COLOUR_MAPPINGS[colour]
+  end
+
   def colour_bg_variable
     colour_variable&.sub(/\)\z/, '-bg)')
   end
 
-  def self.colour_bg_variable_for(name)
-    COLOUR_MAPPINGS[name]&.sub(/\)\z/, '-bg)')
+  def self.colour_bg_variable_of(colour)
+    colour_variable_of(colour)&.sub(/\)\z/, '-bg)')
   end
 end

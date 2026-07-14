@@ -68,11 +68,6 @@
     );
   }
 
-  .bucket--list-item-marker .icons--list {
-    width: calc(var(--icon-size-base) / 1.5);
-    height: calc(var(--icon-size-base) / 1.5);
-  }
-
   .bucket--list-item-marker .icon {
     width: calc(var(--icon-size-base) * 0.5);
     height: calc(var(--icon-size-base) * 0.5);

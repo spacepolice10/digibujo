@@ -230,6 +230,24 @@
     overflow: hidden;
   }
 
+  .review--collections-item-marker[data-bucket-colour] {
+    background: var(--entity-color-bg);
+    border-color: color-mix(
+      in oklch,
+      var(--entity-color) 40%,
+      var(--color-stroke-base)
+    );
+  }
+
+  .review--collections-item-marker .icon {
+    width: calc(var(--icon-size-base) * 0.5);
+    height: calc(var(--icon-size-base) * 0.5);
+  }
+
+  .review--collections-item-marker[data-bucket-colour] .icon {
+    color: var(--entity-color);
+  }
+
   .review--collection-drop-target {
     border-radius: var(--radius-base);
   }

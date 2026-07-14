@@ -46,6 +46,8 @@ Rails.application.routes.draw do
   end
   resources :people
 
+  resources :mentions, only: :show
+
   # --- Bullets ---
   scope 'bullets', module: :bullets do
     resource :pin

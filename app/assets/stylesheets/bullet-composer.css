@@ -222,7 +222,6 @@
     height: var(--icon-size-base);
     padding-block: 0;
     padding-inline: var(--spacing-horizontal);
-    padding-inline-end: var(--spacing-horizontal-half);
     border-radius: var(--radius-full);
     flex: 0 0 auto;
     font-size: var(--font-size-subtle);

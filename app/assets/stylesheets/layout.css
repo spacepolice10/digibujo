@@ -187,14 +187,20 @@
 
   .layout--container {
     width: 100%;
-    margin-inline: auto;
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    
+    &.layout--container-md {
+      max-width: var(--breakpoint-laptop);
+      margin-inline: auto;
+    } 
+  
+    &.layout--container-sm {
+      max-width: var(--breakpoint-tablet);
+      margin-inline: auto;
+    }
   }
 
-  .layout--container-sm {
-    max-width: 640px;
-    width: 100%;
-    margin-inline: auto;
-  }
+
 
   .layout--grid {
     display: grid;
@@ -241,15 +247,19 @@
 
   .layout--surface {
     background: var(--color-bg-subtle);
+    border: 0.5px solid var(--color-stroke-base);
     border-radius: var(--radius-base);
     padding: var(--spacing-vertical) var(--spacing-horizontal);
+
     @media (max-width: 621px) {
       background: transparent;
     }
+
     &.unpadded {
       padding: 0;
     }
   }
+
   .layout--surface-sunken {
     background: var(--color-bg-base);
     border-radius: var(--radius-base);
@@ -269,17 +279,13 @@
 
   .layout--list-item-link {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: var(--spacing-horizontal-half);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     flex: 1;
     text-decoration: none;
     color: inherit;
     border-radius: var(--radius-subtle);
-
-    @media(pointer: coarse) {
-      padding: var(--spacing-vertical) var(--spacing-horizontal-half);
-    }
 
     &:hover {
       background-color: var(--color-stroke-base);

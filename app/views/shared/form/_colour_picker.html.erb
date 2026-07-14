@@ -8,7 +8,7 @@
     <% Colourable::COLOUR_MAPPINGS.each_key do |name| %>
       <label class="form-check">
         <%= form.radio_button :colour, name %>
-        <span class="form--picker-control form--colour-swatch" style="background: <%= Colourable.colour_bg_variable_for(name) %>" aria-hidden="true"></span>
+        <span class="form--picker-control form--colour-swatch" style="background: <%= Colourable.colour_bg_variable_of(name) %>" aria-hidden="true"></span>
         <span class="utilities--sr-only"><%= name.capitalize %></span>
       </label>
     <% end %>
