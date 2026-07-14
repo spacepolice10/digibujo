@@ -8,7 +8,7 @@ class Search::GlobalRequestTest < ActiveSupport::TestCase
   end
 
   test "returns empty entries for blank query" do
-    @user.projects.create!(name: "alpha")
+    create_project!(@user, name: "alpha")
 
     entries = Search::GlobalRequest.call(user: @user, query: "")
 
@@ -17,29 +17,29 @@ class Search::GlobalRequestTest < ActiveSupport::TestCase
 
   test "scopes results to the current user" do
     other_user = users(:two)
-    @user.projects.create!(name: "mine")
-    other_user.projects.create!(name: "mine")
+    create_project!(@user, name: "mine")
+    create_project!(other_user, name: "mine")
 
     entries = Search::GlobalRequest.call(user: @user, query: "mine")
 
     assert_equal 1, entries.size
-    assert_equal "Project", entries.first.class.name
+    assert_equal "Mention", entries.first.class.name
     assert_equal @user.id, entries.first.user_id
   end
 
-  test "finds people by email in search body" do
-    alex = @user.people.create!(name: "alex")
-    alex.handles.create!(kind: :email, data: "alex@example.com")
+  test "finds people by name" do
+    create_person!(@user, name: "alex")
 
-    entries = Search::GlobalRequest.call(user: @user, query: "alex@example.com")
+    entries = Search::GlobalRequest.call(user: @user, query: "alex")
 
     assert_equal 1, entries.size
-    assert_equal "Person", entries.first.class.name
+    assert_equal "Mention", entries.first.class.name
     assert_equal "alex", entries.first.name
+    assert entries.first.person?
   end
 
   test "applies fuzzy fallback for near matches" do
-    @user.projects.create!(name: "alpha")
+    create_project!(@user, name: "alpha")
 
     entries = Search::GlobalRequest.call(user: @user, query: "alpa")
 
@@ -48,13 +48,13 @@ class Search::GlobalRequestTest < ActiveSupport::TestCase
   end
 
   test "returns a flat ranked list across entity types" do
-    @user.projects.create!(name: "alpha project")
+    create_project!(@user, name: "alpha project")
     @user.bullets.create!(bulletable: Task.new(body: "alpha task"))
 
     entries = Search::GlobalRequest.call(user: @user, query: "alpha")
 
     assert_equal 2, entries.size
-    assert_includes entries.map { |entry| entry.class.name }, "Project"
+    assert_includes entries.map { |entry| entry.class.name }, "Mention"
     assert_includes entries.map { |entry| entry.class.name }, "Bullet"
   end
 end

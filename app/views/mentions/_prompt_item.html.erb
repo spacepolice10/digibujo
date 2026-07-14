@@ -1,0 +1,12 @@
+<lexxy-prompt-item search="<%= mention.name %>" sgid="<%= mention.attachable_sgid %>">
+  <template type="menu">
+    <div class="bucket--list-item-name">
+      <%= render "mentions/mark", mention: mention %>
+      <span class="utilities--line-clamp-1"><%= mention.name %></span>
+      <kbd class="key">Tab</kbd>
+    </div>
+  </template>
+  <template type="editor" content-type="<%= mention.content_type %>">
+    <%= render "mentions/attachable_editor", mention: mention %>
+  </template>
+</lexxy-prompt-item>

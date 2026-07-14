@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Person::Searchable
+module Mention::Searchable
   extend ActiveSupport::Concern
   include ::Searchable
 
@@ -9,6 +9,6 @@ module Person::Searchable
   end
 
   def search_body
-    handles.map { |handle| [handle.platform, handle.data].compact.join(' ') }.join(' ')
+    name
   end
 end

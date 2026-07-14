@@ -1,7 +1,0 @@
-<% if person.avatar.attached? %>
-  <%= image_tag person.avatar, class: "pill--avatar", alt: "" %>
-<% elsif person.icon.present? %>
-  <%= image_tag person.icon_path, class: "pill--icon", alt: "" %>
-<% else %>
-  <span class="pill--placeholder" aria-hidden="true"><%= person.name.first %></span>
-<% end %>

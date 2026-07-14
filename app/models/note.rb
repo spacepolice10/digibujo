@@ -12,13 +12,12 @@ class Note < ApplicationRecord
     frustrated: '😣'
   }.freeze
 
-  def self.permitted_bullet_attributes = %i[body mood]
-
   def temporal?                = false
   def completable?             = false
   def starts_date              = nil
   def ends_date                = nil
   def marker_icon              = :text
+  def icon                     = :text
 
   def long?
     body.to_plain_text.length > 400
@@ -46,4 +45,6 @@ class Note < ApplicationRecord
   def data_attributes
     mood.present? ? { note_mood: mood } : {}
   end
+
+  def self.permitted_bullet_attributes = %i[body mood]
 end

@@ -5,7 +5,7 @@ require "test_helper"
 class SearchReindexJobTest < ActiveSupport::TestCase
   test "rebuilds search records for searchable models" do
     user = users(:one)
-    project = user.projects.create!(name: "reindex me")
+    project = create_project!(user, name: "reindex me")
     Search::Record.delete_all
 
     SearchReindexJob.perform_now

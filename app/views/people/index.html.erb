@@ -16,10 +16,10 @@
   <turbo-frame id="people">
     <% if @people.any? %>
       <ul class="layout--list layout--surface">
-        <%= render @people %>
+        <%= render partial: "mentions/mention", collection: @people, as: :mention %>
       </ul>
     <% else %>
-      <p>No people yet. Add people to tag them in your bullets.</p>
+      <p>No people yet.</p>
     <% end %>
   </turbo-frame>
 </div>

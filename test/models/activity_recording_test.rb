@@ -76,7 +76,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
     bullet = @user.bullets.create!(bulletable: Task.new(body: 'Move'))
 
     assert_difference -> { Activity.count }, 1 do
-      bullet.mentions.projects.add!(project_id: project.id)
+      bullet.add_mention!(mention_id: project.id)
     end
 
     assert_equal 'project_mentioned', Activity.order(:created_at).last.action

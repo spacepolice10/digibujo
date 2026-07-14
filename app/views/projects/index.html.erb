@@ -1,27 +1,25 @@
 <% content_for(:title) { "Projects" } %>
 
 <div class="layout--page">
-
   <h2>Projects</h2>
-  <div class="layout--header-actions ">
+  <div class="layout--header-actions">
     <%= link_to home_path, class: "button--tertiary", onclick: "if (history.length > 1) { event.preventDefault(); history.back(); }" do %>
-    <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
-    Back
-  <% end %>
+      <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+      Back
+    <% end %>
     <%= link_to new_project_path, class: "button--tertiary", aria: { label: "Add project" } do %>
       <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
       Add project
     <% end %>
   </div>
 
-
   <turbo-frame id="projects">
     <% if @projects.any? %>
       <ul class="layout--list layout--surface">
-        <%= render @projects %>
+        <%= render partial: "mentions/mention", collection: @projects, as: :mention %>
       </ul>
     <% else %>
-      <p>No projects yet. Collect or pop bullets to create them.</p>
+      <p>No projects yet.</p>
     <% end %>
   </turbo-frame>
 </div>

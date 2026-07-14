@@ -1,0 +1,17 @@
+<li id="<%= dom_id(bucket, :list_item) %>" class="layout--list-item">
+    <%= link_to bucket_path(bucket), class: "layout--list-item-link" do %>
+      <span
+        aria-hidden="true"
+      >
+        <%= image_tag bucket.icon_path, alt: "", style: "background-color: transparent", class: "icon" %>
+      </span>
+  
+      <span class="utilities--line-clamp-1"><%= bucket.name %></span>
+  
+      <div class="typography--paragraph-sm utilities--line-clamp-1">
+        <span><%= bucket.bullets.count %> <%= "bullet".pluralize(bucket.bullets.count) %></span>,
+        <span><%= bucket.created_at.strftime("%b %d") %></span>
+      </div>
+    <% end %>
+  </li>
+  

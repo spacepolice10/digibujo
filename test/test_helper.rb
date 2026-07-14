@@ -14,8 +14,16 @@ module ActiveSupport
     fixtures :all
 
     # Add more helper methods to be used by all tests here...
-    def create_project!(user, name:, colour: nil, icon: nil)
-      user.projects.create!(name: name, colour: colour, icon: icon)
+    def create_mention!(user, kind:, name:, colour: nil)
+      user.mentions.create!(kind: kind, name: name, colour: colour)
+    end
+
+    def create_project!(user, name:, colour: nil, **)
+      create_mention!(user, kind: :project, name: name, colour: colour)
+    end
+
+    def create_person!(user, name:, colour: nil, **)
+      create_mention!(user, kind: :person, name: name, colour: colour)
     end
 
     def create_tracker!(user, name:, schedule: Tracker::DEFAULT_SCHEDULE.dup, colour: nil, icon: nil)

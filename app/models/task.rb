@@ -9,8 +9,10 @@ class Task < ApplicationRecord
   def starts_date    = nil
   def ends_date      = nil
   def marker_icon    = completed? ? :check : :square
+  def icon           = completed? ? :check : :square
   def placeholder    = 'What need to be done?'
   def data_attributes = { task_completed: completed? }
+
   def self.permitted_bullet_attributes = %i[body completed]
 
   def complete!

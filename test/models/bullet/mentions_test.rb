@@ -7,39 +7,39 @@ class Bullet::MentionsTest < ActiveSupport::TestCase
     @user = users(:one)
     @project = create_project!(@user, name: 'alpha')
     @other_project = create_project!(@user, name: 'beta')
-    @person = @user.people.create!(name: 'ada')
+    @person = create_person!(@user, name: 'ada')
     @bullet = @user.bullets.create!(bulletable: Task.new(body: 'Task'))
   end
 
-  test 'projects.add! mentions project' do
-    @bullet.mentions.projects.add!(project_id: @project.id)
+  test 'add_mention! mentions project' do
+    @bullet.add_mention!(mention_id: @project.id)
 
-    assert_includes @bullet.reload.projects, @project
+    assert_includes @bullet.reload.mentions, @project
   end
 
-  test 'projects.add! allows multiple projects' do
-    @bullet.mentions.projects.add!(project_id: @project.id)
-    @bullet.mentions.projects.add!(project_id: @other_project.id)
+  test 'add_mention! allows multiple mentions' do
+    @bullet.add_mention!(mention_id: @project.id)
+    @bullet.add_mention!(mention_id: @other_project.id)
 
-    assert_equal 2, @bullet.reload.projects.count
+    assert_equal 2, @bullet.reload.mentions.count
   end
 
-  test 'projects.remove! drops one project mention' do
-    @bullet.mentions.projects.add!(project_id: @project.id)
-    @bullet.mentions.projects.add!(project_id: @other_project.id)
+  test 'remove_mention! drops one mention' do
+    @bullet.add_mention!(mention_id: @project.id)
+    @bullet.add_mention!(mention_id: @other_project.id)
 
-    @bullet.mentions.projects.remove!(project_id: @project.id)
+    @bullet.remove_mention!(mention_id: @project.id)
 
-    assert_not_includes @bullet.reload.projects, @project
-    assert_includes @bullet.projects, @other_project
+    assert_not_includes @bullet.reload.mentions, @project
+    assert_includes @bullet.mentions, @other_project
   end
 
-  test 'projects.clear! removes all project mentions' do
-    @bullet.mentions.projects.add!(project_id: @project.id)
+  test 'clear_mentions! removes all mentions' do
+    @bullet.add_mention!(mention_id: @project.id)
 
-    @bullet.mentions.projects.clear!
+    @bullet.clear_mentions!
 
-    assert_empty @bullet.reload.projects
+    assert_empty @bullet.reload.mentions
   end
 
   test 'project attachable link renders correct path' do
@@ -49,43 +49,36 @@ class Bullet::MentionsTest < ActiveSupport::TestCase
     assert_includes bullet.body.to_s, "/projects/#{@project.id}"
   end
 
-  test 'body save syncs project mentions from attachments' do
+  test 'body save syncs mentions from attachments' do
     content = ActionText::Content.new('Ship it').append_attachables(@project).to_html
-    @bullet.update!(body: content)
+    @bullet.bulletable.update!(body: content)
 
-    assert_includes @bullet.reload.projects, @project
+    assert_includes @bullet.reload.mentions, @project
     assert_match 'Ship it', @bullet.body.to_plain_text
     assert_includes @bullet.body.body.to_html, 'action-text-attachment'
-    assert_includes @bullet.body.body.attachables.grep(Project), @project
+    assert_includes @bullet.body.body.attachables.grep(Mention), @project
   end
 
-  test 'update clears project mentions when attachments are removed from content' do
+  test 'update clears mentions when attachments are removed from content' do
     content = ActionText::Content.new('Ship it').append_attachables(@project).to_html
-    @bullet.update!(body: content)
-    assert_includes @bullet.reload.projects, @project
+    @bullet.bulletable.update!(body: content)
+    assert_includes @bullet.reload.mentions, @project
 
-    @bullet.update!(body: 'Ship it without mentions')
+    @bullet.bulletable.update!(body: 'Ship it without mentions')
 
-    assert_empty @bullet.reload.projects
+    assert_empty @bullet.reload.mentions
   end
 
-  test 'bullet_project rejects cross-user mention' do
+  test 'bullet_mention rejects cross-user mention' do
     other_project = create_project!(users(:two), name: 'other')
-    join = BulletProject.new(bullet: @bullet, project: other_project)
+    join = BulletMention.new(bullet: @bullet, mention: other_project)
 
     assert_not join.valid?
   end
 
-  test 'bullet_person rejects cross-user mention' do
-    other_person = users(:two).people.create!(name: 'other')
-    join = BulletPerson.new(bullet: @bullet, person: other_person)
+  test 'add_mention! mentions person' do
+    @bullet.add_mention!(mention_id: @person.id)
 
-    assert_not join.valid?
-  end
-
-  test 'people.add! mentions person' do
-    @bullet.mentions.people.add!(person_id: @person.id)
-
-    assert_includes @bullet.reload.people, @person
+    assert_includes @bullet.reload.mentions, @person
   end
 end

@@ -118,41 +118,7 @@
     padding: var(--spacing-vertical) var(--spacing-horizontal);
   }
 
-  .form--surface {
-    border: 1px solid var(--color-stroke-base);
-    background: var(--color-bg-subtle);
-    border-radius: var(--radius-strong);
-  }
 
-
-
-  @media (min-width: 800px) {
-    .layout--workspace {
-      flex-direction: row;
-      align-items: stretch;
-      gap: var(--spacing-horizontal-double);
-    }
-
-    .layout--page:has(.layout--workspace) .layout--workspace {
-      flex: 1;
-      min-height: 0;
-      overflow: hidden;
-    }
-
-    .layout--page:has(.layout--workspace) .layout--surface {
-      min-height: 0;
-      overflow-y: auto;
-    }
-
-    body>.layout--workspace {
-      align-items: start;
-    }
-
-    body>.layout--workspace .layout--rail {
-      align-self: start;
-      height: max-content;
-    }
-  }
 
   .layout--rail {
     flex: 1 1 0%;
@@ -199,21 +165,6 @@
   }
 
 
-  /* matches --breakpoint-surface (640px); var() not valid in @media width */
-  @media (min-width: 640px) {
-    .layout--surface {
-      border: 1px solid var(--color-stroke-base);
-      background: var(--color-bg-subtle);
-      border-radius: var(--radius-strong);
-      padding: var(--spacing-vertical) var(--spacing-horizontal-half);
-    }
-  }
-
-  .layout--surface-name {
-    margin: 0 0 var(--spacing-vertical);
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-strong);
-  }
 
   @media (min-width: 800px) {
     .layout--workspace-page .layout--rail:not([aria-hidden="true"]) {
@@ -235,6 +186,12 @@
 
 
   .layout--container {
+    width: 100%;
+    margin-inline: auto;
+  }
+
+  .layout--container-sm {
+    max-width: 640px;
     width: 100%;
     margin-inline: auto;
   }
@@ -285,13 +242,22 @@
   .layout--surface {
     background: var(--color-bg-subtle);
     border-radius: var(--radius-base);
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
     @media (max-width: 621px) {
       background: transparent;
+    }
+    &.unpadded {
+      padding: 0;
     }
   }
   .layout--surface-sunken {
     background: var(--color-bg-base);
     border-radius: var(--radius-base);
+  }
+
+  .layout--list {
+    display: grid;
+    gap: var(--spacing-vertical);
   }
 
   .layout--list-item {

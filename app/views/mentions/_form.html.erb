@@ -1,0 +1,11 @@
+<%= form_with model: mention, url: url, class: "form form--strong" do |f| %>
+  <small class="form-hint"><%= hint %></small>
+
+  <div class="form-group">
+    <%= f.label :name, class: "form-label" %>
+    <small class="form-hint"><%= name_hint %></small>
+    <%= f.text_field :name, class: "form-input", required: true %>
+  </div>
+  <%= render "shared/form/colour_picker", form: f %>
+  <%= f.submit class: "button--primary form--submit" %>
+<% end %>

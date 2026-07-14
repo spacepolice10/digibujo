@@ -1,9 +1,5 @@
 @layer components {
-  .pinned--workspace {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-vertical-double);
-  }
+
 
   .pinned--entities {
     display: flex;

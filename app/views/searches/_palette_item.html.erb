@@ -1,4 +1,4 @@
-<% path = entity.is_a?(Bucket) ? polymorphic_path(entity.bucketable) : polymorphic_path(entity) %>
+<% path = entity.is_a?(Bucket) ? polymorphic_path(entity.bucketable) : entity.is_a?(Mention) ? public_send(:"#{entity.kind}_path", entity) : polymorphic_path(entity) %>
 <li class="layout--list-item" role="option">
   <%= link_to path,
         class: "menu--palette-item",
@@ -10,10 +10,9 @@
           searchable_id: entity.id
         } do %>
     <% case entity %>
-    <% when Project %>
-      <%= render "projects/search_palette", project: entity %>
-    <% when Person %>
-      <%= render "people/search_palette", person: entity %>
+    <% when Mention %>
+      <%= render "mentions/mark", mention: entity %>
+      <span class="utilities--line-clamp-1"><%= entity.name %></span>
     <% when Bucket %>
       <%= render "buckets/search_palette", bucket: entity %>
     <% when Bullet %>

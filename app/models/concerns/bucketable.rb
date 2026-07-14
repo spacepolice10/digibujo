@@ -10,6 +10,10 @@ module Bucketable
     delegate :colour, :icon, :icon_path, to: :bucket, allow_nil: true
   end
 
+  def icon
+    bucket&.icon
+  end
+
   def name
     bucket&.name
   end

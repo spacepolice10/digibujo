@@ -3,8 +3,8 @@
 module People
   class SuggestionsController < ApplicationController
     def index
-      @people = Current.user.people.order(:name)
-      @people = @people.where('name LIKE ?', "%#{sanitized_string}%") if sanitized_string.present?
+      @people = Current.user.mentions.person.order(:name)
+      @people = @people.where("name LIKE ?", "%#{sanitized_string}%") if sanitized_string.present?
 
       render layout: false
     end

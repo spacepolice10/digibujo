@@ -23,7 +23,7 @@ module Projects
     private
 
     def set_project
-      @project = Current.user.projects.find(params.require(:project_id))
+      @project = Current.user.mentions.project.find(params.require(:project_id))
     end
   end
 end

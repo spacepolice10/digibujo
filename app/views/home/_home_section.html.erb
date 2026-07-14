@@ -29,12 +29,10 @@
   </summary>
 
   <div class="home--section-content-wrapper">
-    <div class="home--section-content layout--surface-sunken">
-      <ul class="layout--surface layout--surface-sunken">
+      <ul class="layout--list layout--surface layout--surface-sunken">
         <% Array.wrap(section.records).each do |record| %>
           <%= render record %>
         <% end %>
       </ul>
     </div>
-  </div>
 </details>

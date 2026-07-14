@@ -49,6 +49,7 @@
     --icon-search: url("icon-search.svg");
     --icon-tag: url("icon-tag.svg");
     --icon-hash: url("icon-hash.svg");
+    --icon-at: url("icon-at.svg");
     --icon-check: url("icon-check.svg");
     --icon-chevron-down: url("icon-chevron-down.svg");
     --icon-face: url("icon-face.svg");
@@ -65,6 +66,7 @@
     --icon-sign-out: url("icon-sign-out.svg");
     --icon-phone: url("icon-phone.svg");
     --icon-text: url("icon-text.svg");
+    --icon-webhook: url("icon-webhook.svg");
   }
 
   .icons--list {

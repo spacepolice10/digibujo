@@ -4,8 +4,8 @@ module Bulletable
   extend ActiveSupport::Concern
 
   MENTION_ATTACHMENT_TYPES = %w[
-    application/vnd.actiontext.project
-    application/vnd.actiontext.person
+    application/vnd.actiontext.mention.project
+    application/vnd.actiontext.mention.person
   ].freeze
 
   COMPOSER_STIMULUS_ACTIONS = 'keydown.enter+meta->composer#submit keydown.enter+ctrl->composer#submit'
@@ -25,6 +25,7 @@ module Bulletable
   def marker_icon      = :line_dashed
   def completed?       = false
   def mood_marker      = nil
+  def icon             = nil
 
   def to_partial_body_path
     "#{self.class.model_name.route_key}/body"

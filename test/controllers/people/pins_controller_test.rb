@@ -7,7 +7,7 @@ module People
     setup do
       @user = users(:one)
       sign_in_as @user
-      @person = @user.people.create!(name: 'Alex')
+      @person = create_person!(@user, name: 'Alex')
     end
 
     test 'create pins person and updates pin button via turbo stream' do

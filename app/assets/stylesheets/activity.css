@@ -10,11 +10,6 @@
     }
   }
 
-  .activity--empty {
-    margin: 0;
-    color: var(--color-fg-subtle);
-  }
-
   .activity--feed-list {
     display: flex;
     flex-direction: column;
@@ -24,6 +19,9 @@
   .activity--item {
     align-items: center;
     min-width: 0;
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   .activity--icon {
@@ -128,13 +126,6 @@
     gap: var(--spacing-vertical-half);
     padding-top: var(--spacing-vertical);
     border-top: 1px solid var(--color-stroke-base);
-  }
-
-  .activity--history-title {
-    margin: 0;
-    font-size: var(--font-size-subtle);
-    font-weight: var(--font-weight-strong);
-    color: var(--color-fg-subtle);
   }
 
   .activity--history-list {

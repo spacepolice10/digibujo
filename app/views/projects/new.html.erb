@@ -11,6 +11,10 @@
     <h2>New project</h2>
   </div>
   <div class="layout--surface">
-    <%= render "form", project: @project %>
+    <%= render "mentions/form",
+          mention: @project,
+          url: projects_path,
+          hint: "Projects work like topic tags — mark bullets with a project and you can instantly see everything related to that goal in one place.",
+          name_hint: "Name the project you are working on. Examples: Website redesign, Book draft, Home renovation." %>
   </div>
 </div>

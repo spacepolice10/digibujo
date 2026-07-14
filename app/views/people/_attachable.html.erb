@@ -1,7 +1,0 @@
-<%= link_to person_path(person),
-      class: "pill",
-      data: { turbo_frame: "_top", colour: person.colour }.compact,
-      aria: { label: "Person: #{person.name}" } do %>
-  <%= render "people/pill_graphic", person: person %>
-  <span><%= person.name %></span>
-<% end %>

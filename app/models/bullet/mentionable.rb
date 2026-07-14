@@ -3,31 +3,45 @@
 module Bullet::Mentionable
   extend ActiveSupport::Concern
 
-  MENTION_TYPES = [
-    { attachable_class: Project, ids_attribute: :project_ids },
-    { attachable_class: Person, ids_attribute: :person_ids }
-  ].freeze
-
   included do
-    has_many :bullet_projects, dependent: :destroy
-    has_many :projects, through: :bullet_projects
-    has_many :bullet_people, dependent: :destroy
-    has_many :people, through: :bullet_people
+    has_many :bullet_mentions, dependent: :destroy
+    has_many :mentions, through: :bullet_mentions
   end
 
-  def mentions
-    @mentions ||= Bullet::Mentions.new(self)
+  def add_mention!(mention_id:)
+    mention = user.mentions.find(mention_id)
+    bullet_mentions.find_or_create_by!(mention: mention)
+    association(:mentions).reset
+    record_activity!(mention.kind_config.fetch(:activity_mentioned))
+  end
+
+  def remove_mention!(mention_id:)
+    join = bullet_mentions.find_by(mention_id: mention_id)
+    return unless join
+
+    mention = join.mention
+    join.destroy!
+    association(:mentions).reset
+    record_activity!(mention.kind_config.fetch(:activity_unmentioned))
+  end
+
+  def clear_mentions!
+    return if bullet_mentions.none?
+
+    kinds = mentions.map(&:kind).uniq
+    bullet_mentions.destroy_all
+    association(:mentions).reset
+    kinds.each do |kind|
+      record_activity!(Mention::KIND.fetch(kind).fetch(:activity_unmentioned))
+    end
   end
 
   def sync_mentions_from_body!
     return if @syncing_mentions
 
     @syncing_mentions = true
-    attachables = bulletable.body.body.attachables
-    MENTION_TYPES.each do |config|
-      mentioned = attachables.grep(config[:attachable_class])
-      public_send("#{config[:ids_attribute]}=", mentioned.map(&:id).uniq)
-    end
+    attachables = bulletable.body.body.attachables.grep(Mention)
+    self.mention_ids = attachables.map(&:id).uniq
   ensure
     @syncing_mentions = false
   end

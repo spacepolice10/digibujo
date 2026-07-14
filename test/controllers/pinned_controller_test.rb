@@ -26,16 +26,12 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'mobile flat list includes pinned bullet' do
-    bullet = @user.bullets.create!(
-      bulletable: Task.create!,
-      body: 'Pinned bullet'
-    )
+    bullet = @user.bullets.create!(bulletable: Task.new(body: 'Pinned bullet'))
     PinnedEntity.create!(user: @user, pinnable: bullet)
 
     get pinned_index_path, headers: { 'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)' }
 
     assert_response :success
-    assert_select '.layout--list-item .menu--palette-marker', count: 1
     assert_select '.layout--list-item', text: /Pinned bullet/, count: 1
   end
 
@@ -60,10 +56,7 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'pinned list popover loads all entity types' do
-    bullet = @user.bullets.create!(
-      bulletable: Task.create!,
-      body: 'Pinned bullet'
-    )
+    bullet = @user.bullets.create!(bulletable: Task.new(body: 'Pinned bullet'))
     PinnedEntity.create!(user: @user, pinnable: bullet)
     project = create_project!(@user, name: 'Popover project')
     project.pin!

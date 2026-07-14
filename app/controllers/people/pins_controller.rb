@@ -23,7 +23,7 @@ module People
     private
 
     def set_person
-      @person = Current.user.people.find(params.require(:person_id))
+      @person = Current.user.mentions.person.find(params.require(:person_id))
     end
   end
 end

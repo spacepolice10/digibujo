@@ -1,3 +1,6 @@
 <%= turbo_stream.replace dom_id(@person, :pin_button) do %>
-  <%= render "people/pins_button", person: @person %>
+  <%= render "mentions/pins_button",
+        mention: @person,
+        pin_path: people_pin_path,
+        pin_params: { person_id: @person.id } %>
 <% end %>

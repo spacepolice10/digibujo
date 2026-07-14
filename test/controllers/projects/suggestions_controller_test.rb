@@ -10,7 +10,7 @@ module Projects
     end
 
     test 'index renders current user project suggestions as lexxy prompt items' do
-      project = create_project!(@user, name: 'alpha', icon: 'folder')
+      project = create_project!(@user, name: 'alpha')
       other_user_project = create_project!(users(:two), name: 'other')
 
       get project_suggestions_path

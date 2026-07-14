@@ -1,7 +1,0 @@
-<%= link_to project_path(project),
-      class: "pill",
-      data: { turbo_frame: "_top", colour: project.colour }.compact,
-      aria: { label: "Project: #{project.name}" } do %>
-  <%= render "projects/pill_graphic", project: project %>
-  <span><%= project.name %></span>
-<% end %>

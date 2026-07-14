@@ -56,11 +56,11 @@ class HomeController < ApplicationController
   end
 
   def person_records
-    Current.user.people.limit(5)
+    Current.user.mentions.person.limit(5)
   end
 
   def project_records
-    Current.user.projects.limit(5)
+    Current.user.mentions.project.limit(5)
   end
 
   def tracker_records

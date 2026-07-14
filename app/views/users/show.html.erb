@@ -1,28 +1,52 @@
 <% content_for(:title) { "Account" } %>
 
-<div class="session-layout session-layout--app">
-  <main class="session-layout--main">
-    <div class="session--page">
-      <div class="form--surface">
-        <div class="session--intro">
-          <h1 class="session--title">Account</h1>
-          <p class="form-hint session--description">
-            Signed in as <strong><%= Current.user.email_address %></strong>.
-          </p>
-        </div>
+<main class="layout--page layout--container-sm layout--surface-sunken">
+  <div class="layout--header-actions">
+    <%= link_to home_path, class: "button--secondary" do %>
+      <i
+        class="icon"
+        style="--icon-mask: var(--icon-arrow-left)"
+        aria-hidden="true"
+      ></i>
 
-        <%= button_to authentication_path,
-              method: :delete,
-              class: "button--secondary button--danger form--submit",
-              form: { class: "user--sign-out-form", data: { turbo_confirm: "Sign out of Digibujo?" } } do %>
-          <i class="icon" style="--icon-mask: var(--icon-sign-out)" aria-hidden="true"></i>
-          Sign out
-        <% end %>
+      <p>Back</p>
+    <% end %>
+  </div>
+
+  <div class="layout--surface">
+    <div class="user--info">
+      <span class="button--secondary button--icon-strong button--circle">
+        <%= Current.user.email_address.first.upcase %>
+      </span>
+      <div>
+        <h1 class="typography--h1">Account</h1>
+        <p class="typography--paragraph-sm">
+          Signed in as <strong><%= Current.user.email_address %></strong>.
+        </p>
       </div>
+    </div>
 
-      <%= link_to home_path, class: "session--footer-link" do %>
-        Back to menu
+    <div class="user--actions">
+      <%= link_to "#", class: "button--secondary" do %>
+        <i
+          class="icon"
+          style="--icon-mask: var(--icon-webhook)"
+          aria-hidden="true"
+        ></i>
+        Webhooks
+      <% end %>
+
+      <%= button_to authentication_path,
+              method: :delete,
+              class: "button--secondary",
+              form: { data: { turbo_confirm: "Sign out of Digibujo?" } } do %>
+        <i
+          class="icon"
+          style="--icon-mask: var(--icon-sign-out)"
+          aria-hidden="true"
+        ></i>
+        Sign out
       <% end %>
     </div>
-  </main>
-</div>
+  </div>
+</main>

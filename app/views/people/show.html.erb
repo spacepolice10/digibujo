@@ -1,36 +1,25 @@
 <% content_for(:title) { @person.name } %>
 
 <div class="layout--page">
-      <div class="layout--header-info">
-      <% if @person.avatar.attached? %>
-        <%= image_tag @person.avatar, class: "person--avatar", alt: "" %>
-      <% end %>
-      <div>
-        <h2><%= @person.name %></h2>
-        <%= render "contacts", person: @person %>
-      </div>
-    </div>
   <div class="layout--header">
     <div class="layout--header-actions">
       <%= link_to home_path, class: "button--secondary" do %>
         <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
         People
       <% end %>
-      <%= link_to edit_person_path(@person), class: "button--secondary layout--rail-action" do %>
-      <i class="icon" style="--icon-mask: var(--icon-pencil)" aria-hidden="true"></i>
-      Edit
-    <% end %>
-    <%= render "people/pins_button", person: @person %>
-    <%= button_to @person,
-          method: :delete,
-          class: "button--secondary button--danger layout--rail-action",
-          form: { data: { turbo_confirm: "Delete this person and remove them from all bullets?" } } do %>
-      <i class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></i>
-      Delete
-    <% end %>
+      <%= render "mentions/pins_button",
+            mention: @person,
+            pin_path: people_pin_path,
+            pin_params: { person_id: @person.id } %>
+      <%= button_to person_path(@person),
+            method: :delete,
+            class: "button--secondary button--danger layout--rail-action",
+            form: { data: { turbo_confirm: "Delete this person and remove them from all bullets?" } } do %>
+        <i class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></i>
+        Delete
+      <% end %>
     </div>
-
-
+    <h2 class="layout--surface-name"><%= @person.name %></h2>
   </div>
 
   <div class="layout--surface">
@@ -46,7 +35,7 @@
           <% end %>
         <% end %>
       <% else %>
-        <p>No bullets yet. Pop a bullet to get started.</p>
+        <p>No bullets yet.</p>
       <% end %>
     </div>
   </div>

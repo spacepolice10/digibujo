@@ -1,0 +1,7 @@
+<%= link_to public_send(:"#{mention.kind}_path", mention),
+      class: "pill",
+      data: { turbo_frame: "_top", colour: mention.colour }.compact,
+      aria: { label: "#{mention.kind_label}: #{mention.name}" } do %>
+  <%= render "mentions/mark", mention: mention %>
+  <span><%= mention.name %></span>
+<% end %>

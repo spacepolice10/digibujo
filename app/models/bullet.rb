@@ -12,6 +12,7 @@ class Bullet < ApplicationRecord
   delegate :completable?, :temporal?, :name,
            :marker_icon, :completed?, :mood_marker,
            :starts_date, :ends_date, :body, :data_attributes,
+           :icon,
            to: :bulletable
 
   accepts_nested_attributes_for :bulletable

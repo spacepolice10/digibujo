@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class SearchReindexJob < ApplicationJob
-  SEARCHABLE_MODELS = [ Project, Bucket, Bullet, Person ].freeze
+  SEARCHABLE_MODELS = [ Mention, Bucket, Bullet ].freeze
 
   def perform
     SEARCHABLE_MODELS.each do |model|
