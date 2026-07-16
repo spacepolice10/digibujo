@@ -1,42 +1,6 @@
 @layer components {
-  .monthly-bucket--page {
-    display: flex;
-    flex-direction: column;
-    max-width: var(--breakpoint-laptop);
-    min-height: 0;
-  }
 
-  @media (min-width: 800px) {
-    .monthly-bucket--page {
 
-      min-height: calc(100vh - var(--spacing-vertical) * 2);
-    }
-  }
-
-  .monthly-bucket--actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-horizontal-half);
-    align-items: center;
-    margin-bottom: var(--spacing-vertical);
-  }
-
-  .monthly-bucket--actions .layout--rail-action,
-  .monthly-bucket--actions form {
-    width: auto;
-  }
-
-  .monthly-bucket--heading {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--spacing-horizontal-half);
-    margin-bottom: var(--spacing-vertical);
-  }
-
-  .monthly-bucket--heading .layout--surface-name {
-    margin: 0;
-  }
 
   .monthly-bucket--period {
     margin: 0;
@@ -49,6 +13,7 @@
     align-items: stretch;
     flex: 1;
     min-height: 0;
+    max-height: 80dvh;
     overflow: hidden;
   }
 

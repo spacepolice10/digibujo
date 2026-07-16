@@ -19,6 +19,16 @@
   .utilities--contents {
     display: contents;
   }
+  .utilities--invisible {
+    display: none;
+  }
+
+  .utilities--mx-auto {
+    margin-inline: auto;
+  }
+  .utilities--my-auto {
+    margin-block: auto;
+  }
 
   @keyframes spin {
     to {

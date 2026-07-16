@@ -10,9 +10,9 @@ export default class extends Controller {
       .find((row) => row.startsWith("timezone="))
       ?.split("=")[1]
 
-    if (existingTimezone == timezone) return
+    if (existingTimezone && decodeURIComponent(existingTimezone) == timezone) return
 
     const secureAttribute = window.location.protocol == "https:" ? "; secure" : ""
-    document.cookie = `timezone=${timezone}; path=/; max-age=31536000; samesite=lax${secureAttribute}`
+    document.cookie = `timezone=${encodeURIComponent(timezone)}; path=/; max-age=31536000; samesite=lax${secureAttribute}`
   }
 }

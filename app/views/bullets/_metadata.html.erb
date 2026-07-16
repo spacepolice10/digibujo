@@ -1,7 +1,7 @@
 <%# locals: (bullet:, selected_date: nil) %>
 <% if bullet.collected_migration? || bullet.popped_migration? %>
-  <div class="bullet--metadata">
-    <span class="bullet--tags">
+  <div>
+    <span>
       <% if bullet.collected_migration? && (activity = bullet.migration_activity) %>
         <% collected_hint_id = dom_id(bullet, :hint_collected) %>
         <% collected_anchor = "--hint-#{bullet.id}-collected" %>

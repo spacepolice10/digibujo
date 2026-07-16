@@ -47,6 +47,7 @@
     width: 100%;
     padding: var(--spacing-vertical) var(--spacing-horizontal);
     margin-block: var(--spacing-vertical);
+    width: fit-content;
     border: 1px solid var(--color-stroke-base);
     border-radius: var(--radius-strong);
     transition: box-shadow 0.15s ease;
@@ -351,7 +352,7 @@
   .bullet-composer--rail .voice-recorder--record,
   .bullet-composer--rail .voice-recorder--stop {
     height: var(--icon-size-base);
-    color: var(--model-color-4);
+    color: var(--model-color-6);
     flex-shrink: 0;
   }
 

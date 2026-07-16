@@ -20,7 +20,6 @@
       min-width: 1.5rem;
       height: 1.5rem;
       padding: 0 0.4rem;
-      font-family: var(--font-family-mono);
       font-size: var(--font-size-tiny);
       font-weight: var(--font-weight-bold);
       color: var(--color-fg-base);

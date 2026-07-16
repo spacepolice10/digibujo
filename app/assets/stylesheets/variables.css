@@ -22,8 +22,8 @@
     --color-fg-positive: light-dark(oklch(0.63 0.11 210), oklch(0.73 0.11 210));
 
     /* accents — lime + teal */
-    --color-accent: oklch(0.85 0.22 130);
-    --color-accent-bg: oklch(0.60 0.2 140);
+    --color-accent: light-dark(oklch(0.85 0.22 130), oklch(0.82 0.2 130));
+    --color-accent-bg: light-dark(oklch(0.96 0.1 130), oklch(0.28 0.08 130));
     --color-accent-alternative: light-dark(
       oklch(0.68 0.16 195),
       oklch(0.78 0.12 195)
@@ -54,54 +54,53 @@
       oklch(0.45 0.08 210)
     );
 
-    /* model colors — neon palette (max saturation, same hues) */
+    /* model colors — palette (Orange, Sky, Pear, Sunshine, Flame, Blossom, Lilac, Inks) */
     --model-color-1: light-dark(
-      oklch(0.68 0.26 49),
-      oklch(0.84 0.22 49)
-    ); /* Peach */
-    --model-color-1-bg: light-dark(oklch(0.92 0.16 49), oklch(0.35 0.16 49));
+      oklch(0.775 0.154 56),
+      oklch(0.84 0.14 56)
+    ); /* Orange */
+    --model-color-1-bg: light-dark(oklch(0.92 0.08 56), oklch(0.35 0.10 56));
     --model-color-2: light-dark(
-      oklch(0.58 0.26 255),
-      oklch(0.76 0.22 255)
-    ); /* Slate */
-    --model-color-2-bg: light-dark(oklch(0.92 0.16 255), oklch(0.33 0.14 255));
+      oklch(0.743 0.123 241),
+      oklch(0.82 0.11 241)
+    ); /* Sky */
+    --model-color-2-bg: light-dark(oklch(0.92 0.06 241), oklch(0.34 0.09 241));
     --model-color-3: light-dark(
-      oklch(0.66 0.22 175),
-      oklch(0.82 0.18 175)
-    ); /* Moss */
-    --model-color-3-bg: light-dark(oklch(0.92 0.14 175), oklch(0.34 0.13 175));
+      oklch(0.769 0.141 133),
+      oklch(0.84 0.12 133)
+    ); /* Pear */
+    --model-color-3-bg: light-dark(oklch(0.92 0.07 133), oklch(0.34 0.10 133));
     --model-color-4: light-dark(
-      oklch(0.68 0.26 145),
-      oklch(0.84 0.22 145)
-    ); /* Sage */
-    --model-color-4-bg: light-dark(oklch(0.92 0.16 145), oklch(0.34 0.15 145));
+      oklch(0.905 0.184 99),
+      oklch(0.92 0.16 99)
+    ); /* Sunshine */
+    --model-color-4-bg: light-dark(oklch(0.92 0.08 99), oklch(0.35 0.10 99));
     --model-color-5: light-dark(
-      oklch(0.78 0.24 89),
-      oklch(0.88 0.2 89)
-    ); /* Butter */
-    --model-color-5-bg: light-dark(oklch(0.92 0.12 80), oklch(0.10 0.16 94));
+      oklch(0.657 0.158 43),
+      oklch(0.78 0.14 43)
+    ); /* Flame */
+    --model-color-5-bg: light-dark(oklch(0.92 0.08 43), oklch(0.34 0.10 43));
     --model-color-6: light-dark(
-      oklch(0.64 0.28 22),
-      oklch(0.82 0.24 22)
-    ); /* Rose */
-    --model-color-6-bg: light-dark(oklch(0.92 0.17 22), oklch(0.34 0.16 22));
+      oklch(0.799 0.090 18),
+      oklch(0.86 0.08 18)
+    ); /* Blossom */
+    --model-color-6-bg: light-dark(oklch(0.92 0.05 18), oklch(0.34 0.07 18));
     --model-color-7: light-dark(
-      oklch(0.58 0.28 305),
-      oklch(0.78 0.24 305)
+      oklch(0.725 0.132 292),
+      oklch(0.82 0.12 292)
     ); /* Lilac */
-    --model-color-7-bg: light-dark(oklch(0.92 0.17 305), oklch(0.33 0.16 305));
+    --model-color-7-bg: light-dark(oklch(0.92 0.07 292), oklch(0.33 0.10 292));
     --model-color-8: light-dark(
-      oklch(0.62 0.26 35),
-      oklch(0.8 0.22 35)
-    ); /* Clay */
-    --model-color-8-bg: light-dark(oklch(0.92 0.16 35), oklch(0.34 0.15 35));
+      oklch(0.40 0.06 54),
+      oklch(0.72 0.05 54)
+    ); /* Inks (Liquorice + chroma) */
+    --model-color-8-bg: light-dark(oklch(0.92 0.03 54), oklch(0.34 0.04 54));
 
     /* breakpoints */
     --breakpoint-0: 0px;
     --breakpoint-fold: 120px;
     --breakpoint-mobile: 360px;
     --breakpoint-tablet: 600px;
-    --breakpoint-surface: 640px;
     --breakpoint-laptop: 800px;
     --breakpoint-pc: 1040px;
 
@@ -133,10 +132,6 @@
     --font-size-base: 1rem;      /* 16px */
     --font-size-subtle: 0.75rem; /* 12px */
 
-    /* font families */
-    --font-family-base: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    --font-family-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-
     /* font weights */
     --font-weight-strong: 800;
     --font-weight-base: 400;
@@ -147,8 +142,8 @@
     --opacity-half: 0.5;
 
     /* radius */
-    --radius-subtle: 4px;
-    --radius-base: 8px;
+    --radius-subtle: 0px;
+    --radius-base: 6px;
     --radius-strong: 12px;
     --radius-full: 9999px;
 
@@ -241,14 +236,14 @@
 
   [data-bullet-type="note"],
   .bullet--composer-create-button--note {
-    --bullet-type-color: var(--model-color-5);
-    --bullet-type-color-bg: var(--model-color-5-bg);
+    --bullet-type-color: var(--model-color-1);
+    --bullet-type-color-bg: var(--model-color-1-bg);
   }
 
   [data-bullet-type="voice"],
   .bullet--composer-create-button--voice {
-    --bullet-type-color: var(--model-color-4);
-    --bullet-type-color-bg: var(--model-color-4-bg);
+    --bullet-type-color: var(--model-color-3);
+    --bullet-type-color-bg: var(--model-color-3-bg);
   }
 
   [data-month="1"] { --entity-color: var(--model-color-1); --entity-color-bg: var(--model-color-1-bg); }

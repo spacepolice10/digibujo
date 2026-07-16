@@ -17,6 +17,7 @@
     </div>
     <h2>New collection</h2>
   </div>
+  <turbo-frame id="<%= turbo_frame_request_id %>">
   <div class="layout--surface">
     <%= render "form",
           collection: @collection,
@@ -34,4 +35,5 @@
       </section>
     <% end %>
   </div>
+  </turbo-frame>
 </div>

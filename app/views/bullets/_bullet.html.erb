@@ -3,8 +3,8 @@
       data: { bullet_type: bullet.bulletable_type.downcase,
               **(bullet.data_attributes) } do %>
   <%= render "bullets/marker", bullet: bullet %>
+  <%= render "bullets/metadata", bullet: bullet, selected_date: selected_date %>
   <div class="bullet--body">
-    <%= render "bullets/metadata", bullet: bullet, selected_date: selected_date %>
     <%= render partial: bullet.bulletable.to_partial_body_path,
                locals: { bullet: bullet, selected_date: selected_date } %>
   </div>

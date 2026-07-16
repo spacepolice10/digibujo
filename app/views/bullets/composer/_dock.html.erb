@@ -3,11 +3,12 @@
   { name: "Task", icon: "square", modifier: "task", hotkey: "Shift+T", hotkey_action: "keydown.shift+t@document->hotkey#click" },
   { name: "Note", icon: "text", modifier: "note", hotkey: "Shift+N", hotkey_action: "keydown.shift+n@document->hotkey#click" },
   { name: "Event", icon: "circle", modifier: "event", hotkey: "Shift+E", hotkey_action: "keydown.shift+e@document->hotkey#click" },
-  { name: "Voice", icon: "microphone", modifier: "voice", hotkey: "Shift+V", hotkey_action: "keydown.shift+v@document->hotkey#click" }
+  { name: "Voice", icon: "microphone", modifier: "voice", hotkey: "Shift+V", hotkey_action: "keydown.shift+v@document->hotkey#click" },
 ] %>
 <% mobile = request.variant.include?(:mobile) %>
 <% buttons = capture do %>
   <div class="bullet--composer-buttons">
+    <span>Add new:</span>
     <% types.each do |type| %>
       <%= link_to new_bullet_path(pops_on: selected_date, bucket_id: bucket&.id, bulletable_type: type[:name]),
             class: ["bullet--composer-create-button", "bullet--composer-create-button--#{type[:modifier]}",
@@ -23,7 +24,11 @@
 
         <i class="icon" style="--icon-mask: var(--icon-<%= type[:icon] %>)" aria-hidden="true"></i>
         <%= type[:name] %>
-      <% end %>
+      <% end %> 
+    <% end %>
+    <%= link_to new_collection_path, class: "bullet--composer-create-button bullet--composer-create-button--collection disabled" do %>
+      <%= icon_tag("list") %>
+      <span class="bullet--composer-create-button-text">Collection</span>
     <% end %>
   </div>
 <% end %>

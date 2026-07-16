@@ -33,7 +33,6 @@
   }
 
   .button--icon {
-    padding: 0;
     width: var(--icon-size-base);
     height: var(--icon-size-base);
   }
@@ -44,8 +43,8 @@
   }
 
   .button--icon-subtle {
-    width: calc(var(--icon-size-subtle) - var(--spacing-horizontal-half));
-    height: calc(var(--icon-size-subtle) - var(--spacing-horizontal-half) );
+    width: var(--icon-size-subtle);
+    height: var(--icon-size-subtle);
   }
 
   .button--circle {
@@ -54,16 +53,14 @@
 
   .button--accent {
     padding: var(--spacing-vertical-half) var(--spacing-horizontal);
-    border-radius: var(--radius-base);
+    border-radius: var(--radius-full);
     font-weight: var(--font-weight-strong);
     font-style: italic;
     text-transform: uppercase;
-    background: var(--color-accent-bg);
+    background: var(--color-accent);
     border: 1px solid color-mix(in oklch, var(--color-accent-bg) 65%, black);
-    color: var(--color-bg-strong);
+    color: black;
     box-shadow: 0 4px 0 oklch(0% 0 0 / 0.95);
-    transition: background 0.1s ease, color 0.1s ease, border-color 0.1s ease,
-      box-shadow 0.1s ease;
 
     @media (hover: hover) {
       &:hover:not(:disabled) {

@@ -1,6 +1,6 @@
 <%# locals: (page:, pagination_link_path:, container_id: "paginated-records", turbo_frame: nil) %>
 <div id="<%= container_id %>"
-     class="records-list"
+     class="layout--list"
      data-controller="pagination"
      <% if turbo_frame.present? %>data-pagination-turbo-frame-value="<%= turbo_frame %>"<% end %>>
   <%= yield %>

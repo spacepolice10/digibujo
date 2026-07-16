@@ -1,10 +1,10 @@
 <% content_for(:title) { @project.name } %>
 
-<div class="layout--page">
+<div class="layout--page layout--container layout--container-md">
   <div class="layout--header">
     <div class="layout--header-actions">
       <%= link_to home_path, class: "button--secondary" do %>
-        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+        <%= icon_tag("arrow-left", colour: "var(--color-stroke-base)") %>
         Projects
       <% end %>
       <%= render "mentions/pins_button",
@@ -15,7 +15,7 @@
             method: :delete,
             class: "button--secondary button--danger layout--rail-action",
             form: { data: { turbo_confirm: "Delete this project and remove it from all bullets?" } } do %>
-        <i class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></i>
+        <%= icon_tag("trash", colour: "var(--color-danger)") %>
         Delete
       <% end %>
     </div>

@@ -14,11 +14,11 @@
 >
 
 <label
-  class="bullet--marker-select"
+  class="bullet--marker"
   for="<%= checkbox_id %>"
   aria-label="Select bullet"
 >
-  <span class="bullet--marker" aria-hidden="true">
+  <span aria-hidden="true">
     <i
       class="icon bullet--marker-type"
       style="--icon-mask: var(--icon-<%= bullet.marker_icon.to_s.dasherize %>)"
@@ -28,4 +28,4 @@
   </span>
 </label>
 
-<label class="utilities--sr-only" for="<%= checkbox_id %>" aria-hidden="true"></label>
+<label class="utilities--sr-only bullet--select-checkbox" for="<%= checkbox_id %>" aria-hidden="true"></label>

@@ -188,12 +188,17 @@
   .layout--container {
     width: 100%;
     padding: var(--spacing-vertical) var(--spacing-horizontal);
-    
+
+    &.layout--container-lg {
+      max-width: var(--breakpoint-pc);
+      margin-inline: auto;
+    }
+
     &.layout--container-md {
       max-width: var(--breakpoint-laptop);
       margin-inline: auto;
-    } 
-  
+    }
+
     &.layout--container-sm {
       max-width: var(--breakpoint-tablet);
       margin-inline: auto;

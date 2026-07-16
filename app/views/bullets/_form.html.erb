@@ -1,4 +1,4 @@
-<% bulletable = bullet.bulletable_type.constantize.new %>
+<% bulletable = editing ? bullet.bulletable : bullet.bulletable_type.constantize.new %>
 
 <%= form_with model: bullet, class: "bullet-composer", data: {
   composer_form: true,

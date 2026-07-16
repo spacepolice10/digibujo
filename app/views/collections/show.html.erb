@@ -1,14 +1,12 @@
 <% content_for(:title) { @collection.name } %>
 
-<div class="layout--page">
-  <div class="layout--header-info">
-    <i class="icon" style="--icon-mask: <%= @collection.bucket.icon_mask %>" aria-hidden="true"></i>
-
+<div class="layout--page layout--container layout--container-md">
+  <div class="layout--header">
+    <%= icon_tag(@collection.bucket.icon, colour: @collection.bucket.colour_variable) %>
       <h2><%= @collection.name %></h2>
       <% if @collection.bucket.description.present? %>
         <p><%= @collection.bucket.description %></p>
       <% end %>
-
   </div>
   <div class="layout--header-actions">
     <%= link_to home_path, class: "button--secondary" do %>

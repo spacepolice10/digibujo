@@ -58,6 +58,7 @@
 
   .tracker--heatmap-cell {
     display: inline-flex;
+
   }
 
   .tracker--heatmap-form {
@@ -75,6 +76,9 @@
     border-radius: var(--radius-subtle);
     background: var(--color-bg-base);
     cursor: pointer;
+    &:hover {
+      background: var(--color-bg-subtle);
+    }
   }
 
   .tracker--heatmap-date-done {
