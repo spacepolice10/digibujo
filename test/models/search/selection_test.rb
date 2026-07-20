@@ -11,7 +11,7 @@ class Search::SelectionTest < ActiveSupport::TestCase
   test 'record! upserts the same target' do
     Search::Selection.record!(
       user: @user,
-      searchable_type: 'Mention',
+      searchable_type: 'Project',
       searchable_id: @project.id,
       query: 'alp'
     )
@@ -19,7 +19,7 @@ class Search::SelectionTest < ActiveSupport::TestCase
     travel 1.hour do
       Search::Selection.record!(
         user: @user,
-        searchable_type: 'Mention',
+        searchable_type: 'Project',
         searchable_id: @project.id,
         query: 'alpha'
       )
@@ -38,7 +38,7 @@ class Search::SelectionTest < ActiveSupport::TestCase
     projects.each do |project|
       Search::Selection.record!(
         user: @user,
-        searchable_type: 'Mention',
+        searchable_type: 'Project',
         searchable_id: project.id
       )
     end
@@ -53,7 +53,7 @@ class Search::SelectionTest < ActiveSupport::TestCase
     projects.each do |project|
       Search::Selection.record!(
         user: @user,
-        searchable_type: 'Mention',
+        searchable_type: 'Project',
         searchable_id: project.id
       )
     end
@@ -68,8 +68,8 @@ class Search::SelectionTest < ActiveSupport::TestCase
     deleted = create_project!(@user, name: 'gone')
     kept = create_project!(@user, name: 'kept')
 
-    Search::Selection.record!(user: @user, searchable_type: 'Mention', searchable_id: deleted.id)
-    Search::Selection.record!(user: @user, searchable_type: 'Mention', searchable_id: kept.id)
+    Search::Selection.record!(user: @user, searchable_type: 'Project', searchable_id: deleted.id)
+    Search::Selection.record!(user: @user, searchable_type: 'Project', searchable_id: kept.id)
 
     deleted.destroy!
 
@@ -96,7 +96,7 @@ class Search::SelectionTest < ActiveSupport::TestCase
   test 'in_menu returns selections with searchable loaded' do
     Search::Selection.record!(
       user: @user,
-      searchable_type: 'Mention',
+      searchable_type: 'Project',
       searchable_id: @project.id
     )
 

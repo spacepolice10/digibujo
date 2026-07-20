@@ -7,8 +7,8 @@
         <%= icon_tag("arrow-left", colour: "var(--color-stroke-base)") %>
         Projects
       <% end %>
-      <%= render "mentions/pins_button",
-            mention: @project,
+      <%= render "projects/pins_button",
+            project: @project,
             pin_path: projects_pin_path,
             pin_params: { project_id: @project.id } %>
       <%= button_to project_path(@project),

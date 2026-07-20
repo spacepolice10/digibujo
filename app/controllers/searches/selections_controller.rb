@@ -24,7 +24,7 @@ module Searches
 
     def find_searchable!(type, id)
       case type
-      when 'Mention' then Current.user.mentions.find(id)
+      when 'Project' then Current.user.projects.find(id)
       when 'Bucket' then Current.user.buckets.find(id)
       when 'Bullet' then Current.user.bullets.find(id)
       else

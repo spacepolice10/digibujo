@@ -8,7 +8,7 @@ class Search::GlobalRequest
 
   SEARCHABLE_INCLUDES = {
     'Bucket' => %i[bucketable bullets],
-    'Bullet' => [:mentions, { bucket: :bucketable }]
+    'Bullet' => [:projects, { bucket: :bucketable }]
   }.freeze
 
   class << self

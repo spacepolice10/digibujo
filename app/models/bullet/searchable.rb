@@ -14,7 +14,7 @@ module Bullet::Searchable
 
   def search_body
     bucket_names = [bucket&.name].compact
-    mention_names = mentions.map(&:name)
+    mention_names = projects.map(&:name)
 
     [
       searchable_body,

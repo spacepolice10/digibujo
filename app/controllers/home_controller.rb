@@ -21,12 +21,6 @@ class HomeController < ApplicationController
         expanded: section_expanded?(:projects)
       ),
       Section.new(
-        name: 'People',
-        records: person_records,
-        show_path: people_path,
-        expanded: section_expanded?(:people)
-      ),
-      Section.new(
         name: 'Collections',
         records: collection_records,
         show_path: collections_path,
@@ -56,12 +50,8 @@ class HomeController < ApplicationController
     Current.user.active_collections.limit(5)
   end
 
-  def person_records
-    Current.user.mentions.person.limit(5)
-  end
-
   def project_records
-    Current.user.mentions.project.limit(5)
+    Current.user.projects.limit(5)
   end
 
   def tracker_records

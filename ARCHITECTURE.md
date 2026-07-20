@@ -47,7 +47,7 @@ List views use **`<%= render_bullet(bullet) %>`**, which resolves `Bullet#to_par
 
 `Bullet` has a `pinned` boolean column (`default: false, null: false`). Archive state is **not** a column — it lives in a separate polymorphic `Archive` entity (see **Archive entity** below). There is no `status` enum. `Pinnable` adds a `pinned` scope and `pin!` / `unpin!` helpers (used by bullets and buckets; no pin count limit). **`Archivable`** adds `archived` / `active` scopes backed by the `archives` join. Daylog and other list views use the **`active`** scope to hide archived bullets; pinned bullets remain visible and are distinguished by icons in the marker.
 
-`Bullet` tracks **`migrated_at`** (`datetime`, nullable) and **`last_migration`** (json, default `{}`): set by **`Migratable#mark_migration!`** when the user schedules (postpone with destination change), collects, completes, or marks as reviewed. Archiving does **not** stamp migration. **`Migratable#mark_as_reviewed!`** stamps `action: 'acknowledged'` when the user keeps a bullet unchanged during review. `migrated?` drives the `›` marker on bullet rows. Full history lives in **`activities.metadata`** (same payload shape). Project/person tags do **not** stamp migration.
+`Bullet` tracks **`migrated_at`** (`datetime`, nullable) and **`last_migration`** (json, default `{}`): set by **`Migratable#mark_migration!`** when the user schedules (postpone with destination change), collects, completes, or marks as reviewed. Archiving does **not** stamp migration. **`Migratable#mark_as_reviewed!`** stamps `action: 'acknowledged'` when the user keeps a bullet unchanged during review. `migrated?` drives the `›` marker on bullet rows. Full history lives in **`activities.metadata`** (same payload shape). Project/project tags do **not** stamp migration.
 
 ## Archive entity
 
@@ -63,7 +63,7 @@ Archiving (`Bullet` or `Bucket`) is modelled as a row in **`archives`** (`archiv
 
 ## Activity
 
-`Activity` is a polymorphic audit log: **`subject`** (`Bullet`, `Bucket`, or `Archive`), **`action`** (string), **`metadata`** (json), **`user_id`**. Recording goes through **`ActivityTrackable#record_activity!`** on subjects, except archive/unarchive which are written from `Archive` callbacks. Bullet actions: `updated`, `collected`, `postponed` (legacy `popped`), `migrated`, `completed`, `uncompleted`, `acknowledged`, `pinned`, `unpinned`, `project_mentioned` / `project_unmentioned`, `person_mentioned` / `person_unmentioned`. Bucket actions: `created`, `updated`, `pinned`, `unpinned`, `destroyed`. Archive actions: `archived`, `unarchived`. Bucket `created` is recorded from controllers (collections/monthlylogs); `destroyed` from `CleanSoftDeletedRecordsJob` before hard delete (snapshots `name` / `colour` / `bucketable_type`); pin stays on intent methods/controllers. Bucket activities are retained after hard delete so `destroyed` rows remain until `Activity.sweep`. Migration intents write bullet activities with migration payload in `metadata`. **`GET /activities`** lists the user's global feed (no subject filter). **`GET /activities/compact`** returns the latest six activities for the home rail.
+`Activity` is a polymorphic audit log: **`subject`** (`Bullet`, `Bucket`, or `Archive`), **`action`** (string), **`metadata`** (json), **`user_id`**. Recording goes through **`ActivityTrackable#record_activity!`** on subjects, except archive/unarchive which are written from `Archive` callbacks. Bullet actions: `updated`, `collected`, `postponed` (legacy `popped`), `migrated`, `completed`, `uncompleted`, `acknowledged`, `pinned`, `unpinned`, `project_mentioned` / `project_unmentioned`. Bucket actions: `created`, `updated`, `pinned`, `unpinned`, `destroyed`. Archive actions: `archived`, `unarchived`. Bucket `created` is recorded from controllers (collections/monthlylogs); `destroyed` from `CleanSoftDeletedRecordsJob` before hard delete (snapshots `name` / `colour` / `bucketable_type`); pin stays on intent methods/controllers. Bucket activities are retained after hard delete so `destroyed` rows remain until `Activity.sweep`. Migration intents write bullet activities with migration payload in `metadata`. **`GET /activities`** lists the user's global feed (no subject filter). **`GET /activities/compact`** returns the latest six activities for the home rail.
 
 ## Tracker
 
@@ -153,11 +153,11 @@ The architecture is intentionally closer to analog Bullet Journal behavior:
 - **Deferred decisions** are supported by moving `pops_on` forward (postpone) or tagging a project
 - **Separation of concerns** mirrors BuJo pages: today/timeline, archived, pinned
 
-## Mentions (tags)
+## Projects (tags)
 
-`Mention` is a first-class model (`belongs_to :user`) with `name`, `colour`, and `kind` (`project` | `person`). Shared behaviour: `Colourable`, `Pinnable`, `ActionText::Attachable`. No per-tag icons or contact fields — the kind mark is fixed (`#` → hash icon, `@` → at icon). Bullets link via `bullet_mentions` (many-to-many). Home and routes keep two surfaces: `GET /projects` / `GET /people` scope `Mention.project` / `Mention.person`. Lexxy `#` / `@` prompts exist **only on the Note composer**. Pin/unpin uses `projects/pin` and `people/pin` on the corresponding show pages.
+`Project` is a first-class model (`belongs_to :user`) with `name` and `colour`. Shared behaviour: `Colourable`, `Pinnable`, `ActionText::Attachable`. Mark is fixed (`#` → hash icon). Bullets link via `bullet_projects` (many-to-many). Surface: `GET /projects`. Lexxy `#` prompt exists **only on the Note composer**. Pin/unpin uses `projects/pin` on the show page.
 
-Kind config (trigger, mark, content_type, activity actions) lives in `Mention::KINDS`. Mentions are added via `Bullet#add_mention!` / removed via `remove_mention!` / `clear_mentions!`. Body attachable sync (`sync_mentions_from_body!`) runs **only for Notes**.
+Projects are added via `Bullet#add_project!` / removed via `remove_project!` / `clear_projects!`. Body attachable sync (`sync_projects_from_body!`) runs **only for Notes**.
 
 ## Buckets and memberships
 

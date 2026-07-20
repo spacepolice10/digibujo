@@ -12,8 +12,6 @@ class Activity < ApplicationRecord
       uncompleted
       project_mentioned
       project_unmentioned
-      person_mentioned
-      person_unmentioned
       acknowledged
       pinned
       unpinned
@@ -33,8 +31,6 @@ class Activity < ApplicationRecord
     'uncompleted' => 'square',
     'project_mentioned' => 'hash',
     'project_unmentioned' => 'hash',
-    'person_mentioned' => 'at',
-    'person_unmentioned' => 'at',
     'created' => 'plus',
     'pinned' => 'pin',
     'unpinned' => 'pin',

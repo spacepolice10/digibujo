@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Bullet < ApplicationRecord
-  include Migratable, Collectable, Postponable, Archivable, Pinnable, Publishable, Bullet::Mentionable,
+  include Migratable, Collectable, Postponable, Archivable, Pinnable, Publishable, Bullet::Projectable,
           Bullet::Searchable, Bullet::ActivityRecording, ActivityTrackable
 
   belongs_to :user

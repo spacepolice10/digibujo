@@ -16,7 +16,7 @@
   <turbo-frame id="projects">
     <% if @projects.any? %>
       <ul class="layout--list layout--surface">
-        <%= render partial: "mentions/mention", collection: @projects, as: :mention %>
+        <%= render partial: "projects/project", collection: @projects, as: :project %>
       </ul>
     <% else %>
       <p>No projects yet.</p>

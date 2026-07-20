@@ -22,7 +22,7 @@ class ProjectsControllerTest < ActionDispatch::IntegrationTest
   test 'show renders project bullets' do
     project = create_project!(@user, name: 'alpha')
     @user.bullets.create!(bulletable: Task.new(body: 'Tagged task'))
-      .tap { |b| b.add_mention!(mention_id: project.id) }
+      .tap { |b| b.add_project!(project_id: project.id) }
 
     get project_path(project)
 
@@ -31,11 +31,11 @@ class ProjectsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'create project' do
-    assert_difference -> { Mention.project.count }, 1 do
-      post projects_path, params: { mention: { name: 'Nova', colour: 'gold' } }
+    assert_difference -> { Project.count }, 1 do
+      post projects_path, params: { project: { name: 'Nova', colour: 'gold' } }
     end
 
     assert_redirected_to home_path
-    assert_equal 'nova', Mention.project.order(:id).last.name
+    assert_equal 'nova', Project.order(:id).last.name
   end
 end

@@ -30,7 +30,10 @@ class Onboarding
   # Ensures a single Daylog bucket exists and returns it.
   def self.ensure_daylog_bucket!(user, _date = Date.current)
     if (existing = user.daylog)
-      return existing.bucket
+      return existing.bucket if existing.bucket
+
+      user.buckets.create!(bucketable: existing, name: DAYLOG_NAME, icon: DAYLOG_ICON)
+      return existing.reload.bucket
     end
 
     record = user.create_daylog!

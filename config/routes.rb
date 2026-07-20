@@ -26,8 +26,6 @@ Rails.application.routes.draw do
   get 'monthly_bucket', to: redirect('/monthlylog')
 
   resources :futures, only: %i[show new create]
-  get 'futures/:id/unplanned', to: 'futures#unplanned', as: :unplanned
-  get 'futures/:id/monthly_grid', to: 'futures#monthly_grid', as: :monthly_grid
 
   resources :monthlylogs, only: %i[new create show]
 
@@ -42,16 +40,6 @@ Rails.application.routes.draw do
     resources :suggestions
   end
   resources :projects
-
-  scope 'people', module: :people, as: :people do
-    resource :pin, only: %i[create destroy]
-  end
-  scope module: :people, path: 'people', as: :person do
-    resources :suggestions
-  end
-  resources :people
-
-  resources :mentions, only: :show
 
   # --- Bullets ---
   scope 'bullets', module: :bullets do

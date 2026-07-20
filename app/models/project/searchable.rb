@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Mention::Searchable
+module Project::Searchable
   extend ActiveSupport::Concern
   include ::Searchable
 

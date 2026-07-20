@@ -4,15 +4,15 @@ class ProjectsController < ApplicationController
   before_action :set_project, only: %i[show destroy]
 
   def index
-    @projects = Current.user.mentions.project.order(created_at: :desc)
+    @projects = Current.user.projects.order(created_at: :desc)
   end
 
   def new
-    @project = Current.user.mentions.project.build
+    @project = Current.user.projects.build
   end
 
   def create
-    @project = Current.user.mentions.project.build(project_params)
+    @project = Current.user.projects.build(project_params)
     if @project.save
       redirect_to home_path, notice: 'Project created'
     else
@@ -35,10 +35,10 @@ class ProjectsController < ApplicationController
   private
 
   def set_project
-    @project = Current.user.mentions.project.find(params[:id])
+    @project = Current.user.projects.find(params[:id])
   end
 
   def project_params
-    params.require(:mention).permit(:name, :colour)
+    params.require(:project).permit(:name, :colour)
   end
 end

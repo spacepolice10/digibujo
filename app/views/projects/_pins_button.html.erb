@@ -1,11 +1,12 @@
-<turbo-frame id="<%= dom_id(mention, :pin_button) %>">
-  <% if mention.pinned? %>
+<%# locals: (project:, pin_path:, pin_params:) %>
+<turbo-frame id="<%= dom_id(project, :pin_button) %>">
+  <% if project.pinned? %>
     <%= button_to pin_path,
           method: :delete,
           params: pin_params,
           class: "button--secondary",
           form: { data: { turbo_stream: true } },
-          aria: { label: "Unpin #{mention.name}" } do %>
+          aria: { label: "Unpin #{project.name}" } do %>
       <i class="icon" style="--icon-mask: var(--icon-unpin)" aria-hidden="true"></i>
       Unpin
     <% end %>
@@ -15,7 +16,7 @@
           params: pin_params,
           class: "button--secondary",
           form: { data: { turbo_stream: true } },
-          aria: { label: "Pin #{mention.name}" } do %>
+          aria: { label: "Pin #{project.name}" } do %>
       <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
       Pin
     <% end %>

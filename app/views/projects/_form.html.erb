@@ -1,4 +1,5 @@
-<%= form_with model: mention, url: url, class: "form form--strong" do |f| %>
+<%# locals: (project:, url:, hint:, name_hint:) %>
+<%= form_with model: project, url: url, class: "form form--strong" do |f| %>
   <small class="form-hint"><%= hint %></small>
 
   <div class="form-group">

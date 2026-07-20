@@ -42,17 +42,6 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     assert_no_match "inbox", response.body
   end
 
-  test "show filters people by name" do
-    create_person!(@user, name: "alex")
-    create_person!(@user, name: "sam")
-
-    get search_path, params: { q: "alex" }
-
-    assert_response :success
-    assert_match "alex", response.body
-    assert_no_match "sam", response.body
-  end
-
   test "show reports empty results when nothing matches" do
     create_project!(@user, name: "alpha")
 
@@ -109,7 +98,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     project = create_project!(@user, name: "recent alpha")
     Search::Selection.record!(
       user: @user,
-      searchable_type: "Mention",
+      searchable_type: "Project",
       searchable_id: project.id
     )
 
@@ -133,7 +122,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     project = create_project!(@user, name: "recent beta")
     Search::Selection.record!(
       user: @user,
-      searchable_type: "Mention",
+      searchable_type: "Project",
       searchable_id: project.id
     )
 
@@ -148,7 +137,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     project = create_project!(@user, name: "recent mobile")
     Search::Selection.record!(
       user: @user,
-      searchable_type: "Mention",
+      searchable_type: "Project",
       searchable_id: project.id
     )
 

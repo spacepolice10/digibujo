@@ -3,7 +3,8 @@
         method: :get,
         class: "search--form",
         data: { combobox_target: "searchForm" } do |form| %>
-    <%= form.label :q, "Search bullets, projects, collections, and people", class: "form-label utilities--sr-only" %>
+    <%= form.label :q, "Search bullets, projects, and collections", class: "form-label utilities--sr-only" %>
+
     <%= form.search_field :q,
           value: "",
           placeholder: "Search…",

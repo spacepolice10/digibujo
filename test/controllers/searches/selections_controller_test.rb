@@ -14,7 +14,7 @@ module Searches
     test "create records a selection and returns no content" do
       assert_difference -> { @user.search_selections.count }, 1 do
         post search_selection_path,
-             params: { searchable_type: "Mention", searchable_id: @project.id, query: "alp" },
+             params: { searchable_type: "Project", searchable_id: @project.id, query: "alp" },
              as: :json
       end
 
@@ -38,7 +38,7 @@ module Searches
       other_project = create_project!(@other_user, name: "secret")
 
       post search_selection_path,
-           params: { searchable_type: "Mention", searchable_id: other_project.id },
+           params: { searchable_type: "Project", searchable_id: other_project.id },
            as: :json
 
       assert_response :not_found
