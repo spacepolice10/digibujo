@@ -12,16 +12,16 @@ class Daylogs::PicturesControllerTest < ActionDispatch::IntegrationTest
 
   test 'create picture' do
     assert_difference -> { @user.daylog.pictures.count }, 1 do
-      post daylog_picture_path, params: { date: @date.iso8601, image: upload_png }
+      post daylog_picture_path, params: { date: @date.iso8601, picture: upload_png }
     end
 
     assert_redirected_to daylog_path(date: @date.iso8601)
-    assert @user.daylog.pictures.find_by!(date: @date).image.attached?
+    assert @user.daylog.pictures.find_by!(date: @date).picture.attached?
   end
 
   test 'destroy picture' do
     picture = @user.daylog.pictures.new(date: @date)
-    picture.image.attach(
+    picture.picture.attach(
       io: StringIO.new(mini_png),
       filename: 'day.png',
       content_type: 'image/png'

@@ -74,17 +74,26 @@ class BucketTest < ActiveSupport::TestCase
   test 'pin! marks bucket pinned' do
     assert_not @bucket.pinned?
 
-    assert @bucket.pin!
+    assert_difference -> { Activity.count }, 1 do
+      assert @bucket.pin!
+    end
 
     assert @bucket.reload.pinned?
+    activity = Activity.order(:created_at).last
+    assert_equal 'pinned', activity.action
+    assert_equal @bucket, activity.subject
+    assert_equal 'Collection', activity.metadata['bucketable_type']
   end
 
   test 'unpin! clears pinned state' do
     @bucket.pin!
 
-    @bucket.unpin!
+    assert_difference -> { Activity.count }, 1 do
+      @bucket.unpin!
+    end
 
     assert_not @bucket.reload.pinned?
+    assert_equal 'unpinned', Activity.order(:created_at).last.action
   end
 
   test 'collection bucket allows nil period' do

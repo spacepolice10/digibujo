@@ -15,15 +15,10 @@ module Authentications
     end
 
     def create
-      LoginCode.sweep
+      user = AuthCode.consume!(email: session[:login_email], code: params[:code])
 
-      user = User.find_by(email_address: session[:login_email])
-
-      if user && (login_code = user.login_codes.find { |lc| !lc.expired? && lc.code_matches?(params[:code]) })
-        login_code.destroy
-        user.login_codes.delete_all
+      if user
         session.delete(:login_email)
-
         start_new_session_for(user)
         redirect_to after_authentication_url
       else

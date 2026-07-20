@@ -16,7 +16,7 @@ class AuthenticationController < ApplicationController
     email = User.normalize_value_for(:email_address, authentication_params[:email_address])
     @user = User.find_or_initialize_by(email_address: email)
     if @user.save
-      _record, code = LoginCode.create_for(@user)
+      _record, code = AuthCode.create_for(@user)
       SessionMailer.login_code(@user, code).deliver_later
       session[:login_email] = @user.email_address
       redirect_to new_authentication_confirmation_path

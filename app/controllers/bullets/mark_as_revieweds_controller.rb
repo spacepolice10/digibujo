@@ -20,12 +20,8 @@ module Bullets
     private
 
     def review_bullets
-      daylog_bucket_ids = Current.user.buckets.where(bucketable_type: 'Daylog').select(:id)
-      Current.user.bullets.active
-        .where(bucket_id: daylog_bucket_ids, pops_on: @review_from..@review_to, migrated_at: nil)
-        .order(created_at: :asc)
+      Current.user.bullets.in_review(@review_from..@review_to).order(created_at: :asc)
     end
-
 
     def bullets_to_mark
       if params[:bullet_ids].present?

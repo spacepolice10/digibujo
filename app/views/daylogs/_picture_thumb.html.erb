@@ -1,10 +1,10 @@
 <%# locals: (date:, picture:) %>
-<% if picture&.image&.attached? %>
+<% if picture&.picture&.attached? %>
   <%= link_to daylog_path(date: date.iso8601),
         class: "daylog--photo-thumb",
         aria: { label: "Open photo for #{date.strftime('%b %-d')}" },
         data: { turbo_frame: "_top" } do %>
-    <%= image_tag picture.image.variant(resize_to_limit: [64, 64]),
+    <%= image_tag picture.picture.variant(resize_to_limit: [64, 64]),
           alt: "",
           class: "daylog--photo-thumb-image" %>
   <% end %>

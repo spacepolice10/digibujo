@@ -21,6 +21,12 @@ class Bullet < ApplicationRecord
   validates :bulletable_type, inclusion: { in: ->(bullet) { bullet.class.bulletable_types } }
   validates :bulletable, presence: true
 
+  scope :in_review, lambda { |range|
+    active
+      .joins(:bucket)
+      .where(buckets: { bucketable_type: 'Daylog' }, pops_on: range, migrated_at: nil)
+  }
+
   def to_partial_path
     return '/bullets/bullet' unless bulletable
 

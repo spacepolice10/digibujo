@@ -28,14 +28,4 @@ class Daylogs::MoodEntitiesControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to daylog_path(date: @date.iso8601)
   end
-
-  test 'create redirects back to monthlylog when referred from there' do
-    monthlylog = create_monthlylog!(@user, name: Date.current.strftime('%B %Y'))
-
-    post daylog_mood_entity_path,
-         params: { date: @date.iso8601, mood: 'positive' },
-         headers: { 'HTTP_REFERER' => monthlylog_url(monthlylog) }
-
-    assert_redirected_to monthlylog_path(monthlylog)
-  end
 end

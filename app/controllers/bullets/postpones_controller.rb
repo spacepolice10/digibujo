@@ -19,9 +19,7 @@ module Bullets
         next_weekends: @daylog_bucket
       }
       @future = Current.user.futures.covering(Date.current).take
-      @monthlylog = Current.user.monthlylogs.find_by(
-        period_from: Date.current.beginning_of_month
-      )
+      @monthlylog = Current.user.monthlylogs.covering(Date.current).take
     end
 
     def create

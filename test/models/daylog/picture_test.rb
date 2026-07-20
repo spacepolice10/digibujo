@@ -16,17 +16,17 @@ class Daylog::PictureTest < ActiveSupport::TestCase
 
   test 'creates picture for a day' do
     picture = @daylog.pictures.new(date: Date.current)
-    picture.image.attach(@blob)
+    picture.picture.attach(@blob)
 
     assert picture.save
-    assert picture.image.attached?
+    assert picture.picture.attached?
   end
 
-  test 'requires image' do
+  test 'requires picture' do
     picture = @daylog.pictures.new(date: Date.current)
 
     assert_not picture.valid?
-    assert_includes picture.errors[:image], "can't be blank"
+    assert_includes picture.errors[:picture], "can't be blank"
   end
 
   test 'rejects unsupported content type' do
@@ -36,19 +36,19 @@ class Daylog::PictureTest < ActiveSupport::TestCase
       content_type: 'text/plain'
     )
     picture = @daylog.pictures.new(date: Date.current)
-    picture.image.attach(bad)
+    picture.picture.attach(bad)
 
     assert_not picture.valid?
-    assert_includes picture.errors[:image], 'has an invalid content type'
+    assert_includes picture.errors[:picture], 'has an invalid content type'
   end
 
   test 'enforces one picture per date' do
     first = @daylog.pictures.new(date: Date.current)
-    first.image.attach(@blob)
+    first.picture.attach(@blob)
     first.save!
 
     duplicate = @daylog.pictures.new(date: Date.current)
-    duplicate.image.attach(@blob)
+    duplicate.picture.attach(@blob)
 
     assert_not duplicate.valid?
   end

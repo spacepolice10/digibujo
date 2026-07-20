@@ -6,7 +6,7 @@ Framework-agnostic references live in [`docs/`](docs/). Agent workflow rules liv
 
 ## Authentication
 
-Custom session-based auth built with an `Authentication` concern (not Devise). **Passwordless:** users continue with email + one-time code (`LoginCode`). `AuthenticationController#create` finds or creates the `User`, sends a code, and stores `session[:login_email]`; `Authentications::ConfirmationsController#create` verifies the code and always starts a session, then redirects to the app. `OnboardingController` (authenticated) still exists: `Onboarding#complete` provisions `Loose Notes` and the single `Daylog`. Monthlylog / Future remain opt-in. Logout via `DELETE /authentication`. Persisted sessions live in the `sessions` table; the signed httponly cookie holds `session_id`. `Current.user` / `Current.session` via `ActiveSupport::CurrentAttributes`. Controllers opt out of auth with `allow_unauthenticated_access`. The continue-with-email form links to **`GET /features`** (`FeaturesController#show`) and **`GET /support`** (`SupportController#show`), both unauthenticated with `layout: public`. Rate limiting is applied to authentication create, confirmation create, and onboarding create. Auth forms use a `form-submit` Stimulus controller for submit loading state.
+Custom session-based auth built with an `Authentication` concern (not Devise). **Passwordless:** users continue with email + one-time code (`AuthCode`). `AuthenticationController#create` finds or creates the `User`, sends a code, and stores `session[:login_email]`; `Authentications::ConfirmationsController#create` calls `AuthCode.consume!` and always starts a session, then redirects to the app. `OnboardingController` (authenticated) still exists: `Onboarding#complete` provisions `Loose Notes` and the single `Daylog`. Monthlylog / Future remain opt-in. Logout via `DELETE /authentication`. Persisted sessions live in the `sessions` table; the signed httponly cookie holds `session_id`. `Current.user` / `Current.session` via `ActiveSupport::CurrentAttributes`. Controllers opt out of auth with `allow_unauthenticated_access`. The continue-with-email form links to **`GET /features`** (`FeaturesController#show`) and **`GET /support`** (`SupportController#show`), both unauthenticated with `layout: public`. Rate limiting is applied to authentication create, confirmation create, and onboarding create. Auth forms use a `form-submit` Stimulus controller for submit loading state.
 
 ## User Settings
 
@@ -63,7 +63,7 @@ Archiving (`Bullet` or `Bucket`) is modelled as a row in **`archives`** (`archiv
 
 ## Activity
 
-`Activity` is a polymorphic audit log: **`subject`** (`Bullet`, `Bucket`, or `Archive`), **`action`** (string from a flat `Activity::ACTIONS` list), **`metadata`** (json), **`user_id`**. Recording goes through **`ActivityTrackable#record_activity!`** on subjects, except archive/unarchive which are written from `Archive` callbacks. Actions: `updated`, `collected`, `rescheduled`, `completed`, `uncompleted`, `pinned`, `unpinned`, `project_mentioned` / `project_unmentioned`, `created`, `destroyed`, `archived`, `unarchived`. Bucket `created` is recorded from controllers (collections/monthlylogs); `destroyed` from `CleanSoftDeletedRecordsJob` before hard delete (snapshots `name` / `colour` / `bucketable_type`); pin stays on intent methods/controllers. Bucket activities are retained after hard delete so `destroyed` rows remain until swept. BuJo migrate intents (`postpone!` → `rescheduled`, `collect!` → `collected`) write bullet activities with migration payload in `metadata`. Complete records Activity `completed` and sets `migrated_at` only; **`mark_as_reviewed!`** sets `migrated_at` with no Activity. Feed copy is built by **`ActivitiesHelper#activity_sentence`** (links via `polymorphic_path`). **`GET /activities`** lists the user's global feed (no subject filter). **`GET /activities/compact`** returns the latest six activities for the home rail.
+`Activity` is a polymorphic audit log: **`subject`** (`Bullet`, `Bucket`, or `Archive`), **`action`** (string from a flat `Activity::ACTIONS` list), **`metadata`** (json), **`user_id`**. Recording goes through **`ActivityTrackable#record_activity!`** on subjects, except archive/unarchive which are written from `Archive` callbacks and pin/unpin from `PinnedEntity` callbacks. Actions: `updated`, `collected`, `rescheduled`, `completed`, `uncompleted`, `pinned`, `unpinned`, `project_mentioned` / `project_unmentioned`, `created`, `destroyed`, `archived`, `unarchived`. Bucket `created` is recorded from controllers (collections/monthlylogs); `destroyed` from `CleanSoftDeletedRecordsJob` before hard delete (snapshots `name` / `colour` / `bucketable_type`). Bucket activities are retained after hard delete so `destroyed` rows remain until swept. BuJo migrate intents (`postpone!` → `rescheduled`, `collect!` → `collected`) write bullet activities with migration payload in `metadata`. Complete records Activity `completed` and sets `migrated_at` only; **`mark_as_reviewed!`** sets `migrated_at` with no Activity. Feed copy is built by **`ActivitiesHelper#activity_sentence`** (links via `polymorphic_path`). **`GET /activities`** lists the user's global feed (no subject filter). **`GET /activities/compact`** returns the latest six activities for the home rail.
 
 ## Tracker
 
@@ -75,17 +75,17 @@ Archiving (`Bullet` or `Bucket`) is modelled as a row in **`archives`** (`archiv
 
 ## Mood tracker
 
-Optional day-level artifacts on **Daylog**: **`Daylog::MoodEntity`** (`daylog_mood_entities`: `date` + mood enum) and **`Daylog::Picture`** (`daylog_pictures`: `date` + Active Storage `image`). Mark/clear via `POST`/`DELETE /daylog/mood_entity` and `POST`/`DELETE /daylog/picture`. Monthly show reads the same records for its spread days (mood controls + photo thumbs). Notes no longer carry mood.
+Optional day-level artifacts on **Daylog**: **`Daylog::MoodEntity`** (`daylog_mood_entities`: `date` + mood enum) and **`Daylog::Picture`** (`daylog_pictures`: `date` + Active Storage `picture`). Mark/clear via `POST`/`DELETE /daylog/mood_entity` and `POST`/`DELETE /daylog/picture` (`Daylog#pick_mood` / `#remove_mood` / `#remove_picture`). Monthly show reads the same records for its spread days via `#mood_entities_by_date` / `#pictures_by_date`. Notes no longer carry mood.
 
 ## Review
 
 **`GET /review`** (`ReviewsController#show`, `?from=YYYY-MM-DD&to=YYYY-MM-DD`, defaults to the last 7 days through today) lists bullets that still need triage for the period:
 
 ```ruby
-Current.user.bullets
-  .active
-  .where(bucket_id: daylog_bucket.id, pops_on: @review_from..@review_to, migrated_at: nil)
+Current.user.bullets.in_review(@review_from..@review_to)
 ```
+
+(`Bullet.in_review` = daylog bucket + `pops_on` in range + `migrated_at: nil` + `.active`)
 
 - **Daylog home only** — monthly/future/collection bullets are excluded.
 - **`pops_on` must be set** — unplanned bullets (`pops_on` nil) are excluded.
@@ -108,13 +108,13 @@ Side partials: `reviews/_collections_side`, `reviews/_to_review`, `reviews/_cale
 
 ## Logs (optional Future / Monthlylog, single Daylog)
 
-Logs are **independent** buckets — no FK ownership between Future, Monthlylog, and Daylog. Controllers resolve “current” records with inline queries (`futures.covering(date)`, `monthlylogs.covering(date)` / `find_by(period_from:)`, `user.daylog`).
+Logs are **independent** buckets — no FK ownership between Future, Monthlylog, and Daylog. Controllers resolve “current” records with inline queries (`futures.covering(date)`, `monthlylogs.covering(date)`, `user.daylog`).
 
 **Future** — optional six-month park (`period_from` month start; `period_to` auto end of month 6). `spread_months` lists the six month-starts. Manual create: **`GET/POST /futures`**. Single **`show`**: month card-grid + unplanned on the same page (desktop = mobile). Sometime → covering Future when one exists. No overlap checks between Futures.
 
 **Monthlylog** — optional one calendar month (`period_from` / auto `period_to`). `spread_days` lists each day. Top-level create: **`GET/POST /monthlylogs`**. **`GET /monthlylog`** → current month or empty. Single **`show`**: two panels side by side — days stacked vertically (date rail links to daylog) + unplanned (no tabs). Styles in `monthlylog.css` (`monthlylog--*`), separate from Future’s card-grid in `future.css`.
 
-**Daylog** — **one per user** (`has_one :daylog`), provisioned in `Onboarding#complete` alongside Loose Notes. Day slice is **`pops_on`**. **`GET /daylog`**: if missing (legacy / destroyed), `show` renders a create form (`POST /daylog` → re-runs `Onboarding#complete`); if present, lists that day’s bullets. Day-level mood/photo via **`Daylog::MoodEntity`** / **`Daylog::Picture`**. Call sites that need the daylog bucket read `user.daylog.bucket` (no lazy ensure). Create always requires an explicit `bucket_id`. Daylog name/icon constants live on `Onboarding` (`DAYLOG_NAME`, `DAYLOG_ICON`).
+**Daylog** — **one per user** (`has_one :daylog`), provisioned in `Onboarding#complete` alongside Loose Notes (via `Daylog.provision!`). Day slice is **`pops_on`**. **`GET /daylog`**: if missing (legacy / destroyed), `show` renders a create form (`POST /daylog` → `Daylog.provision!`); if present, lists that day’s bullets. Day-level mood/photo via **`Daylog::MoodEntity`** / **`Daylog::Picture`**. Call sites that need the daylog bucket read `user.daylog.bucket` (no lazy ensure). Create always requires an explicit `bucket_id`. Daylog name/icon constants live on `Onboarding` (`DAYLOG_NAME`, `DAYLOG_ICON`).
 
 ## Organizing from the timeline
 

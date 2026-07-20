@@ -39,14 +39,6 @@ class Onboarding
   end
 
   def ensure_daylog!
-    if (existing = user.daylog)
-      return if existing.bucket
-
-      user.buckets.create!(bucketable: existing, name: DAYLOG_NAME, icon: DAYLOG_ICON)
-      return
-    end
-
-    record = user.create_daylog!
-    user.buckets.create!(bucketable: record, name: DAYLOG_NAME, icon: DAYLOG_ICON)
+    Daylog.provision!(user)
   end
 end

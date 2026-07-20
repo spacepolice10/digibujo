@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_20_223000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_20_235000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -74,6 +74,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_20_223000) do
     t.index ["user_id"], name: "index_archives_on_user_id"
   end
 
+  create_table "auth_codes", force: :cascade do |t|
+    t.string "code_digest", null: false
+    t.datetime "created_at", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_auth_codes_on_user_id"
+  end
+
   create_table "buckets", force: :cascade do |t|
     t.integer "bucketable_id", null: false
     t.string "bucketable_type", null: false
@@ -123,13 +132,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_20_223000) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "daylogs", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["user_id"], name: "index_daylogs_on_user_id", unique: true
-  end
-
   create_table "daylog_mood_entities", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date", null: false
@@ -149,6 +151,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_20_223000) do
     t.index ["daylog_id"], name: "index_daylog_pictures_on_daylog_id"
   end
 
+  create_table "daylogs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_daylogs_on_user_id", unique: true
+  end
+
   create_table "events", force: :cascade do |t|
     t.text "body", default: "", null: false
     t.date "ends_date"
@@ -163,15 +172,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_20_223000) do
     t.integer "user_id", null: false
     t.index ["user_id", "period_from"], name: "index_futures_on_user_id_and_period_from", unique: true
     t.index ["user_id"], name: "index_futures_on_user_id"
-  end
-
-  create_table "login_codes", force: :cascade do |t|
-    t.string "code_digest", null: false
-    t.datetime "created_at", null: false
-    t.datetime "expires_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["user_id"], name: "index_login_codes_on_user_id"
   end
 
   create_table "monthlylogs", force: :cascade do |t|
@@ -319,16 +319,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_20_223000) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "activities", "users"
   add_foreign_key "archives", "users"
+  add_foreign_key "auth_codes", "users"
   add_foreign_key "buckets", "users"
   add_foreign_key "bullet_projects", "bullets"
   add_foreign_key "bullet_projects", "projects"
   add_foreign_key "bullets", "buckets"
   add_foreign_key "bullets", "users"
-  add_foreign_key "daylogs", "users"
-  add_foreign_key "futures", "users"
-  add_foreign_key "login_codes", "users"
   add_foreign_key "daylog_mood_entities", "daylogs"
   add_foreign_key "daylog_pictures", "daylogs"
+  add_foreign_key "daylogs", "users"
+  add_foreign_key "futures", "users"
   add_foreign_key "monthlylogs", "users"
   add_foreign_key "pinned_entities", "users"
   add_foreign_key "projects", "users"

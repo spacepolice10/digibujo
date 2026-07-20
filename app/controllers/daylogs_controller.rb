@@ -16,7 +16,7 @@ class DaylogsController < ApplicationController
   end
 
   def create
-    Onboarding.new(user: Current.user).complete
+    Daylog.provision!(Current.user)
     redirect_to daylog_path
   end
 

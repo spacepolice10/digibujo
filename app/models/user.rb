@@ -6,7 +6,7 @@ class User < ApplicationRecord
   after_create :create_settings
 
   has_many :sessions, dependent: :destroy
-  has_many :login_codes, dependent: :destroy
+  has_many :auth_codes, dependent: :destroy
   has_many :bullets, dependent: :destroy
   has_many :activities, dependent: :destroy
   has_many :buckets, dependent: :destroy

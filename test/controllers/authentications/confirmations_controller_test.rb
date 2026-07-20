@@ -57,7 +57,7 @@ module Authentications
 
     test 'create with expired code rejects' do
       code = request_login_code(@user.email_address)
-      @user.login_codes.last.update!(expires_at: 1.minute.ago)
+      @user.auth_codes.last.update!(expires_at: 1.minute.ago)
       confirm_login_code(code)
 
       assert_redirected_to new_authentication_confirmation_path
@@ -66,11 +66,11 @@ module Authentications
 
     test 'create destroys all user login codes on success' do
       code = request_login_code(@user.email_address)
-      assert_equal 1, @user.login_codes.count
+      assert_equal 1, @user.auth_codes.count
 
       confirm_login_code(code)
 
-      assert_equal 0, @user.login_codes.count
+      assert_equal 0, @user.auth_codes.count
     end
   end
 end

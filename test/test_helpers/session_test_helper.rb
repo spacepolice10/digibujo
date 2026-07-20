@@ -25,7 +25,7 @@ module SessionTestHelper
   def login_code_from_last_email
     mail = ActionMailer::Base.deliveries.last
     assert mail, 'expected a login code email'
-    mail.body.encoded[/\b[A-Z0-9]{#{LoginCode::CODE_LENGTH}}\b/]
+    mail.body.encoded[/\b[A-Z0-9]{#{AuthCode::CODE_LENGTH}}\b/]
   end
 
   def confirm_login_code(code)

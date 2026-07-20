@@ -21,7 +21,7 @@ class Daylog::MoodEntity < ApplicationRecord
 
   enum :mood, MOODS, validate: true
 
-  validates :date, presence: true, uniqueness: { scope: :daylog_id }
+  validates :date, uniqueness: { scope: :daylog_id }
 
   def marker
     MOOD_MARKERS[mood&.to_sym]

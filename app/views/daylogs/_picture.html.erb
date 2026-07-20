@@ -1,7 +1,7 @@
 <%# locals: (date:, picture:) %>
-<% if picture&.image&.attached? %>
+<% if picture&.picture&.attached? %>
   <div class="daylog--photo">
-    <%= image_tag picture.image.variant(resize_to_limit: [480, 480]),
+    <%= image_tag picture.picture.variant(resize_to_limit: [480, 480]),
           alt: "Photo for #{date.strftime('%b %-d')}",
           class: "daylog--photo-image" %>
     <%= button_to "Remove photo",
@@ -19,7 +19,7 @@
     <%= hidden_field_tag :date, date.iso8601 %>
     <label class="button--tertiary">
       Add photo
-      <%= file_field_tag :image,
+      <%= file_field_tag :picture,
             accept: Daylog::Picture::ALLOWED_CONTENT_TYPES.join(","),
             class: "utilities--sr-only",
             onchange: "this.form.requestSubmit()" %>

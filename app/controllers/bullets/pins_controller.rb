@@ -10,8 +10,6 @@ module Bullets
       Bullet.transaction do
         @bullets.lock.find_each do |bullet|
           raise ActiveRecord::RecordInvalid, bullet unless bullet.pin!
-
-          bullet.record_activity!('pinned')
         end
       end
       respond_to do |format|
@@ -31,10 +29,7 @@ module Bullets
 
     def destroy
       Bullet.transaction do
-        @bullets.lock.find_each do |bullet|
-          bullet.unpin!
-          bullet.record_activity!('unpinned')
-        end
+        @bullets.lock.find_each(&:unpin!)
       end
       respond_to do |format|
         format.turbo_stream
@@ -50,6 +45,5 @@ module Bullets
         end
       end
     end
-
   end
 end

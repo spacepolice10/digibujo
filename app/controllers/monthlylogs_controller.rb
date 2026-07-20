@@ -58,13 +58,8 @@ class MonthlylogsController < ApplicationController
     @unplanned_bullets = scoped.where(pops_on: nil).order(created_at: :asc)
     @trackers = @monthlylog.trackers.chronological.with_completions
     daylog = Current.user.daylog
-    if daylog
-      @mood_entities_by_date = daylog.mood_entities.where(date: @days).index_by(&:date)
-      @pictures_by_date = daylog.pictures.where(date: @days).index_by(&:date)
-    else
-      @mood_entities_by_date = {}
-      @pictures_by_date = {}
-    end
+    @mood_entities_by_date = daylog&.mood_entities_by_date(@days) || {}
+    @pictures_by_date = daylog&.pictures_by_date(@days) || {}
   end
 
   def set_monthlylog

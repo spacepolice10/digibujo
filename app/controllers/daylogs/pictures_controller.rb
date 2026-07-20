@@ -6,15 +6,14 @@ module Daylogs
 
     def create
       picture = @daylog.pictures.find_or_initialize_by(date: picture_date)
-      picture.image.attach(params.require(:image))
+      picture.picture.attach(params.require(:picture))
       picture.save!
-      redirect_after_picture
+      redirect_to daylog_path(date: picture_date.iso8601)
     end
 
     def destroy
-      picture = @daylog.pictures.find_by!(date: picture_date)
-      picture.destroy!
-      redirect_after_picture
+      @daylog.remove_picture(date: picture_date)
+      redirect_to daylog_path(date: picture_date.iso8601)
     end
 
     private
@@ -26,10 +25,6 @@ module Daylogs
 
     def picture_date
       Date.iso8601(params.require(:date).to_s)
-    end
-
-    def redirect_after_picture
-      redirect_back fallback_location: daylog_path(date: picture_date.iso8601)
     end
   end
 end

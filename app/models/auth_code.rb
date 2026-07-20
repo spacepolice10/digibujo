@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class LoginCode < ApplicationRecord
+class AuthCode < ApplicationRecord
   EXPIRY = 15.minutes
   CODE_LENGTH = 6
 
@@ -17,9 +17,9 @@ class LoginCode < ApplicationRecord
   end
 
   def self.create_for(user)
-    user.login_codes.delete_all
+    user.auth_codes.delete_all
     code = generate_code
-    record = user.login_codes.create!(code_digest: digest(code))
+    record = user.auth_codes.create!(code_digest: digest(code))
     [record, code]
   end
 
@@ -33,5 +33,19 @@ class LoginCode < ApplicationRecord
 
   def self.sweep
     where(expires_at: ...Time.current).delete_all
+  end
+
+  def self.consume!(email:, code:)
+    sweep
+
+    user = User.find_by(email_address: email)
+    return unless user
+
+    auth_code = user.auth_codes.find { |ac| !ac.expired? && ac.code_matches?(code) }
+    return unless auth_code
+
+    auth_code.destroy
+    user.auth_codes.delete_all
+    user
   end
 end

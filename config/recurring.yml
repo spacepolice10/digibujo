@@ -13,8 +13,8 @@ production:
   clean_soft_deleted_records:
     class: CleanSoftDeletedRecordsJob
     schedule: every day at 2am
-  sweep_login_codes:
-    class: SweepLoginCodesJob
+  sweep_auth_codes:
+    class: SweepAuthCodesJob
     schedule: every hour
   sweep_activity_logs:
     class: SweepActivityLogsJob
