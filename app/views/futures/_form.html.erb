@@ -14,15 +14,15 @@
   <small class="form-hint">A future log is a six-month spread — pick the month it starts on.</small>
 
   <div class="form-group">
-    <%= field_set_tag "Starts", class: "monthly-bucket--period-picker" do %>
+    <%= field_set_tag "Starts", class: "future--period-picker" do %>
       <%= f.collection_radio_buttons :period_from, starts, :iso8601, ->(m) { m.strftime("%B %Y") },
             { checked: selected.iso8601, item_wrapper_tag: false } do |b| %>
         <% month_date = Date.parse(b.value) %>
-        <%= b.label class: "monthly-bucket--period-option", data: { month: month_date.month } do %>
-          <%= b.radio_button class: "utilities--sr-only monthly-bucket--period-checkbox" %>
-          <span class="monthly-bucket--period-card">
-            <span class="monthly-bucket--period-name"><%= month_date.strftime("%b") %></span>
-            <span class="monthly-bucket--period-meta"><%= month_date.year %></span>
+        <%= b.label class: "future--period-option", data: { month: month_date.month } do %>
+          <%= b.radio_button class: "utilities--sr-only future--period-checkbox" %>
+          <span class="future--period-card">
+            <span class="future--period-name"><%= month_date.strftime("%b") %></span>
+            <span class="future--period-meta"><%= month_date.year %></span>
           </span>
         <% end %>
       <% end %>

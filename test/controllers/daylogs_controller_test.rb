@@ -83,40 +83,43 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select '[data-controller~=?]', 'bullets-bulk', 0
     assert_select '[data-controller~=?]', 'bulk-menu' do
-      assert_select '#bullets[data-bulk-menu-target=?]', 'list'
+      assert_select '[data-bulk-menu-target=?]', 'list'
       assert_select '.bulk-menu[data-bulk-menu-target=?]', 'menu'
       assert_select 'input[type=checkbox][data-bulk-menu-target=?]', 'checkbox'
     end
   end
 
-  test 'desktop daylog renders inline composer dock with quick add links' do
+  test 'desktop daylog renders composer dock links into dialog frame' do
     selected_date = Date.current - 2.days
+    bucket_id = @user.daylog.bucket.id
 
     get daylog_path(date: selected_date.iso8601)
 
     assert_response :success
-    assert_select 'turbo-frame#daylog_bullets_composer[data-controller=?]', 'composer-picker' do
+    assert_select 'dialog#daylog_composer.bullet-composer--dialog'
+    assert_select 'dialog#daylog_composer turbo-frame#daylog_bullets_composer'
+    assert_select '.bullet-composer--dock' do
       assert_select 'a[data-turbo-frame=?][href=?]',
                     'daylog_bullets_composer',
                     new_bullet_path(
                       pops_on: selected_date,
+                      bucket_id: bucket_id,
                       bulletable_type: 'Task'
                     )
       assert_select 'a[data-turbo-frame=?][href=?]',
                     'daylog_bullets_composer',
                     new_bullet_path(
                       pops_on: selected_date,
+                      bucket_id: bucket_id,
                       bulletable_type: 'Event'
                     )
       assert_select 'a[data-turbo-frame=?][href=?]',
                     'daylog_bullets_composer',
                     new_bullet_path(
                       pops_on: selected_date,
+                      bucket_id: bucket_id,
                       bulletable_type: 'Note'
                     )
-      assert_select 'a[aria-label=?]', 'Add Task'
-      assert_select 'a[aria-label=?]', 'Add Event'
-      assert_select 'a[aria-label=?]', 'Add Note'
     end
     assert_no_match(/Add bullet/, response.body)
   end
@@ -124,6 +127,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
   test 'mobile daylog renders composer dialog and dock links into daylog_bullets_composer frame' do
     selected_date = Date.current - 2.days
     mobile_ua = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)'
+    bucket_id = @user.daylog.bucket.id
 
     get daylog_path(date: selected_date.iso8601), headers: { 'User-Agent' => mobile_ua }
 
@@ -134,6 +138,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
                   'daylog_bullets_composer',
                   new_bullet_path(
                     pops_on: selected_date,
+                    bucket_id: bucket_id,
                     bulletable_type: 'Task'
                   )
   end

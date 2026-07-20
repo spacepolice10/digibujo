@@ -279,7 +279,7 @@
 
   .layout--list {
     display: grid;
-    gap: var(--spacing-vertical);
+    gap: var(--spacing-vertical-half);
   }
 
   .layout--list-item {

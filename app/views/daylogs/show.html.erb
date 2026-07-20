@@ -62,7 +62,6 @@
       </div>
 
       <div data-bulk-menu-target="list" class="layout--surface layout--list">
-        <%= render "bullets/composer/jump", composer_id: "daylog_bullets_composer" %>
 
         <%= render layout: "pagination/paginated_list",
               locals: {
@@ -90,11 +89,9 @@
       </div>
     </turbo-frame>
 
-    <% if request.variant.include?(:mobile) %>
-      <%= render "bullets/composer/dialog",
-                id: "daylog_composer",
-                composer_id: "daylog_bullets_composer" %>
-    <% end %>
+    <%= render "bullets/composer/dialog",
+          id: "daylog_composer",
+          composer_id: "daylog_bullets_composer" %>
   <% else %>
     <div class="layout--header daylog--header">
       <h2 class="layout--surface-name">Daily log</h2>

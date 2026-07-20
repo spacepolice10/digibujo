@@ -211,10 +211,12 @@
   }
 
   .button--sm {
+    height: var(--spacing-vertical);
     width: calc(var(--spacing-horizontal) * 6);
   }
 
   .button--lg {
+    height: var(--spacing-vertical);
     width: calc(var(--spacing-horizontal) * 12);
   }
 

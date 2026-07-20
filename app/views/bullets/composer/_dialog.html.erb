@@ -1,29 +1,13 @@
 <%# locals: (id:, composer_id: "bullet_composer") %>
-<dialog
-  id="<%= id %>"
-  class="dialog dialog--large bullet-composer--dialog"
-  data-controller="composer-dialog"
-  data-action="
-    close->composer-dialog#closed
-    click->composer-dialog#backdropClose
-    cancel->composer-dialog#cancel
-    turbo:before-frame-render->composer-dialog#beforeFrameRender
-    turbo:frame-load->composer-dialog#frameLoad
-  "
->
-  <div class="dialog--header">
-    <span>New bullet</span>
-    <button
-      type="button"
-      class="button--tertiary button--icon-subtle"
-      data-action="composer-dialog#close"
-      aria-label="Close composer"
-    >
-      <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
-    </button>
-  </div>
-
-  <div class="dialog--body">
-    <turbo-frame id="<%= composer_id %>"></turbo-frame>
-  </div>
-</dialog>
+<%= render "shared/dialog",
+      id: id,
+      close_on_submit: false,
+      standalone: true,
+      class_name: "dialog--large bullet-composer--dialog layout--surface",
+      actions: [
+        "close->dialog#clearFrame",
+        "composer:restore->dialog#close",
+        "turbo:before-frame-render->dialog#openOnFrame"
+      ] do %>
+  <turbo-frame id="<%= composer_id %>"></turbo-frame>
+<% end %>

@@ -11,6 +11,7 @@
     align-items: center;
     position: relative;
     gap: var(--spacing-horizontal);
+    width: 100%;
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     border-radius: var(--radius-base);
 

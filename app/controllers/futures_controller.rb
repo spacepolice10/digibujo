@@ -1,10 +1,14 @@
 # frozen_string_literal: true
 
 class FuturesController < ApplicationController
-  before_action :set_future, only: %i[show unplanned monthly_grid]
+  before_action :set_future, only: :show
 
   def show
-    assign_grid
+    @months = @future.spread_months
+    scoped = @future.bullets.active.includes(:bulletable)
+    grouped = scoped.where(pops_on: @months).group_by(&:pops_on)
+    @bullets_by_date = @months.index_with { |month| grouped[month] || [] }
+    @unplanned_bullets = scoped.where(pops_on: nil).order(created_at: :asc)
   end
 
   def new
@@ -27,26 +31,10 @@ class FuturesController < ApplicationController
     end
   end
 
-  def unplanned
-    @bullets = @future.bullets.where(pops_on: nil).order(created_at: :asc).includes(:bulletable)
-  end
-
-  def monthly_grid
-    assign_grid
-  end
-
   private
 
   def set_future
     @future = Current.user.futures.find(params[:id])
-  end
-
-  def assign_grid
-    @months = @future.spread_months
-    scoped = @future.bullets.active.includes(:bulletable)
-    grouped = scoped.where(pops_on: @months).includes(:bulletable).group_by(&:pops_on)
-    @bullets_by_date = @months.index_with { |month| grouped[month] || [] }
-    @unplanned_bullets = scoped.where(pops_on: nil).order(created_at: :asc)
   end
 
   def period_from_param

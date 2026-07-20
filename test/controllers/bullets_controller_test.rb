@@ -157,7 +157,8 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select 'form.bullet-composer', count: 0
-    assert_match 'Pick a bullet type first', response.body
+    assert_select '.bullet-composer--dock'
+    assert_select 'a[aria-label=?]', 'Add Task'
   end
 
   test 'new composer renders full page plain editor' do

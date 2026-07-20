@@ -1,50 +1,52 @@
-<% content_for(:title) { "Future Log" } %>
+<% content_for(:title) { @future.name } %>
 
 <div class="layout--page future">
   <div class="layout--header">
     <div class="layout--header-actions">
       <%= link_to home_path, class: "button--secondary" do %>
-        <i
-          class="icon"
-          style="--icon-mask: var(--icon-arrow-left)"
-          aria-hidden="true"
-        ></i>
+        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
         Home
       <% end %>
+
+      <%= render "buckets/pins_button", bucket: @future.bucket %>
     </div>
 
     <h2><%= @future.name %></h2>
   </div>
 
-  <div class="layout--grid layout--surface">
-    <% @bullets_by_date.each do |date, bullets| %>
+  <%= render "futures/months_grid",
+        months: @months,
+        bullets_by_date: @bullets_by_date,
+        future: @future %>
 
-    <div class="future--card grid-item">
-      <div class="future--card-header">
-        <%= date.to_s %>
-      </div>
-      <div class="layout--list layout--padded">
-        <% bullets.each do |bullet| %>
-          <%= render_bullet(bullet) %>
+  <section class="future--unplanned" aria-label="Unplanned">
+    <header class="future--unplanned-header">
+      <h3 class="future--unplanned-title">Unplanned</h3>
+      <p class="future--unplanned-description utilities--text-sm">
+        Dump year goals, long-term thoughts, and potential projects here.
+      </p>
+    </header>
+
+    <div
+      class="future--unplanned-entries"
+      data-controller="pops-drop"
+      data-pops-drop-pops-url-value="<%= postpone_path %>"
+      data-pops-drop-bucket-id-value="<%= @future.bucket.id %>"
+      data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop"
+      data-bulk-menu-target="list"
+    >
+      <div id="future_bullets_unplanned_container">
+        <% @unplanned_bullets.each do |bullet| %>
+          <%= render "futures/bullets/bullet", bullet: bullet %>
         <% end %>
       </div>
-      <turbo-frame id="future_bullets_composer_<%= date.to_s %>">
-        <%= link_to "Add bullet", new_bullet_path(bucket_id: @future.bucket.id, bulletable_type: "Task", pops_on: date), class: "button--tertiary" %>
-        </turbo-frame>
+
+      <%= render "bullets/composer/create_buttons",
+            bucket: @future.bucket,
+            composer_id: "future_bullets_unplanned_composer",
+            side: :unplanned %>
     </div>
+  </section>
 
-    <% end %>
-
-  
-  </div>
-  <div id="unplanned_bullets_container" class="layout--grid layout--surface">
-  <% @unplanned_bullets.each do |bullet| %>
-  <%= render_bullet(bullet) %>
-  <% end %>
-  </div>
-
-<%= render "bullets/composer/dock", selected_date: nil, bucket: @future.bucket, composer_id: "unplanned_bullets_composer" %>
-<%= render "bullets/composer/dialog",
-  id: "unplanned_bullets_composer",
-  composer_id: "unplanned_bullets_composer" %>
+  <%= render "futures/composer_dialog", future: @future, months: @months %>
 </div>

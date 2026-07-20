@@ -122,7 +122,7 @@ Shorter framework-anchored cheatsheets in `docs/`. Load these before working in 
 
 **App-specific architecture, routes, and conventions:** [ARCHITECTURE.md](ARCHITECTURE.md) — read this before changing domain logic, views, or Turbo/Stimulus integration.
 
-**High-churn areas** (recent refactors — read the matching ARCHITECTURE section before editing): **review** (`migrated_at` inbox filter, lazy `review/collections` and `review/scheduled` frames, `mark_as_reviewed`), **composer** (`composer-picker`, `composer-dialog`, `composer:restore`), **routes** (no nested bullet creates; sprints removed), **CSS blocks** (file-scoped `--` naming in `application.css`).
+**High-churn areas** (recent refactors — read the matching ARCHITECTURE section before editing): **review** (`migrated_at` inbox filter, lazy `review/collections` and `review/scheduled` frames, `mark_as_reviewed`), **composer** (`shared/dialog` + `dialog` Stimulus host, dock buttons → dialog frame, `composer:restore`, Note-only `attemptDismiss`), **routes** (no nested bullet creates; sprints removed), **CSS blocks** (file-scoped `--` naming in `application.css`).
 
 Each doc in `docs/` also links to the **Basecamp reference projects** for idiomatic examples: [Fizzy](https://github.com/basecamp/fizzy), [Writebook](https://github.com/basecamp/writebook), [Campfire](https://github.com/basecamp/campfire), and [Lexxy](https://github.com/basecamp/lexxy).
 

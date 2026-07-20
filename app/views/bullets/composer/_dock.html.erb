@@ -6,36 +6,26 @@
   { name: "Voice", icon: "microphone", modifier: "voice", hotkey: "Shift+V", hotkey_action: "keydown.shift+v@document->hotkey#click" },
 ] %>
 <% mobile = request.variant.include?(:mobile) %>
-<% buttons = capture do %>
+<div class="bullet-composer--dock<%= " bullet-composer--dock-mobile" if mobile %>">
   <div class="bullet--composer-buttons">
     <span>Add new:</span>
     <% types.each do |type| %>
       <%= link_to new_bullet_path(pops_on: selected_date, bucket_id: bucket&.id, bulletable_type: type[:name]),
-            class: ["bullet--composer-create-button", "bullet--composer-create-button--#{type[:modifier]}",
-              ("hotkey-hint" if type[:hotkey]),
+            class: [
+              "bullet--composer-create-button",
+              "bullet--composer-create-button--#{type[:modifier]}",
+              ("hotkey-hint" if type[:hotkey])
             ].compact,
             data: {
-              composer_transition_type: type[:modifier],
+              turbo_frame: composer_id,
               controller: ("hotkey" if type[:hotkey]),
               hotkey: type[:hotkey],
               action: type[:hotkey_action]
             }.compact,
             aria: { label: "Add #{type[:name]}", keyshortcuts: type[:hotkey] }.compact do %>
-
         <i class="icon" style="--icon-mask: var(--icon-<%= type[:icon] %>)" aria-hidden="true"></i>
         <%= type[:name] %>
-      <% end %> 
+      <% end %>
     <% end %>
   </div>
-<% end %>
-<div class="bullet-composer--dock<%= " bullet-composer--dock-mobile" if mobile %>">
-
-    <turbo-frame
-      id="<%= composer_id %>"
-      data-controller="composer-picker"
-      data-action="turbo:before-frame-render->composer-picker#beforeFrameRender"
-      class="utilities--contents"
-    >
-      <%= buttons %>
-    </turbo-frame>
 </div>

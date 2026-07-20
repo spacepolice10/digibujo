@@ -55,9 +55,7 @@
     </div>
   </div>
 
-  <% if request.variant.include?(:mobile) %>
-    <%= render "bullets/composer/dialog",
-          id: dom_id(@collection, :composer),
-          composer_id: dom_id(@collection, :bullets_composer) %>
-  <% end %>
+  <%= render "bullets/composer/dialog",
+        id: dom_id(@collection, :composer),
+        composer_id: dom_id(@collection, :bullets_composer) %>
 </div>
