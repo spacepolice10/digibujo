@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Bullet::Archivable
+module Archivable
   extend ActiveSupport::Concern
 
   RETENTION_DAYS = 30
@@ -12,8 +12,8 @@ module Bullet::Archivable
     scope :active, -> { where.missing(:archive) }
     scope :expired_archived, lambda {
       joins(:archive)
-        .where.not(id: PinnedEntity.where(pinnable_type: 'Bullet').select(:pinnable_id))
-        .where('archives.created_at < ?', RETENTION_DAYS.days.ago)
+        .where.not(id: PinnedEntity.where(pinnable_type: model.name).select(:pinnable_id))
+        .where(archives: { created_at: ...RETENTION_DAYS.days.ago })
     }
   end
 
@@ -26,16 +26,10 @@ module Bullet::Archivable
   end
 
   def archive!
-    transaction do
-      create_archive!(user: user)
-      mark_migration!(action: 'archived', pops_on: pops_on)
-    end
+    create_archive!(user: user)
   end
 
   def unarchive!
-    transaction do
-      archive&.destroy
-      record_activity!('unarchived')
-    end
+    archive&.destroy!
   end
 end

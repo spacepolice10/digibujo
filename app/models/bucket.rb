@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Bucket < ApplicationRecord
-  include Bucket::Archivable, Colourable, Iconable, Pinnable, Bucket::Searchable, ActivityTrackable
+  include Archivable, Colourable, Iconable, Pinnable, Bucket::Searchable, ActivityTrackable
 
   belongs_to :user
   has_many :bullets, dependent: :destroy

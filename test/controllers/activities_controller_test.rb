@@ -12,7 +12,7 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     a = @user.bullets.create!(bulletable: Task.new(body: 'One'))
     b = @user.bullets.create!(bulletable: Note.new(body: 'Two'))
     a.record_activity!('updated')
-    b.record_activity!('archived', metadata: { 'action' => 'archived' })
+    b.archive!
 
     get activities_path
 

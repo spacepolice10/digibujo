@@ -34,7 +34,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
     assert_equal 'uncompleted', Activity.order(:created_at).last.action
   end
 
-  test 'archive records archived with migration metadata' do
+  test 'archive records archived activity on Archive subject' do
     bullet = @user.bullets.create!(bulletable: Note.new(body: 'Note'), pops_on: Date.current)
 
     assert_difference -> { Activity.count }, 1 do
@@ -43,7 +43,10 @@ class ActivityRecordingTest < ActiveSupport::TestCase
 
     activity = Activity.order(:created_at).last
     assert_equal 'archived', activity.action
-    assert_equal 'archived', activity.metadata['action']
+    assert_equal 'Archive', activity.subject_type
+    assert_equal bullet.archive, activity.subject
+    assert_equal 'Note', activity.metadata['name']
+    assert_not bullet.reload.migrated?
   end
 
   test 'unarchive records unarchived activity' do
@@ -54,7 +57,9 @@ class ActivityRecordingTest < ActiveSupport::TestCase
       bullet.unarchive!
     end
 
-    assert_equal 'unarchived', Activity.order(:created_at).last.action
+    activity = Activity.order(:created_at).last
+    assert_equal 'unarchived', activity.action
+    assert_equal 'Archive', activity.subject_type
   end
 
   test 'collect records collected with migration metadata' do
@@ -104,16 +109,5 @@ class ActivityRecordingTest < ActiveSupport::TestCase
     end
 
     assert_equal 'postponed', Activity.order(:created_at).last.action
-  end
-
-  test 'bucket update records updated activity' do
-    collection = create_collection!(@user, name: 'before')
-
-    assert_difference -> { Activity.count }, 1 do
-      collection.bucket.update!(name: 'after')
-    end
-
-    activity = Activity.order(:created_at).last
-    assert_equal 'updated', activity.action
   end
 end

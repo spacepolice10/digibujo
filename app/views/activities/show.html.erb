@@ -74,6 +74,11 @@
           <span class="activity--subject-name"><%= @activity.subject_name %></span>
         <% end %>
       </div>
+    <% elsif @activity.subject_type == 'Archive' %>
+      <div class="activity--show-form">
+        <span class="activity--show-name"><%= @activity.metadata['archivable_type'].presence || 'Archive' %></span>
+        <span class="activity--subject-name"><%= @activity.subject_name %></span>
+      </div>
     <% end %>
 
     <% if @history&.any? %>

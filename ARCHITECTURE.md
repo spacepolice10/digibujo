@@ -18,12 +18,12 @@ Per-user settings live in a dedicated `user_settings` table (one row per user), 
 
 | Type    | Concerns     | Notes                              |
 |---------|--------------|------------------------------------|
-| `Task`  | `Bulletable`, `PlainBodyBulletable` | Completable + temporal; plain `body` text |
+| `Task`  | `Bulletable` | Completable + temporal; plain `body` text |
 | `Note`  | `Bulletable` | Long-form; Action Text/Lexxy `body`; mood enum |
-| `Event` | `Bulletable`, `PlainBodyBulletable` | Temporal; plain `body`; date range |
-| `Voice` | `Bulletable`, `PlainBodyBulletable` | Audio memo; plain caption `body` |
+| `Event` | `Bulletable` | Temporal; plain `body`; date range |
+| `Voice` | `Bulletable` | Audio memo; plain caption `body` |
 
-Each bulletable includes **`Bulletable`** (`has_one :bullet`, display defaults, `to_partial_path` / `to_form_path`, `permitted_bullet_attributes`). **Note alone** declares `has_rich_text :body` (Action Text via Lexxy). Task/Event/Voice store a plain **`body` text column** and include **`PlainBodyBulletable`** (`name` / `excerpt` from the string column + update activity). **`Bullet` delegates `:body`** (and type-specific display helpers) to the bulletable. Legacy create/update params may still pass `body:` on the bullet — `Bullet#assign_attributes` / `#body=` forward to the bulletable.
+Each bulletable includes **`Bulletable`** (`has_one :bullet`, display defaults, `to_partial_path` / `to_form_path`, `permitted_bullet_attributes`). **Note alone** declares `has_rich_text :body` (Action Text via Lexxy). Task/Event/Voice store a plain **`body` text column**. **`Bulletable#name` / `#excerpt`** default from `body`; Note overrides for rich text. **`Bullet` delegates `:body`** (and type-specific display helpers) to the bulletable. Legacy create/update params may still pass `body:` on the bullet — `Bullet#assign_attributes` / `#body=` forward to the bulletable.
 
 **Composers:** type partials via `Bullet#to_form_path` (`tasks/form`, `notes/form`, …) wrap a thin layout shell [`bullets/_form`](app/views/bullets/_form.html.erb) (`form_with`, hiddens, rail; Stimulus wiring lives on the form shell / type locals, not on the model). Task/Event/Voice use a plain `text_field`; Note uses Lexxy preset **`note`**. Rendered note rich text uses `.rich-text-content` alongside Lexxy's `.lexxy-content`. **Mentions** sync from Action Text attachables **only on Notes**. Note mood picker submits `bulletable_attributes[:mood]` through `accepts_nested_attributes_for :bulletable`; each type declares permitted attributes via `permitted_bullet_attributes`.
 
@@ -33,11 +33,9 @@ Each bulletable includes **`Bulletable`** (`has_one :bullet`, display defaults, 
 
 All bullet types are created via **`POST /bullets`** (`BulletsController`) — there are no nested `daylog/bullets` or `monthlylogs/:id/bullets` routes.
 
-**Daylog dock** (`bullets/composer/_dock.html.erb`): type buttons load `GET /bullets/new` into a page-local turbo-frame via **`composer-picker`** Stimulus. View Transitions wrap dock ↔ form swaps (`app/javascript/helpers/view_transition.js`). Successful create keeps the form open and clears it for the next bullet; **`composer:restore`** (Esc / cancel) returns the dock to the type-picker state.
+**Dock** (`bullets/composer/_dock.html.erb`): type buttons stay in the page; each link loads `GET /bullets/new` into a **page-level `<dialog>`** turbo-frame (`bullets/composer/_dialog`, built on `shared/dialog` + `dialog` Stimulus). Desktop uses a compact dialog; mobile styles it as a **bottom sheet** (keyboard-safe). Successful create keeps the dialog open and clears the form; Esc / cancel / backdrop closes the dialog and clears the frame. **`attemptDismiss`** (double-Esc confirm) applies only to Note (Lexxy) composers.
 
-**Monthly spread dialog** (`monthlylogs/_composer_dialog.html.erb`): a `<dialog>` driven by **`composer-dialog`** Stimulus; turbo-frame id `bullet_composer`. Type links target `turbo_frame: "bullet_composer"`.
-
-**Form marker:** `data-composer-form` on the form element lets `composer-picker` detect the transition from dock buttons into the editor.
+**Monthly spread / Future:** no dock. Planned cells: Task + Event; unplanned: Task + Note — links load into the page dialog frames.
 
 ## Bullet row rendering
 
@@ -47,24 +45,25 @@ List views use **`<%= render_bullet(bullet) %>`**, which resolves `Bullet#to_par
 
 ## Bullet Status
 
-`Bullet` has a `pinned` boolean column (`default: false, null: false`). Archive state is **not** a column — it lives in a separate polymorphic `Archive` entity (see **Archive entity** below). There is no `status` enum. `Pinnable` adds a `pinned` scope and `pin!` / `unpin!` helpers (used by bullets and buckets; no pin count limit). `Bullet::Archivable` (namespaced concern) adds `archived` / `active` scopes backed by the `archives` join. Daylog and other list views use the **`active`** scope to hide archived bullets; pinned bullets remain visible and are distinguished by icons in the marker.
+`Bullet` has a `pinned` boolean column (`default: false, null: false`). Archive state is **not** a column — it lives in a separate polymorphic `Archive` entity (see **Archive entity** below). There is no `status` enum. `Pinnable` adds a `pinned` scope and `pin!` / `unpin!` helpers (used by bullets and buckets; no pin count limit). **`Archivable`** adds `archived` / `active` scopes backed by the `archives` join. Daylog and other list views use the **`active`** scope to hide archived bullets; pinned bullets remain visible and are distinguished by icons in the marker.
 
-`Bullet` tracks **`migrated_at`** (`datetime`, nullable) and **`last_migration`** (json, default `{}`): set by **`Migratable#mark_migration!`** when the user schedules (postpone with destination change), collects, completes, archives, or marks as reviewed. **`Migratable#mark_as_reviewed!`** stamps `action: 'acknowledged'` when the user keeps a bullet unchanged during review. `migrated?` drives the `›` marker on bullet rows. Full history lives in **`activities.metadata`** (same payload shape). Project/person tags do **not** stamp migration.
+`Bullet` tracks **`migrated_at`** (`datetime`, nullable) and **`last_migration`** (json, default `{}`): set by **`Migratable#mark_migration!`** when the user schedules (postpone with destination change), collects, completes, or marks as reviewed. Archiving does **not** stamp migration. **`Migratable#mark_as_reviewed!`** stamps `action: 'acknowledged'` when the user keeps a bullet unchanged during review. `migrated?` drives the `›` marker on bullet rows. Full history lives in **`activities.metadata`** (same payload shape). Project/person tags do **not** stamp migration.
 
 ## Archive entity
 
 Archiving (`Bullet` or `Bucket`) is modelled as a row in **`archives`** (`archivable_type` / `archivable_id` polymorphic, `user_id`, timestamps), mirroring `PinnedEntity`. A unique index guarantees at most one `Archive` per subject. `Archive#created_at` replaces the old `archives_on` column; `Archive#user_id` records who archived.
 
-State access is split into two **namespaced** concerns (no shared module — Bullet and Bucket diverge too much for one concern):
+**`Archivable`** (shared concern on Bullet and Bucket) provides `has_one :archive`, `archived` / `active` / `expired_archived` scopes, and `archive!` / `unarchive!` (create/destroy the join row only). Lifecycle side effects live on **`Archive`**:
 
-- **`Bullet::Archivable`** — `has_one :archive`, `archived` / `active` / `expired_archived` scopes, `archive!` (writes `Archive` row + `mark_migration!(action: 'archived', …)`), `unarchive!` (destroys row + `unarchived` activity).
-- **`Bucket::Archivable`** — same shape but `archive!` / `unarchive!` record `archived` / `unarchived` activities directly with `bucketable_type` metadata; also calls `reindex` so `Searchable` cache stays in sync (the bucket row is not `update!`-ed, so `after_update_commit :update_in_search_index` does not fire on its own).
+- `after_create` records Activity with **`subject: Archive`**, action `archived`, metadata snapshot (`name`, `colour`, `archivable_type`, plus `pops_on` / `bulletable_type` or `bucketable_type`)
+- `before_destroy` records `unarchived` the same way (skipped when the Archive is destroyed via `dependent:` on the archivable)
+- `after_create_commit` / `after_destroy_commit` call `archivable.reindex` so search stays in sync (archive is not an `update!` on the subject)
 
-Because archive/unarchive is now an INSERT/DELETE into `archives` (not an `update!` of the subject), archive activity is recorded exactly once inside `archive!` / `unarchive!`. `archives_on` is exposed as a shim (`archive&.created_at&.to_date`) for views and tests.
+`Bullet::Searchable` and `Bucket::Searchable` both use `searchable? { !archived? }`. Review inbox scopes **`.active`** (and `migrated_at: nil`) so archived bullets leave review without a migration stamp. `archives_on` remains a shim (`archive&.created_at&.to_date`) for views and tests.
 
 ## Activity
 
-`Activity` is a polymorphic audit log: **`subject`** (`Bullet` or `Bucket`), **`action`** (string), **`metadata`** (json), **`user_id`**. Recording goes through **`ActivityTrackable#record_activity!`** on subjects. Bullet actions: `updated`, `collected`, `postponed` (legacy `popped`), `migrated`, `archived`, `unarchived`, `completed`, `uncompleted`, `acknowledged`, `pinned`, `unpinned`, `project_mentioned` / `project_unmentioned`, `person_mentioned` / `person_unmentioned`. Bucket actions: `created`, `updated`, `pinned`, `unpinned`, `archived`, `unarchived`, `destroyed`. Bucket `created` is recorded from controllers (collections/monthlylogs); `destroyed` from `CleanSoftDeletedRecordsJob` before hard delete (snapshots `name` / `colour` / `bucketable_type`); archive/pin stay on their intent methods/controllers. Bucket activities are retained after hard delete so `destroyed` rows remain until `Activity.sweep`. Migration intents write bullet activities with migration payload in `metadata`. **`GET /activities`** lists the user's global feed (no subject filter). **`GET /activities/compact`** returns the latest six activities for the home rail.
+`Activity` is a polymorphic audit log: **`subject`** (`Bullet`, `Bucket`, or `Archive`), **`action`** (string), **`metadata`** (json), **`user_id`**. Recording goes through **`ActivityTrackable#record_activity!`** on subjects, except archive/unarchive which are written from `Archive` callbacks. Bullet actions: `updated`, `collected`, `postponed` (legacy `popped`), `migrated`, `completed`, `uncompleted`, `acknowledged`, `pinned`, `unpinned`, `project_mentioned` / `project_unmentioned`, `person_mentioned` / `person_unmentioned`. Bucket actions: `created`, `updated`, `pinned`, `unpinned`, `destroyed`. Archive actions: `archived`, `unarchived`. Bucket `created` is recorded from controllers (collections/monthlylogs); `destroyed` from `CleanSoftDeletedRecordsJob` before hard delete (snapshots `name` / `colour` / `bucketable_type`); pin stays on intent methods/controllers. Bucket activities are retained after hard delete so `destroyed` rows remain until `Activity.sweep`. Migration intents write bullet activities with migration payload in `metadata`. **`GET /activities`** lists the user's global feed (no subject filter). **`GET /activities/compact`** returns the latest six activities for the home rail.
 
 ## Tracker
 
@@ -82,12 +81,14 @@ Because archive/unarchive is now an INSERT/DELETE into `archives` (not an `updat
 
 ```ruby
 Current.user.bullets
+  .active
   .where(bucket_id: daylog_bucket.id, pops_on: @review_from..@review_to, migrated_at: nil)
 ```
 
 - **Daylog home only** — monthly/future/collection bullets are excluded.
 - **`pops_on` must be set** — unplanned bullets (`pops_on` nil) are excluded.
-- **Already migrated / reviewed** bullets are excluded (`migrated_at` set by pop, collect, archive, complete, or `mark_as_reviewed!`).
+- **Already migrated / reviewed** bullets are excluded (`migrated_at` set by pop, collect, complete, or `mark_as_reviewed!`).
+- **Archived** bullets are excluded via the **`active`** scope.
 
 **Mark as reviewed:** `POST /bullets/mark_as_reviewed` (`Bullets::MarkAsReviewedsController#create`) calls `mark_as_reviewed!` on all matching bullets (or a `bullet_ids` subset). Redirects back to review. Footer **Mark all as reviewed** and bulk-menu **Mark reviewed** (when `@review_from` / `@review_to` are set via `ApplicationHelper#bulk_menu_review_period`) post here.
 
@@ -105,11 +106,11 @@ Side partials: `reviews/_collections_side`, `reviews/_to_review`, `reviews/_cale
 
 ## Logs (optional Future / Monthlylog, single Daylog)
 
-Logs are **independent** buckets — no FK ownership between Future, Monthlylog, and Daylog. Controllers resolve “current” records with inline queries (`futures.covering(date)`, `monthlylogs.find_by(period_from:)`, `user.daylog`).
+Logs are **independent** buckets — no FK ownership between Future, Monthlylog, and Daylog. Controllers resolve “current” records with inline queries (`futures.covering(date)`, `monthlylogs.covering(date)` / `find_by(period_from:)`, `user.daylog`).
 
-**Future** — optional six-month park (`period_from` month start; `period_to` auto end of month 6). Manual create: **`GET/POST /futures`**. Show: unplanned (`pops_on` nil) + month columns. Sometime → covering Future when one exists. No overlap checks between Futures.
+**Future** — optional six-month park (`period_from` month start; `period_to` auto end of month 6). `spread_months` lists the six month-starts. Manual create: **`GET/POST /futures`**. Single **`show`**: month card-grid + unplanned on the same page (desktop = mobile). Sometime → covering Future when one exists. No overlap checks between Futures.
 
-**Monthlylog** — optional one calendar month (`period_from` / auto `period_to`). Top-level create: **`GET/POST /monthlylogs`**. **`GET /monthlylog`** → current month or empty. Not nested under Future.
+**Monthlylog** — optional one calendar month (`period_from` / auto `period_to`). `spread_days` lists each day. Top-level create: **`GET/POST /monthlylogs`**. **`GET /monthlylog`** → current month or empty. Single **`show`**: two panels side by side — days stacked vertically (date rail links to daylog) + unplanned (no tabs). Styles in `monthlylog.css` (`monthlylog--*`), separate from Future’s card-grid in `future.css`.
 
 **Daylog** — **one per user** (`has_one :daylog`). Day slice is **`pops_on`**. **`GET /daylog`**: if missing, `show` renders a create form (`POST /daylog`); if present, lists that day’s bullets. `User#ensure_daylog_bucket!` find-or-creates only for mutations (postpone, bullet default home, review drops) — not on daylog show.
 
@@ -129,8 +130,8 @@ Select bullets via the marker checkbox inlined in **`bullets/_bullet.html.erb`**
 
 `CleanSoftDeletedRecordsJob` runs daily and purges expired archived records:
 
-- **`Bullet.expired_archived.destroy_all`** — hard-deletes archived bullets after `Bullet::Archivable::RETENTION_DAYS` (30 days); pinned bullets are excluded
-- **`Bucket.expired_archived.destroy_all`** — hard-deletes archived buckets after `Bucket::Archivable::RETENTION_DAYS` (30 days); pinned buckets are excluded; bullets belonging to the bucket are destroyed with it
+- **`Bullet.expired_archived.destroy_all`** — hard-deletes archived bullets after `Archivable::RETENTION_DAYS` (30 days); pinned bullets are excluded
+- **`Bucket.expired_archived.destroy_all`** — hard-deletes archived buckets after `Archivable::RETENTION_DAYS` (30 days); pinned buckets are excluded; bullets belonging to the bucket are destroyed with it
 
 **`SweepActivityLogsJob`** runs daily and calls **`Activity.sweep`** — deletes activities older than `Activity::RETENTION_DAYS` (30 days).
 
@@ -171,7 +172,7 @@ Kind config (trigger, mark, content_type, activity actions) lives in `Mention::K
 
 Bucket **identity** (`name`, `colour`, `icon`, optional `description`) lives on `buckets`. Collection names are unique per user. Home hub: `GET /home` (also **`root`**).
 
-**Collection archive:** all bucket types are archivable (`Bucket#archive!` / `#unarchive!` via `Bucket::Archivable`). `DELETE /collections/:id` soft-archives the bucket by inserting an `Archive` row; archived collections are hidden from home, review collect panel, and collect picker (`User#active_collections` filters via `Bucket.active`). Collect into an archived bucket is rejected (`Collectable` uses the `.active` scope, surfacing 404). Activity records `archived` / `unarchived` on the bucket. Purge after retention is handled by `CleanSoftDeletedRecordsJob` (see Sweep Rules).
+**Collection archive:** all bucket types are archivable (`Bucket#archive!` / `#unarchive!` via `Archivable`). `DELETE /collections/:id` soft-archives the bucket by inserting an `Archive` row; archived collections are hidden from home, review collect panel, and collect picker (`User#active_collections` filters via `Bucket.active`). Collect into an archived bucket is rejected (`Collectable` uses the `.active` scope, surfacing 404). Activity records `archived` / `unarchived` with subject `Archive`. Purge after retention is handled by `CleanSoftDeletedRecordsJob` (see Sweep Rules).
 
 ## Pinned workspace
 

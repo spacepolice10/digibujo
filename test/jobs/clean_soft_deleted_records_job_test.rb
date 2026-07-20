@@ -11,7 +11,7 @@ class CleanSoftDeletedRecordsJobTest < ActiveJob::TestCase
     collection = create_collection!(@user, name: "Stale")
     bucket = collection.bucket
     bucket.archive!
-    bucket.archive.update!(created_at: (Bucket::Archivable::RETENTION_DAYS + 1).days.ago)
+    bucket.archive.update!(created_at: (Archivable::RETENTION_DAYS + 1).days.ago)
 
     assert_difference -> { Bucket.count }, -1 do
       assert_difference -> { Collection.count }, -1 do
@@ -25,7 +25,7 @@ class CleanSoftDeletedRecordsJobTest < ActiveJob::TestCase
     bucket = collection.bucket
     bullet = @user.bullets.create!(bulletable: Task.new(body: "Goes away"), bucket: bucket)
     bucket.archive!
-    bucket.archive.update!(created_at: (Bucket::Archivable::RETENTION_DAYS + 1).days.ago)
+    bucket.archive.update!(created_at: (Archivable::RETENTION_DAYS + 1).days.ago)
 
     assert_difference -> { Bullet.count }, -1 do
       CleanSoftDeletedRecordsJob.perform_now
@@ -40,7 +40,7 @@ class CleanSoftDeletedRecordsJobTest < ActiveJob::TestCase
     bucket_id = bucket.id
     bucket_name = bucket.name
     bucket.archive!
-    bucket.archive.update!(created_at: (Bucket::Archivable::RETENTION_DAYS + 1).days.ago)
+    bucket.archive.update!(created_at: (Archivable::RETENTION_DAYS + 1).days.ago)
 
     assert_difference -> { Activity.where(action: "destroyed").count }, 1 do
       CleanSoftDeletedRecordsJob.perform_now
@@ -56,7 +56,7 @@ class CleanSoftDeletedRecordsJobTest < ActiveJob::TestCase
     collection = create_collection!(@user, name: "Pinned stale")
     bucket = collection.bucket
     bucket.archive!
-    bucket.archive.update!(created_at: (Bucket::Archivable::RETENTION_DAYS + 1).days.ago)
+    bucket.archive.update!(created_at: (Archivable::RETENTION_DAYS + 1).days.ago)
     bucket.pin!
 
     assert_no_difference -> { Bucket.count } do

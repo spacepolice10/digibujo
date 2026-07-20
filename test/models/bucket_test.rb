@@ -98,7 +98,7 @@ class BucketTest < ActiveSupport::TestCase
     assert_equal Date.current, @bucket.archives_on
     activity = Activity.order(:created_at).last
     assert_equal 'archived', activity.action
-    assert_equal 'Bucket', activity.subject_type
+    assert_equal 'Archive', activity.subject_type
     assert_equal 'Collection', activity.metadata['bucketable_type']
   end
 
@@ -118,5 +118,12 @@ class BucketTest < ActiveSupport::TestCase
     @bucket.archive!
 
     assert_not @bucket.searchable?
+  end
+
+  test 'archived bullet is not searchable' do
+    bullet = @user.bullets.create!(bulletable: Task.new(body: 'Hide me'), pops_on: Date.current)
+    bullet.archive!
+
+    assert_not bullet.searchable?
   end
 end

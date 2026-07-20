@@ -8,8 +8,6 @@ class Activity < ApplicationRecord
       popped
       postponed
       migrated
-      archived
-      unarchived
       completed
       uncompleted
       project_mentioned
@@ -20,7 +18,8 @@ class Activity < ApplicationRecord
       pinned
       unpinned
     ].freeze,
-    'Bucket' => %w[created updated pinned unpinned archived unarchived destroyed].freeze
+    'Bucket' => %w[created updated pinned unpinned destroyed].freeze,
+    'Archive' => %w[archived unarchived].freeze
   }.freeze
 
   ACTION_ICON_MAPPINGS = {
@@ -78,6 +77,8 @@ class Activity < ApplicationRecord
       subject&.bulletable_type&.downcase
     when 'Bucket'
       (metadata['bucketable_type'].presence || subject&.bucketable_type)&.downcase
+    when 'Archive'
+      (metadata['bulletable_type'].presence || metadata['bucketable_type'].presence || metadata['archivable_type'])&.downcase
     end
   end
 

@@ -19,12 +19,12 @@ class MigratableTest < ActiveSupport::TestCase
 
   test 'mark_migration! records activity with metadata' do
     assert_difference -> { Activity.count }, 1 do
-      @bullet.mark_migration!(action: 'archived', pops_on: Date.current)
+      @bullet.mark_migration!(action: 'acknowledged', pops_on: Date.current)
     end
 
     activity = Activity.order(:created_at).last
-    assert_equal 'archived', activity.action
-    assert_equal 'archived', activity.metadata['action']
+    assert_equal 'acknowledged', activity.action
+    assert_equal 'acknowledged', activity.metadata['action']
     assert_equal @bullet, activity.subject
   end
 
@@ -102,11 +102,11 @@ class MigratableTest < ActiveSupport::TestCase
     assert_equal 'acknowledged', @bullet.last_migration['action']
   end
 
-  test 'archive! marks archived migration' do
+  test 'archive! does not mark migration' do
     @bullet.archive!
 
-    assert @bullet.migrated?
-    assert_equal 'archived', @bullet.last_migration['action']
+    assert @bullet.archived?
+    assert_not @bullet.migrated?
   end
 
   test 'migration_hint describes postponed move between days' do
@@ -142,7 +142,10 @@ class MigratableTest < ActiveSupport::TestCase
   end
 
   test 'migration_hint describes archive' do
-    @bullet.mark_migration!(action: 'archived', pops_on: Date.current)
+    @bullet.update!(
+      migrated_at: Time.current,
+      last_migration: { 'action' => 'archived', 'pops_on' => Date.current.iso8601 }
+    )
 
     assert_match(/Removed from/, @bullet.migration_hint)
   end
