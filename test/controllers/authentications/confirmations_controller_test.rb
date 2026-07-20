@@ -22,7 +22,7 @@ module Authentications
     end
 
     test 'create with valid code for onboarded user starts session' do
-      FutureBucket.create!(user: @user)
+      create_collection!(@user, name: Onboarding::LOOSE_NOTES_NAME)
       code = request_login_code(@user.email_address)
       confirm_login_code(code)
 
@@ -31,7 +31,7 @@ module Authentications
     end
 
     test 'create with valid lowercase code for onboarded user starts session' do
-      FutureBucket.create!(user: @user)
+      create_collection!(@user, name: Onboarding::LOOSE_NOTES_NAME)
       code = request_login_code(@user.email_address)
       confirm_login_code(code.downcase)
 

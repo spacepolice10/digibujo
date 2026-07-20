@@ -36,34 +36,44 @@ module ActiveSupport
       collection
     end
 
-    def ensure_future_bucket!(user)
-      future_bucket = user.future_buckets.first
-      return if future_bucket&.bucket.present?
-
-      future_bucket = FutureBucket.create!(user: user)
-      user.buckets.create!(
-        bucketable: future_bucket,
-        name: Onboarding::FUTURE_BUCKET_NAME,
-        icon: Onboarding::FUTURE_BUCKET_ICON,
-        colour: Onboarding::FUTURE_BUCKET_COLOUR
-      )
+    def ensure_daylog!(user, date = Date.current)
+      user.ensure_daylog_bucket!(date)
     end
 
-    def create_monthly_bucket!(user, name:, period_from: nil, period_to: nil, colour: nil, icon: nil)
-      ensure_future_bucket!(user)
-      period = MonthlyBucket.default_period
-      monthly_bucket = user.future_buckets.first.monthly_buckets.create!(
-        user: user,
-        period_from: period_from || period[:period_from],
-        period_to: period_to || period[:period_to]
-      )
+    def ensure_future!(user, period_from: Date.current.beginning_of_month)
+      period_from = period_from.to_date.beginning_of_month
+      future = user.futures.find_by(period_from: period_from)
+      return future if future&.bucket.present?
+
+      future = user.futures.create!(period_from: period_from)
       user.buckets.create!(
-        bucketable: monthly_bucket,
-        name: name,
-        colour: colour,
-        icon: icon
+        bucketable: future,
+        name: Onboarding::FUTURE_NAME,
+        icon: Onboarding::FUTURE_ICON,
+        colour: Onboarding::FUTURE_COLOUR
       )
-      monthly_bucket
+      future
+    end
+
+    def create_monthlylog!(user, name:, period_from: nil, colour: nil, icon: nil, **)
+      month = (period_from || Date.current).to_date.beginning_of_month
+
+      monthlylog = user.monthlylogs.find_by(period_from: month)
+      unless monthlylog
+        monthlylog = user.monthlylogs.create!(period_from: month)
+      end
+
+      unless monthlylog.bucket
+        user.buckets.create!(
+          bucketable: monthlylog,
+          name: name,
+          colour: colour,
+          icon: icon
+        )
+        monthlylog.reload
+      end
+
+      monthlylog
     end
 
   end

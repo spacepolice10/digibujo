@@ -8,8 +8,13 @@
   </header>
 
   <div class="review--calendar-body">
+    <% daylog_bucket = Current.user.ensure_daylog_bucket! %>
     <% calendar_days.each do |date| %>
-      <%= render "reviews/calendar_date", date: date, bullets: calendar_bullets_by_date[date] || [] %>
+      <%= render "reviews/calendar_date",
+            date: date,
+            bullets: calendar_bullets_by_date[date] || [],
+            daylog_bucket: daylog_bucket %>
     <% end %>
   </div>
+
 </aside>

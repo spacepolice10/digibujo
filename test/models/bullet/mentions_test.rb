@@ -8,7 +8,7 @@ class Bullet::MentionsTest < ActiveSupport::TestCase
     @project = create_project!(@user, name: 'alpha')
     @other_project = create_project!(@user, name: 'beta')
     @person = create_person!(@user, name: 'ada')
-    @bullet = @user.bullets.create!(bulletable: Task.new(body: 'Task'))
+    @bullet = @user.bullets.create!(bulletable: Note.new(body: 'Note'))
   end
 
   test 'add_mention! mentions project' do
@@ -43,13 +43,13 @@ class Bullet::MentionsTest < ActiveSupport::TestCase
   end
 
   test 'project attachable link renders correct path' do
-    content = ActionText::Content.new('Task').append_attachables(@project).to_html
-    bullet = @user.bullets.create!(bulletable: Task.new(body: content))
+    content = ActionText::Content.new('Note').append_attachables(@project).to_html
+    bullet = @user.bullets.create!(bulletable: Note.new(body: content))
 
-    assert_includes bullet.body.to_s, "/projects/#{@project.id}"
+    assert_includes bullet.body.body_before_type_cast.to_s, @project.id.to_s
   end
 
-  test 'body save syncs mentions from attachments' do
+  test 'note body save syncs mentions from attachments' do
     content = ActionText::Content.new('Ship it').append_attachables(@project).to_html
     @bullet.bulletable.update!(body: content)
 
@@ -59,7 +59,7 @@ class Bullet::MentionsTest < ActiveSupport::TestCase
     assert_includes @bullet.body.body.attachables.grep(Mention), @project
   end
 
-  test 'update clears mentions when attachments are removed from content' do
+  test 'update clears mentions when attachments are removed from note content' do
     content = ActionText::Content.new('Ship it').append_attachables(@project).to_html
     @bullet.bulletable.update!(body: content)
     assert_includes @bullet.reload.mentions, @project
@@ -67,6 +67,13 @@ class Bullet::MentionsTest < ActiveSupport::TestCase
     @bullet.bulletable.update!(body: 'Ship it without mentions')
 
     assert_empty @bullet.reload.mentions
+  end
+
+  test 'task plain body does not sync mentions' do
+    content = ActionText::Content.new('Ship it').append_attachables(@project).to_html
+    task = @user.bullets.create!(bulletable: Task.new(body: content))
+
+    assert_empty task.reload.mentions
   end
 
   test 'bullet_mention rejects cross-user mention' do

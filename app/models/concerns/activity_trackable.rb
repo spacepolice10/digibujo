@@ -4,7 +4,7 @@ module ActivityTrackable
   extend ActiveSupport::Concern
 
   included do
-    has_many :activities, as: :subject, dependent: :destroy
+    has_many :activities, as: :subject
   end
 
   def record_activity!(action, metadata: {})

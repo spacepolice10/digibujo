@@ -5,7 +5,7 @@ module Bullet::Searchable
   include ::Searchable
 
   def search_name
-    body.to_plain_text.truncate(255)
+    name.to_s.truncate(255)
   end
 
   def search_body
@@ -13,9 +13,16 @@ module Bullet::Searchable
     mention_names = mentions.map(&:name)
 
     [
-      body.to_plain_text,
+      searchable_body,
       *bucket_names,
       *mention_names
     ].compact.join(' ')
+  end
+
+  private
+
+  def searchable_body
+    value = body
+    value.respond_to?(:to_plain_text) ? value.to_plain_text.to_s : value.to_s
   end
 end

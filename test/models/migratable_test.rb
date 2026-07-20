@@ -32,18 +32,20 @@ class MigratableTest < ActiveSupport::TestCase
     assert_not @bullet.migrated?
   end
 
-  test 'pop! with date change marks popped migration' do
-    @bullet.pop!(pops_on: Date.current + 2.days)
+  test 'postpone! with date change marks postponed migration' do
+    daylog = @user.ensure_daylog_bucket!
+    @bullet.postpone!(bucket: daylog, pops_on: Date.current + 2.days)
 
     @bullet.reload
     assert @bullet.migrated?
-    assert_equal 'popped', @bullet.last_migration['action']
+    assert_equal 'postponed', @bullet.last_migration['action']
   end
 
-  test 'pop! without date change does not mark migration' do
+  test 'postpone! without date change does not mark migration' do
+    daylog = @user.ensure_daylog_bucket!
     @bullet.update!(pops_on: Date.current)
 
-    @bullet.pop!(pops_on: Date.current)
+    @bullet.postpone!(bucket: daylog, pops_on: Date.current)
 
     @bullet.reload
     assert_not @bullet.migrated?
@@ -59,6 +61,30 @@ class MigratableTest < ActiveSupport::TestCase
     assert_equal 'collected', @bullet.last_migration['action']
     assert_equal collection.bucket.id, @bullet.last_migration['bucket_id']
   end
+
+  test 'migrate_to! future keeps month-start pops_on' do
+    future = ensure_future!(@user)
+    month = Date.current.beginning_of_month
+
+    @bullet.migrate_to!(bucket: future.bucket, pops_on: month + 10.days)
+
+    @bullet.reload
+    assert_equal future.bucket.id, @bullet.bucket_id
+    assert_equal month, @bullet.pops_on
+    assert_equal 'migrated', @bullet.last_migration['action']
+  end
+
+  test 'postpone! sometime clears pops_on on future' do
+    future = ensure_future!(@user)
+
+    @bullet.postpone!(bucket: future.bucket, pops_on: nil)
+
+    @bullet.reload
+    assert_equal future.bucket.id, @bullet.bucket_id
+    assert_nil @bullet.pops_on
+    assert_equal 'postponed', @bullet.last_migration['action']
+  end
+
 
   test 'complete! marks completed migration' do
     @bullet.bulletable.complete!
@@ -83,14 +109,23 @@ class MigratableTest < ActiveSupport::TestCase
     assert_equal 'archived', @bullet.last_migration['action']
   end
 
-  test 'migration_hint describes popped move between days' do
+  test 'migration_hint describes postponed move between days' do
+    from = Date.current
+    to = Date.current + 2.days
+    @bullet.update!(pops_on: to)
+    @bullet.mark_migration!(action: 'postponed', from_pops_on: from, to_pops_on: to)
+
+    assert_includes @bullet.migration_hint, from.strftime('%a, %b %-d')
+    assert_includes @bullet.migration_hint, to.strftime('%a, %b %-d')
+    assert_match(/Rescheduled from/, @bullet.migration_hint)
+  end
+
+  test 'migration_hint describes legacy popped action' do
     from = Date.current
     to = Date.current + 2.days
     @bullet.update!(pops_on: to)
     @bullet.mark_migration!(action: 'popped', from_pops_on: from, to_pops_on: to)
 
-    assert_includes @bullet.migration_hint, from.strftime('%a, %b %-d')
-    assert_includes @bullet.migration_hint, to.strftime('%a, %b %-d')
     assert_match(/Rescheduled from/, @bullet.migration_hint)
   end
 

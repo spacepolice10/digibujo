@@ -32,13 +32,13 @@
       </div>
     </div>
 
-    <% if @activity.bullet_subject? %>
+    <% if @activity.bullet_subject? && @activity.subject_present? %>
       <div class="activity--show-form">
         <span class="activity--show-name">Bullet</span>
-        <%= link_to @activity.subject.name, bullet_path(@activity.subject), class: "activity--subject-name" %>
+        <%= link_to @activity.subject_name, bullet_path(@activity.subject), class: "activity--subject-name" %>
       </div>
 
-      <% if @activity.action == 'popped' %>
+      <% if @activity.action.in?(%w[postponed popped]) %>
         <% if @activity.from_day %>
           <div class="activity--show-form">
             <span class="activity--show-name">From</span>
@@ -68,7 +68,11 @@
     <% elsif @activity.subject_type == 'Bucket' %>
       <div class="activity--show-form">
         <span class="activity--show-name">Bucket</span>
-        <%= link_to @activity.subject.name, bucket_path(@activity.subject), class: "activity--subject-name" %>
+        <% if @activity.subject_present? %>
+          <%= link_to @activity.subject_name, bucket_path(@activity.subject), class: "activity--subject-name" %>
+        <% else %>
+          <span class="activity--subject-name"><%= @activity.subject_name %></span>
+        <% end %>
       </div>
     <% end %>
 

@@ -2,19 +2,17 @@
 
 class Task < ApplicationRecord
   include Bulletable
+  include PlainBodyBulletable
 
   def temporal? = true
   def completable?   = true
   def completed?     = self[:completed]
-  def starts_date    = nil
-  def ends_date      = nil
   def marker_icon    = completed? ? :check : :square
   def icon           = completed? ? :check : :square
   def colour         = 'cobalt'
-  def placeholder    = 'What need to be done?'
   def data_attributes = { task_completed: completed? }
 
-  def self.permitted_bullet_attributes = %i[body completed]
+  def self.permitted_bullet_attributes = %i[id body completed]
 
   def complete!
     update!(completed: true, completed_at: Time.current)

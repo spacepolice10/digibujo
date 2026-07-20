@@ -1,4 +1,4 @@
-<%# locals: (fr:, bullet:, bulletable:) %>
+<%# locals: (fr:, bulletable:) %>
 <%= fr.fields_for :bulletable, bulletable do |nf| %>
 <div class="mood-picker" aria-label="Note mood">
   <% Note::MOOD_MARKERS.each do |name, emoji| %>

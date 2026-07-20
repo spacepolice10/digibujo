@@ -2,13 +2,20 @@
 
 class DaylogsController < ApplicationController
   def show
-    @selected_date = daylog_date_from_params
-    return unless @selected_date
+    @selected_date = daylog_date_from_params or return
+    @daylog = Current.user.daylog
+    return unless @daylog
 
+    @daylog_bucket = @daylog.bucket
     @bullets = set_page_and_extract_portion_from(
-      Current.user.bullets.where(pops_on: @selected_date).active,
-      per_page: [15, 30, 50]
+      @daylog.bullets.where(pops_on: @selected_date).active.order(created_at: :asc),
+      per_page: [ 15, 30, 50 ]
     )
+  end
+
+  def create
+    Current.user.ensure_daylog_bucket!
+    redirect_to daylog_path
   end
 
   private

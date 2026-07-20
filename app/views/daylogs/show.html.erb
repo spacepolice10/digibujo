@@ -1,98 +1,107 @@
 <div class="layout--page daylog" data-controller="daylog">
-  <turbo-frame id="bullets-timeline">
-    <div id="bullets-header" class="layout--header daylog--header">
-      <div class="layout--header-actions daylog--header-navigation">
-        <%= link_to daylog_path(date: (@selected_date - 1.day).iso8601),
-              data: {
-                turbo_action: "advance",
-                controller: "hotkey",
-                hotkey: "←",
-                action: "keydown.shift+left@document->hotkey#click"
-              },
-              class: "button--tertiary hotkey-hint",
-              aria: { label: "Show previous day", keyshortcuts: "Shift+ArrowLeft" } do %>
-          <i
-            class="icon"
-            style="--icon-mask: var(--icon-arrow-left)"
-            aria-hidden="true"
-          ></i>
-        <% end %>
+  <% if @daylog %>
+    <turbo-frame id="bullets-timeline">
+      <div id="bullets-header" class="layout--header daylog--header">
+        <div class="layout--header-actions daylog--header-navigation">
+          <%= link_to daylog_path(date: (@selected_date - 1.day).iso8601),
+                data: {
+                  turbo_action: "advance",
+                  controller: "hotkey",
+                  hotkey: "←",
+                  action: "keydown.shift+left@document->hotkey#click"
+                },
+                class: "button--tertiary hotkey-hint",
+                aria: { label: "Show previous day", keyshortcuts: "Shift+ArrowLeft" } do %>
+            <i
+              class="icon"
+              style="--icon-mask: var(--icon-arrow-left)"
+              aria-hidden="true"
+            ></i>
+          <% end %>
 
-        <button
-          type="button"
-          class="button--tertiary button--lg"
-          data-action="daylog#openDatePicker"
-          aria-label="Pick a date"
-        >
-          <i
-            class="icon"
-            style="--icon-mask: var(--icon-calendar)"
-            aria-hidden="true"
-          ></i>
+          <button
+            type="button"
+            class="button--tertiary button--lg"
+            data-action="daylog#openDatePicker"
+            aria-label="Pick a date"
+          >
+            <i
+              class="icon"
+              style="--icon-mask: var(--icon-calendar)"
+              aria-hidden="true"
+            ></i>
 
-          <%= @selected_date.strftime("%a, %b %-d") %>
-        </button>
+            <%= @selected_date.strftime("%a, %b %-d") %>
+          </button>
 
-        <input <%# herb:disable html-input-require-autocomplete %>
-          type="date"
-          value="<%= @selected_date.iso8601 %>"
-          data-daylog-target="dateForm"
-          data-action="change->daylog#switchDate"
-          class="utilities--sr-only"
-          tabindex="-1"
-        >
+          <input <%# herb:disable html-input-require-autocomplete %>
+            type="date"
+            value="<%= @selected_date.iso8601 %>"
+            data-daylog-target="dateForm"
+            data-action="change->daylog#switchDate"
+            class="utilities--sr-only"
+            tabindex="-1"
+          >
 
-        <%= link_to daylog_path(date: (@selected_date + 1.day).iso8601),
-              data: {
-                turbo_action: "advance",
-                controller: "hotkey",
-                hotkey: "→",
-                action: "keydown.shift+right@document->hotkey#click"
-              },
-              class: "button--tertiary hotkey-hint",
-              aria: { label: "Show next day", keyshortcuts: "Shift+ArrowRight" } do %>
-          <i
-            class="icon icon--flip-h"
-            style="--icon-mask: var(--icon-arrow-right)"
-            aria-hidden="true"
-          ></i>
-        <% end %>
-      </div>
-    </div>
-
-    <div data-bulk-menu-target="list" class="layout--surface layout--list">
-      <%= render "bullets/composer/jump", composer_id: "daylog_bullets_composer" %>
-
-      <%= render layout: "pagination/paginated_list",
-            locals: {
-              page: @page,
-              container_id: "daylog_bullets_container",
-              pagination_link_path: ->(next_param) { daylog_path(date: @selected_date.iso8601, page: next_param) }
-            } do %>
-        <% @page.records.each do |bullet| %>
-          <%= render bullet, selected_date: @selected_date %>
-        <% end %>
-      <% end %>
-
-      <% unless @page.records.any? %>
-        <div id="no_bullets_container" class="layout--surface">
-          <p>
-            No bullets yet, check your monthly bucket, references or start a
-            braindumping session.
-          </p>
+          <%= link_to daylog_path(date: (@selected_date + 1.day).iso8601),
+                data: {
+                  turbo_action: "advance",
+                  controller: "hotkey",
+                  hotkey: "→",
+                  action: "keydown.shift+right@document->hotkey#click"
+                },
+                class: "button--tertiary hotkey-hint",
+                aria: { label: "Show next day", keyshortcuts: "Shift+ArrowRight" } do %>
+            <i
+              class="icon icon--flip-h"
+              style="--icon-mask: var(--icon-arrow-right)"
+              aria-hidden="true"
+            ></i>
+          <% end %>
         </div>
-      <% end %>
-      <%= render "bullets/composer/dock",
-        selected_date: @selected_date,
-        bucket: nil,
-        composer_id: "daylog_bullets_composer" %>
+      </div>
+
+      <div data-bulk-menu-target="list" class="layout--surface layout--list">
+        <%= render "bullets/composer/jump", composer_id: "daylog_bullets_composer" %>
+
+        <%= render layout: "pagination/paginated_list",
+              locals: {
+                page: @page,
+                container_id: "daylog_bullets_container",
+                pagination_link_path: ->(next_param) { daylog_path(date: @selected_date.iso8601, page: next_param) }
+              } do %>
+          <% @page.records.each do |bullet| %>
+            <%= render_bullet(bullet) %>
+          <% end %>
+        <% end %>
+
+        <% unless @page.records.any? %>
+          <div id="no_bullets_container" class="layout--surface">
+            <p>
+              No bullets yet, check your monthly bucket, references or start a
+              braindumping session.
+            </p>
+          </div>
+        <% end %>
+        <%= render "bullets/composer/dock",
+          selected_date: @selected_date,
+          bucket: @daylog_bucket,
+          composer_id: "daylog_bullets_composer" %>
+      </div>
+    </turbo-frame>
+
+    <% if request.variant.include?(:mobile) %>
+      <%= render "bullets/composer/dialog",
+                id: "daylog_composer",
+                composer_id: "daylog_bullets_composer" %>
+    <% end %>
+  <% else %>
+    <div class="layout--header daylog--header">
+      <h2 class="layout--surface-name">Daily log</h2>
     </div>
-  </turbo-frame>
-
-
-  <% if request.variant.include?(:mobile) %>
-    <%= render "bullets/composer/dialog",
-              id: "daylog_composer",
-              composer_id: "daylog_bullets_composer" %>
+    <div class="layout--surface">
+      <p>No daily log yet. Create one to start rapid logging.</p>
+      <%= button_to "Create daylog", daylog_path, method: :post, class: "button--primary" %>
+    </div>
   <% end %>
 </div>

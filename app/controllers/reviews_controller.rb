@@ -15,6 +15,9 @@ class ReviewsController < ApplicationController
   private
 
   def review_bullets
-    Current.user.bullets.where(pops_on: @review_from..@review_to).where(migrated_at: nil).order(created_at: :asc)
+    daylog_bucket_ids = Current.user.buckets.where(bucketable_type: 'Daylog').select(:id)
+    Current.user.bullets
+      .where(bucket_id: daylog_bucket_ids, pops_on: @review_from..@review_to, migrated_at: nil)
+      .order(created_at: :asc)
   end
 end

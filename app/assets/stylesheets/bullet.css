@@ -11,7 +11,12 @@
     align-items: center;
     position: relative;
     gap: var(--spacing-horizontal);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    border-radius: var(--radius-base);
 
+    .bullet--select-checkbox {
+      display: none;
+    }
     &:hover>.bullet--marker::after {
       content: "";
       position: absolute;
@@ -20,13 +25,17 @@
       width: 100%;
       height: 100%;
       background: var(--color-bg-strong);
-
     }
   }
 
   .bullet--marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: relative;
     border-radius: var(--radius-subtle);
+    align-self: flex-start;
+    margin-top: 2px;
   }
 
 
@@ -47,28 +56,18 @@
   }
 
   .bullet:has(input:checked) {
-    &::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--model-color-2-bg);
-      padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    }
+      background: var(--color-bg-base);
+
 
     .bullet--marker {
-      margin-left: var(--spacing-horizontal-double);
-      transition: margin-left 0.08s ease-in-out;
+      background: var(--color-bg-subtle);
+      border-radius: var(--radius-subtle);
     }
 
     .bullet--marker::before {
       content: "";
       position: absolute;
-      top: 0;
-      left: calc(var(--spacing-horizontal-double) * -1);
-      width: 100%;
+      width: 60%;
       height: 100%;
       background: var(--color-bg-strong);
       border: 1px solid var(--color-stroke-strong);
@@ -83,14 +82,15 @@
     }
   }
 
-  [data-mode="select"] .bullet--select-checkbox {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100% !important;
-    height: 100% !important;
-    opacity: 0;
-    cursor: pointer;
+  [data-bulk-menu-select-mode-value="true"] .bullet--select-checkbox {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
   }
 
 }

@@ -51,10 +51,10 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     assert_match 'No recent activity', response.body
   end
 
-  test 'show renders popped activity with daylog links and history' do
+  test 'show renders postponed activity with daylog links and history' do
     bullet = @user.bullets.create!(bulletable: Task.new(body: 'Buy milk'), pops_on: Date.current)
     bullet.record_activity!('updated')
-    bullet.pop!(pops_on: Date.current + 2.days)
+    bullet.postpone!(bucket: @user.ensure_daylog_bucket!, pops_on: Date.current + 2.days)
     activity = Activity.order(:created_at).last
 
     get activity_path(activity)

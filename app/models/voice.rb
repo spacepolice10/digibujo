@@ -3,6 +3,7 @@
 # Audio-backed bulletable type for short voice memos.
 class Voice < ApplicationRecord
   include Bulletable
+  include PlainBodyBulletable
 
   DURATION_SECONDS = 60
 
@@ -13,19 +14,14 @@ class Voice < ApplicationRecord
   validate :recording_must_be_allowed_type
   validate :caption_present
 
-  def self.permitted_bullet_attributes = %i[body recording duration_seconds]
+  def self.permitted_bullet_attributes = %i[id body recording duration_seconds]
 
-  def marker_icon   = :microphone
-  def placeholder   = 'Caption your voice, guitar playing or cat meowing…'
-  def focusing_on_render? = false
-  def stimulus_controller = 'voice-recorder'
-  def stimulus_actions = 'turbo:submit-end->voice-recorder#clearOnSubmit'
-  def to_toolbar_path = 'voices/toolbar'
+  def marker_icon = :microphone
 
   private
 
   def caption_present
-    return if body.present? && body.to_plain_text.strip.present?
+    return if body.to_s.strip.present?
 
     errors.add(:body, :blank)
   end

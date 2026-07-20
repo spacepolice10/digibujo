@@ -21,7 +21,7 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
     @user.bullets.create!(
       bulletable: Note.create!,
       body: 'In bucket',
-      pops_on: @today - 1.day,
+      pops_on: nil,
       bucket_id: collection.bucket.id
     )
 
@@ -57,8 +57,9 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
     assert_select '.review--to-review', count: 0
     assert_select '.review--to-review-list'
     assert_select '.review--review-actions', count: 0
-    assert_select '.review--bullet[draggable="true"]', count: 0
+    assert_select '.review--bullet[draggable="true"]'
     assert_select '[data-bulk-menu-target="list"]'
+
     assert_select '#collects_picker_dropdown_id[popover]'
   end
 
@@ -80,9 +81,14 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
     archived = @user.bullets.create!(bulletable: Task.new(body: 'Archived'), pops_on: @today)
     archived.archive!
     migrated = @user.bullets.create!(bulletable: Task.new(body: 'Migrated'), pops_on: @today)
-    migrated.pop!(pops_on: @today + 1.day)
+    migrated.postpone!(bucket: @user.ensure_daylog_bucket!, pops_on: @today + 1.day)
     migrated.update!(pops_on: @today)
-    @user.bullets.create!(bulletable: Task.new(body: 'Unplanned'), pops_on: nil)
+    collection = create_collection!(@user, name: 'park')
+    @user.bullets.create!(
+      bulletable: Task.new(body: 'Unplanned'),
+      bucket_id: collection.bucket.id,
+      pops_on: nil
+    )
 
     get review_path(from: @today.iso8601, to: @today.iso8601)
 

@@ -48,10 +48,6 @@
   }
 }
 
-.future--card-content {
-  padding: var(--spacing-vertical);
-}
-
 .future--create-monthly-bucket {
   border: 2px dashed var(--color-stroke-base);
   border-radius: var(--radius-strong);

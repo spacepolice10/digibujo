@@ -23,7 +23,7 @@ module Collections
     def prepare_export_bullets
       @bullets = @collection.bucket.bullets.active
                             .includes(bucket: :bucketable)
-                            .preload(bulletable: :rich_text_body)
+                            .preload(:bulletable)
                             .reorder(created_at: :asc)
     end
 

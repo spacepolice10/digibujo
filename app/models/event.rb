@@ -2,13 +2,14 @@
 
 class Event < ApplicationRecord
   include Bulletable
+  include PlainBodyBulletable
 
   def temporal? = true
-  def completable? = false
+  def starts_date  = self[:starts_date]
+  def ends_date    = self[:ends_date]
   def marker_icon  = :circle
   def icon         = :circle
   def colour       = 'magenta'
-  def placeholder  = 'Write down appointments or notable events…'
 
-  def self.permitted_bullet_attributes = %i[body starts_date ends_date]
+  def self.permitted_bullet_attributes = %i[id body starts_date ends_date]
 end

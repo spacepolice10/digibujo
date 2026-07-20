@@ -13,7 +13,8 @@ export default class extends Controller {
 
   frameLoad(event) {
     if (event.target != this.composerFrame) return
-    event.target.querySelector("lexxy-editor")?.focus()
+    const field = event.target.querySelector("lexxy-editor, .bullet-composer--plain-input, input[type='text'], textarea")
+    field?.focus()
   }
 
   close = () => {
@@ -34,13 +35,6 @@ export default class extends Controller {
 
   backdropClose(event) {
     if (event.target == this.element) this.close()
-  }
-
-  submitEnd(event) {
-    if (!event.detail.success) return
-    if (!event.target.classList?.contains("bullet-composer")) return
-    if (event.detail.formSubmission?.submitter?.name == "another") return
-    this.close()
   }
 
   get composerFrame() {

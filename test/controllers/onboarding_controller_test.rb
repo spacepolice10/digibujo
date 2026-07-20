@@ -25,7 +25,7 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
     assert_select 'a.onboarding--external-link[href=?]', 'https://bulletjournal.com/'
   end
 
-  test 'create provisions defaults' do
+  test 'create provisions loose notes only' do
     code = request_login_code(@user.email_address)
     confirm_login_code(code)
 
@@ -33,12 +33,11 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to root_path
     assert cookies[:session_id]
-    assert @user.buckets.exists?(bucketable_type: 'FutureBucket', name: 'future log')
-    assert @user.monthly_buckets.exists?(period_from: MonthlyBucket.default_period[:period_from])
+    assert_not @user.buckets.exists?(bucketable_type: 'Daylog')
+    assert_not @user.buckets.exists?(bucketable_type: 'Future')
+    assert_not @user.futures.any?
+    assert_not @user.monthlylogs.any?
     assert @user.buckets.exists?(bucketable_type: 'Collection', name: 'loose notes')
-    future_bucket = @user.buckets.find_by!(bucketable_type: 'FutureBucket')
-    monthly_bucket = @user.buckets.find_by!(bucketable_type: 'MonthlyBucket')
-    assert future_bucket.activities.exists?(action: 'created')
-    assert monthly_bucket.activities.exists?(action: 'created')
   end
 end
+

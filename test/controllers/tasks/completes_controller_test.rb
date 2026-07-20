@@ -37,10 +37,10 @@ module Tasks
     end
 
     test 'bulk complete replaces monthly bucket bullet with unified row' do
-      monthly_bucket = create_monthly_bucket!(@user, name: 'june')
+      monthlylog = create_monthlylog!(@user, name: 'june')
       bullet = @user.bullets.create!(
         bulletable: Task.new(body: 'Spread task'),
-        bucket_id: monthly_bucket.bucket.id
+        bucket_id: monthlylog.bucket.id
       )
 
       post complete_path,

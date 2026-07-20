@@ -7,14 +7,18 @@ class BulletsController < ApplicationController
 
   BULLET_PARAM_KEYS = %i[pops_on bulletable_type bucket_id].freeze
 
+  rescue_from BulletTypeRequired, with: :bullet_type_required
+
   before_action :set_bullet, only: %i[show edit update destroy]
 
   def new
+    type = resolve_bulletable_type(params[:bulletable_type])
     @bullet = Current.user.bullets.new(
-      bulletable_type: resolve_bulletable_type(params[:bulletable_type]),
+      bulletable_type: type,
       pops_on: params[:pops_on],
       bucket_id: params[:bucket_id]
     )
+    @bullet.bulletable = type.constantize.new if type
   end
 
   def create
@@ -32,11 +36,15 @@ class BulletsController < ApplicationController
     end
   end
 
-  def edit; end
+  def edit
+    return redirect_to bullet_path(@bullet) if @bullet.bulletable_type == 'Voice'
+  end
 
   def show; end
 
   def update
+    return redirect_to bullet_path(@bullet) if @bullet.bulletable_type == 'Voice'
+
     if @bullet.update(bullet_params)
       respond_to do |format|
         format.turbo_stream
@@ -99,5 +107,9 @@ class BulletsController < ApplicationController
       partial: 'shared/toasts',
       locals: { type: 'errmsg', messages: @bullet.errors.full_messages }
     ), status: :unprocessable_entity
+  end
+
+  def bullet_type_required
+    redirect_to new_bullet_path, alert: 'Pick a bullet type first'
   end
 end

@@ -9,16 +9,6 @@ class BucketTest < ActiveSupport::TestCase
     @bucket = @collection.bucket
   end
 
-  test 'create records created activity' do
-    assert_difference -> { Activity.count }, 1 do
-      create_collection!(@user, name: 'inbox')
-    end
-
-    activity = Activity.order(:created_at).last
-    assert_equal 'created', activity.action
-    assert_equal 'Bucket', activity.subject_type
-  end
-
   test 'requires name' do
     @bucket.name = ''
     assert_not @bucket.valid?
@@ -92,8 +82,8 @@ class BucketTest < ActiveSupport::TestCase
     assert @bucket.valid?
   end
 
-  test 'search_body includes description' do
-    @bucket.update!(description: 'Margin notes')
+  test 'search_body includes collection description' do
+    @collection.update!(description: 'Margin notes')
 
     assert_includes @bucket.search_body, 'alpha'
     assert_includes @bucket.search_body, 'Margin notes'

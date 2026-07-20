@@ -1,10 +1,11 @@
 import { Controller } from "@hotwired/stimulus"
-import { post, destroy } from "@rails/request.js"
+import { post } from "@rails/request.js"
 
 export default class extends Controller {
   static values = {
-    popsUrl: String,
+    popsUrl: { type: String, default: "/bullets/postpone" },
     popsOn: { type: String, default: "" },
+    bucketId: { type: String, default: "" },
     reviewDrop: { type: Boolean, default: false }
   }
 
@@ -37,20 +38,17 @@ export default class extends Controller {
 
     const body = new FormData()
     body.append("bullet_ids", bulletId)
+    body.append("bucket_id", this.bucketIdValue)
     body.append("pops_on", targetPopsOn || "")
 
-    const options = {
-      body,
-      responseKind: "turbo-stream",
-      headers: {
-        "X-Requested-With": this.reviewDropValue ? "review-pops-drop" : "pops-drop"
-      }
-    }
-
     try {
-      const response = targetPopsOn
-        ? await post(this.popsUrlValue, options)
-        : await destroy(this.popsUrlValue, options)
+      const response = await post(this.popsUrlValue, {
+        body,
+        responseKind: "turbo-stream",
+        headers: {
+          "X-Requested-With": this.reviewDropValue ? "review-pops-drop" : "pops-drop"
+        }
+      })
 
       if (response.ok) return
 

@@ -4,7 +4,9 @@ require 'test_helper'
 
 class CurrentTimezoneTest < ActionDispatch::IntegrationTest
   setup do
-    sign_in_as users(:one)
+    @user = users(:one)
+    sign_in_as @user
+    ensure_daylog!(@user)
   end
 
   test 'includes the timezone cookie in the ETag' do

@@ -16,7 +16,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "turbo-frame#menu_search"
-    assert_match matching_card.body.to_plain_text, response.body
+    assert_match matching_card.name, response.body
     assert_no_match "Call mom tonight", response.body
   end
 

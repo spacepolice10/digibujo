@@ -1,0 +1,16 @@
+<%# locals: (bullet:, editing:) %>
+<%= render layout: "bullets/form", locals: { bullet:, editing: } do |fr, bulletable| %>
+  <%= fr.fields_for :bulletable, bulletable do |bf| %>
+    <%= bf.hidden_field :id if bulletable.persisted? %>
+    <%= bf.text_field :body,
+          value: bulletable.body,
+          placeholder: "Write down appointments or notable events…",
+          autofocus: true,
+          class: "bullet-composer--plain-input",
+          data: {
+            action: "keydown->composer#plainEnter input->composer#editorInput"
+          } %>
+    <%= bf.date_field :starts_date, value: bulletable.starts_date %>
+    <%= bf.date_field :ends_date, value: bulletable.ends_date %>
+  <% end %>
+<% end %>

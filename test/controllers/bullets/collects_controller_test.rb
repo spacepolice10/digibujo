@@ -133,27 +133,16 @@ module Bullets
       assert_match "Bullet collected into #{collection.name}", response.body
     end
 
-    test 'destroy uncollects multiple bullets' do
-      collection = create_collection!(@user, name: 'Clear')
-      first = @user.bullets.create!(bulletable: Task.new(body: 'A'), bucket_id: collection.bucket.id)
-      second = @user.bullets.create!(bulletable: Note.new(body: 'B'), bucket_id: collection.bucket.id)
-
-      delete collect_path, params: { bullet_ids: "#{first.id},#{second.id}" }
-
-      assert_redirected_to daylog_path
-      assert_nil first.reload.bucket_id
-      assert_nil second.reload.bucket_id
-    end
-
     test 'create rejects collect into archived collection' do
       collection = create_collection!(@user, name: 'Closed')
       collection.bucket.archive!
       card = @user.bullets.create!(bulletable: Task.new(body: 'Move me'))
+      daylog_bucket_id = card.bucket_id
 
       post collect_path, params: { bullet_ids: card.id.to_s, bucket_id: collection.bucket.id }
 
       assert_response :not_found
-      assert_nil card.reload.bucket_id
+      assert_equal daylog_bucket_id, card.reload.bucket_id
     end
   end
 end

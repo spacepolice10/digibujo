@@ -31,12 +31,6 @@
     box-shadow: none;
   }
 
-  .layout--surface:has([data-bulk-menu-target="list"][data-mode="select"]) .bullet-composer--dock,
-  .bucket--list:has([data-bulk-menu-target="list"][data-mode="select"]) .bullet-composer--dock {
-    opacity: 0;
-    pointer-events: none;
-  }
-
   .bullet-composer--dock {
     container-type: scroll-state;
     position: sticky;
@@ -88,26 +82,7 @@
     }
   }
 
-  .layout--surface:has([data-composer-form]) {
-    position: relative;
 
-    @media (min-width: 621px) {
-      &::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border-radius: inherit;
-        background: oklch(0% 0 0 / 0.15);
-        pointer-events: none;
-        z-index: 1;
-        opacity: 1;
-        transition: opacity 150ms ease;
-
-        @starting-style {
-          opacity: 0;
-        }
-      }
-    }
 
     .bullet-composer--dock {
       z-index: 2;

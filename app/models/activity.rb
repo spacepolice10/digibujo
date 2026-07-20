@@ -6,6 +6,8 @@ class Activity < ApplicationRecord
       updated
       collected
       popped
+      postponed
+      migrated
       archived
       unarchived
       completed
@@ -18,13 +20,15 @@ class Activity < ApplicationRecord
       pinned
       unpinned
     ].freeze,
-    'Bucket' => %w[created updated pinned unpinned archived unarchived].freeze
+    'Bucket' => %w[created updated pinned unpinned archived unarchived destroyed].freeze
   }.freeze
 
   ACTION_ICON_MAPPINGS = {
     'updated' => 'pencil',
     'collected' => 'arrow-left',
     'popped' => 'arrow-up',
+    'postponed' => 'arrow-up',
+    'migrated' => 'arrow-up',
     'archived' => 'archive',
     'completed' => 'check',
     'uncompleted' => 'square',
@@ -36,11 +40,12 @@ class Activity < ApplicationRecord
     'pinned' => 'pin',
     'unpinned' => 'pin',
     'unarchived' => 'archive',
-    'acknowledged' => 'line-dashed'
+    'acknowledged' => 'line-dashed',
+    'destroyed' => 'trash'
   }.freeze
 
   belongs_to :user
-  belongs_to :subject, polymorphic: true
+  belongs_to :subject, polymorphic: true, optional: true
 
   RETENTION_DAYS = 30
 
@@ -59,34 +64,48 @@ class Activity < ApplicationRecord
     ACTION_ICON_MAPPINGS.fetch(action)
   end
 
+  def icon_mask
+    "var(--icon-#{icon})"
+  end
+
   def colour
-    Colourable.colour_variable_of(subject.colour)
+    Colourable.colour_variable_of(subject_colour)
   end
 
   def type_name
     case subject_type
     when 'Bullet'
-      subject.bulletable_type.downcase
+      subject&.bulletable_type&.downcase
     when 'Bucket'
-      subject.bucketable_type.downcase
+      (metadata['bucketable_type'].presence || subject&.bucketable_type)&.downcase
     end
   end
 
+  def subject_name
+    metadata['name'].presence || subject&.name || 'Unknown'
+  end
+
   def detail
-    "#{action_name} — #{subject.name}"
+    "#{action_name} — #{subject_name}"
   end
 
   def bullet_subject?
     subject_type == 'Bullet'
   end
 
+  def subject_present?
+    subject.present?
+  end
+
   def subject_history
+    return Activity.none unless subject
+
     subject.activities.where.not(id: id).order(created_at: :desc).limit(30)
   end
 
   def summary
     case action
-    when 'popped' then popped_summary
+    when 'postponed', 'popped' then postponed_summary
     when 'collected' then collected_summary
     when 'completed' then completed_summary
     when 'archived' then archived_summary
@@ -124,7 +143,11 @@ class Activity < ApplicationRecord
 
   private
 
-  def popped_summary
+  def subject_colour
+    metadata['colour'].presence || subject&.colour
+  end
+
+  def postponed_summary
     from = migration_date_name(metadata['from_pops_on'])
     to = migration_date_name(metadata['to_pops_on'])
 
@@ -133,7 +156,7 @@ class Activity < ApplicationRecord
     elsif to
       "Scheduled for #{to}"
     else
-      'Rescheduled to another day'
+      'Parked for sometime'
     end
   end
 

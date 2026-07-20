@@ -1,0 +1,38 @@
+<%# locals: (monthlylog:, months:, occupied_months:) %>
+<% occupied_months = Array(occupied_months) %>
+<% available_months = months.reject { |m| occupied_months.include?(m) } %>
+<% selected_month = available_months.first || months.first %>
+
+<%= form_with url: monthlylogs_path, scope: :monthlylog, class: "form" do |f| %>
+  <% errors = (monthlylog.errors.any? ? monthlylog.errors.full_messages : []) +
+              (monthlylog.bucket&.errors&.any? ? monthlylog.bucket.errors.full_messages : []) %>
+  <% if errors.any? %>
+    <div class="form-errors" role="alert">
+      <% errors.each do |message| %>
+        <p><%= message %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <small class="form-hint">A monthly spread gives you a bird's-eye view of the month — like the traditional BuJo calendar page. Plan events and deadlines here, then jump to any day to work on the details.</small>
+
+  <div class="form-group">
+    <%= field_set_tag "Month", class: "monthly-bucket--period-picker" do %>
+      <%= f.collection_radio_buttons :period_from, months, :iso8601, ->(m) { m.strftime("%B %Y") },
+            { checked: selected_month&.iso8601, item_wrapper_tag: false } do |b| %>
+        <% month_date = Date.parse(b.value) %>
+        <% disabled = occupied_months.include?(month_date) %>
+        <%= b.label class: ["monthly-bucket--period-option", ("monthly-bucket--period-option--disabled" if disabled)].compact.join(" "),
+                    data: { month: month_date.month } do %>
+          <%= b.radio_button class: "utilities--sr-only monthly-bucket--period-checkbox", disabled: disabled %>
+          <span class="monthly-bucket--period-card">
+            <span class="monthly-bucket--period-name"><%= month_date.strftime("%b") %></span>
+            <span class="monthly-bucket--period-meta"><%= month_date.year %></span>
+          </span>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%= f.submit "Create monthly spread", class: "button--primary form--submit" %>
+<% end %>

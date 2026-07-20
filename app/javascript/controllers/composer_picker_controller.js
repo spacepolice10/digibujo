@@ -20,7 +20,10 @@ export default class extends Controller {
         currentFrame.innerHTML = newFrame.innerHTML
       })
 
-      const focus = () => currentFrame.querySelector("lexxy-editor")?.focus()
+      const focus = () => {
+        const field = currentFrame.querySelector("lexxy-editor, .bullet-composer--plain-input, input[type='text'], textarea")
+        field?.focus()
+      }
 
       if (transition) transition.finished.then(focus)
       else focus()

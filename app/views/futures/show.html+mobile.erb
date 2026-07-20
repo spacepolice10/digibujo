@@ -1,0 +1,18 @@
+<div class="layout--page future">
+  <div class="layout--header">
+    <div class="layout--header-actions">
+      <%= link_to home_path, class: "button--secondary" do %>
+        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+        Back
+      <% end %>
+    </div>
+  </div>
+  <div>
+    <%= link_to "Unplanned", unplanned_path(@future), data: { turbo_frame: "future_grid_content" }, class: "button--secondary" %>
+    <%= link_to "Monthly Grid", monthly_grid_path(@future), data: { turbo_frame: "future_grid_content" }, class: "button--secondary" %>
+  </div>
+  <div>
+    <turbo-frame id="future_grid_content" src="<%= monthly_grid_path(@future) %>">
+    </turbo-frame>
+  </div>
+</div>

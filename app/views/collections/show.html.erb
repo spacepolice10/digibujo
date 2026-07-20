@@ -4,8 +4,8 @@
   <div class="layout--header">
     <%= icon_tag(@collection.bucket.icon, colour: @collection.bucket.colour_variable) %>
       <h2><%= @collection.name %></h2>
-      <% if @collection.bucket.description.present? %>
-        <p><%= @collection.bucket.description %></p>
+      <% if @collection.description.present? %>
+        <p><%= @collection.description %></p>
       <% end %>
   </div>
   <div class="layout--header-actions">
@@ -44,7 +44,7 @@
                     pagination_link_path: ->(next_param) { collection_path(@collection, page: next_param) }
                   } do %>
               <% @page.records.each do |bullet| %>
-                <%= render bullet %>
+                <%= render_bullet(bullet) %>
               <% end %>
             <% end %>
           <% else %>

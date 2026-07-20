@@ -1,7 +1,6 @@
 <%# locals: (bullet:) %>
-<% voice = bullet.bulletable %>
-<% duration = voice&.duration_seconds.to_i %>
-<% audio_src = voice&.recording&.attached? ? url_for(voice.recording) : nil %>
+<% duration = bullet.voice.duration_seconds.to_i %>
+<% audio_src = bullet.voice.recording.attached? ? url_for(bullet.voice.recording) : nil %>
 <div class="voice--playback"
      data-controller="voice-player"
      data-voice-player-duration-value="<%= duration %>">

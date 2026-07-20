@@ -62,7 +62,7 @@ module Searchable
   end
 
   def search_body
-    [ try(:name), try(:description), try(:body)&.to_plain_text ].compact.join(" ")
+    [ try(:name), try(:description), try(:body) ].compact.join(" ")
   end
 
   def search_user_id

@@ -31,7 +31,7 @@
                 pagination_link_path: ->(next_param) { person_path(@person, page: next_param) }
               } do %>
           <% @page.records.each do |bullet| %>
-            <%= render bullet %>
+            <%= render_bullet(bullet) %>
           <% end %>
         <% end %>
       <% else %>

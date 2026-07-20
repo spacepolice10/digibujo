@@ -6,6 +6,8 @@ module Bullet::Mentionable
   included do
     has_many :bullet_mentions, dependent: :destroy
     has_many :mentions, through: :bullet_mentions
+    has_many :projects, -> { where(kind: :project) }, through: :bullet_mentions, source: :mention
+    has_many :people, -> { where(kind: :person) }, through: :bullet_mentions, source: :mention
   end
 
   def add_mention!(mention_id:)
@@ -37,6 +39,7 @@ module Bullet::Mentionable
   end
 
   def sync_mentions_from_body!
+    return unless bulletable.is_a?(Note)
     return if @syncing_mentions
 
     @syncing_mentions = true
@@ -48,12 +51,12 @@ module Bullet::Mentionable
 end
 
 ActiveSupport.on_load(:action_text_rich_text) do
-  after_save :sync_bullet_mentions_from_body, if: :bulletable_body_changed?
+  after_save :sync_bullet_mentions_from_body, if: :note_body_changed?
 
   private
 
-  def bulletable_body_changed?
-    record.is_a?(Bulletable) && name == 'body' && saved_change_to_body?
+  def note_body_changed?
+    record.is_a?(Note) && name == 'body' && saved_change_to_body?
   end
 
   def sync_bullet_mentions_from_body

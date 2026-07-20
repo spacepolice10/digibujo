@@ -1,0 +1,50 @@
+<% content_for(:title) { "Future Log" } %>
+
+<div class="layout--page future">
+  <div class="layout--header">
+    <div class="layout--header-actions">
+      <%= link_to home_path, class: "button--secondary" do %>
+        <i
+          class="icon"
+          style="--icon-mask: var(--icon-arrow-left)"
+          aria-hidden="true"
+        ></i>
+        Home
+      <% end %>
+    </div>
+
+    <h2><%= @future.name %></h2>
+  </div>
+
+  <div class="layout--grid layout--surface">
+    <% @bullets_by_date.each do |date, bullets| %>
+
+    <div class="future--card grid-item">
+      <div class="future--card-header">
+        <%= date.to_s %>
+      </div>
+      <div class="layout--list layout--padded">
+        <% bullets.each do |bullet| %>
+          <%= render_bullet(bullet) %>
+        <% end %>
+      </div>
+      <turbo-frame id="future_bullets_composer_<%= date.to_s %>">
+        <%= link_to "Add bullet", new_bullet_path(bucket_id: @future.bucket.id, bulletable_type: "Task", pops_on: date), class: "button--tertiary" %>
+        </turbo-frame>
+    </div>
+
+    <% end %>
+
+  
+  </div>
+  <div id="unplanned_bullets_container" class="layout--grid layout--surface">
+  <% @unplanned_bullets.each do |bullet| %>
+  <%= render_bullet(bullet) %>
+  <% end %>
+  </div>
+
+<%= render "bullets/composer/dock", selected_date: nil, bucket: @future.bucket, composer_id: "unplanned_bullets_composer" %>
+<%= render "bullets/composer/dialog",
+  id: "unplanned_bullets_composer",
+  composer_id: "unplanned_bullets_composer" %>
+</div>

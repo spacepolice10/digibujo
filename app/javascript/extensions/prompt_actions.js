@@ -104,7 +104,7 @@ function runPromptCommand(editorElement, listItem) {
 
 export class PromptActionExtension extends Extension {
   get enabled() {
-    return ["inline", "note"].includes(this.editorElement.preset)
+    return this.editorElement.preset == "note"
   }
 
   get lexicalExtension() {

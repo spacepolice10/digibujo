@@ -3,7 +3,12 @@
   Add collection
 <% end %>
 
-<%= link_to new_monthly_bucket_path, class: "button--secondary home--rail-action", data: { turbo_frame: "_top" } do %>
+<%= link_to new_future_path, class: "button--secondary home--rail-action", data: { turbo_frame: "_top" } do %>
+  <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
+  Add future log
+<% end %>
+
+<%= link_to new_monthlylog_path, class: "button--secondary home--rail-action", data: { turbo_frame: "_top" } do %>
   <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
   Add monthly log
 <% end %>

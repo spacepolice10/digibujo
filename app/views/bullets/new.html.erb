@@ -15,6 +15,13 @@
   </div>
 
   <turbo-frame id="<%= turbo_frame_request_id %>" class="utilities--contents">
-    <%= render "bullets/form", bullet: @bullet, bullets_path: bullets_path, return_to: @return_to, editing: false %>
+    <% if @bullet.bulletable_type.present? %>
+      <%= render @bullet.to_form_path, bullet: @bullet, editing: false %>
+    <% else %>
+      <%= render "bullets/composer/dock",
+            selected_date: @bullet.pops_on || Date.current,
+            bucket: @bullet.bucket || Current.user.ensure_daylog_bucket!,
+            composer_id: turbo_frame_request_id.presence || "bullet_composer" %>
+    <% end %>
   </turbo-frame>
 </div>

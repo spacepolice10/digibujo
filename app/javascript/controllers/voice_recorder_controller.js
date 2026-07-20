@@ -4,7 +4,7 @@ export default class extends Controller {
   static targets = [
     "recordButton", "stopButton", "discardButton", "timer", "status",
     "preview", "previewContainer", "fileInput", "durationInput",
-    "unsupported"
+    "unsupported", "captionInput"
   ]
 
   static values = {
@@ -22,7 +22,6 @@ export default class extends Controller {
 
     this.boundReset = this.reset.bind(this)
     this.boundUpdateSubmitState = this.updateSubmitState.bind(this)
-    this.editor = this.element.querySelector('lexxy-editor[preset="inline"]')
 
     this.supported = typeof MediaRecorder != "undefined" &&
       typeof navigator.mediaDevices?.getUserMedia == "function" &&
@@ -36,7 +35,6 @@ export default class extends Controller {
     this.element.addEventListener("composer:rebind", this.boundReset)
     this.element.addEventListener("input", this.boundUpdateSubmitState)
     this.element.addEventListener("change", this.boundUpdateSubmitState)
-    this.editor?.addEventListener("lexxy:change", this.boundUpdateSubmitState)
 
     this.updateSubmitState()
   }
@@ -45,7 +43,6 @@ export default class extends Controller {
     this.element.removeEventListener("composer:rebind", this.boundReset)
     this.element.removeEventListener("input", this.boundUpdateSubmitState)
     this.element.removeEventListener("change", this.boundUpdateSubmitState)
-    this.editor?.removeEventListener("lexxy:change", this.boundUpdateSubmitState)
     this.cleanupStream()
     this.clearTimer()
   }
@@ -108,7 +105,6 @@ export default class extends Controller {
 
   clearOnSubmit(event) {
     if (!event.detail.success) return
-    if (event.detail.formSubmission?.submitter?.name != "another") return
 
     this.reset()
   }
@@ -218,11 +214,12 @@ export default class extends Controller {
   }
 
   #captionPresent() {
-    const editor = this.element.querySelector('lexxy-editor[preset="inline"]')
-    if (!editor) return false
+    const input = this.hasCaptionInputTarget
+      ? this.captionInputTarget
+      : this.element.querySelector(".bullet-composer--plain-input, input[name*='[body]']")
+    if (!input) return false
 
-    const value = editor.value?.trim?.() || editor.textContent?.trim?.() || ""
-    return value.length > 0
+    return (input.value?.trim() || "").length > 0
   }
 
   updateTimerDisplay() {

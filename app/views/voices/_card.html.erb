@@ -1,14 +1,13 @@
 <%# locals: (bullet:) %>
-<% voice = bullet.bulletable %>
 <div class="voice--card">
   <div class="voice--playback-zone">
     <div class="voice--playback-header">
       <span class="voice--rec-dot" aria-hidden="true"></span>
       <span class="voice--caption"><%= bullet.body %></span>
-      <% if voice.duration_seconds.present? %>
-        <span class="voice--duration utilities--text-sm"><%= voice.duration_seconds %>s</span>
+      <% if bullet.voice.duration_seconds.present? %>
+        <span class="voice--duration utilities--text-sm"><%= bullet.voice.duration_seconds %>s</span>
       <% end %>
     </div>
-    <%= render "voices/playback", voice: voice, compact: true, hide_duration: true %>
+    <%= render "voices/playback", bullet: bullet %>
   </div>
 </div>

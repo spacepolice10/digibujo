@@ -3,15 +3,25 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
-  test 'needs_onboarding? is true without a future bucket' do
+  test 'needs_onboarding? is true without loose notes' do
     assert_predicate users(:one), :needs_onboarding?
   end
 
-  test 'needs_onboarding? is false with a future bucket' do
+  test 'needs_onboarding? is false with loose notes' do
     user = users(:one)
-    FutureBucket.create!(user: user)
+    create_collection!(user, name: Onboarding::LOOSE_NOTES_NAME)
 
     assert_not user.needs_onboarding?
+  end
+
+  test 'ensure_daylog_bucket! creates a single daylog' do
+    user = users(:one)
+
+    bucket = user.ensure_daylog_bucket!
+    again = user.ensure_daylog_bucket!(Date.current + 1.month)
+
+    assert_equal bucket, again
+    assert_equal 1, Daylog.where(user: user).count
   end
 
   test 'downcases and strips email_address' do

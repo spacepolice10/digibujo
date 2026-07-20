@@ -20,7 +20,7 @@ export default class extends Controller {
   static values = {
     idList: { type: Array, default: [] },
     selectMode: { type: Boolean, default: false },
-    popsPickerPath: { type: String, default: "/bullets/pop/new" },
+    popsPickerPath: { type: String, default: "/bullets/postpone/new" },
     collectsPickerPath: { type: String, default: "/bullets/collect/new" },
   };
 
@@ -148,7 +148,7 @@ export default class extends Controller {
 
     const isCollect = form.action.includes("/bullets/collect");
     const isPop =
-      form.action.includes("/bullets/pop") &&
+      form.action.includes("/bullets/postpone") &&
       form.method?.toLowerCase() == "post";
     const isMenuBulk =
       this.hasMenuTarget &&

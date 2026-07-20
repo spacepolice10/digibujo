@@ -13,7 +13,7 @@ class VoiceTest < ActiveSupport::TestCase
   end
 
   test 'requires recording and duration within cap' do
-    voice = Voice.new(duration_seconds: 5)
+    voice = Voice.new(body: 'Caption', duration_seconds: 5)
     voice.recording.attach(@blob)
 
     assert voice.valid?
@@ -53,7 +53,7 @@ class VoiceTest < ActiveSupport::TestCase
       filename: 'voice.webm',
       content_type: 'audio/webm;codecs=opus'
     )
-    voice = Voice.new(duration_seconds: 5)
+    voice = Voice.new(body: 'Caption', duration_seconds: 5)
     voice.recording.attach(blob)
 
     assert voice.valid?

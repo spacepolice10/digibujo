@@ -1,0 +1,207 @@
+<% content_for(:title) { @monthlylog.name } %>
+
+<div class="layout--page layout--container layout--container-lg">
+  <div class="layout--header">
+    <div class="layout--header-actions">
+    <%= link_to home_path, class: "button--secondary" do %>
+      <i
+        class="icon"
+        style="--icon-mask: var(--icon-arrow-left)"
+        aria-hidden="true"
+      ></i>
+      Back
+    <% end %>
+
+    <%= render "buckets/pins_button", bucket: @bucket %>
+  </div>
+  </div>
+
+
+    <h2 class="layout--surface-name"><%= @monthlylog.name %></h2>
+
+    <% if @monthlylog.period? %>
+      <p class="monthly-bucket--period utilities--text-sm">
+        <%= @monthlylog.period_from.strftime("%b %-d") %> –
+        <%= @monthlylog.period_to.strftime("%b %-d, %Y") %>
+      </p>
+    <% end %>
+
+  <div
+    class="monthly-bucket--workspace"
+    data-controller="monthly-sections"
+    data-monthly-sections-active-value="days"
+  >
+    <nav
+      class="monthly-bucket--monthly-sections"
+      role="tablist"
+      aria-label="Monthly spread sections"
+    >
+      <button
+        type="button"
+        class="
+          monthly-bucket--monthly-section
+          monthly-bucket--monthly-section-active
+        "
+        role="tab"
+        aria-selected="true"
+        data-monthly-sections-target="section"
+        data-monthly-sections-section="days"
+        data-action="monthly-sections#select"
+      >
+        Days
+      </button>
+
+      <button
+        type="button"
+        class="monthly-bucket--monthly-section"
+        role="tab"
+        aria-selected="false"
+        data-monthly-sections-target="section"
+        data-monthly-sections-section="unplanned"
+        data-action="monthly-sections#select"
+      >
+        Unplanned
+      </button>
+    </nav>
+
+    <div class="monthly-bucket--spread">
+      <section
+        class="
+          monthly-bucket--calendar monthly-bucket--side
+          monthly-bucket--side-active
+        "
+        aria-label="Planned by date"
+        data-controller="scroll"
+        data-monthly-sections-target="side"
+        data-monthly-sections-side="days"
+      >
+        <% if @period_days %>
+          <div class="monthly-bucket--calendar-body">
+            <% @period_days.each do |date| %>
+              <div class="monthly-bucket--date-band<%= " monthly-bucket--date-band-current" if date == Date.current %>" <% if date == Date.current %> data-scroll-target="current" <% end %>>
+                <div class="monthly-bucket--date-rail">
+                  <%= link_to daylog_path(date: date.iso8601),
+                        class: "monthly-bucket--date-number",
+                        aria: { label: "Open #{date.strftime('%B %-d')} on daily log" } do %>
+                    <span class="monthly-bucket--date-day">
+                      <%= date.day %>
+                    </span>
+
+                    <span class="monthly-bucket--date-weekday">
+                      <%= date.strftime("%a") %>
+                    </span>
+                  <% end %>
+
+                  <div
+                    class="monthly-bucket--date-entries"
+                    data-controller="pops-drop"
+                    data-drop-zone-value="<%= date.iso8601 %>"
+                    data-pops-drop-pops-url-value="<%= postpone_path %>"
+                    data-pops-drop-bucket-id-value="<%= @monthlylog.bucket.id %>"
+                    data-pops-drop-pops-on-value="<%= date.iso8601 %>"
+                    data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop"
+                  >
+                    <div
+                      id="<%= dom_id(@monthlylog, "date_#{date.to_date}_bullets") %>"
+                      class="monthly-bucket--bullets-list"
+                      data-bulk-menu-target="list"
+                    >
+                      <%= turbo_frame_tag "monthlylog_bullets_#{date.to_date}_container" do %>
+                        <% (@bullets_by_date[date] || []).each do |bullet| %>
+                          <%= render "monthlylogs/bullets/bullet", bullet: bullet %>
+                        <% end %>
+                      <% end %>
+                    </div>
+
+                    <% composer_id = "monthlylog_bullets_#{date.to_date}_composer" %>
+                    <div class="monthly-bucket--date-composer">
+                      <turbo-frame
+                        id="<%= composer_id %>"
+                        data-controller="composer-picker"
+                        data-action="turbo:before-frame-render->composer-picker#beforeFrameRender"
+                        class="utilities--contents"
+                      >
+                        <%= link_to new_bullet_path(pops_on: date, bucket_id: @monthlylog.bucket.id, bulletable_type: "Event"),
+                              data: { turbo_frame: composer_id },
+                              class: "bullet--composer-create-button bullet--composer-create-button--event",
+                              aria: { label: "Add Event" } do %>
+                          <i
+                            class="icon"
+                            style="--icon-mask: var(--icon-circle)"
+                            aria-hidden="true"
+                          ></i>
+                          Add Event
+                        <% end %>
+                      </turbo-frame>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="monthly-bucket--by-date-empty">
+            No period set for this spread.
+          </p>
+        <% end %>
+      </section>
+
+      <div class="monthly-bucket--divider" aria-hidden="true"></div>
+
+      <section
+        class="monthly-bucket--unplanned monthly-bucket--side"
+        aria-label="Unplanned"
+        data-monthly-sections-target="side"
+        data-monthly-sections-side="unplanned"
+        hidden
+      >
+        <header class="monthly-bucket--unplanned-header">
+          <h3 class="monthly-bucket--unplanned-title">Unplanned</h3>
+
+          <p class="monthly-bucket--unplanned-description utilities--text-sm">
+            Brain dump for the month — park ideas here until you assign them to
+            a day.
+          </p>
+        </header>
+
+        <div
+          class="monthly-bucket--unplanned-entries"
+          data-controller="pops-drop"
+          data-drop-zone-value=""
+          data-pops-drop-pops-url-value="<%= postpone_path %>"
+          data-pops-drop-bucket-id-value="<%= @monthlylog.bucket.id %>"
+          data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop"
+        >
+          <%= turbo_frame_tag "monthlylog_bullets_unplanned_container",
+                class: "monthly-bucket--bullets-list layout--list",
+                data: { bulk_menu_target: "list" } do %>
+            <% @unplanned_bullets.each do |bullet| %>
+              <%= render "monthlylogs/bullets/bullet", bullet: bullet %>
+            <% end %>
+          <% end %>
+          <div class="monthly-bucket--date-composer">
+            <turbo-frame
+              id="monthlylog_bullets_unplanned_composer"
+              data-controller="composer-picker"
+              data-action="turbo:before-frame-render->composer-picker#beforeFrameRender"
+              class="utilities--contents"
+            >
+              <%= link_to new_bullet_path(bucket_id: @monthlylog.bucket.id, bulletable_type: "Task"),
+                    data: { turbo_frame: "monthlylog_bullets_unplanned_composer" },
+                    class: "bullet--composer-create-button bullet--composer-create-button--task",
+                    aria: { label: "Add Task" } do %>
+                <i
+                  class="icon"
+                  style="--icon-mask: var(--icon-square)"
+                  aria-hidden="true"
+                ></i>
+                Add Task
+              <% end %>
+            </turbo-frame>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+</div>

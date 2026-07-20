@@ -82,26 +82,28 @@ class ActivityRecordingTest < ActiveSupport::TestCase
     assert_equal 'project_mentioned', Activity.order(:created_at).last.action
   end
 
-  test 'pop records popped when moving to another day with migration metadata' do
+  test 'postpone records postponed when moving to another day with migration metadata' do
     bullet = @user.bullets.create!(bulletable: Event.new(body: 'Event'), pops_on: Date.current)
+    daylog = @user.ensure_daylog_bucket!
 
     assert_difference -> { Activity.count }, 1 do
-      bullet.pop!(pops_on: Date.current + 1)
+      bullet.postpone!(bucket: daylog, pops_on: Date.current + 1)
     end
 
     activity = Activity.order(:created_at).last
-    assert_equal 'popped', activity.action
-    assert_equal 'popped', activity.metadata['action']
+    assert_equal 'postponed', activity.action
+    assert_equal 'postponed', activity.metadata['action']
   end
 
-  test 'pop records popped' do
+  test 'postpone records postponed' do
     bullet = @user.bullets.create!(bulletable: Task.new(body: 'Later'))
+    daylog = @user.ensure_daylog_bucket!
 
     assert_difference -> { Activity.count }, 1 do
-      bullet.pop!(pops_on: Date.current + 3)
+      bullet.postpone!(bucket: daylog, pops_on: Date.current + 3)
     end
 
-    assert_equal 'popped', Activity.order(:created_at).last.action
+    assert_equal 'postponed', Activity.order(:created_at).last.action
   end
 
   test 'bucket update records updated activity' do

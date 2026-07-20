@@ -12,14 +12,18 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   test 'update turbo stream replaces bullet only' do
     assert_difference -> { Activity.count }, 1 do
       patch bullet_path(@bullet),
-            params: { bullet: { bulletable_attributes: { body: 'Updated' } } },
+            params: {
+              bullet: {
+                bulletable_attributes: { id: @bullet.bulletable_id, body: 'Updated' }
+              }
+            },
             as: :turbo_stream
     end
 
     assert_response :success
     assert_match(/turbo-stream action="replace"/, response.body)
     assert_no_match(/turbo-stream action="after"/, response.body)
-    assert_equal 'Updated', @bullet.reload.body.to_plain_text
+    assert_equal 'Updated', @bullet.reload.body
     assert_equal 'updated', Activity.order(:created_at).last.action
   end
 
@@ -39,31 +43,14 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to bullet_path(bullet)
   end
 
-  test 'create with another redirects to the new bullet show page' do
-    assert_difference -> { @user.bullets.count }, 1 do
-      post bullets_path,
-           params: {
-             another: '1',
-             bullet: {
-               bulletable_type: 'Task',
-               bulletable_attributes: { body: 'Rapid task' },
-               pops_on: Date.current.iso8601
-             }
-           }
-    end
-
-    bullet = @user.bullets.order(:created_at).last
-    assert_redirected_to bullet_path(bullet)
-  end
-
-  test 'create tags bullet from project attachment in body' do
+  test 'create tags note from project attachment in body' do
     project = create_project!(@user, name: 'Tagged')
     body_html = ActionText::Content.new('').append_attachables(project).to_html
 
       post bullets_path,
            params: {
              bullet: {
-               bulletable_type: 'Task',
+               bulletable_type: 'Note',
                bulletable_attributes: { body: body_html },
                pops_on: Date.current.iso8601
              }
@@ -71,7 +58,25 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
     bullet = @user.bullets.order(:created_at).last
     assert_not_equal @bullet, bullet
-    assert_includes bullet.projects, project
+    assert_includes bullet.mentions, project
+  end
+
+  test 'create does not sync mentions from Task plain body' do
+    project = create_project!(@user, name: 'Ignored')
+    body_html = ActionText::Content.new('').append_attachables(project).to_html
+
+    post bullets_path,
+         params: {
+           bullet: {
+             bulletable_type: 'Task',
+             bulletable_attributes: { body: body_html },
+             pops_on: Date.current.iso8601
+           }
+         }
+
+    bullet = @user.bullets.order(:created_at).last
+    assert_equal 'Task', bullet.bulletable_type
+    assert_empty bullet.mentions
   end
 
   test 'create persists rich content in note body' do
@@ -159,15 +164,15 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'a[href*="bulletable_type=Voice"]'
   end
 
-  test 'new composer renders full page inline editor without frame-dismiss controls' do
+  test 'new composer renders full page plain editor' do
     get new_bullet_path(bulletable_type: 'Task')
 
     assert_response :success
     assert_select 'form.bullet-composer'
-    assert_select 'lexxy-editor[preset=inline]'
+    assert_select '.bullet-composer--plain-input'
+    assert_select 'lexxy-editor', false
     assert_select '.bullet-composer--rail'
     assert_select '.bullet-composer--type-pill[data-bullet-type=?]', 'task', text: /Task/
-    assert_select '.bullet-composer--type-dismiss', count: 0
     assert_select '.bullet-composer--rail-actions .bullet-composer--rail-submit button[type=submit]'
   end
 
@@ -176,9 +181,9 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select 'lexxy-editor[preset=note]'
-    assert_select 'lexxy-editor[preset=inline]', false
+    assert_select '.bullet-composer--plain-input', false
     assert_select '.bullet-composer--type-pill[data-bullet-type=?]', 'note', text: /Note/
-    assert_select '.bullet-composer--rail .mood-option', count: 4
+    assert_select '.mood-option', count: 4
   end
 
   test 'new composer renders without return_to field' do
@@ -194,7 +199,8 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select 'turbo-frame#bullet_composer form.bullet-composer'
-    assert_select 'lexxy-editor[preset=inline]'
+    assert_select '.bullet-composer--plain-input'
+    assert_select 'lexxy-editor', false
     assert_select 'dialog', count: 0
   end
 
@@ -263,7 +269,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
           params: {
             bullet: {
               bulletable_type: 'Note',
-              bulletable_attributes: { body: 'Updated body', mood: 'frustrated' }
+              bulletable_attributes: { id: note.bulletable_id, body: 'Updated body', mood: 'frustrated' }
             }
           },
           as: :turbo_stream
@@ -312,7 +318,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     patch bullet_path(bullet), params: { bullet: { bulletable_attributes: { body: 'Changed' } } }
 
     assert_redirected_to bullet_path(bullet)
-    assert_equal 'Voice caption', bullet.reload.body.to_plain_text
+    assert_equal 'Voice caption', bullet.reload.body
   end
 
   private

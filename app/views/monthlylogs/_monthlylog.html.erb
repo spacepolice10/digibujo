@@ -1,0 +1,7 @@
+<%# locals: (monthlylog:) %>
+<li id="<%= dom_id(monthlylog.bucket, :list_item) %>" class="layout--list-item">
+  <%= link_to monthlylog_path(monthlylog), data: { turbo_frame: "_top" }, class: "layout--list-item-link" do %>
+    <%= icon_tag(monthlylog.icon, colour: monthlylog.colour_variable) %>
+    <span class="layout--list-item-name"><%= monthlylog.name %></span>
+  <% end %>
+</li>

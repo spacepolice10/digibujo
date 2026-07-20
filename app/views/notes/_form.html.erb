@@ -1,0 +1,30 @@
+<%# locals: (bullet:, editing:) %>
+<%= render layout: "bullets/form", locals: { bullet:, editing: } do |fr, bulletable| %>
+  <%= fr.fields_for :bulletable, bulletable do |bf| %>
+    <%= bf.hidden_field :id if bulletable.persisted? %>
+    <%= bf.rich_text_area :body,
+          value: bulletable.body,
+          toolbar_id: "toolbar-note",
+          preset: "note",
+          placeholder: "Add markdown notes, files or images...",
+          autofocus: true do %>
+      <lexxy-prompt
+        trigger="#"
+        name="project"
+        src="<%= project_suggestions_path %>"
+        remote-filtering
+        supports-space-in-searches
+      ></lexxy-prompt>
+
+      <lexxy-prompt
+        trigger="@"
+        name="person"
+        src="<%= person_suggestions_path %>"
+        remote-filtering
+        supports-space-in-searches
+      ></lexxy-prompt>
+    <% end %>
+  <% end %>
+
+  <%= render "notes/toolbar", fr: fr, bulletable: bulletable %>
+<% end %>

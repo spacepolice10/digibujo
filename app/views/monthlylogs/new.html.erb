@@ -1,0 +1,16 @@
+<% content_for(:title) { "New monthly spread" } %>
+
+<div class="layout--container layout--container-md">
+  <div class="layout--header">
+    <div class="layout--header-actions">
+      <%= link_to home_path, class: "button--secondary", onclick: "if (history.length > 1) { event.preventDefault(); history.back(); }" do %>
+        <%= icon_tag("arrow-left") %>
+        Back
+      <% end %>
+    </div>
+    <h2>New monthly spread</h2>
+  </div>
+  <div class="layout--surface">
+    <%= render "form", monthlylog: @monthlylog, months: @months, occupied_months: @occupied_months %>
+  </div>
+</div>

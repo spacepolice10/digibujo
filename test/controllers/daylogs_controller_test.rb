@@ -6,6 +6,31 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @user = users(:one)
     sign_in_as @user
+    ensure_daylog!(@user)
+  end
+
+  test 'daylog without daylog shows create form' do
+    @user.daylog.bucket.destroy!
+    @user.reload
+
+    get daylog_path
+
+    assert_response :success
+    assert_match 'No daily log yet', response.body
+    assert_select "form[action=?]", daylog_path
+    assert_match 'Create daylog', response.body
+  end
+
+  test 'create provisions daylog and redirects' do
+    @user.daylog.bucket.destroy!
+    @user.reload
+
+    assert_difference -> { Daylog.where(user: @user).count }, 1 do
+      post daylog_path
+    end
+
+    assert_redirected_to daylog_path
+    assert_not_nil @user.reload.daylog
   end
 
   test 'daylog without date shows today' do
@@ -14,7 +39,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     get daylog_path
 
     assert_response :success
-    assert_match card.body.to_plain_text, response.body
+    assert_match card.name, response.body
   end
 
   test 'daylog with year month day shows that day' do
@@ -113,13 +138,19 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
                   )
   end
 
-  test 'root shows today daylog' do
-    card = @user.bullets.create!(bulletable: Task.new(body: 'Root today'), pops_on: Date.current)
-
+  test 'root path is home' do
     get root_path
 
     assert_response :success
-    assert_match card.body.to_plain_text, response.body
+  end
+
+  test 'daylog shows today bullets' do
+    card = @user.bullets.create!(bulletable: Task.new(body: 'Root today'), pops_on: Date.current)
+
+    get daylog_path
+
+    assert_response :success
+    assert_match card.name, response.body
   end
 
   test 'desktop daylog renders digibujo menu in header' do

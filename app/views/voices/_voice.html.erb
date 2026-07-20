@@ -1,0 +1,7 @@
+<%# locals: (bullet:) %>
+<%= render layout: "bullets/bullet", locals: { bullet: } do %>
+  <% unless bullet.voice.recording.attached? %>
+    <span class="bullet--content"><%= bullet.body %></span>
+  <% end %>
+  <%= render "voices/playback", bullet: bullet %>
+<% end %>

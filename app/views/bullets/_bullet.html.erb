@@ -1,11 +1,94 @@
-<%# locals: (bullet:, selected_date: nil) %>
+<%# locals: (bullet:) %>
 <%= tag.turbo_frame id: dom_id(bullet), class: "bullet",
       data: { bullet_type: bullet.bulletable_type.downcase,
               **(bullet.data_attributes) } do %>
-  <%= render "bullets/marker", bullet: bullet %>
-  <%= render "bullets/metadata", bullet: bullet, selected_date: selected_date %>
+  <% checkbox_id = dom_id(bullet, :select_checkbox) %>
+  <input
+    type="checkbox"
+    id="<%= checkbox_id %>"
+    value="<%= bullet.id %>"
+    data-bulk-menu-target="checkbox"
+    data-bulk-pinnable="<%= bullet.pinned? ? "pinned" : "unpinned" %>"
+    <% if bullet.completable? %>
+      data-bulk-completable="<%= bullet.completed? ? "completed" : "incomplete" %>"
+    <% end %>
+    data-action="bulk-menu#toggle"
+    class="utilities--sr-only"
+  >
+
+  <label
+    class="bullet--marker"
+    for="<%= checkbox_id %>"
+    aria-label="Select bullet"
+  >
+    <span aria-hidden="true">
+      <i
+        class="icon bullet--marker-type"
+        style="--icon-mask: var(--icon-<%= bullet.marker_icon.to_s.dasherize %>)"
+        aria-hidden="true"
+      ></i>
+      <span class="bullet--marker-select-indicator" aria-hidden="true"></span>
+    </span>
+  </label>
+
+  <label class="bullet--select-checkbox" for="<%= checkbox_id %>" aria-hidden="true"></label>
+
+  <% if bullet.collected_migration? || bullet.popped_migration? %>
+    <div>
+      <span>
+        <% if bullet.collected_migration? && (activity = bullet.migration_activity) %>
+          <% collected_hint_id = dom_id(bullet, :hint_collected) %>
+          <% collected_anchor = "--hint-#{bullet.id}-collected" %>
+          <%= link_to activity_path(activity),
+                class: "bullet--metadata-link",
+                data: { turbo_frame: "_top" },
+                interestfor: collected_hint_id,
+                style: "anchor-name: #{collected_anchor}",
+                aria: { label: "Collected" } do %>
+            <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+          <% end %>
+        <% end %>
+        <% if bullet.popped_migration? && (activity = bullet.migration_activity) %>
+          <% popped_hint_id = dom_id(bullet, :hint_popped) %>
+          <% popped_anchor = "--hint-#{bullet.id}-popped" %>
+          <%= link_to activity_path(activity),
+                class: "bullet--metadata-link",
+                data: { turbo_frame: "_top" },
+                interestfor: popped_hint_id,
+                style: "anchor-name: #{popped_anchor}",
+                aria: { label: "Rescheduled" } do %>
+            <i class="icon" style="--icon-mask: var(--icon-arrow-right)" aria-hidden="true"></i>
+          <% end %>
+        <% end %>
+      </span>
+      <% if bullet.collected_migration? %>
+        <% collected_hint_id = dom_id(bullet, :hint_collected) %>
+        <% collected_anchor = "--hint-#{bullet.id}-collected" %>
+        <div
+          id="<%= collected_hint_id %>"
+          class="hint"
+          popover="hint"
+          style="position-anchor: <%= collected_anchor %>"
+        >
+          <%= bullet.migration_hint %>
+        </div>
+      <% end %>
+      <% if bullet.popped_migration? %>
+        <% popped_hint_id = dom_id(bullet, :hint_popped) %>
+        <% popped_anchor = "--hint-#{bullet.id}-popped" %>
+        <div
+          id="<%= popped_hint_id %>"
+          class="hint"
+          popover="hint"
+          style="position-anchor: <%= popped_anchor %>"
+        >
+          <%= bullet.migration_hint %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
   <div class="bullet--body">
-    <%= render partial: bullet.bulletable.to_partial_body_path,
-               locals: { bullet: bullet, selected_date: selected_date } %>
+    <%= yield %>
   </div>
 <% end %>

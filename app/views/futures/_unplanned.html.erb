@@ -1,0 +1,14 @@
+<%# locals: (bullets:, future:) %>
+<div class="layout--surface future--bullets">
+  <p class="description">Those are your unplanned bullets for the future. Dump here your year goals, long terms thoughts, potential projects, etc.</p>
+  <%= render "bullets/composer/dock",
+        selected_date: nil,
+        bucket: future.bucket,
+        composer_id: "futures_bullets_composer" %>
+
+  <div id="futures_bullets_container">
+    <% bullets.each do |bullet| %>
+      <%= render_bullet(bullet) %>
+    <% end %>
+  </div>
+</div>

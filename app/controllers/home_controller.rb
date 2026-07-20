@@ -48,7 +48,8 @@ class HomeController < ApplicationController
   end
 
   def logs_records
-    Current.user.future_buckets.limit(5).to_a + Current.user.monthly_buckets.limit(5).to_a
+    Current.user.futures.order(period_from: :desc).limit(5).to_a +
+      Current.user.monthlylogs.order(period_from: :desc).limit(5).to_a
   end
 
   def collection_records
@@ -69,7 +70,7 @@ class HomeController < ApplicationController
 
   def published_records
     Current.user.published_entities
-           .includes(publishable: { bulletable: :rich_text_body })
+           .includes(publishable: :bulletable)
            .order(published_at: :desc)
            .limit(5)
   end

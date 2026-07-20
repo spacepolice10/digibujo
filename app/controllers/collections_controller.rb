@@ -14,13 +14,12 @@ class CollectionsController < ApplicationController
   end
 
   def create
-    @collection = Collection.new
+    @collection = Collection.new(description: collection_params[:description])
     @collection.build_bucket(
       user: Current.user,
       name: collection_params[:name],
       colour: collection_params[:colour],
-      icon: collection_params[:icon],
-      description: collection_params[:description]
+      icon: collection_params[:icon]
     )
 
     if @collection.save

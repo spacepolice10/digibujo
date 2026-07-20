@@ -9,6 +9,7 @@ export default class extends Controller {
     this.dismissConfirmElement = null
     this.dismissHint = null
     this.dismissHintId = `dismiss-confirm-${++dismissHintIdCounter}`
+
     window.addEventListener("beforeunload", this.beforeUnload, { signal: this.abortController.signal })
   }
 
@@ -32,12 +33,7 @@ export default class extends Controller {
   submitEnd(event) {
     if (!event.detail.success) return
 
-    if (event.detail.formSubmission?.submitter?.name == "another") {
-      this.resetForm()
-      return
-    }
-
-    this.dispatchRestore()
+    this.resetForm()
   }
 
   escape(event) {
@@ -56,30 +52,15 @@ export default class extends Controller {
     this.keepEditorFocus()
   }
 
-  inlineEnter(event) {
+  plainEnter(event) {
     if (event.key != "Enter") return
     if (event.defaultPrevented || event.isComposing) return
-
-    const form = this.form
-    if (!form) return
-
-    const editor = form.querySelector("lexxy-editor")
-    if (!editor?.contains(event.target)) return
-
-    const chordSubmit = event.metaKey || event.ctrlKey
-
-    if (chordSubmit) {
-      if (event.altKey) return
-    } else {
-      if (event.metaKey || event.ctrlKey || event.altKey) return
-      if (editor.getAttribute("preset") != "inline") return
-    }
+    if (event.altKey) return
+    if (event.shiftKey) return
 
     event.preventDefault()
     event.stopPropagation()
-
-    if (event.shiftKey) this.submitWithMakeAnother(event)
-    else this.submit(event)
+    this.submit(event)
   }
 
   editorInput() {
@@ -93,20 +74,10 @@ export default class extends Controller {
     if (!form) return
 
     const editor = form.querySelector("lexxy-editor")
-    if (editor.hasOpenPrompt) return
+    if (editor?.hasOpenPrompt) return
 
     event?.preventDefault()
     form.requestSubmit()
-  }
-
-  submitWithMakeAnother(event) {
-    if (event?.isComposing) return
-
-    const form = this.form
-    if (!form) return
-
-    event?.preventDefault()
-    form.requestSubmit(form.querySelector('button[name="another"]'))
   }
 
   cancel() {
@@ -176,7 +147,7 @@ export default class extends Controller {
 
     el.setAttribute("aria-describedby", this.dismissHintId)
     el.setAttribute("aria-keyshortcuts", "Escape")
-    el.querySelector("lexxy-editor")?.setAttribute("aria-describedby", this.dismissHintId)
+    this.contentField?.setAttribute("aria-describedby", this.dismissHintId)
     el.closest("dialog[open]")?.setAttribute("aria-describedby", this.dismissHintId)
   }
 
@@ -205,7 +176,7 @@ export default class extends Controller {
 
     el.removeAttribute("aria-describedby")
     el.removeAttribute("aria-keyshortcuts")
-    el.querySelector("lexxy-editor")?.removeAttribute("aria-describedby")
+    this.contentField?.removeAttribute("aria-describedby")
     el.closest("dialog")?.removeAttribute("aria-describedby")
     this.dismissConfirmElement = null
   }
@@ -216,16 +187,20 @@ export default class extends Controller {
   }
 
   resetForm() {
-    const editor = this.form?.querySelector("lexxy-editor")
-    if (editor) editor.value = ""
+    const field = this.contentField
+    if (field?.tagName == "LEXXY-EDITOR") {
+      field.value = ""
+    } else if (field) {
+      field.value = ""
+    }
 
     this.abortDismiss()
-    editor?.focus()
+    field?.focus()
     this.rebind()
   }
 
   keepEditorFocus() {
-    this.form?.querySelector("lexxy-editor")?.focus({ preventScroll: true })
+    this.contentField?.focus({ preventScroll: true })
   }
 
   rebind() {
@@ -237,8 +212,23 @@ export default class extends Controller {
     return this.element.querySelector("[data-composer-form]")
   }
 
+  get contentField() {
+    const form = this.form
+    if (!form) return null
+
+    return form.querySelector("lexxy-editor") ||
+      form.querySelector(".bullet-composer--plain-input") ||
+      form.querySelector("input[type='text'], textarea")
+  }
+
   get hasUnsavedContent() {
-    const editor = this.form?.querySelector("lexxy-editor")
-    return (editor?.toString().trim().length ?? 0) > 0
+    const field = this.contentField
+    if (!field) return false
+
+    if (field.tagName == "LEXXY-EDITOR") {
+      return (field.toString?.().trim().length ?? 0) > 0
+    }
+
+    return (field.value?.trim().length ?? 0) > 0
   }
 }

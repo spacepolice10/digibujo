@@ -13,6 +13,6 @@ module Bucket::Searchable
   end
 
   def search_body
-    [name, description].compact.join(' ')
+    [name, bucketable.try(:description)].compact.join(' ')
   end
 end

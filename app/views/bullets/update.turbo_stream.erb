@@ -1,1 +1,3 @@
-<%= turbo_stream.replace_all @bullet %>
+<%= turbo_stream.replace_all @bullet do %>
+  <%= render_bullet(@bullet) %>
+<% end %>

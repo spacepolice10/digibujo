@@ -12,6 +12,6 @@ class EventTest < ActiveSupport::TestCase
   end
 
   test 'permitted bullet attributes include date fields' do
-    assert_equal %i[starts_date ends_date], Event.permitted_bullet_attributes
+    assert_equal %i[id body starts_date ends_date], Event.permitted_bullet_attributes
   end
 end

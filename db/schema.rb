@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_14_163815) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_20_150000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -79,7 +79,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_14_163815) do
     t.string "bucketable_type", null: false
     t.string "colour"
     t.datetime "created_at", null: false
-    t.text "description"
     t.string "icon"
     t.string "name", null: false
     t.boolean "pinned", default: false, null: false
@@ -101,7 +100,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_14_163815) do
   end
 
   create_table "bullets", force: :cascade do |t|
-    t.integer "bucket_id"
+    t.integer "bucket_id", null: false
     t.integer "bulletable_id", null: false
     t.string "bulletable_type", null: false
     t.datetime "created_at", null: false
@@ -120,19 +119,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_14_163815) do
 
   create_table "collections", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.text "description"
     t.datetime "updated_at", null: false
   end
 
+  create_table "daylogs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_daylogs_on_user_id", unique: true
+  end
+
   create_table "events", force: :cascade do |t|
+    t.text "body", default: "", null: false
     t.date "ends_date"
     t.date "starts_date"
   end
 
-  create_table "future_buckets", force: :cascade do |t|
+  create_table "futures", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.date "period_from", null: false
+    t.date "period_to", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index ["user_id"], name: "index_future_buckets_on_user_id"
+    t.index ["user_id", "period_from"], name: "index_futures_on_user_id_and_period_from", unique: true
+    t.index ["user_id"], name: "index_futures_on_user_id"
   end
 
   create_table "login_codes", force: :cascade do |t|
@@ -155,16 +166,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_14_163815) do
     t.index ["user_id"], name: "index_mentions_on_user_id"
   end
 
-  create_table "monthly_buckets", force: :cascade do |t|
+  create_table "monthlylogs", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.integer "future_bucket_id", null: false
     t.date "period_from"
     t.date "period_to"
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index ["future_bucket_id"], name: "index_monthly_buckets_on_future_bucket_id"
-    t.index ["user_id", "period_from"], name: "index_monthly_buckets_on_user_id_and_period_from", unique: true
-    t.index ["user_id"], name: "index_monthly_buckets_on_user_id"
+    t.index ["user_id", "period_from"], name: "index_monthlylogs_on_user_id_and_period_from", unique: true
+    t.index ["user_id"], name: "index_monthlylogs_on_user_id"
   end
 
   create_table "notes", force: :cascade do |t|
@@ -234,6 +243,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_14_163815) do
   end
 
   create_table "tasks", force: :cascade do |t|
+    t.text "body", default: "", null: false
     t.boolean "completed", default: false, null: false
     t.datetime "completed_at"
   end
@@ -284,6 +294,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_14_163815) do
   end
 
   create_table "voices", force: :cascade do |t|
+    t.text "body", default: "", null: false
     t.datetime "created_at", null: false
     t.integer "duration_seconds"
     t.datetime "updated_at", null: false
@@ -298,11 +309,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_14_163815) do
   add_foreign_key "bullet_mentions", "mentions"
   add_foreign_key "bullets", "buckets"
   add_foreign_key "bullets", "users"
-  add_foreign_key "future_buckets", "users"
+  add_foreign_key "daylogs", "users"
+  add_foreign_key "futures", "users"
   add_foreign_key "login_codes", "users"
   add_foreign_key "mentions", "users"
-  add_foreign_key "monthly_buckets", "future_buckets"
-  add_foreign_key "monthly_buckets", "users"
+  add_foreign_key "monthlylogs", "users"
   add_foreign_key "pinned_entities", "users"
   add_foreign_key "published_entities", "users"
   add_foreign_key "search_records", "users"

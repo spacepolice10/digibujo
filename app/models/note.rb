@@ -3,6 +3,8 @@
 class Note < ApplicationRecord
   include Bulletable
 
+  has_rich_text :body
+
   enum :mood, { positive: 0, negative: 1, inspired: 2, frustrated: 3 }
 
   MOOD_MARKERS = {
@@ -12,10 +14,6 @@ class Note < ApplicationRecord
     frustrated: '😣'
   }.freeze
 
-  def temporal?                = false
-  def completable?             = false
-  def starts_date              = nil
-  def ends_date                = nil
   def marker_icon              = :text
   def icon                     = :text
   def colour                   = 'gold'
@@ -38,14 +36,9 @@ class Note < ApplicationRecord
     MOOD_MARKERS[mood&.to_sym]
   end
 
-  def preset = 'note'
-  def permitted_attachment_types = nil
-  def placeholder = 'Add markdown notes, files or images...'
-  def to_toolbar_path = 'notes/toolbar'
-
   def data_attributes
     mood.present? ? { note_mood: mood } : {}
   end
 
-  def self.permitted_bullet_attributes = %i[body mood]
+  def self.permitted_bullet_attributes = %i[id body mood]
 end

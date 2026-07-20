@@ -1,49 +1,46 @@
-<% bulletable = editing ? bullet.bulletable : bullet.bulletable_type.constantize.new %>
+<%# locals: (bullet:, editing:, stimulus_controller: nil, stimulus_actions: nil) %>
+<% bulletable = bullet.bulletable || bullet.bulletable_type.constantize.new %>
+<%
+  controllers = [ "composer", stimulus_controller ].compact
+  actions = [
+    "keydown.enter+meta->composer#submit",
+    "keydown.enter+ctrl->composer#submit",
+    stimulus_actions,
+    "turbo:submit-end->composer#submitEnd",
+    "keydown.esc@document->composer#escape:capture"
+  ].compact
+%>
 
 <%= form_with model: bullet, class: "bullet-composer", data: {
   composer_form: true,
-  controller: [bulletable.stimulus_controller, "composer"].compact.join(" "),
-  action: [
-    bulletable.stimulus_actions,
-    "turbo:submit-end->composer#submitEnd",
-    "keydown->composer#inlineEnter:capture",
-    "input->composer#editorInput",
-    "keydown.esc@document->composer#escape:capture"
-  ].compact.join(" ")
-}.compact do |fr| %>
+  controller: controllers.join(" "),
+  action: actions.join(" ")
+} do |fr| %>
   <%= fr.hidden_field :pops_on, value: bullet.pops_on %>
   <%= fr.hidden_field :bucket_id, value: bullet.bucket_id %>
   <%= fr.hidden_field :bulletable_type %>
-  <%= fr.fields_for :bulletable, bulletable do |bf| %>
-    <%= bf.rich_text_area :body, value: bulletable.body, toolbar_id: bulletable.toolbar_id, preset: bulletable.preset, autofocus: bulletable.focusing_on_render?, placeholder: bulletable.placeholder, **bulletable.editor_html_options do %>
-      <lexxy-prompt
-        trigger="#"
-        name="project"
-        src="<%= project_suggestions_path %>"
-        remote-filtering
-        supports-space-in-searches
-      ></lexxy-prompt>
 
-      <lexxy-prompt
-        trigger="@"
-        name="person"
-        src="<%= person_suggestions_path %>"
-        remote-filtering
-        supports-space-in-searches
-      ></lexxy-prompt>
-    <% end %>
+  <% if bullet.errors.any? || bulletable.errors.any? %>
+    <div class="form--errors" role="alert">
+      <ul>
+        <% (bullet.errors.full_messages + bulletable.errors.full_messages).uniq.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
   <% end %>
 
-  <div class="bullet-composer--rail">
+  <%= yield fr, bulletable %>
 
+  <div class="bullet-composer--rail">
     <button
-    type="button"
-    class="button--tertiary button--icon-subtle bullet-composer--type-dismiss"
-    data-action="composer#cancel"
-    aria-label="Close composer"
-  >
-    <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
-  </button>
+      type="button"
+      class="button--tertiary button--icon-subtle bullet-composer--type-dismiss"
+      data-action="composer#cancel"
+      aria-label="Close composer"
+    >
+      <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+    </button>
     <span
       class="bullet-composer--type-pill"
       data-bullet-type="<%= bullet.bulletable_type.downcase %>"
@@ -51,10 +48,6 @@
     >
       <%= bullet.bulletable_type %>
     </span>
-
-    <%= render bulletable.to_toolbar_path, fr: fr, bullet: bullet, bulletable: bulletable if bulletable.to_toolbar_path.present? %>
-
-    <div id="toolbar_id"></div>
 
     <div class="bullet-composer--rail-actions">
       <div class="bullet-composer--rail-submit">
@@ -66,14 +59,6 @@
             style="--icon-mask: var(--icon-arrow-up)"
             aria-hidden="true"
           ></i>
-        <% end %>
-
-        <%= fr.button type: "submit",
-                name: "another",
-                value: "1",
-                class: "button--tertiary",
-                aria: { label: "Save and add another" } do %>
-          + one more
         <% end %>
       </div>
     </div>

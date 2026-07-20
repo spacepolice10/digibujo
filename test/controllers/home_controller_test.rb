@@ -8,7 +8,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   setup do
     @user = users(:one)
     @user.create_settings! unless @user.settings
-    ensure_future_bucket!(@user)
+    ensure_future!(@user)
     sign_in_as @user
   end
 
@@ -69,7 +69,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   test 'show lists projects and collections' do
     create_project!(@user, name: 'alpha')
     create_collection!(@user, name: 'reading')
-    create_monthly_bucket!(@user, name: 'june')
+    create_monthlylog!(@user, name: 'june')
 
     get home_path
 
@@ -93,7 +93,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   test 'show respects collapsed section preferences' do
     create_project!(@user, name: 'alpha')
     create_collection!(@user, name: 'reading')
-    create_monthly_bucket!(@user, name: 'june')
+    create_monthlylog!(@user, name: 'june')
     @user.settings.update!(projects_expanded: false)
 
     get home_path
@@ -114,7 +114,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   test 'collapsing a section persists and is reflected on next page load' do
     create_project!(@user, name: 'alpha')
     create_collection!(@user, name: 'reading')
-    create_monthly_bucket!(@user, name: 'june')
+    create_monthlylog!(@user, name: 'june')
     post home_collapse_section_path('projects')
     assert_response :ok
     assert_equal false, @user.reload.settings.projects_expanded?
@@ -127,7 +127,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   test 'expanding a collapsed section persists and is reflected on next page load' do
     create_project!(@user, name: 'alpha')
     create_collection!(@user, name: 'reading')
-    create_monthly_bucket!(@user, name: 'june')
+    create_monthlylog!(@user, name: 'june')
     @user.settings.update!(projects_expanded: false)
 
     post home_expand_section_path('projects')

@@ -1,6 +1,0 @@
-<% if @failed_bullet %>
-  <%= turbo_stream.update "toasts" do %>
-    <% messages = @failed_bullet.respond_to?(:errors) && @failed_bullet.errors.any? ? @failed_bullet.errors.full_messages : ["Invalid date"] %>
-    <%= render "shared/toasts", type: "errmsg", messages: messages %>
-  <% end %>
-<% end %>

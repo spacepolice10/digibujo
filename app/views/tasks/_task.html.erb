@@ -1,0 +1,4 @@
+<%# locals: (bullet:) %>
+<%= render layout: "bullets/bullet", locals: { bullet: } do %>
+  <span class="bullet--content"><%= bullet.excerpt %></span>
+<% end %>

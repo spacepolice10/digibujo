@@ -20,14 +20,19 @@ Rails.application.routes.draw do
   resource :support, only: :show, controller: 'support'
 
   # --- Logs ---
-  resource :daylog, only: :show, controller: 'daylogs'
+  resource :daylog, only: %i[show create], controller: 'daylogs'
 
-  get 'monthly_bucket', to: 'monthly_buckets#current', as: :current_monthly_bucket
+  get 'monthlylog', to: 'monthlylogs#current', as: :current_monthlylog
+  get 'monthly_bucket', to: redirect('/monthlylog')
 
-  resources :future_buckets, only: :show
-  get 'future_buckets/:id/unplanned', to: 'future_buckets#unplanned', as: :unplanned
-  get 'future_buckets/:id/monthly_grid', to: 'future_buckets#monthly_grid', as: :monthly_grid
-  resources :monthly_buckets
+  resources :futures, only: %i[show new create]
+  get 'futures/:id/unplanned', to: 'futures#unplanned', as: :unplanned
+  get 'futures/:id/monthly_grid', to: 'futures#monthly_grid', as: :monthly_grid
+
+  resources :monthlylogs, only: %i[new create show]
+
+  get 'future_buckets/:id', to: redirect('/futures/%{id}')
+  get 'monthly_buckets/:id', to: redirect('/monthlylogs/%{id}')
 
   # --- Tags ---
   scope 'projects', module: :projects, as: :projects do
@@ -51,9 +56,9 @@ Rails.application.routes.draw do
   # --- Bullets ---
   scope 'bullets', module: :bullets do
     resource :pin
-    resource :pop
+    resource :postpone, only: %i[new create]
     resource :archive
-    resource :collect
+    resource :collect, only: %i[new create]
     resource :publish
     resource :mark_as_reviewed
   end

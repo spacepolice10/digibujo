@@ -10,9 +10,10 @@ class User < ApplicationRecord
   has_many :bullets, dependent: :destroy
   has_many :activities, dependent: :destroy
   has_many :buckets, dependent: :destroy
-  has_many :future_buckets, dependent: :destroy
+  has_many :futures, dependent: :destroy
+  has_many :monthlylogs, dependent: :destroy
+  has_one :daylog, dependent: :destroy
   has_many :collections, through: :buckets, source: :bucketable, source_type: 'Collection'
-  has_many :monthly_buckets, through: :buckets, source: :bucketable, source_type: 'MonthlyBucket'
   has_many :mentions, dependent: :destroy
   has_many :pinned_entities, dependent: :destroy
   has_many :published_entities, dependent: :destroy
@@ -28,7 +29,18 @@ class User < ApplicationRecord
   end
 
   def needs_onboarding?
-    future_buckets.none?
+    !buckets.exists?(bucketable_type: 'Collection', name: Onboarding::LOOSE_NOTES_NAME.downcase)
+  end
+
+  # Ensures a single Daylog bucket exists and returns it.
+  def ensure_daylog_bucket!(_date = Date.current)
+    if (existing = daylog)
+      return existing.bucket
+    end
+
+    record = create_daylog!
+    buckets.create!(bucketable: record, name: Onboarding::DAYLOG_NAME, icon: 'calendar')
+    record.bucket
   end
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
