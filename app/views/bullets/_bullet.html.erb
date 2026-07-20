@@ -33,7 +33,7 @@
 
   <label class="bullet--select-checkbox" for="<%= checkbox_id %>" aria-hidden="true"></label>
 
-  <% if bullet.collected_migration? || bullet.popped_migration? %>
+  <% if bullet.collected_migration? || bullet.rescheduled_migration? %>
     <div>
       <span>
         <% if bullet.collected_migration? && (activity = bullet.migration_activity) %>
@@ -48,14 +48,14 @@
             <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
           <% end %>
         <% end %>
-        <% if bullet.popped_migration? && (activity = bullet.migration_activity) %>
-          <% popped_hint_id = dom_id(bullet, :hint_popped) %>
-          <% popped_anchor = "--hint-#{bullet.id}-popped" %>
+        <% if bullet.rescheduled_migration? && (activity = bullet.migration_activity) %>
+          <% rescheduled_hint_id = dom_id(bullet, :hint_rescheduled) %>
+          <% rescheduled_anchor = "--hint-#{bullet.id}-rescheduled" %>
           <%= link_to activity_path(activity),
                 class: "bullet--metadata-link",
                 data: { turbo_frame: "_top" },
-                interestfor: popped_hint_id,
-                style: "anchor-name: #{popped_anchor}",
+                interestfor: rescheduled_hint_id,
+                style: "anchor-name: #{rescheduled_anchor}",
                 aria: { label: "Rescheduled" } do %>
             <i class="icon" style="--icon-mask: var(--icon-arrow-right)" aria-hidden="true"></i>
           <% end %>
@@ -73,14 +73,14 @@
           <%= bullet.migration_hint %>
         </div>
       <% end %>
-      <% if bullet.popped_migration? %>
-        <% popped_hint_id = dom_id(bullet, :hint_popped) %>
-        <% popped_anchor = "--hint-#{bullet.id}-popped" %>
+      <% if bullet.rescheduled_migration? %>
+        <% rescheduled_hint_id = dom_id(bullet, :hint_rescheduled) %>
+        <% rescheduled_anchor = "--hint-#{bullet.id}-rescheduled" %>
         <div
-          id="<%= popped_hint_id %>"
+          id="<%= rescheduled_hint_id %>"
           class="hint"
           popover="hint"
-          style="position-anchor: <%= popped_anchor %>"
+          style="position-anchor: <%= rescheduled_anchor %>"
         >
           <%= bullet.migration_hint %>
         </div>

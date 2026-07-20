@@ -8,20 +8,20 @@ class ActivityTest < ActiveSupport::TestCase
     @bullet = @user.bullets.create!(bulletable: Task.new(body: 'Task'))
   end
 
-  test 'sweep deletes activities older than retention' do
+  test 'sweep job deletes activities older than retention' do
     stale = @bullet.record_activity!('updated')
     stale.update_column(:created_at, (Activity::RETENTION_DAYS + 1).days.ago)
 
     assert_difference -> { Activity.count }, -1 do
-      Activity.sweep
+      SweepActivityLogsJob.perform_now
     end
   end
 
-  test 'sweep keeps recent activities' do
+  test 'sweep job keeps recent activities' do
     @bullet.record_activity!('updated')
 
     assert_no_difference -> { Activity.count } do
-      Activity.sweep
+      SweepActivityLogsJob.perform_now
     end
   end
 end

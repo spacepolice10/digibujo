@@ -78,7 +78,7 @@ module Bullets
       card.reload
       assert_equal @future.bucket.id, card.bucket_id
       assert_nil card.pops_on
-      assert_equal 'postponed', card.last_migration['action']
+      assert_equal 'rescheduled', card.last_migration['action']
     end
 
     test 'create requires bucket_id' do

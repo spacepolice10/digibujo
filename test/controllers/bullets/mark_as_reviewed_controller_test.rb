@@ -17,7 +17,7 @@ class Bullets::MarkAsReviewedControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to review_path(from: @today.iso8601, to: @today.iso8601)
     assert in_review.reload.migrated?
-    assert_equal 'acknowledged', in_review.last_migration['action']
+    assert_equal({}, in_review.last_migration)
 
     follow_redirect!
     assert_select '#review-amount-in-review', text: '0'

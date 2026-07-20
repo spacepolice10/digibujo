@@ -2,7 +2,6 @@
 
 class Task < ApplicationRecord
   include Bulletable
-  include PlainBodyBulletable
 
   def temporal? = true
   def completable?   = true
@@ -16,7 +15,8 @@ class Task < ApplicationRecord
 
   def complete!
     update!(completed: true, completed_at: Time.current)
-    bullet.mark_migration!(action: 'completed', pops_on: bullet.pops_on)
+    bullet.update!(migrated_at: Time.current)
+    bullet.record_activity!('completed')
     bullet.forget_search_selections!
   end
 

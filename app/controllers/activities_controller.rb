@@ -2,8 +2,7 @@
 
 class ActivitiesController < ApplicationController
   def show
-    @activity = Current.user.activities.includes(subject: :bulletable).find(params[:id])
-    @history = @activity.subject_history if @activity.bullet_subject?
+    @activity = Current.user.activities.includes(:subject).find(params[:id])
   end
 
   def index

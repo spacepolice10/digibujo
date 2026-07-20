@@ -2,7 +2,6 @@
 
 class Event < ApplicationRecord
   include Bulletable
-  include PlainBodyBulletable
 
   def temporal? = true
   def starts_date  = self[:starts_date]

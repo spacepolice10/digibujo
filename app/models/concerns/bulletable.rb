@@ -11,8 +11,8 @@ module Bulletable
   def completable?     = false
   def starts_date      = nil
   def ends_date        = nil
-  def name             = 'Untitled'
-  def excerpt          = 'Untitled'
+  def name             = body.to_s.strip.presence || 'Untitled'
+  def excerpt          = body.to_s.strip.presence || 'Untitled'
   def long?            = false
   def marker_icon      = :line_dashed
   def completed?       = false

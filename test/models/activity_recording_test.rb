@@ -7,7 +7,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
     @user = users(:one)
   end
 
-  test 'complete records completed with migration metadata' do
+  test 'complete records completed activity and leaves inbox' do
     bullet = @user.bullets.create!(bulletable: Task.new(body: 'Task'), pops_on: Date.current)
     task = bullet.bulletable
 
@@ -17,9 +17,10 @@ class ActivityRecordingTest < ActiveSupport::TestCase
 
     activity = Activity.order(:created_at).last
     assert_equal 'completed', activity.action
-    assert_equal 'completed', activity.metadata['action']
     assert_equal bullet, activity.subject
     assert_equal @user.id, activity.user_id
+    assert bullet.reload.migrated?
+    assert_equal({}, bullet.last_migration)
   end
 
   test 'uncomplete records uncompleted' do
@@ -87,7 +88,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
     assert_equal 'project_mentioned', Activity.order(:created_at).last.action
   end
 
-  test 'postpone records postponed when moving to another day with migration metadata' do
+  test 'postpone records rescheduled when moving to another day with migration metadata' do
     bullet = @user.bullets.create!(bulletable: Event.new(body: 'Event'), pops_on: Date.current)
     daylog = Onboarding.ensure_daylog_bucket!(@user)
 
@@ -96,11 +97,11 @@ class ActivityRecordingTest < ActiveSupport::TestCase
     end
 
     activity = Activity.order(:created_at).last
-    assert_equal 'postponed', activity.action
-    assert_equal 'postponed', activity.metadata['action']
+    assert_equal 'rescheduled', activity.action
+    assert_equal 'rescheduled', activity.metadata['action']
   end
 
-  test 'postpone records postponed' do
+  test 'postpone records rescheduled' do
     bullet = @user.bullets.create!(bulletable: Task.new(body: 'Later'))
     daylog = Onboarding.ensure_daylog_bucket!(@user)
 
@@ -108,6 +109,6 @@ class ActivityRecordingTest < ActiveSupport::TestCase
       bullet.postpone!(bucket: daylog, pops_on: Date.current + 3)
     end
 
-    assert_equal 'postponed', Activity.order(:created_at).last.action
+    assert_equal 'rescheduled', Activity.order(:created_at).last.action
   end
 end

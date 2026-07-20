@@ -2,6 +2,6 @@
 
 class SweepActivityLogsJob < ApplicationJob
   def perform
-    Activity.sweep
+    Activity.where(created_at: ...Activity::RETENTION_DAYS.days.ago).delete_all
   end
 end

@@ -51,9 +51,8 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     assert_match 'No recent activity', response.body
   end
 
-  test 'show renders postponed activity with daylog links and history' do
+  test 'show renders rescheduled activity with daylog links' do
     bullet = @user.bullets.create!(bulletable: Task.new(body: 'Buy milk'), pops_on: Date.current)
-    bullet.record_activity!('updated')
     bullet.postpone!(bucket: Onboarding.ensure_daylog_bucket!(@user), pops_on: Date.current + 2.days)
     activity = Activity.order(:created_at).last
 
@@ -61,11 +60,10 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_match 'Buy milk', response.body
-    assert_match 'Moved from', response.body
+    assert_match 'Moved', response.body
     assert_select 'a[href=?]', daylog_path(date: Date.current.iso8601)
     assert_select 'a[href=?]', daylog_path(date: (Date.current + 2.days).iso8601)
-    assert_select '.activity--history-item', count: 1
-    assert_match 'Updated', response.body
+    assert_no_select '.activity--history'
   end
 
   test 'show renders collected activity with bucket link' do

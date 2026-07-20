@@ -3,7 +3,6 @@
 # Audio-backed bulletable type for short voice memos.
 class Voice < ApplicationRecord
   include Bulletable
-  include PlainBodyBulletable
 
   DURATION_SECONDS = 60
 

@@ -4,14 +4,8 @@
   class="activity--item"
 >
   <%= link_to activity_path(activity), class: "activity--feed-item", data: { turbo_frame: "_top" } do %>
-    <%= icon_tag(activity.icon, colour: activity.colour) %>
     <p class="activity--detail utilities--line-clamp-1">
-      <%= activity.detail %>,
-      <time class="activity--time" datetime="<%= activity.created_at.to_fs(:db) %>">
-        <span class="activity--time-relative">
-          <%= time_ago_in_words(activity.created_at) %> ago
-        </span>
-      </time>
+      <%= activity_sentence(activity, relative: true, linked: false) %>
     </p>
   <% end %>
 </div>
