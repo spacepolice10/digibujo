@@ -10,10 +10,10 @@ class BucketsControllerTest < ActionDispatch::IntegrationTest
 
   test 'show loads bucket bullets for footer popover' do
     collection = create_collection!(@user, name: 'bucket list')
-    @user.bullets.create!(
+    create_bullet!(@user,
       bulletable: Task.new(body: 'In bucket'),
       bucket: collection.bucket,
-      pops_on: Date.current
+      pops_on: nil
     )
 
     get bucket_path(collection.bucket), headers: { 'Turbo-Frame' => dom_id(collection.bucket, :footer_bullets) }

@@ -4,6 +4,6 @@
         pagination_link_path: ->(next_param) { listing.path(page: next_param) }
       } do %>
   <% page.records.each do |bullet| %>
-    <%= render_bullet(bullet) %>
+    <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
   <% end %>
 <% end %>

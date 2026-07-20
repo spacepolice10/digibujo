@@ -1,0 +1,19 @@
+<%# locals: (date:, entity:) %>
+<% if entity %>
+  <%= button_to daylog_mood_entity_path(date: date.iso8601),
+        method: :delete,
+        class: "button--tertiary",
+        form: { data: { turbo: true } } do %>
+    <%= entity.marker %>
+  <% end %>
+<% else %>
+  <% Daylog::MoodEntity::MOOD_MARKERS.each do |mood, emoji| %>
+    <%= button_to daylog_mood_entity_path,
+          method: :post,
+          params: { date: date.iso8601, mood: mood },
+          class: "button--tertiary",
+          form: { data: { turbo: true } } do %>
+      <%= emoji %>
+    <% end %>
+  <% end %>
+<% end %>

@@ -8,15 +8,15 @@ module Collections
       @user = users(:one)
       sign_in_as @user
       @collection = create_collection!(@user, name: 'Reading List')
-      @first = @user.bullets.create!(
-        bulletable: Task.create!,
-        body: 'First bullet',
-        bucket: @collection.bucket
+      @first = create_bullet!(@user,
+        bulletable: Task.new(body: 'First bullet'),
+        bucket: @collection.bucket,
+        pops_on: nil
       )
-      @second = @user.bullets.create!(
-        bulletable: Note.create!,
-        body: 'Second bullet',
-        bucket: @collection.bucket
+      @second = create_bullet!(@user,
+        bulletable: Note.new(body: 'Second bullet'),
+        bucket: @collection.bucket,
+        pops_on: nil
       )
     end
 

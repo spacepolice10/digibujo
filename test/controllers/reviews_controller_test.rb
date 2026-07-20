@@ -12,15 +12,13 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show lists timeline bullets in period' do
-    in_review = @user.bullets.create!(
-      bulletable: Task.create!,
-      body: 'Needs review',
+    in_review = create_bullet!(@user,
+      bulletable: Task.new(body: 'Needs review'),
       pops_on: @today
     )
     collection = create_collection!(@user, name: 'Inbox')
-    @user.bullets.create!(
-      bulletable: Note.create!,
-      body: 'In bucket',
+    create_bullet!(@user,
+      bulletable: Note.new(body: 'In bucket'),
       pops_on: nil,
       bucket_id: collection.bucket.id
     )
@@ -34,7 +32,7 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show desktop renders three-column workspace with lazy frames' do
-    @user.bullets.create!(bulletable: Task.new(body: 'Review me'), pops_on: @today)
+    create_bullet!(@user, bulletable: Task.new(body: 'Review me'), pops_on: @today)
     create_collection!(@user, name: 'Work')
 
     get review_path(from: @today.iso8601, to: @today.iso8601)
@@ -48,7 +46,7 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show mobile renders inbox list with bulk menu' do
-    @user.bullets.create!(bulletable: Task.new(body: 'Mobile review'), pops_on: @today)
+    create_bullet!(@user, bulletable: Task.new(body: 'Mobile review'), pops_on: @today)
 
     get review_path(from: @today.iso8601, to: @today.iso8601), headers: { 'User-Agent' => MOBILE_UA }
 
@@ -64,9 +62,9 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show defaults to the last seven days through today' do
-    @user.bullets.create!(bulletable: Task.new(body: 'Today task'), pops_on: @today)
-    @user.bullets.create!(bulletable: Note.new(body: 'Earlier this week'), pops_on: @today - 5.days)
-    @user.bullets.create!(bulletable: Event.new(body: 'Too old'), pops_on: @today - 8.days)
+    create_bullet!(@user, bulletable: Task.new(body: 'Today task'), pops_on: @today)
+    create_bullet!(@user, bulletable: Note.new(body: 'Earlier this week'), pops_on: @today - 5.days)
+    create_bullet!(@user, bulletable: Event.new(body: 'Too old'), pops_on: @today - 8.days)
 
     get review_path
 
@@ -77,14 +75,14 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show excludes archived migrated and unplanned bullets from inbox' do
-    @user.bullets.create!(bulletable: Task.new(body: 'In review'), pops_on: @today)
-    archived = @user.bullets.create!(bulletable: Task.new(body: 'Archived'), pops_on: @today)
+    create_bullet!(@user, bulletable: Task.new(body: 'In review'), pops_on: @today)
+    archived = create_bullet!(@user, bulletable: Task.new(body: 'Archived'), pops_on: @today)
     archived.archive!
-    migrated = @user.bullets.create!(bulletable: Task.new(body: 'Migrated'), pops_on: @today)
-    migrated.postpone!(bucket: Onboarding.ensure_daylog_bucket!(@user), pops_on: @today + 1.day)
+    migrated = create_bullet!(@user, bulletable: Task.new(body: 'Migrated'), pops_on: @today)
+    migrated.postpone!(bucket: ensure_daylog!(@user), pops_on: @today + 1.day)
     migrated.update!(pops_on: @today)
     collection = create_collection!(@user, name: 'park')
-    @user.bullets.create!(
+    create_bullet!(@user,
       bulletable: Task.new(body: 'Unplanned'),
       bucket_id: collection.bucket.id,
       pops_on: nil

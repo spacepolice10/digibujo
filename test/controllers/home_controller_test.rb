@@ -13,9 +13,9 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show lists published bullets in section' do
-    published = @user.bullets.create!(bulletable: Note.new(body: 'Public note'))
+    published = create_bullet!(@user, bulletable: Note.new(body: 'Public note'))
     published.publish!
-    @user.bullets.create!(bulletable: Note.new(body: 'Private note'))
+    create_bullet!(@user, bulletable: Note.new(body: 'Private note'))
 
     get home_path
 
@@ -28,7 +28,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
   test 'show published section links to index when more than eight published bullets' do
     9.times do |index|
-      bullet = @user.bullets.create!(bulletable: Note.new(body: "Published #{index}"))
+      bullet = create_bullet!(@user, bulletable: Note.new(body: "Published #{index}"))
       bullet.publish!
     end
 

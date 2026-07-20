@@ -24,14 +24,6 @@ class User < ApplicationRecord
     settings || create_settings!
   end
 
-  def active_collections
-    collections.merge(Bucket.active).order('buckets.name')
-  end
-
-  def needs_onboarding?
-    !buckets.exists?(bucketable_type: 'Collection', name: Onboarding::LOOSE_NOTES_NAME.downcase)
-  end
-
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
   validates :email_address, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }

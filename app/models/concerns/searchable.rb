@@ -50,7 +50,7 @@ module Searchable
   end
 
   def search_record_body
-    search_body&.truncate_bytes(Search::Record::SEARCH_CONTENT_SIZE, omission: "")
+    search_body&.truncate_bytes(Search::Record::SEARCH_CONTENT_SIZE, omission: '')
   end
 
   def searchable?
@@ -62,7 +62,7 @@ module Searchable
   end
 
   def search_body
-    [ try(:name), try(:description), try(:body) ].compact.join(" ")
+    [try(:name), try(:description), try(:body)].compact.join(' ')
   end
 
   def search_user_id

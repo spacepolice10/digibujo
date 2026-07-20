@@ -8,8 +8,10 @@ module Bullets
     before_action :set_return_to, only: :new
 
     def new
-      @collects_q = Collection.sanitized_name_query(params[:q])
-      @collections, @collections_page = collectables_page(Current.user.active_collections)
+      @collects_q = params[:q].to_s.strip.presence
+      @collections, @collections_page = collectables_page(
+        Current.user.collections.merge(Bucket.active.matching_name(params[:q])).order('buckets.name')
+      )
 
       respond_to do |format|
         format.html
@@ -47,10 +49,8 @@ module Bullets
     end
 
     def collectables_page(scope)
-      page = GearedPagination::Recordset.new(
-        scope.matching_bucket_name(@collects_q),
-        per_page: [8, 16, 24]
-      ).page(params[:collections_page])
+      page = GearedPagination::Recordset.new(scope, per_page: [8, 16, 24])
+                    .page(params[:collections_page])
       [page.records, page]
     end
 

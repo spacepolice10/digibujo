@@ -5,7 +5,7 @@ require 'test_helper'
 class MigratableTest < ActiveSupport::TestCase
   setup do
     @user = users(:one)
-    @bullet = @user.bullets.create!(bulletable: Task.new(body: 'Task'), pops_on: Date.current)
+    @bullet = create_bullet!(@user, bulletable: Task.new(body: 'Task'), pops_on: Date.current)
   end
 
   test 'mark_migration! sets migrated_at and last_migration' do
@@ -39,7 +39,7 @@ class MigratableTest < ActiveSupport::TestCase
   end
 
   test 'postpone! with date change marks rescheduled migration' do
-    daylog = Onboarding.ensure_daylog_bucket!(@user)
+    daylog = ensure_daylog!(@user)
     @bullet.postpone!(bucket: daylog, pops_on: Date.current + 2.days)
 
     @bullet.reload
@@ -48,7 +48,7 @@ class MigratableTest < ActiveSupport::TestCase
   end
 
   test 'postpone! without date change does not mark migration' do
-    daylog = Onboarding.ensure_daylog_bucket!(@user)
+    daylog = ensure_daylog!(@user)
     @bullet.update!(pops_on: Date.current)
 
     assert_no_difference -> { Activity.count } do

@@ -12,7 +12,7 @@ module Reviews
 
     test 'show lists scheduled bullets for the week anchored at review_to' do
       week_start = @today + 2.days
-      @user.bullets.create!(bulletable: Event.new(body: 'Team standup'), pops_on: week_start)
+      create_bullet!(@user, bulletable: Event.new(body: 'Team standup'), pops_on: week_start)
 
       get review_scheduled_path(from: @today.iso8601, to: @today.iso8601)
 
@@ -22,8 +22,8 @@ module Reviews
     end
 
     test 'show only includes active bullets' do
-      @user.bullets.create!(bulletable: Task.new(body: 'Active bullet'), pops_on: @today)
-      archived = @user.bullets.create!(bulletable: Task.new(body: 'Archived'), pops_on: @today)
+      create_bullet!(@user, bulletable: Task.new(body: 'Active bullet'), pops_on: @today)
+      archived = create_bullet!(@user, bulletable: Task.new(body: 'Archived'), pops_on: @today)
       archived.archive!
 
       get review_scheduled_path(from: @today.iso8601, to: @today.iso8601)
@@ -34,7 +34,7 @@ module Reviews
     end
 
     test 'show defaults review period when no dates given' do
-      @user.bullets.create!(bulletable: Task.new(body: 'Recent'), pops_on: @today)
+      create_bullet!(@user, bulletable: Task.new(body: 'Recent'), pops_on: @today)
 
       get review_scheduled_path
 

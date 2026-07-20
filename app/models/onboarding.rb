@@ -19,25 +19,13 @@ class Onboarding
 
     ActiveRecord::Base.transaction do
       ensure_loose_notes!
+      ensure_daylog!
     end
 
     true
   rescue ActiveRecord::RecordInvalid => e
     errors.add(:base, e.message)
     false
-  end
-
-  # Ensures a single Daylog bucket exists and returns it.
-  def self.ensure_daylog_bucket!(user, _date = Date.current)
-    if (existing = user.daylog)
-      return existing.bucket if existing.bucket
-
-      user.buckets.create!(bucketable: existing, name: DAYLOG_NAME, icon: DAYLOG_ICON)
-      return existing.reload.bucket
-    end
-
-    record = user.create_daylog!
-    user.buckets.create!(bucketable: record, name: DAYLOG_NAME, icon: DAYLOG_ICON)
   end
 
   private
@@ -48,5 +36,17 @@ class Onboarding
 
     collection = Collection.create!
     user.buckets.create!(bucketable: collection, name: LOOSE_NOTES_NAME)
+  end
+
+  def ensure_daylog!
+    if (existing = user.daylog)
+      return if existing.bucket
+
+      user.buckets.create!(bucketable: existing, name: DAYLOG_NAME, icon: DAYLOG_ICON)
+      return
+    end
+
+    record = user.create_daylog!
+    user.buckets.create!(bucketable: record, name: DAYLOG_NAME, icon: DAYLOG_ICON)
   end
 end

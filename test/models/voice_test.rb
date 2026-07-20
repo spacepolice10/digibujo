@@ -61,6 +61,8 @@ class VoiceTest < ActiveSupport::TestCase
 
   test 'saves through bullet with caption and recording' do
     bullet = @user.bullets.new(
+      bucket: ensure_daylog!(@user),
+      pops_on: Date.current,
       bulletable_type: 'Voice',
       bulletable_attributes: {
         body: 'Morning memo',

@@ -57,7 +57,14 @@ class MonthlylogsController < ApplicationController
     @bullets_by_date = @days.index_with { |day| grouped[day] || [] }
     @unplanned_bullets = scoped.where(pops_on: nil).order(created_at: :asc)
     @trackers = @monthlylog.trackers.chronological.with_completions
-    @mood_entries_by_date = @monthlylog.mood_entries.index_by(&:date) if @monthlylog.mood_tracker_enabled?
+    daylog = Current.user.daylog
+    if daylog
+      @mood_entities_by_date = daylog.mood_entities.where(date: @days).index_by(&:date)
+      @pictures_by_date = daylog.pictures.where(date: @days).index_by(&:date)
+    else
+      @mood_entities_by_date = {}
+      @pictures_by_date = {}
+    end
   end
 
   def set_monthlylog
@@ -82,8 +89,7 @@ class MonthlylogsController < ApplicationController
     end
 
     {
-      period_from: period,
-      mood_tracker_enabled: !!ActiveModel::Type::Boolean.new.cast(raw[:mood_tracker_enabled])
+      period_from: period
     }
   end
 end

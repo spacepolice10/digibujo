@@ -30,9 +30,10 @@ class FlattenBundlesToCollectionsTest < ActiveSupport::TestCase
   test "migrates bundle bullets pins and search records into a new collection" do
     bundle_name = "bundle-subfolder-#{SecureRandom.hex(4)}"
     _bundle_id, old_bucket_id = insert_bundle!(name: bundle_name, colour: "teal")
-    bullet = @user.bullets.create!(
-      bulletable: Task.create!(body: "In bundle"),
-      bucket_id: old_bucket_id
+    bullet = create_bullet!(@user,
+      bulletable: Task.new(body: "In bundle"),
+      bucket_id: old_bucket_id,
+      pops_on: nil
     )
     @user.pinned_entities.create!(pinnable_type: "Bucket", pinnable_id: old_bucket_id)
     Search::Record.upsert!(

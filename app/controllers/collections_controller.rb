@@ -6,7 +6,7 @@ class CollectionsController < ApplicationController
   before_action :prepare_collect_context, only: %i[new create]
 
   def index
-    @collections = Current.user.active_collections
+    @collections = Current.user.collections.merge(Bucket.active).order('buckets.name')
   end
 
   def new
@@ -67,7 +67,7 @@ class CollectionsController < ApplicationController
   private
 
   def set_collection
-    @collection = Current.user.active_collections.find(params[:id])
+    @collection = Current.user.collections.merge(Bucket.active).find(params[:id])
   end
 
   def collection_params

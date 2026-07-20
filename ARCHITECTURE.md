@@ -6,7 +6,7 @@ Framework-agnostic references live in [`docs/`](docs/). Agent workflow rules liv
 
 ## Authentication
 
-Custom session-based auth built with an `Authentication` concern (not Devise). **Passwordless:** users continue with email + one-time code (`LoginCode`). `AuthenticationController#create` finds or creates the `User`, sends a code, and stores `session[:login_email]`; `Authentications::ConfirmationsController#create` verifies the code and always starts a session. Users without Loose Notes are then sent to `OnboardingController` (authenticated); `Onboarding#complete` provisions `Loose Notes` only. Daylog / Monthlylog / Future are opt-in afterward. Returning users go straight to the app. Logout via `DELETE /authentication`. Persisted sessions live in the `sessions` table; the signed httponly cookie holds `session_id`. `Current.user` / `Current.session` via `ActiveSupport::CurrentAttributes`. Controllers opt out of auth with `allow_unauthenticated_access`. The continue-with-email form links to **`GET /features`** (`FeaturesController#show`) and **`GET /support`** (`SupportController#show`), both unauthenticated with `layout: public`. Rate limiting is applied to authentication create, confirmation create, and onboarding create. Auth forms use a `form-submit` Stimulus controller for submit loading state.
+Custom session-based auth built with an `Authentication` concern (not Devise). **Passwordless:** users continue with email + one-time code (`LoginCode`). `AuthenticationController#create` finds or creates the `User`, sends a code, and stores `session[:login_email]`; `Authentications::ConfirmationsController#create` verifies the code and always starts a session, then redirects to the app. `OnboardingController` (authenticated) still exists: `Onboarding#complete` provisions `Loose Notes` and the single `Daylog`. Monthlylog / Future remain opt-in. Logout via `DELETE /authentication`. Persisted sessions live in the `sessions` table; the signed httponly cookie holds `session_id`. `Current.user` / `Current.session` via `ActiveSupport::CurrentAttributes`. Controllers opt out of auth with `allow_unauthenticated_access`. The continue-with-email form links to **`GET /features`** (`FeaturesController#show`) and **`GET /support`** (`SupportController#show`), both unauthenticated with `layout: public`. Rate limiting is applied to authentication create, confirmation create, and onboarding create. Auth forms use a `form-submit` Stimulus controller for submit loading state.
 
 ## User Settings
 
@@ -23,11 +23,11 @@ Per-user settings live in a dedicated `user_settings` table (one row per user), 
 | `Event` | `Bulletable` | Temporal; plain `body`; date range |
 | `Voice` | `Bulletable` | Audio memo; plain caption `body` |
 
-Each bulletable includes **`Bulletable`** (`has_one :bullet`, display defaults, `to_partial_path` / `to_form_path`, `permitted_bullet_attributes`). **Note alone** declares `has_rich_text :body` (Action Text via Lexxy). Task/Event/Voice store a plain **`body` text column**. **`Bulletable#name` / `#excerpt`** default from `body`; Note overrides for rich text. **`Bullet` delegates `:body`** (and type-specific display helpers) to the bulletable. Legacy create/update params may still pass `body:` on the bullet — `Bullet#assign_attributes` / `#body=` forward to the bulletable.
+Each bulletable includes **`Bulletable`** (`has_one :bullet`, display defaults, `to_partial_path` / `to_form_path`, `permitted_bullet_attributes`). **Note alone** declares `has_rich_text :body` (Action Text via Lexxy). Task/Event/Voice store a plain **`body` text column**. **`Bulletable#name` / `#excerpt`** default from `body`; Note overrides for rich text. **`Bullet` delegates `:body`** (and type-specific display helpers) to the bulletable. Create/update params nest body under `bulletable_attributes`.
 
 **Composers:** type partials via `Bullet#to_form_path` (`tasks/form`, `notes/form`, …) wrap a thin layout shell [`bullets/_form`](app/views/bullets/_form.html.erb) (`form_with`, hiddens, rail; Stimulus wiring lives on the form shell / type locals, not on the model). Task/Event/Voice use a plain `text_field`; Note uses Lexxy preset **`note`**. Rendered note rich text uses `.rich-text-content` alongside Lexxy's `.lexxy-content`. **Projects** sync from Action Text `#` attachables **only on Notes**. Each type declares permitted attributes via `permitted_bullet_attributes`.
 
-**Bucket membership:** `Bullet` **requires** `belongs_to :bucket` (Daylog, Monthlylog, Future, or Collection). **`bucket_id` must belong to the same user**. Homes are exclusive: the daylog page never unions monthly/future bullets. **`Migratable#migrate_to!`** moves a bullet to a destination with an explicit BuJo `action` (`collected` or `rescheduled`) and a caller-resolved `pops_on`. **`Collectable#collect!`** and **`Postponable#postpone!`** own destination/`pops_on` rules and call that API. There is no uncollect — migration is one-way.
+**Bucket membership:** `Bullet` **requires** `belongs_to :bucket` (Daylog, Monthlylog, Future, or Collection). **`bucket_id` must belong to the same user** and must be supplied on create (composer hidden field / `new` query params). Homes are exclusive: the daylog page never unions monthly/future bullets. **`Migratable#migrate_to!`** moves a bullet to a destination with an explicit BuJo `action` (`collected` or `rescheduled`) and a caller-resolved `pops_on`. **`Collectable#collect!`** and **`Postponable#postpone!`** own destination/`pops_on` rules and call that API. There is no uncollect — migration is one-way.
 
 ### Composer UX
 
@@ -39,9 +39,9 @@ All bullet types are created via **`POST /bullets`** (`BulletsController`) — t
 
 ## Bullet row rendering
 
-List views use **`<%= render_bullet(bullet) %>`**, which resolves `Bullet#to_partial_path` → type row (`tasks/task`, `notes/note`, …) with local name forced to `:bullet`. Each type row wraps layout [`bullets/_bullet`](app/views/bullets/_bullet.html.erb) (turbo-frame, inline marker + migration metadata) and yields type-specific content.
+List views use **`<%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>`**, which resolves `Bullet#to_partial_path` → type row (`tasks/task`, `notes/note`, …) with local name forced to `:bullet`. Each type row wraps layout [`bullets/_bullet`](app/views/bullets/_bullet.html.erb) (turbo-frame, inline marker + migration metadata) and yields type-specific content.
 
-- **Wrappers:** `reviews/_bullet`, `monthlylogs/bullets/_bullet`, `futures/bullets/_bullet` — drag shells around `render_bullet`.
+- **Wrappers:** `reviews/_bullet`, `monthlylogs/bullets/_bullet`, `futures/bullets/_bullet` — drag shells around the type row render.
 
 ## Bullet Status
 
@@ -55,7 +55,7 @@ Archiving (`Bullet` or `Bucket`) is modelled as a row in **`archives`** (`archiv
 
 **`Archivable`** (shared concern on Bullet and Bucket) provides `has_one :archive`, `archived` / `active` / `expired_archived` scopes, and `archive!` / `unarchive!` (create/destroy the join row only). Lifecycle side effects live on **`Archive`**:
 
-- `after_create` records Activity with **`subject: Archive`**, action `archived`, metadata snapshot (`name`, `colour`, `archivable_type`, plus `pops_on` / `bulletable_type` or `bucketable_type`)
+- `after_create` records Activity with **`subject: Archive`**, action `archived`, metadata snapshot (`name`)
 - `before_destroy` records `unarchived` the same way (skipped when the Archive is destroyed via `dependent:` on the archivable)
 - `after_create_commit` / `after_destroy_commit` call `archivable.reindex` so search stays in sync (archive is not an `update!` on the subject)
 
@@ -75,7 +75,7 @@ Archiving (`Bullet` or `Bucket`) is modelled as a row in **`archives`** (`archiv
 
 ## Mood tracker
 
-Optional on Monthlylog via **`mood_tracker_enabled`** (checkbox at create). Entries live in **`monthlylog_mood_entries`** (`date` + mood enum). Mark/clear via `POST`/`DELETE /monthlylogs/:id/mood_entry`. Notes no longer carry mood.
+Optional day-level artifacts on **Daylog**: **`Daylog::MoodEntity`** (`daylog_mood_entities`: `date` + mood enum) and **`Daylog::Picture`** (`daylog_pictures`: `date` + Active Storage `image`). Mark/clear via `POST`/`DELETE /daylog/mood_entity` and `POST`/`DELETE /daylog/picture`. Monthly show reads the same records for its spread days (mood controls + photo thumbs). Notes no longer carry mood.
 
 ## Review
 
@@ -114,7 +114,7 @@ Logs are **independent** buckets — no FK ownership between Future, Monthlylog,
 
 **Monthlylog** — optional one calendar month (`period_from` / auto `period_to`). `spread_days` lists each day. Top-level create: **`GET/POST /monthlylogs`**. **`GET /monthlylog`** → current month or empty. Single **`show`**: two panels side by side — days stacked vertically (date rail links to daylog) + unplanned (no tabs). Styles in `monthlylog.css` (`monthlylog--*`), separate from Future’s card-grid in `future.css`.
 
-**Daylog** — **one per user** (`has_one :daylog`). Day slice is **`pops_on`**. **`GET /daylog`**: if missing, `show` renders a create form (`POST /daylog`); if present, lists that day’s bullets. `Onboarding.ensure_daylog_bucket!(user)` find-or-creates only for mutations (postpone, bullet default home, review drops) — not on daylog show. Daylog name/icon constants live on `Onboarding` (`DAYLOG_NAME`, `DAYLOG_ICON`).
+**Daylog** — **one per user** (`has_one :daylog`), provisioned in `Onboarding#complete` alongside Loose Notes. Day slice is **`pops_on`**. **`GET /daylog`**: if missing (legacy / destroyed), `show` renders a create form (`POST /daylog` → re-runs `Onboarding#complete`); if present, lists that day’s bullets. Day-level mood/photo via **`Daylog::MoodEntity`** / **`Daylog::Picture`**. Call sites that need the daylog bucket read `user.daylog.bucket` (no lazy ensure). Create always requires an explicit `bucket_id`. Daylog name/icon constants live on `Onboarding` (`DAYLOG_NAME`, `DAYLOG_ICON`).
 
 ## Organizing from the timeline
 
@@ -159,7 +159,7 @@ The architecture is intentionally closer to analog Bullet Journal behavior:
 
 `Project` is a first-class model (`belongs_to :user`) with `name` and `colour`. Shared behaviour: `Colourable`, `Pinnable`, `ActionText::Attachable`. Mark is fixed (`#` → hash icon). Bullets link via `bullet_projects` (many-to-many). Surface: `GET /projects`. Lexxy `#` prompt exists **only on the Note composer**. Pin/unpin uses `projects/pin` on the show page.
 
-Projects are added via `Bullet#add_project!` / removed via `remove_project!` / `clear_projects!`. Body attachable sync (`sync_projects_from_body!`) runs **only for Notes**.
+Projects link via `bullet_projects` (many-to-many). Body attachable sync (`sync_projects_from_body!`) runs **only for Notes**. Explicit add/remove intents are deferred to a future API.
 
 ## Buckets and memberships
 
@@ -174,7 +174,7 @@ Projects are added via `Bullet#add_project!` / removed via `remove_project!` / `
 
 Bucket **identity** (`name`, `colour`, `icon`, optional `description`) lives on `buckets`. Collection names are unique per user. Home hub: `GET /home` (also **`root`**).
 
-**Collection archive:** all bucket types are archivable (`Bucket#archive!` / `#unarchive!` via `Archivable`). `DELETE /collections/:id` soft-archives the bucket by inserting an `Archive` row; archived collections are hidden from home, review collect panel, and collect picker (`User#active_collections` filters via `Bucket.active`). Collect into an archived bucket is rejected (`Collectable` uses the `.active` scope, surfacing 404). Activity records `archived` / `unarchived` with subject `Archive`. Purge after retention is handled by `CleanSoftDeletedRecordsJob` (see Sweep Rules).
+**Collection archive:** all bucket types are archivable (`Bucket#archive!` / `#unarchive!` via `Archivable`). `DELETE /collections/:id` soft-archives the bucket by inserting an `Archive` row; archived collections are hidden from home, review collect panel, and collect picker (`collections.merge(Bucket.active)`). Collect into an archived bucket is rejected (`Collectable` uses the `.active` scope, surfacing 404). Activity records `archived` / `unarchived` with subject `Archive`. Purge after retention is handled by `CleanSoftDeletedRecordsJob` (see Sweep Rules).
 
 ## Pinned workspace
 
@@ -250,8 +250,10 @@ resources :projects
 POST   /monthlylogs/:monthlylog_id/trackers  → monthlylogs/trackers#create
 resources :trackers, only: %i[show edit update destroy]
   nested: trackers/:tracker_id/completion     → trackers/completions#create/destroy
-POST   /monthlylogs/:id/mood_entry           → monthlylogs/mood_entries#create
-DELETE /monthlylogs/:id/mood_entry           → monthlylogs/mood_entries#destroy
+POST   /daylog/mood_entity                   → daylogs/mood_entities#create
+DELETE /daylog/mood_entity                   → daylogs/mood_entities#destroy
+POST   /daylog/picture                       → daylogs/pictures#create
+DELETE /daylog/picture                       → daylogs/pictures#destroy
 
 # Home & navigation
 GET    /home                                 → home#show

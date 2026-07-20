@@ -24,7 +24,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'new with bullet_ids renders full page form and preview' do
-    card = @user.bullets.create!(bulletable: Task.new(body: 'Preview me'))
+    card = create_bullet!(@user, bulletable: Task.new(body: 'Preview me'))
 
     get new_collection_path, params: { bullet_ids: card.id.to_s, return_to: review_path }
 
@@ -36,8 +36,8 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'create with bullet_ids collects bullets and returns turbo stream' do
-    first = @user.bullets.create!(bulletable: Task.new(body: 'One'))
-    second = @user.bullets.create!(bulletable: Note.new(body: 'Two'))
+    first = create_bullet!(@user, bulletable: Task.new(body: 'One'))
+    second = create_bullet!(@user, bulletable: Note.new(body: 'Two'))
 
     assert_difference -> { Collection.count }, 1 do
       post collections_path,
@@ -58,7 +58,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'create with bullet_ids redirects back to return_to' do
-    card = @user.bullets.create!(bulletable: Task.new(body: 'Move me'))
+    card = create_bullet!(@user, bulletable: Task.new(body: 'Move me'))
 
     post collections_path,
          params: {
@@ -72,7 +72,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'create with invalid collection and bullet_ids re-renders full page form' do
-    card = @user.bullets.create!(bulletable: Task.new(body: 'Hold'))
+    card = create_bullet!(@user, bulletable: Task.new(body: 'Hold'))
 
     assert_no_difference -> { Collection.count } do
       post collections_path,
@@ -92,7 +92,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
 
   test 'show renders collected migration hint when bullet was collected into the collection' do
     collection = create_collection!(@user, name: 'Inbox', colour: 'teal')
-    bullet = @user.bullets.create!(bulletable: Task.new(body: 'Collected in'), pops_on: Date.current)
+    bullet = create_bullet!(@user, bulletable: Task.new(body: 'Collected in'), pops_on: Date.current)
     bullet.collect!(bucket_id: collection.bucket.id)
 
     get collection_path(collection)
@@ -117,7 +117,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
 
   test 'destroy archives collection and hides it from active lists' do
     collection = create_collection!(@user, name: 'Old inbox')
-    card = @user.bullets.create!(bulletable: Task.new(body: 'Stay'), bucket_id: collection.bucket.id)
+    card = create_bullet!(@user, bulletable: Task.new(body: 'Stay'), bucket_id: collection.bucket.id, pops_on: nil)
 
     assert_no_difference -> { Collection.count } do
       delete collection_path(collection)
@@ -126,6 +126,6 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to home_path
     assert collection.bucket.reload.archived?
     assert_equal collection.bucket.id, card.reload.bucket_id
-    assert_empty @user.active_collections.where(collections: { id: collection.id })
+    assert_empty @user.collections.merge(Bucket.active).where(collections: { id: collection.id })
   end
 end

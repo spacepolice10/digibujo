@@ -20,7 +20,10 @@ Rails.application.routes.draw do
   resource :support, only: :show, controller: 'support'
 
   # --- Logs ---
-  resource :daylog, only: %i[show create], controller: 'daylogs'
+  resource :daylog, only: %i[show create], controller: 'daylogs' do
+    resource :mood_entity, only: %i[create destroy], module: :daylogs
+    resource :picture, only: %i[create destroy], module: :daylogs
+  end
 
   get 'monthlylog', to: 'monthlylogs#current', as: :current_monthlylog
   get 'monthly_bucket', to: redirect('/monthlylog')
@@ -29,7 +32,6 @@ Rails.application.routes.draw do
 
   resources :monthlylogs, only: %i[new create show] do
     resources :trackers, only: %i[new create], module: :monthlylogs
-    resource :mood_entry, only: %i[create destroy], module: :monthlylogs
   end
 
   get 'future_buckets/:id', to: redirect('/futures/%{id}')

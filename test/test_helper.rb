@@ -30,8 +30,17 @@ module ActiveSupport
       collection
     end
 
-    def ensure_daylog!(user, date = Date.current)
-      Onboarding.ensure_daylog_bucket!(user, date)
+    def ensure_daylog!(user, _date = Date.current)
+      Onboarding.new(user: user).complete
+      user.reload.daylog.bucket
+    end
+
+    def create_bullet!(user, bucket: nil, bucket_id: nil, **attrs)
+      bucket ||= user.buckets.find(bucket_id) if bucket_id
+      bucket ||= ensure_daylog!(user)
+      attrs = attrs.dup
+      attrs[:pops_on] = Date.current if !attrs.key?(:pops_on) && bucket.bucketable_type == 'Daylog'
+      user.bullets.create!(bucket: bucket, **attrs)
     end
 
     def ensure_future!(user, period_from: Date.current.beginning_of_month)

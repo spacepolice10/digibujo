@@ -1,0 +1,28 @@
+<%# locals: (date:, picture:) %>
+<% if picture&.image&.attached? %>
+  <div class="daylog--photo">
+    <%= image_tag picture.image.variant(resize_to_limit: [480, 480]),
+          alt: "Photo for #{date.strftime('%b %-d')}",
+          class: "daylog--photo-image" %>
+    <%= button_to "Remove photo",
+          daylog_picture_path(date: date.iso8601),
+          method: :delete,
+          class: "button--tertiary",
+          form: { data: { turbo: true } } %>
+  </div>
+<% else %>
+  <%= form_with url: daylog_picture_path,
+        method: :post,
+        multipart: true,
+        class: "daylog--photo-upload",
+        data: { turbo: true } do %>
+    <%= hidden_field_tag :date, date.iso8601 %>
+    <label class="button--tertiary">
+      Add photo
+      <%= file_field_tag :image,
+            accept: Daylog::Picture::ALLOWED_CONTENT_TYPES.join(","),
+            class: "utilities--sr-only",
+            onchange: "this.form.requestSubmit()" %>
+    </label>
+  <% end %>
+<% end %>

@@ -25,11 +25,7 @@ module Authentications
         session.delete(:login_email)
 
         start_new_session_for(user)
-        if user.needs_onboarding?
-          redirect_to new_onboarding_path
-        else
-          redirect_to after_authentication_url
-        end
+        redirect_to after_authentication_url
       else
         redirect_to new_authentication_confirmation_path, alert: 'Invalid or expired code.'
       end

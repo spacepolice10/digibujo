@@ -11,10 +11,12 @@ class DaylogsController < ApplicationController
       @daylog.bullets.where(pops_on: @selected_date).active.order(created_at: :asc),
       per_page: [ 15, 30, 50 ]
     )
+    @mood_entity = @daylog.mood_entities.find_by(date: @selected_date)
+    @picture = @daylog.pictures.find_by(date: @selected_date)
   end
 
   def create
-    Onboarding.ensure_daylog_bucket!(Current.user)
+    Onboarding.new(user: Current.user).complete
     redirect_to daylog_path
   end
 

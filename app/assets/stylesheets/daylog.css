@@ -88,4 +88,31 @@
       );
     }
   }
+
+  .daylog--day-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-horizontal);
+    margin-block-end: var(--spacing-vertical);
+  }
+
+  .daylog--photo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-vertical-half);
+  }
+
+  .daylog--photo-image {
+    max-inline-size: min(100%, 30rem);
+    border-radius: var(--radius-sm, 0.25rem);
+  }
+
+  .daylog--photo-thumb-image {
+    inline-size: 2rem;
+    block-size: 2rem;
+    object-fit: cover;
+    border-radius: var(--radius-sm, 0.25rem);
+  }
 }

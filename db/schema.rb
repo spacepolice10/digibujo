@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_20_191000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_20_223000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -130,6 +130,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_20_191000) do
     t.index ["user_id"], name: "index_daylogs_on_user_id", unique: true
   end
 
+  create_table "daylog_mood_entities", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.date "date", null: false
+    t.integer "daylog_id", null: false
+    t.integer "mood", null: false
+    t.datetime "updated_at", null: false
+    t.index ["daylog_id", "date"], name: "index_daylog_mood_entities_on_daylog_id_and_date", unique: true
+    t.index ["daylog_id"], name: "index_daylog_mood_entities_on_daylog_id"
+  end
+
+  create_table "daylog_pictures", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.date "date", null: false
+    t.integer "daylog_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["daylog_id", "date"], name: "index_daylog_pictures_on_daylog_id_and_date", unique: true
+    t.index ["daylog_id"], name: "index_daylog_pictures_on_daylog_id"
+  end
+
   create_table "events", force: :cascade do |t|
     t.text "body", default: "", null: false
     t.date "ends_date"
@@ -155,19 +174,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_20_191000) do
     t.index ["user_id"], name: "index_login_codes_on_user_id"
   end
 
-  create_table "monthlylog_mood_entries", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.date "date", null: false
-    t.integer "monthlylog_id", null: false
-    t.integer "mood", null: false
-    t.datetime "updated_at", null: false
-    t.index ["monthlylog_id", "date"], name: "index_monthlylog_mood_entries_on_monthlylog_id_and_date", unique: true
-    t.index ["monthlylog_id"], name: "index_monthlylog_mood_entries_on_monthlylog_id"
-  end
-
   create_table "monthlylogs", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.boolean "mood_tracker_enabled", default: false, null: false
     t.date "period_from"
     t.date "period_to"
     t.datetime "updated_at", null: false
@@ -319,7 +327,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_20_191000) do
   add_foreign_key "daylogs", "users"
   add_foreign_key "futures", "users"
   add_foreign_key "login_codes", "users"
-  add_foreign_key "monthlylog_mood_entries", "monthlylogs"
+  add_foreign_key "daylog_mood_entities", "daylogs"
+  add_foreign_key "daylog_pictures", "daylogs"
   add_foreign_key "monthlylogs", "users"
   add_foreign_key "pinned_entities", "users"
   add_foreign_key "projects", "users"

@@ -15,37 +15,19 @@ class Archive < ApplicationRecord
   private
 
   def record_archived_activity!
-    record_lifecycle_activity!('archived')
-  end
-
-  def record_unarchived_activity!
-    record_lifecycle_activity!('unarchived')
-  end
-
-  def record_lifecycle_activity!(action)
     activities.create!(
       user: user || archivable.user,
-      action: action,
-      metadata: activity_metadata.merge('action' => action)
+      action: 'archived',
+      metadata: { 'name' => archivable.try(:name).to_s }
     )
   end
 
-  def activity_metadata
-    meta = {
-      'name' => archivable.try(:name).to_s,
-      'colour' => archivable.try(:colour),
-      'archivable_type' => archivable_type
-    }
-
-    case archivable_type
-    when 'Bullet'
-      meta['pops_on'] = archivable.try(:pops_on)
-      meta['bulletable_type'] = archivable.try(:bulletable_type)
-    when 'Bucket'
-      meta['bucketable_type'] = archivable.try(:bucketable_type)
-    end
-
-    meta.compact
+  def record_unarchived_activity!
+    activities.create!(
+      user: user || archivable.user,
+      action: 'unarchived',
+      metadata: { 'name' => archivable.try(:name).to_s }
+    )
   end
 
   def reindex_archivable

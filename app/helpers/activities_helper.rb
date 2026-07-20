@@ -2,15 +2,15 @@
 
 module ActivitiesHelper
   def activity_sentence(activity, relative: false, linked: true)
-    parts = [sentence_for(activity, linked: linked)]
+    parts = [sentence(activity, linked: linked)]
     parts << "#{time_ago_in_words(activity.created_at)} ago" if relative
     safe_join(parts, ', ')
   end
 
   private
 
-  def sentence_for(activity, linked:)
-    subject = activity_subject_link(activity, linked: linked)
+  def sentence(activity, linked:)
+    subject = activity_link(activity.subject, linked: linked, name: activity.subject_name)
 
     case activity.action
     when 'destroyed'
@@ -32,7 +32,13 @@ module ActivitiesHelper
     when 'uncompleted'
       safe_join(['Uncompleted ', subject])
     when 'collected'
-      safe_join(['Moved ', subject, ' into ', activity_bucket_link(activity, linked: linked)])
+      bucket_name = activity.metadata['bucket_name'].presence ||
+                     activity.destination_bucket&.name ||
+                     'a collection'
+      safe_join([
+        'Moved ', subject, ' into ',
+        activity_link(activity.destination_bucket, linked: linked, name: bucket_name)
+      ])
     when 'rescheduled'
       rescheduled_sentence(activity, subject, linked: linked)
     when 'project_mentioned'
@@ -45,8 +51,8 @@ module ActivitiesHelper
   end
 
   def rescheduled_sentence(activity, subject, linked:)
-    from = activity_day_link(activity.from_date, linked: linked)
-    to = activity_day_link(activity.to_date, linked: linked)
+    from = activity_link(activity.from_date, linked: linked)
+    to = activity_link(activity.to_date, linked: linked)
 
     if from && to
       safe_join(['Moved ', subject, ' from ', from, ' to ', to])
@@ -57,28 +63,21 @@ module ActivitiesHelper
     end
   end
 
-  def activity_subject_link(activity, linked:)
-    name = activity.subject_name
-    return name unless linked && activity.subject_present?
-    return name if activity.subject_type == 'Archive'
+  def activity_link(target, linked:, name: nil)
+    case target
+    when Date
+      formatted = target.strftime('%a, %b %-d')
+      return formatted unless linked
 
-    link_to(name, polymorphic_path(activity.subject), class: 'activity--subject-name')
-  end
+      link_to(formatted, daylog_path(date: target.iso8601), class: 'activity--subject-name')
+    when nil
+      name
+    else
+      label = name.presence || target.try(:name) || 'Unknown'
+      return label unless linked
+      return label if target.is_a?(Archive)
 
-  def activity_bucket_link(activity, linked:)
-    name = activity.metadata['bucket_name'].presence || activity.destination_bucket&.name || 'a collection'
-    bucket = activity.destination_bucket
-    return name unless linked && bucket
-
-    link_to(name, polymorphic_path(bucket), class: 'activity--subject-name')
-  end
-
-  def activity_day_link(date, linked:)
-    return if date.blank?
-
-    formatted = date.strftime('%a, %b %-d')
-    return formatted unless linked
-
-    link_to(formatted, daylog_path(date: date.iso8601), class: 'activity--subject-name')
+      link_to(label, polymorphic_path(target), class: 'activity--subject-name')
+    end
   end
 end

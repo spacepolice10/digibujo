@@ -138,37 +138,22 @@
     <% end %>
   </section>
 
-  <% if @monthlylog.mood_tracker_enabled? %>
-    <section class="monthlylog--mood layout--surface" aria-label="Mood tracker">
-      <h3 class="monthlylog--unplanned-title">Mood</h3>
-      <div class="tracker--heatmap-days">
-        <% @days.each do |date| %>
-          <% entry = @mood_entries_by_date[date] %>
-          <div class="tracker--cell">
-            <span class="utilities--text-sm"><%= date.day %></span>
-            <% if entry %>
-              <%= button_to monthlylog_mood_entry_path(@monthlylog, date: date.iso8601),
-                    method: :delete,
-                    class: "button--tertiary",
-                    form: { data: { turbo: true } } do %>
-                <%= entry.marker %>
-              <% end %>
-            <% else %>
-              <% Monthlylog::MoodEntry::MOOD_MARKERS.each do |mood, emoji| %>
-                <%= button_to monthlylog_mood_entry_path(@monthlylog),
-                      method: :post,
-                      params: { date: date.iso8601, mood: mood },
-                      class: "button--tertiary",
-                      form: { data: { turbo: true } } do %>
-                  <%= emoji %>
-                <% end %>
-              <% end %>
-            <% end %>
-          </div>
-        <% end %>
-      </div>
-    </section>
-  <% end %>
+  <section class="monthlylog--mood layout--surface" aria-label="Mood tracker">
+    <h3 class="monthlylog--unplanned-title">Mood</h3>
+    <div class="tracker--heatmap-days">
+      <% @days.each do |date| %>
+        <div class="tracker--cell">
+          <span class="utilities--text-sm"><%= date.day %></span>
+          <%= render "daylogs/mood_entity",
+                date: date,
+                entity: @mood_entities_by_date[date] %>
+          <%= render "daylogs/picture_thumb",
+                date: date,
+                picture: @pictures_by_date[date] %>
+        </div>
+      <% end %>
+    </div>
+  </section>
 
   <%= render "monthlylogs/composer_dialog" %>
 </div>

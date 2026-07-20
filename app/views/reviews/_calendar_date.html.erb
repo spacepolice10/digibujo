@@ -18,7 +18,7 @@
          data-pops-drop-review-drop-value="true"
          data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop">
       <% bullets.each do |bullet| %>
-        <%= render_bullet(bullet) %>
+        <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
       <% end %>
     </div>
   </div>

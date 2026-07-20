@@ -7,7 +7,9 @@ module Reviews
       @review_from = params[:from].present? ? params[:from].to_date : @review_to - 6.days
 
       @collections_q = params[:q].to_s.strip.presence
-      collections = Current.user.active_collections.matching_bucket_name(@collections_q)
+      collections = Current.user.collections
+                         .merge(Bucket.active.matching_name(params[:q]))
+                         .order('buckets.name')
       page = GearedPagination::Recordset.new(collections, per_page: [8, 16, 24])
                                         .page(params[:collections_page])
       @collections = page.records

@@ -8,30 +8,6 @@ module Bullet::Projectable
     has_many :projects, through: :bullet_projects
   end
 
-  def add_project!(project_id:)
-    project = user.projects.find(project_id)
-    bullet_projects.find_or_create_by!(project: project)
-    association(:projects).reset
-    record_activity!('project_mentioned')
-  end
-
-  def remove_project!(project_id:)
-    join = bullet_projects.find_by(project_id: project_id)
-    return unless join
-
-    join.destroy!
-    association(:projects).reset
-    record_activity!('project_unmentioned')
-  end
-
-  def clear_projects!
-    return if bullet_projects.none?
-
-    bullet_projects.destroy_all
-    association(:projects).reset
-    record_activity!('project_unmentioned')
-  end
-
   def sync_projects_from_body!
     return unless bulletable.is_a?(Note)
     return if @syncing_projects

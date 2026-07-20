@@ -17,7 +17,7 @@ module Collections
     private
 
     def set_collection
-      @collection = Current.user.active_collections.find(params[:collection_id])
+      @collection = Current.user.collections.merge(Bucket.active).find(params[:collection_id])
     end
 
     def prepare_export_bullets

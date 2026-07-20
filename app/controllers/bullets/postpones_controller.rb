@@ -11,7 +11,7 @@ module Bullets
       @tomorrow = Date.current + 1.day
       @next_monday = Date.current.next_occurring(:monday)
       @next_weekends = Date.current.next_occurring(:saturday)
-      @daylog_bucket = Onboarding.ensure_daylog_bucket!(Current.user)
+      @daylog_bucket = Current.user.daylog.bucket
       @daylog_buckets = {
         asap: @daylog_bucket,
         tomorrow: @daylog_bucket,

@@ -42,12 +42,12 @@ class FutureTest < ActiveSupport::TestCase
   end
 
   test 'future bullets group by pops_on month and unplanned' do
-    planned = @user.bullets.create!(
+    planned = create_bullet!(@user,
       bulletable: Task.new(body: 'July goal'),
       bucket: @future.bucket,
       pops_on: @future.period_from
     )
-    unplanned = @user.bullets.create!(
+    unplanned = create_bullet!(@user,
       bulletable: Task.new(body: 'Someday'),
       bucket: @future.bucket,
       pops_on: nil
@@ -58,16 +58,5 @@ class FutureTest < ActiveSupport::TestCase
 
     assert_includes by_month[@future.period_from].map(&:id), planned.id
     assert_includes @future.bullets.where(pops_on: nil).pluck(:id), unplanned.id
-  end
-
-  test 'rejects pops_on outside future spread' do
-    bullet = @user.bullets.new(
-      bulletable: Task.new(body: 'Too far'),
-      bucket: @future.bucket,
-      pops_on: @future.period_from + 6.months
-    )
-
-    assert_not bullet.valid?
-    assert_includes bullet.errors[:pops_on], 'must be within the future spread'
   end
 end

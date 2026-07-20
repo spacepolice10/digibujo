@@ -19,6 +19,15 @@ class BucketTest < ActiveSupport::TestCase
     assert_equal 'beta', @bucket.name
   end
 
+  test 'matching_name filters by prefix' do
+    create_collection!(@user, name: 'alpine')
+    create_collection!(@user, name: 'zeta')
+
+    assert_equal %w[alpha alpine], @user.buckets.matching_name('al').order(:name).pluck(:name)
+    assert_equal @user.buckets.order(:name).pluck(:name),
+                 @user.buckets.matching_name(nil).order(:name).pluck(:name)
+  end
+
   test 'accepts valid colour and icon' do
     @bucket.update!(colour: 'teal', icon: 'calendar')
     assert_equal 'teal', @bucket.colour
@@ -99,7 +108,7 @@ class BucketTest < ActiveSupport::TestCase
     activity = Activity.order(:created_at).last
     assert_equal 'archived', activity.action
     assert_equal 'Archive', activity.subject_type
-    assert_equal 'Collection', activity.metadata['bucketable_type']
+    assert_equal @bucket.name, activity.metadata['name']
   end
 
   test 'unarchive! clears archived state and records activity' do
@@ -121,7 +130,7 @@ class BucketTest < ActiveSupport::TestCase
   end
 
   test 'archived bullet is not searchable' do
-    bullet = @user.bullets.create!(bulletable: Task.new(body: 'Hide me'), pops_on: Date.current)
+    bullet = create_bullet!(@user, bulletable: Task.new(body: 'Hide me'), pops_on: Date.current)
     bullet.archive!
 
     assert_not bullet.searchable?

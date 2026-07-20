@@ -10,8 +10,8 @@ class Bullets::MarkAsReviewedControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'create marks all bullets in review period' do
-    in_review = @user.bullets.create!(bulletable: Task.new(body: 'Keep as is'), pops_on: @today)
-    @user.bullets.create!(bulletable: Note.new(body: 'Already reviewed'), pops_on: @today).tap(&:mark_as_reviewed!)
+    in_review = create_bullet!(@user, bulletable: Task.new(body: 'Keep as is'), pops_on: @today)
+    create_bullet!(@user, bulletable: Note.new(body: 'Already reviewed'), pops_on: @today).tap(&:mark_as_reviewed!)
 
     post mark_as_reviewed_path, params: { from: @today.iso8601, to: @today.iso8601 }
 
@@ -25,8 +25,8 @@ class Bullets::MarkAsReviewedControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'create with bullet_ids marks only selected bullets' do
-    first = @user.bullets.create!(bulletable: Task.new(body: 'First'), pops_on: @today)
-    second = @user.bullets.create!(bulletable: Task.new(body: 'Second'), pops_on: @today)
+    first = create_bullet!(@user, bulletable: Task.new(body: 'First'), pops_on: @today)
+    second = create_bullet!(@user, bulletable: Task.new(body: 'Second'), pops_on: @today)
 
     post mark_as_reviewed_path,
          params: { from: @today.iso8601, to: @today.iso8601, bullet_ids: first.id.to_s }
@@ -38,10 +38,10 @@ class Bullets::MarkAsReviewedControllerTest < ActionDispatch::IntegrationTest
 
   test 'create rejects bullet_ids outside review scope' do
     collection = create_collection!(@user, name: 'Work')
-    collected = @user.bullets.create!(
+    collected = create_bullet!(@user,
       bulletable: Task.new(body: 'Collected'),
-      pops_on: @today,
-      bucket_id: collection.bucket.id
+      bucket_id: collection.bucket.id,
+      pops_on: nil
     )
 
     post mark_as_reviewed_path,

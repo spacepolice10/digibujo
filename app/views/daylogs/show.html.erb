@@ -63,6 +63,15 @@
 
       <div data-bulk-menu-target="list" class="layout--surface layout--list">
 
+        <section class="daylog--day-meta" aria-label="Day notes">
+          <%= render "daylogs/mood_entity",
+                date: @selected_date,
+                entity: @mood_entity %>
+          <%= render "daylogs/picture",
+                date: @selected_date,
+                picture: @picture %>
+        </section>
+
         <%= render layout: "pagination/paginated_list",
               locals: {
                 page: @page,
@@ -70,7 +79,7 @@
                 pagination_link_path: ->(next_param) { daylog_path(date: @selected_date.iso8601, page: next_param) }
               } do %>
           <% @page.records.each do |bullet| %>
-            <%= render_bullet(bullet) %>
+            <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
           <% end %>
         <% end %>
 

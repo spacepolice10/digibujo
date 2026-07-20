@@ -34,7 +34,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'daylog without date shows today' do
-    card = @user.bullets.create!(bulletable: Task.new(body: 'Today card'), pops_on: Date.current)
+    card = create_bullet!(@user, bulletable: Task.new(body: 'Today card'), pops_on: Date.current)
 
     get daylog_path
 
@@ -45,9 +45,9 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
   test 'daylog with year month day shows that day' do
     selected_date = Date.current - 2.days
     travel_to selected_date.in_time_zone.change(hour: 10) do
-      @user.bullets.create!(bulletable: Task.new(body: 'That day'), pops_on: selected_date)
+      create_bullet!(@user, bulletable: Task.new(body: 'That day'), pops_on: selected_date)
     end
-    @user.bullets.create!(bulletable: Task.new(body: 'Today noise'), pops_on: Date.current)
+    create_bullet!(@user, bulletable: Task.new(body: 'Today noise'), pops_on: Date.current)
 
     get daylog_path(date: selected_date.iso8601)
 
@@ -76,7 +76,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'daylog scopes bulk menu controls to the bullets list' do
-    @user.bullets.create!(bulletable: Task.new(body: 'Selectable card'), pops_on: Date.current)
+    create_bullet!(@user, bulletable: Task.new(body: 'Selectable card'), pops_on: Date.current)
 
     get daylog_path
 
@@ -150,7 +150,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'daylog shows today bullets' do
-    card = @user.bullets.create!(bulletable: Task.new(body: 'Root today'), pops_on: Date.current)
+    card = create_bullet!(@user, bulletable: Task.new(body: 'Root today'), pops_on: Date.current)
 
     get daylog_path
 
@@ -182,9 +182,9 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
 
   test 'daylog renders mixed bullet types on the same page' do
     selected_date = Date.current
-    @user.bullets.create!(bulletable: Task.new(body: 'Task line'), pops_on: selected_date)
-    @user.bullets.create!(bulletable: Note.new(body: 'Note line'), pops_on: selected_date)
-    @user.bullets.create!(bulletable: Event.new(body: 'Event line'), pops_on: selected_date)
+    create_bullet!(@user, bulletable: Task.new(body: 'Task line'), pops_on: selected_date)
+    create_bullet!(@user, bulletable: Note.new(body: 'Note line'), pops_on: selected_date)
+    create_bullet!(@user, bulletable: Event.new(body: 'Event line'), pops_on: selected_date)
 
     get daylog_path(date: selected_date.iso8601)
 

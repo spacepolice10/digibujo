@@ -17,15 +17,4 @@ module Bucketable
   def colour_variable
     bucket&.colour_variable
   end
-
-  class_methods do
-    def sanitized_name_query(query)
-      ActiveRecord::Base.sanitize_sql_like(query.to_s.strip.downcase).presence
-    end
-
-    def matching_bucket_name(query)
-      sanitized = sanitized_name_query(query)
-      sanitized ? where('LOWER(buckets.name) LIKE ?', "#{sanitized}%") : all
-    end
-  end
 end

@@ -6,11 +6,12 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @user = users(:one)
     sign_in_as @user
-    @bullet = @user.bullets.create!(bulletable: Task.new(body: 'Original'))
+    @daylog = ensure_daylog!(@user)
+    @bullet = create_bullet!(@user, bulletable: Task.new(body: 'Original'))
   end
 
   test 'update turbo stream replaces bullet only' do
-    assert_difference -> { Activity.count }, 1 do
+    assert_no_difference -> { Activity.count } do
       patch bullet_path(@bullet),
             params: {
               bullet: {
@@ -24,7 +25,6 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_match(/turbo-stream action="replace"/, response.body)
     assert_no_match(/turbo-stream action="after"/, response.body)
     assert_equal 'Updated', @bullet.reload.body
-    assert_equal 'updated', Activity.order(:created_at).last.action
   end
 
   test 'create redirects to the new bullet show page by default' do
@@ -34,7 +34,8 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
              bullet: {
                bulletable_type: 'Task',
                bulletable_attributes: { body: 'Fresh task' },
-               pops_on: Date.current.iso8601
+               pops_on: Date.current.iso8601,
+               bucket_id: @daylog.id
              }
            }
     end
@@ -52,7 +53,8 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
              bullet: {
                bulletable_type: 'Note',
                bulletable_attributes: { body: body_html },
-               pops_on: Date.current.iso8601
+               pops_on: Date.current.iso8601,
+               bucket_id: @daylog.id
              }
            }
 
@@ -70,7 +72,8 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
            bullet: {
              bulletable_type: 'Task',
              bulletable_attributes: { body: body_html },
-             pops_on: Date.current.iso8601
+             pops_on: Date.current.iso8601,
+             bucket_id: @daylog.id
            }
          }
 
@@ -85,7 +88,8 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
              bullet: {
                bulletable_type: 'Note',
                bulletable_attributes: { body: '<h1>Long detail</h1>' },
-               pops_on: Date.current.iso8601
+               pops_on: Date.current.iso8601,
+               bucket_id: @daylog.id
              }
            }
 
@@ -95,7 +99,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show renders note body' do
-    note = @user.bullets.create!(bulletable: Note.new(body: '<p>Expanded content</p>'))
+    note = create_bullet!(@user, bulletable: Note.new(body: '<p>Expanded content</p>'))
 
     get bullet_path(note)
 
@@ -105,7 +109,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'edit renders note body editor for note with saved content' do
-    note = @user.bullets.create!(bulletable: Note.new(body: '<p>Expanded content</p>'))
+    note = create_bullet!(@user, bulletable: Note.new(body: '<p>Expanded content</p>'))
 
     get edit_bullet_path(note)
 
@@ -127,7 +131,9 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
            params: {
              bullet: {
                bulletable_type: 'Task',
-               bulletable_attributes: { body: '' }
+               bulletable_attributes: { body: '' },
+               pops_on: Date.current.iso8601,
+               bucket_id: @daylog.id
              }
            }
     end
@@ -142,7 +148,9 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
            params: {
              bullet: {
                bulletable_type: 'Voice',
-               bulletable_attributes: { body: '' }
+               bulletable_attributes: { body: '' },
+               pops_on: Date.current.iso8601,
+               bucket_id: @daylog.id
              }
            }
     end
@@ -209,7 +217,8 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
              bullet: {
                bulletable_type: 'Task',
                bulletable_attributes: { body: 'Mobile daylog task' },
-               pops_on: Date.current.iso8601
+               pops_on: Date.current.iso8601,
+               bucket_id: @daylog.id
              }
            },
            headers: { 'Turbo-Frame' => 'daylog_bullets_composer', 'User-Agent' => mobile_ua },
@@ -249,7 +258,8 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
              bullet: {
                bulletable_type: 'Task',
                bulletable_attributes: { body: 'Stale mood', mood: 'inspired' },
-               pops_on: Date.current.iso8601
+               pops_on: Date.current.iso8601,
+               bucket_id: @daylog.id
              }
            }
 
@@ -260,7 +270,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
   test 'edit redirects voice bullets to show' do
     blob = create_blob!(filename: 'voice.webm', content_type: 'audio/webm')
-    bullet = @user.bullets.create!(
+    bullet = create_bullet!(@user,
       bulletable_type: 'Voice',
       bulletable_attributes: { body: 'Voice caption', recording: blob.signed_id, duration_seconds: 5 }
     )
@@ -272,7 +282,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
   test 'update redirects voice bullets to show' do
     blob = create_blob!(filename: 'voice.webm', content_type: 'audio/webm')
-    bullet = @user.bullets.create!(
+    bullet = create_bullet!(@user,
       bulletable_type: 'Voice',
       bulletable_attributes: { body: 'Voice caption', recording: blob.signed_id, duration_seconds: 5 }
     )

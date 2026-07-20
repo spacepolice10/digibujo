@@ -41,7 +41,7 @@ class HomeController < ApplicationController
   end
 
   def collection_records
-    Current.user.active_collections.limit(5)
+    Current.user.collections.merge(Bucket.active).order('buckets.name').limit(5)
   end
 
   def project_records

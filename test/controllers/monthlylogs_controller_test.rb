@@ -19,9 +19,8 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
 
   test 'monthly bucket shows spread when current exists' do
     monthlylog = create_monthlylog!(@user, name: 'june')
-    @user.bullets.create!(
-      bulletable: Task.create!,
-      body: 'Unplanned task',
+    create_bullet!(@user,
+      bulletable: Task.new(body: 'Unplanned task'),
       bucket_id: monthlylog.bucket.id
     )
 
@@ -44,9 +43,8 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
   test 'show by id lists dated bullets in by_date column' do
     monthlylog = create_monthlylog!(@user, name: 'june')
     day = Date.current.beginning_of_month + 2.days
-    @user.bullets.create!(
-      bulletable: Event.create!,
-      body: 'Dentist',
+    create_bullet!(@user,
+      bulletable: Event.new(body: 'Dentist'),
       bucket_id: monthlylog.bucket.id,
       pops_on: day
     )
@@ -60,9 +58,8 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
   test 'monthlylog show has date bands, add links, and unplanned panel' do
     monthlylog = create_monthlylog!(@user, name: 'june')
     day = Date.current.beginning_of_month + 2.days
-    @user.bullets.create!(
-      bulletable: Task.create!,
-      body: 'Planned task',
+    create_bullet!(@user,
+      bulletable: Task.new(body: 'Planned task'),
       bucket_id: monthlylog.bucket.id,
       pops_on: day
     )
@@ -97,9 +94,8 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
 
   test 'monthlylog unplanned bullets render as compact rows without metadata tags' do
     monthlylog = create_monthlylog!(@user, name: 'june')
-    bullet = @user.bullets.create!(
-      bulletable: Task.create!,
-      body: 'Pinned spread task',
+    bullet = create_bullet!(@user,
+      bulletable: Task.new(body: 'Pinned spread task'),
       bucket_id: monthlylog.bucket.id
     )
     PinnedEntity.create!(user: @user, pinnable: bullet)
@@ -116,14 +112,12 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
 
   test 'monthlylog unplanned bullets render body text' do
     monthlylog = create_monthlylog!(@user, name: 'june')
-    @user.bullets.create!(
-      bulletable: Task.create!,
-      body: 'Plain task',
+    create_bullet!(@user,
+      bulletable: Task.new(body: 'Plain task'),
       bucket_id: monthlylog.bucket.id
     )
-    @user.bullets.create!(
-      bulletable: Note.create!,
-      body: '<p>Expanded detail</p>',
+    create_bullet!(@user,
+      bulletable: Note.new(body: '<p>Expanded detail</p>'),
       bucket_id: monthlylog.bucket.id
     )
 
@@ -137,9 +131,8 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
   test 'dated monthlylog tasks appear in date bands' do
     monthlylog = create_monthlylog!(@user, name: 'june')
     day = Date.current.beginning_of_month + 2.days
-    bullet = @user.bullets.create!(
-      bulletable: Task.create!,
-      body: 'Buy ointment',
+    bullet = create_bullet!(@user,
+      bulletable: Task.new(body: 'Buy ointment'),
       bucket_id: monthlylog.bucket.id,
       pops_on: day
     )
@@ -155,15 +148,13 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
   test 'mobile monthlylog show keeps both panels without tabs' do
     monthlylog = create_monthlylog!(@user, name: 'june')
     day = Date.current.beginning_of_month
-    @user.bullets.create!(
-      bulletable: Task.create!,
-      body: 'Planned mobile task',
+    create_bullet!(@user,
+      bulletable: Task.new(body: 'Planned mobile task'),
       bucket_id: monthlylog.bucket.id,
       pops_on: day
     )
-    @user.bullets.create!(
-      bulletable: Note.create!,
-      body: 'Unplanned mobile note',
+    create_bullet!(@user,
+      bulletable: Note.new(body: 'Unplanned mobile note'),
       bucket_id: monthlylog.bucket.id
     )
 
@@ -182,9 +173,8 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
 
   test 'mobile monthlylog unplanned bullets render without drag' do
     monthlylog = create_monthlylog!(@user, name: 'june')
-    @user.bullets.create!(
-      bulletable: Task.create!,
-      body: 'Mobile spread task',
+    create_bullet!(@user,
+      bulletable: Task.new(body: 'Mobile spread task'),
       bucket_id: monthlylog.bucket.id
     )
 
@@ -259,22 +249,18 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
 
     created = Monthlylog.last
     assert_redirected_to monthlylog_path(created)
-    assert_not created.mood_tracker_enabled?
   end
 
-  test 'create enables mood tracker when checked' do
-    @user.monthlylogs.destroy_all
-    month = Date.current.beginning_of_month
+  test 'show includes mood tracker from daylog' do
+    ensure_daylog!(@user)
+    @user.daylog.mood_entities.create!(date: Date.current, mood: :inspired)
+    monthlylog = create_monthlylog!(@user, name: Date.current.strftime('%B %Y'))
 
-    post monthlylogs_path, params: {
-      monthlylog: { period_from: month.iso8601, mood_tracker_enabled: '1' }
-    }
+    get monthlylog_path(monthlylog)
 
-    created = Monthlylog.last
-    assert_redirected_to monthlylog_path(created)
-    assert created.mood_tracker_enabled?
-    follow_redirect!
+    assert_response :success
     assert_select 'section.monthlylog--mood'
+    assert_match '✨', response.body
   end
 
   test 'show by id loads the requested spread when multiple months exist' do
@@ -290,14 +276,12 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
       period_from: Date.new(2026, 7, 1),
       period_to: Date.new(2026, 7, 31)
     )
-    @user.bullets.create!(
-      bulletable: Task.create!,
-      body: 'June-only task',
+    create_bullet!(@user,
+      bulletable: Task.new(body: 'June-only task'),
       bucket_id: june.bucket.id
     )
-    @user.bullets.create!(
-      bulletable: Task.create!,
-      body: 'July-only task',
+    create_bullet!(@user,
+      bulletable: Task.new(body: 'July-only task'),
       bucket_id: july.bucket.id
     )
 

@@ -11,4 +11,13 @@ class Bucket < ApplicationRecord
   validates :name, presence: true
 
   normalizes :name, with: ->(name) { name.strip.downcase }
+
+  scope :matching_name, lambda { |query|
+    sanitized = sanitized_name_query(query)
+    sanitized ? where('LOWER(name) LIKE ?', "#{sanitized}%") : all
+  }
+
+  def self.sanitized_name_query(query)
+    sanitize_sql_like(query.to_s.strip.downcase).presence
+  end
 end

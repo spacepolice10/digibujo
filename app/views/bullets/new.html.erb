@@ -20,7 +20,7 @@
     <% else %>
       <%= render "bullets/composer/dock",
             selected_date: @bullet.pops_on || Date.current,
-            bucket: @bullet.bucket || Onboarding.ensure_daylog_bucket!(Current.user),
+            bucket: @bullet.bucket || Current.user.daylog.bucket,
             composer_id: turbo_frame_request_id.presence || "bullet_composer" %>
     <% end %>
   </turbo-frame>

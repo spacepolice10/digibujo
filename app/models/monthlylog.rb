@@ -5,7 +5,6 @@ class Monthlylog < ApplicationRecord
 
   belongs_to :user
   has_many :trackers, dependent: :destroy
-  has_many :mood_entries, class_name: 'Monthlylog::MoodEntry', dependent: :destroy
 
   validates :period_from, presence: true, uniqueness: { scope: :user_id }
 

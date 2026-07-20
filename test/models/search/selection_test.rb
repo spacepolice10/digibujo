@@ -80,7 +80,7 @@ class Search::SelectionTest < ActiveSupport::TestCase
   end
 
   test 'complete! removes bullet from recent selections' do
-    bullet = @user.bullets.create!(bulletable: Task.new(body: 'Finish me'))
+    bullet = create_bullet!(@user, bulletable: Task.new(body: 'Finish me'))
 
     Search::Selection.record!(
       user: @user,
