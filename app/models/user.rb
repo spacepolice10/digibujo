@@ -32,17 +32,6 @@ class User < ApplicationRecord
     !buckets.exists?(bucketable_type: 'Collection', name: Onboarding::LOOSE_NOTES_NAME.downcase)
   end
 
-  # Ensures a single Daylog bucket exists and returns it.
-  def ensure_daylog_bucket!(_date = Date.current)
-    if (existing = daylog)
-      return existing.bucket
-    end
-
-    record = create_daylog!
-    buckets.create!(bucketable: record, name: Onboarding::DAYLOG_NAME, icon: 'calendar')
-    record.bucket
-  end
-
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
   validates :email_address, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }

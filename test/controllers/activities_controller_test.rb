@@ -54,7 +54,7 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
   test 'show renders postponed activity with daylog links and history' do
     bullet = @user.bullets.create!(bulletable: Task.new(body: 'Buy milk'), pops_on: Date.current)
     bullet.record_activity!('updated')
-    bullet.postpone!(bucket: @user.ensure_daylog_bucket!, pops_on: Date.current + 2.days)
+    bullet.postpone!(bucket: Onboarding.ensure_daylog_bucket!(@user), pops_on: Date.current + 2.days)
     activity = Activity.order(:created_at).last
 
     get activity_path(activity)

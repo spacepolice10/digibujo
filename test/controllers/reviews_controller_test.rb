@@ -81,7 +81,7 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
     archived = @user.bullets.create!(bulletable: Task.new(body: 'Archived'), pops_on: @today)
     archived.archive!
     migrated = @user.bullets.create!(bulletable: Task.new(body: 'Migrated'), pops_on: @today)
-    migrated.postpone!(bucket: @user.ensure_daylog_bucket!, pops_on: @today + 1.day)
+    migrated.postpone!(bucket: Onboarding.ensure_daylog_bucket!(@user), pops_on: @today + 1.day)
     migrated.update!(pops_on: @today)
     collection = create_collection!(@user, name: 'park')
     @user.bullets.create!(

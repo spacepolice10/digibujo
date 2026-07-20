@@ -33,7 +33,7 @@ class MigratableTest < ActiveSupport::TestCase
   end
 
   test 'postpone! with date change marks postponed migration' do
-    daylog = @user.ensure_daylog_bucket!
+    daylog = Onboarding.ensure_daylog_bucket!(@user)
     @bullet.postpone!(bucket: daylog, pops_on: Date.current + 2.days)
 
     @bullet.reload
@@ -42,7 +42,7 @@ class MigratableTest < ActiveSupport::TestCase
   end
 
   test 'postpone! without date change does not mark migration' do
-    daylog = @user.ensure_daylog_bucket!
+    daylog = Onboarding.ensure_daylog_bucket!(@user)
     @bullet.update!(pops_on: Date.current)
 
     @bullet.postpone!(bucket: daylog, pops_on: Date.current)

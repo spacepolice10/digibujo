@@ -14,7 +14,7 @@ class DaylogsController < ApplicationController
   end
 
   def create
-    Current.user.ensure_daylog_bucket!
+    Onboarding.ensure_daylog_bucket!(Current.user)
     redirect_to daylog_path
   end
 

@@ -37,7 +37,7 @@ module ActiveSupport
     end
 
     def ensure_daylog!(user, date = Date.current)
-      user.ensure_daylog_bucket!(date)
+      Onboarding.ensure_daylog_bucket!(user, date)
     end
 
     def ensure_future!(user, period_from: Date.current.beginning_of_month)

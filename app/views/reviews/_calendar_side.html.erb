@@ -8,7 +8,7 @@
   </header>
 
   <div class="review--calendar-body">
-    <% daylog_bucket = Current.user.ensure_daylog_bucket! %>
+    <% daylog_bucket = Onboarding.ensure_daylog_bucket!(Current.user) %>
     <% calendar_days.each do |date| %>
       <%= render "reviews/calendar_date",
             date: date,

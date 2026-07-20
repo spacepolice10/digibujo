@@ -112,7 +112,7 @@ Logs are **independent** buckets — no FK ownership between Future, Monthlylog,
 
 **Monthlylog** — optional one calendar month (`period_from` / auto `period_to`). `spread_days` lists each day. Top-level create: **`GET/POST /monthlylogs`**. **`GET /monthlylog`** → current month or empty. Single **`show`**: two panels side by side — days stacked vertically (date rail links to daylog) + unplanned (no tabs). Styles in `monthlylog.css` (`monthlylog--*`), separate from Future’s card-grid in `future.css`.
 
-**Daylog** — **one per user** (`has_one :daylog`). Day slice is **`pops_on`**. **`GET /daylog`**: if missing, `show` renders a create form (`POST /daylog`); if present, lists that day’s bullets. `User#ensure_daylog_bucket!` find-or-creates only for mutations (postpone, bullet default home, review drops) — not on daylog show.
+**Daylog** — **one per user** (`has_one :daylog`). Day slice is **`pops_on`**. **`GET /daylog`**: if missing, `show` renders a create form (`POST /daylog`); if present, lists that day’s bullets. `Onboarding.ensure_daylog_bucket!(user)` find-or-creates only for mutations (postpone, bullet default home, review drops) — not on daylog show. Daylog name/icon constants live on `Onboarding` (`DAYLOG_NAME`, `DAYLOG_ICON`).
 
 ## Organizing from the timeline
 

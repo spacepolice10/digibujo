@@ -14,16 +14,6 @@ class UserTest < ActiveSupport::TestCase
     assert_not user.needs_onboarding?
   end
 
-  test 'ensure_daylog_bucket! creates a single daylog' do
-    user = users(:one)
-
-    bucket = user.ensure_daylog_bucket!
-    again = user.ensure_daylog_bucket!(Date.current + 1.month)
-
-    assert_equal bucket, again
-    assert_equal 1, Daylog.where(user: user).count
-  end
-
   test 'downcases and strips email_address' do
     user = User.new(email_address: ' DOWNCASED@EXAMPLE.COM ')
     assert_equal('downcased@example.com', user.email_address)

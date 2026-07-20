@@ -7,7 +7,7 @@ module Bullets
     setup do
       @user = users(:one)
       sign_in_as @user
-      @daylog = @user.ensure_daylog_bucket!
+      @daylog = Onboarding.ensure_daylog_bucket!(@user)
       @future = ensure_future!(@user)
     end
 

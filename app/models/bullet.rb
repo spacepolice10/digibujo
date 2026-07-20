@@ -60,7 +60,7 @@ class Bullet < ApplicationRecord
     return if bucket.present? || bucket_id.present?
     return if user.blank?
 
-    self.bucket = user.ensure_daylog_bucket!
+    self.bucket = Onboarding.ensure_daylog_bucket!(user)
     self.pops_on ||= Date.current
   end
 

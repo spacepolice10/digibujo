@@ -89,7 +89,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
 
   test 'postpone records postponed when moving to another day with migration metadata' do
     bullet = @user.bullets.create!(bulletable: Event.new(body: 'Event'), pops_on: Date.current)
-    daylog = @user.ensure_daylog_bucket!
+    daylog = Onboarding.ensure_daylog_bucket!(@user)
 
     assert_difference -> { Activity.count }, 1 do
       bullet.postpone!(bucket: daylog, pops_on: Date.current + 1)
@@ -102,7 +102,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
 
   test 'postpone records postponed' do
     bullet = @user.bullets.create!(bulletable: Task.new(body: 'Later'))
-    daylog = @user.ensure_daylog_bucket!
+    daylog = Onboarding.ensure_daylog_bucket!(@user)
 
     assert_difference -> { Activity.count }, 1 do
       bullet.postpone!(bucket: daylog, pops_on: Date.current + 3)
