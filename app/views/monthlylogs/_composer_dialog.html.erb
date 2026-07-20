@@ -1,1 +1,15 @@
-<%= render "bullets/composer/dialog", id: "monthlylog_composer" %>
+<%= render "shared/dialog",
+      id: "monthlylog_composer",
+      close_on_submit: false,
+      standalone: true,
+      class_name: "dialog--large bullet-composer--dialog",
+      actions: [
+        "close->dialog#clearFrame",
+        "composer:restore->dialog#close",
+        "turbo:before-frame-render->dialog#openOnFrame"
+      ] do %>
+  <% @days.each do |date| %>
+    <turbo-frame id="monthlylog_bullets_<%= date.to_date %>_composer"></turbo-frame>
+  <% end %>
+  <turbo-frame id="monthlylog_unplanned_composer"></turbo-frame>
+<% end %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_20_190000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_20_191000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -155,8 +155,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_20_190000) do
     t.index ["user_id"], name: "index_login_codes_on_user_id"
   end
 
+  create_table "monthlylog_mood_entries", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.date "date", null: false
+    t.integer "monthlylog_id", null: false
+    t.integer "mood", null: false
+    t.datetime "updated_at", null: false
+    t.index ["monthlylog_id", "date"], name: "index_monthlylog_mood_entries_on_monthlylog_id_and_date", unique: true
+    t.index ["monthlylog_id"], name: "index_monthlylog_mood_entries_on_monthlylog_id"
+  end
+
   create_table "monthlylogs", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.boolean "mood_tracker_enabled", default: false, null: false
     t.date "period_from"
     t.date "period_to"
     t.datetime "updated_at", null: false
@@ -166,7 +177,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_20_190000) do
   end
 
   create_table "notes", force: :cascade do |t|
-    t.integer "mood"
   end
 
   create_table "pinned_entities", force: :cascade do |t|
@@ -262,13 +272,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_20_190000) do
     t.string "colour"
     t.datetime "created_at", null: false
     t.string "icon"
+    t.integer "monthlylog_id", null: false
     t.string "name", null: false
     t.json "schedule", default: {"days" => [0, 1, 2, 3, 4, 5, 6]}, null: false
-    t.date "stopped_on"
     t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["user_id", "created_at"], name: "index_trackers_on_user_id_and_created_at"
-    t.index ["user_id"], name: "index_trackers_on_user_id"
+    t.index ["created_at"], name: "index_trackers_on_user_id_and_created_at"
+    t.index ["monthlylog_id"], name: "index_trackers_on_monthlylog_id"
   end
 
   create_table "user_settings", force: :cascade do |t|
@@ -279,7 +288,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_20_190000) do
     t.boolean "projects_expanded", default: true, null: false
     t.boolean "published_expanded", default: true, null: false
     t.boolean "spreads_expanded", default: true, null: false
-    t.boolean "trackers_expanded", default: true, null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["user_id"], name: "index_user_settings_on_user_id", unique: true
@@ -311,6 +319,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_20_190000) do
   add_foreign_key "daylogs", "users"
   add_foreign_key "futures", "users"
   add_foreign_key "login_codes", "users"
+  add_foreign_key "monthlylog_mood_entries", "monthlylogs"
   add_foreign_key "monthlylogs", "users"
   add_foreign_key "pinned_entities", "users"
   add_foreign_key "projects", "users"
@@ -319,7 +328,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_20_190000) do
   add_foreign_key "search_selections", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "tracker_completions", "trackers"
-  add_foreign_key "trackers", "users"
+  add_foreign_key "trackers", "monthlylogs"
   add_foreign_key "user_settings", "users"
 
   # Virtual tables defined in this database.

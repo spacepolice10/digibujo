@@ -1,0 +1,31 @@
+<%# locals: (bucket:, composer_id:, side:, pops_on: nil) %>
+<%# side: :planned → Task + Event; :unplanned → Task + Note %>
+<% types = if side.to_sym == :planned
+  [
+    { name: "Task", icon: "square", modifier: "task" },
+    { name: "Event", icon: "circle", modifier: "event" }
+  ]
+else
+  [
+    { name: "Task", icon: "square", modifier: "task" },
+    { name: "Note", icon: "text", modifier: "note" }
+  ]
+end %>
+<div class="bullet--composer-buttons">
+  <% types.each do |type| %>
+    <%= link_to new_bullet_path(
+          pops_on: pops_on,
+          bucket_id: bucket.id,
+          bulletable_type: type[:name]
+        ),
+        class: [
+          "bullet--composer-create-button",
+          "bullet--composer-create-button--#{type[:modifier]}"
+        ],
+        data: { turbo_frame: composer_id },
+        aria: { label: "Add #{type[:name]}" } do %>
+      <i class="icon" style="--icon-mask: var(--icon-<%= type[:icon] %>)" aria-hidden="true"></i>
+      <%= type[:name] %>
+    <% end %>
+  <% end %>
+</div>

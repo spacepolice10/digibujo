@@ -8,7 +8,7 @@ class MonthlylogsController < ApplicationController
       period_from: Date.current.beginning_of_month
     )
     if @monthlylog
-      assign_data
+      prepare_show
       render :show
     else
       render :empty
@@ -16,7 +16,7 @@ class MonthlylogsController < ApplicationController
   end
 
   def show
-    assign_data
+    prepare_show
   end
 
   def new
@@ -26,7 +26,7 @@ class MonthlylogsController < ApplicationController
   end
 
   def create
-    @monthlylog = Current.user.monthlylogs.new(period_from: period_from_param)
+    @monthlylog = Current.user.monthlylogs.new(monthlylog_create_params)
     if @monthlylog.period_from
       @monthlylog.build_bucket(
         user: Current.user,
@@ -50,6 +50,16 @@ class MonthlylogsController < ApplicationController
 
   private
 
+  def prepare_show
+    @days = @monthlylog.spread_days
+    scoped = @monthlylog.bullets.active.includes(:bulletable)
+    grouped = scoped.where(pops_on: @days).group_by(&:pops_on)
+    @bullets_by_date = @days.index_with { |day| grouped[day] || [] }
+    @unplanned_bullets = scoped.where(pops_on: nil).order(created_at: :asc)
+    @trackers = @monthlylog.trackers.chronological.with_completions
+    @mood_entries_by_date = @monthlylog.mood_entries.index_by(&:date) if @monthlylog.mood_tracker_enabled?
+  end
+
   def set_monthlylog
     @monthlylog = Current.user.monthlylogs.find(params[:id])
   end
@@ -63,24 +73,17 @@ class MonthlylogsController < ApplicationController
     (0..12).map { |i| start + i.months }
   end
 
-  def period_from_param
-    raw = params.require(:monthlylog)[:period_from]
-    return if raw.blank?
+  def monthlylog_create_params
+    raw = params.require(:monthlylog)
+    period = begin
+      Date.iso8601(raw[:period_from].to_s).beginning_of_month if raw[:period_from].present?
+    rescue Date::Error, ArgumentError
+      nil
+    end
 
-    Date.iso8601(raw.to_s).beginning_of_month
-  rescue Date::Error, ArgumentError
-    nil
-  end
-
-  def assign_data
-    @bucket = @monthlylog.bucket
-    @period_days = @monthlylog.period_days
-    scoped = Current.user.bullets.where(bucket_id: @bucket.id).active
-    @bullets_by_date = if @period_days
-                         scoped.where(pops_on: @period_days).includes(:bulletable).group_by(&:pops_on)
-                       else
-                         {}
-                       end
-    @unplanned_bullets = scoped.where(pops_on: nil).order(created_at: :asc).includes(:bulletable)
+    {
+      period_from: period,
+      mood_tracker_enabled: !!ActiveModel::Type::Boolean.new.cast(raw[:mood_tracker_enabled])
+    }
   end
 end

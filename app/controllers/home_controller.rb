@@ -27,12 +27,6 @@ class HomeController < ApplicationController
         expanded: section_expanded?(:collections)
       ),
       Section.new(
-        name: 'Trackers',
-        records: tracker_records,
-        show_path: trackers_path,
-        expanded: section_expanded?(:trackers)
-      ),
-      Section.new(
         name: 'Published',
         records: published_records,
         show_path: published_index_path,
@@ -52,10 +46,6 @@ class HomeController < ApplicationController
 
   def project_records
     Current.user.projects.limit(5)
-  end
-
-  def tracker_records
-    Current.user.trackers.open.chronological.limit(5)
   end
 
   def published_records

@@ -6,22 +6,13 @@
 
     <div class="layout--header">
       <div class="layout--header-actions">
-        <%= link_to home_path, class: "button--secondary" do %>
+        <%= link_to monthlylog_path(@tracker.monthlylog), class: "button--secondary" do %>
           <%= icon_tag("arrow-left", colour: "var(--color-stroke-base)") %> Back
         <% end %>
       </div>
 
       <div class="tracker--show-actions">
         <%= link_to "Edit", edit_tracker_path(@tracker), class: "button--secondary" %>
-
-        <% if @tracker.open? %>
-          <%= button_to tracker_stop_path(@tracker),
-                    method: :post,
-                    class: "button--secondary",
-                    form: { data: { turbo_confirm: "Stop this tracker?" } } do %>
-            Stop
-          <% end %>
-        <% end %>
 
         <%= button_to @tracker,
                   method: :delete,
@@ -51,8 +42,8 @@
       </div>
     </dl>
 
-    <section class="tracker--heatmap layout--surface" aria-label="Last 90 days">
-      <h2 class="tracker--heading">Last 90 days</h2>
+    <section class="tracker--heatmap layout--surface" aria-label="This month">
+      <h2 class="tracker--heading">This month</h2>
 
       <div class="tracker--heatmap-days">
         <% @heatmap_days.each do |day| %>

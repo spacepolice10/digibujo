@@ -5,15 +5,6 @@ class Note < ApplicationRecord
 
   has_rich_text :body
 
-  enum :mood, { positive: 0, negative: 1, inspired: 2, frustrated: 3 }
-
-  MOOD_MARKERS = {
-    positive: '😊',
-    negative: '😞',
-    inspired: '✨',
-    frustrated: '😣'
-  }.freeze
-
   def marker_icon              = :text
   def icon                     = :text
   def colour                   = 'gold'
@@ -32,13 +23,5 @@ class Note < ApplicationRecord
     long? ? excerpt_text.truncate(400) : body
   end
 
-  def mood_marker
-    MOOD_MARKERS[mood&.to_sym]
-  end
-
-  def data_attributes
-    mood.present? ? { note_mood: mood } : {}
-  end
-
-  def self.permitted_bullet_attributes = %i[id body mood]
+  def self.permitted_bullet_attributes = %i[id body]
 end

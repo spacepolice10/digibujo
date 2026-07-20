@@ -5,20 +5,7 @@ class TrackersController < ApplicationController
 
   def show
     @tracker = Current.user.trackers.where(id: @tracker.id).with_completions.first
-    @heatmap_days = (Date.current - 89.days)..Date.current
-  end
-
-  def new
-    @tracker = Tracker.new(schedule: Tracker::DEFAULT_SCHEDULE.dup)
-  end
-
-  def create
-    @tracker = Current.user.trackers.build(tracker_attributes)
-    if @tracker.save
-      redirect_to home_path, notice: 'Tracker created'
-    else
-      render :new, status: :unprocessable_entity
-    end
+    @heatmap_days = @tracker.monthlylog.spread_days
   end
 
   def edit; end
@@ -32,8 +19,9 @@ class TrackersController < ApplicationController
   end
 
   def destroy
+    monthlylog = @tracker.monthlylog
     @tracker.destroy!
-    redirect_to home_path, notice: 'Tracker deleted'
+    redirect_to monthlylog_path(monthlylog), notice: 'Tracker deleted'
   end
 
   private

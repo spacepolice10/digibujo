@@ -2,12 +2,12 @@
 
 
 
-  .monthly-bucket--period {
+  .monthlylog--period {
     margin: 0;
     color: var(--color-fg-subtle);
   }
 
-  .monthly-bucket--spread {
+  .monthlylog--spread {
     display: grid;
     grid-template-columns: 1fr 1px 1fr;
     align-items: stretch;
@@ -17,34 +17,34 @@
     overflow: hidden;
   }
 
-  .monthly-bucket--by-date {
+  .monthlylog--by-date {
     min-width: 0;
     min-height: 0;
     overflow-y: auto;
     padding: var(--spacing-vertical) var(--spacing-horizontal);
   }
 
-  .monthly-bucket--calendar {
+  .monthlylog--calendar {
     min-width: 0;
     min-height: 0;
     overflow-y: auto;
     padding: var(--spacing-vertical) var(--spacing-horizontal);
   }
 
-  .monthly-bucket--calendar-body {
+  .monthlylog--calendar-body {
     display: flex;
     flex-direction: column;
   }
 
-  .monthly-bucket--date-band {
+  .monthlylog--date-band {
     padding-block: calc(var(--spacing-vertical-half) / 2);
   }
 
-  .monthly-bucket--date-band-current .monthly-bucket--date-number {
+  .monthlylog--date-band-current .monthlylog--date-number {
     color: var(--color-fg-base);
   }
 
-  .monthly-bucket--date-band-current .monthly-bucket--date-number::before {
+  .monthlylog--date-band-current .monthlylog--date-number::before {
     content: "";
     position: absolute;
     left: 0;
@@ -56,7 +56,7 @@
     pointer-events: none;
   }
 
-  .monthly-bucket--date-rail {
+  .monthlylog--date-rail {
     display: flex;
     align-items: flex-start;
     gap: var(--spacing-horizontal-half);
@@ -65,7 +65,7 @@
     border-bottom: 0.5px solid var(--color-stroke-base);
   }
 
-  .monthly-bucket--date-number {
+  .monthlylog--date-number {
     position: relative;
     flex-shrink: 0;
     display: flex;
@@ -84,64 +84,64 @@
     }
   }
 
-  .monthly-bucket--date-day {
+  .monthlylog--date-day {
     font-weight: var(--font-weight-strong);
     font-size: 0.85em;
   }
 
-  .monthly-bucket--date-weekday {
+  .monthlylog--date-weekday {
     font-weight: var(--font-weight-base);
     font-size: 0.75em;
     text-transform: uppercase;
   }
 
-  .monthly-bucket--date-entries {
+  .monthlylog--date-entries {
     flex: 1;
     min-width: 0;
     align-self: stretch;
   }
 
   @media (hover: hover) {
-    .monthly-bucket--calendar .monthly-bucket--date-composer {
+    .monthlylog--calendar .monthlylog--date-composer {
       visibility: hidden;
       pointer-events: none;
     }
 
-    .monthly-bucket--calendar .monthly-bucket--date-band:is(:hover, :focus-within) .monthly-bucket--date-composer {
+    .monthlylog--calendar .monthlylog--date-band:is(:hover, :focus-within) .monthlylog--date-composer {
       visibility: visible;
       pointer-events: auto;
     }
   }
 
   @media (hover: none) {
-    .monthly-bucket--calendar .monthly-bucket--date-composer {
+    .monthlylog--calendar .monthlylog--date-composer {
       visibility: visible;
       pointer-events: auto;
     }
   }
 
-  .monthly-bucket--divider {
+  .monthlylog--divider {
     background: var(--color-stroke-base);
   }
 
-  .monthly-bucket--by-date-empty {
+  .monthlylog--by-date-empty {
     color: var(--color-fg-subtle);
     text-align: center;
     padding: var(--spacing-vertical-quad) var(--spacing-horizontal);
   }
 
-  .monthly-bucket--date-form {
+  .monthlylog--date-form {
     flex-shrink: 0;
     align-self: flex-start;
   }
 
   @supports (appearance: base-select) {
-    .monthly-bucket--date-form-select,
-    .monthly-bucket--date-form-select::picker(select) {
+    .monthlylog--date-form-select,
+    .monthlylog--date-form-select::picker(select) {
       appearance: base-select;
     }
 
-    .monthly-bucket--date-form-select {
+    .monthlylog--date-form-select {
       width: var(--icon-size-base);
       height: var(--icon-size-base);
       padding: 0;
@@ -150,7 +150,7 @@
       color: var(--color-fg-subtle);
     }
 
-    .monthly-bucket--date-form-select > button {
+    .monthlylog--date-form-select > button {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -164,22 +164,22 @@
       cursor: pointer;
     }
 
-    .monthly-bucket--date-form-select:hover > button,
-    .monthly-bucket--date-form-select:focus-within > button {
+    .monthlylog--date-form-select:hover > button,
+    .monthlylog--date-form-select:focus-within > button {
       color: var(--color-fg-base);
       background: var(--color-stroke-base);
     }
 
-    .monthly-bucket--date-form-select::picker-icon {
+    .monthlylog--date-form-select::picker-icon {
       display: none;
     }
 
-    .monthly-bucket--date-form-select::picker(select) {
+    .monthlylog--date-form-select::picker(select) {
       min-width: calc(var(--spacing-horizontal-double) * 8);
     }
   }
 
-  .monthly-bucket--unplanned {
+  .monthlylog--unplanned {
     display: flex;
     flex-direction: column;
     min-width: 0;
@@ -188,35 +188,35 @@
     overflow-y: auto;
   }
 
-  .monthly-bucket--unplanned-header {
+  .monthlylog--unplanned-header {
     margin-bottom: var(--spacing-vertical);
   }
 
-  .monthly-bucket--unplanned-title {
+  .monthlylog--unplanned-title {
     margin: 0 0 var(--spacing-vertical-half);
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-strong);
   }
 
-  .monthly-bucket--unplanned-description {
+  .monthlylog--unplanned-description {
     margin: 0;
     color: var(--color-fg-subtle);
   }
 
-  .monthly-bucket--unplanned-entries {
+  .monthlylog--unplanned-entries {
     display: flex;
     flex-direction: column;
     gap: 0;
   }
 
-  .monthly-bucket--drop-over,
+  .monthlylog--drop-over,
   .pops-drop--over {
     outline: 2px dashed var(--model-color-4);
     outline-offset: -2px;
     border-radius: var(--radius-base);
   }
 
-  .monthly-bucket--workspace {
+  .monthlylog--workspace {
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -227,83 +227,38 @@
     overflow: hidden;
   }
 
-  .monthly-bucket--monthly-sections {
-    display: none;
-    gap: 0;
-    border-bottom: 1px solid var(--color-stroke-base);
-    background: var(--color-bg-base);
-  }
-
-  .monthly-bucket--monthly-section {
-    flex: 1;
-    margin: 0;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
-    border: 0;
-    border-bottom: 2px solid transparent;
-    background: transparent;
-    color: var(--color-fg-subtle);
-    font: inherit;
-    cursor: pointer;
-  }
-
-  .monthly-bucket--monthly-section-active {
-    color: var(--color-fg-base);
-    border-bottom-color: var(--model-color-4);
-  }
-
   @media (min-width: 1200px) {
-    .monthly-bucket--spread {
+    .monthlylog--spread {
       grid-template-columns: minmax(0, 1.65fr) 1px minmax(calc(var(--spacing-horizontal-double) * 9), 1fr);
     }
   }
 
   @media (max-width: 799px) {
-    .monthly-bucket--monthly-sections {
-      display: flex;
+    .monthlylog--spread {
+      grid-template-columns: 1fr;
+      max-height: none;
     }
 
-    .monthly-bucket--spread {
-      display: contents;
+    .monthlylog--divider {
+      height: 1px;
+      width: 100%;
     }
 
-    .monthly-bucket--by-date,
-    .monthly-bucket--calendar,
-    .monthly-bucket--unplanned {
-      overflow-y: auto;
-      padding: var(--spacing-vertical) var(--spacing-horizontal);
+    .monthlylog--calendar,
+    .monthlylog--unplanned {
+      max-height: 50dvh;
     }
-
-    .monthly-bucket--divider {
-      display: none;
-    }
-  }
-
-  .monthly-bucket--page-mobile {
-    min-height: calc(100dvh - var(--spacing-vertical) * 2);
-  }
-
-  .monthly-bucket--workspace-mobile {
-    flex: 1;
-    min-height: 0;
-  }
-
-  .monthly-bucket--page-mobile .monthly-bucket--monthly-sections {
-    display: flex;
-  }
-
-  .monthly-bucket--page-mobile .monthly-bucket--spread-mobile {
-    display: contents;
   }
 
   /* ── Month period picker (new spread form) ────────── */
 
-  .monthly-bucket--period-picker {
+  .monthlylog--period-picker {
     border: none;
     padding: 0;
     margin: 0;
   }
 
-  .monthly-bucket--period-picker > legend {
+  .monthlylog--period-picker > legend {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -313,48 +268,48 @@
     clip: rect(0, 0, 0, 0);
   }
 
-  .monthly-bucket--period-picker {
+  .monthlylog--period-picker {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: var(--spacing-vertical);
   }
 
   @container page-column (max-width: 600px) {
-    .monthly-bucket--period-picker {
+    .monthlylog--period-picker {
       grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  .monthly-bucket--period-option {
+  .monthlylog--period-option {
     display: flex;
     position: relative;
     cursor: pointer;
   }
 
-  .monthly-bucket--period-option--disabled {
+  .monthlylog--period-option--disabled {
     cursor: not-allowed;
     opacity: var(--opacity-half);
   }
 
-  .monthly-bucket--period-option--disabled .monthly-bucket--period-input {
+  .monthlylog--period-option--disabled .monthlylog--period-input {
     cursor: not-allowed;
     pointer-events: none;
   }
 
-  .monthly-bucket--period-option--disabled:hover .monthly-bucket--period-card,
-  .monthly-bucket--period-option--disabled .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
-  .monthly-bucket--period-option--disabled .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
+  .monthlylog--period-option--disabled:hover .monthlylog--period-card,
+  .monthlylog--period-option--disabled .monthlylog--period-input:focus-visible + .monthlylog--period-card,
+  .monthlylog--period-option--disabled .monthlylog--period-input:checked + .monthlylog--period-card {
     transform: none;
     border-color: var(--color-stroke-base);
     box-shadow: none;
     outline: none;
   }
 
-  .monthly-bucket--period-option--disabled .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card::after {
+  .monthlylog--period-option--disabled .monthlylog--period-input:focus-visible + .monthlylog--period-card::after {
     content: none;
   }
 
-  .monthly-bucket--period-input {
+  .monthlylog--period-input {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -369,11 +324,11 @@
     z-index: 1;
   }
 
-  .monthly-bucket--period-input:focus {
+  .monthlylog--period-input:focus {
     outline: none;
   }
 
-  .monthly-bucket--period-card {
+  .monthlylog--period-card {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -394,26 +349,26 @@
       background 0.22s ease;
   }
 
-  .monthly-bucket--period-name {
+  .monthlylog--period-name {
     font-size: var(--font-size-huge);
     font-weight: var(--font-weight-strong);
     color: var(--color-fg-base);
     line-height: 1;
   }
 
-  .monthly-bucket--period-meta {
+  .monthlylog--period-meta {
     font-size: var(--font-size-base);
     color: var(--color-fg-subtle);
     line-height: 1;
   }
 
-  .monthly-bucket--period-checkbox:hover + .monthly-bucket--period-card {
+  .monthlylog--period-checkbox:hover + .monthlylog--period-card {
     transform: translateY(-1px) scale(1.02);
     border-color: var(--color-stroke-strong);
     box-shadow: var(--shadow-base);
   }
 
-  .monthly-bucket--period-checkbox:focus-visible + .monthly-bucket--period-card {
+  .monthlylog--period-checkbox:focus-visible + .monthlylog--period-card {
     transform: scale(1.05);
     border-color: var(--color-stroke-strong);
     outline: 2px solid var(--color-stroke-strong);
@@ -423,7 +378,7 @@
       var(--shadow-strong);
   }
 
-  .monthly-bucket--period-checkbox:focus-visible + .monthly-bucket--period-card::after {
+  .monthlylog--period-checkbox:focus-visible + .monthlylog--period-card::after {
     content: "";
     position: absolute;
     top: var(--spacing-vertical-half);
@@ -435,14 +390,14 @@
     box-shadow: 0 0 0 2px var(--color-bg-base);
   }
 
-  .monthly-bucket--period-checkbox:checked + .monthly-bucket--period-card {
+  .monthlylog--period-checkbox:checked + .monthlylog--period-card {
     border-color: var(--color-stroke-strong);
     transform: scale(1.02);
   }
 
-  .monthly-bucket--period-checkbox[data-month]:hover .monthly-bucket--period-card,
-  .monthly-bucket--period-option .monthly-bucket--period-checkbox:focus-visible + .monthly-bucket--period-card,
-  .monthly-bucket--period-option .monthly-bucket--period-checkbox:checked + .monthly-bucket--period-card {
+  .monthlylog--period-checkbox[data-month]:hover .monthlylog--period-card,
+  .monthlylog--period-option .monthlylog--period-checkbox:focus-visible + .monthlylog--period-card,
+  .monthlylog--period-option .monthlylog--period-checkbox:checked + .monthlylog--period-card {
     background: var(--entity-color-bg);
     border-color: color-mix(
       in oklch,
@@ -453,10 +408,10 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .monthly-bucket--period-option:hover .monthly-bucket--period-card,
-    .monthly-bucket--period-option[data-month]:hover .monthly-bucket--period-card,
-    .monthly-bucket--period-input:focus-visible + .monthly-bucket--period-card,
-    .monthly-bucket--period-input:checked + .monthly-bucket--period-card {
+    .monthlylog--period-option:hover .monthlylog--period-card,
+    .monthlylog--period-option[data-month]:hover .monthlylog--period-card,
+    .monthlylog--period-input:focus-visible + .monthlylog--period-card,
+    .monthlylog--period-input:checked + .monthlylog--period-card {
       transform: none;
     }
   }

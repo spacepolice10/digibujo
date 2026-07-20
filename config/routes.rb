@@ -27,7 +27,10 @@ Rails.application.routes.draw do
 
   resources :futures, only: %i[show new create]
 
-  resources :monthlylogs, only: %i[new create show]
+  resources :monthlylogs, only: %i[new create show] do
+    resources :trackers, only: %i[new create], module: :monthlylogs
+    resource :mood_entry, only: %i[create destroy], module: :monthlylogs
+  end
 
   get 'future_buckets/:id', to: redirect('/futures/%{id}')
   get 'monthly_buckets/:id', to: redirect('/monthlylogs/%{id}')
@@ -71,10 +74,9 @@ Rails.application.routes.draw do
   resources :buckets, only: :show
 
   # --- Trackers ---
-  resources :trackers, except: :index do
+  resources :trackers, only: %i[show edit update destroy] do
     scope module: :trackers do
       resource :completion
-      resource :stop, only: :create
     end
   end
 

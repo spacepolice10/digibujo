@@ -18,8 +18,10 @@ module ActiveSupport
       user.projects.create!(name: name, colour: colour)
     end
 
-    def create_tracker!(user, name:, schedule: Tracker::DEFAULT_SCHEDULE.dup, colour: nil, icon: nil)
-      user.trackers.create!(name: name, schedule: schedule, colour: colour, icon: icon)
+    def create_tracker!(user, name:, monthlylog: nil, schedule: Tracker::DEFAULT_SCHEDULE.dup, colour: nil, icon: nil)
+      monthlylog ||= user.monthlylogs.find_by(period_from: Date.current.beginning_of_month) ||
+                     create_monthlylog!(user, name: Date.current.strftime('%B %Y'))
+      monthlylog.trackers.create!(name: name, schedule: schedule, colour: colour, icon: icon)
     end
 
     def create_collection!(user, name:, colour: nil, icon: nil)

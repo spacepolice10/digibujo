@@ -58,10 +58,10 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
     bullet = @user.bullets.order(:created_at).last
     assert_not_equal @bullet, bullet
-    assert_includes bullet.mentions, project
+    assert_includes bullet.projects, project
   end
 
-  test 'create does not sync mentions from Task plain body' do
+  test 'create does not sync projects from Task plain body' do
     project = create_project!(@user, name: 'Ignored')
     body_html = ActionText::Content.new('').append_attachables(project).to_html
 
@@ -76,7 +76,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
     bullet = @user.bullets.order(:created_at).last
     assert_equal 'Task', bullet.bulletable_type
-    assert_empty bullet.mentions
+    assert_empty bullet.projects
   end
 
   test 'create persists rich content in note body' do
@@ -152,16 +152,12 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'can&#39;t be blank', response.body
   end
 
-  test 'new without type renders full page type picker' do
+  test 'new without type asks to pick a type' do
     get new_bullet_path
 
     assert_response :success
     assert_select 'form.bullet-composer', count: 0
-    assert_select '.bullet--composer-create-button'
-    assert_select 'a[href*="bulletable_type=Task"]'
-    assert_select 'a[href*="bulletable_type=Note"]'
-    assert_select 'a[href*="bulletable_type=Event"]'
-    assert_select 'a[href*="bulletable_type=Voice"]'
+    assert_match 'Pick a bullet type first', response.body
   end
 
   test 'new composer renders full page plain editor' do
@@ -183,7 +179,6 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'lexxy-editor[preset=note]'
     assert_select '.bullet-composer--plain-input', false
     assert_select '.bullet-composer--type-pill[data-bullet-type=?]', 'note', text: /Note/
-    assert_select '.mood-option', count: 4
   end
 
   test 'new composer renders without return_to field' do
@@ -247,40 +242,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_match(/turbo-stream action="append" target="#{container_id}"/, response.body)
   end
 
-  test 'create sets note mood from bulletable_attributes' do
-    post bullets_path,
-         params: {
-           bullet: {
-             bulletable_type: 'Note',
-             bulletable_attributes: { body: 'Moody note', mood: 'inspired' },
-             pops_on: Date.current.iso8601
-           }
-         }
-
-    bullet = @user.bullets.order(:created_at).last
-    assert_equal 'Note', bullet.bulletable_type
-    assert_equal 'inspired', bullet.bulletable.mood
-  end
-
-  test 'update changes note mood via bulletable_attributes' do
-    note = @user.bullets.create!(bulletable: Note.new(mood: 'positive', body: 'Existing note'))
-
-    patch bullet_path(note),
-          params: {
-            bullet: {
-              bulletable_type: 'Note',
-              bulletable_attributes: { id: note.bulletable_id, body: 'Updated body', mood: 'frustrated' }
-            }
-          },
-          as: :turbo_stream
-
-    assert_response :success
-    assert_equal 'frustrated', note.reload.bulletable.mood
-    assert_equal 'Updated body', note.body.to_plain_text
-  end
-
   test 'create with non-Note type ignores stale bulletable_attributes' do
-    # Simulates user picking a mood (Note), then switching to Task in the same form.
       post bullets_path,
            params: {
              bullet: {
@@ -292,7 +254,6 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
     bullet = @user.bullets.order(:created_at).last
     assert_equal 'Task', bullet.bulletable_type
-    # Task has no mood column; the per-type permitted attrs stripped it before assignment.
     assert_not bullet.bulletable.respond_to?(:mood)
   end
 

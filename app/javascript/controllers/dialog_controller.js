@@ -4,7 +4,6 @@ export default class extends Controller {
   static targets = ["dialog"]
 
   connect() {
-    // Strip `open` from dialogs in cached snapshots before Turbo renders them
     this.beforeRenderHandler = (event) => {
       event.detail.newBody
         .querySelectorAll("dialog[open]")
@@ -12,12 +11,11 @@ export default class extends Controller {
     }
     document.addEventListener("turbo:before-render", this.beforeRenderHandler)
 
-    // Fallback for browsers without native invoker commands support
     if (!("commandForElement" in HTMLButtonElement.prototype)) {
       this.invokerHandler = (event) => {
         const button = event.target.closest("[commandfor]")
         if (!button) return
-        if (!this.dialogTarget.id || this.dialogTarget.id !== button.getAttribute("commandfor")) return
+        if (!this.dialog.id || this.dialog.id !== button.getAttribute("commandfor")) return
         const command = button.getAttribute("command")
         if (command == "show-modal") this.open()
         else if (command == "close") this.close()
@@ -34,11 +32,11 @@ export default class extends Controller {
   }
 
   open() {
-    this.dialogTarget.showModal()
+    if (!this.dialog.open) this.dialog.showModal()
   }
 
   close() {
-    this.dialogTarget.close()
+    if (this.dialog.open) this.dialog.close()
   }
 
   hide() {
@@ -46,15 +44,30 @@ export default class extends Controller {
   }
 
   backdropHide(event) {
-    if (event.target === this.dialogTarget) {
-      this.dialogTarget.close()
-    }
+    if (event.target === this.dialog) this.close()
   }
 
-
   submitSuccess(ev) {
-    if (ev.detail.success) {
-      this.dialogTarget.close()
-    }
+    if (ev.detail.success) this.close()
+  }
+
+  openOnFrame(event) {
+    if (!this.#isOwnedFrame(event.target)) return
+    this.open()
+  }
+
+  clearFrame() {
+    this.dialog.querySelectorAll("turbo-frame").forEach((frame) => {
+      frame.removeAttribute("src")
+      frame.innerHTML = ""
+    })
+  }
+
+  get dialog() {
+    return this.hasDialogTarget ? this.dialogTarget : this.element
+  }
+
+  #isOwnedFrame(target) {
+    return target instanceof Element && target.tagName == "TURBO-FRAME" && this.dialog.contains(target)
   }
 }

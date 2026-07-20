@@ -1,5 +1,5 @@
-<%# locals: (tracker:) %>
-<%= form_with model: tracker, class: "form form--strong" do |f| %>
+<%# locals: (tracker:, url: nil) %>
+<%= form_with model: tracker, url: url, class: "form form--strong" do |f| %>
   <% if tracker.errors.any? %>
     <div class="form--errors" role="alert">
       <p><%= pluralize(tracker.errors.count, "error") %> prevented this tracker from being saved:</p>
@@ -11,7 +11,7 @@
     </div>
   <% end %>
 
-  <small class="form-small">Trackers are repeating habits you want to build — mark them off each day and track your consistency over time.</small>
+  <small class="form-small">Trackers are repeating habits for this month — mark them off each day on the monthly spread.</small>
 
   <div class="form-group">
     <%= f.label :name, class: "form-label" %>

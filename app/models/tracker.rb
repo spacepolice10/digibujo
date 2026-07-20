@@ -5,11 +5,11 @@ class Tracker < ApplicationRecord
 
   DEFAULT_SCHEDULE = { 'days' => (0..6).to_a }.freeze
 
-  belongs_to :user
+  belongs_to :monthlylog
+  has_one :user, through: :monthlylog
   has_many :completions, class_name: 'Tracker::Completion', dependent: :destroy
 
   scope :chronological, -> { order(created_at: :asc) }
-  scope :open, -> { where(stopped_on: nil) }
 
   validates :name, presence: true
   validates :schedule, presence: true
@@ -26,28 +26,16 @@ class Tracker < ApplicationRecord
   end
 
   def active_from
-    created_at.to_date
+    monthlylog.period_from
   end
 
   def active_to
-    stopped_on || Date.current
-  end
-
-  def stopped?
-    stopped_on.present?
-  end
-
-  def open?
-    !stopped?
-  end
-
-  def stop!(on: Date.current)
-    update!(stopped_on: on.to_date)
+    [monthlylog.period_to, Date.current].min
   end
 
   def active_on?(date)
     day = date.to_date
-    day >= active_from && day <= active_to
+    day >= monthlylog.period_from && day <= monthlylog.period_to
   end
 
   def scheduled_on?(date)

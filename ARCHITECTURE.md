@@ -10,7 +10,7 @@ Custom session-based auth built with an `Authentication` concern (not Devise). *
 
 ## User Settings
 
-Per-user settings live in a dedicated `user_settings` table (one row per user), accessed via `User::Configurable` concern. `User` `has_one :settings, class_name: "User::Settings"`; the row is created automatically on user create. `User::Settings` exposes typed columns and a `SECTIONS` / `SECTION_COLUMNS` map (current sections: `logs`, `projects`, `collections`, `people`, `trackers`, `published` → `*_expanded` booleans). **`appearance`** (`default`, `warm`, `cool`, `nature`, `cheese`) drives the home background tint. Add new settings as real columns and extend the model; avoid JSON columns. Home section expand/collapse is updated via `POST /home/sections/:id/expand` and `POST /home/sections/:id/collapse` (`Home::SectionsController`), which guards unknown keys using `User::Settings::SECTION_COLUMNS`. Appearance is updated via `POST /home/appearance` (`Home::AppearancesController`). The concern also exposes `User#settings!` which lazy-creates the row on first access; use it from controllers so users created before the row existed (or created via raw SQL) still get a settings record.
+Per-user settings live in a dedicated `user_settings` table (one row per user), accessed via `User::Configurable` concern. `User` `has_one :settings, class_name: "User::Settings"`; the row is created automatically on user create. `User::Settings` exposes typed columns and a `SECTIONS` / `SECTION_COLUMNS` map (current sections: `logs`, `projects`, `collections`, `published` → `*_expanded` booleans). **`appearance`** (`default`, `warm`, `cool`, `nature`, `cheese`) drives the home background tint. Add new settings as real columns and extend the model; avoid JSON columns. Home section expand/collapse is updated via `POST /home/sections/:id/expand` and `POST /home/sections/:id/collapse` (`Home::SectionsController`), which guards unknown keys using `User::Settings::SECTION_COLUMNS`. Appearance is updated via `POST /home/appearance` (`Home::AppearancesController`). The concern also exposes `User#settings!` which lazy-creates the row on first access; use it from controllers so users created before the row existed (or created via raw SQL) still get a settings record.
 
 ## Delegated Type Pattern (Bullets)
 
@@ -19,13 +19,13 @@ Per-user settings live in a dedicated `user_settings` table (one row per user), 
 | Type    | Concerns     | Notes                              |
 |---------|--------------|------------------------------------|
 | `Task`  | `Bulletable` | Completable + temporal; plain `body` text |
-| `Note`  | `Bulletable` | Long-form; Action Text/Lexxy `body`; mood enum |
+| `Note`  | `Bulletable` | Long-form; Action Text/Lexxy `body` |
 | `Event` | `Bulletable` | Temporal; plain `body`; date range |
 | `Voice` | `Bulletable` | Audio memo; plain caption `body` |
 
 Each bulletable includes **`Bulletable`** (`has_one :bullet`, display defaults, `to_partial_path` / `to_form_path`, `permitted_bullet_attributes`). **Note alone** declares `has_rich_text :body` (Action Text via Lexxy). Task/Event/Voice store a plain **`body` text column**. **`Bulletable#name` / `#excerpt`** default from `body`; Note overrides for rich text. **`Bullet` delegates `:body`** (and type-specific display helpers) to the bulletable. Legacy create/update params may still pass `body:` on the bullet — `Bullet#assign_attributes` / `#body=` forward to the bulletable.
 
-**Composers:** type partials via `Bullet#to_form_path` (`tasks/form`, `notes/form`, …) wrap a thin layout shell [`bullets/_form`](app/views/bullets/_form.html.erb) (`form_with`, hiddens, rail; Stimulus wiring lives on the form shell / type locals, not on the model). Task/Event/Voice use a plain `text_field`; Note uses Lexxy preset **`note`**. Rendered note rich text uses `.rich-text-content` alongside Lexxy's `.lexxy-content`. **Mentions** sync from Action Text attachables **only on Notes**. Note mood picker submits `bulletable_attributes[:mood]` through `accepts_nested_attributes_for :bulletable`; each type declares permitted attributes via `permitted_bullet_attributes`.
+**Composers:** type partials via `Bullet#to_form_path` (`tasks/form`, `notes/form`, …) wrap a thin layout shell [`bullets/_form`](app/views/bullets/_form.html.erb) (`form_with`, hiddens, rail; Stimulus wiring lives on the form shell / type locals, not on the model). Task/Event/Voice use a plain `text_field`; Note uses Lexxy preset **`note`**. Rendered note rich text uses `.rich-text-content` alongside Lexxy's `.lexxy-content`. **Projects** sync from Action Text `#` attachables **only on Notes**. Each type declares permitted attributes via `permitted_bullet_attributes`.
 
 **Bucket membership:** `Bullet` **requires** `belongs_to :bucket` (Daylog, Monthlylog, Future, or Collection). **`bucket_id` must belong to the same user**. Homes are exclusive: the daylog page never unions monthly/future bullets. **`Migratable#migrate_to!`** moves a bullet to a destination bucket (with per-type `pops_on` rules). **`Collectable#collect!`** and **`Postponable#postpone!`** wrap that API. There is no uncollect — migration is one-way.
 
@@ -67,13 +67,15 @@ Archiving (`Bullet` or `Bucket`) is modelled as a row in **`archives`** (`archiv
 
 ## Tracker
 
-`Tracker` tracks repeating habits per user (`belongs_to :user`). One mark per calendar day via **`Tracker::Completion`** (`tracker_id`, `date`, unique index). Not a bullet — no bucket, migration, or sweep. Identity uses **`Colourable`** / **`Iconable`** (`colour`, `icon` columns) like collections.
+`Tracker` is a habit grid **on a Monthlylog** (`belongs_to :monthlylog`). One mark per calendar day via **`Tracker::Completion`**. Not a bullet — no archive or sweep. Identity uses **`Colourable`** / **`Iconable`**.
 
-**Schedule** (`schedule` json): `{ "days" => […] }` with Ruby `wday` 0–6. **Lifecycle:** `active_from` is the creation date; `stopped_on` (nullable) retires the habit. While open, the upper bound is today. **`stop!`** sets `stopped_on`; `POST /trackers/:tracker_id/stop` (`Trackers::StopsController`). Destroy removes completions (`dependent: :destroy`).
+**Schedule** (`schedule` json): `{ "days" => […] }` with Ruby `wday` 0–6 (defaults to every day). Active range is the monthlylog period. No `stop!` lifecycle — delete the tracker or leave it for the month.
 
-**API on the record:** after `Current.user.trackers.open.chronological.with_completions`, views call `tracker.completed?(date)` and `tracker.statistics` (streak, best streak, total, period % over `active_from..active_to`). No separate tracker/query PORO.
+**UI:** create from monthlylog show (`POST /monthlylogs/:id/trackers`). Show page renders that month’s day cells. Toggle posts to `POST`/`DELETE /trackers/:id/completion`.
 
-**UI:** `resources :trackers, except: :index` (home is the entry point; show/edit/destroy per tracker). Show page renders a **90-day heatmap** (`Date.current - 89.days..Date.current`); create/edit form includes colour + icon pickers like collections. Toggle posts to `POST`/`DELETE /trackers/:id/completion` with `date` + `dom_key`; turbo-stream replaces only that cell.
+## Mood tracker
+
+Optional on Monthlylog via **`mood_tracker_enabled`** (checkbox at create). Entries live in **`monthlylog_mood_entries`** (`date` + mood enum). Mark/clear via `POST`/`DELETE /monthlylogs/:id/mood_entry`. Notes no longer carry mood.
 
 ## Review
 
@@ -176,7 +178,7 @@ Bucket **identity** (`name`, `colour`, `icon`, optional `description`) lives on 
 
 ## Pinned workspace
 
-Desktop footer has a single **Pinned** button (pin icon) in [`shared/_footer.html.erb`](app/views/shared/_footer.html.erb) (`#pinned_dock`). Clicking opens a lazy popover (`turbo-frame#pinned_list`) that loads a flat list of all pinned entities (Bullet, Bucket, Mention) via [`pinned#index`](app/controllers/pinned_controller.rb) with `Turbo-Frame: pinned_list`. Mobile uses the bottom tab bar via [`shared/_footer.html+mobile.erb`](app/views/shared/_footer.html+mobile.erb) and **`GET /pinned`** for the same flat list in full-page mode (with bulk menu for bullets). Pin/unpin Turbo Streams replace bullet rows (`render "bullets/bullet"`) and entity pin buttons only — the footer button is static.
+Desktop footer has a single **Pinned** button (pin icon) in [`shared/_footer.html.erb`](app/views/shared/_footer.html.erb) (`#pinned_dock`). Clicking opens a lazy popover (`turbo-frame#pinned_list`) that loads a flat list of all pinned entities (Bullet, Bucket, Project) via [`pinned#index`](app/controllers/pinned_controller.rb) with `Turbo-Frame: pinned_list`. Mobile uses the bottom tab bar via [`shared/_footer.html+mobile.erb`](app/views/shared/_footer.html+mobile.erb) and **`GET /pinned`** for the same flat list in full-page mode (with bulk menu for bullets). Pin/unpin Turbo Streams replace bullet rows (`render "bullets/bullet"`) and entity pin buttons only — the footer button is static.
 
 ## Publishing
 
@@ -243,15 +245,13 @@ GET    /projects/suggestions                 → projects/suggestions#index
 POST   /projects/pin                         → projects/pins#create
 DELETE /projects/pin                         → projects/pins#destroy
 resources :projects
-GET    /people/suggestions                   → people/suggestions#index
-POST   /people/pin                           → people/pins#create
-DELETE /people/pin                           → people/pins#destroy
-resources :people
 
-# Trackers
-resources :trackers, except: :index
+# Trackers (nested create under monthlylog; show/edit on tracker)
+POST   /monthlylogs/:monthlylog_id/trackers  → monthlylogs/trackers#create
+resources :trackers, only: %i[show edit update destroy]
   nested: trackers/:tracker_id/completion     → trackers/completions#create/destroy
-  nested: trackers/:tracker_id/stop           → trackers/stops#create
+POST   /monthlylogs/:id/mood_entry           → monthlylogs/mood_entries#create
+DELETE /monthlylogs/:id/mood_entry           → monthlylogs/mood_entries#destroy
 
 # Home & navigation
 GET    /home                                 → home#show

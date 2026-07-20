@@ -57,7 +57,7 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Dentist', response.body
   end
 
-  test 'monthly bucket spread has date add menu and composer frames' do
+  test 'monthlylog show has date bands, add links, and unplanned panel' do
     monthlylog = create_monthlylog!(@user, name: 'june')
     day = Date.current.beginning_of_month + 2.days
     @user.bullets.create!(
@@ -70,31 +70,32 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     get monthlylog_path(monthlylog)
 
     assert_response :success
-    assert_select 'a[aria-label=?]', 'Add Event'
-    assert_select 'a[aria-label=?]', 'Add Task'
-    assert_select 'dialog#monthlylog_composer', count: 0
-    assert_select "turbo-frame#monthlylog_bullets_#{day.to_date}_composer[data-controller=?]", 'composer-picker' do
-      assert_select 'a[data-turbo-frame=?][href=?]',
-                    "monthlylog_bullets_#{day.to_date}_composer",
-                    new_bullet_path(
-                      pops_on: day,
-                      bucket_id: monthlylog.bucket.id,
-                      bulletable_type: 'Event'
-                    )
-    end
-    assert_select 'turbo-frame#monthlylog_bullets_unplanned_composer[data-controller=?]', 'composer-picker' do
-      assert_select 'a[data-turbo-frame=?][href=?]',
-                    'monthlylog_bullets_unplanned_composer',
-                    new_bullet_path(
-                      bucket_id: monthlylog.bucket.id,
-                      bulletable_type: 'Task'
-                    )
-    end
-    assert_select "turbo-frame##{dom_id(monthlylog, day)}", count: 0
-    assert_match 'Planned task', response.body
+    assert_select '.monthlylog--workspace'
+    assert_select '.monthlylog--date-band', minimum: 28
+    assert_select '.monthlylog--calendar', text: /Planned task/
+    assert_select "a.bullet--composer-create-button--task[href=?]",
+                  new_bullet_path(
+                    pops_on: day,
+                    bucket_id: monthlylog.bucket.id,
+                    bulletable_type: 'Task'
+                  )
+    assert_select "a.bullet--composer-create-button--event[href=?]",
+                  new_bullet_path(
+                    pops_on: day,
+                    bucket_id: monthlylog.bucket.id,
+                    bulletable_type: 'Event'
+                  )
+    assert_select '.monthlylog--unplanned a.bullet--composer-create-button--task'
+    assert_select '.monthlylog--unplanned a.bullet--composer-create-button--note'
+    assert_select '.monthlylog--unplanned a.bullet--composer-create-button--event', count: 0
+    assert_select '.monthlylog--unplanned a.bullet--composer-create-button--voice', count: 0
+    assert_select '.bullet-composer--dock', count: 0
+    assert_select '.monthlylog--unplanned'
+    assert_select 'dialog#monthlylog_composer.bullet-composer--dialog'
+    assert_select 'dialog#monthlylog_composer turbo-frame#monthlylog_unplanned_composer'
   end
 
-  test 'monthly bucket bullets render as compact rows without metadata tags' do
+  test 'monthlylog unplanned bullets render as compact rows without metadata tags' do
     monthlylog = create_monthlylog!(@user, name: 'june')
     bullet = @user.bullets.create!(
       bulletable: Task.create!,
@@ -113,7 +114,7 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
   end
 
 
-  test 'monthly bucket bullets render body text' do
+  test 'monthlylog unplanned bullets render body text' do
     monthlylog = create_monthlylog!(@user, name: 'june')
     @user.bullets.create!(
       bulletable: Task.create!,
@@ -133,7 +134,7 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Expanded detail', response.body
   end
 
-  test 'completed monthly bucket tasks are marked completed' do
+  test 'dated monthlylog tasks appear in date bands' do
     monthlylog = create_monthlylog!(@user, name: 'june')
     day = Date.current.beginning_of_month + 2.days
     bullet = @user.bullets.create!(
@@ -147,12 +148,11 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     get monthlylog_path(monthlylog)
 
     assert_response :success
-    assert_select "turbo-frame##{dom_id(bullet)}[data-bullet-completed]"
-    assert_match 'Buy ointment', response.body
+    assert_select '.monthlylog--calendar', text: /Buy ointment/
   end
 
 
-  test 'mobile monthly bucket renders planned and unplanned tabs' do
+  test 'mobile monthlylog show keeps both panels without tabs' do
     monthlylog = create_monthlylog!(@user, name: 'june')
     day = Date.current.beginning_of_month
     @user.bullets.create!(
@@ -170,20 +170,17 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     get monthlylog_path(monthlylog), headers: { 'User-Agent' => MOBILE_UA }
 
     assert_response :success
-    assert_select '.monthly-bucket--page-mobile'
-    assert_select '.monthly-bucket--monthly-sections button[role=tab]', count: 2
-    assert_select 'button[data-monthly-sections-section=?]', 'days', text: 'Planned'
-    assert_select 'button[data-monthly-sections-section=?]', 'unplanned', text: 'Unplanned'
-    assert_select '.monthly-bucket--calendar.monthly-bucket--side-active', count: 1
-    assert_select '.monthly-bucket--unplanned[hidden]', count: 1
+    assert_select '.monthlylog--workspace'
+    assert_select '.monthlylog--calendar'
+    assert_select '.monthlylog--unplanned'
+    assert_select '[role=tab]', count: 0
     assert_match 'Planned mobile task', response.body
     assert_match 'Unplanned mobile note', response.body
     assert_select 'dialog#monthlylog_composer.bullet-composer--dialog'
-    assert_select 'a[data-turbo-frame=?]', 'bullet_composer', minimum: 1
-    assert_select '[data-controller=?]', 'pops-drop', count: 0
+    assert_select '[data-controller=?]', 'pops-drop', minimum: 1
   end
 
-  test 'mobile monthly bucket bullets render full rows without drag' do
+  test 'mobile monthlylog unplanned bullets render without drag' do
     monthlylog = create_monthlylog!(@user, name: 'june')
     @user.bullets.create!(
       bulletable: Task.create!,
@@ -200,15 +197,14 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select '.bullet--marker', minimum: 1
   end
 
-  test 'monthly bucket date labels link to daylog' do
+  test 'monthlylog date rails link to daylog' do
     monthlylog = create_monthlylog!(@user, name: 'june')
     day = Date.current.beginning_of_month + 4.days
 
     get monthlylog_path(monthlylog)
 
     assert_response :success
-    assert_select "a.monthly-bucket--date-number[href='#{daylog_path(date: day.iso8601)}']",
-                  text: /#{day.day}.*#{day.strftime('%a')}/
+    assert_select "a.monthlylog--date-number[href=?]", daylog_path(date: day.iso8601)
   end
 
   test 'new form defaults to first available selectable month' do
@@ -235,7 +231,7 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select "input[name='monthlylog[period_from]'][value=?][disabled]",
                   occupied.iso8601
     assert_select "input[name='monthlylog[period_from]'][value=?][checked]", expected.iso8601
-    assert_select 'label.monthly-bucket--period-option--disabled'
+    assert_select 'label.monthlylog--period-option--disabled'
   end
 
   test 'create rejects duplicate month' do
@@ -261,7 +257,24 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
       }
     end
 
-    assert_redirected_to monthlylog_path(Monthlylog.last)
+    created = Monthlylog.last
+    assert_redirected_to monthlylog_path(created)
+    assert_not created.mood_tracker_enabled?
+  end
+
+  test 'create enables mood tracker when checked' do
+    @user.monthlylogs.destroy_all
+    month = Date.current.beginning_of_month
+
+    post monthlylogs_path, params: {
+      monthlylog: { period_from: month.iso8601, mood_tracker_enabled: '1' }
+    }
+
+    created = Monthlylog.last
+    assert_redirected_to monthlylog_path(created)
+    assert created.mood_tracker_enabled?
+    follow_redirect!
+    assert_select 'section.monthlylog--mood'
   end
 
   test 'show by id loads the requested spread when multiple months exist' do

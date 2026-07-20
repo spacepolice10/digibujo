@@ -16,7 +16,6 @@ module Bulletable
   def long?            = false
   def marker_icon      = :line_dashed
   def completed?       = false
-  def mood_marker      = nil
   def icon             = nil
   def colour           = nil
 

@@ -7,6 +7,21 @@ class MonthlylogTest < ActiveSupport::TestCase
     @user = users(:one)
   end
 
+  test 'covering finds monthly log for a date in its month' do
+    monthlylog = create_monthlylog!(@user, name: 'current')
+    day = monthlylog.period_from + 10.days
+
+    assert_equal monthlylog, @user.monthlylogs.covering(day).take
+    assert_nil @user.monthlylogs.covering(monthlylog.period_from - 1.day).take
+    assert_nil @user.monthlylogs.covering(monthlylog.period_to + 1.day).take
+  end
+
+  test 'spread_days returns every day in the month' do
+    monthlylog = create_monthlylog!(@user, name: 'current')
+
+    assert_equal (monthlylog.period_from..monthlylog.period_to).to_a, monthlylog.spread_days
+  end
+
   test 'finds monthly log for calendar month' do
     monthlylog = create_monthlylog!(@user, name: 'current')
 
@@ -43,27 +58,5 @@ class MonthlylogTest < ActiveSupport::TestCase
 
     assert_nil @user.daylog
     assert_not_nil monthlylog.bucket
-  end
-
-  test 'covers_date? is true for dates in the spread month' do
-    monthlylog = create_monthlylog!(@user, name: 'current')
-    day = monthlylog.period_from + 10.days
-
-    assert monthlylog.covers_date?(day)
-    assert monthlylog.covers_date?(monthlylog.period_from)
-    assert monthlylog.covers_date?(monthlylog.period_to)
-  end
-
-  test 'covers_date? is false for dates outside the spread month' do
-    monthlylog = create_monthlylog!(@user, name: 'current')
-
-    assert_not monthlylog.covers_date?(monthlylog.period_from - 1.day)
-    assert_not monthlylog.covers_date?(monthlylog.period_to + 1.day)
-  end
-
-  test 'period_days returns inclusive range' do
-    monthlylog = create_monthlylog!(@user, name: 'current')
-
-    assert_equal monthlylog.period_from..monthlylog.period_to, monthlylog.period_days
   end
 end

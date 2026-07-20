@@ -38,7 +38,6 @@ class Onboarding
 
     record = user.create_daylog!
     user.buckets.create!(bucketable: record, name: DAYLOG_NAME, icon: DAYLOG_ICON)
-    record.bucket
   end
 
   private

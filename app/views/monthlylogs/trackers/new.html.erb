@@ -3,7 +3,7 @@
 <div class="layout--container layout--container-md">
   <div class="layout--header">
     <div class="layout--header-actions">
-      <%= link_to home_path, class: "button--secondary", onclick: "if (history.length > 1) { event.preventDefault(); history.back(); }" do %>
+      <%= link_to monthlylog_path(@monthlylog), class: "button--secondary" do %>
         <%= icon_tag("arrow-left") %>
         Back
       <% end %>
@@ -11,6 +11,6 @@
     <h2>New tracker</h2>
   </div>
   <div class="layout--surface">
-    <%= render "form", tracker: @tracker %>
+    <%= render "trackers/form", tracker: @tracker, url: monthlylog_trackers_path(@monthlylog) %>
   </div>
 </div>

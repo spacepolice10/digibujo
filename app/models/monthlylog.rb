@@ -4,21 +4,22 @@ class Monthlylog < ApplicationRecord
   include Bucketable
 
   belongs_to :user
+  has_many :trackers, dependent: :destroy
+  has_many :mood_entries, class_name: 'Monthlylog::MoodEntry', dependent: :destroy
 
   validates :period_from, presence: true, uniqueness: { scope: :user_id }
 
   before_validation :normalize_period
 
-  def covers_date?(date)
-    period_from == date.to_date.beginning_of_month
-  end
+  scope :covering, lambda { |date = Date.current|
+    day = date.to_date
+    where(period_from: ..day, period_to: day..)
+  }
 
-  def period?
-    period_from.present? && period_to.present?
-  end
+  def spread_days
+    return [] if period_from.blank?
 
-  def period_days
-    period? ? (period_from..period_to) : nil
+    (period_from.to_date..period_to.to_date).to_a
   end
 
   private

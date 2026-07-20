@@ -1,8 +1,28 @@
-<dialog id="<%= id %>" class="dialog" data-dialog-target="dialog" data-action="click->dialog#backdropHide turbo:submit-end->dialog#submitSuccess">
-  <div class="dialog--body">
-    <button type="button" class="dialog--hide button--primary button--icon button--circle" commandfor="<%= id %>" command="close" aria-label="Close">
+<%# locals: (id:, close_on_submit: true, class_name: nil, standalone: false, actions: nil) %>
+<%
+  action_list = ["click->dialog#backdropHide"]
+  action_list << "turbo:submit-end->dialog#submitSuccess" if close_on_submit
+  action_list.concat(Array(actions))
+%>
+<dialog
+  id="<%= id %>"
+  class="dialog<%= " #{class_name}" if class_name.present? %>"
+  <% if standalone %>data-controller="dialog"<% end %>
+  data-dialog-target="dialog"
+  data-action="<%= action_list.join(" ") %>"
+>
+  <div class="dialog--chrome">
+    <button
+      type="button"
+      class="dialog--hide button--primary button--icon button--circle"
+      commandfor="<%= id %>"
+      command="close"
+      aria-label="Close"
+    >
       <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
     </button>
+  </div>
+  <div class="dialog--body">
     <%= yield %>
   </div>
 </dialog>

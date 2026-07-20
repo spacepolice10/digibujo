@@ -284,37 +284,9 @@
     flex-shrink: 0;
   }
 
-  .bullet-composer--rail .mood-picker {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
-    flex: 0 0 auto;
-  }
 
-  .bullet-composer--rail .mood-option {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--icon-size-base);
-    height: var(--icon-size-base);
-    padding: 0;
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
-    font-size: var(--font-size-subtle);
-    line-height: 1;
-    cursor: pointer;
-    opacity: var(--opacity-half);
-  }
 
-  .bullet-composer--rail .mood-option:has(input:checked) {
-    opacity: 1;
-    border-color: var(--color-fg-base);
-    background: var(--color-bg-base);
-  }
 
-  .bullet-composer--rail .mood_marker {
-    pointer-events: none;
-  }
 
   .bullet-composer--rail .voice-recorder--controls {
     display: flex;

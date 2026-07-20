@@ -12,16 +12,6 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     sign_in_as @user
   end
 
-  test 'show lists trackers in section' do
-    create_tracker!(@user, name: 'Morning run')
-
-    get home_path
-
-    assert_response :success
-    assert_select '.home--section-name', text: 'Trackers'
-    assert_match 'Morning run', response.body
-  end
-
   test 'show lists published bullets in section' do
     published = @user.bullets.create!(bulletable: Note.new(body: 'Public note'))
     published.publish!
