@@ -2,28 +2,18 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   connect() {
-    this.onKeydown = this.onKeydown.bind(this)
-    this.onKeyup = this.onKeyup.bind(this)
-    this.onFocusin = this.onFocusin.bind(this)
-    this.onBlur = this.hide.bind(this)
-    this.onVisibilityChange = this.onVisibilityChange.bind(this)
-    this.beforeVisit = this.hide.bind(this)
+    this.abortController = new AbortController()
+    const { signal } = this.abortController
 
-    document.addEventListener("keydown", this.onKeydown)
-    document.addEventListener("keyup", this.onKeyup)
-    document.addEventListener("focusin", this.onFocusin)
-    window.addEventListener("blur", this.onBlur)
-    document.addEventListener("visibilitychange", this.onVisibilityChange)
-    document.addEventListener("turbo:before-visit", this.beforeVisit)
+    document.addEventListener("keydown", this.onKeydown.bind(this), { signal })
+    document.addEventListener("keyup", this.onKeyup.bind(this), { signal })
+    document.addEventListener("focusin", this.onFocusin.bind(this), { signal })
+    document.addEventListener("visibilitychange", this.onVisibilityChange.bind(this), { signal })
+    document.addEventListener("turbo:before-visit", this.hide.bind(this), { signal })
   }
 
   disconnect() {
-    document.removeEventListener("keydown", this.onKeydown)
-    document.removeEventListener("keyup", this.onKeyup)
-    document.removeEventListener("focusin", this.onFocusin)
-    window.removeEventListener("blur", this.onBlur)
-    document.removeEventListener("visibilitychange", this.onVisibilityChange)
-    document.removeEventListener("turbo:before-visit", this.beforeVisit)
+    this.abortController.abort()
     this.hide()
   }
 

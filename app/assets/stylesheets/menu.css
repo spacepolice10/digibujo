@@ -1,8 +1,11 @@
 @layer components {
   .header--menu .dropdown-body {
-    top: 0;
+    position: fixed;
+    inset: unset;
+    top: var(--spacing-vertical-half);
     left: 50%;
     translate: -50% 0;
+    margin: 0;
     padding: var(--spacing-vertical-double);
     border-radius: var(--radius-strong);
     box-shadow: 0 8px 32px oklch(0% 0 0 / 0.12), var(--shadow-base);
@@ -10,7 +13,6 @@
   }
 
   .menu--wrap {
-    display: flex;
     flex-direction: column;
     gap: var(--spacing-vertical-double);
     width: 100%;
@@ -19,8 +21,8 @@
     overflow: hidden;
   }
 
-  .dropdown[open]>.dropdown-body.menu--wrap {
-    gap: var(--spacing-vertical-double);
+  .menu--wrap:popover-open {
+    display: flex;
   }
 
   .menu--wrap>nav.menu--navigation,

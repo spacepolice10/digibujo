@@ -168,7 +168,7 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Planned mobile task', response.body
     assert_match 'Unplanned mobile note', response.body
     assert_select 'dialog#monthlylog_composer.bullet-composer--dialog'
-    assert_select '[data-controller=?]', 'pops-drop', minimum: 1
+    assert_select '[data-controller~=pops-drop]', minimum: 1
   end
 
   test 'mobile monthlylog unplanned bullets render without drag' do

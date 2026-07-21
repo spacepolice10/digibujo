@@ -2,26 +2,27 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = [
-    "recordButton", "stopButton", "discardButton", "timer", "status",
-    "preview", "previewContainer", "fileInput", "durationInput",
-    "unsupported", "captionInput"
+    "recordButton", "stopButton", "discardButton", "remaining", "status",
+    "preview", "previewContainer", "file", "duration",
+    "unsupported", "waveform"
   ]
 
   static values = {
     durationSeconds: { type: Number, default: 60 }
   }
 
+  // Detect MediaRecorder support and lock submit until a take exists.
   connect() {
     this.chunks = []
     this.elapsedSeconds = 0
     this.timerInterval = null
+    this.waveformInterval = null
     this.mediaRecorder = null
     this.stream = null
-    this.previewUrl = null
-    this.ready = false
-
-    this.boundReset = this.reset.bind(this)
-    this.boundUpdateSubmitState = this.updateSubmitState.bind(this)
+    this.audioContext = null
+    this.analyser = null
+    this.previewLink = null
+    this.doneRecording = false
 
     this.supported = typeof MediaRecorder != "undefined" &&
       typeof navigator.mediaDevices?.getUserMedia == "function" &&
@@ -32,37 +33,33 @@ export default class extends Controller {
       this.recordButtonTarget.disabled = true
     }
 
-    this.element.addEventListener("composer:rebind", this.boundReset)
-    this.element.addEventListener("input", this.boundUpdateSubmitState)
-    this.element.addEventListener("change", this.boundUpdateSubmitState)
-
-    this.updateSubmitState()
+    this.updateSubmitStatus()
   }
 
+  // Tear down mic stream, waveform, and timers when the form leaves the DOM.
   disconnect() {
-    this.element.removeEventListener("composer:rebind", this.boundReset)
-    this.element.removeEventListener("input", this.boundUpdateSubmitState)
-    this.element.removeEventListener("change", this.boundUpdateSubmitState)
+    this.#stopWaveform()
     this.cleanupStream()
-    this.clearTimer()
+    this.cleanupTimers()
   }
 
-  async start(event) {
+  // Request mic, start MediaRecorder + countdown, show waveform.
+  async record(event) {
     event.preventDefault()
     if (!this.supported) return
 
     try {
       this.stream = await navigator.mediaDevices.getUserMedia({ audio: true })
     } catch {
-      this.setStatus("Microphone access denied.")
+      this.updateStatus("Microphone access denied.")
       return
     }
 
     this.chunks = []
     this.elapsedSeconds = 0
-    this.ready = false
-    this.clearRecording()
-    this.updateTimerDisplay()
+    this.doneRecording = false
+    this.cleanupRecording()
+    this.updateRemaining()
 
     const mimeType = this.#preferredMimeType()
     this.mediaRecorder = new MediaRecorder(this.stream, { mimeType })
@@ -75,40 +72,44 @@ export default class extends Controller {
 
     this.mediaRecorder.start(250)
     this.recordButtonTarget.hidden = true
-    this.stopButtonTarget.hidden = false
     this.discardButtonTarget.hidden = false
     this.previewContainerTarget.hidden = true
-    this.setStatus("Recording…")
+    this.updateStatus("Recording…")
+    this.#createWaveform()
 
     this.timerInterval = window.setInterval(() => {
       this.elapsedSeconds += 1
-      this.updateTimerDisplay()
+      this.updateRemaining()
 
       if (this.elapsedSeconds >= this.durationSecondsValue) this.stop()
     }, 1000)
   }
 
+  // Stop MediaRecorder; waveform/stream cleanup follows via stop handlers.
   stop(event) {
     event?.preventDefault()
     if (!this.mediaRecorder || this.mediaRecorder.state != "recording") return
 
-    this.clearTimer()
+    this.cleanupTimers()
+    this.#stopWaveform()
     this.mediaRecorder.stop()
     this.cleanupStream()
-    this.stopButtonTarget.hidden = true
   }
 
+  // Throw away the current take and return to idle UI.
   discard(event) {
     event.preventDefault()
     this.reset()
   }
 
+  // After a successful Turbo submit, reset recorder state.
   clearOnSubmit(event) {
     if (!event.detail.success) return
 
     this.reset()
   }
 
+  // Stop an in-progress take if needed, then reset UI.
   reset() {
     if (this.mediaRecorder?.state == "recording") {
       this.mediaRecorder.addEventListener("stop", () => this.#resetUi(), { once: true })
@@ -117,37 +118,82 @@ export default class extends Controller {
       this.#resetUi()
     }
 
+    this.#stopWaveform()
     this.cleanupStream()
-    this.clearTimer()
+    this.cleanupTimers()
   }
 
-  updateSubmitState() {
-    const captionPresent = this.#captionPresent()
-    const canSubmit = this.ready && captionPresent
-
+  // Enable Save only when a finished recording is attached.
+  updateSubmitStatus() {
     this.element.querySelectorAll('button[type="submit"]').forEach((button) => {
-      button.disabled = !canSubmit
+      button.disabled = !this.doneRecording
     })
   }
 
+  // Format remaining countdown into the remaining target.
+  updateRemaining() {
+    const remaining = Math.max(0, this.durationSecondsValue - this.elapsedSeconds)
+    const minutes = Math.floor(remaining / 60)
+    const seconds = remaining % 60
+    this.remainingTarget.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`
+  }
+
+  // Show or hide the status line message.
+  updateStatus(message) {
+    if (!this.hasStatusTarget) return
+
+    this.statusTarget.textContent = message
+    this.statusTarget.hidden = message.length == 0
+  }
+
+  // Clear file + duration inputs for a fresh take.
+  cleanupRecording() {
+    this.fileTarget.value = ""
+    this.durationTarget.value = ""
+  }
+
+  // Revoke the object URL used by the preview <audio>.
+  revokePreviewLink() {
+    URL.revokeObjectURL(this.previewLink ?? "")
+    this.previewLink = null
+  }
+
+  // Stop all mic tracks.
+  cleanupStream() {
+    if (!this.stream) return
+
+    this.stream.getTracks().forEach((track) => track.stop())
+    this.stream = null
+  }
+
+  // Clear the 1s elapsed / auto-stop interval.
+  cleanupTimers() {
+    window.clearInterval(this.timerInterval)
+    this.timerInterval = null
+  }
+
+  // Idle UI: hide preview/waveform controls, clear status, re-enable Record.
   #resetUi() {
     this.chunks = []
     this.elapsedSeconds = 0
-    this.ready = false
-    this.clearRecording()
-    this.revokePreviewUrl()
+    this.doneRecording = false
+    this.cleanupRecording()
+    this.revokePreviewLink()
     this.#resetPreviewPlayer()
+    this.#stopWaveform()
     this.previewContainerTarget.hidden = true
     this.recordButtonTarget.hidden = false
-    this.stopButtonTarget.hidden = true
     this.discardButtonTarget.hidden = true
     this.recordButtonTarget.disabled = !this.supported
-    this.setStatus("")
-    this.updateTimerDisplay()
-    this.updateSubmitState()
+    this.updateStatus("")
+    this.updateRemaining()
+    this.updateSubmitStatus()
   }
 
+  // Build File from chunks, set duration, wire preview playback.
   #finalizeRecording() {
+    this.#stopWaveform()
+
     if (this.chunks.length == 0) {
       this.#resetUi()
       return
@@ -159,11 +205,11 @@ export default class extends Controller {
     const file = new File([blob], `voice-memo.${extension}`, { type: mimeType })
 
     const duration = Math.min(this.durationSecondsValue, Math.max(1, Math.ceil(this.elapsedSeconds)))
-    this.durationInputTarget.value = duration
+    this.durationTarget.value = duration
 
-    this.revokePreviewUrl()
-    this.previewUrl = URL.createObjectURL(blob)
-    this.previewTarget.src = this.previewUrl
+    this.revokePreviewLink()
+    this.previewLink = URL.createObjectURL(blob)
+    this.previewTarget.src = this.previewLink
     this.previewTarget.load()
     this.#syncPreviewDuration(duration)
     this.previewContainerTarget.hidden = false
@@ -171,20 +217,23 @@ export default class extends Controller {
     this.#appendRecording(file)
   }
 
+  // Put the File into the hidden file input and unlock submit.
   #appendRecording(file) {
     const data = new DataTransfer()
     data.items.add(file)
-    this.fileInputTarget.files = data.files
+    this.fileTarget.files = data.files
 
-    this.ready = true
-    this.setStatus("Ready to save.")
-    this.updateSubmitState()
+    this.doneRecording = true
+    this.updateStatus("Ready to save.")
+    this.updateSubmitStatus()
   }
 
+  // Find the voice-player root inside the preview container.
   #previewPlayer() {
     return this.previewContainerTarget.querySelector(".voice--playback")
   }
 
+  // Sync preview player duration value + slider aria after a take.
   #syncPreviewDuration(duration) {
     const player = this.#previewPlayer()
     if (!player) return
@@ -195,15 +244,15 @@ export default class extends Controller {
     if (progress) progress.setAttribute("aria-valuemax", duration)
   }
 
+  // Pause/clear preview <audio> and zero its duration UI.
   #resetPreviewPlayer() {
-    if (!this.hasPreviewTarget) return
-
-    this.previewTarget.pause()
-    this.previewTarget.removeAttribute("src")
-    this.previewTarget.load()
+    this.previewTarget?.pause()
+    this.previewTarget?.removeAttribute("src")
+    this.previewTarget?.load()
     this.#syncPreviewDuration(0)
   }
 
+  // Pick webm or mp4 for MediaRecorder, or null if unsupported.
   #preferredMimeType() {
     if (typeof MediaRecorder == "undefined") return null
 
@@ -213,52 +262,70 @@ export default class extends Controller {
     return null
   }
 
-  #captionPresent() {
-    const input = this.hasCaptionInputTarget
-      ? this.captionInputTarget
-      : this.element.querySelector(".bullet-composer--plain-input, input[name*='[body]']")
-    if (!input) return false
-
-    return (input.value?.trim() || "").length > 0
+  // SVG rects (.voice--waveform-item) inside the waveform target.
+  #waveformItems() {
+    return this.waveformTarget.querySelectorAll(".voice--waveform-item")
   }
 
-  updateTimerDisplay() {
-    const remaining = Math.max(0, this.durationSecondsValue - this.elapsedSeconds)
-    const minutes = Math.floor(remaining / 60)
-    const seconds = remaining % 60
-    this.timerTarget.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`
+  // Open AudioContext/analyser on the mic stream and start the 150ms bar tick.
+  #createWaveform() {
+    this.waveformTarget.hidden = false
+    this.audioContext = new AudioContext()
+    this.analyser = this.audioContext.createAnalyser()
+    this.analyser.fftSize = 256
+    this.audioContext.createMediaStreamSource(this.stream).connect(this.analyser)
+    this.audioContext.resume()
+
+    this.waveformInterval = window.setInterval(() => this.#tickWaveform(), 150)
+    this.#tickWaveform()
   }
 
-  setStatus(message) {
-    if (!this.hasStatusTarget) return
+  // Advance filled items from elapsedSeconds; set current item height from loudness.
+  #tickWaveform() {
+    if (!this.analyser) return
 
-    this.statusTarget.textContent = message
-    this.statusTarget.hidden = message.length == 0
+    const items = this.#waveformItems()
+    const level = this.#sampleLoudness()
+    const filled = Math.floor(items.length * this.elapsedSeconds / this.durationSecondsValue)
+    const h = Math.max(2, Math.round(level * 28))
+
+    items.forEach((item, i) => {
+      const active = i <= filled
+      item.classList.toggle("is-filled", active)
+      if (i == filled) {
+        item.setAttribute("height", h)
+        item.setAttribute("y", (32 - h) / 2)
+      } else if (!active) {
+        item.setAttribute("height", "2")
+        item.setAttribute("y", "15")
+      }
+    })
   }
 
-  clearRecording() {
-    this.fileInputTarget.value = ""
-    this.durationInputTarget.value = ""
+  // Peak amplitude 0..1 from the analyser time-domain buffer.
+  #sampleLoudness() {
+    const data = new Uint8Array(this.analyser.fftSize)
+    this.analyser.getByteTimeDomainData(data)
+    let peak = 0
+    for (const v of data) peak = Math.max(peak, Math.abs(v - 128))
+    return Math.min(1, peak / 64)
   }
 
-  revokePreviewUrl() {
-    if (!this.previewUrl) return
+  // Cancel tick, close AudioContext, reset items, hide waveform.
+  #stopWaveform() {
+    window.clearInterval(this.waveformInterval)
+    this.waveformInterval = null
+    this.audioContext?.close()
+    this.audioContext = null
+    this.analyser = null
 
-    URL.revokeObjectURL(this.previewUrl)
-    this.previewUrl = null
-  }
+    if (!this.hasWaveformTarget) return
 
-  cleanupStream() {
-    if (!this.stream) return
-
-    this.stream.getTracks().forEach((track) => track.stop())
-    this.stream = null
-  }
-
-  clearTimer() {
-    if (!this.timerInterval) return
-
-    window.clearInterval(this.timerInterval)
-    this.timerInterval = null
+    this.#waveformItems().forEach((item) => {
+      item.classList.remove("is-filled")
+      item.setAttribute("height", "2")
+      item.setAttribute("y", "15")
+    })
+    this.waveformTarget.hidden = true
   }
 }

@@ -1,0 +1,29 @@
+<% content_for(:title) { @blob.filename.to_s } %>
+
+<div class="layout--container layout--container-md layout--grid grid-cols-1">
+  <header class="layout--header">
+    <button class="button--tertiary" onclick="history.back()">
+      <i
+        class="icon"
+        style="--icon-mask: var(--icon-arrow-left)"
+        aria-hidden="true"
+      ></i>
+      Back
+    </button>
+  </header>
+
+  <article class="layout--surface attachment--show">
+    <% if @blob.representable? %>
+      <%= image_tag @blob,
+            alt: @blob.filename,
+            class: "attachment--show-image" %>
+    <% else %>
+      <p class="typography--paragraph">
+        <%= link_to @blob.filename,
+              rails_blob_path(@blob, disposition: "attachment"),
+              data: { turbo: false } %>
+        · <%= number_to_human_size @blob.byte_size %>
+      </p>
+    <% end %>
+  </article>
+</div>

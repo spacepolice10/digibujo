@@ -1,16 +1,25 @@
 <header class="header">
   <div class="header--branding">
-    <details class="dropdown header--menu"
-             data-controller="dropdown menu"
-             data-action="toggle->dropdown#syncClosedStatusWithBody turbo:before-visit@document->dropdown#close toggle->menu#focusOnOpen keydown->menu#keydown keydown.ctrl+k@document->menu#open keydown.meta+k@document->menu#open">
-      <summary class="button--accent" aria-haspopup="menu">
+    <div class="header--menu">
+      <button
+        type="button"
+        class="button--accent"
+        popovertarget="header_menu"
+        aria-haspopup="menu"
+      >
         Digibujo
         <i class="icon" style="--icon-mask: var(--icon-chevron-down)" aria-hidden="true"></i>
-      </summary>
-      <div class="dropdown-body menu--wrap" inert>
-      <%= render "menu/menu" %>
+      </button>
+
+      <div
+        id="header_menu"
+        class="dropdown-body menu--wrap"
+        popover
+        data-controller="menu"
+        data-action="toggle->menu#focusOnOpen keydown->menu#keydown turbo:before-visit@document->menu#close keydown.ctrl+k@document->menu#open keydown.meta+k@document->menu#open"
+      >
+        <%= render "menu/menu" %>
       </div>
-    </details>
+    </div>
   </div>
 </header>
-

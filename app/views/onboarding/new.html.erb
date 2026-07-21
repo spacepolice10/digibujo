@@ -40,13 +40,7 @@
       </li>
     </ul>
 
-    <%= form_with url: onboarding_path,
-          class: "form form--strong onboarding--form",
-          data: {
-            controller: "form-submit",
-            form_submit_loading_text_value: "Setting up…",
-            action: "turbo:submit-start->form-submit#start turbo:submit-end->form-submit#end"
-          } do |form| %>
+    <%= form_with url: onboarding_path, class: "form form--strong onboarding--form" do |form| %>
       <%= render "authentication/submit_button", form: form, label: "Start my journal" %>
     <% end %>
   </div>

@@ -3,34 +3,29 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
   static targets = ["focus"];
 
-  connect() {
-    this.onDocumentFocusIn = this.onDocumentFocusIn.bind(this);
-    document.addEventListener("focusin", this.onDocumentFocusIn);
-  }
-
-  disconnect() {
-    document.removeEventListener("focusin", this.onDocumentFocusIn);
-  }
-
   focusOnOpen(event) {
-    if (!event.target.open) return;
-    this._focus();
+    if (event.newState != "open") return;
+    this.#focus();
   }
 
   open(event) {
     event.preventDefault();
-    if (!this.element.open) this.element.setAttribute("open", "");
-    this._focus();
+    if (!this.#open) this.element.showPopover();
+    this.#focus();
+  }
+
+  close() {
+    if (this.#open) this.element.hidePopover();
   }
 
   keydown(event) {
-    if (!this.element.open) return;
+    if (!this.#open) return;
     if (event.key != "Tab") return;
 
-    const focusableElements = this._focusableElements();
+    const focusableElements = this.#focusableElements();
     if (focusableElements.length == 0) {
       event.preventDefault();
-      this._focus();
+      this.#focus();
       return;
     }
 
@@ -50,15 +45,12 @@ export default class extends Controller {
     }
   }
 
-  onDocumentFocusIn(event) {
-    if (!this.element.open) return;
-    if (this.element.contains(event.target)) return;
-
-    this._focus();
+  get #open() {
+    return this.element.matches(":popover-open");
   }
 
-  _focusableElements() {
-    return Array.from(this.element.querySelectorAll("a, button, input, select, textarea, summary, [tabindex]")).filter((element) => {
+  #focusableElements() {
+    return Array.from(this.element.querySelectorAll("a, button, input, select, textarea, [tabindex]")).filter((element) => {
       if (element.hasAttribute("disabled")) return false;
       if (element.getAttribute("tabindex") == "-1") return false;
       if (element.hidden) return false;
@@ -67,9 +59,9 @@ export default class extends Controller {
     });
   }
 
-  _focus() {
+  #focus() {
     requestAnimationFrame(() => {
-      if (!this.element.open) return;
+      if (!this.#open) return;
 
       this.focusTarget?.focus();
     });

@@ -4,13 +4,7 @@
   <div class="form--surface">
     <%= render "authentication/flash" %>
 
-    <%= form_with url: authentication_path,
-          class: "form form--strong",
-          data: {
-            controller: "form-submit",
-            form_submit_loading_text_value: "Sending code…",
-            action: "turbo:submit-start->form-submit#start turbo:submit-end->form-submit#end"
-          } do |form| %>
+    <%= form_with url: authentication_path, class: "form form--strong" do |form| %>
       <div class="session--intro">
         <h1 class="session--title">Continue with email</h1>
         <p class="form-hint session--description">Enter your email and we'll send you a one-time code to sign in or create an account.</p>

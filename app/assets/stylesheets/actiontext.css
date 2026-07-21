@@ -337,17 +337,11 @@ lexxy-editor[preset="note"] .lexxy-editor__content {
     cursor: zoom-in;
   }
 
-  .attachment--preview img.attachment--zoomed {
-    position: fixed;
-    inset: 0;
-    z-index: calc(var(--z-dropdown) + 1);
-    block-size: auto;
-    inline-size: auto;
-    max-width: 90vw;
-    max-height: 90vh;
-    margin: auto;
-    object-fit: contain;
-    cursor: zoom-out;
+  .attachment--show-image {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin-inline: auto;
   }
 
 }

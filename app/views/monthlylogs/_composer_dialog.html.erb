@@ -2,11 +2,12 @@
       id: "monthlylog_composer",
       close_on_submit: false,
       standalone: true,
+      controllers: %w[dialog composer-dialog],
       class_name: "dialog--large bullet-composer--dialog",
       actions: [
-        "close->dialog#clearFrame",
+        "close->composer-dialog#clearFrame",
         "composer:restore->dialog#close",
-        "turbo:before-frame-render->dialog#openOnFrame"
+        "turbo:before-frame-render->composer-dialog#openOnFrame"
       ] do %>
   <% @days.each do |date| %>
     <turbo-frame id="monthlylog_bullets_<%= date.to_date %>_composer"></turbo-frame>

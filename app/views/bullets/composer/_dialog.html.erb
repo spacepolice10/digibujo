@@ -3,11 +3,12 @@
       id: id,
       close_on_submit: false,
       standalone: true,
+      controllers: %w[dialog composer-dialog],
       class_name: "dialog--large bullet-composer--dialog layout--surface",
       actions: [
-        "close->dialog#clearFrame",
+        "close->composer-dialog#clearFrame",
         "composer:restore->dialog#close",
-        "turbo:before-frame-render->dialog#openOnFrame"
+        "turbo:before-frame-render->composer-dialog#openOnFrame"
       ] do %>
   <turbo-frame id="<%= composer_id %>"></turbo-frame>
 <% end %>

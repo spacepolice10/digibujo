@@ -81,12 +81,12 @@
     }
   }
 
-  .dropdown[open] > .button--accent {
+  .header--menu:has(:popover-open) > .button--accent {
     box-shadow: 0 2px 0 oklch(0% 0 0 / 0.35);
     transform: translateY(2px);
   }
 
-  .dropdown[open] > .button--accent .icon {
+  .header--menu:has(:popover-open) > .button--accent .icon {
     rotate: 180deg;
   }
 

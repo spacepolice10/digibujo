@@ -6,7 +6,7 @@ export default class extends Controller {
     popsUrl: { type: String, default: "/bullets/postpone" },
     popsOn: { type: String, default: "" },
     bucketId: { type: String, default: "" },
-    reviewDrop: { type: Boolean, default: false }
+    requestedWith: { type: String, default: "pops-drop" }
   }
 
   dragover(event) {
@@ -34,7 +34,7 @@ export default class extends Controller {
     const frame = document.getElementById(`bullet_${bulletId}`)
     if (!frame) return
 
-    const revert = this.reviewDropValue ? null : this.#applyOptimisticMove(frame)
+    const revert = this.#optimisticMove(frame)
 
     const body = new FormData()
     body.append("bullet_ids", bulletId)
@@ -46,7 +46,7 @@ export default class extends Controller {
         body,
         responseKind: "turbo-stream",
         headers: {
-          "X-Requested-With": this.reviewDropValue ? "review-pops-drop" : "pops-drop"
+          "X-Requested-With": this.requestedWithValue
         }
       })
 
@@ -61,23 +61,13 @@ export default class extends Controller {
     }
   }
 
-  #applyOptimisticMove(frame) {
-    const originalParent = frame.parentElement
-    const originalNextSibling = frame.nextSibling
+  #optimisticMove(frame) {
+    if (this.requestedWithValue == "review-pops-drop") return null
 
-    const composer = this.element.querySelector("turbo-frame[id^='composer_']")
-    if (composer) {
-      composer.before(frame)
-    } else {
-      this.element.appendChild(frame)
-    }
-
-    return () => {
-      if (originalNextSibling) {
-        originalParent.insertBefore(frame, originalNextSibling)
-      } else {
-        originalParent.appendChild(frame)
-      }
-    }
+    const optimistic = this.application.getControllerForElementAndIdentifier(
+      this.element,
+      "drop-postpone-optimistic"
+    )
+    return optimistic?.move(frame) ?? null
   }
 }

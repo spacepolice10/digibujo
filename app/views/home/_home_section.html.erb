@@ -4,10 +4,10 @@
     open
   <% end %>
   <% if section.name.present? %>
-    data-controller="section"
-    data-action="toggle->section#onToggle"
-    data-section-expand-path-value="<%= home_expand_section_path(section.name.downcase) %>"
-    data-section-collapse-path-value="<%= home_collapse_section_path(section.name.downcase) %>"
+    data-controller="home-section"
+    data-action="toggle->home-section#onToggle"
+    data-home-section-expand-path-value="<%= home_expand_section_path(section.name.downcase) %>"
+    data-home-section-collapse-path-value="<%= home_collapse_section_path(section.name.downcase) %>"
   <% end %>
 >
   <summary class="home--section-summary">

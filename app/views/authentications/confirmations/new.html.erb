@@ -4,13 +4,7 @@
   <div class="form--surface">
     <%= render "authentication/flash" %>
 
-    <%= form_with url: authentication_confirmation_path,
-          class: "form form--strong",
-          data: {
-            controller: "form-submit",
-            form_submit_loading_text_value: "Verifying…",
-            action: "turbo:submit-start->form-submit#start turbo:submit-end->form-submit#end"
-          } do |form| %>
+    <%= form_with url: authentication_confirmation_path, class: "form form--strong" do |form| %>
       <div class="session--intro">
         <h1 class="session--title">Check your email</h1>
         <p class="form-hint session--description">We sent a 6-character code to <strong><%= @email %></strong>.</p>

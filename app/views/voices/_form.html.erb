@@ -13,18 +13,31 @@
           value: bulletable.body,
           placeholder: "Caption your voice, guitar playing or cat meowing…",
           autofocus: false,
-          class: "bullet-composer--plain-input",
-          data: {
-            voice_recorder_target: "captionInput",
-            action: "keydown->composer#plainEnter input->composer#editorInput"
-          } %>
-    <%= bf.file_field :recording, accept: "audio/webm,audio/mp4", hidden: true, data: { voice_recorder_target: "fileInput" } %>
-    <%= bf.hidden_field :duration_seconds, data: { voice_recorder_target: "durationInput" } %>
+          class: "bullet-composer--plain-input" %>
+    <%= bf.file_field :recording, accept: "audio/webm,audio/mp4", hidden: true, data: { voice_recorder_target: "file" } %>
+    <%= bf.hidden_field :duration_seconds, data: { voice_recorder_target: "duration" } %>
   <% end %>
 
   <div class="voice-recorder">
+    <div class="voice--playback" data-voice-recorder-target="waveform" hidden>
+      <button type="button"
+              class="button--tertiary button--sm voice--play"
+              data-voice-recorder-target="stopButton"
+              data-action="voice-recorder#stop"
+              aria-label="Stop recording">
+        <i class="icon voice--play-icon" style="--icon-mask: var(--icon-square)" aria-hidden="true"></i>
+        <p>Stop</p>
+      </button>
+      <div class="voice--waveform" aria-hidden="true">
+        <svg viewBox="0 0 160 32" preserveAspectRatio="none">
+          <% 40.times do |i| %>
+            <rect class="voice--waveform-item" x="<%= i * 4 %>" y="15" width="2" height="2" rx="1" />
+          <% end %>
+        </svg>
+      </div>
+    </div>
     <div class="voice-recorder--preview" data-voice-recorder-target="previewContainer" hidden>
-      <%= render "voices/playback", bullet: bullet %>
+      <%= render "voices/playback", recording: nil, recording_duration: 0 %>
     </div>
     <p class="voice-recorder--unsupported utilities--text-sm" data-voice-recorder-target="unsupported" hidden>
       Voice recording is not supported in this browser.
@@ -36,28 +49,21 @@
             data-controller="hotkey"
             data-hotkey="Shift+R"
             data-voice-recorder-target="recordButton"
-            data-action="voice-recorder#start keydown.shift+r@document->hotkey#click"
+            data-action="voice-recorder#record keydown.shift+r@document->hotkey#click"
             aria-label="Start recording"
             aria-keyshortcuts="Shift+R">
       <i class="icon" style="--icon-mask: var(--icon-microphone)" aria-hidden="true"></i>
       <p>Record</p>
     </button>
     <button type="button"
-            class="button--secondary button--icon voice-recorder--stop"
-            data-voice-recorder-target="stopButton"
-            data-action="voice-recorder#stop"
-            hidden
-            aria-label="Stop recording">
-      <i class="icon" style="--icon-mask: var(--icon-square)" aria-hidden="true"></i>
-    </button>
-    <button type="button"
-            class="button--secondary button--icon"
+            class="button--secondary voice-recorder--discard"
             data-voice-recorder-target="discardButton"
             data-action="voice-recorder#discard"
             hidden>
       <i class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></i>
+      <p>Discard</p>
     </button>
-    <span class="voice-recorder--timer utilities--text-sm" data-voice-recorder-target="timer" aria-live="polite">0:00</span>
+    <span class="voice-recorder--remaining utilities--text-sm" data-voice-recorder-target="remaining" aria-live="polite">0:00</span>
     <span class="voice-recorder--status utilities--text-sm" data-voice-recorder-target="status" hidden></span>
   </div>
 <% end %>

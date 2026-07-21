@@ -1,10 +1,7 @@
-<%= form.button type: "submit",
-      class: "button--primary form--submit",
-      data: { form_submit_target: "submit" } do %>
-  <span data-form-submit-target="label"><%= label %></span>
+<%# locals: (form:, label:) %>
+<%= form.button type: "submit", class: "button--primary form--submit" do %>
+  <span class="form--submit-label"><%= label %></span>
   <i class="icon icon--spin form-submit--spinner"
-     data-form-submit-target="spinner"
-     hidden
      style="--icon-mask: var(--icon-spinner)"
      aria-hidden="true"></i>
 <% end %>

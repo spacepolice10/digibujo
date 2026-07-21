@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = [ "audio", "playButton", "playIcon", "pauseIcon", "progress", "progressFill" ]
+  static targets = [ "audio", "playButton", "stopButton", "playIcon", "stopIcon", "progress", "progressFill" ]
   static values = { duration: Number }
 
   connect() {
@@ -16,7 +16,7 @@ export default class extends Controller {
     document.addEventListener("voice-player:play", this.boundOnOtherPlay)
 
     this.#timeUpdate()
-    this.#updatePlayState()
+    this.#updatePlayStatus()
   }
 
   disconnect() {
@@ -24,13 +24,13 @@ export default class extends Controller {
     this.audioTarget.removeEventListener("ended", this.boundEnded)
     this.audioTarget.removeEventListener("loadedmetadata", this.boundTimeUpdate)
     document.removeEventListener("voice-player:play", this.boundOnOtherPlay)
-    this.#pause()
+    this.#stop()
   }
 
   toggle(event) {
     event.preventDefault()
     if (this.audioTarget.paused) this.#play()
-    else this.#pause()
+    else this.#stop()
   }
 
   seek(event) {
@@ -59,17 +59,17 @@ export default class extends Controller {
     document.dispatchEvent(new CustomEvent("voice-player:play", { detail: { controller: this } }))
     this.audioTarget.play()
     this.playing = true
-    this.#updatePlayState()
+    this.#updatePlayStatus()
   }
 
-  #pause() {
+  #stop() {
     this.audioTarget.pause()
     this.playing = false
-    this.#updatePlayState()
+    this.#updatePlayStatus()
   }
 
   #onOtherPlay(event) {
-    if (event.detail.controller != this && !this.audioTarget.paused) this.#pause()
+    if (event.detail.controller != this && !this.audioTarget.paused) this.#stop()
   }
 
   #duration() {
@@ -87,14 +87,15 @@ export default class extends Controller {
   }
 
   #ended() {
-    this.#pause()
+    this.#stop()
     this.audioTarget.currentTime = 0
     this.#timeUpdate()
   }
 
-  #updatePlayState() {
+  #updatePlayStatus() {
     this.playIconTarget.hidden = this.playing
-    this.pauseIconTarget.hidden = !this.playing
-    this.playButtonTarget.setAttribute("aria-label", this.playing ? "Pause" : "Play")
+    this.stopIconTarget.hidden = !this.playing
+    this.playButtonTarget.setAttribute("aria-label", this.playing ? "Stop" : "Play")
+    this.stopButtonTarget.setAttribute("aria-label", this.playing ? "Play" : "Stop")
   }
 }

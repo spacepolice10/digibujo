@@ -288,41 +288,6 @@
 
 
 
-  .bullet-composer--rail .voice-recorder--controls {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
-    flex: 0 0 auto;
-    min-width: 0;
-  }
-
-  .bullet-composer--rail .voice-recorder--record,
-  .bullet-composer--rail .voice-recorder--stop {
-    height: var(--icon-size-base);
-    color: var(--model-color-6);
-    flex-shrink: 0;
-  }
-
-  .bullet-composer--rail .voice-recorder--discard {
-    padding: 0;
-    font-size: var(--font-size-subtle);
-    color: var(--color-fg-subtle);
-  }
-
-  .bullet-composer--rail .voice-recorder--timer {
-    color: var(--color-fg-subtle);
-    font-variant-numeric: tabular-nums;
-    flex-shrink: 0;
-  }
-
-  .bullet-composer--rail .voice-recorder--status {
-    color: var(--color-fg-subtle);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    min-width: 0;
-  }
-
   .bullet-composer--rail [data-bullet-composer-target="typeFields"][hidden] {
     display: none;
   }
@@ -373,16 +338,6 @@
   ::view-transition-group(composer-type-event),
   ::view-transition-group(composer-type-voice) {
     animation-duration: 150ms;
-  }
-
-  .voice-recorder {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-vertical-half);
-  }
-
-  .voice-recorder--unsupported {
-    color: var(--color-fg-subtle);
   }
 
   .bullet-composer--dialog .bullet-composer {

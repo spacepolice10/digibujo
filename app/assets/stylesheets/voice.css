@@ -8,98 +8,78 @@
     white-space: normal;
   }
 
-  .bullet[data-bullet-type="voice"] {
-    .voice--card {
-      width: 100%;
-      border: 1px solid var(--color-stroke-base);
-      border-radius: var(--radius-base);
-      overflow: hidden;
-      background: var(--color-bg-subtle);
-    }
+  .voice--caption {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
-    .voice--playback-zone {
-      display: flex;
-      flex-direction: column;
-    }
+  .voice--playback {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    width: 100%;
+    min-height: 2.75rem;
+    border-radius: var(--radius-full);
+    background: var(--color-bg-base);
+    padding: var(--spacing-horizontal-half);
+  }
 
-    .voice--playback-header {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-horizontal-half);
-      padding: var(--spacing-vertical-half) var(--spacing-horizontal);
-      border-bottom: 1px solid var(--color-stroke-base);
-      background: var(--color-bg-base);
-      min-width: 0;
-    }
+  .voice--playback-compact {
+    gap: var(--spacing-horizontal-half);
+  }
 
-    .voice--rec-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: var(--radius-full);
-      background: var(--color-fg-negative);
-      flex-shrink: 0;
-    }
+  .voice--play {
+    flex-shrink: 0;
+  }
 
-    .voice--caption {
-      flex: 1;
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
+  .voice--play .icon {
+    width: var(--icon-size-base);
+    height: var(--icon-size-base);
+  }
 
-    .voice--playback {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-horizontal-half);
-      margin-top: var(--spacing-vertical-half);
-      width: 100%;
-    }
+  .voice--pause-icon {
+    margin-inline-start: 0;
+  }
 
-    .voice--playback-zone .voice--playback {
-      margin-top: 0;
-      padding: var(--spacing-vertical-half) var(--spacing-horizontal);
-    }
+  .voice--progress {
+    flex: 1;
+    min-width: 0;
+    height: 4px;
+    border-radius: var(--radius-full);
+    background: var(--color-stroke-base);
+    cursor: pointer;
+    overflow: hidden;
+  }
 
-    .voice--playback-compact {
-      gap: var(--spacing-horizontal-half);
-    }
+  .voice--progress-fill {
+    height: 100%;
+    width: 0;
+    border-radius: inherit;
+    background: var(--bullet-type-color, var(--color-fg-base));
+    pointer-events: none;
+    transition: width 0.05s linear;
+  }
 
-    .voice--play .icon {
-      width: var(--icon-size-base);
-      height: var(--icon-size-base);
-    }
+  .voice--waveform {
+    flex: 1;
+    min-width: 0;
+    height: var(--icon-size-base);
+  }
 
-    .voice--pause-icon {
-      margin-inline-start: 0;
-    }
+  .voice--waveform svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
 
-    .voice--progress {
-      flex: 1;
-      min-width: 0;
-      height: 4px;
-      border-radius: var(--radius-full);
-      background: var(--color-stroke-base);
-      cursor: pointer;
-      overflow: hidden;
-    }
+  .voice--waveform-item {
+    fill: var(--model-color-6, var(--bullet-type-color, var(--color-fg-base)));
+    opacity: 0.25;
+  }
 
-    .voice--progress-fill {
-      height: 100%;
-      width: 0;
-      border-radius: inherit;
-      background: var(--bullet-type-color);
-      pointer-events: none;
-      transition: width 0.05s linear;
-    }
-
-    .voice--duration {
-      color: var(--color-fg-subtle);
-      flex-shrink: 0;
-    }
-
-    .voice--playback-header .voice--duration {
-      font-variant-numeric: tabular-nums;
-    }
+  .voice--waveform-item.is-filled {
+    opacity: 1;
   }
 }

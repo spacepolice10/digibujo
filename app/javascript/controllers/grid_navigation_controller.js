@@ -8,30 +8,18 @@ export default class extends Controller {
   connect() {
     this.currentPosition = 0;
     this.focusPending = false;
-    this.detailsElement = this.element.closest("details");
     this.initTabindex();
-    if (this.element.hasAttribute("popover")) {
-      this._onToggle = this.onToggle.bind(this);
-      this._onFrameLoad = this.onFrameLoad.bind(this);
-      this.element.addEventListener("toggle", this._onToggle);
-      this.element.addEventListener("turbo:frame-load", this._onFrameLoad);
-    }
-    if (this.detailsElement) {
-      this._onDetailsToggle = this.onDetailsToggle.bind(this);
-      this.detailsElement.addEventListener("toggle", this._onDetailsToggle);
-    }
+
+    if (!this.element.hasAttribute("popover")) return;
+
+    this.abortController = new AbortController();
+    const { signal } = this.abortController;
+    this.element.addEventListener("toggle", this.onToggle.bind(this), { signal });
+    this.element.addEventListener("turbo:frame-load", this.onFrameLoad.bind(this), { signal });
   }
 
   disconnect() {
-    if (this._onToggle) {
-      this.element.removeEventListener("toggle", this._onToggle);
-    }
-    if (this._onFrameLoad) {
-      this.element.removeEventListener("turbo:frame-load", this._onFrameLoad);
-    }
-    if (this._onDetailsToggle && this.detailsElement) {
-      this.detailsElement.removeEventListener("toggle", this._onDetailsToggle);
-    }
+    this.abortController?.abort();
   }
 
   onToggle(event) {
@@ -51,8 +39,6 @@ export default class extends Controller {
   }
 
   navigate(event) {
-    if (!this.isNavigable()) return;
-
     const directions = {
       ArrowLeft: "left",
       ArrowRight: "right",
@@ -74,8 +60,6 @@ export default class extends Controller {
   }
 
   syncPosition(event) {
-    if (!this.isNavigable()) return;
-
     const position = this.itemTargets.indexOf(event.target);
     if (position == -1) return;
 
@@ -106,30 +90,10 @@ export default class extends Controller {
     const items = this.itemTargets;
     if (!items.length) return;
 
-    if (!this.isNavigable()) {
-      items.forEach((item) => item.setAttribute("tabindex", "-1"));
-      return;
-    }
-
     this.currentPosition = Math.min(this.currentPosition, items.length - 1);
     items.forEach((item, index) => {
       item.setAttribute("tabindex", index == this.currentPosition ? "0" : "-1");
     });
-  }
-
-  onDetailsToggle() {
-    if (!this.isNavigable()) {
-      this.itemTargets.forEach((item) => {
-        item.setAttribute("tabindex", "-1");
-        if (item == document.activeElement) item.blur();
-      });
-    }
-
-    this.initTabindex();
-  }
-
-  isNavigable() {
-    return !this.detailsElement || this.detailsElement.open;
   }
 
   #focusWhenReady(attempt = 0) {

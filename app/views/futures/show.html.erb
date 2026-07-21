@@ -29,7 +29,7 @@
 
     <div
       class="future--unplanned-entries"
-      data-controller="pops-drop"
+      data-controller="pops-drop drop-postpone-optimistic"
       data-pops-drop-pops-url-value="<%= postpone_path %>"
       data-pops-drop-bucket-id-value="<%= @future.bucket.id %>"
       data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop"

@@ -6,10 +6,7 @@
           value: bulletable.body,
           placeholder: "Write down appointments or notable events…",
           autofocus: true,
-          class: "bullet-composer--plain-input",
-          data: {
-            action: "keydown->composer#plainEnter input->composer#editorInput"
-          } %>
+          class: "bullet-composer--plain-input" %>
     <%= bf.date_field :starts_date, value: bulletable.starts_date %>
     <%= bf.date_field :ends_date, value: bulletable.ends_date %>
   <% end %>

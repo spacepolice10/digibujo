@@ -18,7 +18,7 @@ module Reviews
 
       assert_response :success
       assert_match 'Team standup', response.body
-      assert_select '[data-controller="pops-drop"]', minimum: 7
+      assert_select '[data-controller~=pops-drop]', minimum: 7
     end
 
     test 'show only includes active bullets' do

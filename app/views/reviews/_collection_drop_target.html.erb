@@ -1,7 +1,7 @@
 <%# locals: (collection:) %>
 <li class="review--collections-item">
   <div class="review--collections-drop-form review--collection-drop-target"
-       data-controller="collect-drop"
+       data-controller="collect-drop drop-collection-optimistic"
        data-collect-drop-collect-url-value="<%= collect_path %>"
        data-collect-drop-bucket-id-value="<%= collection.bucket.id %>"
        data-action="dragover->collect-drop#dragover dragleave->collect-drop#dragleave drop->collect-drop#drop">

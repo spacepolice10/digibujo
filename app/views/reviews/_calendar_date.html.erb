@@ -10,12 +10,12 @@
     <% end %>
 
     <div class="review--date-entries"
-         data-controller="pops-drop"
+         data-controller="pops-drop drop-postpone-optimistic"
          data-drop-zone-value="<%= date.iso8601 %>"
          data-pops-drop-pops-url-value="<%= postpone_path %>"
          data-pops-drop-bucket-id-value="<%= daylog_bucket.id %>"
          data-pops-drop-pops-on-value="<%= date.iso8601 %>"
-         data-pops-drop-review-drop-value="true"
+         data-pops-drop-requested-with-value="review-pops-drop"
          data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop">
       <% bullets.each do |bullet| %>
         <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>

@@ -55,7 +55,10 @@
 
     <div>
       <% if @bullet.bulletable_type == "Voice" && @bullet.bulletable.recording.attached? %>
-        <%= render "voices/card", bullet: @bullet %>
+        <%= @bullet.body %>
+        <%= render "voices/playback",
+              recording: @bullet.voice.recording,
+              recording_duration: @bullet.voice.duration_seconds %>
       <% else %>
         <%= @bullet.body %>
       <% end %>

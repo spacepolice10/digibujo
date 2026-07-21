@@ -162,9 +162,9 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     get daylog_path
 
     assert_response :success
-    assert_select 'header.header details.dropdown.header--menu' do
-      assert_select 'summary.button--accent', text: 'Digibujo'
-      assert_select '.dropdown-body[inert]'
+    assert_select 'header.header .header--menu' do
+      assert_select 'button.button--accent[popovertarget=?]', 'header_menu', text: 'Digibujo'
+      assert_select '#header_menu.dropdown-body[popover]'
       assert_select 'form.search--form[action=?]', search_path
       assert_select 'turbo-frame#menu_search'
     end

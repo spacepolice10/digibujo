@@ -28,7 +28,11 @@ export default class extends Controller {
     const frame = document.getElementById(`bullet_${bulletId}`)
     if (!frame) return
 
-    const revert = this.#removeOptimistically(frame)
+    const optimistic = this.application.getControllerForElementAndIdentifier(
+      this.element,
+      "drop-collection-optimistic"
+    )
+    const revert = optimistic?.remove(frame)
 
     const body = new FormData()
     body.append("bullet_ids", bulletId)
@@ -41,27 +45,12 @@ export default class extends Controller {
       })
       if (response.ok) return
 
-      revert()
+      revert?.()
       if (!response.unprocessableEntity && response.isTurboStream) {
         await response.renderTurboStream()
       }
     } catch {
-      revert()
-    }
-  }
-
-  #removeOptimistically(frame) {
-    const originalParent = frame.parentElement
-    const originalNextSibling = frame.nextSibling
-
-    frame.remove()
-
-    return () => {
-      if (originalNextSibling) {
-        originalParent.insertBefore(frame, originalNextSibling)
-      } else {
-        originalParent.appendChild(frame)
-      }
+      revert?.()
     }
   }
 }

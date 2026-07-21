@@ -33,7 +33,7 @@ Each bulletable includes **`Bulletable`** (`has_one :bullet`, display defaults, 
 
 All bullet types are created via **`POST /bullets`** (`BulletsController`) — there are no nested `daylog/bullets` or `monthlylogs/:id/bullets` routes.
 
-**Dock** (`bullets/composer/_dock.html.erb`): type buttons stay in the page; each link loads `GET /bullets/new` into a **page-level `<dialog>`** turbo-frame (`bullets/composer/_dialog`, built on `shared/dialog` + `dialog` Stimulus). Desktop uses a compact dialog; mobile styles it as a **bottom sheet** (keyboard-safe). Successful create keeps the dialog open and clears the form; Esc / cancel / backdrop closes the dialog and clears the frame. **`attemptDismiss`** (double-Esc confirm) applies only to Note (Lexxy) composers.
+**Dock** (`bullets/composer/_dock.html.erb`): type buttons stay in the page; each link loads `GET /bullets/new` into a **page-level `<dialog>`** turbo-frame (`bullets/composer/_dialog`, built on `shared/dialog` + `dialog` Stimulus). Desktop uses a compact dialog; mobile styles it as a **bottom sheet** (keyboard-safe). Successful create closes the dialog and clears the frame; Esc / cancel / backdrop do the same.
 
 **Monthly spread / Future:** no dock. Planned cells: Task + Event; unplanned: Task + Note — links load into the page dialog frames.
 

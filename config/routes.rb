@@ -115,6 +115,9 @@ Rails.application.routes.draw do
   resources :pinned
   resources :archived
 
+  # --- Attachments ---
+  resources :attachments, only: :show, param: :signed_id
+
   # --- Publishing ---
   resources :published, param: :code
 end
