@@ -13,7 +13,7 @@
           value: bulletable.body,
           placeholder: "Caption your voice, guitar playing or cat meowing…",
           autofocus: false,
-          class: "bullet-composer--plain-input" %>
+          class: "bullets-form--body" %>
     <%= bf.file_field :recording, accept: "audio/webm,audio/mp4", hidden: true, data: { voice_recorder_target: "file" } %>
     <%= bf.hidden_field :duration_seconds, data: { voice_recorder_target: "duration" } %>
   <% end %>

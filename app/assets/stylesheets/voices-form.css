@@ -14,7 +14,7 @@
     align-items: center;
     gap: var(--spacing-horizontal-half);
     flex: 0 0 auto;
-    min-width: 0;
+    width: 100%;
     border: 1px solid var(--color-stroke-base);
     border-radius: var(--radius-base);
     padding: var(--spacing-horizontal-half);

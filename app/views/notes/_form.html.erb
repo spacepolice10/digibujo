@@ -4,7 +4,6 @@
     <%= bf.hidden_field :id if bulletable.persisted? %>
     <%= bf.rich_text_area :body,
           value: bulletable.body,
-          toolbar_id: "toolbar-note",
           preset: "note",
           placeholder: "Add markdown notes, files or images...",
           autofocus: true do %>

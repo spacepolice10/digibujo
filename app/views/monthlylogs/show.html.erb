@@ -67,11 +67,34 @@
 
                     <% composer_id = "monthlylog_bullets_#{date.to_date}_composer" %>
                     <div class="monthlylog--date-composer">
-                      <%= render "bullets/composer/create_buttons",
-                            bucket: @monthlylog.bucket,
-                            composer_id: composer_id,
-                            pops_on: date,
-                            side: :planned %>
+                      <%= link_to new_bullet_path(
+                        pops_on: date,
+                        bucket_id: @monthlylog.bucket.id,
+                        bulletable_type: "Task"
+                      ),
+                      class: [
+                        "bullets-form--create-button",
+                        "bullets-form--create-button--task"
+                      ],
+                      data: { turbo_frame: composer_id },
+                      aria: { label: "Add Task" } do %>
+                      <i class="icon" style="--icon-mask: var(--icon-square)" aria-hidden="true"></i>
+                      Task
+                    <% end %>
+                    <%= link_to new_bullet_path(
+                      pops_on: date,
+                      bucket_id: @monthlylog.bucket.id,
+                      bulletable_type: "Event"
+                    ),
+                    class: [
+                      "bullets-form--create-button",
+                      "bullets-form--create-button--event"
+                    ],
+                    data: { turbo_frame: composer_id },
+                    aria: { label: "Add Event" } do %>
+                    <i class="icon" style="--icon-mask: var(--icon-circle)" aria-hidden="true"></i>
+                    Event
+                  <% end %>
                     </div>
                   </div>
                 </div>
@@ -108,10 +131,21 @@
             <% end %>
           <% end %>
 
-          <%= render "bullets/composer/create_buttons",
-                bucket: @monthlylog.bucket,
-                composer_id: "monthlylog_unplanned_composer",
-                side: :unplanned %>
+          <% composer_id = "monthlylog_bullets_unplanned_composer" %>
+          <%= link_to new_bullet_path(
+            pops_on: nil,
+            bucket_id: @monthlylog.bucket.id,
+            bulletable_type: "Note"
+          ),
+          class: [
+            "bullets-form--create-button",
+            "bullets-form--create-button--note"
+          ],
+          data: { turbo_frame: composer_id },
+          aria: { label: "Add Note" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-text)" aria-hidden="true"></i>
+        Note
+      <% end %>
         </div>
       </section>
     </div>

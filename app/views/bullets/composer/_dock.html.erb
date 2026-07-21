@@ -6,17 +6,17 @@
   { name: "Voice", icon: "microphone", modifier: "voice", hotkey: "Shift+V", hotkey_action: "keydown.shift+v@document->hotkey#click" },
 ] %>
 <% mobile = request.variant.include?(:mobile) %>
-<div class="bullet-composer--dock<%= " bullet-composer--dock-mobile" if mobile %>">
-  <div class="bullet--composer-buttons">
-    <span>Add new:</span>
+<div class="bullets-form--dock<%= " bullets-form--dock-mobile" if mobile %>">
+  <div class="bullets-form--buttons">
     <% types.each do |type| %>
       <%= link_to new_bullet_path(pops_on: selected_date, bucket_id: bucket&.id, bulletable_type: type[:name]),
             class: [
-              "bullet--composer-create-button",
-              "bullet--composer-create-button--#{type[:modifier]}",
+              "bullets-form--create-button",
+              "bullets-form--create-button--#{type[:modifier]}",
               ("hotkey-hint" if type[:hotkey])
             ].compact,
             data: {
+              bullet_type: type[:modifier],
               turbo_frame: composer_id,
               controller: ("hotkey" if type[:hotkey]),
               hotkey: type[:hotkey],

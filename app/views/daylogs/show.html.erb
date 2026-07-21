@@ -1,76 +1,77 @@
 <div class="layout--page daylog" data-controller="daylog">
   <% if @daylog %>
-    <turbo-frame id="bullets-timeline">
-      <div id="bullets-header" class="layout--header daylog--header">
-        <div class="layout--header-actions daylog--header-navigation">
-          <%= link_to daylog_path(date: (@selected_date - 1.day).iso8601),
-                data: {
-                  turbo_action: "advance",
-                  controller: "hotkey",
-                  hotkey: "←",
-                  action: "keydown.shift+left@document->hotkey#click"
-                },
-                class: "button--tertiary hotkey-hint",
-                aria: { label: "Show previous day", keyshortcuts: "Shift+ArrowLeft" } do %>
-            <i
-              class="icon"
-              style="--icon-mask: var(--icon-arrow-left)"
-              aria-hidden="true"
-            ></i>
-          <% end %>
-
-          <button
-            type="button"
-            class="button--tertiary button--lg"
-            data-action="daylog#openDatePicker"
-            aria-label="Pick a date"
-          >
-            <i
-              class="icon"
-              style="--icon-mask: var(--icon-calendar)"
-              aria-hidden="true"
-            ></i>
-
-            <%= @selected_date.strftime("%a, %b %-d") %>
-          </button>
-
-          <input <%# herb:disable html-input-require-autocomplete %>
-            type="date"
-            value="<%= @selected_date.iso8601 %>"
-            data-daylog-target="dateForm"
-            data-action="change->daylog#switchDate"
-            class="utilities--sr-only"
-            tabindex="-1"
-          >
-
-          <%= link_to daylog_path(date: (@selected_date + 1.day).iso8601),
-                data: {
-                  turbo_action: "advance",
-                  controller: "hotkey",
-                  hotkey: "→",
-                  action: "keydown.shift+right@document->hotkey#click"
-                },
-                class: "button--tertiary hotkey-hint",
-                aria: { label: "Show next day", keyshortcuts: "Shift+ArrowRight" } do %>
-            <i
-              class="icon icon--flip-h"
-              style="--icon-mask: var(--icon-arrow-right)"
-              aria-hidden="true"
-            ></i>
-          <% end %>
-        </div>
-      </div>
+    <turbo-frame id="daylog">
+      
 
       <div data-bulk-menu-target="list" class="layout--surface layout--list">
+        <div id="bullets-header" class="layout--header daylog--header">
+          <div class="layout--header-actions daylog--header-navigation">
+            <%= link_to daylog_path(date: (@selected_date - 1.day).iso8601),
+                  data: {
+                    turbo_action: "advance",
+                    controller: "hotkey",
+                    hotkey: "←",
+                    action: "keydown.shift+left@document->hotkey#click"
+                  },
+                  class: "button--tertiary hotkey-hint",
+                  aria: { label: "Show previous day", keyshortcuts: "Shift+ArrowLeft" } do %>
+              <i
+                class="icon"
+                style="--icon-mask: var(--icon-arrow-left)"
+                aria-hidden="true"
+              ></i>
+            <% end %>
+  
+            <button
+              type="button"
+              class="button--tertiary button--lg"
+              data-action="daylog#openDatePicker"
+              aria-label="Pick a date"
+            >
+              <i
+                class="icon"
+                style="--icon-mask: var(--icon-calendar)"
+                aria-hidden="true"
+              ></i>
+  
+              <%= @selected_date.strftime("%a, %b %-d") %>
+            </button>
+  
+            <input <%# herb:disable html-input-require-autocomplete %>
+              type="date"
+              value="<%= @selected_date.iso8601 %>"
+              data-daylog-target="dateForm"
+              data-action="change->daylog#switchDate"
+              class="utilities--sr-only"
+              tabindex="-1"
+            >
+  
+            <%= link_to daylog_path(date: (@selected_date + 1.day).iso8601),
+                  data: {
+                    turbo_action: "advance",
+                    controller: "hotkey",
+                    hotkey: "→",
+                    action: "keydown.shift+right@document->hotkey#click"
+                  },
+                  class: "button--tertiary hotkey-hint",
+                  aria: { label: "Show next day", keyshortcuts: "Shift+ArrowRight" } do %>
+              <i
+                class="icon icon--flip-h"
+                style="--icon-mask: var(--icon-arrow-right)"
+                aria-hidden="true"
+              ></i>
+            <% end %>
+          </div>
+          <section class="daylog--meta" aria-label="Day notes">
+            <%= render "daylogs/mood_entity",
+                  date: @selected_date,
+                  entity: @mood_entity %>
+            <%= render "daylogs/picture",
+                  date: @selected_date,
+                  picture: @picture %>
+          </section>
+        </div>
 
-        <section class="daylog--day-meta" aria-label="Day notes">
-          <%= render "daylogs/mood_entity",
-                date: @selected_date,
-                entity: @mood_entity %>
-          <%= render "daylogs/picture",
-                date: @selected_date,
-                picture: @picture %>
-        </section>
 
         <%= render layout: "pagination/paginated_list",
               locals: {

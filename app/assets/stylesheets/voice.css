@@ -21,8 +21,8 @@
     gap: var(--spacing-horizontal-half);
     width: 100%;
     min-height: 2.75rem;
-    border-radius: var(--radius-full);
-    background: var(--color-bg-base);
+    border-radius: var(--radius-base);
+border: 1px solid var(--color-stroke-base);
     padding: var(--spacing-horizontal-half);
   }
 

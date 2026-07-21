@@ -8,7 +8,11 @@ export default class extends Controller {
     if (!this.element.open) this.element.showModal()
   }
 
-  clearFrame() {
+  async cleanupElement() {
+    await Promise.all(
+      this.element.getAnimations().map((animation) => animation.finished.catch(() => {}))
+    )
+
     this.element.querySelectorAll("turbo-frame").forEach((frame) => {
       frame.removeAttribute("src")
       frame.innerHTML = ""

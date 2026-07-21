@@ -101,6 +101,11 @@
     align-self: stretch;
   }
 
+  .monthlylog--date-composer {
+    display: flex;
+    gap: var(--spacing-horizontal);
+  }
+
   @media (hover: hover) {
     .monthlylog--calendar .monthlylog--date-composer {
       visibility: hidden;

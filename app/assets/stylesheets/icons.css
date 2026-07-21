@@ -83,6 +83,7 @@
     --icon-music: url("icon-music.svg");
     --icon-camera: url("icon-camera.svg");
     --icon-money: url("icon-money.svg");
+    --icon-zoom-in: url("icon-zoom-in.svg");
   }
 
   .icon--spin {

@@ -64,10 +64,9 @@
     }
 
     .daylog--header-navigation {
-      flex: 1 1 100%;
       justify-content: space-between;
       position: relative;
-      font-size: var(--font-size-base);
+      align-items: center;
     }
 
     .daylog--header-today:not(:empty) {
@@ -81,7 +80,7 @@
       padding-inline: 0;
     }
 
-    .daylog--page .bucket--list:has(.bullet-composer--dock-mobile) {
+    .daylog--page .bucket--list:has(.bullets-form--dock-mobile) {
       padding-bottom: calc(
         var(--tabbar-scroll-padding, calc(var(--spacing-vertical-double) * 2 + env(safe-area-inset-bottom, 0px)))
         + var(--icon-size-base) + var(--spacing-vertical) * 2
@@ -89,7 +88,8 @@
     }
   }
 
-  .daylog--day-meta {
+  .daylog--meta {
+    position: relative;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -97,22 +97,73 @@
     margin-block-end: var(--spacing-vertical);
   }
 
-  .daylog--photo {
+  .daylog--mood-dialog {
+    width: auto;
+  }
+
+  .daylog--mood-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-horizontal);
+    padding-block: var(--spacing-vertical);
+  }
+
+  .daylog--mood-option {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    font-size: var(--font-size-huge);
+    justify-content: center;
+  }
+
+  .daylog--mood-option-current {
+    background: var(--color-bg-base);
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .daylog--picture-container {
+    position: relative;
+  }
+  .daylog--picture {
+    position: absolute;
+    width: 65px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: var(--spacing-vertical-half);
+  
+    @media (max-width: 799px) {
+      position: relative;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      width: 45px;
+      transform: none;
+      border-radius: var(--radius-full);
+    }
+    @media (min-width: 800px) {
+      right: -25px;
+      top: -55px;
+      transform: rotate(10deg);
+      padding: var(--spacing-vertical-half);
+      background: var(--color-bg-base);
+      border: 1px solid var(--color-stroke-base);
+      box-shadow: var(--shadow-base);
+      border-radius: var(--radius-subtle);
+    }
   }
 
-  .daylog--photo-image {
-    max-inline-size: min(100%, 30rem);
-    border-radius: var(--radius-sm, 0.25rem);
-  }
-
-  .daylog--photo-thumb-image {
-    inline-size: 2rem;
-    block-size: 2rem;
+  .daylog--picture-thumbnail {
+    width: 100%;
     object-fit: cover;
-    border-radius: var(--radius-sm, 0.25rem);
+    border-radius: var(--radius-subtle);
+    aspect-ratio: 1/1;
+  }
+  .daylog--picture-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    justify-content: space-between;
   }
 }

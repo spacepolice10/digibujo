@@ -102,12 +102,12 @@ export default class extends Controller {
     if (this.idListValue.length == 0) return;
 
     if (this.#isPickerOpen()) {
-      this.#closePicker(this.popsDropdownTarget);
-      this.#closePicker(this.collectsDropdownTarget);
+      this.#hidePicker(this.popsDropdownTarget);
+      this.#hidePicker(this.collectsDropdownTarget);
       return;
     }
 
-    this.#clearSelection();
+    this.#cleanupSelection();
   }
 
   // =====================================================================
@@ -125,7 +125,7 @@ export default class extends Controller {
     if (!element.matches(":popover-open")) element.showPopover();
   }
 
-  #closePicker(element) {
+  #hidePicker(element) {
     if (element?.matches(":popover-open")) element.hidePopover();
   }
 
@@ -159,12 +159,12 @@ export default class extends Controller {
   }
 
   #restore() {
-    this.#closePicker(this.popsDropdownTarget);
-    this.#closePicker(this.collectsDropdownTarget);
-    this.#clearSelection();
+    this.#hidePicker(this.popsDropdownTarget);
+    this.#hidePicker(this.collectsDropdownTarget);
+    this.#cleanupSelection();
   }
 
-  #clearSelection() {
+  #cleanupSelection() {
     this.idListValue = [];
     this.checkboxTargets.forEach((checkbox) => {
       checkbox.checked = false;
@@ -209,6 +209,10 @@ export default class extends Controller {
       return traits[trait] == expected;
     });
   }
+
+  // =====================================================================
+  // Select mode sync
+  // =====================================================================
 
   #syncSelectMode() {
     if (!this.hasListTarget) return;

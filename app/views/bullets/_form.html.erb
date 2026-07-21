@@ -11,7 +11,7 @@
   ].compact
 %>
 
-<%= form_with model: bullet, class: "bullet-composer", data: {
+<%= form_with model: bullet, class: "bullets-form", data: {
   composer_form: true,
   controller: controllers.join(" "),
   action: actions.join(" ")
@@ -32,25 +32,26 @@
 
   <%= yield fr, bulletable %>
 
-  <div class="bullet-composer--rail">
+  <div class="bullets-form--rail">
+    <div class="bullets-form--rail-actions">
     <button
       type="button"
-      class="button--tertiary button--icon-subtle bullet-composer--type-dismiss"
+      class="button--tertiary button--icon-subtle bullets-form--type-dismiss"
       data-action="composer#cancel"
       aria-label="Close composer"
     >
       <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
     </button>
     <span
-      class="bullet-composer--type-pill"
+      class="bullets-form--type-pill"
       data-bullet-type="<%= bullet.bulletable_type.downcase %>"
       data-composer-transition-type="<%= bullet.bulletable_type.downcase %>"
     >
       <%= bullet.bulletable_type %>
     </span>
+  </div>
 
-    <div class="bullet-composer--rail-actions">
-      <div class="bullet-composer--rail-submit">
+      <div class="bullets-form--rail-submit">
         <%= fr.button type: "submit",
               class: "button--primary button--icon button--circle",
               aria: { label: "Save" } do %>
@@ -61,6 +62,5 @@
           ></i>
         <% end %>
       </div>
-    </div>
   </div>
 <% end %>

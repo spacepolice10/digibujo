@@ -6,8 +6,8 @@
           value: bulletable.body,
           placeholder: "Write down appointments or notable events…",
           autofocus: true,
-          class: "bullet-composer--plain-input" %>
-    <%= bf.date_field :starts_date, value: bulletable.starts_date %>
-    <%= bf.date_field :ends_date, value: bulletable.ends_date %>
+          class: "bullets-form--body" %>
+    <%= bf.hidden_field :starts_date, value: bulletable.starts_date %>
+    <%= bf.hidden_field :ends_date, value: bulletable.ends_date %>
   <% end %>
 <% end %>

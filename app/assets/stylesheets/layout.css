@@ -94,7 +94,7 @@
     display: flex;
     gap: var(--spacing-horizontal-half);
     flex-shrink: 0;
-    flex: 1;
+    align-items: center;
   }
 
   .layout--main {
@@ -262,10 +262,6 @@
     border: 0.5px solid var(--color-stroke-base);
     border-radius: var(--radius-base);
     padding: var(--spacing-vertical) var(--spacing-horizontal);
-
-    @media (max-width: 621px) {
-      background: transparent;
-    }
 
     &.unpadded {
       padding: 0;
