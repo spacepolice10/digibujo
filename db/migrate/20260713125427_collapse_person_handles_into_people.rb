@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class CollapsePersonHandlesIntoPeople < ActiveRecord::Migration[8.1]
+  class MigrationPerson < ApplicationRecord
+    self.table_name = "people"
+  end
+
   class MigrationPersonHandle < ApplicationRecord
     self.table_name = "person_handles"
   end
@@ -9,9 +13,9 @@ class CollapsePersonHandlesIntoPeople < ActiveRecord::Migration[8.1]
     add_column :people, :email, :string
     add_column :people, :phone, :string
 
-    Person.reset_column_information
+    MigrationPerson.reset_column_information
 
-    Person.find_each do |person|
+    MigrationPerson.find_each do |person|
       handles = MigrationPersonHandle.where(person_id: person.id).order(:position, :id)
       email = handles.find { |handle| handle.kind == 0 }&.data
       phone = handles.find { |handle| handle.kind == 1 }&.data
@@ -34,7 +38,7 @@ class CollapsePersonHandlesIntoPeople < ActiveRecord::Migration[8.1]
     now = Time.current
     rows = []
 
-    Person.find_each do |person|
+    MigrationPerson.find_each do |person|
       position = 0
 
       if person.read_attribute(:email).present?
