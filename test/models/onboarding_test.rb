@@ -8,6 +8,7 @@ class OnboardingTest < ActiveSupport::TestCase
     onboarding = Onboarding.new(user: user)
 
     assert onboarding.complete
+    assert user.reload.onboarded?
     assert_not user.futures.any?
     assert_not user.monthlylogs.any?
     assert_not_nil user.daylog
@@ -23,6 +24,7 @@ class OnboardingTest < ActiveSupport::TestCase
     assert onboarding.complete
     assert onboarding.complete
 
+    assert user.reload.onboarded?
     assert_equal 0, Future.where(user: user).count
     assert_equal 0, user.monthlylogs.count
     assert_equal 1, Daylog.where(user: user).count

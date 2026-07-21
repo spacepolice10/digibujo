@@ -13,8 +13,8 @@
     <% end %>
   </div>
 
-  <div class="layout--surface">
-    <div class="user--info">
+  <div class="layout--page">
+    <div class="layout--surface">
       <span class="button--secondary button--icon-strong button--circle">
         <%= Current.user.email_address.first.upcase %>
       </span>
@@ -26,7 +26,7 @@
       </div>
     </div>
 
-    <div class="user--actions">
+    <div class="layout--surface layout--header-actions">
       <%= link_to "#", class: "button--secondary" do %>
         <i
           class="icon"

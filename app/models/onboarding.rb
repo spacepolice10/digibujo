@@ -20,6 +20,7 @@ class Onboarding
     ActiveRecord::Base.transaction do
       ensure_loose_notes!
       ensure_daylog!
+      user.update!(onboarded: true)
     end
 
     true
