@@ -17,7 +17,6 @@
     & .bullet--name {
       font-size: inherit;
       font-weight: var(--font-weight-strong);
-      color: var(--color-fg-base);
       margin-bottom: var(--spacing-vertical-half);
       border-bottom: 1px solid var(--color-stroke-base);
       padding-bottom: var(--spacing-vertical-half);

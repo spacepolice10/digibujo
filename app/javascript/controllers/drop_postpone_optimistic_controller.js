@@ -5,12 +5,8 @@ export default class extends Controller {
     const originalParent = frame.parentElement
     const originalNextSibling = frame.nextSibling
 
-    const composer = this.element.querySelector("turbo-frame[id^='composer_']")
-    if (composer) {
-      composer.before(frame)
-    } else {
-      this.element.appendChild(frame)
-    }
+    // Drop target is this.element — same node that carries data-drop-zone-value
+    this.element.appendChild(frame)
 
     return () => {
       if (originalNextSibling) {

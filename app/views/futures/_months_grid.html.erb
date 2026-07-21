@@ -24,11 +24,17 @@
           <% end %>
         </div>
 
-        <%= render "bullets/composer/create_buttons",
-              bucket: future.bucket,
-              composer_id: composer_id,
-              pops_on: month_start,
-              side: :planned %>
+        <%= link_to new_bullet_path(
+              bucket_id: future.bucket.id,
+              pops_on: month_start.iso8601,
+              bulletable_type: "Note"
+            ),
+              class: "bullets-form--create-button",
+              data: { turbo_frame: composer_id },
+              aria: { label: "Add Note" } do %>
+          <i class="icon" style="--icon-mask: var(--icon-text)" aria-hidden="true"></i>
+          Note
+        <% end %>
       </div>
     </div>
   <% end %>

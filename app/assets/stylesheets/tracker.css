@@ -52,7 +52,8 @@
 
   .tracker--heatmap-days {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow-x: auto;
     gap: 2px;
   }
 
@@ -84,6 +85,16 @@
   .tracker--heatmap-date-done {
     background: var(--color-accent-alternative-bg);
     border-color: var(--color-accent-alternative);
+  }
+
+  .tracker--cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-vertical);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-subtle);
   }
 
   .tracker--heatmap-date-done::after {

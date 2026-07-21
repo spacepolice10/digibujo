@@ -41,10 +41,10 @@
         <% end %>
       </div>
 
-      <%= render "bullets/composer/create_buttons",
-            bucket: @future.bucket,
-            composer_id: "future_bullets_unplanned_composer",
-            side: :unplanned %>
+      <%= link_to new_bullet_path(bucket_id: @future.bucket.id, bulletable_type: "Note"), class: "bullets-form--create-button", data: { turbo_frame: "future_bullets_unplanned_composer" }, aria: { label: "Add Note" } do %>
+        <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
+        Add bullet
+      <% end %>
     </div>
   </section>
 

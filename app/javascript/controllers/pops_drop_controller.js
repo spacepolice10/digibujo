@@ -62,8 +62,6 @@ export default class extends Controller {
   }
 
   #optimisticMove(frame) {
-    if (this.requestedWithValue == "review-pops-drop") return null
-
     const optimistic = this.application.getControllerForElementAndIdentifier(
       this.element,
       "drop-postpone-optimistic"

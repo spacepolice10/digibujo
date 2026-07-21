@@ -177,7 +177,7 @@
     <div class="tracker--heatmap-days">
       <% @days.each do |date| %>
         <div class="tracker--cell">
-          <span class="utilities--text-sm"><%= date.day %></span>
+          <p class="utilities--text-sm"><%= date.day %></p>
           <%= render "daylogs/mood_entity",
                 date: date,
                 entity: @mood_entities_by_date[date] %>

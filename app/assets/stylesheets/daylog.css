@@ -94,7 +94,6 @@
     flex-wrap: wrap;
     align-items: center;
     gap: var(--spacing-horizontal);
-    margin-block-end: var(--spacing-vertical);
   }
 
   .daylog--mood-dialog {
