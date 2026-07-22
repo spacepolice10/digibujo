@@ -137,7 +137,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select '.menu--page.menu--page-mobile'
-    assert_select '.menu--search[data-combobox-path-value=?]', search_path
+    assert_select '.search[data-combobox-path-value=?]', search_path
     assert_select 'button.search--dismiss[aria-label=?]', 'Close search'
     assert_select '.menu--create-bucket[data-controller=?]', 'dialog'
     assert_select 'nav.menu--navigation a[href=?]', activities_path

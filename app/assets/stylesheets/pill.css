@@ -17,8 +17,8 @@
   }
 
   .pill .icon {
-    width: var(--icon-size-subtle);
-    height: var(--icon-size-subtle);
+    width: var(--spacing-horizontal);
+    height: var(--spacing-horizontal);
   }
 
   .pill--label {
@@ -26,7 +26,7 @@
   }
 
   .lexxy-prompt-menu__item .icon {
-    width: var(--icon-size-base);
-    height: var(--icon-size-base);
+    width: var(--spacing-horizontal-double);
+    height: var(--spacing-horizontal-double);
   }
 }

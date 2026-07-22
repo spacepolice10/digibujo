@@ -16,7 +16,7 @@
         class="dropdown-body menu--wrap"
         popover
         data-controller="menu"
-        data-action="toggle->menu#focusOnOpen keydown->menu#keydown turbo:before-visit@document->menu#close keydown.ctrl+k@document->menu#open keydown.meta+k@document->menu#open"
+        data-action="keydown->menu#keydown turbo:before-visit@document->menu#hideMenu keydown.ctrl+k@document->menu#showMenu keydown.meta+k@document->menu#showMenu"
       >
         <%= render "menu/menu" %>
       </div>

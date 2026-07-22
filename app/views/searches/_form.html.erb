@@ -2,16 +2,15 @@
       method: :get,
       class: "search--form",
       data: { combobox_target: "searchForm" } do |form| %>
-    <%= form.label :q, "Search bullets, projects, and collections", class: "form-label utilities--sr-only" %>
+  <%= form.label :q, "Search bullets, projects, and collections", class: "form-label utilities--sr-only" %>
 
   <%= form.search_field :q,
         value: "",
         placeholder: "Search…",
-        class: "form-input",
         data: {
-          menu_target: "focus",
+          menu_target: "search",
           search_target: "textform",
           combobox_target: "searchField",
-          action: "focus->combobox#activate blur->combobox#deactivate input->combobox#search keydown->combobox#navigate"
+          action: "input->combobox#search search->combobox#commit keydown->combobox#navigate"
         } %>
 <% end %>

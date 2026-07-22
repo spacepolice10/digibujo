@@ -4,10 +4,9 @@ import { debounce } from "helpers/debounce"
 import { navigateCombobox } from "helpers/combobox"
 
 const DEFAULT_DEBOUNCE_MS = 80
-const MOBILE_DEACTIVATE_MS = 200
 
 export default class extends Controller {
-  static targets = ["searchForm", "searchField", "item", "palette"]
+  static targets = ["searchForm", "searchField", "item"]
 
   static values = {
     path: String,
@@ -16,13 +15,8 @@ export default class extends Controller {
 
   #abort = null
   #debouncedSearch = null
-  #deactivateTimer = null
 
   connect() {
-    this.mobileSearch =
-      this.element.closest(".menu--page-mobile")?.querySelector(".menu--search") ===
-      this.element
-
     this.#debouncedSearch = debounce(
       (input) => this.#performSearch(input),
       this.debounceMsValue,
@@ -30,40 +24,16 @@ export default class extends Controller {
   }
 
   disconnect() {
-    this.#cancelDeactivate()
     this.#cancelPendingSearch()
   }
 
-  activate() {
-    if (!this.mobileSearch) return
-
-    this.#cancelDeactivate()
-    this.element.classList.add("menu--search-active")
-    
-  }
-
-  deactivate() {
-    if (!this.mobileSearch) return
-
-    this.#cancelDeactivate()
-    this.#deactivateTimer = window.setTimeout(() => {
-      this.element.classList.remove("menu--search-active")
-      this.#deactivateTimer = null
-    }, MOBILE_DEACTIVATE_MS)
-  }
-
+  // Prevent input blur when interacting with the results list.
   keepFocus(event) {
-    if (!this.mobileSearch) return
-
     event.preventDefault()
   }
 
   dismiss(event) {
-    if (!this.mobileSearch) return
-
     event.preventDefault()
-    this.#cancelDeactivate()
-    this.element.classList.remove("menu--search-active")
 
     if (!this.hasSearchFieldTarget) return
 
@@ -76,6 +46,7 @@ export default class extends Controller {
     }
 
     this.searchFieldTarget.blur()
+    event.currentTarget.blur()
   }
 
   search() {
@@ -84,6 +55,13 @@ export default class extends Controller {
     this.#cancelPendingSearch()
     this.#abort = new AbortController()
     this.#debouncedSearch(this.searchFieldTarget)
+  }
+
+  // Native search clear (×) and Enter fire `search`. Collapse when empty.
+  commit() {
+    if (!this.hasSearchFieldTarget) return
+    if (this.searchFieldTarget.value.trim()) return
+    this.searchFieldTarget.blur()
   }
 
   navigate(event) {
@@ -148,7 +126,6 @@ export default class extends Controller {
 
   _updateItems() {
     this.itemTargets.forEach((item, index) => {
-      item.classList.toggle("is-active", index == this.currentPosition)
       item.setAttribute("aria-selected", index == this.currentPosition)
     })
   }
@@ -176,12 +153,5 @@ export default class extends Controller {
   #cancelPendingSearch() {
     this.#abort?.abort()
     this.#abort = null
-  }
-
-  #cancelDeactivate() {
-    if (this.#deactivateTimer == null) return
-
-    window.clearTimeout(this.#deactivateTimer)
-    this.#deactivateTimer = null
   }
 }

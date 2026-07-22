@@ -1,8 +1,10 @@
 @layer components {
-  .button--primary,
-  .button--secondary,
-  .button--tertiary,
-  .button--accent {
+  /* ── Base ─────────────────────────────────────────── */
+
+  :is(.button--primary,
+    .button--secondary,
+    .button--tertiary,
+    .button--accent) {
     display: inline-flex;
     justify-content: center;
     align-items: center;
@@ -24,36 +26,101 @@
     }
   }
 
-  .button--primary,
-  .button--secondary,
-  .button--tertiary {
+  :is(.button--primary, .button--secondary, .button--tertiary) {
     padding: var(--spacing-vertical) var(--spacing-horizontal);
     border-radius: var(--radius-strong);
     width: fit-content;
   }
 
-  .button--icon {
-    width: var(--icon-size-base);
-    height: var(--icon-size-base);
+  /* ── Variants ─────────────────────────────────────── */
+
+  .button--primary {
+    background: var(--color-fg-base);
+    border: 1px solid var(--color-fg-base);
+    color: var(--color-bg-base);
+
+    @media (hover: hover) {
+      &:hover:not(:disabled) {
+        background: var(--color-fg-subtle);
+        border-color: var(--color-fg-subtle);
+      }
+    }
+
+    &:active:not(:disabled) {
+      background: color-mix(in oklch, var(--color-fg-base) 88%, var(--color-bg-base));
+      border-color: color-mix(in oklch, var(--color-fg-base) 88%, var(--color-bg-base));
+    }
   }
 
-  .button--icon-strong {
-    width: var(--icon-size-strong);
-    height: var(--icon-size-strong);
+  .button--secondary {
+    background: var(--color-bg-subtle);
+    border: 1px solid var(--color-stroke-base);
+    color: var(--color-fg-subtle);
+
+    @media (hover: hover) {
+      &:hover:not(:disabled) {
+        border-color: var(--color-stroke-strong);
+        color: var(--color-fg-base);
+      }
+    }
+
+    &:focus-visible {
+      border-color: var(--color-stroke-strong);
+      color: var(--color-fg-base);
+    }
+
+    &:active:not(:disabled) {
+      background: color-mix(in oklch,
+          var(--color-bg-subtle) 80%,
+          var(--color-stroke-base));
+      border-color: var(--color-stroke-strong);
+      color: var(--color-fg-base);
+    }
   }
 
-  .button--icon-subtle {
-    width: var(--icon-size-subtle);
-    height: var(--icon-size-subtle);
+  .button--secondary.button--danger {
+    color: var(--color-fg-negative);
+    border-color: var(--color-fg-negative);
+
+    @media (hover: hover) {
+      &:hover:not(:disabled) {
+        background: var(--color-bg-negative);
+        color: var(--color-fg-negative);
+      }
+    }
+
+    &:active:not(:disabled) {
+      background: color-mix(in oklch,
+          var(--color-bg-negative) 75%,
+          var(--color-fg-negative));
+      border-color: var(--color-fg-negative);
+      color: var(--color-fg-negative);
+    }
   }
 
-  .button--circle {
-    border-radius: var(--radius-full);
+  .button--tertiary {
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--color-fg-subtle);
+
+    @media (hover: hover) {
+      &:hover:not(:disabled) {
+        color: var(--model-color-2);
+      }
+    }
+
+    &:active:not(:disabled) {
+      color: var(--model-color-2);
+      background: color-mix(in oklch,
+          var(--color-bg-subtle) 80%,
+          var(--color-stroke-base));
+      border-color: var(--color-stroke-strong);
+    }
   }
 
   .button--accent {
     padding: var(--spacing-vertical-half) var(--spacing-horizontal);
-    border-radius: var(--radius-full);
+    border-radius: var(--radius-base);
     font-weight: var(--font-weight-strong);
     font-style: italic;
     text-transform: uppercase;
@@ -81,133 +148,48 @@
     }
   }
 
-  .header--menu:has(:popover-open) > .button--accent {
+  .header--menu:has(:popover-open)>.button--accent {
     box-shadow: 0 2px 0 oklch(0% 0 0 / 0.35);
     transform: translateY(2px);
   }
 
-  .header--menu:has(:popover-open) > .button--accent .icon {
+  .header--menu:has(:popover-open)>.button--accent .icon {
     rotate: 180deg;
   }
 
-  /* ── Primary ──────────────────────────────────────── */
-
-  .button--primary {
-    background: var(--color-fg-base);
-    border: 1px solid var(--color-fg-base);
-    color: var(--color-bg-base);
-
-    @media (hover: hover) {
-      &:hover:not(:disabled) {
-        background: var(--color-fg-subtle);
-        border-color: var(--color-fg-subtle);
-      }
-    }
-
-    &:active:not(:disabled) {
-      background: color-mix(in oklch, var(--color-fg-base) 88%, var(--color-bg-base));
-      border-color: color-mix(in oklch, var(--color-fg-base) 88%, var(--color-bg-base));
-    }
-  }
-
-  /* ── Secondary ────────────────────────────────────── */
-
-  .button--secondary {
-    background: var(--color-bg-subtle);
-    border: 1px solid var(--color-stroke-base);
+  .button--link {
+    display: inline-block;
+    text-decoration: none;
     color: var(--color-fg-subtle);
+    font-size: var(--font-size-base);
+    margin-block: var(--spacing-vertical);
 
-    @media (hover: hover) {
-      &:hover:not(:disabled) {
-        background: var(--color-bg-subtle);
-        border-color: var(--color-stroke-strong);
-        color: var(--color-fg-base);
-      }
-    }
-
-    &:focus-visible {
-      background: var(--color-bg-subtle);
-      border-color: var(--color-stroke-strong);
+    &:hover:not(:disabled) {
       color: var(--color-fg-base);
+      text-decoration: underline;
     }
 
-    &:active:not(:disabled) {
-      background: color-mix(
-        in oklch,
-        var(--color-bg-subtle) 80%,
-        var(--color-stroke-base)
-      );
-      border-color: var(--color-stroke-strong);
-      color: var(--color-fg-base);
-    }
-
-    &:disabled:hover {
-      background: transparent;
-      border-color: var(--color-stroke-base);
-      color: var(--color-fg-subtle);
+    &[target="_blank"]::after {
+      content: " \2197";
     }
   }
 
-  .button--secondary.button--danger {
-    color: var(--color-fg-negative);
-    border-color: var(--color-fg-negative);
+  /* ── Shape ────────────────────────────────────────── */
 
-    @media (hover: hover) {
-      &:hover:not(:disabled) {
-        background: var(--color-bg-negative);
-        color: var(--color-fg-negative);
-      }
-    }
-
-    &:active:not(:disabled) {
-      background: color-mix(
-        in oklch,
-        var(--color-bg-negative) 75%,
-        var(--color-fg-negative)
-      );
-      border-color: var(--color-fg-negative);
-      color: var(--color-fg-negative);
-    }
-
-    &:disabled:hover {
-      background: transparent;
-      border-color: var(--color-fg-negative);
-      color: var(--color-fg-negative);
-    }
+  .button--circle {
+    border-radius: var(--radius-full);
   }
 
-  /* ── Tertiary ─────────────────────────────────────── */
+  /* ── Size ─────────────────────────────────────────── */
 
-  .button--tertiary {
-    border: 1px solid transparent;
-    background: transparent;
-    color: var(--color-fg-subtle);
-
-    @media (hover: hover) {
-      &:hover:not(:disabled) {
-        color: var(--model-color-2);
-      }
-    }
-
-    &:active:not(:disabled) {
-      color: var(--model-color-2);
-      background: color-mix(
-        in oklch,
-        var(--color-bg-subtle) 80%,
-        var(--color-stroke-base)
-      );
-      border-color: var(--color-stroke-strong);
-    }
+  .button--icon {
+    width: var(--spacing-horizontal-triple);
+    height: var(--spacing-horizontal-triple);
   }
 
-  /* ── Width ──────────────────────────────────────── */
-
-  .button--auto {
-    width: fit-content;
-  }
-
-  .button--wide {
-    width: 100%;
+  .button--text-only {
+    width: auto;
+    height: auto;
   }
 
   .button--sm {
@@ -220,20 +202,11 @@
     width: calc(var(--spacing-horizontal) * 12);
   }
 
-  /* ── Link ─────────────────────────────────────────── */
+  .button--auto {
+    width: auto;
+  }
 
-  .button--link {
-    display: inline-block;
-    text-decoration: none;
-    color: var(--color-fg-subtle);
-    font-size: var(--font-size-base);
-    margin-block: var(--spacing-vertical);
-    &:hover:not(:disabled) {
-      color: var(--color-fg-base);
-      text-decoration: underline;
-    }
-    &[target="_blank"]::after {
-      content: " \2197";
-    }
+  .button--wide {
+    width: 100%;
   }
 }

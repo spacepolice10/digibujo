@@ -35,8 +35,8 @@ border: 1px solid var(--color-stroke-base);
   }
 
   .voice--play .icon {
-    width: var(--icon-size-base);
-    height: var(--icon-size-base);
+    width: var(--spacing-horizontal-double);
+    height: var(--spacing-horizontal-double);
   }
 
   .voice--pause-icon {
@@ -65,7 +65,7 @@ border: 1px solid var(--color-stroke-base);
   .voice--waveform {
     flex: 1;
     min-width: 0;
-    height: var(--icon-size-base);
+    height: var(--spacing-horizontal-double);
   }
 
   .voice--waveform svg {

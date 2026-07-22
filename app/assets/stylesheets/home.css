@@ -50,8 +50,8 @@
   }
 
   .home--section-icon {
-    width: var(--icon-size-base);
-    height: var(--icon-size-base);
+    width: var(--spacing-horizontal-double);
+    height: var(--spacing-horizontal-double);
   }
 
   .home--section-chevron {
@@ -102,8 +102,8 @@
     display: block;
     border: 1px solid transparent;
     border-radius: var(--radius-full);
-    width: var(--icon-size-base);
-    height: var(--icon-size-base);
+    width: var(--spacing-horizontal-double);
+    height: var(--spacing-horizontal-double);
     cursor: pointer;
     &:hover {
       border: 1px solid var(--color-stroke-strong);

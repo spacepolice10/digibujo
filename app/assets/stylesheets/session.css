@@ -121,8 +121,8 @@
 
   .form--submit .form-submit--spinner {
     display: none;
-    width: var(--icon-size-subtle);
-    height: var(--icon-size-subtle);
+    width: var(--spacing-horizontal);
+    height: var(--spacing-horizontal);
   }
 
   .form--submit:disabled .form-submit--spinner {

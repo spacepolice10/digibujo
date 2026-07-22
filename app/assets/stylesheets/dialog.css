@@ -78,8 +78,8 @@
   }
 
   .dialog--hide {
-    width: var(--icon-size-base);
-    height: var(--icon-size-base);
+    width: var(--spacing-horizontal-double);
+    height: var(--spacing-horizontal-double);
     border: 1px solid var(--color-stroke-base);
     border-radius: var(--radius-full);
   }

@@ -114,7 +114,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h4.search--section-heading", count: 0
-    assert_select "ul.menu--palette-list", count: 0
+    assert_select "ul.search--results", count: 0
     assert_match "No recents yet.", response.body
   end
 
@@ -146,7 +146,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h4.search--section-heading", count: 0
     assert_select "details.home--section summary .home--section-name", text: "Recent", count: 0
-    assert_select "ul.menu--palette-list", count: 1
+    assert_select "ul.search--results", count: 1
     assert_match "recent mobile", response.body
   end
 end

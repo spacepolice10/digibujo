@@ -59,8 +59,8 @@
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    width: var(--icon-size-base);
-    height: var(--icon-size-base);
+    width: var(--spacing-horizontal-double);
+    height: var(--spacing-horizontal-double);
     padding: 0;
     border: none;
     background: none;
@@ -93,8 +93,8 @@
   }
 
   .activity--rail-item .layout--filter-option {
-    width: var(--icon-size-subtle);
-    height: var(--icon-size-subtle);
+    width: var(--spacing-horizontal);
+    height: var(--spacing-horizontal);
   }
 
   .activity--rail-item .layout--filter-option .icon {

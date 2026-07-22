@@ -1,31 +1,23 @@
 <% content_for(:title, "Home") %>
 
-<div class="layout--page menu--page menu--page-mobile">
-  <div class="menu--page-mobile-header">
-    <h1 class="button--accent">Digibujo</h1>
+<div class="layout--page">
+  <div class="layout--flex layout--justify-between">
+    <h1 class="typography--h1">Hello <%= current_user.email_address %></h1>
 
-    <div class="menu--page-mobile-header-actions">
+    <div class="layout--flex">
       <%= render "account_button" %>
-
-      <div class="menu--create-bucket" data-controller="dialog">
+      <div data-controller="dialog">
         <button
           type="button"
-          class="button--primary button--icon-strong button--circle"
+          class="button--primary button--icon button--circle"
           commandfor="home_create"
           command="show-modal"
           aria-label="Create"
         >
-          <i
-            class="icon"
-            style="--icon-mask: var(--icon-plus)"
-            aria-hidden="true"
-          ></i>
+        <%= icon_tag("plus") %>
         </button>
-
         <%= render "shared/dialog", id: "home_create" do %>
-          <div class="menu--create-bucket-body">
             <%= render "home_actions" %>
-          </div>
         <% end %>
       </div>
     </div>
@@ -34,20 +26,15 @@
   <%= render "menu/navigation" %>
 
   <div
-    class="menu--search"
+    class="search"
     data-controller="combobox search"
     data-combobox-path-value="<%= search_path %>"
     data-search-selection-path-value="<%= search_selection_path %>"
   >
-    <%= render "menu/search" %>
-    <%= render "menu/search_palette" %>
+    <%= render "searches/form" %>
+    <%= render "searches/palette" %>
   </div>
-
-  <div class="menu--scroll">
-    <div class="menu--sections">
       <% @sections.each do |section| %>
         <%= render "home_section", section: section %>
       <% end %>
-    </div>
-  </div>
 </div>

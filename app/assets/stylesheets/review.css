@@ -223,8 +223,8 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    width: calc(var(--icon-size-base));
-    height: calc(var(--icon-size-base));
+    width: var(--spacing-horizontal-double);
+    height: var(--spacing-horizontal-double);
     border-radius: var(--radius-base);
     border: 1px solid var(--color-stroke-base);
     overflow: hidden;
@@ -240,8 +240,8 @@
   }
 
   .review--collections-item-marker .icon {
-    width: calc(var(--icon-size-base) * 0.5);
-    height: calc(var(--icon-size-base) * 0.5);
+    width: var(--spacing-horizontal);
+    height: var(--spacing-horizontal);
   }
 
   .review--collections-item-marker[data-bucket-colour] .icon {

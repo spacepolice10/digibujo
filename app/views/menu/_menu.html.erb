@@ -1,9 +1,9 @@
 <%= render "menu/navigation" %>
 
-<div class="menu--search"
+<div class="search"
      data-controller="combobox search"
      data-combobox-path-value="<%= search_path %>"
      data-search-selection-path-value="<%= search_selection_path %>">
-  <%= render "menu/search" %>
-  <%= render "menu/search_palette" %>
+  <%= render "searches/form" %>
+  <%= render "searches/palette" %>
 </div>

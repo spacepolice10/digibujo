@@ -16,12 +16,12 @@ class AttachmentsController < ApplicationController
 
   def note_attachment_owned?(blob)
     rich_text_ids = ActiveStorage::Attachment
-      .where(blob_id: blob.id, record_type: 'ActionText::RichText')
-      .select(:record_id)
+                    .where(blob_id: blob.id, record_type: 'ActionText::RichText')
+                    .select(:record_id)
 
     note_ids = ActionText::RichText
-      .where(id: rich_text_ids, record_type: 'Note')
-      .select(:record_id)
+               .where(id: rich_text_ids, record_type: 'Note')
+               .select(:record_id)
 
     Current.user.bullets.exists?(bulletable_type: 'Note', bulletable_id: note_ids)
   end
@@ -31,6 +31,6 @@ class AttachmentsController < ApplicationController
     return false unless daylog
 
     daylog.pictures.joins(:picture_attachment)
-      .exists?(active_storage_attachments: { blob_id: blob.id })
+          .exists?(active_storage_attachments: { blob_id: blob.id })
   end
 end

@@ -1,18 +1,18 @@
 .typography--h1 {
-  font-size: var(--font-size-large);
+  font-size: var(--font-size-xl);
   font-weight: var(--font-weight-strong);
 }
 
 .typography--h2 {
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-lg);
   font-weight: var(--font-weight-strong);
 }
 
-.typography--paragraph-base {
-  font-size: var(--font-size-base);
+.typography--paragraph-md {
+  font-size: var(--font-size-md);
   color: var(--color-fg-base);
 }
 .typography--paragraph-sm {
-  font-size: var(--font-size-subtle); 
+  font-size: var(--font-size-xs); 
   color: var(--color-fg-subtle);
 }

@@ -83,7 +83,7 @@
     .daylog--page .bucket--list:has(.bullets-form--dock-mobile) {
       padding-bottom: calc(
         var(--tabbar-scroll-padding, calc(var(--spacing-vertical-double) * 2 + env(safe-area-inset-bottom, 0px)))
-        + var(--icon-size-base) + var(--spacing-vertical) * 2
+        + var(--spacing-horizontal-double) + var(--spacing-vertical) * 2
       );
     }
   }

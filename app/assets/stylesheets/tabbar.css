@@ -1,12 +1,10 @@
+@view-transition {
+  navigation: auto;
+}
+
 @layer components {
-  body:has(> .tabbar--navigation) {
-    --tabbar-scroll-padding: calc(
-      var(--spacing-vertical-double) +
-      var(--icon-size-base) +
-      var(--spacing-vertical) +
-      max(var(--spacing-vertical-half), env(safe-area-inset-bottom, 0px)) +
-      var(--spacing-vertical-double)
-    );
+  body:has(.tabbar--navigation) {
+    --tabbar-scroll-padding: calc(var(--spacing-vertical-double) + var(--spacing-horizontal-double) + var(--spacing-vertical) + max(var(--spacing-vertical-half), env(safe-area-inset-bottom, 0px)) + var(--spacing-vertical-double));
     margin-bottom: 0;
     padding-bottom: var(--tabbar-scroll-padding);
     scroll-padding-bottom: var(--tabbar-scroll-padding);
@@ -31,6 +29,7 @@
 
   .tabbar--item {
     flex: 1;
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -43,25 +42,39 @@
 
     & .icon,
     & .tabbar--item-icon {
-      width: var(--icon-size-base);
-      height: var(--icon-size-base);
+      width: var(--spacing-horizontal-double);
+      height: var(--spacing-horizontal-double);
       flex-shrink: 0;
-    }
-
-    @media (hover: hover) {
-      &:hover {
-        color: var(--color-fg-base);
-        background: var(--color-bg-subtle);
-      }
     }
 
     &:focus-visible {
       color: var(--color-fg-base);
     }
 
-    &.tabbar--item-active {
-      color: var(--color-fg-base);
+    &.tabbar--item-active::before {
+      view-transition-name: tabbar-item;
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      opacity: 0.75;
+      border-radius: 9999px;
       background: var(--color-accent-bg);
     }
+  }
+
+  ::view-transition-group(tabbar) {
+    z-index: 2;
+    animation: none;
+  }
+
+  ::view-transition-old(tabbar) {
+    display: none;
+  }
+
+  ::view-transition-group(tabbar-item) {
+    z-index: 1;
+    animation-duration: 200ms;
+    animation-timing-function: cubic-bezier(.2, .8, .2, 1);
   }
 }

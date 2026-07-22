@@ -57,8 +57,8 @@
     position: absolute;
     right: var(--spacing-vertical-half);
     top: var(--spacing-vertical-half);
-    width: var(--icon-size-base);
-    height: var(--icon-size-base);
+    width: var(--spacing-horizontal-double);
+    height: var(--spacing-horizontal-double);
     border: 1px solid var(--color-stroke-base);
     border-radius: var(--radius-full);
   }
@@ -155,7 +155,7 @@
       }
     }
 
-    &.is-active {
+    &[aria-selected="true"] {
       background-color: var(--color-accent-bg);
       color: var(--color-fg-base);
     }
