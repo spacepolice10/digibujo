@@ -2,7 +2,7 @@
 
 <div class="layout--page">
   <div class="layout--flex layout--justify-between">
-    <h1 class="typography--h1">Hello <%= current_user.email_address %></h1>
+    <h1 class="typography--h1 typography--truncate">Hello <%= current_user.name %></h1>
 
     <div class="layout--flex">
       <%= render "account_button" %>

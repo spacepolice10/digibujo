@@ -74,12 +74,6 @@
     color: currentColor;
   }
 
-  /* Lock page scroll while a modal dialog is open. */
-  html:has(:modal),
-  body:has(:modal) {
-    overflow: hidden !important;
-  }
-
   /* Appearance. Theming colors — on body so Turbo morph refresh reapplies tokens. */
 
   body[data-appearance="warm"] {

@@ -1,6 +1,6 @@
 <li class="layout--list-item" role="option">
   <%= link_to polymorphic_path(pinned_entity.pinnable), class: "pinned--entity-item", data: { turbo_frame: "_top" } do %>
-    <%= icon_tag(pinned_entity.pinnable.icon, colour: Colourable.colour_variable_of(pinned_entity.pinnable.colour)) %>
+    <%= icon_tag(pinned_entity.pinnable.icon, style: "color: #{Colourable.colour_variable_of(pinned_entity.pinnable.colour)};", class: "pinned--entity-item-icon") %>
     <%= pinned_entity.pinnable.name %>
   <% end %>
 </li>

@@ -7,7 +7,7 @@
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     margin-block: var(--spacing-vertical-half) 0;
     position: sticky;
-    bottom: 1rem;
+    bottom: 2.5rem;
   }
 
   .bullets-form--dock-mobile {

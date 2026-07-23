@@ -2,7 +2,7 @@
   .bulk-menu {
     position: fixed;
     inset-inline: 0;
-    bottom: calc(var(--spacing-vertical-double) * 5);
+    bottom: var(--spacing-vertical);
     z-index: 20;
     anchor-name: --bulk-menu;
     display: flex;

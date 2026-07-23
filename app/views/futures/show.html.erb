@@ -7,7 +7,7 @@
     <h2><%= @future.name %></h2>
     </div>
 
-    <p class="utilities--mx-auto typography--paragraph-sm">This is future plannin section. Drop your "sometime" bullets here & jot down  the events that will happen in the future.</p>
+    <p class="layout--padded utilities--mx-auto typography--paragraph-sm">This is future plannin section. Drop your "sometime" bullets here & jot down  the events that will happen in the future.</p>
 
   </div>
   <div class="layout--page">
@@ -85,7 +85,7 @@
               dialog_id: "future_composer",
               bucket_id: @future.bucket.id,
               pops_on: nil,
-              bulletable_type: Bullet.bulletable_types %>
+              bulletable_type: ["Task", "Note"] %>
       </div>
     </div>
       </section>

@@ -20,11 +20,15 @@ class User < ApplicationRecord
   has_many :search_selections, class_name: 'Search::Selection', dependent: :destroy
   has_many :trackers, through: :monthlylogs
 
+  normalizes :email_address, with: ->(e) { e.strip.downcase }
+
+  validates :email_address, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
+
   def settings!
     settings || create_settings!
   end
 
-  normalizes :email_address, with: ->(e) { e.strip.downcase }
-
-  validates :email_address, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
+  def name
+    email_address.split('@').first
+  end
 end

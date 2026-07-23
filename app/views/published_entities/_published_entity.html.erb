@@ -1,4 +1,4 @@
-<%# locals: (published_entity:) %>
+
 <% publishable = published_entity.publishable %>
 <li id="<%= dom_id(published_entity, :list_item) %>" class="home--section-list-item">
   <%= link_to polymorphic_path(publishable), class: "home--section-list-item", data: { turbo_frame: "_top" } do %>

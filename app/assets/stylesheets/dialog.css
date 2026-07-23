@@ -16,6 +16,16 @@
     overflow: scroll;
     overscroll-behavior: none;
 
+    @media (max-width: 799px) {
+      margin:
+        max(var(--spacing-vertical), env(safe-area-inset-top, 0px)) auto
+        max(var(--spacing-vertical), env(safe-area-inset-bottom, 0px));
+      max-height: min(
+        90dvh,
+        100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)
+      );
+    }
+
     /* closed / exit state */
     opacity: 0;
     scale: 0.96;

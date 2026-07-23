@@ -13,6 +13,9 @@
     <div class="layout--padded">
       <%= form_with url: authentication_confirmation_path, class: "form form--strong" do |form| %>
         <div class="layout--mx-auto">
+          <%= form.text_field :code, class: "session--code-input", required: true, autofocus: true, autocomplete: "one-time-code", inputmode: "text", maxlength: 6, placeholder: "······", aria: { label: "6-character login code" } %>
+        </div>
+        <div class="layout--mx-auto">
           <%= form.button type: "submit", class: "button--primary button--lg" do %>
             Verify code
           <% end %>

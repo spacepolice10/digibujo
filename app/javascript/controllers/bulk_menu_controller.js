@@ -66,7 +66,7 @@ export default class extends Controller {
     }
 
     if (this.hasMenuTarget && this.idListValue.length > 0) {
-      this.menuTarget.focus();
+      this.menuTarget.focus({ preventScroll: true });
     }
 
     this.selectModeValue = this.idListValue.length > 0;

@@ -8,6 +8,7 @@
     padding: var(--spacing-vertical) var(--spacing-horizontal);
     max-width: var(--breakpoint-laptop);
     margin-top: 10ch;
+    padding-bottom: calc(var(--spacing-vertical-quad) + var(--layout-scroll-padding)) !important ;
   }
 
   .daylog--page #bullets_container {
