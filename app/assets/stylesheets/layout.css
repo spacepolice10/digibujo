@@ -1,5 +1,8 @@
 @layer layout {
-
+  :root {
+    --layout-padding: var(--spacing-vertical) var(--spacing-horizontal);
+    --layout-scroll-padding: calc(var(--spacing-vertical-double) + var(--spacing-horizontal-double) + var(--spacing-vertical) + max(var(--spacing-vertical-half), env(safe-area-inset-bottom, 0px)) + var(--spacing-vertical-double));
+  }
 
   .header {
     display: flex;
@@ -28,8 +31,7 @@
 
   .layout--container {
     width: 100%;
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
-
+    padding-bottom: var(--layout-scroll-padding);
     &.layout--container-xl {
       max-width: var(--breakpoint-pc);
       margin-inline: auto;
@@ -65,7 +67,7 @@
   }
 
   .layout--grid {
-    display: grid;
+    display: grid;;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
 
     &.cols-1 {
@@ -101,6 +103,10 @@
     &.span-4 {
       grid-column: span 4;
     }
+  }
+
+  .layout--gapped {
+    gap: var(--spacing-vertical);
   }
 
   .layout--padded {

@@ -131,8 +131,8 @@
 
     /* font sizes */
     --font-size-xl: 1.5rem;   /* 24px */
-    --font-size-lg: 1.25rem;   /* 20px */
-    --font-size-md: 1rem;      /* 16px */
+    --font-size-huge: 1.25rem;   /* 20px */
+    --font-size-base: 1rem;      /* 16px */
     --font-size-xs: 0.75rem; /* 12px */
 
     /* font weights */
@@ -150,6 +150,7 @@
     --radius-base: 6px;
     --radius-strong: 12px;
     --radius-full: 9999px;
+    
   }
 
 

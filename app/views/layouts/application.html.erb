@@ -19,7 +19,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="turbo-refresh-method" content="morph">
     <meta name="turbo-refresh-scroll" content="preserve">
-    <meta name="view-transition" content="same-origin">
+    <% if request.variant.include?(:mobile) %>
+      <meta name="view-transition" content="same-origin">
+    <% end %>
 
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>

@@ -51,12 +51,6 @@
     color: inherit;
   }
 
-  .activity--show-more-button {
-    margin-top: var(--spacing-vertical-half);
-    margin-inline: auto;
-    width: fit-content;
-  }
-
   .activity--show {
     display: flex;
     flex-direction: column;

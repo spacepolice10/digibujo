@@ -3,6 +3,11 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   static targets = ["search"]
 
+  toggleMenu(event) {
+    event.preventDefault()
+    if (this.#open) this.showMenu(event)
+  }
+
   showMenu(event) {
     event.preventDefault()
     if (!this.#open) this.element.showPopover()

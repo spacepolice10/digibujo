@@ -32,25 +32,6 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     assert_match 'No activity yet', response.body
   end
 
-  test 'rail renders recent activities in home frame' do
-    bullet = create_bullet!(@user, bulletable: Task.new(body: 'Rail visible'))
-    bullet.record_activity!('updated')
-
-    get compact_activities_path, headers: { 'Turbo-Frame' => 'home_activity' }
-
-    assert_response :success
-    assert_select 'turbo-frame#home_activity'
-    assert_match 'Rail visible', response.body
-    assert_select '.activity--feed-item'
-  end
-
-  test 'rail shows empty state when there is no activity' do
-    get compact_activities_path, headers: { 'Turbo-Frame' => 'home_activity' }
-
-    assert_response :success
-    assert_match 'No recent activity', response.body
-  end
-
   test 'show renders rescheduled activity with daylog links' do
     bullet = create_bullet!(@user, bulletable: Task.new(body: 'Buy milk'), pops_on: Date.current)
     bullet.postpone!(bucket: ensure_daylog!(@user), pops_on: Date.current + 2.days)
@@ -63,7 +44,7 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Moved', response.body
     assert_select 'a[href=?]', daylog_path(date: Date.current.iso8601)
     assert_select 'a[href=?]', daylog_path(date: (Date.current + 2.days).iso8601)
-    assert_no_select '.activity--history'
+    assert_select '.activity--history', count: 0
   end
 
   test 'show renders collected activity with bucket link' do
@@ -75,7 +56,8 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     get activity_path(activity)
 
     assert_response :success
-    assert_match 'Moved into Reading list', response.body
+    assert_match 'Read chapter', response.body
+    assert_match 'reading list', response.body
     assert_select 'a[href=?]', bucket_path(collection.bucket)
   end
 
@@ -96,8 +78,9 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     get activity_path(collection.bucket.activities.last)
 
     assert_response :success
-    assert_match 'Inbox', response.body
-    assert_no_select '.activity--history'
+    assert_match 'Updated', response.body
+    assert_match 'inbox', response.body
+    assert_select '.activity--history', count: 0
   end
 
   test 'index feed links to activity show' do

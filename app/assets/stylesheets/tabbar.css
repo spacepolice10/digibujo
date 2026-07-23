@@ -4,10 +4,8 @@
 
 @layer components {
   body:has(.tabbar--navigation) {
-    --tabbar-scroll-padding: calc(var(--spacing-vertical-double) + var(--spacing-horizontal-double) + var(--spacing-vertical) + max(var(--spacing-vertical-half), env(safe-area-inset-bottom, 0px)) + var(--spacing-vertical-double));
-    margin-bottom: 0;
-    padding-bottom: var(--tabbar-scroll-padding);
-    scroll-padding-bottom: var(--tabbar-scroll-padding);
+    padding-bottom: var(--layout-scroll-padding);
+    scroll-padding-bottom: var(--layout-scroll-padding);
   }
 
   .tabbar--navigation {

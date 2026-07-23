@@ -83,7 +83,9 @@ Rails.application.routes.draw do
   end
 
   # --- Home & navigation ---
-  resource :home, controller: 'home'
+  resource :home, controller: 'home' do
+    resources :activities
+  end
 
   scope module: :home do
     post 'home/sections/:id/expand', to: 'sections#expand', as: :home_expand_section
@@ -107,11 +109,7 @@ Rails.application.routes.draw do
       resource :scheduled, only: :show, controller: 'scheduled'
     end
   end
-  resources :activities do
-    collection do
-      get :compact
-    end
-  end
+  resources :activities
   resources :pinned
   resources :archived
 

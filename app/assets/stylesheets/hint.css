@@ -6,7 +6,7 @@
 
   .bullet--metadata [interestfor],
   .layout--filter-group [interestfor],
-  .activity--rail-list [interestfor] {
+  .home--activity-list [interestfor] {
     interest-delay: 0.2s;
   }
 
@@ -90,15 +90,5 @@
 
   .layout--filter-option[aria-current="page"][data-bullet-type] {
     color: var(--color-fg-base);
-  }
-
-  .activity--rail-item .layout--filter-option {
-    width: var(--spacing-horizontal);
-    height: var(--spacing-horizontal);
-  }
-
-  .activity--rail-item .layout--filter-option .icon {
-    width: 100%;
-    height: 100%;
   }
 }

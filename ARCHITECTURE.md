@@ -257,6 +257,7 @@ DELETE /daylog/picture                       → daylogs/pictures#destroy
 
 # Home & navigation
 GET    /home                                 → home#show
+GET    /home/activities                      → home/activities#index
 POST   /home/sections/:id/expand             → home/sections#expand
 POST   /home/sections/:id/collapse           → home/sections#collapse
 POST   /home/appearance                      → home/appearances#update
@@ -269,7 +270,6 @@ GET    /review                               → reviews#show (?from= &to=YYYY-M
 GET    /review/collections                   → reviews/collections#index (?from= &to= &q= &collections_page=)
 GET    /review/scheduled                     → reviews/scheduled#show (?from= &to=)
 GET    /activities                           → activities#index
-GET    /activities/compact                   → activities/compact
 resources :pinned, only: :index
 resources :archived, only: :index
 GET    /published                            → published#index

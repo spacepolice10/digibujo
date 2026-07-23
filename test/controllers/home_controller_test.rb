@@ -41,9 +41,9 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   test 'show returns success' do
     get home_path
     assert_response :success
-    assert_select 'turbo-frame#home_activity[src=?]', compact_activities_path
-    assert_select '.account--dock a.menu--account-button[href=?][aria-label=?]', user_path, 'Account'
-    assert_select '.menu--account-initial', text: @user.email_address.first.upcase
+    assert_select 'turbo-frame#home_activity[src=?]', home_activities_path
+    assert_select 'footer a[href=?][aria-label=?]', user_path, 'Account'
+    assert_select 'footer span[aria-hidden=true]', text: @user.email_address.first.upcase
   end
 
   test 'show renders saved appearance on html' do
@@ -136,11 +136,11 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     get home_path, headers: { 'User-Agent' => MOBILE_UA }
 
     assert_response :success
-    assert_select '.menu--page.menu--page-mobile'
+    assert_select '.layout--page'
     assert_select '.search[data-combobox-path-value=?]', search_path
-    assert_select 'button.search--dismiss[aria-label=?]', 'Close search'
-    assert_select '.menu--create-bucket[data-controller=?]', 'dialog'
+    assert_select '[data-controller=?]', 'dialog'
     assert_select 'nav.menu--navigation a[href=?]', activities_path
+    assert_select 'nav.menu--navigation a[href=?] .icon[style*=--icon-history]', activities_path
     assert_select 'nav.menu--navigation a[href=?]', review_path
     assert_select 'nav.menu--navigation a[href=?]', archived_index_path
     assert_select 'nav.menu--navigation a[href=?]', published_index_path
@@ -149,10 +149,29 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     assert_select 'details.home--section[data-controller=?]', 'home-section'
     assert_select 'details.home--section summary .home--section-name', text: 'Projects'
     assert_select 'details.home--section summary .home--section-name', text: 'Collections'
-    assert_select '.menu--create-bucket-link[href=?]', new_collection_path
-    assert_select 'a.menu--account-button[href=?][aria-label=?]', user_path, 'Account'
-    assert_select '.menu--account-initial', text: @user.email_address.first.upcase
-    assert_select '.account--dock', count: 0
+    assert_select 'a.home--rail-action[href=?]', new_collection_path
+    assert_select 'a[href=?][aria-label=?]', user_path, 'Account'
+    assert_select 'span[aria-hidden=true]', text: @user.email_address.first.upcase
+    assert_select '.tabbar--navigation'
     assert_match 'mobile alpha', response.body
+  end
+
+  test 'activity rail renders recent activities in home frame' do
+    bullet = create_bullet!(@user, bulletable: Task.new(body: 'Rail visible'))
+    bullet.record_activity!('updated')
+
+    get home_activities_path, headers: { 'Turbo-Frame' => 'home_activity' }
+
+    assert_response :success
+    assert_select 'turbo-frame#home_activity'
+    assert_match 'Rail visible', response.body
+    assert_select '.home--activity-link'
+  end
+
+  test 'activity rail shows empty state when there is no activity' do
+    get home_activities_path, headers: { 'Turbo-Frame' => 'home_activity' }
+
+    assert_response :success
+    assert_match 'No recent activity', response.body
   end
 end

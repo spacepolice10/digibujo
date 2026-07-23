@@ -1,5 +1,5 @@
 <header class="header">
-  <div class="header--branding">
+
     <div class="header--menu">
       <button
         type="button"
@@ -8,7 +8,7 @@
         aria-haspopup="menu"
       >
         Digibujo
-        <i class="icon" style="--icon-mask: var(--icon-chevron-down)" aria-hidden="true"></i>
+        <%= icon_tag("chevron-down") %>
       </button>
 
       <div
@@ -16,10 +16,10 @@
         class="dropdown-body menu--wrap"
         popover
         data-controller="menu"
-        data-action="keydown->menu#keydown turbo:before-visit@document->menu#hideMenu keydown.ctrl+k@document->menu#showMenu keydown.meta+k@document->menu#showMenu"
+        data-action="toggle->menu#toggleMenu keydown->menu#keydown turbo:before-visit@document->menu#hideMenu keydown.ctrl+k@document->menu#showMenu keydown.meta+k@document->menu#showMenu"
       >
         <%= render "menu/menu" %>
       </div>
     </div>
-  </div>
+
 </header>
