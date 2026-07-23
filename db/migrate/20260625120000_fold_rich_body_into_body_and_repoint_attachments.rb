@@ -58,7 +58,7 @@ class FoldRichBodyIntoBodyAndRepointAttachments < ActiveRecord::Migration[8.1]
 
   def migrate_non_note_rich_content
     bullet_rows = select_all(<<~SQL.squish)
-      SELECT b.id, b.user_id, b.created_at, b.updated_at
+      SELECT b.id, b.user_id, b.bucket_id, b.created_at, b.updated_at
         FROM bullets b
         WHERE b.bulletable_type != 'Note'
           AND (
@@ -82,17 +82,16 @@ class FoldRichBodyIntoBodyAndRepointAttachments < ActiveRecord::Migration[8.1]
       next if new_body.blank?
 
       execute <<~SQL.squish
-        INSERT INTO notes (mood)
-        VALUES (NULL)
+        INSERT INTO notes DEFAULT VALUES
       SQL
       note_id = select_value("SELECT last_insert_rowid()")
 
       execute <<~SQL.squish
         INSERT INTO bullets (user_id, bucket_id, bulletable_id, bulletable_type,
-                            pops_on, indented, last_migration, migrated_at,
-                            ends_date, created_at, updated_at)
-        VALUES (#{brow["user_id"]}, NULL, #{note_id}, 'Note',
-                NULL, 0, '{}', NULL, NULL,
+                            pops_on, last_migration, migrated_at,
+                            created_at, updated_at)
+        VALUES (#{brow["user_id"]}, #{brow["bucket_id"]}, #{note_id}, 'Note',
+                NULL, '{}', NULL,
                 #{quote(brow["created_at"])}, #{quote(brow["updated_at"])})
       SQL
       new_bullet_id = select_value("SELECT last_insert_rowid()")

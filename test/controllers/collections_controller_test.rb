@@ -29,13 +29,13 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     get new_collection_path, params: { bullet_ids: card.id.to_s, return_to: review_path }
 
     assert_response :success
-    assert_select '.layout--page.form--page'
+    assert_select '.layout--page'
     assert_select 'input[name="bullet_ids"][value=?]', card.id.to_s
     assert_match 'Preview me', response.body
     assert_match '1 bullet will be added', response.body
   end
 
-  test 'create with bullet_ids collects bullets and returns turbo stream' do
+  test 'create with bullet_ids collects bullets and redirects' do
     first = create_bullet!(@user, bulletable: Task.new(body: 'One'))
     second = create_bullet!(@user, bulletable: Note.new(body: 'Two'))
 
@@ -44,17 +44,15 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
            params: {
              collection: { name: 'Fresh inbox', colour: 'teal', icon: 'folder' },
              bullet_ids: "#{first.id},#{second.id}"
-           },
-           headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
+           }
     end
 
     collection = Collection.last
+    assert_redirected_to collection_path(collection)
     assert_equal collection.bucket.id, first.reload.bucket_id
     assert_equal collection.bucket.id, second.reload.bucket_id
     assert first.migrated?
     assert second.migrated?
-    assert_match %(turbo-stream action="remove" targets="#bullet_#{first.id}"), response.body
-    assert_match %(turbo-stream action="remove" targets="#bullet_#{second.id}"), response.body
   end
 
   test 'create with bullet_ids redirects back to return_to' do
@@ -73,6 +71,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
 
   test 'create with invalid collection and bullet_ids re-renders full page form' do
     card = create_bullet!(@user, bulletable: Task.new(body: 'Hold'))
+    daylog_bucket_id = card.bucket_id
 
     assert_no_difference -> { Collection.count } do
       post collections_path,
@@ -84,8 +83,8 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :unprocessable_entity
-    assert_nil card.reload.bucket_id
-    assert_select '.layout--page.form--page'
+    assert_equal daylog_bucket_id, card.reload.bucket_id
+    assert_select '.layout--page'
     assert_match 'Create and collect', response.body
     assert_match 'Hold', response.body
   end
@@ -98,8 +97,8 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     get collection_path(collection)
 
     assert_response :success
-    assert_select '.bullet--metadata button[aria-label=?]', 'Collected', minimum: 1
-    assert_match 'Moved into Inbox.', response.body
+    assert_select 'a.bullet--metadata-link[aria-label=?]', 'Collected', minimum: 1
+    assert_match 'Moved into inbox.', response.body
   end
 
   test 'show renders composer create buttons for all bullet types' do

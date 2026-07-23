@@ -30,8 +30,8 @@
             <%= render layout: "pagination/paginated_list",
                   locals: {
                     page: @page,
-                    container_id: dom_id(@collection, :bullets_container),
-                    pagination_link_path: ->(next_param) { collection_path(@collection, page: next_param) }
+                    container_id: dom_id(@project, :bullets_container),
+                    pagination_link_path: ->(next_param) { project_path(@project, page: next_param) }
                   } do %>
               <% @page.records.each do |bullet| %>
                 <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>

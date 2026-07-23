@@ -1,59 +1,106 @@
-<% content_for(:title) { "Bullet #{@bullet.bulletable.name}" } %>
+<% content_for(:title) { @bullet.name } %>
 
-<div class="layout--container layout--container-md layout--grid grid-cols-1">
-  <header class="layout--header">
-    <button class="button--tertiary" onclick="history.back()">
-      <i
-        class="icon"
-        style="--icon-mask: var(--icon-arrow-left)"
-        aria-hidden="true"
-      ></i>
-      Back
-    </button>
+<% bullet_colour = Colourable.colour_variable_of(@bullet.colour) || "var(--#{@bullet.bulletable_type.downcase}-color)" %>
 
-    <div class="layout--header-actions">
-      <%= link_to edit_bullet_path(@bullet), class: "button--secondary", data: { turbo_frame: "_top" } do %>
-        <%= icon_tag(:pencil) %> Edit
-      <% end unless @bullet.bulletable_type == "Voice" %>
+<div class="layout--page layout--container layout--container-md">
+  <div class="layout--mx-auto bullet--header">
+    <%= icon_tag(@bullet.marker_icon.to_s.dasherize,
+          style: "color: #{bullet_colour};",
+          class: "bullet--header-icon") %>
+    <h2><%= @bullet.name %></h2>
+  </div>
 
-      <% if @bullet.pinned? %>
-        <%= button_to pin_path, method: :delete, params: { bullet_ids: @bullet.id }, class: "button--secondary" do %>
-          <%= icon_tag(:unpin) %> Unpin
-        <% end %>
-      <% else %>
-        <%= button_to pin_path, method: :post, params: { bullet_ids: @bullet.id }, class: "button--secondary" do %>
-          <%= icon_tag(:pin) %> Pin
-        <% end %>
+  <div class="layout--surface">
+    <div class="layout--flex layout--justify-between layout--surface-header">
+      <%= link_to home_path, class: "button--tertiary button--sm" do %>
+        <%= icon_tag("arrow-left", style: "color: var(--color-text-base);", class: "button--icon") %>
+        Back
       <% end %>
 
-      <% if @bullet.published? %>
-        <%= button_to publish_path, method: :delete, params: { bullet_ids: @bullet.id }, class: "button--secondary" do %>
-          <%= icon_tag(:link) %> Unpublish
+      <div class="layout--flex layout--gapped">
+        <% unless @bullet.bulletable_type == "Voice" %>
+          <%= link_to edit_bullet_path(@bullet),
+                class: "button--secondary button--sm",
+                data: { turbo_frame: "_top" } do %>
+            <%= icon_tag("pencil", style: "color: var(--color-text-base);", class: "button--icon") %>
+            Edit
+          <% end %>
         <% end %>
-      <% else %>
-        <%= button_to publish_path, method: :post, params: { bullet_ids: @bullet.id }, class: "button--secondary" do %>
-          <%= icon_tag(:link) %> Publish
-        <% end %>
-      <% end %>
 
-      <%= button_to archive_path(@bullet), method: :post, class: "button--secondary button--danger", form: { data: { turbo_confirm: "Are you sure?" } } do %>
-        <%= icon_tag(:trash) %> Archive
-      <% end %>
+        <% if @bullet.pinned? %>
+          <%= button_to pin_path,
+                method: :delete,
+                params: { bullet_ids: @bullet.id },
+                class: "button--secondary button--sm",
+                aria: { label: "Unpin #{@bullet.name}" } do %>
+            <%= icon_tag("pin", style: "color: var(--color-text-base);", class: "button--icon") %>
+            Unpin
+          <% end %>
+        <% else %>
+          <%= button_to pin_path,
+                method: :post,
+                params: { bullet_ids: @bullet.id },
+                class: "button--secondary button--sm",
+                aria: { label: "Pin #{@bullet.name}" } do %>
+            <%= icon_tag("pin", style: "color: var(--color-text-base);", class: "button--icon") %>
+            Pin
+          <% end %>
+        <% end %>
+
+        <% if @bullet.published? %>
+          <%= button_to publish_path,
+                method: :delete,
+                params: { bullet_ids: @bullet.id },
+                class: "button--secondary button--sm",
+                aria: { label: "Unpublish #{@bullet.name}" } do %>
+            <%= icon_tag("link", style: "color: var(--color-text-base);", class: "button--icon") %>
+            Unpublish
+          <% end %>
+        <% else %>
+          <%= button_to publish_path,
+                method: :post,
+                params: { bullet_ids: @bullet.id },
+                class: "button--secondary button--sm",
+                aria: { label: "Publish #{@bullet.name}" } do %>
+            <%= icon_tag("link", style: "color: var(--color-text-base);", class: "button--icon") %>
+            Publish
+          <% end %>
+        <% end %>
+
+        <% if @bullet.archived? %>
+          <%= button_to archive_path,
+                method: :delete,
+                params: { bullet_ids: @bullet.id },
+                class: "button--secondary button--sm",
+                aria: { label: "Unarchive #{@bullet.name}" } do %>
+            <%= icon_tag("archive", style: "color: var(--color-text-base);", class: "button--icon") %>
+            Unarchive
+          <% end %>
+        <% else %>
+          <%= button_to archive_path,
+                method: :post,
+                params: { bullet_ids: @bullet.id },
+                class: "button--secondary button--sm button--danger",
+                form: { data: { turbo_confirm: "Are you sure?" } },
+                aria: { label: "Archive #{@bullet.name}" } do %>
+            <%= icon_tag("archive", style: "color: var(--color-text-base);", class: "button--icon") %>
+            Archive
+          <% end %>
+        <% end %>
+      </div>
     </div>
-  </header>
 
-  <article class="layout--surface">
-    <% if @bullet.published? %>
-      <input <%# herb:disable html-input-require-autocomplete %>
-        type="text"
-        class="bullet--published-link"
-        value="<%= published_url(@bullet.public_code) %>"
-        readonly
-        onclick="this.select()"
-      >
-    <% end %>
+    <div class="layout--padded bullet--show-body">
+      <% if @bullet.published? %>
+        <input <%# herb:disable html-input-require-autocomplete %>
+          type="text"
+          class="bullet--published-link"
+          value="<%= published_url(@bullet.public_code) %>"
+          readonly
+          onclick="this.select()"
+        >
+      <% end %>
 
-    <div>
       <% if @bullet.bulletable_type == "Voice" && @bullet.bulletable.recording.attached? %>
         <%= @bullet.body %>
         <%= render "voices/playback",
@@ -63,5 +110,5 @@
         <%= @bullet.body %>
       <% end %>
     </div>
-  </article>
+  </div>
 </div>

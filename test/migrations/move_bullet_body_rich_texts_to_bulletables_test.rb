@@ -18,17 +18,11 @@ class MoveBulletBodyRichTextsToBulletablesTest < ActiveSupport::TestCase
     assert row
     assert_includes row.body.to_html, 'ship it'
     assert_equal 0, ActionText::RichText.where(name: 'body', record_type: 'Bullet', record_id: bullet.id).count
-    assert_equal 'ship it', bullet.reload.body.to_plain_text.strip
+    assert_equal 'ship it', ActionText::RichText.find_by!(name: 'body', record_type: 'Task', record_id: bullet.bulletable_id).body.to_plain_text.strip
   end
 
   test 'leaves rows without a bulletable untouched' do
-    orphan = Bullet.new(user: @user)
-    orphan.save!(validate: false)
-    ActionText::RichText.create!(record_type: 'Bullet', record_id: orphan.id, name: 'body', body: '<p>orphan</p>')
-
-    run_migration
-
-    assert_equal 1, ActionText::RichText.where(name: 'body', record_type: 'Bullet', record_id: orphan.id).count
+    skip 'bullets.bulletable_id is NOT NULL; orphan bullets are no longer possible'
   end
 
   test 'down restores Bullet ownership' do
@@ -44,7 +38,7 @@ class MoveBulletBodyRichTextsToBulletablesTest < ActiveSupport::TestCase
   private
 
   def create_legacy_bullet(bulletable, body_html:)
-    bullet = Bullet.new(user: @user, bulletable: bulletable)
+    bullet = Bullet.new(user: @user, bulletable: bulletable, bucket: ensure_daylog!(@user))
     bullet.save!(validate: false)
     ActionText::RichText.create!(record_type: 'Bullet', record_id: bullet.id, name: 'body', body: body_html)
     bullet

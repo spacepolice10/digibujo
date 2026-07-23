@@ -88,10 +88,10 @@ module Bullets
 
       get new_collect_path, params: { bullet_ids: card.id.to_s, return_to: daylog_path }
 
-      assert_select 'a[href=?][data-turbo-frame=?][aria-label=?]',
+      assert_select 'a[href=?][data-turbo-frame=?]',
                     new_collection_path(bullet_ids: card.id.to_s, return_to: daylog_path),
                     '_top',
-                    'Create new collection'
+                    text: 'New collection'
     end
 
     test 'create collects bullet into selected collection' do

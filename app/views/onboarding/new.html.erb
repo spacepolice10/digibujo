@@ -1,47 +1,52 @@
 <% content_for(:title) { "Welcome" } %>
 <% content_for(:main_class) { "session-layout--main-wide" } %>
 
-<div class="session--page onboarding--page">
-  <div class="form--surface">
-    <%= render "authentication/flash" %>
+<div class="layout--page layout--container layout--container-md">
+  <div class="layout--mx-auto onboarding--header">
+    <%= icon_tag("books", style: "color: var(--color-text-base);", class: "onboarding--header-icon") %>
+    <h1>Welcome to Digibujo</h1>
+  </div>
+  <p class="utilities--mx-auto typography--paragraph-sm typography--center onboarding--lede">
+    You're signed in as <strong><%= @onboarding.user.email_address %></strong>.
+    Digibujo follows the
+    <%= link_to "Bullet Journal", "https://bulletjournal.com/", target: "_blank", rel: "noopener noreferrer", class: "onboarding--external-link" %>
+    method — rapid logging on paper, adapted for a digital workflow.
+  </p>
 
-    <% if @onboarding.errors.any? %>
-      <div class="form--errors" role="alert">
-        <ul>
-          <% @onboarding.errors.full_messages.each do |message| %>
-            <li><%= message %></li>
+  <div class="layout--surface layout--mx-auto">
+    <div class="layout--padded">
+      <% if @onboarding.errors.any? %>
+        <div class="form--errors" role="alert">
+          <ul>
+            <% @onboarding.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <ul class="onboarding--basics">
+        <li>
+          <strong>Loose Notes</strong> — a catch-all collection for quick captures before you sort them.
+        </li>
+        <li>
+          <strong>Daily log</strong> — your daylog is ready from the start; open it anytime to add today's bullets.
+        </li>
+        <li>
+          <strong>Monthly spread &amp; Future log</strong> — optional parks for the month and farther out; add them when you need them.
+        </li>
+        <li>
+          <strong>Activity</strong> — a running log on the home page of what moved, completed, or changed in your journal.
+        </li>
+      </ul>
+
+      <%= form_with url: onboarding_path, class: "form form--strong onboarding--form" do |form| %>
+        <div class="layout--mx-auto">
+          <%= form.button type: "submit", class: "button--primary button--lg" do %>
+            Start my journal
           <% end %>
-        </ul>
-      </div>
-    <% end %>
-
-    <div class="session--intro">
-      <h1 class="session--title">Welcome to Digibujo</h1>
-      <p class="form-hint session--description onboarding--lede">
-        You're signed in as <strong><%= @onboarding.user.email_address %></strong>.
-        Digibujo follows the
-        <%= link_to "Bullet Journal", "https://bulletjournal.com/", target: "_blank", rel: "noopener noreferrer", class: "onboarding--external-link" %>
-        method — rapid logging on paper, adapted for a digital workflow.
-      </p>
+        </div>
+      <% end %>
     </div>
-
-    <ul class="onboarding--basics">
-      <li>
-        <strong>Loose Notes</strong> — a catch-all collection for quick captures before you sort them.
-      </li>
-      <li>
-        <strong>Daily log</strong> — your daylog is ready from the start; open it anytime to add today's bullets.
-      </li>
-      <li>
-        <strong>Monthly spread &amp; Future log</strong> — optional parks for the month and farther out; add them when you need them.
-      </li>
-      <li>
-        <strong>Activity</strong> — a running log on the home page of what moved, completed, or changed in your journal.
-      </li>
-    </ul>
-
-    <%= form_with url: onboarding_path, class: "form form--strong onboarding--form" do |form| %>
-      <%= render "authentication/submit_button", form: form, label: "Start my journal" %>
-    <% end %>
   </div>
 </div>

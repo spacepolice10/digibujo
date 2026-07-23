@@ -23,8 +23,8 @@ class MenuControllerTest < ActionDispatch::IntegrationTest
     assert_select ".menu--page-mobile", count: 0
     assert_select "nav[data-controller=?]", "grid-navigation"
     assert_select "form.search--form[action=?]", search_path
-    assert_select "label.form-label.utilities--sr-only[for=?]", "q", text: "Search bullets, projects, collections, and people"
-    assert_select "input.form-input[placeholder=?]", "Search…"
+    assert_select "label.form-label.utilities--sr-only[for=?]", "q", text: "Search bullets, projects, and collections"
+    assert_select "input[placeholder=?]", "Search…"
     assert_select "turbo-frame#menu_search[src=?]", search_path
     assert_select "button.search--dismiss", count: 0
     assert_select "[data-search-replace-link-value]", count: 0

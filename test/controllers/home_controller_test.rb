@@ -12,6 +12,32 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     sign_in_as @user
   end
 
+  test 'show lists archived bullets in section' do
+    archived = create_bullet!(@user, bulletable: Task.new(body: 'Old task'))
+    archived.archive!
+    create_bullet!(@user, bulletable: Task.new(body: 'Active task'))
+
+    get home_path
+
+    assert_response :success
+    assert_home_section 'Archived'
+    assert_page_text 'Old task'
+    assert_no_page_text 'Active task'
+    assert_section_index_link archived_index_path, 'Archived', count: 1
+  end
+
+  test 'show archived section links to index when more than five archived bullets' do
+    6.times do |index|
+      bullet = create_bullet!(@user, bulletable: Task.new(body: "Archived #{index}"))
+      bullet.archive!
+    end
+
+    get home_path
+
+    assert_response :success
+    assert_section_index_link archived_index_path, 'Archived', count: 1
+  end
+
   test 'show lists published bullets in section' do
     published = create_bullet!(@user, bulletable: Note.new(body: 'Public note'))
     published.publish!

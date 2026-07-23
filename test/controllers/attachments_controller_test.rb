@@ -59,7 +59,8 @@ class AttachmentsControllerTest < ActionDispatch::IntegrationTest
       filename: filename,
       content_type: 'image/png'
     )
-    bullet.bulletable.body.embeds.attach(blob)
+    content = ActionText::Content.new('<p>note</p>').append_attachables(blob)
+    bullet.bulletable.update!(body: content)
     blob
   end
 

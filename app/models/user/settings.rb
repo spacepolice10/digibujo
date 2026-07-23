@@ -7,6 +7,7 @@ class User::Settings < ApplicationRecord
     'logs' => :logs_expanded,
     'projects' => :projects_expanded,
     'collections' => :collections_expanded,
+    'archived' => :archived_expanded,
     'published' => :published_expanded
   }.freeze
   SECTIONS = SECTION_COLUMNS.keys.freeze

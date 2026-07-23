@@ -3,6 +3,7 @@ import { Controller } from "@hotwired/stimulus";
 const ACTION_REQUIREMENTS = {
   requirePinnable: "pinnable",
   requireCompletable: "completable",
+  requirePublishable: "publishable",
 };
 
 export default class extends Controller {
@@ -190,6 +191,7 @@ export default class extends Controller {
     return {
       pinnable: this.#uniformTrait(checked, "bulkPinnable"),
       completable: this.#uniformTrait(checked, "bulkCompletable"),
+      publishable: this.#uniformTrait(checked, "bulkPublishable"),
     };
   }
 

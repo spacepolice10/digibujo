@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_21_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_24_120000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -290,6 +290,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_21_100000) do
 
   create_table "user_settings", force: :cascade do |t|
     t.string "appearance", default: "default", null: false
+    t.boolean "archived_expanded", default: true, null: false
     t.boolean "collections_expanded", default: true, null: false
     t.datetime "created_at", null: false
     t.boolean "logs_expanded", default: true, null: false

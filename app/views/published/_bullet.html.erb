@@ -1,4 +1,4 @@
-<li id="<%= dom_id(bullet, :published_list_item) %>" class="layout--list-item">
+<li id="<%= dom_id(bullet, :published_list_item) %>" class="home--section-list-item">
   <%= link_to bullet_path(bullet), class: "bucket--list-item-link", data: { turbo_frame: "_top" } do %>
     <span class="utilities--line-clamp-1"><%= bullet.bulletable.name %></span>
   <% end %>

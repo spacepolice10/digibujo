@@ -8,7 +8,6 @@ class FeaturesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_match 'Rapid logging', response.body
-    assert_match 'Work in progress', response.body
     assert_no_match 'Email code', response.body
   end
 

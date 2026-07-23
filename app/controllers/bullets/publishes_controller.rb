@@ -10,16 +10,20 @@ module Bullets
       Bullet.transaction do
         @bullets.lock.find_each(&:publish!)
       end
-
-      redirect_to @bullets.first
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to @bullets.first }
+      end
     end
 
     def destroy
       Bullet.transaction do
         @bullets.lock.find_each(&:unpublish!)
       end
-
-      redirect_to @bullets.first
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_to @bullets.first }
+      end
     end
   end
 end

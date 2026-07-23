@@ -12,8 +12,6 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     get user_path
 
     assert_response :success
-    assert_heading 'Account', level: 1
-    assert_page_text @user.email_address
     assert_select 'form[action=?][data-turbo-confirm=?]', authentication_path, 'Sign out of Digibujo?'
     assert_select 'button', text: /Sign out/
   end

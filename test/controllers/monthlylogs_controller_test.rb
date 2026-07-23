@@ -67,7 +67,7 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     get monthlylog_path(monthlylog)
 
     assert_response :success
-    assert_select '.monthlylog--workspace'
+    assert_select '.monthlylog--spread'
     assert_select '.monthlylog--date-band', minimum: 28
     assert_select '.monthlylog--calendar', text: /Planned task/
     assert_select "a.bullets-form--create-button--task[href=?]",
@@ -161,7 +161,7 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     get monthlylog_path(monthlylog), headers: { 'User-Agent' => MOBILE_UA }
 
     assert_response :success
-    assert_select '.monthlylog--workspace'
+    assert_select '.monthlylog--spread'
     assert_select '.monthlylog--calendar'
     assert_select '.monthlylog--unplanned'
     assert_select '[role=tab]', count: 0
@@ -194,7 +194,7 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     get monthlylog_path(monthlylog)
 
     assert_response :success
-    assert_select "a.monthlylog--date-number[href=?]", daylog_path(date: day.iso8601)
+    assert_select "a.monthlylog--date-item[href=?]", daylog_path(date: day.iso8601)
   end
 
   test 'new form defaults to first available selectable month' do

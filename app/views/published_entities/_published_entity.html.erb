@@ -1,8 +1,8 @@
 <%# locals: (published_entity:) %>
 <% publishable = published_entity.publishable %>
-<li id="<%= dom_id(published_entity, :list_item) %>" class="layout--list-item">
-  <%= link_to polymorphic_path(publishable), class: "layout--list-item-link", data: { turbo_frame: "_top" } do %>
-    <%= icon_tag(publishable.icon, colour: Colourable.colour_variable_of(publishable.colour)) %>
+<li id="<%= dom_id(published_entity, :list_item) %>" class="home--section-list-item">
+  <%= link_to polymorphic_path(publishable), class: "home--section-list-item", data: { turbo_frame: "_top" } do %>
+    <%= icon_tag(publishable.icon, colour: Colourable.colour_variable_of(publishable.colour), class: "home--section-list-item-icon") %>
     <span class="utilities--line-clamp-1"><%= publishable.name %></span>
   <% end %>
 </li>

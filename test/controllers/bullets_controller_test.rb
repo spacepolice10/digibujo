@@ -108,6 +108,19 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_select '.bullet--rich-body', count: 0
   end
 
+  test 'show renders unarchive for archived bullet' do
+    bullet = create_bullet!(@user, bulletable: Task.new(body: 'Archived task'))
+    bullet.archive!
+
+    get bullet_path(bullet)
+
+    assert_response :success
+    assert_select '.layout--surface-header form[action=?][method=post]', archive_path do
+      assert_select 'input[name=_method][value=delete]'
+      assert_select 'button', text: /^Unarchive$/
+    end
+  end
+
   test 'edit renders note body editor for note with saved content' do
     note = create_bullet!(@user, bulletable: Note.new(body: '<p>Expanded content</p>'))
 
@@ -164,8 +177,8 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     get new_bullet_path
 
     assert_response :success
-    assert_select 'form.bullet-composer', count: 0
-    assert_select '.bullet-composer--dock'
+    assert_select 'form.bullets-form', count: 0
+    assert_select '.bullets-form--dock'
     assert_select 'a[aria-label=?]', 'Add Task'
   end
 
@@ -173,12 +186,12 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     get new_bullet_path(bulletable_type: 'Task')
 
     assert_response :success
-    assert_select 'form.bullet-composer'
-    assert_select '.bullet-composer--plain-input'
+    assert_select 'form.bullets-form'
+    assert_select 'textarea.bullets-form--body'
     assert_select 'lexxy-editor', false
-    assert_select '.bullet-composer--rail'
-    assert_select '.bullet-composer--type-pill[data-bullet-type=?]', 'task', text: /Task/
-    assert_select '.bullet-composer--rail-actions .bullet-composer--rail-submit button[type=submit]'
+    assert_select '.bullets-form--rail'
+    assert_select '.bullets-form--type-pill[data-bullet-type=?]', 'task', text: /Task/
+    assert_select '.bullets-form--rail-submit button[type=submit]'
   end
 
   test 'new composer with Note type renders note editor' do
@@ -186,8 +199,8 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select 'lexxy-editor[preset=note]'
-    assert_select '.bullet-composer--plain-input', false
-    assert_select '.bullet-composer--type-pill[data-bullet-type=?]', 'note', text: /Note/
+    assert_select 'textarea.bullets-form--body', false
+    assert_select '.bullets-form--type-pill[data-bullet-type=?]', 'note', text: /Note/
   end
 
   test 'new composer renders without return_to field' do
@@ -202,8 +215,8 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
         headers: { 'Turbo-Frame' => 'bullet_composer', 'User-Agent' => mobile_ua }
 
     assert_response :success
-    assert_select 'turbo-frame#bullet_composer form.bullet-composer'
-    assert_select '.bullet-composer--plain-input'
+    assert_select 'turbo-frame#bullet_composer form.bullets-form'
+    assert_select 'textarea.bullets-form--body'
     assert_select 'lexxy-editor', false
     assert_select 'dialog', count: 0
   end

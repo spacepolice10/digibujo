@@ -8,7 +8,7 @@ class BucketsControllerTest < ActionDispatch::IntegrationTest
     sign_in_as @user
   end
 
-  test 'show loads bucket bullets for footer popover' do
+  test 'show redirects to bucketable' do
     collection = create_collection!(@user, name: 'bucket list')
     create_bullet!(@user,
       bulletable: Task.new(body: 'In bucket'),
@@ -16,11 +16,9 @@ class BucketsControllerTest < ActionDispatch::IntegrationTest
       pops_on: nil
     )
 
-    get bucket_path(collection.bucket), headers: { 'Turbo-Frame' => dom_id(collection.bucket, :footer_bullets) }
-    assert_select "turbo-frame##{dom_id(collection.bucket, :footer_bullets)}[popover].pinned--dropdown" do
-      assert_select '.dropdown--element-header h2', text: 'bucket list'
-      assert_select '.bullet', text: /In bucket/, count: 1
-    end
+    get bucket_path(collection.bucket)
+
+    assert_redirected_to collection_path(collection)
   end
 
   test 'show returns not found for another users bucket' do

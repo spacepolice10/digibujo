@@ -27,6 +27,12 @@ class HomeController < ApplicationController
         expanded: section_expanded?(:collections)
       ),
       Section.new(
+        name: 'Archived',
+        records: archived_records,
+        show_path: archived_index_path,
+        expanded: section_expanded?(:archived)
+      ),
+      Section.new(
         name: 'Published',
         records: published_records,
         show_path: published_index_path,
@@ -46,6 +52,13 @@ class HomeController < ApplicationController
 
   def project_records
     Current.user.projects.limit(5)
+  end
+
+  def archived_records
+    Archive.where(user_id: Current.user.id, archivable_type: 'Bullet')
+           .includes(archivable: :bulletable)
+           .order(created_at: :desc)
+           .limit(5)
   end
 
   def published_records

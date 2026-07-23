@@ -47,6 +47,19 @@
     height: 5ch !important;
   }
 
+  .onboarding--header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-vertical-half);
+    padding-block: var(--spacing-vertical-quad);
+  }
+
+  .onboarding--header-icon {
+    width: 5ch !important;
+    height: 5ch !important;
+  }
+
   .session--page {
     display: flex;
     flex-direction: column;
@@ -140,12 +153,6 @@
 
   .form--submit:disabled .form-submit--spinner {
     display: inline-block;
-  }
-
-  .onboarding--page .session--description {
-    min-height: auto;
-    display: block;
-    -webkit-line-clamp: unset;
   }
 
   .onboarding--lede {

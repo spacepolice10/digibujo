@@ -9,6 +9,7 @@
     value="<%= bullet.id %>"
     data-bulk-menu-target="checkbox"
     data-bulk-pinnable="<%= bullet.pinned? ? "pinned" : "unpinned" %>"
+    data-bulk-publishable="<%= bullet.published? ? "published" : "unpublished" %>"
     <% if bullet.completable? %>
       data-bulk-completable="<%= bullet.completed? ? "completed" : "incomplete" %>"
     <% end %>
