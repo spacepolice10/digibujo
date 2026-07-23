@@ -34,6 +34,19 @@
     max-width: min(var(--breakpoint-tablet), 100%);
   }
 
+  .authentication--header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-vertical-half);
+    padding-block: var(--spacing-vertical-quad);
+  }
+
+  .authentication--header-icon {
+    width: 5ch !important;
+    height: 5ch !important;
+  }
+
   .session--page {
     display: flex;
     flex-direction: column;

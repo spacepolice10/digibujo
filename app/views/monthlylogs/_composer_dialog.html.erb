@@ -7,7 +7,8 @@
       actions: [
         "close->composer-dialog#cleanupElement",
         "composer:restore->dialog#close",
-        "turbo:before-frame-render->composer-dialog#openOnFrame"
+        "turbo:before-frame-render->composer-dialog#openOnFrame",
+        "turbo:frame-load->composer-dialog#openOnFrameLoad"
       ] do %>
   <% @days.each do |date| %>
     <turbo-frame id="monthlylog_bullets_<%= date.to_date %>_composer"></turbo-frame>

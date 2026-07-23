@@ -7,10 +7,12 @@
     gap: var(--spacing-horizontal-half);
     padding-block: var(--spacing-vertical-double);
   }
+
   .monthlylog--header-icon {
     width: 5ch !important;
     height: 5ch !important;
   }
+
   .monthlylog--section-list-item {
     display: flex;
     gap: var(--spacing-horizontal-half);
@@ -38,7 +40,7 @@
     align-items: stretch;
     flex: 1;
     min-height: 0;
-    max-height: 80dvh;
+    height: 80dvh;
     overflow: hidden;
   }
 
@@ -51,9 +53,7 @@
 
   .monthlylog--calendar {
     min-width: 0;
-    min-height: 0;
     overflow-y: auto;
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
   }
 
   .monthlylog--calendar-body {
@@ -65,19 +65,19 @@
     padding-block: calc(var(--spacing-vertical-half) / 2);
   }
 
-  .monthlylog--date-band-current .monthlylog--date-number {
+  .monthlylog--date-band-current .monthlylog--date-item {
     color: var(--color-fg-base);
   }
 
-  .monthlylog--date-band-current .monthlylog--date-number::before {
+  .monthlylog--date-band-current .monthlylog--date-item::before {
     content: "";
     position: absolute;
-    left: 0;
+    left: -4px;
     top: var(--spacing-vertical-half);
     bottom: var(--spacing-vertical-half);
     width: var(--radius-base);
     border-radius: var(--radius-full);
-    background: var(--model-color-4);
+    background: var(--model-color-3);
     pointer-events: none;
   }
 
@@ -86,11 +86,12 @@
     align-items: flex-start;
     gap: var(--spacing-horizontal-half);
     min-width: 0;
-    padding-bottom: var(--spacing-vertical-half);
+    padding-block: var(--spacing-vertical);
+padding-inline: var(--spacing-horizontal);
     border-bottom: 0.5px solid var(--color-stroke-base);
   }
 
-  .monthlylog--date-number {
+  .monthlylog--date-item {
     position: relative;
     flex-shrink: 0;
     display: flex;
@@ -109,14 +110,14 @@
     }
   }
 
-  .monthlylog--date-day {
+  .monthlylog--date-number {
     font-weight: var(--font-weight-strong);
-    font-size: 0.85em;
+    font-size: var(--font-size-xs);
   }
 
-  .monthlylog--date-weekday {
+  .monthlylog--date-name {
     font-weight: var(--font-weight-base);
-    font-size: 0.75em;
+    font-size: var(--font-size-xs);
     text-transform: uppercase;
   }
 
@@ -129,6 +130,7 @@
   .monthlylog--date-composer {
     display: flex;
     gap: var(--spacing-horizontal);
+    padding-inline: var(--spacing-horizontal-double);
   }
 
   @media (hover: hover) {

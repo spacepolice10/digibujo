@@ -40,7 +40,7 @@
       data-action="composer#cancel"
       aria-label="Close composer"
     >
-      <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+      <%= icon_tag("arrow-left", style: "color: var(--color-text-base);", class: "button--icon") %>
     </button>
     <span
       class="bullets-form--type-pill"
@@ -53,13 +53,10 @@
 
       <div class="bullets-form--rail-submit">
         <%= fr.button type: "submit",
-              class: "button--primary button--icon button--circle",
+              class: "button--primary button--sm",
               aria: { label: "Save" } do %>
-          <i
-            class="icon"
-            style="--icon-mask: var(--icon-arrow-up)"
-            aria-hidden="true"
-          ></i>
+          <%= icon_tag("arrow-up", style: "color: var(--color-text-base);", class: "button--icon") %>
+          Save
         <% end %>
       </div>
   </div>

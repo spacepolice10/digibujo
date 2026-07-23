@@ -1,47 +1,50 @@
 <% content_for(:title) { "Continue" } %>
 
-<div class="session--page">
-  <div class="form--surface">
-    <%= render "authentication/flash" %>
+<div class="layout--page layout--container layout--container-md">
+  <div class="layout--surface layout--mx-auto">
+    <div class="layout--surface-header">
+      <h1>Continue with email</h1>
+    </div>
+    <div class="layout--padded">
+      <%= form_with url: authentication_path, class: "form form--strong" do |form| %>
+        <p class="typography--paragraph-sm">Enter your email and we'll send you a one-time code to sign in or create an account.</p>
 
-    <%= form_with url: authentication_path, class: "form form--strong" do |form| %>
-      <div class="session--intro">
-        <h1 class="session--title">Continue with email</h1>
-        <p class="form-hint session--description">Enter your email and we'll send you a one-time code to sign in or create an account.</p>
-      </div>
+        <% if @user&.errors&.any? %>
+          <div class="form--errors" role="alert">
+            <ul>
+              <% @user.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
 
-      <% if @user&.errors&.any? %>
-        <div class="form--errors" role="alert">
-          <ul>
-            <% @user.errors.full_messages.each do |message| %>
-              <li><%= message %></li>
-            <% end %>
-          </ul>
+        <div class="form-group">
+          <%= form.email_field :email_address,
+                class: "form-input",
+                required: true,
+                autofocus: true,
+                autocomplete: "username",
+                placeholder: "you@example.com",
+                aria: { label: "Email" },
+                value: params[:email_address] %>
+        </div>
+        <div class="layout--mx-auto">
+          <%= form.button type: "submit", class: "button--primary button--lg" do %>
+            Continue
+          <% end %>
         </div>
       <% end %>
-
-      <div class="form-group">
-        <%= form.email_field :email_address,
-              class: "form-input",
-              required: true,
-              autofocus: true,
-              autocomplete: "username",
-              placeholder: "you@example.com",
-              aria: { label: "Email" },
-              value: params[:email_address] %>
-      </div>
-
-      <%= render "authentication/submit_button", form: form, label: "Continue" %>
-    <% end %>
+    </div>
   </div>
 
-  <nav class="session--footer-links" aria-label="About">
-    <%= link_to features_path, class: "session--footer-link" do %>
-      <i class="icon" style="--icon-mask: var(--icon-list)" aria-hidden="true"></i>
+  <nav class="layout--flex layout--justify-center" aria-label="About">
+    <%= link_to features_path, class: "typography--paragraph-sm layout--list-item" do %>
+      <%= icon_tag("list", style: "color: var(--color-text-base);", class: "button--icon button--sm") %>
       Features
     <% end %>
-    <%= link_to support_path, class: "session--footer-link" do %>
-      <i class="icon" style="--icon-mask: var(--icon-mail)" aria-hidden="true"></i>
+    <%= link_to support_path, class: "typography--paragraph-sm layout--list-item" do %>
+      <%= icon_tag("mail", style: "color: var(--color-text-base);", class: "button--icon button--sm") %>
       Support
     <% end %>
   </nav>

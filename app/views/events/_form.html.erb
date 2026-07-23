@@ -2,8 +2,7 @@
 <%= render layout: "bullets/form", locals: { bullet:, editing: } do |fr, bulletable| %>
   <%= fr.fields_for :bulletable, bulletable do |bf| %>
     <%= bf.hidden_field :id if bulletable.persisted? %>
-    <%= bf.text_field :body,
-          value: bulletable.body,
+    <%= bf.text_area :body,
           placeholder: "Write down appointments or notable events…",
           autofocus: true,
           class: "bullets-form--body" %>

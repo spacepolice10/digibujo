@@ -16,12 +16,12 @@
   <div class="dialog--chrome">
     <button
       type="button"
-      class="dialog--hide button--primary button--icon button--circle"
+      class="dialog--hide button--primary button--sm"
       commandfor="<%= id %>"
       command="close"
       aria-label="Close"
     >
-      <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
+      <%= icon_tag("x", style: "color: var(--color-text-base);", class: "button--icon") %>
     </button>
   </div>
   <div class="dialog--body">

@@ -47,7 +47,8 @@ Every `format.turbo_stream` response should also handle `format.html` (redirect 
 |---|---|---|
 | `turbo:submit-end` | After a form submission finishes. `event.detail.success` indicates HTTP 2xx. | Close dialogs, clear selection state |
 | `turbo:before-visit` | Before any navigation. | Reset transient UI state |
-| `turbo:before-render` | Before a cached snapshot is rendered. | Strip stale modal `open` attributes |
+| `turbo:before-render` | Before a cached snapshot is rendered. | Close stale `<dialog open>` in the incoming body |
+| `turbo:before-morph-attribute` | Before morph patches an attribute. | Close dialogs when morph would remove `open` |
 | `turbo:render` / `turbo:load` | After a new body is rendered. | — |
 | `turbo:frame-load` | After a `<turbo-frame>` resolves. | — |
 
@@ -73,7 +74,7 @@ Full list: https://turbo.hotwired.dev/reference/events
 ## Things to watch for
 
 - **Morphing custom elements** — form-associated web components (e.g. Lexxy) must handle disconnect/reconnect; see `docs/_lexxy.md`.
-- **Cached `<dialog open>`** — strip `open` from dialogs in `turbo:before-render` to avoid stale modals in back-forward cache.
+- **Cached `<dialog open>`** — call `dialog.close()` in `turbo:before-render` (incoming body) and intercept `open` removal in `turbo:before-morph-attribute`. Never `removeAttribute("open")` on a modal dialog — it desyncs `.open` from the top layer ([Turbo #1239](https://github.com/hotwired/turbo/issues/1239)).
 - **Frame IDs must be unique** on the page; don't reuse the same id on a frame and a plain element.
 - **`data-turbo-action="advance"`** inside popovers often navigates unexpectedly — omit unless intentional.
 

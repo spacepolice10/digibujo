@@ -77,31 +77,33 @@
       align-items: center;
       gap: var(--spacing-horizontal-half);
       justify-content: space-between;
-      & [data-bullet-type="task"] {
-        background: var(--model-color-2);
-        color: var(--text-color-on-model-2);
+      border-radius: var(--radius-strong);
+      padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+      &[data-bullet-type="task"] {
+        background: var(--model-color-2-bg);
+        color: var(--model-color-2);
       }
-      & [data-bullet-type="note"] {
-        background: var(--model-color-3);
-        color: var(--text-color-on-model-3);
+      &[data-bullet-type="note"] {
+        background: var(--model-color-4-bg);
+        color: var(--model-color-4);
       }
-      & [data-bullet-type="event"] {
-        background: var(--model-color-4);
-        color: var(--text-color-on-model-4);
+      &[data-bullet-type="event"] {
+        background: var(--model-color-5-bg  );
+        color: var(--model-color-5);
       }
-      & [data-bullet-type="voice"] {
-        background: var(--model-color-5);
-        color: var(--text-color-on-model-5);
+      &[data-bullet-type="voice"] {
+        background: var(--model-color-3-bg);
+        color: var(--model-color-3);
       }
     }
   }
   .bullets-form--body {
     appearance: none;
-    display: flex;
+    display: block;
     width: 100%;
     margin: var(--spacing-vertical-half) 0;
-    padding: var(--spacing-horizontal-half);
-    border: none;
+    border: 0.5px solid var(--color-stroke-base);
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
     border-radius: var(--radius-base);
     background: transparent;
     outline: none !important;

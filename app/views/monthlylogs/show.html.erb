@@ -1,30 +1,28 @@
 <% if @monthlylog %>
   <% content_for(:title) { @monthlylog.name } %>
 
-  <div class="layout--page layout--container layout--container-lg">
-    <div class="layout--header">
-      <div class="layout--header-actions">
-        <%= link_to home_path, class: "button--secondary" do %>
-          <i
-            class="icon"
-            style="--icon-mask: var(--icon-arrow-left)"
-            aria-hidden="true"
-          ></i>
-          Back
-        <% end %>
-
-        <%= render "buckets/pins_button", bucket: @monthlylog.bucket %>
-      </div>
-    </div>
-
-    <h2 class="layout--surface-name"><%= @monthlylog.name %></h2>
-
-    <p class="monthlylog--period utilities--text-sm">
+  <div class="layout--mx-auto monthlylog--header">
+    <%= icon_tag("calendar", style: "color: var(--color-text-base);", class: "monthlylog--header-icon") %>
+    <h2><%= @monthlylog.name %></h2>
+    <p class="typography--paragraph-sm">
       <%= @monthlylog.period_from.strftime("%b %-d") %> –
       <%= @monthlylog.period_to.strftime("%b %-d, %Y") %>
     </p>
+  </div>
+  <p class="utilities--mx-auto typography--paragraph-sm layout--padded">This is monthly planning section. Drop your "sometime" bullets here & jot down  the events that will happen in the future.</p>
 
-    <div class="monthlylog--workspace">
+  <div class="layout--page">
+  <main class="layout--container layout--container-lg layout--surface">
+
+    <div class="layout--flex layout--justify-between layout--surface-header">
+      <%= link_to home_path, class: "button--tertiary button--sm" do %>
+        <%= icon_tag("arrow-left", style: "color: var(--color-text-base);", class: "button--icon") %>
+        Home
+      <% end %>
+
+      <%= render "buckets/pins_button", bucket: @monthlylog.bucket %>
+    </div>
+
       <div class="monthlylog--spread">
         <section
           class="monthlylog--calendar"
@@ -40,10 +38,10 @@
                 >
                   <div class="monthlylog--date-rail">
                     <%= link_to daylog_path(date: date.iso8601),
-                          class: "monthlylog--date-number",
+                          class: "monthlylog--date-item",
                           aria: { label: "Open #{date.strftime('%B %-d')} on daily log" } do %>
-                      <span class="monthlylog--date-day"><%= date.day %></span>
-                      <span class="monthlylog--date-weekday"><%= date.strftime("%a") %></span>
+                      <span class="monthlylog--date-number"><%= date.day %></span>
+                      <span class="monthlylog--date-name"><%= date.strftime("%a") %></span>
                     <% end %>
 
                     <div
@@ -69,6 +67,7 @@
                       <% composer_id = "monthlylog_bullets_#{date.to_date}_composer" %>
                       <div class="monthlylog--date-composer">
                         <%= create_bullet_buttons composer_id: composer_id,
+                              dialog_id: "monthlylog_composer",
                               bucket_id: @monthlylog.bucket.id,
                               pops_on: date,
                               bulletable_type: %w[Task Event] %>
@@ -110,6 +109,7 @@
 
             <% composer_id = "monthlylog_bullets_unplanned_composer" %>
             <%= create_bullet_buttons composer_id: composer_id,
+                  dialog_id: "monthlylog_composer",
                   bucket_id: @monthlylog.bucket.id,
                   pops_on: nil,
                   bulletable_type: %w[Note] %>

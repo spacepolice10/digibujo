@@ -1,8 +1,8 @@
 <% if @future %>
   <% content_for(:title) { @future.name } %>
 
-  <div class="utilities--mx-auto future--header">
-    <div class="utilities--mx-auto future--header">
+  <div class="layout--mx-auto future--header">
+    <div class="layout--mx-auto future--header">
     <%= icon_tag("calendar", style: "color: var(--color-text-base);", class: "future--header-icon") %>
     <h2><%= @future.name %></h2>
     </div>
@@ -82,6 +82,7 @@
 
       <div class="layout--flex layout--gapped layout--mx-auto">
       <%= create_bullet_buttons composer_id: "future_bullets_unplanned_composer",
+              dialog_id: "future_composer",
               bucket_id: @future.bucket.id,
               pops_on: nil,
               bulletable_type: Bullet.bulletable_types %>

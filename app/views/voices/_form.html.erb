@@ -9,8 +9,7 @@
   <% bulletable.body = "Record #{(bullet.pops_on || Date.current).strftime('%a, %b %-d')}" if bulletable.body.blank? %>
   <%= fr.fields_for :bulletable, bulletable do |bf| %>
     <%= bf.hidden_field :id if bulletable.persisted? %>
-    <%= bf.text_field :body,
-          value: bulletable.body,
+    <%= bf.text_area :body,
           placeholder: "Caption your voice, guitar playing or cat meowing…",
           autofocus: false,
           class: "bullets-form--body" %>
@@ -25,7 +24,7 @@
               data-voice-recorder-target="stopButton"
               data-action="voice-recorder#stop"
               aria-label="Stop recording">
-        <i class="icon voice--play-icon" style="--icon-mask: var(--icon-square)" aria-hidden="true"></i>
+        <%= icon_tag("square", style: "color: var(--color-text-base);", class: "button--icon") %>
         <p>Stop</p>
       </button>
       <div class="voice--waveform" aria-hidden="true">
@@ -52,7 +51,7 @@
             data-action="voice-recorder#record keydown.shift+r@document->hotkey#click"
             aria-label="Start recording"
             aria-keyshortcuts="Shift+R">
-      <i class="icon" style="--icon-mask: var(--icon-microphone)" aria-hidden="true"></i>
+      <%= icon_tag("microphone", style: "color: var(--color-text-base);", class: "button--icon") %>
       <p>Record</p>
     </button>
     <button type="button"
@@ -60,7 +59,7 @@
             data-voice-recorder-target="discardButton"
             data-action="voice-recorder#discard"
             hidden>
-      <i class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></i>
+      <%= icon_tag("trash", style: "color: var(--color-text-base);", class: "button--icon") %>
       <p>Discard</p>
     </button>
     <span class="voice-recorder--remaining utilities--text-sm" data-voice-recorder-target="remaining" aria-live="polite">0:00</span>

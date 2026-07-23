@@ -8,7 +8,8 @@
       actions: [
         "close->composer-dialog#cleanupElement",
         "composer:restore->dialog#close",
-        "turbo:before-frame-render->composer-dialog#openOnFrame"
+        "turbo:before-frame-render->composer-dialog#openOnFrame",
+        "turbo:frame-load->composer-dialog#openOnFrameLoad"
       ] do %>
   <% months.each do |month_start| %>
     <turbo-frame id="future_bullets_<%= month_start.iso8601 %>_composer"></turbo-frame>
