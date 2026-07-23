@@ -1,13 +1,6 @@
-<li id="<%= dom_id(project, :list_item) %>" class="layout--list-item">
-  <%= link_to project_path(project),
-        { data: { turbo_frame: "_top" }, class: "layout--list-item-link" } do %>
 
-    <%= icon_tag(project.icon, colour: project.colour) %>
-    <span class="utilities--line-clamp-1"><%= project.name %></span>
+<%= link_to project_path(project), class: "project--list-item" do %>
+  <%= icon_tag(project.icon, style: "color: #{project.colour_variable};", class: "home--section-list-item-icon") %>
+  <span class="utilities--line-clamp-1"><%= project.name %></span>
+<% end %>
 
-    <div class="typography--paragraph-sm utilities--line-clamp-1">
-      <span><%= project.bullets.count %> <%= "bullet".pluralize(project.bullets.count) %></span>,
-      <span><%= project.created_at.strftime("%b %d") %></span>
-    </div>
-  <% end %>
-</li>

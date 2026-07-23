@@ -1,25 +1,26 @@
 <% content_for(:title) { "Collections" } %>
 
-<div class="layout--page">
-  <h2>Collections</h2>
-
-  <div class="layout--header-actions">
-    <%= link_to home_path, class: "button--tertiary", onclick: "if (history.length > 1) { event.preventDefault(); history.back(); }" do %>
-      <i
-        class="icon"
-        style="--icon-mask: var(--icon-arrow-left)"
-        aria-hidden="true"
-      ></i>
-      Back
-    <% end %>
-
-    <%= link_to new_collection_path, class: "button--tertiary", aria: { label: "Add collection" } do %>
-      <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
-      Add collection
-    <% end %>
+<div class="layout--page layout--container layout--container-md">
+  <div class="layout--mx-auto collection--header">
+    <%= icon_tag("folder", style: "color: var(--color-text-base);", class: "collection--header-icon") %>
+    <h2>Collections</h2>
   </div>
 
-  <ul class="layout--list layout--surface">
-    <%= render @collections %>
-  </ul>
+  <div class="layout--surface">
+    <div class="layout--flex layout--justify-between layout--surface-header">
+      <%= link_to home_path, class: "button--tertiary button--sm", onclick: "if (history.length > 1) { event.preventDefault(); history.back(); }" do %>
+        <%= icon_tag("arrow-left") %>
+        Back
+      <% end %>
+    </div>
+    <turbo-frame id="collections">
+      <% if @collections.any? %>
+        <ul class="layout--list-grid layout--padded collection--list">
+          <%= render partial: "collections/collection", collection: @collections, as: :collection %>
+        </ul>
+      <% else %>
+        <p>No collections yet.</p>
+      <% end %>
+    </turbo-frame>
+  </div>
 </div>

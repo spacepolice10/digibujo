@@ -17,19 +17,20 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     get activities_path
 
     assert_response :success
-    assert_match 'Archived', response.body
-    assert_match 'Updated', response.body
-    assert_select '.activity--feed-item', minimum: 2
-    assert_select '.layout--surface'
-    assert_select '.activity--date'
-    assert_no_match 'layout--workspace', response.body
+    assert_page_text 'Archived'
+    assert_page_text 'Updated'
+    assert_heading 'Activity', level: 2
+    assert_select 'h3', minimum: 1
+    assert_link home_path, text: /Back/
   end
 
   test 'index shows empty state when there is no activity' do
+    Activity.delete_all
+
     get activities_path
 
     assert_response :success
-    assert_match 'No activity yet', response.body
+    assert_page_text 'No activity yet.'
   end
 
   test 'show renders rescheduled activity with daylog links' do
@@ -40,11 +41,11 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     get activity_path(activity)
 
     assert_response :success
-    assert_match 'Buy milk', response.body
-    assert_match 'Moved', response.body
-    assert_select 'a[href=?]', daylog_path(date: Date.current.iso8601)
-    assert_select 'a[href=?]', daylog_path(date: (Date.current + 2.days).iso8601)
-    assert_select '.activity--history', count: 0
+    assert_page_text 'Buy milk'
+    assert_page_text 'Moved'
+    assert_link daylog_path(date: Date.current.iso8601)
+    assert_link daylog_path(date: (Date.current + 2.days).iso8601)
+    assert_select '#activity-feed', count: 0
   end
 
   test 'show renders collected activity with bucket link' do
@@ -56,9 +57,9 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     get activity_path(activity)
 
     assert_response :success
-    assert_match 'Read chapter', response.body
-    assert_match 'reading list', response.body
-    assert_select 'a[href=?]', bucket_path(collection.bucket)
+    assert_page_text 'Read chapter'
+    assert_page_text 'reading list'
+    assert_link bucket_path(collection.bucket)
   end
 
   test 'show returns not found for another users activity' do
@@ -78,19 +79,18 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     get activity_path(collection.bucket.activities.last)
 
     assert_response :success
-    assert_match 'Updated', response.body
-    assert_match 'inbox', response.body
-    assert_select '.activity--history', count: 0
+    assert_page_text 'Updated'
+    assert_page_text 'inbox'
+    assert_select '#activity-feed', count: 0
   end
 
-  test 'index feed links to activity show' do
+  test 'index feed links subject to model' do
     bullet = create_bullet!(@user, bulletable: Task.new(body: 'Linked'))
     bullet.record_activity!('updated')
-    activity = Activity.order(:created_at).last
 
     get activities_path
 
     assert_response :success
-    assert_select "a.activity--feed-item[href=?]", activity_path(activity)
+    assert_link bullet_path(bullet)
   end
 end

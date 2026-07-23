@@ -4,10 +4,11 @@
     flex-direction: column;
   }
 
-.layout--page.daylog {
-  padding: var(--spacing-vertical) var(--spacing-horizontal);
-  max-width: var(--breakpoint-laptop);
-}
+  .layout--page.daylog {
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    max-width: var(--breakpoint-laptop);
+    margin-top: 10ch;
+  }
 
   .daylog--page #bullets_container {
     margin-block-end: var(--spacing-vertical);
@@ -41,6 +42,11 @@
     color: var(--model-color-2);
     pointer-events: none;
     user-select: none;
+  }
+
+  .daylog--date-picker {
+    font-family: monospace;
+    width: 6rem;
   }
 
   .daylog--todays-indicator-ring {
@@ -81,10 +87,7 @@
     }
 
     .daylog--page .bucket--list:has(.bullets-form--dock-mobile) {
-      padding-bottom: calc(
-        var(--tabbar-scroll-padding, calc(var(--spacing-vertical-double) * 2 + env(safe-area-inset-bottom, 0px)))
-        + var(--spacing-horizontal-double) + var(--spacing-vertical) * 2
-      );
+      padding-bottom: calc(var(--tabbar-scroll-padding, calc(var(--spacing-vertical-double) * 2 + env(safe-area-inset-bottom, 0px))) + var(--spacing-horizontal-double) + var(--spacing-vertical) * 2);
     }
   }
 
@@ -123,6 +126,7 @@
   .daylog--picture-container {
     position: relative;
   }
+
   .daylog--picture {
     position: absolute;
     width: 65px;
@@ -130,7 +134,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: var(--spacing-vertical-half);
-  
+
     @media (max-width: 799px) {
       position: relative;
       display: flex;
@@ -141,6 +145,7 @@
       transform: none;
       border-radius: var(--radius-full);
     }
+
     @media (min-width: 800px) {
       right: -25px;
       top: -55px;
@@ -159,6 +164,7 @@
     border-radius: var(--radius-subtle);
     aspect-ratio: 1/1;
   }
+
   .daylog--picture-controls {
     display: flex;
     align-items: center;

@@ -13,7 +13,8 @@
     width: min(calc(100vw - (2 * var(--spacing-horizontal))),
         calc(var(--spacing-horizontal-double) * 13));
     max-width: calc(100vw - (2 * var(--spacing-horizontal)));
-    overflow: hidden;
+    overflow: scroll;
+    overscroll-behavior: none;
 
     /* closed / exit state */
     opacity: 0;

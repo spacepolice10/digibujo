@@ -1,25 +1,64 @@
-<% content_for(:title) { @future.name } %>
+<% if @future %>
+  <% content_for(:title) { @future.name } %>
 
-<div class="layout--page future">
-  <div class="layout--header">
-    <div class="layout--header-actions">
-      <%= link_to home_path, class: "button--secondary" do %>
-        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
-        Home
-      <% end %>
-
-      <%= render "buckets/pins_button", bucket: @future.bucket %>
+  <div class="utilities--mx-auto future--header">
+    <div class="utilities--mx-auto future--header">
+    <%= icon_tag("calendar", style: "color: var(--color-text-base);", class: "future--header-icon") %>
+    <h2><%= @future.name %></h2>
     </div>
 
-    <h2><%= @future.name %></h2>
+    <p class="utilities--mx-auto typography--paragraph-sm">This is future plannin section. Drop your "sometime" bullets here & jot down  the events that will happen in the future.</p>
+
   </div>
+  <div class="layout--page">
+  <main class="layout--container layout--container-lg layout--surface">
+      <div class="layout--flex layout--justify-between layout--surface-header">
+        <%= link_to home_path, class: "button--tertiary button--sm" do %>
+          <%= icon_tag("arrow-left", style: "color: var(--color-text-base);", class: "button--icon") %>
+          Home
+        <% end %>
 
-  <%= render "futures/months_grid",
-        months: @months,
-        bullets_by_date: @bullets_by_date,
-        future: @future %>
+        <div class="layout--flex layout--gapped">
+          <%= render "buckets/pins_button", bucket: @future.bucket %>
+        </div>
+      </div>
 
-  <section class="future--unplanned" aria-label="Unplanned">
+  <div class="layout--grid" style="--grid-item-size: 30rem;">
+  <section class="layout--padded">
+    <div class="future--grid" data-bulk-menu-target="list">
+      <% @months.each do |month_start| %>
+        <% month_bullets = @bullets_by_date[month_start] || [] %>
+        <% composer_id = "future_bullets_#{month_start.iso8601}_composer" %>
+        <% container_id = "future_bullets_#{month_start.iso8601}_container" %>
+
+        <div class="future--card">
+          <div class="future--card-header">
+            <%= month_start.strftime("%b %Y") %>
+            <%= link_to new_bullet_path(bucket_id: @future.bucket.id, pops_on: month_start), class: "button--tertiary button--icon" do %>
+              <%= icon_tag("plus", style: "color: var(--color-text-base);", class: "button--icon") %>
+            <% end %>
+          </div>
+
+          <div
+            class="future--card-content"
+            data-controller="pops-drop drop-postpone-optimistic"
+            data-pops-drop-pops-url-value="<%= postpone_path %>"
+            data-pops-drop-pops-on-value="<%= month_start.iso8601 %>"
+            data-pops-drop-bucket-id-value="<%= @future.bucket.id %>"
+            data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop"
+          >
+            <div id="<%= container_id %>">
+              <% month_bullets.first(6).each do |bullet| %>
+                <%= render "futures/bullets/bullet", bullet: bullet %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <section class="layout--padded" aria-label="Unplanned">
     <header class="future--unplanned-header">
       <h3 class="future--unplanned-title">Unplanned</h3>
       <p class="future--unplanned-description utilities--text-sm">
@@ -41,12 +80,32 @@
         <% end %>
       </div>
 
-      <%= link_to new_bullet_path(bucket_id: @future.bucket.id, bulletable_type: "Note"), class: "bullets-form--create-button", data: { turbo_frame: "future_bullets_unplanned_composer" }, aria: { label: "Add Note" } do %>
-        <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
-        Add bullet
-      <% end %>
+      <div class="layout--flex layout--gapped layout--mx-auto">
+      <%= create_bullet_buttons composer_id: "future_bullets_unplanned_composer",
+              bucket_id: @future.bucket.id,
+              pops_on: nil,
+              bulletable_type: Bullet.bulletable_types %>
+      </div>
     </div>
-  </section>
-
+      </section>
+    </div>
+  </main>
+  </div>
   <%= render "futures/composer_dialog", future: @future, months: @months %>
-</div>
+<% else %>
+  <% content_for(:title) { "Future log" } %>
+
+  <div class="layout--page layout--container layout--container-md">
+    <div class="layout--surface layout--mx-auto">
+      <div class="layout--surface-header">
+        <h2>Future log</h2>
+      </div>
+      <div class="layout--surface layout--padded layout--mx-auto">
+        <p class="typography--paragraph-sm typography--center">No future log yet. Create one to capture long-term plans and someday ideas.</p>
+        <div class="layout--padded">
+          <%= link_to "Create future log", new_future_path, class: "button--primary layout--mx-auto" %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

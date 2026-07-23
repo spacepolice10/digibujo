@@ -17,7 +17,7 @@
     gap: var(--spacing-vertical-double);
     width: 100%;
     min-width: var(--breakpoint-mobile);
-    max-width: var(--breakpoint-tablet);
+    max-width: 30rem;
     overflow: hidden;
   }
 

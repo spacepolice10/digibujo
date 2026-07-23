@@ -3,7 +3,7 @@
 <div class="daylog--mood" data-controller="dialog">
   <button
     type="button"
-    class="button--secondary button--icon-strong"
+    class="button--tertiary button--icon"
     commandfor="<%= dialog_id %>"
     command="show-modal"
     aria-label="<%= entity ? "Change mood" : "Pick mood" %>"
@@ -12,7 +12,7 @@
     <% if entity %>
       <%= entity.marker %>
     <% else %>
-      <i class="icon" style="--icon-mask: var(--icon-face)" aria-hidden="true"></i>
+      <%= icon_tag("face") %>
     <% end %>
   </button>
 
@@ -23,7 +23,7 @@
         <%= button_to daylog_mood_entity_path,
               method: :post,
               params: { date: date.iso8601, mood: mood },
-              class: "button--tertiary button--icon-strong",
+              class: "button--tertiary button--icon",
               form: { data: { turbo: true } },
               aria: { label: mood.to_s.humanize, pressed: selected } do %>
           <%= emoji %>

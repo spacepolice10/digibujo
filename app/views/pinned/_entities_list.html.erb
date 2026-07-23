@@ -1,17 +1,7 @@
 <%# locals: (pinned_entities:, compact: false, popover: false) %>
-<div class="pinned--list-body">
-  <% if popover %>
-    <button
-      type="button"
-      class="button--primary button--icon button--circle bulk-menu--hide"
-      popovertarget="pinned_list"
-      popovertargetaction="hide"
-      aria-label="Close pinned list"
-    >
-      <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
-    </button>
-  <% end %>
-
+<%= render "shared/dropdown",
+      name: (popover ? "Pinned" : nil),
+      popover_target: (popover ? "pinned_list" : nil) do %>
   <% if pinned_entities.any? %>
     <% if compact %>
       <ul class="layout--list bucket--list">
@@ -27,6 +17,6 @@
       </div>
     <% end %>
   <% else %>
-    <p>Nothing pinned yet.</p>
+    <p class="pinned--no-entities">Nothing pinned yet.</p>
   <% end %>
-</div>
+<% end %>

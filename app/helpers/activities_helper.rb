@@ -10,7 +10,12 @@ module ActivitiesHelper
   private
 
   def sentence(activity, linked:)
-    subject = activity_link(activity.subject, linked: linked, name: activity.subject_name)
+    subject = activity_link(
+      activity.subject,
+      linked: linked,
+      name: activity.subject_name,
+      colour: activity.metadata['colour']
+    )
 
     case activity.action
     when 'destroyed'
@@ -33,12 +38,12 @@ module ActivitiesHelper
       safe_join(['Uncompleted ', subject])
     when 'collected'
       bucket_name = activity.metadata['bucket_name'].presence ||
-                     activity.destination_bucket&.name ||
-                     'a collection'
+                    activity.destination_bucket&.name ||
+                    'a collection'
       safe_join([
-        'Moved ', subject, ' into ',
-        activity_link(activity.destination_bucket, linked: linked, name: bucket_name)
-      ])
+                  'Moved ', subject, ' into ',
+                  activity_link(activity.destination_bucket, linked: linked, name: bucket_name)
+                ])
     when 'rescheduled'
       rescheduled_sentence(activity, subject, linked: linked)
     when 'project_mentioned'
@@ -63,21 +68,64 @@ module ActivitiesHelper
     end
   end
 
-  def activity_link(target, linked:, name: nil)
+  def activity_link(target, linked:, name: nil, colour: nil)
+    colour_variable = activity_colour_variable(target, colour: colour)
+    link_attrs = activity_subject_link_attrs(colour_variable)
+
     case target
     when Date
       formatted = target.strftime('%a, %b %-d')
-      return formatted unless linked
-
-      link_to(formatted, daylog_path(date: target.iso8601), class: 'activity--subject-name')
+      if linked
+        link_to(formatted, daylog_path(date: target.iso8601), **link_attrs)
+      else
+        activity_subject_text(formatted, colour_variable)
+      end
     when nil
-      name
+      activity_subject_text(name, colour_variable)
     else
       label = name.presence || target.try(:name) || 'Unknown'
-      return label unless linked
-      return label if target.is_a?(Archive)
+      path = activity_target_path(target)
+      if linked && path
+        link_to(label, path, **link_attrs)
+      else
+        activity_subject_text(label, colour_variable)
+      end
+    end
+  end
 
-      link_to(label, polymorphic_path(target), class: 'activity--subject-name')
+  def activity_subject_link_attrs(colour_variable)
+    attrs = { class: 'activity--subject-name', data: { turbo_frame: '_top' } }
+    attrs[:style] = "color: #{colour_variable}" if colour_variable.present?
+    attrs
+  end
+
+  def activity_subject_text(label, colour_variable)
+    return label if colour_variable.blank?
+
+    content_tag(:span, label, class: 'activity--subject-name', style: "color: #{colour_variable}")
+  end
+
+  def activity_target_path(target)
+    case target
+    when Archive
+      archivable = target.archivable
+      polymorphic_path(archivable) if archivable.present?
+    else
+      polymorphic_path(target)
+    end
+  rescue NoMethodError, ActionController::UrlGenerationError
+    nil
+  end
+
+  def activity_colour_variable(target, colour: nil)
+    resolved = target.is_a?(Archive) ? target.archivable : target
+
+    if resolved.respond_to?(:colour_variable) && resolved.colour_variable.present?
+      resolved.colour_variable
+    elsif resolved.respond_to?(:colour) && resolved.colour.present?
+      Colourable.colour_variable_of(resolved.colour)
+    elsif colour.present?
+      Colourable.colour_variable_of(colour)
     end
   end
 end

@@ -33,9 +33,9 @@ Each bulletable includes **`Bulletable`** (`has_one :bullet`, display defaults, 
 
 All bullet types are created via **`POST /bullets`** (`BulletsController`) — there are no nested `daylog/bullets` or `monthlylogs/:id/bullets` routes.
 
-**Dock** (`bullets/composer/_dock.html.erb`): type buttons stay in the page; each link loads `GET /bullets/new` into a **page-level `<dialog>`** turbo-frame (`bullets/composer/_dialog`, built on `shared/dialog` + `dialog` Stimulus). Desktop uses a compact dialog; mobile styles it as a **bottom sheet** (keyboard-safe). Successful create closes the dialog and clears the frame; Esc / cancel / backdrop do the same.
+**Create buttons** (`BulletsHelper#create_bullet_buttons`): configurable type links stay in the page; each loads `GET /bullets/new` into a **page-level `<dialog>`** turbo-frame (`bullets/composer/_dialog`, built on `shared/dialog` + `dialog` Stimulus). Callers pass `composer_id`, `bucket_id`, `pops_on`, and `bulletable_type` (array of Task/Note/Event/Voice). Daylog/collection views wrap buttons in `bullets-form--dock`; monthly/future cells use their own layout wrappers. Desktop uses a compact dialog; mobile styles it as a **bottom sheet** (keyboard-safe). Successful create closes the dialog and clears the frame; Esc / cancel / backdrop do the same.
 
-**Monthly spread / Future:** no dock. Planned cells: Task + Event; unplanned: Task + Note — links load into the page dialog frames.
+**Monthly spread / Future:** no dock wrapper. Planned cells: Task + Event; unplanned: Note — same helper, subset `bulletable_type`.
 
 ## Bullet row rendering
 

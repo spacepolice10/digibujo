@@ -1,5 +1,5 @@
-<li id="<%= dom_id(bucket, :list_item) %>" class="layout--list-item">
-  <%= link_to bucket_path(bucket), class: "layout--list-item-link" do %>
+
+
     <%= icon_tag(bucket.icon, colour: bucket.colour_variable) %>
 
     <span class="utilities--line-clamp-1"><%= bucket.name %></span>
@@ -9,5 +9,4 @@
       <%= "bullet".pluralize(bucket.bullets.count) %>,
       <%= bucket.created_at.strftime("%b %d") %>
     </span>
-  <% end %>
-</li>
+

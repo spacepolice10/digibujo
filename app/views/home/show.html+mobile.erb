@@ -6,20 +6,7 @@
 
     <div class="layout--flex">
       <%= render "account_button" %>
-      <div data-controller="dialog">
-        <button
-          type="button"
-          class="button--primary button--icon button--circle"
-          commandfor="home_create"
-          command="show-modal"
-          aria-label="Create"
-        >
-        <%= icon_tag("plus") %>
-        </button>
-        <%= render "shared/dialog", id: "home_create" do %>
-            <%= render "home_actions" %>
-        <% end %>
-      </div>
+      <%= render "create_dock" %>
     </div>
   </div>
 

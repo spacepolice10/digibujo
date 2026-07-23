@@ -1,21 +1,10 @@
 # frozen_string_literal: true
 
 class MonthlylogsController < ApplicationController
-  before_action :set_monthlylog, only: :show
-
-  def current
-    @monthlylog = Current.user.monthlylogs.find_by(
-      period_from: Date.current.beginning_of_month
-    )
-    if @monthlylog
-      prepare_show
-      render :show
-    else
-      render :empty
-    end
-  end
-
   def show
+    @monthlylog = find_monthlylog
+    return unless @monthlylog
+
     prepare_show
   end
 
@@ -50,6 +39,14 @@ class MonthlylogsController < ApplicationController
 
   private
 
+  def find_monthlylog
+    if params[:id].present?
+      Current.user.monthlylogs.find(params[:id])
+    else
+      Current.user.monthlylogs.covering(Date.current).take
+    end
+  end
+
   def prepare_show
     @days = @monthlylog.spread_days
     scoped = @monthlylog.bullets.active.includes(:bulletable)
@@ -60,10 +57,6 @@ class MonthlylogsController < ApplicationController
     daylog = Current.user.daylog
     @mood_entities_by_date = daylog&.mood_entities_by_date(@days) || {}
     @pictures_by_date = daylog&.pictures_by_date(@days) || {}
-  end
-
-  def set_monthlylog
-    @monthlylog = Current.user.monthlylogs.find(params[:id])
   end
 
   def occupied_months

@@ -18,10 +18,14 @@
     <% if @bullet.bulletable_type.present? %>
       <%= render @bullet.to_form_path, bullet: @bullet, editing: false %>
     <% else %>
-      <%= render "bullets/composer/dock",
-            selected_date: @bullet.pops_on || Date.current,
-            bucket: @bullet.bucket || Current.user.daylog.bucket,
-            composer_id: turbo_frame_request_id.presence || "bullet_composer" %>
+      <div class="bullets-form--dock<%= " bullets-form--dock-mobile" if request.variant.include?(:mobile) %>">
+        <div class="bullets-form--buttons">
+          <%= create_bullet_buttons composer_id: turbo_frame_request_id.presence || "bullet_composer",
+                bucket_id: (@bullet.bucket || Current.user.daylog.bucket).id,
+                pops_on: @bullet.pops_on || Date.current,
+                bulletable_type: Bullet.bulletable_types %>
+        </div>
+      </div>
     <% end %>
   </turbo-frame>
 </div>

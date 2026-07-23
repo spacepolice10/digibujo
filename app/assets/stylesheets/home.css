@@ -6,6 +6,7 @@
     display: flex;
     gap: var(--spacing-vertical-half);
     flex-wrap: wrap;
+    justify-content: center;
 
     @media (min-width: 800px) {
       position: sticky;
@@ -13,10 +14,65 @@
     }
   }
 
-  .home--rail-action {
+  .home--action {
     @media (min-width: 800px) {
       margin-inline-start: auto;
     }
+  }
+
+  .home--create-dock {
+    anchor-name: --home-create-dock;
+  }
+
+  .home--create-dropdown {
+    position-anchor: --home-create-dock;
+  }
+
+  .home--create-dropdown[popover] {
+    width: max-content;
+    min-width: calc(var(--spacing-horizontal-quad));
+    max-width: min(
+      calc(var(--spacing-horizontal-double) * 8),
+      calc(100dvw - var(--spacing-horizontal-quad))
+    );
+  }
+
+  .home--create-menu {
+    gap: var(--spacing-vertical-half);
+  }
+
+  .home--create-menu-item {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .home--section-list {
+    min-height: 80vh;
+  }
+
+  .home--section-list-item {
+    display: flex;
+    gap: var(--spacing-horizontal-half);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    flex: 1;
+    text-decoration: none;
+    color: inherit;
+    border-radius: var(--radius-base);
+    align-items: baseline;
+
+    &:hover {
+      background-color: var(--color-bg-base);
+    }
+  }
+
+  .home--section-list-item-icon {
+    flex-shrink: 0;
+    border: 1px solid var(--color-stroke-subtle);
+    border-radius: var(--radius-full);
+    background-color: var(--color-bg-base);
+    padding: 2.5px;
+    width: 2.5ch !important;
+    height: 2ch !important;
   }
 
   .home--section-summary {
@@ -91,11 +147,13 @@
 
   .home--section-content-wrapper>* {
     opacity: 0;
-    transition: opacity 0.14s ease;
+    transform: translateY(var(--spacing-vertical-half));
+    transition: opacity 0.14s ease, transform 0.14s ease;
   }
 
   .home--section[open] .home--section-content-wrapper>* {
     opacity: 1;
+    transform: translateY(0);
     transition-delay: 0.14s;
   }
 
@@ -145,21 +203,12 @@
     gap: var(--spacing-vertical-half);
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     max-width: 280px;
-  }
-
-  .home--activity-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-vertical);
+    justify-content: center;
   }
 
   .home--activity-item {
     align-items: center;
     min-width: 0;
-
-    &:hover {
-      text-decoration: underline;
-    }
   }
 
   .home--activity-link {
@@ -173,7 +222,7 @@
   .home--activity-detail {
     margin: 0;
     min-width: 0;
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-xs);
     color: var(--color-fg-subtle);
   }
 

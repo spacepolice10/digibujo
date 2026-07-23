@@ -14,6 +14,14 @@
         }
       } do %>
   <ul class="layout--list bucket--list" role="listbox">
+    <li class="layout--list-item" role="option">
+      <%= link_to new_collection_path(bullet_ids: bullet_ids, return_to: return_to),
+            class: "bulk-menu--collect-item-link",
+            data: { turbo_frame: "_top" } do %>
+        <%= icon_tag("plus") %>
+        New collection
+      <% end %>
+    </li>
     <%= render partial: "bullets/collects/collection",
           collection: collections,
           locals: { bullet_ids: bullet_ids } %>

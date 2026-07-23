@@ -1,24 +1,29 @@
 <% content_for(:title) { "New collection" } %>
 
-<div class="layout--container layout--container-md">
-  <div class="layout--header">
-    <div class="layout--header-actions">
+
+<div class="layout--page layout--container layout--container-md">
+  <div class="utilities--mx-auto collection--header">
+    <%= icon_tag("folder", style: "color: var(--color-text-base);", class: "collection--header-icon") %>
+    <h2>New collection</h2>
+    <p class="layout--mx-auto layout--container layout--container-sm typography--paragraph-sm layout--padded">Collections are like folders in a traditional notebook — group related tasks, notes, or events together and keep them organised for as long as you need</p>
+  </div>
+  <div class="layout--surface">
+    <div class="layout--flex layout--justify-between layout--surface-header">
       <% if @bullet_ids.present? && @return_to.present? %>
-        <%= link_to @return_to, class: "button--secondary" do %>
+        <%= link_to @return_to, class: "button--tertiary button--sm" do %>
           <%= icon_tag("arrow-left") %>
           Back
         <% end %>
       <% else %>
-        <%= link_to home_path, class: "button--secondary", onclick: "if (history.length > 1) { event.preventDefault(); history.back(); }" do %>
+        <%= link_to home_path, class: "button--tertiary button--sm", onclick: "if (history.length > 1) { event.preventDefault(); history.back(); }" do %>
           <%= icon_tag("arrow-left") %>
           Back
         <% end %>
       <% end %>
     </div>
-    <h2>New collection</h2>
-  </div>
-  <turbo-frame id="<%= turbo_frame_request_id %>">
-  <div class="layout--surface">
+  
+  <div id="<%= dom_id(@collection) %>" class="layout--padded">
+
     <%= render "form",
           collection: @collection,
           bullet_ids: @bullet_ids,
@@ -35,5 +40,5 @@
       </section>
     <% end %>
   </div>
-  </turbo-frame>
+</div>
 </div>

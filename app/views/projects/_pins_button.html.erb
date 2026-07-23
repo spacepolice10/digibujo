@@ -4,21 +4,19 @@
     <%= button_to pin_path,
           method: :delete,
           params: pin_params,
-          class: "button--secondary",
+          class: "button--secondary button--sm",
           form: { data: { turbo_stream: true } },
           aria: { label: "Unpin #{project.name}" } do %>
-      <i class="icon" style="--icon-mask: var(--icon-unpin)" aria-hidden="true"></i>
-      Unpin
+      <%= icon_tag("pin", style: "color: var(--color-text-base);", class: "button--icon") %>
     <% end %>
   <% else %>
     <%= button_to pin_path,
           method: :post,
           params: pin_params,
-          class: "button--secondary",
+          class: "button--secondary button--sm ",
           form: { data: { turbo_stream: true } },
           aria: { label: "Pin #{project.name}" } do %>
-      <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
-      Pin
+      <%= icon_tag("pin", style: "color: var(--color-text-base);", class: "button--icon") %>
     <% end %>
   <% end %>
 </turbo-frame>

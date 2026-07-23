@@ -1,19 +1,19 @@
-<%= link_to new_collection_path, class: "button--secondary home--rail-action", data: { turbo_frame: "_top" } do %>
-  <i class="icon" style="--icon-mask: var(--icon-book)" aria-hidden="true"></i>
+<%= link_to new_collection_path, class: "button--secondary home--action", data: { turbo_frame: "_top" } do %>
+  <%= icon_tag("plus", style: "color: var(--color-text-base);") %>
   Add collection
 <% end %>
 
-<%= link_to new_future_path, class: "button--secondary home--rail-action", data: { turbo_frame: "_top" } do %>
-  <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
+<%= link_to new_future_path, class: "button--secondary home--action", data: { turbo_frame: "_top" } do %>
+  <%= icon_tag("calendar", style: "color: var(--color-text-base);") %>
   Add future log
 <% end %>
 
-<%= link_to new_monthlylog_path, class: "button--secondary home--rail-action", data: { turbo_frame: "_top" } do %>
-  <i class="icon" style="--icon-mask: var(--icon-calendar)" aria-hidden="true"></i>
+<%= link_to new_monthlylog_path, class: "button--secondary home--action", data: { turbo_frame: "_top" } do %>
+  <%= icon_tag("calendar", style: "color: var(--color-text-base);") %>
   Add monthly log
 <% end %>
 
-<%= link_to new_project_path, class: "button--secondary home--rail-action", data: { turbo_frame: "_top" } do %>
-  <i class="icon" style="--icon-mask: var(--icon-tag)" aria-hidden="true"></i>
+<%= link_to new_project_path, class: "button--secondary home--action", data: { turbo_frame: "_top" } do %>
+  <%= icon_tag("tag", style: "color: var(--color-text-base);") %>
   New project
 <% end %>

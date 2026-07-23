@@ -1,16 +1,22 @@
 <% content_for(:title) { "New monthly spread" } %>
 
-<div class="layout--container layout--container-md">
-  <div class="layout--header">
-    <div class="layout--header-actions">
-      <%= link_to home_path, class: "button--secondary", onclick: "if (history.length > 1) { event.preventDefault(); history.back(); }" do %>
-        <%= icon_tag("arrow-left") %>
-        Back
-      <% end %>
-    </div>
+<div class="layout--page layout--container layout--container-md">
+  <div class="layout--mx-auto monthlylog--header">
+    <%= icon_tag("calendar", style: "color: var(--color-text-base);", class: "monthlylog--header-icon") %>
     <h2>New monthly spread</h2>
+    <p class="layout--mx-auto layout--container layout--container-sm typography--paragraph-sm layout--padded">
+      A monthly spread gives you a bird's-eye view of the month — like the traditional BuJo calendar page. Plan events and deadlines here, then jump to any day to work on the details.
+    </p>
   </div>
   <div class="layout--surface">
-    <%= render "form", monthlylog: @monthlylog, months: @months, occupied_months: @occupied_months %>
+    <div class="layout--flex layout--justify-between layout--surface-header">
+    <%= link_to home_path, class: "button--tertiary button--sm", onclick: "if (history.length > 1) { event.preventDefault(); history.back(); }" do %>
+      <%= icon_tag("arrow-left") %>
+      Back
+    <% end %>
+  </div>
+      <div class="layout--padded">
+        <%= render "form", monthlylog: @monthlylog, months: @months, occupied_months: @occupied_months %>
+      </div>
   </div>
 </div>

@@ -20,10 +20,10 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     get home_path
 
     assert_response :success
-    assert_select '.home--section-name', text: 'Published'
-    assert_match 'Public note', response.body
-    assert_no_match 'Private note', response.body
-    assert_select 'a.home--section-more[href=?]', published_index_path, count: 0
+    assert_home_section 'Published'
+    assert_page_text 'Public note'
+    assert_no_page_text 'Private note'
+    assert_section_index_link published_index_path, 'Published', count: 1
   end
 
   test 'show published section links to index when more than eight published bullets' do
@@ -35,14 +35,14 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     get home_path
 
     assert_response :success
-    assert_select 'a.home--section-more[href=?]', published_index_path, count: 1
+    assert_section_index_link published_index_path, 'Published', count: 1
   end
 
   test 'show returns success' do
     get home_path
     assert_response :success
-    assert_select 'turbo-frame#home_activity[src=?]', home_activities_path
-    assert_select 'footer a[href=?][aria-label=?]', user_path, 'Account'
+    assert_turbo_frame 'home_activities', src: home_activities_path
+    assert_link user_path, aria_label: 'Account'
     assert_select 'footer span[aria-hidden=true]', text: @user.email_address.first.upcase
   end
 
@@ -64,11 +64,11 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     get home_path
 
     assert_response :success
-    assert_select '.home--section-name', text: 'Projects'
-    assert_select '.home--section-name', text: 'Collections'
-    assert_match 'alpha', response.body
-    assert_match 'reading', response.body
-    assert_select 'a.home--section-more[href=?]', collections_path, count: 0
+    assert_home_section 'Projects'
+    assert_home_section 'Collections'
+    assert_page_text 'alpha'
+    assert_page_text 'reading'
+    assert_section_index_link collections_path, 'Collections', count: 1
   end
 
   test 'show collections section links to index when more than eight collections' do
@@ -77,7 +77,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     get home_path
 
     assert_response :success
-    assert_select 'a.home--section-more[href=?]', collections_path, count: 1
+    assert_section_index_link collections_path, 'Collections', count: 1
   end
 
   test 'show respects collapsed section preferences' do
@@ -89,8 +89,8 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     get home_path
 
     assert_response :success
-    assert_select 'details.home--section[data-controller=section]', count: 3
-    assert_select 'details.home--section[open]', count: 2
+    assert_home_sections total: 3, expanded: 2
+    assert_home_section 'Projects', expanded: false
   end
 
   test 'show works when user has no settings row' do
@@ -111,7 +111,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
     get home_path
     assert_response :success
-    assert_select 'details.home--section[data-controller=section][open]', count: 2
+    assert_home_sections total: 3, expanded: 2
   end
 
   test 'expanding a collapsed section persists and is reflected on next page load' do
@@ -126,7 +126,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
     get home_path
     assert_response :success
-    assert_select 'details.home--section[data-controller=section][open]', count: 3
+    assert_home_sections total: 3, expanded: 3
   end
 
   test 'show renders mobile home with expandable sections and create bucket' do
@@ -136,42 +136,45 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     get home_path, headers: { 'User-Agent' => MOBILE_UA }
 
     assert_response :success
-    assert_select '.layout--page'
-    assert_select '.search[data-combobox-path-value=?]', search_path
-    assert_select '[data-controller=?]', 'dialog'
-    assert_select 'nav.menu--navigation a[href=?]', activities_path
-    assert_select 'nav.menu--navigation a[href=?] .icon[style*=--icon-history]', activities_path
-    assert_select 'nav.menu--navigation a[href=?]', review_path
-    assert_select 'nav.menu--navigation a[href=?]', archived_index_path
-    assert_select 'nav.menu--navigation a[href=?]', published_index_path
-    assert_select 'nav.menu--navigation a[href=?]', daylog_path, count: 0
-    assert_select 'nav.menu--navigation a[href=?]', home_path, count: 0
-    assert_select 'details.home--section[data-controller=?]', 'home-section'
-    assert_select 'details.home--section summary .home--section-name', text: 'Projects'
-    assert_select 'details.home--section summary .home--section-name', text: 'Collections'
-    assert_select 'a.home--rail-action[href=?]', new_collection_path
-    assert_select 'a[href=?][aria-label=?]', user_path, 'Account'
+    assert_select 'h1', text: /Hello #{Regexp.escape(@user.email_address)}/
+    assert_form_action search_path
+    assert_select '#home_create[popover]'
+    assert_select '[popovertarget=?]', 'home_create'
+    assert_select '.dropdown--element-header h2', text: 'Create'
+    assert_menu_nav_link activities_path, label: 'Activity'
+    assert_menu_nav_link review_path, label: 'Review'
+    assert_menu_nav_link archived_index_path, label: 'Archived'
+    assert_menu_nav_link published_index_path, label: 'Published'
+    assert_menu_nav_link daylog_path, label: 'Daylog', count: 0
+    assert_menu_nav_link home_path, label: 'Home', count: 0
+    assert_tabbar_link home_path, label: 'Menu'
+    assert_tabbar_link daylog_path, label: 'Daily log'
+    assert_home_section 'Projects'
+    assert_home_section 'Collections'
+    assert_link new_collection_path, text: 'Add collection'
+    assert_link user_path, aria_label: 'Account'
     assert_select 'span[aria-hidden=true]', text: @user.email_address.first.upcase
-    assert_select '.tabbar--navigation'
-    assert_match 'mobile alpha', response.body
+    assert_page_text 'mobile alpha'
   end
 
   test 'activity rail renders recent activities in home frame' do
     bullet = create_bullet!(@user, bulletable: Task.new(body: 'Rail visible'))
-    bullet.record_activity!('updated')
+    activity = bullet.record_activity!('updated')
 
-    get home_activities_path, headers: { 'Turbo-Frame' => 'home_activity' }
+    get home_activities_path, headers: { 'Turbo-Frame' => 'home_activities' }
 
     assert_response :success
-    assert_select 'turbo-frame#home_activity'
-    assert_match 'Rail visible', response.body
-    assert_select '.home--activity-link'
+    assert_turbo_frame 'home_activities'
+    assert_page_text 'Rail visible'
+    assert_link bullet_path(bullet)
   end
 
   test 'activity rail shows empty state when there is no activity' do
-    get home_activities_path, headers: { 'Turbo-Frame' => 'home_activity' }
+    Activity.delete_all
+
+    get home_activities_path, headers: { 'Turbo-Frame' => 'home_activities' }
 
     assert_response :success
-    assert_match 'No recent activity', response.body
+    assert_page_text 'No recent activity'
   end
 end

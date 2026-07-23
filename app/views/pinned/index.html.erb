@@ -1,5 +1,5 @@
 <% if request.headers["Turbo-Frame"] == "pinned_list" %>
-  <turbo-frame id="pinned_list" class="dropdown pinned--list" popover>
+  <turbo-frame id="pinned_list" class="dropdown dropdown--element dropdown--element-up animations--side-in pinned--dropdown" popover>
     <%= render "pinned/entities_list",
           pinned_entities: @pinned_entities,
           compact: true,

@@ -16,3 +16,15 @@
   font-size: var(--font-size-xs); 
   color: var(--color-fg-subtle);
 }
+.typography--center {
+  text-align: center;
+}
+.typography--justify {
+  text-align: justify;
+}
+.typography--bold {
+  font-weight: var(--font-weight-strong);
+}
+.typography--italic {
+  font-style: italic;
+}

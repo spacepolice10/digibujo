@@ -5,7 +5,7 @@
     .button--secondary,
     .button--tertiary,
     .button--accent) {
-    display: inline-flex;
+    display: flex;
     justify-content: center;
     align-items: center;
     gap: var(--spacing-vertical-half);
@@ -178,6 +178,7 @@
 
   .button--circle {
     border-radius: var(--radius-full);
+    flex-shrink: 0;
   }
 
   /* ── Size ─────────────────────────────────────────── */
@@ -185,6 +186,7 @@
   .button--icon {
     width: var(--spacing-horizontal-triple);
     height: var(--spacing-horizontal-triple);
+    padding: 0;
   }
 
   .button--text-only {
@@ -193,13 +195,13 @@
   }
 
   .button--sm {
-    height: var(--spacing-vertical);
-    width: calc(var(--spacing-horizontal) * 6);
+    height: var(--spacing-vertical-triple);
+    width: fit-content;
   }
 
   .button--lg {
-    height: var(--spacing-vertical);
-    width: calc(var(--spacing-horizontal) * 12);
+    height: var(--spacing-vertical-quad);
+    width: fit-content;
   }
 
   .button--auto {

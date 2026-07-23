@@ -3,9 +3,7 @@
   id="<%= dom_id(activity) %>"
   class="activity--item"
 >
-  <%= link_to activity_path(activity), class: "activity--feed-item", data: { turbo_frame: "_top" } do %>
-    <p class="activity--detail utilities--line-clamp-1">
-      <%= activity_sentence(activity, relative: true, linked: false) %>
-    </p>
-  <% end %>
+  <p class="activity--detail utilities--line-clamp-1">
+    <%= activity_sentence(activity, relative: true) %>
+  </p>
 </div>

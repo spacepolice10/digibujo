@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 class FuturesController < ApplicationController
-  before_action :set_future, only: :show
-
   def show
+    @future = find_future
+    return unless @future
+
     @months = @future.spread_months
     scoped = @future.bullets.active.includes(:bulletable)
     grouped = scoped.where(pops_on: @months).group_by(&:pops_on)
@@ -33,8 +34,12 @@ class FuturesController < ApplicationController
 
   private
 
-  def set_future
-    @future = Current.user.futures.find(params[:id])
+  def find_future
+    if params[:id].present?
+      Current.user.futures.find(params[:id])
+    else
+      Current.user.futures.covering(Date.current).take
+    end
   end
 
   def period_from_param

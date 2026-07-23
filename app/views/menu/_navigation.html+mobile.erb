@@ -1,4 +1,4 @@
-<nav class="layout--grid cols-4 justify-between menu--navigation"
+<nav class="layout--grid cols-4 layout--gapped justify-between menu--navigation"
      data-controller="grid-navigation"
      data-grid-navigation-columns-value="4"
      data-action="keydown->grid-navigation#navigate">
@@ -12,7 +12,7 @@
           action: "keydown.1@document->hotkey#click focus->grid-navigation#syncPosition"
         },
         aria: { keyshortcuts: "1", label: "Activity" } do %>
-    <i class="icon" style="--icon-mask: var(--icon-history)" aria-hidden="true"></i>
+    <%= icon_tag("history", style: "color: var(--color-text-base);", class: "menu--navigation-icon") %>
     <span class="menu--navigation-label">Activity</span>
   <% end %>
   <%= link_to review_path,
@@ -25,7 +25,7 @@
           action: "keydown.2@document->hotkey#click focus->grid-navigation#syncPosition"
         },
         aria: { keyshortcuts: "2", label: "Review" } do %>
-    <i class="icon" style="--icon-mask: var(--icon-circle-check)" aria-hidden="true"></i>
+    <%= icon_tag("circle-check", style: "color: var(--color-text-base);", class: "menu--navigation-icon") %>
     <span class="menu--navigation-label">Review</span>
   <% end %>
   <%= link_to archived_index_path,
@@ -38,7 +38,7 @@
           action: "keydown.3@document->hotkey#click focus->grid-navigation#syncPosition"
         },
         aria: { keyshortcuts: "3", label: "Archived" } do %>
-    <i class="icon" style="--icon-mask: var(--icon-archive)" aria-hidden="true"></i>
+    <%= icon_tag("archive", style: "color: var(--color-text-base);", class: "menu--navigation-icon") %>
     <span class="menu--navigation-label">Archived</span>
   <% end %>
   <%= link_to published_index_path,
@@ -51,7 +51,7 @@
           action: "keydown.4@document->hotkey#click focus->grid-navigation#syncPosition"
         },
         aria: { keyshortcuts: "4", label: "Published" } do %>
-    <i class="icon" style="--icon-mask: var(--icon-link)" aria-hidden="true"></i>
-    <span class="menu--navigation-label">Published</span>
+    <%= icon_tag("link", style: "color: var(--color-text-base);", class: "menu--navigation-icon") %>
+    <span class="menu--navigation-label">Shared</span>
   <% end %>
 </nav>

@@ -1,5 +1,12 @@
 @layer components {
 
+  .pinned--dock {
+    anchor-name: --pinned-dock;
+  }
+
+  .pinned--dropdown {
+    position-anchor: --pinned-dock;
+  }
 
   .pinned--entities {
     display: flex;
@@ -17,6 +24,7 @@
     min-width: 0;
     text-decoration: none;
     color: inherit;
+
     &:hover {
       background-color: var(--color-bg-subtle);
     }
@@ -26,13 +34,6 @@
     text-align: center;
     color: var(--color-fg-subtle);
     padding: var(--spacing-vertical) var(--spacing-horizontal);
-  }
-
-  .pinned--dock {
-    display: flex;
-    position: relative;
-    width: fit-content;
-    flex-shrink: 0;
   }
 
   .pinned--dock-button {
@@ -55,41 +56,6 @@
       translate: -50% 0;
       margin-block-end: var(--spacing-vertical-half);
     }
-  }
-
-  .pinned--list {
-    position: fixed;
-    inset: unset;
-    position-anchor: --footer;
-    position-area: block-start inline-end;
-    box-sizing: border-box;
-    width: min(
-      calc(var(--spacing-horizontal-double) * 18),
-      calc(100dvw - var(--spacing-horizontal-double))
-    );
-    min-width: min(
-      calc(var(--spacing-horizontal-double) * 18),
-      calc(100dvw - var(--spacing-horizontal-double))
-    );
-    max-height: min(
-      calc(var(--spacing-horizontal-double) * 14),
-      calc(100dvh - var(--spacing-horizontal-double) * 5)
-    );
-    margin-bottom: var(--spacing-vertical-half);
-    overflow: auto;
-    background-color: var(--color-bg-base);
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-strong);
-    box-shadow: var(--shadow-base);
-    position-try-fallbacks:
-      flip-block,
-      flip-inline,
-      flip-block flip-inline;
-  }
-
-  .pinned--list-body {
-    position: relative;
-    padding: calc(var(--spacing-horizontal-double) + var(--spacing-vertical)) var(--spacing-horizontal-half) var(--spacing-vertical-half);
   }
 
 }

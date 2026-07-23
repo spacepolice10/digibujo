@@ -1,12 +1,11 @@
-
-<div class="form-group">
-  <span class="form-label">Icon</span>
-  <small class="form-small">
+<div class="form-section">
+  <label>Icon</label>
+  <small>
     Pick an icon to make this record easy to spot.
   </small>
   <div class="form--picker form--icon-picker" role="radiogroup" aria-label="Icon picker">
     <% Iconable::ICON_MAPPINGS.each do |icon| %>
-      <label class="form-check">
+      <label class="form-checkbox">
         <%= form.radio_button :icon, icon %>
         <%= icon_tag(icon, class: "form--icon") %>
         <span class="utilities--sr-only"><%= icon.humanize %></span>

@@ -1,38 +1,26 @@
 <% content_for(:title) { "Account" } %>
 
-<main class="layout--page layout--container-sm layout--surface-sunken">
-  <div class="layout--header-actions">
-    <%= link_to home_path, class: "button--secondary" do %>
-      <i
-        class="icon"
-        style="--icon-mask: var(--icon-arrow-left)"
-        aria-hidden="true"
-      ></i>
-
-      <p>Back</p>
-    <% end %>
+<main class="layout--page layout--container layout--container-sm layout--surface-sunken">
+  <div class="layout--mx-auto user--header">
+    <div class="button--primary layout--mx-auto">
+      <%= Current.user.email_address.first.upcase %>
+    </div>
+  
   </div>
 
-  <div class="layout--page">
     <div class="layout--surface">
-      <span class="button--secondary button--icon-strong button--circle">
-        <%= Current.user.email_address.first.upcase %>
-      </span>
-      <div>
-        <h1 class="typography--h1">Account</h1>
-        <p class="typography--paragraph-sm">
-          Signed in as <strong><%= Current.user.email_address %></strong>.
-        </p>
-      </div>
-    </div>
+      <div class="layout--flex layout--justify-between layout--surface-header">
+      <%= link_to home_path, class: "button--tertiary button--sm" do %>
+        <%= icon_tag("arrow-left") %>
 
-    <div class="layout--surface layout--header-actions">
+      Back
+    <% end %>
+    </div>
+    <div class="layout--padded layout--flex layout--gapped">
+  
+
       <%= link_to "#", class: "button--secondary" do %>
-        <i
-          class="icon"
-          style="--icon-mask: var(--icon-webhook)"
-          aria-hidden="true"
-        ></i>
+        <%= icon_tag("webhook") %>
         Webhooks
       <% end %>
 
@@ -40,13 +28,9 @@
               method: :delete,
               class: "button--secondary",
               form: { data: { turbo_confirm: "Sign out of Digibujo?" } } do %>
-        <i
-          class="icon"
-          style="--icon-mask: var(--icon-sign-out)"
-          aria-hidden="true"
-        ></i>
+        <%= icon_tag("sign-out") %>
         Sign out
       <% end %>
     </div>
-  </div>
+    </div>
 </main>

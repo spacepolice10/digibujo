@@ -1,7 +1,4 @@
-<%# locals: (future:) %>
-<li id="<%= dom_id(future.bucket, :list_item) %>" class="layout--list-item">
-  <%= link_to future_path(future), data: { turbo_frame: "_top" }, class: "layout--list-item-link" do %>
-    <%= icon_tag(future.icon, colour: future.colour_variable) %>
-    <span class="layout--list-item-name"><%= future.name %></span>
-  <% end %>
-</li>
+<%= link_to future_path(future), class: "future--section-list-item" do %>
+<%= icon_tag(future.icon, style: "color: #{future.colour_variable};", class: "home--section-list-item-icon") %>
+  <span class="utilities--line-clamp-1"><%= future.name %></span>
+<% end %>

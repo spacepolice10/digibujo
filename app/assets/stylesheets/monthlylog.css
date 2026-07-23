@@ -1,6 +1,31 @@
 @layer components {
 
+  .monthlylog--header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    padding-block: var(--spacing-vertical-double);
+  }
+  .monthlylog--header-icon {
+    width: 5ch !important;
+    height: 5ch !important;
+  }
+  .monthlylog--section-list-item {
+    display: flex;
+    gap: var(--spacing-horizontal-half);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    flex: 1;
+    text-decoration: none;
+    color: inherit;
+    border-radius: var(--radius-base);
+    align-items: baseline;
+    height: fit-content;
 
+    &:hover {
+      background-color: var(--color-bg-base);
+    }
+  }
 
   .monthlylog--period {
     margin: 0;

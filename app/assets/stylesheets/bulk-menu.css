@@ -103,8 +103,17 @@
   }
 
   .bulk-menu--action-menu--collects {
-    width: calc(var(--spacing-horizontal-double) * 9);
-    height: calc(100dvh - var(--spacing-vertical-double) * 9);
+    width: min(
+      calc(var(--spacing-horizontal-double) * 12),
+      calc(100dvw - var(--spacing-horizontal-double))
+    );
+    min-width: calc(var(--spacing-horizontal-double) * 11);
+    max-height: calc(100dvh - var(--spacing-vertical-double) * 11);
+  }
+
+  .bulk-menu--action-menu:has(.dropdown--element-header) {
+    padding: 0;
+    overflow: hidden;
   }
 
   .bulk-menu--action-frame:popover-open {
@@ -133,7 +142,6 @@
 
   .bulk-menu--collect-item-link {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     gap: var(--spacing-horizontal-half);
     width: 100%;

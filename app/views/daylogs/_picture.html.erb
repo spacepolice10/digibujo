@@ -10,12 +10,12 @@
     method: :delete,
           class: "button--link",
           data: { confirm: "Are you sure you want to remove this photo?" } do %>
-    <i class="icon" style="--icon-mask: var(--icon-trash)" aria-hidden="true"></i>
+    <%= icon_tag("trash") %>
     <% end %>
     <%= link_to attachment_path(picture.picture.blob.signed_id),
     data: { turbo_frame: "_top" },
           aria: { label: "View full photo" } do %>
-      <i class="icon" style="--icon-mask: var(--icon-zoom-in)" aria-hidden="true"></i>
+      <%= icon_tag("zoom-in") %>
     <% end %>
     </div>
   </div>
@@ -26,8 +26,8 @@
         multipart: true,
         data: { turbo: true } do %>
     <%= hidden_field_tag :date, date.iso8601 %>
-    <label class="button--secondary button--icon-strong">
-      <i class="icon" style="--icon-mask: var(--icon-camera)" aria-hidden="true"></i>
+    <label class="button--tertiary button--icon">
+      <%= icon_tag("camera") %>
       <%= file_field_tag :picture,
             accept: Daylog::Picture::ALLOWED_CONTENT_TYPES.join(","),
             class: "utilities--sr-only",

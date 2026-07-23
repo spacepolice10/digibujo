@@ -1,11 +1,9 @@
-<div class="layout--page daylog" data-controller="daylog">
-  <% if @daylog %>
+<% if @daylog %>
+  <div class="layout--page layout--container layout--container-md daylog" data-controller="daylog">
     <turbo-frame id="daylog">
-      
-
       <div data-bulk-menu-target="list" class="layout--surface layout--list">
-        <div id="bullets-header" class="layout--header daylog--header">
-          <div class="layout--header-actions daylog--header-navigation">
+        <div id="bullets-header" class="layout--flex layout--justify-between layout--surface-header">
+          <div class="layout--flex layout--gapped">
             <%= link_to daylog_path(date: (@selected_date - 1.day).iso8601),
                   data: {
                     turbo_action: "advance",
@@ -15,28 +13,20 @@
                   },
                   class: "button--tertiary hotkey-hint",
                   aria: { label: "Show previous day", keyshortcuts: "Shift+ArrowLeft" } do %>
-              <i
-                class="icon"
-                style="--icon-mask: var(--icon-arrow-left)"
-                aria-hidden="true"
-              ></i>
+              <%= icon_tag("arrow-left") %>
             <% end %>
-  
+
             <button
               type="button"
-              class="button--tertiary button--lg"
+              class="button--tertiary daylog--date-picker"
               data-action="daylog#openDatePicker"
               aria-label="Pick a date"
             >
-              <i
-                class="icon"
-                style="--icon-mask: var(--icon-calendar)"
-                aria-hidden="true"
-              ></i>
-  
+              <%= icon_tag("calendar") %>
+
               <%= @selected_date.strftime("%a, %b %-d") %>
             </button>
-  
+
             <input <%# herb:disable html-input-require-autocomplete %>
               type="date"
               value="<%= @selected_date.iso8601 %>"
@@ -45,7 +35,7 @@
               class="utilities--sr-only"
               tabindex="-1"
             >
-  
+
             <%= link_to daylog_path(date: (@selected_date + 1.day).iso8601),
                   data: {
                     turbo_action: "advance",
@@ -55,22 +45,20 @@
                   },
                   class: "button--tertiary hotkey-hint",
                   aria: { label: "Show next day", keyshortcuts: "Shift+ArrowRight" } do %>
-              <i
-                class="icon icon--flip-h"
-                style="--icon-mask: var(--icon-arrow-right)"
-                aria-hidden="true"
-              ></i>
+              <%= icon_tag("arrow-right") %>
             <% end %>
           </div>
-          <section class="daylog--meta" aria-label="Day notes">
-   
+          <div class="layout--flex layout--gapped">
+            <%= render "daylogs/mood_entity",
+                  date: @selected_date,
+                  entity: @mood_entity %>
             <%= render "daylogs/picture",
                   date: @selected_date,
                   picture: @picture %>
-          </section>
+          </div>
         </div>
 
-
+        <div class="layout--padded">
         <%= render layout: "pagination/paginated_list",
               locals: {
                 page: @page,
@@ -81,32 +69,43 @@
             <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
           <% end %>
         <% end %>
+            </div>
 
         <% unless @page.records.any? %>
-          <div id="no_bullets_container" class="layout--surface">
-            <p>
+          <p id="no_bullets_container" class="typography--paragraph-sm typography--center layout--padded layout--mx-auto">
               No bullets yet, check your monthly bucket, references or start a
               braindumping session.
-            </p>
-          </div>
+          </p>
         <% end %>
-        <%= render "bullets/composer/dock",
-          selected_date: @selected_date,
-          bucket: @daylog_bucket,
-          composer_id: "daylog_bullets_composer" %>
+        <div class="bullets-form--dock<%= " bullets-form--dock-mobile" if request.variant.include?(:mobile) %>">
+          <div class="bullets-form--buttons">
+            <%= create_bullet_buttons composer_id: "daylog_bullets_composer",
+                  bucket_id: @daylog_bucket.id,
+                  pops_on: @selected_date,
+                  bulletable_type: Bullet.bulletable_types %>
+          </div>
+        </div>
       </div>
     </turbo-frame>
 
     <%= render "bullets/composer/dialog",
           id: "daylog_composer",
           composer_id: "daylog_bullets_composer" %>
-  <% else %>
-    <div class="layout--header daylog--header">
-      <h2 class="layout--surface-name">Daily log</h2>
+  </div>
+<% else %>
+  <% content_for(:title) { "Daily log" } %>
+
+  <div class="layout--page layout--container layout--container-md">
+    <div class="layout--surface layout--mx-auto">
+      <div class="layout--surface-header">
+        <h2>Daily log</h2>
+      </div>
+      <div class="layout--surface layout--padded layout--mx-auto">
+        <p class="typography--paragraph-sm typography--center">No daily log yet. Create one to start rapid logging.</p>
+        <div class="layout--padded">
+          <%= button_to "Create daylog", daylog_path, method: :post, class: "button--primary layout--mx-auto" %>
+        </div>
+      </div>
     </div>
-    <div class="layout--surface">
-      <p>No daily log yet. Create one to start rapid logging.</p>
-      <%= button_to "Create daylog", daylog_path, method: :post, class: "button--primary" %>
-    </div>
-  <% end %>
-</div>
+  </div>
+<% end %>

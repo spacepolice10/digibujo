@@ -102,17 +102,34 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Moved into Inbox.', response.body
   end
 
-  test 'show renders add note button linking to the full page bullet composer' do
+  test 'show renders composer create buttons for all bullet types' do
     collection = create_collection!(@user, name: 'Inbox')
 
     get collection_path(collection)
 
     assert_response :success
-    assert_select 'a[aria-label=?]', 'Add note' do
+    assert_select 'a[aria-label=?]', 'Add Note' do
       assert_select '[href=?]', new_bullet_path(
-        bulletable_type: 'Note', bucket_id: collection.bucket.id, return_to: collection_path(collection)
+        bulletable_type: 'Note', bucket_id: collection.bucket.id, pops_on: nil
       )
     end
+    assert_select '.bullets-form--dock a.bullets-form--create-button', count: 4
+  end
+
+  test 'update changes bucket attributes and description' do
+    collection = create_collection!(@user, name: 'Old name', colour: 'teal', icon: 'folder')
+    collection.update!(description: 'Original')
+
+    patch collection_path(collection), params: {
+      collection: { name: 'New name', colour: 'gold', icon: 'heart', description: 'Updated' }
+    }
+
+    assert_redirected_to collection_path(collection)
+    collection.reload
+    assert_equal 'new name', collection.name
+    assert_equal 'Updated', collection.description
+    assert_equal 'gold', collection.bucket.colour
+    assert_equal 'heart', collection.bucket.icon
   end
 
   test 'destroy archives collection and hides it from active lists' do

@@ -14,9 +14,9 @@
     </div>
   <% end %>
 
-  <small class="form-hint">A monthly spread gives you a bird's-eye view of the month — like the traditional BuJo calendar page. Plan events and deadlines here, then jump to any day to work on the details.</small>
-
-  <div class="form-group">
+  <div class="form-section">
+    <label>Month</label>
+    <small>Pick the month you want to create a monthly spread for.</small>
     <%= field_set_tag "Month", class: "monthlylog--period-picker" do %>
       <%= f.collection_radio_buttons :period_from, months, :iso8601, ->(m) { m.strftime("%B %Y") },
             { checked: selected_month&.iso8601, item_wrapper_tag: false } do |b| %>

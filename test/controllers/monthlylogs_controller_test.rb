@@ -70,26 +70,26 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select '.monthlylog--workspace'
     assert_select '.monthlylog--date-band', minimum: 28
     assert_select '.monthlylog--calendar', text: /Planned task/
-    assert_select "a.bullet--composer-create-button--task[href=?]",
+    assert_select "a.bullets-form--create-button--task[href=?]",
                   new_bullet_path(
                     pops_on: day,
                     bucket_id: monthlylog.bucket.id,
                     bulletable_type: 'Task'
                   )
-    assert_select "a.bullet--composer-create-button--event[href=?]",
+    assert_select "a.bullets-form--create-button--event[href=?]",
                   new_bullet_path(
                     pops_on: day,
                     bucket_id: monthlylog.bucket.id,
                     bulletable_type: 'Event'
                   )
-    assert_select '.monthlylog--unplanned a.bullet--composer-create-button--task'
-    assert_select '.monthlylog--unplanned a.bullet--composer-create-button--note'
-    assert_select '.monthlylog--unplanned a.bullet--composer-create-button--event', count: 0
-    assert_select '.monthlylog--unplanned a.bullet--composer-create-button--voice', count: 0
-    assert_select '.bullet-composer--dock', count: 0
+    assert_select '.monthlylog--unplanned a.bullets-form--create-button--note'
+    assert_select '.monthlylog--unplanned a.bullets-form--create-button--task', count: 0
+    assert_select '.monthlylog--unplanned a.bullets-form--create-button--event', count: 0
+    assert_select '.monthlylog--unplanned a.bullets-form--create-button--voice', count: 0
+    assert_select '.bullets-form--dock', count: 0
     assert_select '.monthlylog--unplanned'
     assert_select 'dialog#monthlylog_composer.bullet-composer--dialog'
-    assert_select 'dialog#monthlylog_composer turbo-frame#monthlylog_unplanned_composer'
+    assert_select 'dialog#monthlylog_composer turbo-frame#monthlylog_bullets_unplanned_composer'
   end
 
   test 'monthlylog unplanned bullets render as compact rows without metadata tags' do

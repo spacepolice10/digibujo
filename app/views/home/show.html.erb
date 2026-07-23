@@ -1,23 +1,33 @@
-<br>
+
+<main class="layout--page">
 <p class="utilities--mx-auto typography--paragraph-sm">Press ⌘+K to open the menu</p>
-<div class="layout--container layout--container-lg layout--grid cols-4">
-  <aside class="home--side layout--grid-item span-1">
+<div class="layout--container layout--container-md layout--gapped layout--grid" style="--grid-item-size: 10rem;">
+  <aside class="home--side layout--grid-item">
     <%= render "home_actions" %>
     <%= render "appearance_picker", appearance: @appearance %>
   </aside>
 
-  <div class="layout--surface layout--grid-item span-2 home--section-list">
+  <div class="layout--surface layout--grid-item span-2 home--section-list layout--padded">
+    <div class="layout--flex layout--justify-between layout--surface layout--surface-sunken layout--padded">
+      <div>
+    <h2 class="typography--h2">Hi there, <%= current_user.email_address.split("@").first %> 😉 </h2>
+    <p class="typography--paragraph-sm">Welcome to your home page</p>
+    </div>
+
+    </div>
     <% @sections.each do |section| %>
       <%= render "home_section", section: section %>
     <% end %>
   </div>
 
-  <aside class="home--activity layout--grid-item span-1">
-    <h2>Activity</h2>
+  <aside class="layout--grid-item home--activity">
     <turbo-frame
-      id="home_activity"
+      id="home_activities"
       src="<%= home_activities_path %>"
       loading="lazy"
-    ></turbo-frame>
-  </aside>
+    >
+    <i class="icon animations--spin" style="--icon-mask: var(--icon-spinner); margin-top: var(--spacing-vertical-triple)" aria-hidden="true"></i>
+  </turbo-frame>
+</aside>
 </div>
+</main>

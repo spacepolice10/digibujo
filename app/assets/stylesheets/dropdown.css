@@ -3,9 +3,10 @@
  *
  * Markup patterns:
  *   <details class="dropdown"> … <div class="dropdown-body">
- *   <turbo-frame class="dropdown pinned--list" popover> … footer bullet lists
+ *   <div class="dropdown--dock"> … <* class="dropdown dropdown--element …" popover>
+ *     <%= render "shared/dropdown", name:, popover_target: do %> … <% end %>
  *   <div class="dropdown-menu dropdown-menu--anchor …" popover>
- * Trigger: anchor-name (inline). Menu: position-anchor (inline).
+ * Trigger: anchor-name on .dropdown--dock. Panel: position-anchor (component CSS).
  */
 
 @layer components {
@@ -51,28 +52,7 @@
     width: 100%;
   }
 
-  /* ── Popover panel header (sticky, slight lift over scrolling body) ── */
-
-  .dropdown--header {
-    position: sticky;
-    top: 0;
-    z-index: var(--z-dialog-backdrop);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--spacing-horizontal);
-    padding: var(--spacing-horizontal-half);
-    background: var(--color-bg-base);
-    /* 1px hairline — no stroke-width token in the design system */
-    border-bottom: 1px solid var(--color-stroke-base);
-    box-shadow: var(--shadow-subtle), var(--shadow-base);
-
-    & h2 {
-      font-size: var(--font-size-base);
-    }
-  }
-
-  /* ── Popover menu panel ─────────────────────────── */
+  /* ── Anchor-backed popover panel (pinned, mobile create, …) ── */
 
   .dropdown-menu {
     padding: var(--spacing-vertical-half);
@@ -136,8 +116,105 @@
     }
   }
 
-  .pinned--list[popover] {
+  /* ── Anchor-backed popover panel (pinned, mobile create, …) ── */
+
+  .dropdown--dock {
+    display: flex;
+    position: relative;
+    width: fit-content;
+    flex-shrink: 0;
+  }
+
+  .dropdown--element[popover] {
+    position: fixed;
+    inset: unset;
+    box-sizing: border-box;
     z-index: var(--z-dropdown);
+    display: flex;
+    flex-direction: column;
+    width: min(
+      calc(var(--spacing-horizontal-double) * 18),
+      calc(100dvw - var(--spacing-horizontal-double))
+    );
+    min-width: min(
+      calc(var(--spacing-horizontal-double) * 18),
+      calc(100dvw - var(--spacing-horizontal-double))
+    );
+    max-height: min(
+      calc(var(--spacing-horizontal-double) * 14),
+      calc(100dvh - var(--spacing-horizontal-double) * 5)
+    );
+    overflow: auto;
+    background-color: var(--color-bg-base);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-strong);
+    box-shadow: var(--shadow-base);
+    position-try-fallbacks:
+      flip-block,
+      flip-inline,
+      flip-block flip-inline;
+  }
+
+  .dropdown--element-up {
+    position-area: block-start inline-end;
+    margin-block-end: var(--spacing-vertical-half);
+  }
+
+  .dropdown--element-bottom {
+    position-area: block-end inline-end;
+    margin-block-start: var(--spacing-vertical-half);
+  }
+
+  .dropdown--element-header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-horizontal);
+    padding: var(--spacing-horizontal-half) var(--spacing-horizontal);
+    background: var(--color-bg-base);
+    border-bottom: 1px solid var(--color-stroke-base);
+
+    h2 {
+      margin: 0;
+      min-width: 0;
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-strong);
+    }
+  }
+
+  .dropdown--element-body {
+    padding: var(--spacing-horizontal-half) var(--spacing-horizontal-half) var(--spacing-vertical-half);
+  }
+
+  .dropdown--element-hide {
+    flex-shrink: 0;
+    width: var(--spacing-horizontal-double);
+    height: var(--spacing-horizontal-double);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-full);
+  }
+
+  /* Side slide — discrete enter/exit (close reverses before display:none) */
+  [popover].animations--side-in {
+    opacity: 0;
+    transform: translateX(100%);
+    transition:
+      opacity 0.08s ease,
+      transform 0.08s ease,
+      display 0.08s allow-discrete,
+      overlay 0.08s allow-discrete;
+  }
+
+  [popover].animations--side-in:popover-open {
+    opacity: 1;
+    transform: translateX(0);
+
+    @starting-style {
+      transform: translateX(100%);
+    }
   }
 
   .dropdown-menu--anchor-inline-start {

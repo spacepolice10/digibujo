@@ -6,32 +6,26 @@
     justify-content: center;
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     margin-block: var(--spacing-vertical-half) 0;
+    position: sticky;
+    bottom: 1rem;
   }
 
   .bullets-form--dock-mobile {
     position: fixed;
     inset-inline: var(--spacing-horizontal);
-    bottom: var(--tabbar-scroll-padding);
+    bottom: var(--layout-scroll-padding);
     z-index: var(--z-dropdown);
     justify-content: center;
     width: fit-content;
     max-width: calc(100% - var(--spacing-horizontal-double));
     margin-inline: auto;
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    background: var(--color-bg-base);
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
-    box-shadow: var(--shadow-subtle);
   }
   .bullets-form--buttons {
     display: flex;
     align-items: center;
     gap: var(--spacing-horizontal-half);
     justify-content: center;
-    background: var(--color-bg-base);
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
-    box-shadow: var(--shadow-subtle);
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
   }
   .bullets-form--create-button {
@@ -40,9 +34,10 @@
     gap: var(--spacing-horizontal-half);
     justify-content: space-between;
     text-decoration: none;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    border-radius: var(--radius-base);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+    border-radius: var(--radius-strong);
     color: var(--color-fg-base);
+    background: var(--color-bg-base);
     &:hover {
       background: var(--color-bg-strong);
       color: var(--color-fg-strong);

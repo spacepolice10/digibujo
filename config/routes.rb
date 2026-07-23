@@ -25,8 +25,10 @@ Rails.application.routes.draw do
     resource :picture, only: %i[create destroy], module: :daylogs
   end
 
-  get 'monthlylog', to: 'monthlylogs#current', as: :current_monthlylog
+  get 'monthlylog', to: 'monthlylogs#show', as: :current_monthlylog
   get 'monthly_bucket', to: redirect('/monthlylog')
+
+  get 'future', to: 'futures#show', as: :current_future
 
   resources :futures, only: %i[show new create]
 
@@ -84,7 +86,7 @@ Rails.application.routes.draw do
 
   # --- Home & navigation ---
   resource :home, controller: 'home' do
-    resources :activities
+    resources :activities, module: :home
   end
 
   scope module: :home do

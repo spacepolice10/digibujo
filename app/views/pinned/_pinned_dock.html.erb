@@ -1,4 +1,4 @@
-<div class="pinned--dock">
+<div class="dropdown--dock pinned--dock">
   <button
     type="button"
     class="button--secondary button--circle hotkey-hint pinned--dock-button"
@@ -13,7 +13,7 @@
   </button>
   <turbo-frame
     id="pinned_list"
-    class="dropdown pinned--list"
+    class="dropdown dropdown--element dropdown--element-up animations--side-in pinned--dropdown"
     src="<%= pinned_index_path %>"
     loading="lazy"
     popover

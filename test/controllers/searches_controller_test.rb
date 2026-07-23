@@ -69,7 +69,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "turbo-stream[action=?][target=?]", "update", "menu_search" do
-      assert_select "li.layout--list-item", maximum: Search::GlobalRequest::LIMIT
+      assert_select "li[role=option]", maximum: Search::GlobalRequest::LIMIT
     end
   end
 
@@ -105,17 +105,16 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_path
 
     assert_response :success
-    assert_select "h4.search--section-heading", text: "Recent"
-    assert_match "recent alpha", response.body
+    assert_turbo_frame "menu_search"
+    assert_page_text "recent alpha"
   end
 
   test "show with blank query and no selections renders recents placeholder" do
     get search_path
 
     assert_response :success
-    assert_select "h4.search--section-heading", count: 0
-    assert_select "ul.search--results", count: 0
-    assert_match "No recents yet.", response.body
+    assert_select "ul[role=listbox]", count: 0
+    assert_page_text "No recent searches."
   end
 
   test "show with query does not render recent selections" do
@@ -129,8 +128,8 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_path, params: { q: "recent" }
 
     assert_response :success
-    assert_select "h4.search--section-heading", count: 0
-    assert_match "recent beta", response.body
+    assert_select "ul[role=listbox]", count: 1
+    assert_page_text "recent beta"
   end
 
   test "show with blank query renders recent list on mobile" do
@@ -144,9 +143,8 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_path, headers: { "User-Agent" => "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)" }
 
     assert_response :success
-    assert_select "h4.search--section-heading", count: 0
-    assert_select "details.home--section summary .home--section-name", text: "Recent", count: 0
-    assert_select "ul.search--results", count: 1
-    assert_match "recent mobile", response.body
+    assert_select "details summary", text: "Recent", count: 0
+    assert_select "ul[role=listbox]", count: 1
+    assert_page_text "recent mobile"
   end
 end

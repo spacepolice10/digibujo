@@ -13,14 +13,10 @@
   <summary class="home--section-summary">
     <span class="home--section-name"><%= section.name %></span>
 
-    <i
-      class="icon home--section-chevron"
-      style="--icon-mask: var(--icon-chevron-down)"
-      aria-hidden="true"
-    ></i>
+    <%= icon_tag("chevron-down", style: "color: var(--color-text-base);", class: "home--section-chevron") %>
 
     <% if section.show_path.present? %>
-      <%= link_to "Show more",
+      <%= link_to "Show all",
           section.show_path,
           class: "home--section-more",
           data: { turbo_frame: "_top" },
@@ -31,7 +27,7 @@
   <div class="home--section-content-wrapper">
       <ul class="layout--list">
         <% Array.wrap(section.records).each do |record| %>
-          <%= render record %>
+            <%= render record %>
         <% end %>
       </ul>
     </div>

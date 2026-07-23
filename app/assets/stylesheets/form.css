@@ -9,14 +9,14 @@
 
   /* ── Label ────────────────────────────────────────── */
 
-  .form-label {
+  form label {
     display: block;
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-strong);
     color: var(--color-fg-subtle);
   }
 
-  .form-small {
+  form small {
     display: flex;
     font-size: var(--font-size-subtle);
   }
@@ -51,13 +51,13 @@
 
   /* ── Textarea ─────────────────────────────────────── */
 
-  .form-textarea {
-    resize: vertical;
+  textarea {
+    resize: none;
   }
 
   /* ── Select ───────────────────────────────────────── */
 
-  .form-select {
+  select {
     appearance: none;
     cursor: pointer;
     padding-right: var(--spacing-horizontal);
@@ -94,7 +94,7 @@
 
   /* ── Checkbox & Radio ─────────────────────────────── */
 
-  .form-check {
+  .form-checkbox {
     position: relative;
     overflow: hidden;
     display: inline-flex;
@@ -106,8 +106,13 @@
     border: 1px solid var(--color-stroke-base);
     border-radius: var(--radius-base);
 
+    &:hover {
+      background: var(--color-bg-base);
+    }
+
     &:has(input:checked) {
       border-color: var(--color-fg-base);
+      background: var(--color-accent);
 
       &::after {
         content: "*";
@@ -150,7 +155,7 @@
 
   /* ── Field group ──────────────────────────────────── */
 
-  .form-group {
+  .form-section {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-vertical);

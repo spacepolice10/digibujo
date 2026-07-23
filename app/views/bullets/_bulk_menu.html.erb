@@ -1,4 +1,4 @@
-<div class="bulk-menu"
+<div class="bulk-menu layout--surface"
      data-bulk-menu-target="menu"
      data-action="keydown.esc@document->bulk-menu#escape"
      data-turbo-temporary="true"
@@ -16,7 +16,7 @@
                 action: "keydown.p@document->hotkey#click"
               },
               aria: { keyshortcuts: "P" } do %>
-          <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
+          <%= icon_tag("pin") %>
           Pin
         <% end %>
       <% end %>
@@ -33,7 +33,7 @@
                 action: "keydown.p@document->hotkey#click"
               },
               aria: { keyshortcuts: "P" } do %>
-          <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
+          <%= icon_tag("pin") %>
           Unpin
         <% end %>
       <% end %>
@@ -50,7 +50,7 @@
                 action: "keydown.c@document->hotkey#click"
               },
               aria: { keyshortcuts: "C" } do %>
-          <i class="icon" style="--icon-mask: var(--icon-check)" aria-hidden="true"></i>
+          <%= icon_tag("check") %>
           Complete
         <% end %>
       <% end %>
@@ -67,7 +67,7 @@
                 action: "keydown.u@document->hotkey#click"
               },
               aria: { keyshortcuts: "U" } do %>
-          <i class="icon" style="--icon-mask: var(--icon-square)" aria-hidden="true"></i>
+          <%= icon_tag("square") %>
           Uncomplete
         <% end %>
       <% end %>
@@ -83,7 +83,7 @@
               action: "keydown.a@document->hotkey#click"
             },
             aria: { keyshortcuts: "A" } do %>
-        <i class="icon" style="--icon-mask: var(--icon-archive)" aria-hidden="true"></i>
+        <%= icon_tag("archive") %>
         Archive
       <% end %>
     <% end %>
@@ -95,7 +95,7 @@
               data-hotkey="L"
               data-action="bulk-menu#openPopsPicker keydown.l@document->hotkey#click"
               aria-keyshortcuts="L">
-        <i class="icon" style="--icon-mask: var(--icon-arrow-up)" aria-hidden="true"></i>
+        <%= icon_tag("arrow-up") %>
         Later
       </button>
       <turbo-frame id="postpone_picker_dropdown_id"
@@ -115,7 +115,7 @@
               data-hotkey="S"
               data-action="bulk-menu#openCollectsPicker keydown.s@document->hotkey#click"
               aria-keyshortcuts="S">
-        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
+        <%= icon_tag("arrow-left") %>
         Save
       </button>
       <turbo-frame id="collects_picker_dropdown_id"
@@ -129,7 +129,7 @@
     <button type="button"
             class="button--primary button--icon button--circle bulk-menu--hide"
             data-action="bulk-menu#clear">
-      <i class="icon" style="--icon-mask: var(--icon-x)" aria-hidden="true"></i>
+      <%= icon_tag("x") %>
     </button>
   </div>
 

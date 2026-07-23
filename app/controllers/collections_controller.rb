@@ -2,7 +2,7 @@
 
 class CollectionsController < ApplicationController
   include PrepareBullets
-  before_action :set_collection, only: %i[show destroy]
+  before_action :set_collection, only: %i[show edit update destroy]
   before_action :prepare_collect_context, only: %i[new create]
 
   def index
@@ -57,6 +57,19 @@ class CollectionsController < ApplicationController
       @collection.bucket.bullets.active,
       per_page: [15, 30, 50, 100]
     )
+  end
+
+  def edit; end
+
+  def update
+    @collection.assign_attributes(description: collection_params[:description])
+    @collection.bucket.assign_attributes(collection_params.slice(:name, :colour, :icon))
+
+    if @collection.save
+      redirect_to collection_path(@collection), notice: 'Collection updated'
+    else
+      render :edit, status: :unprocessable_entity
+    end
   end
 
   def destroy

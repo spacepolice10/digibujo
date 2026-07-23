@@ -17,8 +17,8 @@ class BucketsControllerTest < ActionDispatch::IntegrationTest
     )
 
     get bucket_path(collection.bucket), headers: { 'Turbo-Frame' => dom_id(collection.bucket, :footer_bullets) }
-    assert_select "turbo-frame##{dom_id(collection.bucket, :footer_bullets)}[popover].pinned--list" do
-      assert_select '.dropdown--header h2', text: 'bucket list'
+    assert_select "turbo-frame##{dom_id(collection.bucket, :footer_bullets)}[popover].pinned--dropdown" do
+      assert_select '.dropdown--element-header h2', text: 'bucket list'
       assert_select '.bullet', text: /In bucket/, count: 1
     end
   end

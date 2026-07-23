@@ -96,9 +96,9 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     get daylog_path(date: selected_date.iso8601)
 
     assert_response :success
-    assert_select 'dialog#daylog_composer.bullet-composer--dialog'
+    assert_select 'dialog#daylog_composer.bullets-form--dialog'
     assert_select 'dialog#daylog_composer turbo-frame#daylog_bullets_composer'
-    assert_select '.bullet-composer--dock' do
+    assert_select '.bullets-form--dock' do
       assert_select 'a[data-turbo-frame=?][href=?]',
                     'daylog_bullets_composer',
                     new_bullet_path(
@@ -132,7 +132,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     get daylog_path(date: selected_date.iso8601), headers: { 'User-Agent' => mobile_ua }
 
     assert_response :success
-    assert_select 'dialog#daylog_composer.bullet-composer--dialog'
+    assert_select 'dialog#daylog_composer.bullets-form--dialog'
     assert_select 'dialog#daylog_composer turbo-frame#daylog_bullets_composer'
     assert_select 'a[data-turbo-frame=?][href=?]',
                   'daylog_bullets_composer',
