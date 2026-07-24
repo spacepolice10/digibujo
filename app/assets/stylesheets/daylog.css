@@ -46,8 +46,42 @@
   }
 
   .daylog--date-picker {
+    position: relative;
     font-family: monospace;
+    font-size: var(--font-size-xs);
     width: 6rem;
+  }
+
+  .daylog--date-picker-face {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-vertical-half);
+    pointer-events: none;
+  }
+
+  /* Full-hit target: Chrome opens the picker via the indicator, not the field body. */
+  .daylog--date-picker-input {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .daylog--date-picker-input::-webkit-calendar-picker-indicator {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
   }
 
   .daylog--todays-indicator-ring {

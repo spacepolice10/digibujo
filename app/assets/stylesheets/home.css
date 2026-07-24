@@ -1,5 +1,10 @@
 @layer components {
 
+.home--greeting {
+  margin-top: var(--spacing-vertical-quad);
+  margin-bottom: var(--spacing-vertical)
+}
+
   .home--side {
     min-width: 0;
     top: var(--spacing-vertical);

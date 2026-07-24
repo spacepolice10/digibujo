@@ -79,12 +79,24 @@
     view-transition-name: bullet-composer;
   }
 
+  .bullets-form--wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: fixed;
+    inset: 0;
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
+  }
+
   .bullets-form {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-vertical-half);
     align-items: center;
     opacity: 1;
+    overflow: scroll;
+    overscroll-behavior: none;
     transform: translateY(0);
     transition:
       opacity 200ms ease-out,
@@ -113,6 +125,7 @@
 
   /* Empty page shell ↔ button shell (shared-element morph). */
   .bullets-form--page {
+    max-height: 90vh;
     position: relative;
     isolation: isolate;
     &::before {
@@ -167,6 +180,7 @@
     width: 100%;
     align-items: center;
     justify-content: space-between;
+    background: var(--color-bg-subtle);
     padding-block: var(--spacing-vertical-half);
     & .bullets-form--rail-actions {
       display: flex;
@@ -205,7 +219,6 @@
     width: 100%;
     margin: var(--spacing-vertical-half) 0;
     border: none;
-      background: var(--color-bg-subtle);
     padding: var(--spacing-vertical) var(--spacing-horizontal);
     border-radius: var(--radius-base);
     outline: none !important;

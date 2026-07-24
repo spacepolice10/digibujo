@@ -1,7 +1,8 @@
 <% content_for(:title) { "New bullet" } %>
 
+<div class="bullets-form--wrap">
 <div
-  class="layout--page layout--container layout--container-md<%= " bullets-form--page" if @bullet.bulletable_type.present? %>"
+  class="layout--page layout--container layout--container-md layout--padded <%= " bullets-form--page" if @bullet.bulletable_type.present? %>"
   <% if @bullet.bulletable_type.present? %>
     data-bullet-type="<%= @bullet.bulletable_type.downcase %>"
   <% end %>
@@ -20,4 +21,5 @@
       </div>
     </div>
   <% end %>
+</div>
 </div>

@@ -2,14 +2,14 @@
 
 <div class="layout--page">
   <div class="layout--flex layout--justify-between">
-    <h1 class="typography--h1 typography--truncate">Hello <%= current_user.name %></h1>
-
+        <%= image_tag "/icon.svg", class: "button button--icon button--circle" %>
     <div class="layout--flex">
       <%= render "account_button" %>
       <%= render "create_dock" %>
     </div>
   </div>
-
+  
+  <h1 class="typography--h1 typography--truncate home--greeting">Hello, <%= current_user.name %></h1>
   <%= render "menu/navigation" %>
 
   <div

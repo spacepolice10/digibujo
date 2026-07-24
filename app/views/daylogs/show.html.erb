@@ -16,25 +16,20 @@
               <%= icon_tag("arrow-left") %>
             <% end %>
 
-            <button
-              type="button"
-              class="button--tertiary daylog--date-picker"
-              data-action="daylog#openDatePicker"
-              aria-label="Pick a date"
-            >
-              <%= icon_tag("calendar") %>
+            <div class="button--tertiary daylog--date-picker">
+              <span class="daylog--date-picker-face" aria-hidden="true">
+                <%= icon_tag("calendar") %>
+                <%= @selected_date.strftime("%a, %b %-d") %>
+              </span>
 
-              <%= @selected_date.strftime("%a, %b %-d") %>
-            </button>
-
-            <input <%# herb:disable html-input-require-autocomplete %>
-              type="date"
-              value="<%= @selected_date.iso8601 %>"
-              data-daylog-target="dateForm"
-              data-action="change->daylog#switchDate"
-              class="utilities--sr-only"
-              tabindex="-1"
-            >
+              <input <%# herb:disable html-input-require-autocomplete %>
+                type="date"
+                value="<%= @selected_date.iso8601 %>"
+                data-action="change->daylog#switchDate"
+                class="daylog--date-picker-input"
+                aria-label="Pick a date"
+              >
+            </div>
 
             <%= link_to daylog_path(date: (@selected_date + 1.day).iso8601),
                   data: {
