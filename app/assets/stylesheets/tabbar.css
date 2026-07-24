@@ -2,6 +2,19 @@
   navigation: auto;
 }
 
+/* Desktop: no page crossfade — only named transitions (composer) animate. */
+@media (min-width: 800px) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  ::view-transition-old(root) {
+    display: none;
+  }
+}
+
 @layer components {
   body:has(.tabbar--navigation) {
     padding-bottom: var(--layout-scroll-padding);

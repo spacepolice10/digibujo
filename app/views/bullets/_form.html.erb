@@ -10,7 +10,7 @@
 %>
 
 <%= form_with model: bullet,
-      class: ["bullets-form", ("bullets-form--page" if return_path.present?)],
+      class: "bullets-form",
       data: {
         composer_form: true,
         bullet_type: (bullet.bulletable_type.downcase if return_path.present?),
@@ -55,7 +55,6 @@
     <span
       class="bullets-form--type-pill"
       data-bullet-type="<%= bullet.bulletable_type.downcase %>"
-      data-composer-transition-type="<%= bullet.bulletable_type.downcase %>"
     >
       <%= bullet.bulletable_type %>
     </span>

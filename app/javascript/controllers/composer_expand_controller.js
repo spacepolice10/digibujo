@@ -1,27 +1,26 @@
 import { Controller } from "@hotwired/stimulus"
 
 const VT_CLASS = "is-composer-expanding"
-const STORAGE_KEY = "composer-expand-type"
 
-// Shared-element expand: create-button shell ↔ page-form shell.
-// Only one element may hold the view-transition-name at a time (many dock
-// buttons share a type on monthlylog), so we mark the clicked button; CSS
-// puts the name on its ::before (background only — no stretched label text).
+// Marks which create control shares `bullet-composer` with the page shell.
+// Also flags <html data-composer-vt> so root page content stays hidden while
+// the shell morphs (avoids editor-on-editor).
 export default class extends Controller {
   connect() {
-    this.boundClick = (event) => this.#onClick(event)
-    this.boundBeforeRender = (event) => this.#onBeforeRender(event)
-    this.boundLoad = () => this.#onLoad()
+    this.onClick = (event) => this.#onClick(event)
+    this.onBeforeRender = (event) => this.#onBeforeRender(event)
+    this.onLoad = () => this.#onLoad()
+    this.waitingForVt = false
 
-    document.addEventListener("turbo:click", this.boundClick)
-    document.addEventListener("turbo:before-render", this.boundBeforeRender)
-    document.addEventListener("turbo:load", this.boundLoad)
+    document.addEventListener("turbo:click", this.onClick)
+    document.addEventListener("turbo:before-render", this.onBeforeRender)
+    document.addEventListener("turbo:load", this.onLoad)
   }
 
   disconnect() {
-    document.removeEventListener("turbo:click", this.boundClick)
-    document.removeEventListener("turbo:before-render", this.boundBeforeRender)
-    document.removeEventListener("turbo:load", this.boundLoad)
+    document.removeEventListener("turbo:click", this.onClick)
+    document.removeEventListener("turbo:before-render", this.onBeforeRender)
+    document.removeEventListener("turbo:load", this.onLoad)
   }
 
   #onClick(event) {
@@ -30,43 +29,65 @@ export default class extends Controller {
     const link = event.target.closest("[data-composer-expand]")
     if (!link) return
 
-    this.#clearExpanding(document)
+    this.#clear(document)
     link.classList.add(VT_CLASS)
-
-    const type = link.dataset.bulletType
-    if (type) sessionStorage.setItem(STORAGE_KEY, type)
+    this.#arm()
   }
 
   #onBeforeRender(event) {
     if (this.#reducedMotion) return
 
-    const type = sessionStorage.getItem(STORAGE_KEY)
+    const leaving = document.querySelector(".bullets-form--page")
+    const entering = event.detail.newBody.querySelector(".bullets-form--page")
+    if (!leaving && !entering) return
+
+    this.#arm()
+
+    if (!leaving) return
+
+    const type = leaving.dataset.bulletType
     if (!type) return
 
     const newBody = event.detail.newBody
-    if (newBody.querySelector(".bullets-form--page")) return
+    this.#clear(newBody)
 
-    this.#clearExpanding(newBody)
-    const button = newBody.querySelector(`[data-composer-expand][data-bullet-type="${CSS.escape(type)}"]`)
+    const button = newBody.querySelector(
+      `[data-composer-expand][data-bullet-type="${CSS.escape(type)}"]`
+    )
     if (button) button.classList.add(VT_CLASS)
   }
 
   #onLoad() {
-    this.#clearExpanding(document)
-
-    const pageForm = document.querySelector(".bullets-form--page")
-    if (pageForm) {
-      const type = pageForm.dataset.bulletType
-      if (type) sessionStorage.setItem(STORAGE_KEY, type)
-      return
-    }
-
-    sessionStorage.removeItem(STORAGE_KEY)
+    this.#clear(document)
+    if (!this.waitingForVt) this.#unarm()
   }
 
-  #clearExpanding(root) {
-    root.querySelectorAll(`[data-composer-expand].${VT_CLASS}`).forEach((element) => {
-      element.classList.remove(VT_CLASS)
+  #arm() {
+    document.documentElement.dataset.composerVt = ""
+    if (this.waitingForVt) return
+
+    this.waitingForVt = true
+
+    const onReveal = (event) => {
+      window.removeEventListener("pagereveal", onReveal)
+      if (event.viewTransition) {
+        event.viewTransition.finished.finally(() => this.#unarm())
+      } else {
+        this.#unarm()
+      }
+    }
+
+    window.addEventListener("pagereveal", onReveal)
+  }
+
+  #unarm() {
+    this.waitingForVt = false
+    delete document.documentElement.dataset.composerVt
+  }
+
+  #clear(root) {
+    root.querySelectorAll(`[data-composer-expand].${VT_CLASS}`).forEach((el) => {
+      el.classList.remove(VT_CLASS)
     })
   }
 

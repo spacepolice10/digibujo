@@ -38,7 +38,7 @@
     text-decoration: none;
     padding: var(--spacing-vertical-half) var(--spacing-horizontal);
     border-radius: var(--radius-strong);
-    color: var(--color-fg-strong);
+    color: var(--color-fg-base);
     background: transparent;
     border: none;
     &::before {
@@ -47,7 +47,7 @@
       inset: 0;
       z-index: -1;
       border-radius: inherit;
-      background: var(--color-bg-strong);
+      background: var(--color-bg-subtle);
       border: 1px solid var(--color-stroke-base);
       box-shadow: var(--shadow-base);
     }
@@ -73,14 +73,45 @@
       color: var(--model-color-5);
     }
   }
+
+  /* Future "+" etc. — no shell, name on the control itself. */
+  [data-composer-expand].is-composer-expanding:not(.bullets-form--create-button) {
+    view-transition-name: bullet-composer;
+  }
+
   .bullets-form {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-vertical-half);
     align-items: center;
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity 200ms ease-out,
+      transform 200ms ease-out;
+
+    @starting-style {
+      opacity: 0;
+      transform: translateY(var(--spacing-vertical-half));
+    }
   }
 
-  /* Shared-element VT morphs only the empty shell (like tabbar), not label text. */
+  /* During shell morph: hide page snapshot + live form (no editor-on-editor). */
+  html[data-composer-vt] {
+    & ::view-transition-new(root) {
+      opacity: 0 !important;
+      animation: none !important;
+      mix-blend-mode: normal;
+    }
+
+    & .bullets-form--page .bullets-form {
+      opacity: 0;
+      transform: translateY(var(--spacing-vertical-half));
+      transition: none;
+    }
+  }
+
+  /* Empty page shell ↔ button shell (shared-element morph). */
   .bullets-form--page {
     position: relative;
     isolation: isolate;
@@ -90,7 +121,7 @@
       inset: 0;
       z-index: -1;
       border-radius: var(--radius-strong);
-      
+      background: var(--color-bg-subtle);
       view-transition-name: bullet-composer;
     }
   }
@@ -109,7 +140,17 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .bullets-form {
+      transition: none;
+
+      @starting-style {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
     .bullets-form--create-button.is-composer-expanding::before,
+    [data-composer-expand].is-composer-expanding:not(.bullets-form--create-button),
     .bullets-form--page::before {
       view-transition-name: none;
     }
