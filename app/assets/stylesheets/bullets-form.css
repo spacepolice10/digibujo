@@ -29,6 +29,8 @@
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
   }
   .bullets-form--create-button {
+    position: relative;
+    isolation: isolate;
     display: flex;
     align-items: center;
     gap: var(--spacing-horizontal-half);
@@ -36,14 +38,27 @@
     text-decoration: none;
     padding: var(--spacing-vertical-half) var(--spacing-horizontal);
     border-radius: var(--radius-strong);
-    color: var(--color-fg-base);
-    background: var(--color-bg-strong);
     color: var(--color-fg-strong);
-    border: 1px solid var(--color-stroke-base);
-    box-shadow: var(--shadow-base);
+    background: transparent;
+    border: none;
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: inherit;
+      background: var(--color-bg-strong);
+      border: 1px solid var(--color-stroke-base);
+      box-shadow: var(--shadow-base);
+    }
     &:hover {
-      background: var(--color-bg-base);
       color: var(--color-fg-subtle);
+      &::before {
+        background: var(--color-bg-base);
+      }
+    }
+    &.is-composer-expanding::before {
+      view-transition-name: bullet-composer;
     }
     &[data-bullet-type="task"] > .icon {
       color: var(--model-color-2);
@@ -65,8 +80,19 @@
     align-items: center;
   }
 
+  /* Shared-element VT morphs only the empty shell (like tabbar), not label text. */
   .bullets-form--page {
-    view-transition-name: bullet-composer;
+    position: relative;
+    isolation: isolate;
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: var(--radius-strong);
+      
+      view-transition-name: bullet-composer;
+    }
   }
 
   ::view-transition-group(bullet-composer) {
@@ -83,7 +109,8 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .bullets-form--page {
+    .bullets-form--create-button.is-composer-expanding::before,
+    .bullets-form--page::before {
       view-transition-name: none;
     }
 

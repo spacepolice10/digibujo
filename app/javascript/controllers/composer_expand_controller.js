@@ -1,11 +1,12 @@
 import { Controller } from "@hotwired/stimulus"
 
-const VT_NAME = "bullet-composer"
+const VT_CLASS = "is-composer-expanding"
 const STORAGE_KEY = "composer-expand-type"
 
-// Shared-element expand: create button ↔ full-page composer.
+// Shared-element expand: create-button shell ↔ page-form shell.
 // Only one element may hold the view-transition-name at a time (many dock
-// buttons share a type on monthlylog), so we assign it on click / before-render.
+// buttons share a type on monthlylog), so we mark the clicked button; CSS
+// puts the name on its ::before (background only — no stretched label text).
 export default class extends Controller {
   connect() {
     this.boundClick = (event) => this.#onClick(event)
@@ -29,8 +30,8 @@ export default class extends Controller {
     const link = event.target.closest("[data-composer-expand]")
     if (!link) return
 
-    this.#clearInlineNames(document)
-    link.style.viewTransitionName = VT_NAME
+    this.#clearExpanding(document)
+    link.classList.add(VT_CLASS)
 
     const type = link.dataset.bulletType
     if (type) sessionStorage.setItem(STORAGE_KEY, type)
@@ -45,13 +46,13 @@ export default class extends Controller {
     const newBody = event.detail.newBody
     if (newBody.querySelector(".bullets-form--page")) return
 
-    this.#clearInlineNames(newBody)
+    this.#clearExpanding(newBody)
     const button = newBody.querySelector(`[data-composer-expand][data-bullet-type="${CSS.escape(type)}"]`)
-    if (button) button.style.viewTransitionName = VT_NAME
+    if (button) button.classList.add(VT_CLASS)
   }
 
   #onLoad() {
-    this.#clearInlineNames(document)
+    this.#clearExpanding(document)
 
     const pageForm = document.querySelector(".bullets-form--page")
     if (pageForm) {
@@ -63,11 +64,9 @@ export default class extends Controller {
     sessionStorage.removeItem(STORAGE_KEY)
   }
 
-  #clearInlineNames(root) {
-    root.querySelectorAll("[data-composer-expand]").forEach((element) => {
-      if (element.style.viewTransitionName === VT_NAME) {
-        element.style.viewTransitionName = ""
-      }
+  #clearExpanding(root) {
+    root.querySelectorAll(`[data-composer-expand].${VT_CLASS}`).forEach((element) => {
+      element.classList.remove(VT_CLASS)
     })
   }
 

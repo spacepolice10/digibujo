@@ -10,7 +10,6 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 100%;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-size: var(--font-size-base);
     background: var(--color-bg-base);
@@ -76,22 +75,22 @@
 
   /* Appearance. Theming colors — on body so Turbo morph refresh reapplies tokens. */
 
-  body[data-appearance="warm"] {
+  html[data-appearance="warm"] {
     --color-bg-base: light-dark(oklch(0.97 0.015 78), oklch(0.19 0.025 78));
     --color-bg-subtle: light-dark(oklch(0.99 0.01 78), oklch(0.24 0.018 78));
   }
 
-  body[data-appearance="cool"] {
+  html[data-appearance="cool"] {
     --color-bg-base: light-dark(oklch(0.97 0.015 250), oklch(0.19 0.025 255));
     --color-bg-subtle: light-dark(oklch(0.99 0.01 250), oklch(0.24 0.018 255));
   }
 
-  body[data-appearance="nature"] {
+  html[data-appearance="nature"] {
     --color-bg-base: light-dark(oklch(0.97 0.015 145), oklch(0.19 0.025 145));
     --color-bg-subtle: light-dark(oklch(0.99 0.01 145), oklch(0.24 0.018 145));
   }
 
-  body[data-appearance="cheese"] {
+  html[data-appearance="cheese"] {
     --color-bg-base: light-dark(oklch(0.97 0.02 85), oklch(0.19 0.03 85));
     --color-bg-subtle: light-dark(oklch(0.99 0.014 85), oklch(0.24 0.022 85));
   }
