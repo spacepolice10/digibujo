@@ -7,7 +7,6 @@
     <%= icon_tag(@bullet.marker_icon.to_s.dasherize,
           style: "color: #{bullet_colour};",
           class: "bullet--header-icon") %>
-    <h2><%= @bullet.name %></h2>
   </div>
 
   <div class="layout--surface">
@@ -18,14 +17,7 @@
       <% end %>
 
       <div class="layout--flex layout--gapped">
-        <% unless @bullet.bulletable_type == "Voice" %>
-          <%= link_to edit_bullet_path(@bullet),
-                class: "button--secondary button--sm",
-                data: { turbo_frame: "_top" } do %>
-            <%= icon_tag("pencil", style: "color: var(--color-text-base);", class: "button--icon") %>
-            Edit
-          <% end %>
-        <% end %>
+      
 
         <% if @bullet.pinned? %>
           <%= button_to pin_path,
@@ -36,6 +28,7 @@
             <%= icon_tag("pin", style: "color: var(--color-text-base);", class: "button--icon") %>
             Unpin
           <% end %>
+          
         <% else %>
           <%= button_to pin_path,
                 method: :post,
@@ -47,11 +40,25 @@
           <% end %>
         <% end %>
 
+        <button type="button" class="button--secondary button--sm" aria-label="Actions" aria-haspopup="menu" popovertarget="<%= dom_id(@bullet, :actions) %>">
+          <%= icon_tag("dots", style: "color: var(--color-text-base);", class: "button--icon") %>
+          Actions
+        </button>
+        <div id="<%= dom_id(@bullet, :actions) %>" class="dropdown dropdown--element dropdown--element-bottom animations--side-in" style="position-anchor: <%= dom_id(@bullet, :actions) %>" popover>
+          <%= render "shared/dropdown", name: "Actions", popover_target: dom_id(@bullet, :actions) do %>
+        <% unless @bullet.bulletable_type == "Voice" %>
+        <%= link_to edit_bullet_path(@bullet),
+              class: "button--tertiary button--sm",
+              data: { turbo_frame: "_top" } do %>
+          <%= icon_tag("pencil", style: "color: var(--color-text-base);", class: "button--icon") %>
+          Edit
+        <% end %>
+      <% end %>
         <% if @bullet.published? %>
           <%= button_to publish_path,
                 method: :delete,
                 params: { bullet_ids: @bullet.id },
-                class: "button--secondary button--sm",
+                class: "button--tertiary button--sm",
                 aria: { label: "Unpublish #{@bullet.name}" } do %>
             <%= icon_tag("link", style: "color: var(--color-text-base);", class: "button--icon") %>
             Unpublish
@@ -60,7 +67,7 @@
           <%= button_to publish_path,
                 method: :post,
                 params: { bullet_ids: @bullet.id },
-                class: "button--secondary button--sm",
+                class: "button--tertiary button--sm",
                 aria: { label: "Publish #{@bullet.name}" } do %>
             <%= icon_tag("link", style: "color: var(--color-text-base);", class: "button--icon") %>
             Publish
@@ -71,7 +78,7 @@
           <%= button_to archive_path,
                 method: :delete,
                 params: { bullet_ids: @bullet.id },
-                class: "button--secondary button--sm",
+                class: "button--tertiary button--sm",
                 aria: { label: "Unarchive #{@bullet.name}" } do %>
             <%= icon_tag("archive", style: "color: var(--color-text-base);", class: "button--icon") %>
             Unarchive
@@ -80,13 +87,15 @@
           <%= button_to archive_path,
                 method: :post,
                 params: { bullet_ids: @bullet.id },
-                class: "button--secondary button--sm button--danger",
+                class: "button--tertiary button--sm button--danger",
                 form: { data: { turbo_confirm: "Are you sure?" } },
                 aria: { label: "Archive #{@bullet.name}" } do %>
             <%= icon_tag("archive", style: "color: var(--color-text-base);", class: "button--icon") %>
             Archive
           <% end %>
         <% end %>
+        <% end %>
+        </div>
       </div>
     </div>
 

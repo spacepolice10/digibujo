@@ -12,7 +12,8 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
     get pinned_index_path, headers: { 'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)' }
 
     assert_response :success
-    assert_select '.pinned--workspace'
+    assert_select '.pinned--header'
+    assert_select '.layout--surface'
     assert_select 'footer.footer', count: 1
     assert_select 'nav.tabbar--navigation a.tabbar--item-active[href=?]', pinned_index_path
   end
@@ -21,7 +22,8 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
     get pinned_index_path
 
     assert_response :success
-    assert_select '.pinned--workspace'
+    assert_select '.pinned--header'
+    assert_select '.layout--surface'
     assert_select 'footer.footer', count: 1
   end
 

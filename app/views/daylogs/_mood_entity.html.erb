@@ -1,13 +1,17 @@
 <%# locals: (date:, entity:) %>
-<% dialog_id = "daylog_mood_#{date.iso8601}" %>
-<div class="daylog--mood" data-controller="dialog">
+<% popover_id = "daylog_mood_#{date.iso8601}" %>
+<% anchor_name = "--#{popover_id.tr('-', '_')}" %>
+<% hint_id = "daylog_mood_hint_#{date.iso8601}" %>
+<% hint_anchor = "--hint-mood-#{date.iso8601.tr('-', '_')}" %>
+<div class="dropdown--dock daylog--mood" style="anchor-name: <%= anchor_name %>">
   <button
     type="button"
     class="button--tertiary button--icon"
-    commandfor="<%= dialog_id %>"
-    command="show-modal"
+    popovertarget="<%= popover_id %>"
+    interestfor="<%= hint_id %>"
+    style="anchor-name: <%= hint_anchor %>"
     aria-label="<%= entity ? "Change mood" : "Pick mood" %>"
-    aria-haspopup="dialog"
+    aria-haspopup="menu"
   >
     <% if entity %>
       <%= entity.marker %>
@@ -16,19 +20,41 @@
     <% end %>
   </button>
 
-  <%= render "shared/dialog", id: dialog_id, class_name: "daylog--mood-dialog" do %>
-    <div class="daylog--mood-options">
-      <% Daylog::MoodEntity::MOOD_MARKERS.each do |mood, emoji| %>
-        <% selected = entity&.mood == mood.to_s %>
-        <%= button_to daylog_mood_entity_path,
-              method: :post,
-              params: { date: date.iso8601, mood: mood },
-              class: "button--tertiary button--icon",
-              form: { data: { turbo: true } },
-              aria: { label: mood.to_s.humanize, pressed: selected } do %>
-          <%= emoji %>
+  <div
+    id="<%= hint_id %>"
+    class="hint"
+    popover="hint"
+    style="position-anchor: <%= hint_anchor %>"
+  >
+    <%= entity ? entity.mood.humanize : "Pick mood" %>
+  </div>
+
+  <div
+    id="<%= popover_id %>"
+    class="dropdown dropdown--element dropdown--element-bottom animations--side-in daylog--mood-dropdown"
+    style="position-anchor: <%= anchor_name %>"
+    popover
+  >
+    <%= render "shared/dropdown", name: "Mood", popover_target: popover_id do %>
+      <nav class="daylog--mood-menu" aria-label="Mood">
+        <% Daylog::MoodEntity::MOOD_MARKERS.each do |mood, emoji| %>
+          <% selected = entity&.mood == mood.to_s %>
+          <%= button_to daylog_mood_entity_path,
+                method: :post,
+                params: { date: date.iso8601, mood: mood },
+                class: [
+                  "button--tertiary",
+                  "daylog--mood-menu-item",
+                  ("daylog--mood-menu-item-current" if selected)
+                ],
+                form_class: "daylog--mood-menu-form",
+                form: { data: { turbo: true } },
+                aria: { label: mood.to_s.humanize, pressed: selected } do %>
+            <span class="daylog--mood-menu-marker" aria-hidden="true"><%= emoji %></span>
+            <%= mood.to_s.humanize %>
+          <% end %>
         <% end %>
-      <% end %>
-    </div>
-  <% end %>
+      </nav>
+    <% end %>
+  </div>
 </div>

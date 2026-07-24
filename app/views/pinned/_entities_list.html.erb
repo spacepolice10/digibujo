@@ -1,21 +1,11 @@
-<%# locals: (pinned_entities:, compact: false, popover: false) %>
-<%= render "shared/dropdown",
-      name: (popover ? "Pinned" : nil),
-      popover_target: (popover ? "pinned_list" : nil) do %>
+<%# locals: (pinned_entities:) %>
+<%= render "shared/dropdown", name: "Pinned", popover_target: "pinned_list" do %>
   <% if pinned_entities.any? %>
-    <% if compact %>
-      <ul class="layout--list bucket--list">
-        <% pinned_entities.each do |pinned_entity| %>
-          <%= render "pinned/entity", pinned_entity: pinned_entity, compact: true %>
-        <% end %>
-      </ul>
-    <% else %>
-      <div class="pinned--entities">
-        <% pinned_entities.each do |pinned_entity| %>
-          <%= render "pinned/entity", pinned_entity: pinned_entity, compact: false %>
-        <% end %>
-      </div>
-    <% end %>
+    <ul class="layout--list bucket--list">
+      <% pinned_entities.each do |pinned_entity| %>
+        <%= render "pinned/entity", pinned_entity: pinned_entity %>
+      <% end %>
+    </ul>
   <% else %>
     <p class="pinned--no-entities">Nothing pinned yet.</p>
   <% end %>

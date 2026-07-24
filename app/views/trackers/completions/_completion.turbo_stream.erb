@@ -1,4 +1,8 @@
 <%# locals: (tracker:, date:) %>
 <%= turbo_stream.replace dom_id(tracker, "date_#{date.iso8601}") do %>
-  <%= render "trackers/cell", tracker: tracker, date: date %>
+  <% if @dom_key == "monthlylog" %>
+    <%= render "trackers/day_toggle", tracker: tracker, date: date %>
+  <% else %>
+    <%= render "trackers/cell", tracker: tracker, date: date %>
+  <% end %>
 <% end %>

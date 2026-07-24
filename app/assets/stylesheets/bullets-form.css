@@ -37,10 +37,13 @@
     padding: var(--spacing-vertical-half) var(--spacing-horizontal);
     border-radius: var(--radius-strong);
     color: var(--color-fg-base);
-    background: var(--color-bg-base);
+    background: var(--color-bg-strong);
+    color: var(--color-fg-strong);
+    border: 1px solid var(--color-stroke-base);
+    box-shadow: var(--shadow-base);
     &:hover {
-      background: var(--color-bg-strong);
-      color: var(--color-fg-strong);
+      background: var(--color-bg-base);
+      color: var(--color-fg-subtle);
     }
     &[data-bullet-type="task"] > .icon {
       color: var(--model-color-2);

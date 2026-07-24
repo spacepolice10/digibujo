@@ -52,7 +52,7 @@
     width: 100%;
   }
 
-  /* ── Anchor-backed popover panel (pinned, mobile create, …) ── */
+  /* ── Compact anchored menus ─────────────────────── */
 
   .dropdown-menu {
     padding: var(--spacing-vertical-half);
@@ -109,14 +109,17 @@
     position-try-fallbacks:
       flip-block,
       flip-inline,
-      flip-block flip-inline;
+      block-start center,
+      center inline-start,
+      block-end center,
+      center inline-end;
 
     &:popover-open {
       animation: popout 110ms ease-out;
     }
   }
 
-  /* ── Anchor-backed popover panel (pinned, mobile create, …) ── */
+  /* ── Overlay popover panel (mood, create, pinned, …) ── */
 
   .dropdown--dock {
     display: flex;
@@ -130,39 +133,36 @@
     inset: unset;
     box-sizing: border-box;
     z-index: var(--z-dropdown);
-    display: flex;
+    /* Persist during exit fade — must not live only under :popover-open. */
     flex-direction: column;
-    width: min(
-      calc(var(--spacing-horizontal-double) * 18),
-      calc(100dvw - var(--spacing-horizontal-double))
-    );
-    min-width: min(
-      calc(var(--spacing-horizontal-double) * 18),
-      calc(100dvw - var(--spacing-horizontal-double))
+    width: max-content;
+    min-width: calc(var(--spacing-horizontal-double) * 4);
+    max-width: min(
+      calc(var(--spacing-horizontal-double) * 10),
+      calc(100dvw - (2 * var(--spacing-horizontal)))
     );
     max-height: min(
-      calc(var(--spacing-horizontal-double) * 14),
-      calc(100dvh - var(--spacing-horizontal-double) * 5)
+      calc(var(--spacing-horizontal-double) * 10),
+      calc(100dvh - (2 * var(--spacing-horizontal)))
     );
     overflow: auto;
     background-color: var(--color-bg-base);
     border: 1px solid var(--color-stroke-base);
     border-radius: var(--radius-strong);
     box-shadow: var(--shadow-base);
-    position-try-fallbacks:
-      flip-block,
-      flip-inline,
-      flip-block flip-inline;
+    position-area: center;
+    margin: var(--spacing-vertical-half) var(--spacing-horizontal-half);
   }
 
-  .dropdown--element-up {
-    position-area: block-start inline-end;
-    margin-block-end: var(--spacing-vertical-half);
+  .dropdown--element[popover]:popover-open {
+    display: flex;
   }
 
+  /* Kept for existing markup; both overlay the trigger like the default. */
+  .dropdown--element-up,
   .dropdown--element-bottom {
-    position-area: block-end inline-end;
-    margin-block-start: var(--spacing-vertical-half);
+    position-area: center;
+    margin: 0;
   }
 
   .dropdown--element-header {
@@ -197,23 +197,23 @@
     border-radius: var(--radius-full);
   }
 
-  /* Side slide — discrete enter/exit (close reverses before display:none) */
-  [popover].animations--side-in {
+  /*
+   * Fade only for dropdown panels. Transform/scale during close fights
+   * position-area and flex-direction-on-:popover-open caused a visible reflow.
+   */
+  .dropdown--element[popover].animations--side-in {
     opacity: 0;
-    transform: translateX(100%);
     transition:
       opacity 0.08s ease,
-      transform 0.08s ease,
       display 0.08s allow-discrete,
       overlay 0.08s allow-discrete;
   }
 
-  [popover].animations--side-in:popover-open {
+  .dropdown--element[popover].animations--side-in:popover-open {
     opacity: 1;
-    transform: translateX(0);
 
     @starting-style {
-      transform: translateX(100%);
+      opacity: 0;
     }
   }
 

@@ -1,16 +1,23 @@
 <% content_for(:title) { "New tracker" } %>
 
-<div class="layout--container layout--container-md">
-  <div class="layout--header">
-    <div class="layout--header-actions">
-      <%= link_to monthlylog_path(@monthlylog), class: "button--secondary" do %>
+<div class="layout--page layout--container layout--container-md">
+  <div class="layout--mx-auto tracker--header">
+    <%= icon_tag("target", style: "color: var(--color-text-base);", class: "tracker--header-icon") %>
+    <h2>New tracker</h2>
+    <p class="layout--mx-auto layout--container layout--container-sm typography--paragraph-sm layout--padded">Trackers are repeating habits for this month — mark them off each day on the monthly spread.</p>
+  </div>
+  <div class="layout--surface">
+    <div class="layout--flex layout--justify-between layout--surface-header">
+      <%= link_to monthlylog_path(@monthlylog), class: "button--tertiary button--sm", onclick: "if (history.length > 1) { event.preventDefault(); history.back(); }" do %>
         <%= icon_tag("arrow-left") %>
         Back
       <% end %>
     </div>
-    <h2>New tracker</h2>
-  </div>
-  <div class="layout--surface">
-    <%= render "trackers/form", tracker: @tracker, url: monthlylog_trackers_path(@monthlylog) %>
+    <div class="layout--padded">
+      <%= render "trackers/form",
+            tracker: @tracker,
+            url: monthlylog_trackers_path(@monthlylog),
+            name_hint: "Give your tracker a name. Examples: Morning run, Meditate, Drink water." %>
+    </div>
   </div>
 </div>

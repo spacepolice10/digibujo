@@ -2,7 +2,7 @@
 
 module Trackers
   class CompletionsController < ApplicationController
-    COMPLETION_DOM_KEYS = %w[date].freeze
+    COMPLETION_DOM_KEYS = %w[date monthlylog].freeze
 
     before_action :set_tracker
     before_action :set_date

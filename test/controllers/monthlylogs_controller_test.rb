@@ -251,7 +251,7 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to monthlylog_path(created)
   end
 
-  test 'show includes mood tracker from daylog' do
+  test 'show includes mood controls in each date band' do
     ensure_daylog!(@user)
     @user.daylog.mood_entities.create!(date: Date.current, mood: :inspired)
     monthlylog = create_monthlylog!(@user, name: Date.current.strftime('%B %Y'))
@@ -259,8 +259,24 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     get monthlylog_path(monthlylog)
 
     assert_response :success
-    assert_select 'section.monthlylog--mood'
+    assert_select '.monthlylog--date-mood .daylog--mood', count: monthlylog.spread_days.size
+    assert_select '.daylog--mood-menu-item', text: /Inspired/
+    assert_select 'section.monthlylog--mood', count: 0
     assert_match '✨', response.body
+  end
+
+  test 'show includes tracker toggles on scheduled days' do
+    monthlylog = create_monthlylog!(@user, name: Date.current.strftime('%B %Y'))
+    tracker = create_tracker!(@user, name: 'Meditate', monthlylog: monthlylog, icon: 'heart')
+    weekday_only = [(Date.current + 1.day).wday]
+    tracker.update!(schedule: { 'days' => weekday_only })
+
+    get monthlylog_path(monthlylog)
+
+    assert_response :success
+    scheduled_count = monthlylog.spread_days.count { |day| weekday_only.include?(day.wday) }
+    assert_select '.tracker--day-toggle', count: scheduled_count
+    assert_select '.monthlylog--date-trackers .tracker--day-toggle-done', count: 0
   end
 
   test 'show by id loads the requested spread when multiple months exist' do

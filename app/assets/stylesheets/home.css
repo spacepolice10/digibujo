@@ -6,7 +6,7 @@
     display: flex;
     gap: var(--spacing-vertical-half);
     flex-wrap: wrap;
-    justify-content: center;
+    margin-top: var(--spacing-vertical-quad);
 
     @media (min-width: 800px) {
       position: sticky;
@@ -28,12 +28,11 @@
     position-anchor: --home-create-dock;
   }
 
-  .home--create-dropdown[popover] {
-    width: max-content;
+  .home--create-dropdown.dropdown--element[popover] {
     min-width: calc(var(--spacing-horizontal-quad));
     max-width: min(
-      calc(var(--spacing-horizontal-double) * 8),
-      calc(100dvw - var(--spacing-horizontal-quad))
+      calc(var(--spacing-horizontal-double) * 7),
+      calc(100dvw - (2 * var(--spacing-horizontal)))
     );
   }
 
@@ -203,7 +202,7 @@
     gap: var(--spacing-vertical-half);
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     max-width: 280px;
-    justify-content: center;
+    margin-top: var(--spacing-vertical-quad);
   }
 
   .home--activity-item {

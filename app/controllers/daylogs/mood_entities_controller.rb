@@ -6,12 +6,12 @@ module Daylogs
 
     def create
       @daylog.pick_mood(date: mood_date, mood: params.require(:mood))
-      redirect_to daylog_path(date: mood_date.iso8601)
+      redirect_back fallback_location: daylog_path(date: mood_date.iso8601)
     end
 
     def destroy
       @daylog.remove_mood(date: mood_date)
-      redirect_to daylog_path(date: mood_date.iso8601)
+      redirect_back fallback_location: daylog_path(date: mood_date.iso8601)
     end
 
     private

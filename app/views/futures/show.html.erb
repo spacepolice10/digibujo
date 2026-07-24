@@ -34,7 +34,7 @@
         <div class="future--card">
           <div class="future--card-header">
             <%= month_start.strftime("%b %Y") %>
-            <%= link_to new_bullet_path(bucket_id: @future.bucket.id, pops_on: month_start), class: "button--tertiary button--icon" do %>
+            <%= link_to new_bullet_path(bucket_id: @future.bucket.id, pops_on: month_start, bulletable_type: "Event"), data: { turbo_frame: composer_id }, class: "button--tertiary button--icon" do %>
               <%= icon_tag("plus", style: "color: var(--color-text-base);", class: "button--icon") %>
             <% end %>
           </div>

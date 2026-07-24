@@ -71,11 +71,11 @@ Archiving (`Bullet` or `Bucket`) is modelled as a row in **`archives`** (`archiv
 
 **Schedule** (`schedule` json): `{ "days" => […] }` with Ruby `wday` 0–6 (defaults to every day). Active range is the monthlylog period. No `stop!` lifecycle — delete the tracker or leave it for the month.
 
-**UI:** create from monthlylog show (`POST /monthlylogs/:id/trackers`). Show page renders that month’s day cells. Toggle posts to `POST`/`DELETE /trackers/:id/completion`.
+**UI:** create from monthlylog show (`POST /monthlylogs/:id/trackers`). Monthly show embeds a day toggle for each tracker scheduled on that date (grayscale incomplete / coloured complete). Tracker show page still has the month heatmap. Toggle posts to `POST`/`DELETE /trackers/:id/completion`.
 
 ## Mood tracker
 
-Optional day-level artifacts on **Daylog**: **`Daylog::MoodEntity`** (`daylog_mood_entities`: `date` + mood enum) and **`Daylog::Picture`** (`daylog_pictures`: `date` + Active Storage `picture`). Mark/clear via `POST`/`DELETE /daylog/mood_entity` and `POST`/`DELETE /daylog/picture` (`Daylog#pick_mood` / `#remove_mood` / `#remove_picture`). Monthly show reads the same records for its spread days via `#mood_entities_by_date` / `#pictures_by_date`. Notes no longer carry mood.
+Optional day-level artifacts on **Daylog**: **`Daylog::MoodEntity`** (`daylog_mood_entities`: `date` + mood enum) and **`Daylog::Picture`** (`daylog_pictures`: `date` + Active Storage `picture`). Mark/clear via `POST`/`DELETE /daylog/mood_entity` and `POST`/`DELETE /daylog/picture` (`Daylog#pick_mood` / `#remove_mood` / `#remove_picture`). Monthly show embeds the mood picker in each date band (alongside Task/Event create buttons) via `#mood_entities_by_date`. Pictures stay on the daylog page. Notes no longer carry mood.
 
 ## Review
 

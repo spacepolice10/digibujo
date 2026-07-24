@@ -133,6 +133,27 @@ padding-inline: var(--spacing-horizontal);
     padding-inline: var(--spacing-horizontal-double);
   }
 
+  .monthlylog--date-artifacts {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    padding-inline: var(--spacing-horizontal-double);
+    width: fit-content;
+    justify-self: end
+  }
+
+  .monthlylog--date-mood {
+    display: flex;
+  }
+
+  .monthlylog--date-trackers {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+  }
+
   @media (hover: hover) {
     .monthlylog--calendar .monthlylog--date-composer {
       visibility: hidden;

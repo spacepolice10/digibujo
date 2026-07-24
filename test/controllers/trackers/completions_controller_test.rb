@@ -59,4 +59,17 @@ class Trackers::CompletionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "turbo-stream[action=replace][target=#{dom_id(@tracker, "date_#{@date.iso8601}")}]", count: 1
   end
+
+  test 'create completion replaces monthlylog day toggle' do
+    assert_difference -> { @tracker.completions.count }, 1 do
+      post tracker_completion_path(@tracker),
+           params: { date: @date.iso8601, dom_key: 'monthlylog' },
+           as: :turbo_stream
+    end
+
+    assert_response :success
+    assert_select "turbo-stream[action=replace][target=#{dom_id(@tracker, "date_#{@date.iso8601}")}]" do
+      assert_select '.tracker--day-toggle-done'
+    end
+  end
 end

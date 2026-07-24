@@ -124,19 +124,21 @@
     font-weight: var(--font-weight-strong);
     font-style: italic;
     text-transform: uppercase;
-    background: var(--color-accent);
+    background: var(--color-accent-bg);
     border: 1px solid color-mix(in oklch, var(--color-accent-bg) 65%, black);
     color: black;
     box-shadow: 0 4px 0 oklch(0% 0 0 / 0.95);
+    transition:
+      color 0.2s ease,
+      box-shadow 0.2s ease;
 
     @media (hover: hover) {
       &:hover:not(:disabled) {
-        box-shadow: 0 6px 0 oklch(0% 0 0 / 0.4);
+        background: color-mix(in oklch, var(--color-accent-bg) 85%, black);
       }
     }
 
     &:active:not(:disabled) {
-      background: color-mix(in oklch, var(--color-accent) 75%, black);
       border-color: color-mix(in oklch, var(--color-accent) 45%, black);
       box-shadow: 0 3px 0 oklch(0% 0 0 / 0.35);
     }

@@ -100,28 +100,36 @@
     gap: var(--spacing-horizontal);
   }
 
-  .daylog--mood-dialog {
-    width: auto;
+  .daylog--mood-dropdown.dropdown--element[popover] {
+    min-width: calc(var(--spacing-horizontal-quad));
+    max-width: min(
+      calc(var(--spacing-horizontal-double) * 7),
+      calc(100dvw - (2 * var(--spacing-horizontal)))
+    );
   }
 
-  .daylog--mood-options {
+  .daylog--mood-menu {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--spacing-horizontal);
-    padding-block: var(--spacing-vertical);
+    flex-direction: column;
+    gap: var(--spacing-vertical-half);
   }
 
-  .daylog--mood-option {
-    min-width: 2.75rem;
-    min-height: 2.75rem;
-    font-size: var(--font-size-huge);
-    justify-content: center;
+  .daylog--mood-menu-form {
+    width: 100%;
   }
 
-  .daylog--mood-option-current {
+  .daylog--mood-menu-item {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .daylog--mood-menu-item-current {
     background: var(--color-bg-base);
     box-shadow: var(--shadow-subtle);
+  }
+
+  .daylog--mood-menu-marker {
+    font-size: var(--font-size-base);
   }
 
   .daylog--picture-container {

@@ -56,7 +56,6 @@ class MonthlylogsController < ApplicationController
     @trackers = @monthlylog.trackers.chronological.with_completions
     daylog = Current.user.daylog
     @mood_entities_by_date = daylog&.mood_entities_by_date(@days) || {}
-    @pictures_by_date = daylog&.pictures_by_date(@days) || {}
   end
 
   def occupied_months

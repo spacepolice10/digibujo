@@ -1,4 +1,32 @@
 @layer components {
+  .tracker--header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-vertical-half);
+    padding-block: var(--spacing-vertical-quad);
+  }
+
+  .tracker--header-icon {
+    width: 5ch !important;
+    height: 5ch !important;
+  }
+
+  .tracker--day-toggle-form {
+    display: inline-flex;
+    margin: 0;
+  }
+
+  .tracker--day-toggle-icon {
+    filter: grayscale(1);
+    opacity: 0.45;
+  }
+
+  .tracker--day-toggle-done .tracker--day-toggle-icon {
+    filter: none;
+    opacity: 1;
+  }
+
   .tracker--show-header {
     display: flex;
     flex-wrap: wrap;

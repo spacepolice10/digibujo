@@ -105,31 +105,27 @@
     color: var(--color-fg-subtle);
     border: 1px solid var(--color-stroke-base);
     border-radius: var(--radius-base);
-
+    transition: border-color 0.2s ease, background 0.2s ease;
     &:hover {
       background: var(--color-bg-base);
     }
 
     &:has(input:checked) {
-      border-color: var(--color-fg-base);
-      background: var(--color-accent);
 
       &::after {
-        content: "*";
+        content: "";
         position: absolute;
         height: 50%;
         width: 50%;
-        right: 2px;
-        bottom: 2px;
-        background: var(--color-bg-strong);
-        -webkit-mask-image: var(--icon-check);
-        -webkit-mask-size: contain;
-        -webkit-mask-repeat: no-repeat;
-        -webkit-mask-position: center;
-        mask-image: var(--icon-check);
-        mask-size: contain;
-        mask-repeat: no-repeat;
-        mask-position: center;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%) skew(-12deg);
+        color: inherit;
+        background: currentColor;
+        opacity: var(--opacity-half);
+        font-size: var(--font-size-subtle);
+        font-weight: var(--font-weight-strong);
+        animation: popout 0.2s ease-in-out;
       }
     }
 

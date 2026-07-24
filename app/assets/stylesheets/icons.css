@@ -7,6 +7,7 @@
     width: 1.75ch;
     height: 1.75ch;
     box-sizing: border-box;
+    flex-shrink: 0;
   }
 
   .icon {
@@ -96,5 +97,6 @@
     --icon-camera: url("icon-camera.svg");
     --icon-money: url("icon-money.svg");
     --icon-zoom-in: url("icon-zoom-in.svg");
+    --icon-dots: url("icon-dots.svg");
   }
 }

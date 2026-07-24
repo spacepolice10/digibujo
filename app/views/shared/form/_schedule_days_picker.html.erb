@@ -1,10 +1,6 @@
-<% schedule_days = form.object.schedule_days %>
-
-<div class="form-group">
-  <span class="form-label">Days</span>
-  <small class="form-small">
-    Pick the days of the week that this record should repeat on.
-  </small>
+<div class="form-section">
+  <label>Days</label>
+  <small>Pick the days of the week that this record should repeat on.</small>
   <div
     class="form--picker form--repeat-date-picker"
     role="group"
@@ -13,7 +9,7 @@
     data-action="keydown->grid-navigation#navigate"
   >
     <% Date::ABBR_DAYNAMES.each_with_index do |name, wday| %>
-      <label class="form-check">
+      <label class="form-checkbox" style="color: var(--model-color-4);">
         <%= form.check_box :schedule_days, { multiple: true }, wday, nil %>
         <span class="form--icon" aria-hidden="true"><%= name %></span>
         <span class="utilities--sr-only"><%= name %></span>
