@@ -33,7 +33,7 @@ Each bulletable includes **`Bulletable`** (`has_one :bullet`, display defaults, 
 
 All bullet types are created via **`POST /bullets`** (`BulletsController`) — there are no nested `daylog/bullets` or `monthlylogs/:id/bullets` routes.
 
-**Create buttons** (`BulletsHelper#create_bullet_buttons`): configurable type links stay in the page; each loads `GET /bullets/new` into a **page-level `<dialog>`** turbo-frame (`bullets/composer/_dialog`, built on `shared/dialog` + `dialog` Stimulus). Callers pass `composer_id`, `bucket_id`, `pops_on`, and `bulletable_type` (array of Task/Note/Event/Voice). Daylog/collection views wrap buttons in `bullets-form--dock`; monthly/future cells use their own layout wrappers. Desktop uses a compact dialog; mobile styles it as a **bottom sheet** (keyboard-safe). Successful create closes the dialog and clears the frame; Esc / cancel / backdrop do the same.
+**Create buttons** (`BulletsHelper#create_bullet_buttons`): type links stay on the page and always navigate with `data-turbo-frame="_top"` to **`GET /bullets/new`** as a full Drive page (no dialog). Callers pass `bucket_id`, `pops_on`, and `bulletable_type` (array of Task/Note/Event/Voice). Daylog/collection views wrap buttons in `bullets-form--dock`; monthly/future cells use their own layout wrappers. After create, redirect to `bullet_composer_return_path` (daylog date / collection / monthlylog / future from `bucket` + `pops_on`). Rail Back is the same path; Esc / cancel follow it. Open/close uses a shared-element **view transition** (`composer-expand` Stimulus + `view-transition-name: bullet-composer`) so the clicked create button expands into the page form and collapses on return.
 
 **Monthly spread / Future:** no dock wrapper. Planned cells: Task + Event; unplanned: Note — same helper, subset `bulletable_type`.
 
@@ -79,7 +79,7 @@ Optional day-level artifacts on **Daylog**: **`Daylog::MoodEntity`** (`daylog_mo
 
 ## Review
 
-**`GET /review`** (`ReviewsController#show`, `?from=YYYY-MM-DD&to=YYYY-MM-DD`, defaults to the last 7 days through today) lists bullets that still need triage for the period:
+**`GET /review`** (`ReviewsController#show`, `?from=YYYY-MM-DD&to=YYYY-MM-DD`, defaults to the last 7 days through yesterday — today's bullets stay out of review) lists bullets that still need triage for the period:
 
 ```ruby
 Current.user.bullets.in_review(@review_from..@review_to)
@@ -100,7 +100,7 @@ Current.user.bullets.in_review(@review_from..@review_to)
 |--------|-------------|-----------|
 | Collections (left) | Lazy `turbo-frame#review_collections_frame` → `GET /review/collections` | Paginated list + combobox search; drop → collect via `collect-drop` |
 | To review (center) | Inline in `show` | Paginated inbox; draggable bullets + bulk-menu; footer marks all reviewed |
-| Schedule (right) | Lazy `turbo-frame#review_scheduled_frame` → `GET /review/scheduled` | 7 days forward from `review_to` (`review_to..review_to+6`); `.active` bullets per day; drop → postpone via `pops-drop` with `reviewDrop` |
+| Schedule (right) | Lazy `turbo-frame#review_scheduled_frame` → `GET /review/scheduled` | 7 days forward from today (`Date.current..Date.current+6`); `.active` bullets per day; drop → postpone via `pops-drop` with `reviewDrop` |
 
 Side partials: `reviews/_collections_side`, `reviews/_to_review`, `reviews/_calendar_side` / `_calendar_date`.
 
@@ -149,7 +149,7 @@ Planned bullet recycling (not yet in code):
 
 The architecture is intentionally closer to analog Bullet Journal behavior:
 
-- **Rapid logging** uses type-specific composers (`tasks/_form`, `events/_form`, `voices/_form`, `notes/_form`) wrapping `bullets/_form`; Task/Event/Voice are plain text; Note uses Lexxy preset `note`; daylog dock and monthly dialog load the form via turbo-frame
+- **Rapid logging** uses type-specific composers (`tasks/_form`, `events/_form`, `voices/_form`, `notes/_form`) wrapping `bullets/_form`; Task/Event/Voice are plain text; Note uses Lexxy preset `note`; create opens full-page `/bullets/new` and returns via `bullet_composer_return_path`
 - **Daily focus** is explicit (`/daylog` and dated daylog paths show the daily log)
 - **Migration over rewrite** happens where needed by editing or changing bullet type
 - **Deferred decisions** are supported by moving `pops_on` forward (postpone) or tagging a project
@@ -315,9 +315,9 @@ Common blocks (use these class names in markup — not legacy `button-primary`-s
 | `utilities.css` | `utilities--sr-only`, `utilities--line-clamp-1`, `utilities--text-sm`, `utilities--contents`, `utilities--handwriting` | Small cross-page helpers only; prefer component/layout classes when possible |
 | `layout.css` | `layout--page`, `layout--column`, `layout--header`, `layout--header-actions`, `layout--list`, `layout--list-item`, `layout--main`, `header`, `footer`, `footer--dock` | Page structure and app shell chrome (`shared/_header`, `shared/_footer`; daylog and bucket pages use `layout--page`) |
 | `bucket.css` | `bucket--list`, `bucket--list-item-link`, `bucket--list-item-marker`, … | Bucket list chrome and item styling (pair with `layout--list` / `layout--list-item`) |
-| `dialog.css` | `dialog`, `dialog--large`, `dialog--header`, `dialog--body`, `dialog--footer` | Native `<dialog>` chrome (monthly composer, etc.) |
+| `dialog.css` | `dialog`, `dialog--large`, `dialog--header`, `dialog--body`, `dialog--footer` | Native `<dialog>` chrome (shared pickers, etc.) |
 | `hotkey-hint.css` | `hotkey-hint`, `hotkey-hint--always` | Keyboard shortcut badges on buttons |
-| `bullet-composer.css` | `bullet-composer`, `bullet-composer--dock`, `bullet--composer-create-button`, … | Composer form and dock type-picker |
+| `bullets-form.css` | `bullets-form`, `bullets-form--dock`, `bullets-form--rail`, … | Composer form and dock type-picker |
 | `bullet.css` | `bullet`, `bullet--body`, `bullet--marker`, … | Shared bullet row chrome |
 | `task.css`, `note.css`, `event.css`, `voice.css` | Type-specific body/toolbar classes | Pair with `bullets/_bullet` + `{type}s/_{type}` |
 | `review.css` | `review--page`, `review--to-review`, `review--calendar`, … | Review workspace columns |

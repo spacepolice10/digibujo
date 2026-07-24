@@ -1,8 +1,9 @@
-<%# locals: (bullet:, editing:) %>
+<%# locals: (bullet:, editing:, return_path: nil) %>
 <%= render layout: "bullets/form",
       locals: {
         bullet:,
         editing:,
+        return_path:,
         stimulus_controller: "voice-recorder",
         stimulus_actions: "turbo:submit-end->voice-recorder#clearOnSubmit"
       } do |fr, bulletable| %>

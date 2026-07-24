@@ -88,8 +88,7 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select '.monthlylog--unplanned a.bullets-form--create-button--voice', count: 0
     assert_select '.bullets-form--dock', count: 0
     assert_select '.monthlylog--unplanned'
-    assert_select 'dialog#monthlylog_composer.bullet-composer--dialog'
-    assert_select 'dialog#monthlylog_composer turbo-frame#monthlylog_bullets_unplanned_composer'
+    assert_select 'dialog#monthlylog_composer', count: 0
   end
 
   test 'monthlylog unplanned bullets render as compact rows without metadata tags' do
@@ -167,7 +166,7 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select '[role=tab]', count: 0
     assert_match 'Planned mobile task', response.body
     assert_match 'Unplanned mobile note', response.body
-    assert_select 'dialog#monthlylog_composer.bullet-composer--dialog'
+    assert_select 'dialog#monthlylog_composer', count: 0
     assert_select '[data-controller~=pops-drop]', minimum: 1
   end
 

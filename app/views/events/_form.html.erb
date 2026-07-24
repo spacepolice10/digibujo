@@ -1,5 +1,5 @@
-<%# locals: (bullet:, editing:) %>
-<%= render layout: "bullets/form", locals: { bullet:, editing: } do |fr, bulletable| %>
+<%# locals: (bullet:, editing:, return_path: nil) %>
+<%= render layout: "bullets/form", locals: { bullet:, editing:, return_path: } do |fr, bulletable| %>
   <%= fr.fields_for :bulletable, bulletable do |bf| %>
     <%= bf.hidden_field :id if bulletable.persisted? %>
     <%= bf.text_area :body,

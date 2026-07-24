@@ -28,13 +28,18 @@
     <div class="future--grid" data-bulk-menu-target="list">
       <% @months.each do |month_start| %>
         <% month_bullets = @bullets_by_date[month_start] || [] %>
-        <% composer_id = "future_bullets_#{month_start.iso8601}_composer" %>
         <% container_id = "future_bullets_#{month_start.iso8601}_container" %>
 
         <div class="future--card">
           <div class="future--card-header">
             <%= month_start.strftime("%b %Y") %>
-            <%= link_to new_bullet_path(bucket_id: @future.bucket.id, pops_on: month_start, bulletable_type: "Event"), data: { turbo_frame: composer_id }, class: "button--tertiary button--icon" do %>
+            <%= link_to new_bullet_path(bucket_id: @future.bucket.id, pops_on: month_start, bulletable_type: "Event"),
+                  data: {
+                    turbo_frame: "_top",
+                    bullet_type: "event",
+                    composer_expand: true
+                  },
+                  class: "button--tertiary button--icon" do %>
               <%= icon_tag("plus", style: "color: var(--color-text-base);", class: "button--icon") %>
             <% end %>
           </div>
@@ -81,9 +86,7 @@
       </div>
 
       <div class="layout--flex layout--gapped layout--mx-auto">
-      <%= create_bullet_buttons composer_id: "future_bullets_unplanned_composer",
-              dialog_id: "future_composer",
-              bucket_id: @future.bucket.id,
+      <%= create_bullet_buttons bucket_id: @future.bucket.id,
               pops_on: nil,
               bulletable_type: ["Task", "Note"] %>
       </div>
@@ -92,7 +95,6 @@
     </div>
   </main>
   </div>
-  <%= render "futures/composer_dialog", future: @future, months: @months %>
 <% else %>
   <% content_for(:title) { "Future log" } %>
 

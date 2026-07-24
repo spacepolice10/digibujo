@@ -25,14 +25,9 @@ class BulletsController < ApplicationController
     @bullet = Current.user.bullets.new(bullet_params)
 
     if @bullet.save
-      respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to bullet_path(@bullet) }
-      end
+      redirect_to helpers.bullet_composer_return_path(@bullet), status: :see_other
     else
-      respond_to do |format|
-        format.html { render :new, status: :unprocessable_entity }
-      end
+      render :new, status: :unprocessable_entity
     end
   end
 

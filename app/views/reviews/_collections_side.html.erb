@@ -2,8 +2,8 @@
 <aside class="review--collections" aria-label="Collections">
   <header class="review--collections-header">
     <h3 class="review--side-name">Collections</h3>
-    <%= link_to new_collection_path, class: "button--primary button--icon button--circle", data: { turbo_frame: "_top" } do %>
-    <i class="icon" style="--icon-mask: var(--icon-plus)" aria-hidden="true"></i>
+    <%= link_to new_collection_path, class: "button--primary button--sm", data: { turbo_frame: "_top" } do %>
+    <%= icon_tag("plus", style: "color: var(--color-text-base);", class: "") %>
     <% end %>
   </header>
 

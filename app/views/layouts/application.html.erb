@@ -14,9 +14,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="turbo-refresh-method" content="morph">
     <meta name="turbo-refresh-scroll" content="preserve">
-    <% if request.variant.include?(:mobile) %>
-      <meta name="view-transition" content="same-origin">
-    <% end %>
+    <meta name="view-transition" content="same-origin">
 
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -36,7 +34,7 @@
   </head>
 
   <body
-    data-controller="dialog timezone-cookie bulk-menu"
+    data-controller="dialog timezone-cookie bulk-menu composer-expand"
     <% if Current.user %>
       data-appearance="<%= Current.user.settings!.appearance %>"
     <% end %>

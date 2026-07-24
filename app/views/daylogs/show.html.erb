@@ -79,19 +79,13 @@
         <% end %>
         <div class="bullets-form--dock<%= " bullets-form--dock-mobile" if request.variant.include?(:mobile) %>">
           <div class="bullets-form--buttons">
-            <%= create_bullet_buttons composer_id: "daylog_bullets_composer",
-                  dialog_id: "daylog_composer",
-                  bucket_id: @daylog_bucket.id,
+            <%= create_bullet_buttons bucket_id: @daylog_bucket.id,
                   pops_on: @selected_date,
                   bulletable_type: Bullet.bulletable_types %>
           </div>
         </div>
       </div>
     </turbo-frame>
-
-    <%= render "bullets/composer/dialog",
-          id: "daylog_composer",
-          composer_id: "daylog_bullets_composer" %>
   </div>
 <% else %>
   <% content_for(:title) { "Daily log" } %>

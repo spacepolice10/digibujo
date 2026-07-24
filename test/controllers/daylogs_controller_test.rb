@@ -89,32 +89,31 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'desktop daylog renders composer dock links into dialog frame' do
+  test 'desktop daylog dock links navigate to full page composer' do
     selected_date = Date.current - 2.days
     bucket_id = @user.daylog.bucket.id
 
     get daylog_path(date: selected_date.iso8601)
 
     assert_response :success
-    assert_select 'dialog#daylog_composer.bullets-form--dialog'
-    assert_select 'dialog#daylog_composer turbo-frame#daylog_bullets_composer'
+    assert_select 'dialog#daylog_composer', count: 0
     assert_select '.bullets-form--dock' do
       assert_select 'a[data-turbo-frame=?][href=?]',
-                    'daylog_bullets_composer',
+                    '_top',
                     new_bullet_path(
                       pops_on: selected_date,
                       bucket_id: bucket_id,
                       bulletable_type: 'Task'
                     )
       assert_select 'a[data-turbo-frame=?][href=?]',
-                    'daylog_bullets_composer',
+                    '_top',
                     new_bullet_path(
                       pops_on: selected_date,
                       bucket_id: bucket_id,
                       bulletable_type: 'Event'
                     )
       assert_select 'a[data-turbo-frame=?][href=?]',
-                    'daylog_bullets_composer',
+                    '_top',
                     new_bullet_path(
                       pops_on: selected_date,
                       bucket_id: bucket_id,
@@ -124,7 +123,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match(/Add bullet/, response.body)
   end
 
-  test 'mobile daylog renders composer dialog and dock links into daylog_bullets_composer frame' do
+  test 'mobile daylog dock links navigate to full page composer' do
     selected_date = Date.current - 2.days
     mobile_ua = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)'
     bucket_id = @user.daylog.bucket.id
@@ -132,10 +131,9 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     get daylog_path(date: selected_date.iso8601), headers: { 'User-Agent' => mobile_ua }
 
     assert_response :success
-    assert_select 'dialog#daylog_composer.bullets-form--dialog'
-    assert_select 'dialog#daylog_composer turbo-frame#daylog_bullets_composer'
+    assert_select 'dialog#daylog_composer', count: 0
     assert_select 'a[data-turbo-frame=?][href=?]',
-                  'daylog_bullets_composer',
+                  '_top',
                   new_bullet_path(
                     pops_on: selected_date,
                     bucket_id: bucket_id,

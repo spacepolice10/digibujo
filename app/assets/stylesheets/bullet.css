@@ -73,6 +73,15 @@
     align-self: flex-start;
     margin-top: 2px;
   }
+  .bullet--metadata-marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-radius: var(--radius-subtle);
+    align-self: flex-start;
+    margin-top: 2px;
+  }
 
 
   [data-bullet-type="task"]>.bullet--marker {
@@ -129,5 +138,7 @@
     cursor: pointer;
     z-index: var(--z-dropdown);
   }
+
+
 
 }

@@ -3,10 +3,7 @@
 module Reviews
   class ScheduledController < ApplicationController
     def show
-      @review_to = params[:to].present? ? params[:to].to_date : Date.current
-      @review_from = params[:from].present? ? params[:from].to_date : @review_to - 6.days
-
-      @calendar_days = (@review_to..(@review_to + 6.days)).to_a
+      @calendar_days = (Date.current..(Date.current + 6.days)).to_a
       @calendar_bullets_by_date = calendar_bullets_by_date
     end
 

@@ -1,21 +1,22 @@
-<%# locals: (bullet:, editing:, stimulus_controller: nil, stimulus_actions: nil) %>
+<%# locals: (bullet:, editing:, stimulus_controller: nil, stimulus_actions: nil, return_path: nil) %>
 <% bulletable = bullet.bulletable || bullet.bulletable_type.constantize.new %>
 <%
   controllers = [ "composer", stimulus_controller ].compact
   actions = [
-    "keydown.enter+meta->composer#submit",
-    "keydown.enter+ctrl->composer#submit",
     stimulus_actions,
     "turbo:submit-end->composer#submitFinish",
     "keydown.esc@document->composer#escape:capture"
   ].compact
 %>
 
-<%= form_with model: bullet, class: "bullets-form", data: {
-  composer_form: true,
-  controller: controllers.join(" "),
-  action: actions.join(" ")
-} do |fr| %>
+<%= form_with model: bullet,
+      class: ["bullets-form", ("bullets-form--page" if return_path.present?)],
+      data: {
+        composer_form: true,
+        bullet_type: (bullet.bulletable_type.downcase if return_path.present?),
+        controller: controllers.join(" "),
+        action: actions.join(" ")
+      }.compact do |fr| %>
   <%= fr.hidden_field :pops_on, value: bullet.pops_on %>
   <%= fr.hidden_field :bucket_id, value: bullet.bucket_id %>
   <%= fr.hidden_field :bulletable_type %>
@@ -32,16 +33,25 @@
 
   <%= yield fr, bulletable %>
 
-  <div class="bullets-form--rail">
+  <div class="bullets-form--rail" data-composer-target="rail">
     <div class="bullets-form--rail-actions">
-    <button
-      type="button"
-      class="button--tertiary button--icon-subtle bullets-form--type-dismiss"
-      data-action="composer#cancel"
-      aria-label="Close composer"
-    >
-      <%= icon_tag("arrow-left", style: "color: var(--color-text-base);", class: "button--icon") %>
-    </button>
+    <% if return_path.present? %>
+      <%= link_to return_path,
+            class: "button--tertiary button--icon-subtle bullets-form--type-dismiss",
+            data: { turbo_frame: "_top", turbo_action: "advance" },
+            aria: { label: "Back" } do %>
+        <%= icon_tag("arrow-left", style: "color: var(--color-text-base);", class: "button--icon") %>
+      <% end %>
+    <% else %>
+      <button
+        type="button"
+        class="button--tertiary button--icon-subtle bullets-form--type-dismiss"
+        data-action="composer#cancel"
+        aria-label="Close composer"
+      >
+        <%= icon_tag("arrow-left", style: "color: var(--color-text-base);", class: "button--icon") %>
+      </button>
+    <% end %>
     <span
       class="bullets-form--type-pill"
       data-bullet-type="<%= bullet.bulletable_type.downcase %>"

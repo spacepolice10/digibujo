@@ -1,9 +1,9 @@
-<%# locals: (review_to:, calendar_days:, calendar_bullets_by_date:) %>
+<%# locals: (calendar_days:, calendar_bullets_by_date:) %>
 <aside class="review--calendar" aria-label="This week">
   <header class="review--calendar-header">
     <h3 class="review--side-name">Schedule</h3>
     <p class="review--side-description utilities--text-sm">
-      <%= review_to.strftime("%b %-d") %> – <%= calendar_days.last.strftime("%b %-d") %>
+      <%= calendar_days.first.strftime("%b %-d") %> – <%= calendar_days.last.strftime("%b %-d") %>
     </p>
   </header>
 

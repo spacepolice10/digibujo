@@ -12,7 +12,7 @@
   <p class="utilities--mx-auto typography--paragraph-sm layout--padded">This is monthly planning section. Drop your "sometime" bullets here & jot down  the events that will happen in the future.</p>
 
   <div class="layout--page">
-  <main class="layout--container layout--container-lg layout--surface">
+  <main class="layout--container layout--container-md layout--surface">
 
     <div class="layout--flex layout--justify-between layout--surface-header">
       <%= link_to home_path, class: "button--tertiary button--sm" do %>
@@ -66,7 +66,6 @@
                         <% end %>
                       </div>
 
-                      <% composer_id = "monthlylog_bullets_#{date.to_date}_composer" %>
                       <div class="monthlylog--date-artifacts">
                         <div class="monthlylog--date-mood">
                           <%= render "daylogs/mood_entity",
@@ -83,9 +82,7 @@
                         <% end %>
                       </div>
                       <div class="monthlylog--date-composer">
-                        <%= create_bullet_buttons composer_id: composer_id,
-                              dialog_id: "monthlylog_composer",
-                              bucket_id: @monthlylog.bucket.id,
+                        <%= create_bullet_buttons bucket_id: @monthlylog.bucket.id,
                               pops_on: date,
                               bulletable_type: %w[Task Event] %>
                       </div>
@@ -124,18 +121,13 @@
               <% end %>
             <% end %>
 
-            <% composer_id = "monthlylog_bullets_unplanned_composer" %>
-            <%= create_bullet_buttons composer_id: composer_id,
-                  dialog_id: "monthlylog_composer",
-                  bucket_id: @monthlylog.bucket.id,
+            <%= create_bullet_buttons bucket_id: @monthlylog.bucket.id,
                   pops_on: nil,
                   bulletable_type: %w[Note] %>
           </div>
         </section>
       </div>
     </div>
-
-    <%= render "monthlylogs/composer_dialog" %>
   </div>
 <% else %>
   <% content_for(:title) { "Monthly spread" } %>

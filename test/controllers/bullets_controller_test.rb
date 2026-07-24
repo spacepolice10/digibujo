@@ -27,7 +27,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'Updated', @bullet.reload.body
   end
 
-  test 'create redirects to the new bullet show page by default' do
+  test 'create redirects to the originating daylog' do
     assert_difference -> { @user.bullets.count }, 1 do
       post bullets_path,
            params: {
@@ -40,8 +40,24 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
            }
     end
 
-    bullet = @user.bullets.order(:created_at).last
-    assert_redirected_to bullet_path(bullet)
+    assert_redirected_to daylog_path(date: Date.current.iso8601)
+  end
+
+  test 'create redirects to originating page even when turbo stream is preferred' do
+    assert_difference -> { @user.bullets.count }, 1 do
+      post bullets_path,
+           params: {
+             bullet: {
+               bulletable_type: 'Task',
+               bulletable_attributes: { body: 'Full page task' },
+               pops_on: Date.current.iso8601,
+               bucket_id: @daylog.id
+             }
+           },
+           as: :turbo_stream
+    end
+
+    assert_redirected_to daylog_path(date: Date.current.iso8601)
   end
 
   test 'create tags note from project attachment in body' do
@@ -152,7 +168,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     end
 
     bullet = @user.bullets.order(:created_at).last
-    assert_redirected_to bullet_path(bullet)
+    assert_redirected_to daylog_path(date: Date.current.iso8601)
   end
 
   test 'create renders new with errors when invalid' do
@@ -203,50 +219,17 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_select '.bullets-form--type-pill[data-bullet-type=?]', 'note', text: /Note/
   end
 
-  test 'new composer renders without return_to field' do
-    get new_bullet_path(bulletable_type: 'Task')
+  test 'new composer renders navigational back link from bucket' do
+    get new_bullet_path(bulletable_type: 'Task', pops_on: Date.current, bucket_id: @daylog.id)
+
+    assert_response :success
+    assert_select 'a.bullets-form--type-dismiss[data-turbo-frame=_top][href=?]',
+                  daylog_path(date: Date.current.iso8601)
     assert_select "input[name='return_to']", count: 0
   end
 
-  test 'new composer turbo frame request on mobile renders shared form in matching frame' do
-    mobile_ua = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)'
-
-    get new_bullet_path(bulletable_type: 'Task', pops_on: Date.current),
-        headers: { 'Turbo-Frame' => 'bullet_composer', 'User-Agent' => mobile_ua }
-
-    assert_response :success
-    assert_select 'turbo-frame#bullet_composer form.bullets-form'
-    assert_select 'textarea.bullets-form--body'
-    assert_select 'lexxy-editor', false
-    assert_select 'dialog', count: 0
-  end
-
-  test 'create turbo stream appends bullet to daylog list from mobile composer frame' do
-    mobile_ua = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)'
-
-    assert_difference -> { @user.bullets.count }, 1 do
-      post bullets_path,
-           params: {
-             bullet: {
-               bulletable_type: 'Task',
-               bulletable_attributes: { body: 'Mobile daylog task' },
-               pops_on: Date.current.iso8601,
-               bucket_id: @daylog.id
-             }
-           },
-           headers: { 'Turbo-Frame' => 'daylog_bullets_composer', 'User-Agent' => mobile_ua },
-           as: :turbo_stream
-    end
-
-    assert_response :success
-    assert_match(/turbo-stream action="append" target="daylog_bullets_container"/, response.body)
-    assert_match(/turbo-stream action="remove" target="no_bullets_container"/, response.body)
-  end
-
-  test 'create turbo stream appends bullet to collection list from composer frame' do
+  test 'create redirects to originating collection' do
     collection = create_collection!(@user, name: 'Inbox')
-    composer_frame = ActionView::RecordIdentifier.dom_id(collection, :bullets_composer)
-    container_id = ActionView::RecordIdentifier.dom_id(collection, :bullets_container)
 
     assert_difference -> { @user.bullets.count }, 1 do
       post bullets_path,
@@ -256,13 +239,10 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
                bulletable_attributes: { body: 'Collection task' },
                bucket_id: collection.bucket.id
              }
-           },
-           headers: { 'Turbo-Frame' => composer_frame },
-           as: :turbo_stream
+           }
     end
 
-    assert_response :success
-    assert_match(/turbo-stream action="append" target="#{container_id}"/, response.body)
+    assert_redirected_to collection_path(collection)
   end
 
   test 'create with non-Note type ignores stale bulletable_attributes' do

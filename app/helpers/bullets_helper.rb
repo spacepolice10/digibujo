@@ -32,13 +32,11 @@ module BulletsHelper
     }
   }.freeze
 
-  def create_bullet_buttons(composer_id:, bucket_id:, pops_on:, bulletable_type:, dialog_id: nil)
+  def create_bullet_buttons(bucket_id:, pops_on:, bulletable_type:)
     safe_join(
       Array(bulletable_type).map do |type_name|
         create_bullet_button(
           type_name: type_name.to_s,
-          composer_id: composer_id,
-          dialog_id: dialog_id,
           bucket_id: bucket_id,
           pops_on: pops_on
         )
@@ -46,9 +44,25 @@ module BulletsHelper
     )
   end
 
+  def bullet_composer_return_path(bullet)
+    bucketable = bullet.bucket&.bucketable
+    case bucketable
+    when Daylog
+      daylog_path(date: (bullet.pops_on || Date.current).iso8601)
+    when Collection
+      collection_path(bucketable)
+    when Monthlylog
+      monthlylog_path(bucketable)
+    when Future
+      future_path(bucketable)
+    else
+      daylog_path
+    end
+  end
+
   private
 
-  def create_bullet_button(type_name:, composer_id:, bucket_id:, pops_on:, dialog_id: nil)
+  def create_bullet_button(type_name:, bucket_id:, pops_on:)
     config = BULLET_TYPE_CONFIG.fetch(type_name) do
       raise ArgumentError, "Unknown bullet type: #{type_name}"
     end
@@ -65,14 +79,13 @@ module BulletsHelper
             ].compact,
             data: {
               bullet_type: config[:modifier],
-              turbo_frame: composer_id,
+              composer_expand: true,
+              turbo_frame: '_top',
               controller: ('hotkey' if config[:hotkey]),
               hotkey: config[:hotkey],
               action: config[:hotkey_action]
             }.compact,
-            commandfor: dialog_id,
-            command: ("show-modal" if dialog_id),
-            aria: { label: "Add #{type_name}", keyshortcuts: config[:hotkey], haspopup: ("dialog" if dialog_id) }.compact do
+            aria: { label: "Add #{type_name}", keyshortcuts: config[:hotkey] }.compact do
       safe_join([
                   icon_tag(config[:icon], style: "color: #{config[:colour]};", class: 'button--icon'),
                   type_name

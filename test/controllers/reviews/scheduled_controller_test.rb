@@ -10,11 +10,11 @@ module Reviews
       @today = Date.current
     end
 
-    test 'show lists scheduled bullets for the week anchored at review_to' do
+    test 'show lists scheduled bullets for the week starting today' do
       week_start = @today + 2.days
       create_bullet!(@user, bulletable: Event.new(body: 'Team standup'), pops_on: week_start)
 
-      get review_scheduled_path(from: @today.iso8601, to: @today.iso8601)
+      get review_scheduled_path(from: (@today - 1.day).iso8601, to: (@today - 1.day).iso8601)
 
       assert_response :success
       assert_match 'Team standup', response.body
@@ -33,7 +33,7 @@ module Reviews
       assert_no_match 'Archived', response.body
     end
 
-    test 'show defaults review period when no dates given' do
+    test 'show defaults to the next seven days from today' do
       create_bullet!(@user, bulletable: Task.new(body: 'Recent'), pops_on: @today)
 
       get review_scheduled_path

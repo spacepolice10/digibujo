@@ -4,7 +4,7 @@ class ReviewsController < ApplicationController
   include PrepareBullets
 
   def show
-    @review_to = params[:to].present? ? params[:to].to_date : Date.current
+    @review_to = params[:to].present? ? params[:to].to_date : Date.yesterday
     @review_from = params[:from].present? ? params[:from].to_date : @review_to - 6.days
 
     scoped = review_bullets.includes(:bulletable)

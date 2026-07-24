@@ -1,31 +1,18 @@
 <% content_for(:title) { "New bullet" } %>
 
-<div class="session-layout">
-  <div class="layout--header">
-    <%= link_to daylog_path, class: "button--secondary" do %>
-      <i
-        class="icon"
-        style="--icon-mask: var(--icon-arrow-left)"
-        aria-hidden="true"
-      ></i>
-      Back
-    <% end %>
-
-    <div></div>
-  </div>
-
-  <turbo-frame id="<%= turbo_frame_request_id %>" class="utilities--contents">
-    <% if @bullet.bulletable_type.present? %>
-      <%= render @bullet.to_form_path, bullet: @bullet, editing: false %>
-    <% else %>
-      <div class="bullets-form--dock<%= " bullets-form--dock-mobile" if request.variant.include?(:mobile) %>">
-        <div class="bullets-form--buttons">
-          <%= create_bullet_buttons composer_id: turbo_frame_request_id.presence || "bullet_composer",
-                bucket_id: (@bullet.bucket || Current.user.daylog.bucket).id,
-                pops_on: @bullet.pops_on || Date.current,
-                bulletable_type: Bullet.bulletable_types %>
-        </div>
+<div class="layout--page layout--container layout--container-md">
+  <% if @bullet.bulletable_type.present? %>
+    <%= render @bullet.to_form_path,
+          bullet: @bullet,
+          editing: false,
+          return_path: bullet_composer_return_path(@bullet) %>
+  <% else %>
+    <div class="bullets-form--dock<%= " bullets-form--dock-mobile" if request.variant.include?(:mobile) %>">
+      <div class="bullets-form--buttons">
+        <%= create_bullet_buttons bucket_id: (@bullet.bucket || Current.user.daylog.bucket).id,
+              pops_on: @bullet.pops_on || Date.current,
+              bulletable_type: Bullet.bulletable_types %>
       </div>
-    <% end %>
-  </turbo-frame>
+    </div>
+  <% end %>
 </div>

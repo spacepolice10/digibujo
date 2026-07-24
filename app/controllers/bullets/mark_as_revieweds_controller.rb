@@ -5,7 +5,7 @@ module Bullets
     include PrepareBullets
 
     def create
-      @review_to = params[:to].present? ? params[:to].to_date : Date.current
+      @review_to = params[:to].present? ? params[:to].to_date : Date.yesterday
       @review_from = params[:from].present? ? params[:from].to_date : @review_to - 6.days
 
       bullets = bullets_to_mark

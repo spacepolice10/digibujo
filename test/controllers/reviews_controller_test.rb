@@ -61,15 +61,17 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
     assert_select '#collects_picker_dropdown_id[popover]'
   end
 
-  test 'show defaults to the last seven days through today' do
+  test 'show defaults to the last seven days through yesterday' do
     create_bullet!(@user, bulletable: Task.new(body: 'Today task'), pops_on: @today)
+    create_bullet!(@user, bulletable: Task.new(body: 'Yesterday task'), pops_on: @today - 1.day)
     create_bullet!(@user, bulletable: Note.new(body: 'Earlier this week'), pops_on: @today - 5.days)
     create_bullet!(@user, bulletable: Event.new(body: 'Too old'), pops_on: @today - 8.days)
 
     get review_path
 
     assert_response :success
-    assert_match 'Today task', response.body
+    assert_no_match 'Today task', response.body
+    assert_match 'Yesterday task', response.body
     assert_match 'Earlier this week', response.body
     assert_no_match 'Too old', response.body
   end

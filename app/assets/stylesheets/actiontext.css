@@ -8,11 +8,10 @@ lexxy-toolbar {
 }
 
 .lexxy-content {
-  background: transparent;
   color: var(--color-fg-base);
 }
 .lexxy-editor__toolbar-button {
-  background: var(--color-bg-subtle);
+  background: transparent;
   color: var(--color-fg-base);
   &:hover {
     background: var(--color-bg-strong) !important;

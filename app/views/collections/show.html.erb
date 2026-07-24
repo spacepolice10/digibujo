@@ -52,14 +52,9 @@
 </div>
 <div class="bullets-form--dock<%= " bullets-form--dock-mobile" if request.variant.include?(:mobile) %>">
   <div class="bullets-form--buttons">
-    <%= create_bullet_buttons composer_id: dom_id(@collection, :bullets_composer),
-          dialog_id: dom_id(@collection, :composer),
-          bucket_id: @collection.bucket.id,
+    <%= create_bullet_buttons bucket_id: @collection.bucket.id,
           pops_on: nil,
           bulletable_type: Bullet.bulletable_types %>
   </div>
 </div>
-  <%= render "bullets/composer/dialog",
-        id: dom_id(@collection, :composer),
-        composer_id: dom_id(@collection, :bullets_composer) %>
 </div>
