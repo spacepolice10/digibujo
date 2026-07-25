@@ -1,23 +1,47 @@
 <%= render "shared/dropdown",
       name: "Create",
       popover_target: "home_create" do %>
-  <nav class="home--create-menu" aria-label="Create">
-    <%= link_to new_collection_path, class: "button--tertiary home--create-menu-item", data: { turbo_frame: "_top" } do %>
+  <nav class="dropdown--menu" aria-label="Create">
+    <%= link_to new_collection_path,
+          class: "dropdown-item",
+          data: {
+            turbo_frame: "_top",
+            grid_navigation_target: "item",
+            action: "focus->grid-navigation#syncPosition"
+          } do %>
       <%= icon_tag("plus") %>
       Add collection
     <% end %>
 
-    <%= link_to new_future_path, class: "button--tertiary home--create-menu-item", data: { turbo_frame: "_top" } do %>
+    <%= link_to new_future_path,
+          class: "dropdown-item",
+          data: {
+            turbo_frame: "_top",
+            grid_navigation_target: "item",
+            action: "focus->grid-navigation#syncPosition"
+          } do %>
       <%= icon_tag("calendar") %>
       Add future log
     <% end %>
 
-    <%= link_to new_monthlylog_path, class: "button--tertiary home--create-menu-item", data: { turbo_frame: "_top" } do %>
+    <%= link_to new_monthlylog_path,
+          class: "dropdown-item",
+          data: {
+            turbo_frame: "_top",
+            grid_navigation_target: "item",
+            action: "focus->grid-navigation#syncPosition"
+          } do %>
       <%= icon_tag("calendar") %>
       Add monthly log
     <% end %>
 
-    <%= link_to new_project_path, class: "button--tertiary home--create-menu-item", data: { turbo_frame: "_top" } do %>
+    <%= link_to new_project_path,
+          class: "dropdown-item",
+          data: {
+            turbo_frame: "_top",
+            grid_navigation_target: "item",
+            action: "focus->grid-navigation#syncPosition"
+          } do %>
       <%= icon_tag("tag") %>
       New project
     <% end %>

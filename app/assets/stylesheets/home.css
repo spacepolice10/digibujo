@@ -41,15 +41,6 @@
     );
   }
 
-  .home--create-menu {
-    gap: var(--spacing-vertical-half);
-  }
-
-  .home--create-menu-item {
-    width: 100%;
-    justify-content: flex-start;
-  }
-
   .home--section-list {
     min-height: 80vh;
   }
@@ -202,7 +193,6 @@
   }
 
   .home--activity {
-    display: flex;
     flex-direction: column;
     gap: var(--spacing-vertical-half);
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);

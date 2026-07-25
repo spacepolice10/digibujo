@@ -11,6 +11,9 @@
     id="home_create"
     class="dropdown dropdown--element dropdown--element-bottom animations--side-in home--create-dropdown"
     popover
+    data-controller="grid-navigation"
+    data-grid-navigation-columns-value="1"
+    data-action="keydown->grid-navigation#navigate"
   >
     <%= render "home/create_menu" %>
   </div>

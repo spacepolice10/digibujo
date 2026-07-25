@@ -1,19 +1,27 @@
 <% content_for(:title) { "Published" } %>
 
-<div class="layout--page">
-  <div class="layout--header">
-    <div class="layout--header-actions">
-      <%= link_to home_path, class: "button--secondary" do %>
-        <i class="icon" style="--icon-mask: var(--icon-arrow-left)" aria-hidden="true"></i>
-        Home
-      <% end %>
-    </div>
+<div class="layout--page layout--container layout--container-md">
+  <div class="layout--mx-auto published--header">
+    <%= icon_tag("link", style: "color: var(--color-text-base);", class: "published--header-icon") %>
     <h2>Published</h2>
   </div>
 
-  <article class="layout--column bucket--list">
-    <ul class="layout--list">
-      <%= render partial: "published/bullet", collection: @bullets, as: :bullet %>
-    </ul>
-  </article>
+  <div class="layout--surface">
+    <div class="layout--flex layout--justify-between layout--surface-header">
+      <%= back_link_to home_path, class: "button--tertiary button--sm" do %>
+        <%= icon_tag("arrow-left", style: "color: var(--color-text-base);", class: "button--icon") %>
+        Back
+      <% end %>
+    </div>
+
+    <div class="layout--list layout--padded published--list">
+      <% if @bullets.any? %>
+        <ul class="layout--list">
+          <%= render partial: "published/bullet", collection: @bullets, as: :bullet %>
+        </ul>
+      <% else %>
+        <p class="published--empty typography--paragraph-sm">Nothing published yet.</p>
+      <% end %>
+    </div>
+  </div>
 </div>

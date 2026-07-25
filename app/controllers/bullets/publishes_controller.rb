@@ -10,10 +10,7 @@ module Bullets
       Bullet.transaction do
         @bullets.lock.find_each(&:publish!)
       end
-      respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to @bullets.first }
-      end
+      redirect_to published_path(@bullets.first.reload.public_code)
     end
 
     def destroy

@@ -87,11 +87,11 @@ export default class extends Controller {
   }
 
   openPopsPicker() {
-    this.#openPicker(this.popsDropdownTarget, this.popsPickerPathValue);
+    this.#openPicker(this.#popsFrame(), this.popsPickerPathValue);
   }
 
   openCollectsPicker() {
-    this.#openPicker(this.collectsDropdownTarget, this.collectsPickerPathValue);
+    this.#openPicker(this.#collectsFrame(), this.collectsPickerPathValue);
   }
 
   clear() {
@@ -103,8 +103,7 @@ export default class extends Controller {
     if (this.idListValue.length == 0) return;
 
     if (this.#isPickerOpen()) {
-      this.#hidePicker(this.popsDropdownTarget);
-      this.#hidePicker(this.collectsDropdownTarget);
+      this.#hidePickers();
       return;
     }
 
@@ -114,6 +113,20 @@ export default class extends Controller {
   // =====================================================================
   // Picker popovers
   // =====================================================================
+
+  #popsFrame() {
+    if (!this.hasPopsDropdownTarget) return null;
+    return this.popsDropdownTarget.querySelector("#postpone_picker_dropdown_id");
+  }
+
+  #collectsFrame() {
+    if (!this.hasCollectsDropdownTarget) return null;
+    return this.collectsDropdownTarget.querySelector("#collects_picker_dropdown_id");
+  }
+
+  #pickerFrames() {
+    return [this.#popsFrame(), this.#collectsFrame()].filter(Boolean);
+  }
 
   #openPicker(element, path) {
     if (!element) return;
@@ -130,11 +143,12 @@ export default class extends Controller {
     if (element?.matches(":popover-open")) element.hidePopover();
   }
 
+  #hidePickers() {
+    this.#pickerFrames().forEach((frame) => this.#hidePicker(frame));
+  }
+
   #isPickerOpen() {
-    const pickers = [];
-    if (this.hasPopsDropdownTarget) pickers.push(this.popsDropdownTarget);
-    if (this.hasCollectsDropdownTarget) pickers.push(this.collectsDropdownTarget);
-    return pickers.some((picker) => picker.matches(":popover-open"));
+    return this.#pickerFrames().some((frame) => frame.matches(":popover-open"));
   }
 
   // =====================================================================
@@ -160,9 +174,11 @@ export default class extends Controller {
   }
 
   #restore() {
-    this.#hidePicker(this.popsDropdownTarget);
-    this.#hidePicker(this.collectsDropdownTarget);
-    this.#cleanupSelection();
+    try {
+      this.#hidePickers();
+    } finally {
+      this.#cleanupSelection();
+    }
   }
 
   #cleanupSelection() {

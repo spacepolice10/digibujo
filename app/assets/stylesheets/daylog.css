@@ -142,26 +142,6 @@
     );
   }
 
-  .daylog--mood-menu {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-vertical-half);
-  }
-
-  .daylog--mood-menu-form {
-    width: 100%;
-  }
-
-  .daylog--mood-menu-item {
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .daylog--mood-menu-item-current {
-    background: var(--color-bg-base);
-    box-shadow: var(--shadow-subtle);
-  }
-
   .daylog--mood-menu-marker {
     font-size: var(--font-size-base);
   }

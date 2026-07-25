@@ -36,7 +36,7 @@
   <div class="bullets-form--rail" data-composer-target="rail">
     <div class="bullets-form--rail-actions">
     <% if return_path.present? %>
-      <%= link_to return_path,
+      <%= back_link_to return_path,
             class: "button--tertiary button--icon-subtle bullets-form--type-dismiss",
             data: { turbo_frame: "_top", turbo_action: "advance" },
             aria: { label: "Back" } do %>

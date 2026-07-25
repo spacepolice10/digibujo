@@ -13,11 +13,14 @@
           )
         }
       } do %>
-  <ul class="layout--list bucket--list" role="listbox">
-    <li class="layout--list-item" role="option">
+  <ul class="bulk-menu--picker-list" role="listbox">
+    <li class="bulk-menu--picker-list-item" role="option">
       <%= link_to new_collection_path(bullet_ids: bullet_ids, return_to: return_to),
-            class: "bulk-menu--collect-item-link",
-            data: { turbo_frame: "_top" } do %>
+            class: "dropdown-item",
+            data: {
+              turbo_frame: "_top",
+              combobox_target: "item"
+            } do %>
         <%= icon_tag("plus") %>
         New collection
       <% end %>

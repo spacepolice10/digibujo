@@ -259,7 +259,7 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select '.monthlylog--date-mood .daylog--mood', count: monthlylog.spread_days.size
-    assert_select '.daylog--mood-menu-item', text: /Inspired/
+    assert_select '.dropdown-item', text: /Inspired/
     assert_select 'section.monthlylog--mood', count: 0
     assert_match '✨', response.body
   end

@@ -1,43 +1,9 @@
 <div class="bulk-menu layout--surface"
      data-bulk-menu-target="menu"
      data-action="keydown.esc@document->bulk-menu#escape"
-     data-turbo-temporary="true"
      tabindex="0"
      hidden>
   <div class="bulk-menu--actions">
-    <div data-bulk-menu-target="conditionalAction" data-require-pinnable="unpinned" hidden>
-      <%= form_with url: pin_path, method: :post, data: { turbo_stream: true } do %>
-        <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
-        <%= button_tag type: :submit,
-              class: "button--secondary hotkey-hint hotkey-hint--always",
-              data: {
-                controller: "hotkey",
-                hotkey: "P",
-                action: "keydown.p@document->hotkey#click"
-              },
-              aria: { keyshortcuts: "P" } do %>
-          <%= icon_tag("pin") %>
-          Pin
-        <% end %>
-      <% end %>
-    </div>
-
-    <div data-bulk-menu-target="conditionalAction" data-require-pinnable="pinned" hidden>
-      <%= form_with url: pin_path, method: :delete, data: { turbo_stream: true } do %>
-        <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
-        <%= button_tag type: :submit,
-              class: "button--secondary hotkey-hint hotkey-hint--always",
-              data: {
-                controller: "hotkey",
-                hotkey: "P",
-                action: "keydown.p@document->hotkey#click"
-              },
-              aria: { keyshortcuts: "P" } do %>
-          <%= icon_tag("pin") %>
-          Unpin
-        <% end %>
-      <% end %>
-    </div>
 
     <div data-bulk-menu-target="conditionalAction" data-require-completable="incomplete" hidden>
       <%= form_with url: complete_path, method: :post, data: { turbo_stream: true } do %>
@@ -73,8 +39,42 @@
       <% end %>
     </div>
 
+    <div data-bulk-menu-target="conditionalAction" data-require-pinnable="unpinned" hidden>
+      <%= form_with url: pin_path, method: :post, data: { turbo_stream: true } do %>
+        <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
+        <%= button_tag type: :submit,
+              class: "button--secondary hotkey-hint hotkey-hint--always",
+              data: {
+                controller: "hotkey",
+                hotkey: "P",
+                action: "keydown.p@document->hotkey#click"
+              },
+              aria: { keyshortcuts: "P" } do %>
+          <%= icon_tag("pin") %>
+          Pin
+        <% end %>
+      <% end %>
+    </div>
+
+    <div data-bulk-menu-target="conditionalAction" data-require-pinnable="pinned" hidden>
+      <%= form_with url: pin_path, method: :delete, data: { turbo_stream: true } do %>
+        <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
+        <%= button_tag type: :submit,
+              class: "button--secondary hotkey-hint hotkey-hint--always",
+              data: {
+                controller: "hotkey",
+                hotkey: "P",
+                action: "keydown.p@document->hotkey#click"
+              },
+              aria: { keyshortcuts: "P" } do %>
+          <%= icon_tag("pin") %>
+          Unpin
+        <% end %>
+      <% end %>
+    </div>
+
     <div data-bulk-menu-target="conditionalAction" data-require-publishable="unpublished" hidden>
-      <%= form_with url: publish_path, method: :post, data: { turbo_stream: true } do %>
+      <%= form_with url: publish_path, method: :post, data: { turbo_frame: "_top" } do %>
         <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
         <%= button_tag type: :submit,
               class: "button--secondary hotkey-hint hotkey-hint--always",
@@ -122,41 +122,41 @@
       <% end %>
     <% end %>
 
-    <div class="bulk-menu--action-dock">
+    <div class="dropdown--dock bulk-menu--action-dock" data-bulk-menu-target="popsDropdown">
       <button type="button"
               class="button--secondary hotkey-hint hotkey-hint--always"
               data-controller="hotkey"
               data-hotkey="L"
               data-action="bulk-menu#openPopsPicker keydown.l@document->hotkey#click"
-              aria-keyshortcuts="L">
+              aria-keyshortcuts="L"
+              aria-haspopup="menu">
         <%= icon_tag("arrow-up") %>
         Later
       </button>
       <turbo-frame id="postpone_picker_dropdown_id"
-                   class="bulk-menu--action-menu bulk-menu--action-menu--wide bulk-menu--action-frame"
+                   class="dropdown dropdown--element dropdown--element-up animations--side-in bulk-menu--picker bulk-menu--picker--schedule"
                    popover
                    loading="lazy"
-                   data-bulk-menu-target="popsDropdown"
                    data-controller="grid-navigation"
                    data-grid-navigation-columns-value="1"
                    data-action="keydown->grid-navigation#navigate"></turbo-frame>
     </div>
 
-    <div class="bulk-menu--action-dock">
+    <div class="dropdown--dock bulk-menu--action-dock" data-bulk-menu-target="collectsDropdown">
       <button type="button"
               class="button--secondary hotkey-hint hotkey-hint--always"
               data-controller="hotkey"
               data-hotkey="S"
               data-action="bulk-menu#openCollectsPicker keydown.s@document->hotkey#click"
-              aria-keyshortcuts="S">
+              aria-keyshortcuts="S"
+              aria-haspopup="menu">
         <%= icon_tag("arrow-left") %>
         Save
       </button>
       <turbo-frame id="collects_picker_dropdown_id"
-                   class="bulk-menu--action-menu bulk-menu--action-menu--collects bulk-menu--action-frame"
+                   class="dropdown dropdown--element dropdown--element-up animations--side-in bulk-menu--picker bulk-menu--picker--collects"
                    popover
-                   loading="lazy"
-                   data-bulk-menu-target="collectsDropdown"></turbo-frame>
+                   loading="lazy"></turbo-frame>
     </div>
 
 

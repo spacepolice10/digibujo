@@ -4,6 +4,9 @@ import { debounce } from "helpers/debounce"
 import { navigateCombobox } from "helpers/combobox"
 
 const DEFAULT_DEBOUNCE_MS = 80
+// iOS Safari often blurs the field (and would hide the palette) before the
+// tap synthesizes click — keep results mounted long enough for the link to receive it.
+const COLLAPSE_DELAY_MS = 300
 
 export default class extends Controller {
   static targets = ["searchForm", "searchField", "item"]
@@ -15,19 +18,45 @@ export default class extends Controller {
 
   #abort = null
   #debouncedSearch = null
+  #collapseTimer = null
 
   connect() {
     this.#debouncedSearch = debounce(
       (input) => this.#performSearch(input),
       this.debounceMsValue,
     )
+
+    if (this.#managesPalette) {
+      this._expand = this.expand.bind(this)
+      this._collapseSoon = this.collapseSoon.bind(this)
+      this.element.addEventListener("focusin", this._expand)
+      this.element.addEventListener("focusout", this._collapseSoon)
+    }
   }
 
   disconnect() {
     this.#cancelPendingSearch()
+    this.#cancelCollapse()
+
+    if (this._expand) {
+      this.element.removeEventListener("focusin", this._expand)
+      this.element.removeEventListener("focusout", this._collapseSoon)
+    }
   }
 
-  // Prevent input blur when interacting with the results list.
+  expand() {
+    this.#cancelCollapse()
+    this.element.classList.add("search--open")
+  }
+
+  collapseSoon(event) {
+    if (event.relatedTarget && this.element.contains(event.relatedTarget)) return
+
+    this.#cancelCollapse()
+    this.#collapseTimer = setTimeout(() => this.#collapse(), COLLAPSE_DELAY_MS)
+  }
+
+  // Prevent input blur when interacting with the results list (mousedown path).
   keepFocus(event) {
     event.preventDefault()
   }
@@ -45,6 +74,7 @@ export default class extends Controller {
       this.#performSearch(this.searchFieldTarget)
     }
 
+    this.#collapse()
     this.searchFieldTarget.blur()
     event.currentTarget.blur()
   }
@@ -61,6 +91,7 @@ export default class extends Controller {
   commit() {
     if (!this.hasSearchFieldTarget) return
     if (this.searchFieldTarget.value.trim()) return
+    this.#collapse()
     this.searchFieldTarget.blur()
   }
 
@@ -71,7 +102,9 @@ export default class extends Controller {
     } else if (event.key == "ArrowUp") {
       event.preventDefault()
       this._move("up")
-    } else if (event.key == "Enter" || event.key == " ") {
+    } else if (event.key == "Enter") {
+      this._activate(event)
+    } else if (event.key == " " && (!this.hasSearchFieldTarget || event.target != this.searchFieldTarget)) {
       this._activate(event)
     } else if (event.key == "Escape") {
       this.currentPosition = -1
@@ -88,13 +121,11 @@ export default class extends Controller {
   }
 
   itemTargetConnected() {
-    this.currentPosition = -1
-    this._updateItems()
+    this.#selectFirstItem()
   }
 
   itemTargetDisconnected() {
-    this.currentPosition = -1
-    this._updateItems()
+    this.#selectFirstItem()
   }
 
   _activate(event) {
@@ -120,7 +151,9 @@ export default class extends Controller {
       direction,
       this.itemTargets.length,
     )
-    this.itemTargets[this.currentPosition].scrollIntoView({ behavior: "smooth", block: "center" })
+    if (this.currentPosition >= 0) {
+      this.itemTargets[this.currentPosition].scrollIntoView({ behavior: "smooth", block: "center" })
+    }
     this._updateItems()
   }
 
@@ -128,6 +161,20 @@ export default class extends Controller {
     this.itemTargets.forEach((item, index) => {
       item.setAttribute("aria-selected", index == this.currentPosition)
     })
+  }
+
+  get #managesPalette() {
+    return this.element.querySelector(".search--palette") != null
+  }
+
+  #collapse() {
+    this.#cancelCollapse()
+    this.element.classList.remove("search--open")
+  }
+
+  #cancelCollapse() {
+    clearTimeout(this.#collapseTimer)
+    this.#collapseTimer = null
   }
 
   async #performSearch(input) {
@@ -153,5 +200,10 @@ export default class extends Controller {
   #cancelPendingSearch() {
     this.#abort?.abort()
     this.#abort = null
+  }
+
+  #selectFirstItem() {
+    this.currentPosition = this.itemTargets.length > 0 ? 0 : -1
+    this._updateItems()
   }
 }

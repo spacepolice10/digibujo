@@ -189,6 +189,59 @@
     padding: var(--spacing-horizontal-half) var(--spacing-horizontal-half) var(--spacing-vertical-half);
   }
 
+  /* List rows inside overlay menus (mood, create, bulk pickers, …). */
+  .dropdown--element-body:has(.dropdown--menu) {
+    padding-inline: 0;
+  }
+
+  .dropdown--menu {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .dropdown--menu-form {
+    display: block;
+    width: 100%;
+    margin: 0;
+  }
+
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    font: inherit;
+    font-size: var(--font-size-base);
+    line-height: inherit;
+    text-align: start;
+    text-decoration: none;
+    color: var(--color-fg-subtle);
+    cursor: pointer;
+    appearance: none;
+
+    @media (hover: hover) {
+      &:hover {
+        background: var(--color-bg-subtle);
+        color: var(--color-fg-base);
+      }
+    }
+
+    &:focus-visible,
+    &[aria-selected="true"],
+    &.dropdown-item--current {
+      background: var(--color-bg-subtle);
+      color: var(--color-fg-base);
+      outline: none;
+    }
+  }
+
   .dropdown--element-hide {
     flex-shrink: 0;
     width: var(--spacing-horizontal-double);

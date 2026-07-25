@@ -2,14 +2,10 @@
 
 <div class="layout--container layout--container-md layout--grid grid-cols-1">
   <header class="layout--header">
-    <button class="button--tertiary" onclick="history.back()">
-      <i
-        class="icon"
-        style="--icon-mask: var(--icon-arrow-left)"
-        aria-hidden="true"
-      ></i>
+    <%= back_link_to home_path, class: "button--tertiary" do %>
+      <%= icon_tag("arrow-left") %>
       Back
-    </button>
+    <% end %>
   </header>
 
   <article class="layout--surface attachment--show">

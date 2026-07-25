@@ -140,11 +140,11 @@
     min-height: 0;
   }
 
-  .menu--page-mobile:has(.search:focus-within)>.search {
+  .menu--page-mobile:has(.search.search--open)>.search {
     flex: 1;
   }
 
-  .menu--page-mobile:has(.search:focus-within)>.menu--scroll {
+  .menu--page-mobile:has(.search.search--open)>.menu--scroll {
     display: none;
   }
 

@@ -8,7 +8,7 @@
 
   <div class="layout--surface">
     <div class="layout--flex layout--justify-between layout--surface-header">
-      <%= link_to activities_path, class: "button--tertiary button--sm", data: { turbo_frame: "_top" } do %>
+      <%= back_link_to activities_path, class: "button--tertiary button--sm", data: { turbo_frame: "_top" } do %>
         <%= icon_tag("arrow-left", style: "color: var(--color-text-base);", class: "button--icon") %>
         Back
       <% end %>

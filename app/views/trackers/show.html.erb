@@ -6,7 +6,7 @@
 
     <div class="layout--header">
       <div class="layout--header-actions">
-        <%= link_to monthlylog_path(@tracker.monthlylog), class: "button--secondary" do %>
+        <%= back_link_to monthlylog_path(@tracker.monthlylog), class: "button--secondary" do %>
           <%= icon_tag("arrow-left", colour: "var(--color-stroke-base)") %> Back
         <% end %>
       </div>

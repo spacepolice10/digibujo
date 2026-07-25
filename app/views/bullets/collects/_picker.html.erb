@@ -7,7 +7,7 @@
        data-combobox-path-value="<%= new_collect_path %>">
     <%= form_with url: new_collect_path,
           method: :get,
-          class: "search--form",
+          class: "bulk-menu--collect-search",
           data: { combobox_target: "searchForm" } do %>
       <%= hidden_field_tag :bullet_ids, bullet_ids, data: { bulk_menu_target: "idList" } %>
       <%= hidden_field_tag :return_to, return_to if return_to.present? %>
@@ -22,17 +22,17 @@
             } %>
     <% end %>
 
-    <div class="bulk-menu--collect-section">
+    <nav class="dropdown--menu" aria-label="Collections">
       <%= render "bullets/collects/collections_list",
             bullet_ids: bullet_ids,
             return_to: return_to,
             collects_q: collects_q,
             collections: collections,
             collections_page: collections_page %>
-    </div>
+    </nav>
 
     <% if collections.empty? %>
-      <p>No collections found.</p>
+      <p class="bulk-menu--collect-empty">No collections found.</p>
     <% end %>
   </div>
 <% end %>

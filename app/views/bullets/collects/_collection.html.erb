@@ -1,13 +1,13 @@
 <%# locals: (collection:, bullet_ids: "") %>
-<li class="layout--list-item" role="option">
+<li class="bulk-menu--picker-list-item" role="option">
   <%= form_with url: collect_path,
         method: :post,
-        class: "bulk-menu--collect-form",
+        class: "dropdown--menu-form",
         data: { turbo_stream: true } do %>
     <%= hidden_field_tag :bullet_ids, bullet_ids, data: { bulk_menu_target: "idList" } %>
     <%= hidden_field_tag :bucket_id, collection.bucket.id %>
     <button type="submit"
-            class="bulk-menu--collect-item-link"
+            class="dropdown-item"
             data-combobox-target="item">
       <%= render "collections/search_palette", collection: collection %>
     </button>

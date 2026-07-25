@@ -124,22 +124,37 @@
     font-weight: var(--font-weight-strong);
     font-style: italic;
     text-transform: uppercase;
-    background: var(--color-accent);
+    background: linear-gradient(
+      165deg,
+      color-mix(in oklch, var(--color-accent) 55%, oklch(0.93 0.18 105)) 0%,
+      var(--color-accent) 42%,
+      color-mix(in oklch, var(--color-accent) 78%, oklch(0.72 0.16 95)) 100%
+    );
     border: 1px solid color-mix(in oklch, var(--color-accent-bg) 65%, black);
     color: black;
     box-shadow: 0 4px 0 oklch(0% 0 0 / 0.95);
     transition:
+      background 0.2s ease,
       color 0.2s ease,
       box-shadow 0.2s ease;
 
     &:active:not(:disabled) {
+      background: linear-gradient(
+        165deg,
+        color-mix(in oklch, var(--color-accent) 70%, oklch(0.62 0.14 100)) 0%,
+        color-mix(in oklch, var(--color-accent) 65%, oklch(0.55 0.13 95)) 100%
+      );
       border-color: color-mix(in oklch, var(--color-accent) 45%, black);
       box-shadow: 0 3px 0 oklch(0% 0 0 / 0.35);
     }
 
     &:focus-visible {
       outline: none;
-      background: color-mix(in oklch, var(--color-accent) 85%, black);
+      background: linear-gradient(
+        165deg,
+        color-mix(in oklch, var(--color-accent) 62%, oklch(0.68 0.15 100)) 0%,
+        color-mix(in oklch, var(--color-accent) 58%, oklch(0.58 0.14 95)) 100%
+      );
       border-color: var(--color-stroke-strong);
     }
   }

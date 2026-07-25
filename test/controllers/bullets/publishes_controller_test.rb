@@ -10,15 +10,11 @@ module Bullets
       @bullet = create_bullet!(@user, bulletable: Note.new(body: 'Publish me'))
     end
 
-    test 'create publishes bullet via turbo stream' do
-      post publish_path,
-           params: { bullet_ids: @bullet.id.to_s },
-           headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
+    test 'create publishes bullet and redirects to its public page' do
+      post publish_path, params: { bullet_ids: @bullet.id.to_s }
 
-      assert_response :success
       assert @bullet.reload.published?
-      assert_match 'turbo-stream', response.media_type
-      assert_match %(turbo-stream action="replace" targets="#bullet_#{@bullet.id}"), response.body
+      assert_redirected_to published_path(@bullet.public_code)
     end
 
     test 'create publishes multiple bullets' do
@@ -26,9 +22,9 @@ module Bullets
 
       post publish_path, params: { bullet_ids: "#{@bullet.id},#{other.id}" }
 
-      assert_redirected_to bullet_path(@bullet)
       assert @bullet.reload.published?
       assert other.reload.published?
+      assert_redirected_to published_path(@bullet.public_code)
     end
 
     test 'destroy unpublishes bullet via turbo stream' do

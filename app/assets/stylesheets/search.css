@@ -7,11 +7,11 @@
     min-height: 0;
   }
 
-  .search:focus-within {
+  .search.search--open {
     flex: 1;
   }
 
-  .search:not(:focus-within) .search--palette {
+  .search:not(.search--open) .search--palette {
     display: none;
   }
 
@@ -59,7 +59,7 @@
     flex-shrink: 0;
   }
 
-  .search:focus-within .search--dismiss {
+  .search.search--open .search--dismiss {
     display: inline-flex;
   }
 
@@ -83,7 +83,7 @@
 
   .search--item {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: var(--spacing-horizontal);
     padding: var(--spacing-vertical) var(--spacing-horizontal-half);
     flex: 1;
