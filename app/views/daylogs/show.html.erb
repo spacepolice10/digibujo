@@ -1,90 +1,77 @@
 <% if @daylog %>
-  <div class="layout--page layout--container layout--container-md daylog daylog--chat" data-controller="daylog">
-    <turbo-frame id="daylog">
-      <%# Shell is header + list only. Composer is a fixed dock above the tabbar;
-          the full-viewport shell clears it with scroller padding. %>
-      <div data-bulk-menu-target="list"
-           class="layout--surface daylog--shell"
-           data-controller="daylog-scroll"
-           data-daylog-scroll-url-value="<%= daylog_bullets_path %>">
-        <div id="bullets-header" class="layout--flex layout--justify-between layout--surface-header">
-          <div class="layout--flex layout--gapped">
-            <%= link_to daylog_path(date: (@selected_date - 1.day).iso8601),
-                  data: {
-                    turbo_action: "advance",
-                    controller: "hotkey",
-                    hotkey: "←",
-                    action: "keydown.shift+left@document->hotkey#click"
-                  },
-                  class: "button--tertiary hotkey-hint",
-                  aria: { label: "Show previous day", keyshortcuts: "Shift+ArrowLeft" } do %>
-              <%= icon_tag("arrow-left") %>
-            <% end %>
-
-            <div class="button--tertiary daylog--date-picker">
-              <span class="daylog--date-picker-face" aria-hidden="true">
-                <%= icon_tag("calendar") %>
-                <%= @selected_date.strftime("%a, %b %-d") %>
-              </span>
-
-              <input <%# herb:disable html-input-require-autocomplete %>
-                type="date"
-                value="<%= @selected_date.iso8601 %>"
-                data-action="change->daylog#switchDate"
-                class="daylog--date-picker-input"
-                aria-label="Pick a date"
-              >
-            </div>
-
-            <%= link_to daylog_path(date: (@selected_date + 1.day).iso8601),
-                  data: {
-                    turbo_action: "advance",
-                    controller: "hotkey",
-                    hotkey: "→",
-                    action: "keydown.shift+right@document->hotkey#click"
-                  },
-                  class: "button--tertiary hotkey-hint",
-                  aria: { label: "Show next day", keyshortcuts: "Shift+ArrowRight" } do %>
-              <%= icon_tag("arrow-right") %>
-            <% end %>
-          </div>
-          <div class="layout--flex layout--gapped">
-            <%= render "daylogs/mood_entity",
-                  date: @selected_date,
-                  entity: @mood_entity %>
-            <%= render "daylogs/picture",
-                  date: @selected_date,
-                  picture: @picture %>
-          </div>
-        </div>
-
-        <div class="layout--padded daylog--scroller" data-daylog-scroll-target="scroller">
-          <% if @more_bullets %>
-            <div class="daylog--older-trigger" data-daylog-scroll-target="trigger">
-              <i class="icon icon--spin" style="--icon-mask: var(--icon-spinner)" aria-hidden="true"></i>
-              <span class="utilities--sr-only">Loading earlier bullets</span>
-            </div>
+  <div class="layout--page layout--container layout--container-md daylog daylog--chat">
+    <%# Shell is header + list only. Composer is a fixed dock above the tabbar;
+        the full-viewport shell clears it with scroller padding. %>
+    <div data-bulk-menu-target="list"
+         class="layout--surface daylog--shell"
+         data-controller="daylog-scroll"
+         data-daylog-scroll-url-value="<%= daylog_bullets_path %>">
+      <div id="bullets-header" class="layout--flex layout--justify-between layout--surface-header">
+        <div class="layout--flex layout--gapped">
+          <%= link_to daylog_path(date: (@selected_date - 1.day).iso8601),
+                data: {
+                  turbo_action: "advance",
+                  controller: "hotkey",
+                  hotkey: "←",
+                  action: "keydown.shift+left@document->hotkey#click"
+                },
+                class: "button--tertiary hotkey-hint",
+                aria: { label: "Show previous day", keyshortcuts: "Shift+ArrowLeft" } do %>
+            <%= icon_tag("arrow-left") %>
           <% end %>
 
-          <div id="<%= dom_id(@daylog, :bullets_container) %>" class="layout--list" data-daylog-scroll-target="list">
-            <% @bullets.each do |bullet| %>
-              <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
-            <% end %>
+          <span class="button--tertiary daylog--date-label">
+            <%= @selected_date.strftime("%a, %b %-d") %>
+          </span>
 
-            <% if @bullets.empty? %>
-              <p id="no_bullets_container" class="typography--paragraph-sm typography--center layout--padded layout--mx-auto">
-                  No bullets yet, check your monthly bucket, references or start a
-                  braindumping session.
-              </p>
-            <% end %>
-          </div>
+          <%= link_to daylog_path(date: (@selected_date + 1.day).iso8601),
+                data: {
+                  turbo_action: "advance",
+                  controller: "hotkey",
+                  hotkey: "→",
+                  action: "keydown.shift+right@document->hotkey#click"
+                },
+                class: "button--tertiary hotkey-hint",
+                aria: { label: "Show next day", keyshortcuts: "Shift+ArrowRight" } do %>
+            <%= icon_tag("arrow-right") %>
+          <% end %>
+        </div>
+        <div class="layout--flex layout--gapped">
+          <%= render "daylogs/mood_entity",
+                date: @selected_date,
+                entity: @mood_entity %>
+          <%= render "daylogs/picture",
+                date: @selected_date,
+                picture: @picture %>
         </div>
       </div>
 
-      <%= render "bullets/composer",
-            bucket_id: @daylog_bucket.id,
-            pops_on: @selected_date %>
-    </turbo-frame>
+      <div class="layout--padded daylog--scroller" data-daylog-scroll-target="scroller">
+        <% if @more_bullets %>
+          <div class="daylog--older-trigger" data-daylog-scroll-target="trigger">
+            <i class="icon icon--spin" style="--icon-mask: var(--icon-spinner)" aria-hidden="true"></i>
+            <span class="utilities--sr-only">Loading earlier bullets</span>
+          </div>
+        <% end %>
+
+        <div id="<%= dom_id(@daylog, :bullets_container) %>" class="layout--list" data-daylog-scroll-target="list">
+          <% @bullets.each do |bullet| %>
+            <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
+          <% end %>
+
+          <% if @bullets.empty? %>
+            <p id="no_bullets_container" class="typography--paragraph-sm typography--center layout--padded layout--mx-auto">
+                No bullets yet, check your monthly bucket, references or start a
+                braindumping session.
+            </p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <%= render "bullets/composer",
+          bucket_id: @daylog_bucket.id,
+          pops_on: @selected_date %>
   </div>
 <% else %>
   <% content_for(:title) { "Daily log" } %>

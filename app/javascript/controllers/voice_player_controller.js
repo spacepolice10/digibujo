@@ -93,6 +93,8 @@ export default class extends Controller {
   }
 
   #updatePlayStatus() {
+    if (!this.hasPlayIconTarget || !this.hasStopIconTarget) return
+
     this.playIconTarget.hidden = this.playing
     this.stopIconTarget.hidden = !this.playing
     this.playButtonTarget.setAttribute("aria-label", this.playing ? "Stop" : "Play")

@@ -7,12 +7,17 @@
 
     position: fixed;
     inset-inline: 0;
-    bottom: max(var(--composer-keyboard-inset), var(--composer-tabbar-inset));
+    bottom: var(--composer-tabbar-inset);
     z-index: var(--z-dropdown);
     margin: 0;
     padding: var(--spacing-vertical-half) var(--spacing-horizontal);
     margin-inline: auto;
     width: 90%;
+  }
+
+  /* Keyboard open: sit on the keyboard only. Tabbar stays under it. */
+  .composer.composer--keyboard-open {
+    bottom: var(--composer-keyboard-inset);
   }
 
   .composer--form {

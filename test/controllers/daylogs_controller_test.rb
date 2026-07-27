@@ -106,6 +106,8 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
       assert_select 'button[data-composer-type=?]', 'Task'
       assert_select 'button[data-composer-type=?]', 'Event'
       assert_select '.composer--record.button--secondary'
+      assert_select '[data-voice-player-target=?]', 'playIcon'
+      assert_select '[data-voice-player-target=?]', 'stopIcon'
     end
     assert_no_match(/Add bullet/, response.body)
   end
@@ -195,7 +197,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
       assert_select "[data-daylog-scroll-target='scroller'] ##{container}[data-daylog-scroll-target='list']"
       assert_select '#bullet_composer', count: 0
     end
-    assert_select 'turbo-frame#daylog > #bullet_composer'
+    assert_select '.daylog--chat > #bullet_composer'
   end
 
   test 'daylog renders mixed bullet types on the same page' do

@@ -26,6 +26,8 @@
     <%= tag.meta name: "timezone", content: Time.zone.name %>
     <%= yield :head %>
     <%= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+    <%= tag.meta name: "theme-color", content: "#f6f5f2", media: "(prefers-color-scheme: light)" %>
+    <%= tag.meta name: "theme-color", content: "#151410", media: "(prefers-color-scheme: dark)" %>
 
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">

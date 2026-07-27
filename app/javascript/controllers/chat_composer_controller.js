@@ -16,26 +16,31 @@ export default class extends Controller {
 
   connect() {
     this.typeBeforeVoice = null
-    this.boundSyncDockInsets = () => {
-      this.#syncKeyboardInset()
-      this.#syncTabbarInset()
-    }
+    this.boundSyncKeyboardInset = () => this.#syncKeyboardInset()
+    this.boundSyncTabbarInset = () => this.#syncTabbarInset()
+    this.boundLockPageScroll = () => this.#lockPageScroll()
 
-    this.#visualViewport?.addEventListener("resize", this.boundSyncDockInsets)
-    this.#visualViewport?.addEventListener("scroll", this.boundSyncDockInsets)
-    window.addEventListener("resize", this.boundSyncDockInsets)
+    this.#visualViewport?.addEventListener("resize", this.boundSyncKeyboardInset)
+    this.#visualViewport?.addEventListener("scroll", this.boundSyncKeyboardInset)
+    this.#visualViewport?.addEventListener("scroll", this.boundLockPageScroll)
+    window.addEventListener("resize", this.boundSyncTabbarInset)
+    window.addEventListener("resize", this.boundSyncKeyboardInset)
 
     this.#observeEditorHeight()
     this.#applyType(this.#storedType || this.typeFieldTarget.value)
-    this.boundSyncDockInsets()
+    this.#syncTabbarInset()
+    this.#syncKeyboardInset()
     this.refresh()
   }
 
   disconnect() {
-    this.#visualViewport?.removeEventListener("resize", this.boundSyncDockInsets)
-    this.#visualViewport?.removeEventListener("scroll", this.boundSyncDockInsets)
-    window.removeEventListener("resize", this.boundSyncDockInsets)
+    this.#visualViewport?.removeEventListener("resize", this.boundSyncKeyboardInset)
+    this.#visualViewport?.removeEventListener("scroll", this.boundSyncKeyboardInset)
+    this.#visualViewport?.removeEventListener("scroll", this.boundLockPageScroll)
+    window.removeEventListener("resize", this.boundSyncTabbarInset)
+    window.removeEventListener("resize", this.boundSyncKeyboardInset)
     this.resizeObserver?.disconnect()
+    this.element.classList.remove("composer--keyboard-open")
     this.element.style.removeProperty("--composer-keyboard-inset")
     this.element.style.removeProperty("--composer-tabbar-inset")
   }
@@ -304,12 +309,15 @@ export default class extends Controller {
     if (!viewport) return
 
     // iOS overlays the keyboard over the layout viewport; Chromium usually
-    // resizes content and leaves this at zero.
+    // resizes content and leaves this at zero. The tabbar stays put — only the
+    // composer rail tracks the keyboard (see composer--keyboard-open in CSS).
     const inset = Math.max(0, Math.round(window.innerHeight - viewport.height - viewport.offsetTop))
     this.element.style.setProperty("--composer-keyboard-inset", `${inset}px`)
+    this.element.classList.toggle("composer--keyboard-open", inset > 0)
   }
 
-  // The floating mobile tabbar sits above the page; keep the dock clear of it.
+  // Tabbar clearance when the keyboard is closed. Ignored while typing so the
+  // dock sits flush on the keyboard, not stacked above the hidden tabbar.
   #syncTabbarInset() {
     const tabbar = document.querySelector(".tabbar--navigation")
     if (!tabbar) {
@@ -320,6 +328,14 @@ export default class extends Controller {
     const rect = tabbar.getBoundingClientRect()
     const inset = Math.max(0, Math.round(window.innerHeight - rect.top))
     this.element.style.setProperty("--composer-tabbar-inset", `${inset}px`)
+  }
+
+  // iOS pans the layout viewport when an input focuses; that double-lifts fixed
+  // chrome if we also apply a keyboard inset. Pin the document while typing.
+  #lockPageScroll() {
+    if (window.scrollY === 0 && window.scrollX === 0) return
+
+    window.scrollTo(0, 0)
   }
 
   #storeType(type) {

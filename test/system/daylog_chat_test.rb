@@ -91,6 +91,22 @@ class DaylogChatSystemTest < ApplicationSystemTestCase
     assert_pinned_to_bottom
   end
 
+  test 'switching dates loads the other day and remounts the composer' do
+    yesterday = Date.current - 1.day
+    create_bullet!(@user, bulletable: Note.new(body: 'Yesterday line'), pops_on: yesterday)
+
+    visit daylog_path(date: Date.current.iso8601)
+    assert_selector '#bullet_composer lexxy-editor .lexxy-editor__content'
+
+    find("a[href='#{daylog_path(date: yesterday.iso8601)}']").click
+
+    assert_current_path daylog_path(date: yesterday.iso8601)
+    assert_text 'Yesterday line'
+    assert_selector '#bullet_composer lexxy-editor .lexxy-editor__content'
+    assert_equal yesterday.iso8601,
+      find("#bullet_composer input[name='bullet[pops_on]']", visible: false).value
+  end
+
   private
 
   def assert_pinned_to_bottom
