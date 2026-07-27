@@ -67,27 +67,6 @@ lexxy-editor:not(.composer--editor) {
   color: var(--color-fg-base);
 }
 
-/* Short focus animation blocks WebKit from extending the page under the keyboard. */
-.composer--field lexxy-editor.composer--editor:focus-within {
-  animation: composer-ios-focus-lock 0.1s;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .composer--field lexxy-editor.composer--editor:focus-within {
-    animation: none;
-  }
-}
-
-@keyframes composer-ios-focus-lock {
-  from {
-    opacity: 0.99;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
 .lexxy-editor__content {
   display: inline;
 }

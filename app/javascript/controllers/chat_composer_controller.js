@@ -18,11 +18,9 @@ export default class extends Controller {
     this.typeBeforeVoice = null
     this.boundSyncKeyboardInset = () => this.#syncKeyboardInset()
     this.boundSyncTabbarInset = () => this.#syncTabbarInset()
-    this.boundLockPageScroll = () => this.#lockPageScroll()
 
     this.#visualViewport?.addEventListener("resize", this.boundSyncKeyboardInset)
     this.#visualViewport?.addEventListener("scroll", this.boundSyncKeyboardInset)
-    this.#visualViewport?.addEventListener("scroll", this.boundLockPageScroll)
     window.addEventListener("resize", this.boundSyncTabbarInset)
     window.addEventListener("resize", this.boundSyncKeyboardInset)
 
@@ -36,7 +34,6 @@ export default class extends Controller {
   disconnect() {
     this.#visualViewport?.removeEventListener("resize", this.boundSyncKeyboardInset)
     this.#visualViewport?.removeEventListener("scroll", this.boundSyncKeyboardInset)
-    this.#visualViewport?.removeEventListener("scroll", this.boundLockPageScroll)
     window.removeEventListener("resize", this.boundSyncTabbarInset)
     window.removeEventListener("resize", this.boundSyncKeyboardInset)
     this.resizeObserver?.disconnect()
@@ -328,14 +325,6 @@ export default class extends Controller {
     const rect = tabbar.getBoundingClientRect()
     const inset = Math.max(0, Math.round(window.innerHeight - rect.top))
     this.element.style.setProperty("--composer-tabbar-inset", `${inset}px`)
-  }
-
-  // iOS pans the layout viewport when an input focuses; that double-lifts fixed
-  // chrome if we also apply a keyboard inset. Pin the document while typing.
-  #lockPageScroll() {
-    if (window.scrollY === 0 && window.scrollX === 0) return
-
-    window.scrollTo(0, 0)
   }
 
   #storeType(type) {
