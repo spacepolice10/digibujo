@@ -15,7 +15,8 @@
      keeps the laptop max-width and only stretches in height. The fixed composer
      floats on top — scroller padding clears it so bullets can scroll above.
      --daylog-vv-* shrinks the shell to the visual viewport while the keyboard
-     is open so Safari does not pan the whole page (see chat-composer). */
+     is open so Safari does not pan the whole page (see chat-composer).
+     Top stays 0 — only height tracks visualViewport. */
   .layout--page.daylog.daylog--chat {
     --daylog-composer-clearance: calc(
       var(--spacing-vertical-double) + var(--spacing-vertical) + var(--spacing-horizontal-double)
