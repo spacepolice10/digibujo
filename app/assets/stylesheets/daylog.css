@@ -13,25 +13,44 @@
 
   /* Chat shell: always the full viewport. Mobile takes width + height; desktop
      keeps the laptop max-width and only stretches in height. The fixed composer
-     floats on top — scroller padding clears it so bullets can scroll above. */
+     floats on top — scroller padding clears it so bullets can scroll above.
+     --daylog-vv-* shrinks the shell to the visual viewport while the keyboard
+     is open so Safari does not pan the whole page (see chat-composer). */
   .layout--page.daylog.daylog--chat {
     --daylog-composer-clearance: calc(
       var(--spacing-vertical-double) + var(--spacing-vertical) + var(--spacing-horizontal-double)
     );
+    --daylog-vv-top: 0px;
+    --daylog-vv-height: 100dvh;
 
     position: fixed;
-    inset: 0;
+    top: var(--daylog-vv-top);
+    right: 0;
+    bottom: auto;
+    left: 0;
     z-index: 0;
     display: flex;
     flex-direction: column;
     width: 100%;
     max-width: none;
-    height: 100dvh;
-    max-height: 100dvh;
+    height: var(--daylog-vv-height);
+    max-height: var(--daylog-vv-height);
     margin: 0;
     padding: var(--spacing-vertical) var(--spacing-horizontal);
     padding-bottom: 0 !important;
     gap: 0;
+  }
+
+  /* Document scroll is unused on the chat page (shell is fixed). Lock it so
+     Safari cannot pan the layout viewport when the composer focuses. */
+  html:has(.layout--page.daylog.daylog--chat) {
+    overflow: hidden;
+    height: 100%;
+  }
+
+  html:has(.layout--page.daylog.daylog--chat) body {
+    overflow: hidden;
+    height: 100%;
   }
 
   /* Composer lives inside this shell, so its own z-index cannot escape past the
@@ -50,6 +69,18 @@
       max-width: var(--breakpoint-laptop);
       height: auto;
       max-height: none;
+      /* No mobile tabbar — composer dock + a little air above it. */
+      --daylog-composer-clearance: calc(
+        var(--spacing-vertical-quad) + var(--spacing-vertical-triple)
+      );
+    }
+
+    .daylog--chat .daylog--scroller {
+      padding-bottom: calc(var(--daylog-composer-clearance) + var(--spacing-vertical-double)) !important;
+    }
+
+    .daylog--chat > .composer {
+      bottom: var(--spacing-vertical-double);
     }
   }
 
@@ -71,6 +102,12 @@
     overscroll-behavior: contain;
     /* Tabbar clearance + room to park the last bullet above the composer dock. */
     padding-bottom: calc(var(--layout-scroll-padding) + var(--daylog-composer-clearance)) !important;
+  }
+
+  /* Keyboard open: shell already matches the visual viewport, tabbar is under
+     the keyboard — only clear the composer dock. */
+  .daylog--chat.daylog--keyboard-open .daylog--scroller {
+    padding-bottom: calc(var(--daylog-composer-clearance) + var(--spacing-vertical)) !important;
   }
 
   /* Pin short days to the composer edge without keeping the older-trigger in

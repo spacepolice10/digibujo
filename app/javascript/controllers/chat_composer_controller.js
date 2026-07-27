@@ -16,6 +16,7 @@ export default class extends Controller {
 
   connect() {
     this.typeBeforeVoice = null
+    this.keyboardWasOpen = false
     this.boundSyncKeyboardInset = () => this.#syncKeyboardInset()
     this.boundSyncTabbarInset = () => this.#syncTabbarInset()
 
@@ -37,6 +38,7 @@ export default class extends Controller {
     window.removeEventListener("resize", this.boundSyncTabbarInset)
     window.removeEventListener("resize", this.boundSyncKeyboardInset)
     this.resizeObserver?.disconnect()
+    this.#clearChatViewport()
     this.element.classList.remove("composer--keyboard-open")
     this.element.style.removeProperty("--composer-keyboard-inset")
     this.element.style.removeProperty("--composer-tabbar-inset")
@@ -305,12 +307,60 @@ export default class extends Controller {
     const viewport = this.#visualViewport
     if (!viewport) return
 
-    // iOS overlays the keyboard over the layout viewport; Chromium usually
-    // resizes content and leaves this at zero. The tabbar stays put — only the
-    // composer rail tracks the keyboard (see composer--keyboard-open in CSS).
+    // Layout viewport bottom under the keyboard (iOS overlays; Chromium often
+    // resizes content and leaves this at zero).
     const inset = Math.max(0, Math.round(window.innerHeight - viewport.height - viewport.offsetTop))
-    this.element.style.setProperty("--composer-keyboard-inset", `${inset}px`)
-    this.element.classList.toggle("composer--keyboard-open", inset > 0)
+    const keyboardOpen = inset > 0
+    this.element.classList.toggle("composer--keyboard-open", keyboardOpen)
+
+    const chat = this.#chatShell
+    if (chat && !this.#desktopChat) {
+      // Daylog: shrink the fixed shell to the visual viewport so Safari does not
+      // pan the whole page. Composer is position:absolute inside that shell, so
+      // bottom:0 already clears the keyboard — no layout-viewport inset needed.
+      this.#syncChatViewport(chat, viewport, keyboardOpen)
+      this.element.style.setProperty("--composer-keyboard-inset", "0px")
+    } else {
+      this.#clearChatViewport()
+      this.element.style.setProperty("--composer-keyboard-inset", `${inset}px`)
+    }
+
+    if (keyboardOpen && !this.keyboardWasOpen) this.#revealLatestBullets()
+    this.keyboardWasOpen = keyboardOpen
+  }
+
+  // Match .daylog--chat to the visual viewport. Top + height (not bottom) so a
+  // Safari offsetTop pan cannot leave a gap above the shell.
+  #syncChatViewport(chat, viewport, keyboardOpen) {
+    if (!keyboardOpen) {
+      this.#clearChatViewport(chat)
+      return
+    }
+
+    if (window.scrollY !== 0 || window.scrollX !== 0) window.scrollTo(0, 0)
+
+    chat.style.setProperty("--daylog-vv-top", `${Math.round(viewport.offsetTop)}px`)
+    chat.style.setProperty("--daylog-vv-height", `${Math.round(viewport.height)}px`)
+    chat.classList.add("daylog--keyboard-open")
+  }
+
+  #clearChatViewport(chat = this.#chatShell) {
+    if (!chat) return
+
+    chat.classList.remove("daylog--keyboard-open")
+    chat.style.removeProperty("--daylog-vv-top")
+    chat.style.removeProperty("--daylog-vv-height")
+  }
+
+  // Shell just shrank around the keyboard — keep the latest bullets in view
+  // above the composer so the writer can orient on them.
+  #revealLatestBullets() {
+    const scroller = this.#chatShell?.querySelector(".daylog--scroller")
+    if (!scroller) return
+
+    requestAnimationFrame(() => {
+      scroller.scrollTo({ top: scroller.scrollHeight, behavior: "instant" })
+    })
   }
 
   // Tabbar clearance when the keyboard is closed. Ignored while typing so the
@@ -325,6 +375,14 @@ export default class extends Controller {
     const rect = tabbar.getBoundingClientRect()
     const inset = Math.max(0, Math.round(window.innerHeight - rect.top))
     this.element.style.setProperty("--composer-tabbar-inset", `${inset}px`)
+  }
+
+  get #chatShell() {
+    return this.element.closest(".daylog--chat")
+  }
+
+  get #desktopChat() {
+    return window.matchMedia("(min-width: 800px)").matches
   }
 
   #storeType(type) {

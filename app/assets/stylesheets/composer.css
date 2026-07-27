@@ -12,12 +12,24 @@
     margin: 0;
     padding: var(--spacing-vertical-half) var(--spacing-horizontal);
     margin-inline: auto;
-    width: 90%;
+    width: 95%;
   }
 
-  /* Keyboard open: sit on the keyboard only. Tabbar stays under it. */
+  /* Daylog chat owns a fixed shell — dock inside it so visual-viewport resize
+     keeps the composer on the shell bottom (not the layout-viewport bottom). */
+  .daylog--chat > .composer {
+    position: absolute;
+  }
+
+  /* Keyboard open: sit on the keyboard only. Tabbar stays under it.
+     On daylog the shell is already VV-sized, so bottom:0 is correct.
+     Elsewhere (collections) use the layout-viewport keyboard inset. */
   .composer.composer--keyboard-open {
     bottom: var(--composer-keyboard-inset);
+  }
+
+  .daylog--chat > .composer.composer--keyboard-open {
+    bottom: 0;
   }
 
   .composer--form {
@@ -108,6 +120,13 @@
     align-items: stretch;
     background: var(--color-bg-base);
     width: 100%;
+  }
+
+  /* Fullscreen on daylog fills the (possibly VV-sized) chat shell. */
+  .daylog--chat > .composer.composer--fullscreen {
+    position: absolute;
+    inset: 0;
+    bottom: 0;
   }
 
   .composer--fullscreen .composer--form {
