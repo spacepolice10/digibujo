@@ -11,6 +11,13 @@ Lexxy.configure({
   global: {
 
   },
+  inline: {
+    attachments: true,
+    toolbar: false,
+    multiLine: true,
+    richText: true,
+    markdown: true,
+  },
   note: {
     attachments: true,
     toolbar: true,

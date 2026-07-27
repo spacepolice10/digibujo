@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class Bullet < ApplicationRecord
-  include Migratable, Collectable, Postponable, Archivable, Pinnable, Publishable, Bullet::Projectable,
-          Bullet::Searchable, ActivityTrackable
+  include Migratable, Collectable, Postponable, Archivable, Pinnable, Publishable, Bullet::Pageable,
+          Bullet::Projectable, Bullet::Searchable, ActivityTrackable
 
   belongs_to :user
   belongs_to :bucket
@@ -12,7 +12,7 @@ class Bullet < ApplicationRecord
 
   delegate :completable?, :temporal?, :name, :excerpt, :long?,
            :marker_icon, :completed?,
-           :starts_date, :ends_date, :body, :data_attributes,
+           :starts_date, :ends_date, :body, :body_as_text, :data_attributes,
            :icon, :colour,
            to: :bulletable
 
@@ -28,9 +28,9 @@ class Bullet < ApplicationRecord
   }
 
   def to_partial_path
-    return '/bullets/bullet' unless bulletable
+    return 'bullets/bullet' unless bulletable
 
-    "/#{bulletable.to_partial_path}"
+    bulletable.to_partial_path
   end
 
   def to_form_path

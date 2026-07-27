@@ -26,7 +26,7 @@
       src="<%= home_activities_path %>"
       loading="lazy"
     >
-    <i class="icon animations--spin" style="--icon-mask: var(--icon-spinner); margin-top: var(--spacing-vertical-triple)" aria-hidden="true"></i>
+    <%= icon_tag("spinner", class: "animations--spin", style: "margin-top: var(--spacing-vertical-triple); layout--mx-auto;") %>
   </turbo-frame>
 </aside>
 </div>

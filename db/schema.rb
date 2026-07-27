@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_24_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_26_120000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -159,7 +159,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_24_120000) do
   end
 
   create_table "events", force: :cascade do |t|
-    t.text "body", default: "", null: false
     t.date "ends_date"
     t.date "starts_date"
   end
@@ -261,7 +260,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_24_120000) do
   end
 
   create_table "tasks", force: :cascade do |t|
-    t.text "body", default: "", null: false
     t.boolean "completed", default: false, null: false
     t.datetime "completed_at"
   end
@@ -311,7 +309,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_24_120000) do
   end
 
   create_table "voices", force: :cascade do |t|
-    t.text "body", default: "", null: false
     t.datetime "created_at", null: false
     t.integer "duration_seconds"
     t.datetime "updated_at", null: false

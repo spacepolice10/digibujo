@@ -7,6 +7,8 @@ module BulletsHelper
       modifier: 'task',
       hotkey: 'Shift+T',
       colour: 'var(--model-color-2)',
+      placeholder: 'What need to be done?',
+      description: 'Something to do',
       hotkey_action: 'keydown.shift+t@document->hotkey#click'
     },
     'Note' => {
@@ -14,6 +16,8 @@ module BulletsHelper
       modifier: 'note',
       hotkey: 'Shift+N',
       colour: 'var(--model-color-4)',
+      placeholder: 'Write it down…',
+      description: 'Thoughts, ideas, anything',
       hotkey_action: 'keydown.shift+n@document->hotkey#click'
     },
     'Event' => {
@@ -21,6 +25,8 @@ module BulletsHelper
       modifier: 'event',
       hotkey: 'Shift+E',
       colour: 'var(--model-color-5)',
+      placeholder: 'Write down appointments or notable events…',
+      description: 'Appointments and dates',
       hotkey_action: 'keydown.shift+e@document->hotkey#click'
     },
     'Voice' => {
@@ -28,9 +34,14 @@ module BulletsHelper
       modifier: 'voice',
       hotkey: 'Shift+V',
       colour: 'var(--model-color-3)',
+      placeholder: 'Caption your voice, guitar playing or cat meowing…',
+      description: 'Quick audio memo',
       hotkey_action: 'keydown.shift+v@document->hotkey#click'
     }
   }.freeze
+
+  # Voice is driven by the mic button, not the type picker.
+  COMPOSER_TYPES = %w[Note Task Event].freeze
 
   def create_bullet_buttons(bucket_id:, pops_on:, bulletable_type:)
     safe_join(
@@ -42,6 +53,10 @@ module BulletsHelper
         )
       end
     )
+  end
+
+  def bullet_type_config(type_name)
+    BULLET_TYPE_CONFIG.fetch(type_name) { raise ArgumentError, "Unknown bullet type: #{type_name}" }
   end
 
   def bullet_composer_return_path(bullet)

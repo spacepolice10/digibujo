@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = [ "audio", "playButton", "stopButton", "playIcon", "stopIcon", "progress", "progressFill" ]
+  static targets = [ "audio", "playButton", "playIcon", "stopIcon", "label", "progress", "progressFill" ]
   static values = { duration: Number }
 
   connect() {
@@ -96,6 +96,6 @@ export default class extends Controller {
     this.playIconTarget.hidden = this.playing
     this.stopIconTarget.hidden = !this.playing
     this.playButtonTarget.setAttribute("aria-label", this.playing ? "Stop" : "Play")
-    this.stopButtonTarget.setAttribute("aria-label", this.playing ? "Play" : "Stop")
+    if (this.hasLabelTarget) this.labelTarget.textContent = this.playing ? "Stop" : "Play"
   }
 }

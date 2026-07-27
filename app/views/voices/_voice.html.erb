@@ -1,7 +1,7 @@
 <%# locals: (bullet:) %>
 <%= render layout: "bullets/bullet", locals: { bullet: } do %>
-  <% if bullet.body.present? %>
-    <span class="voice--caption"><%= bullet.body %></span>
+  <% if bullet.body_as_text.present? %>
+    <span class="voice--caption"><%= bullet.body_as_text %></span>
   <% end %>
   <%= render "voices/playback",
         recording: bullet.voice.recording,

@@ -12,13 +12,13 @@
          aria-hidden="true"></audio>
 
   <button type="button"
-          class="button--tertiary button--sm voice--play"
+          class="voice--play"
           data-voice-player-target="playButton"
           data-action="voice-player#toggle"
           aria-label="Play">
-    <i class="icon voice--play-icon" style="--icon-mask: var(--icon-play)" aria-hidden="true" data-voice-player-target="playIcon"></i>
-    <i class="icon voice--pause-icon" style="--icon-mask: var(--icon-pause)" aria-hidden="true" data-voice-player-target="pauseIcon" hidden></i>
-    <p>Play</p>
+    <%= icon_tag("play", class: "button--icon", data: { voice_player_target: "playIcon" }) %>
+    <%= icon_tag("pause", class: "button--icon", hidden: true) %>
+    <p data-voice-player-target="label">Play</p>
   </button>
 
   <div class="voice--progress"

@@ -1,9 +1,108 @@
-lexxy-editor {
+/*
+ * Lexxy ships unlayered with its own light-theme tokens. Map them onto Digibujo
+ * so every editor (composer, note form, …) picks up light-dark surfaces.
+ * This file loads after lexxy.css — see layouts/application.html.erb.
+ */
+:root {
+  --lexxy-color-ink: var(--color-fg-base);
+  --lexxy-color-ink-medium: var(--color-fg-subtle);
+  --lexxy-color-ink-light: var(--color-fg-subtle);
+  --lexxy-color-ink-lighter: var(--color-stroke-base);
+  --lexxy-color-ink-lightest: var(--color-bg-subtle);
+  --lexxy-color-ink-inverted: var(--color-bg-base);
+
+  --lexxy-color-accent-dark: var(--color-accent-alternative);
+  --lexxy-color-accent-medium: var(--color-accent-alternative);
+  --lexxy-color-accent-light: var(--color-accent-alternative-bg);
+  --lexxy-color-accent-lightest: var(--color-accent-bg);
+
+  --lexxy-color-canvas: var(--color-bg-base);
+  --lexxy-color-text: var(--color-fg-base);
+  --lexxy-color-text-subtle: var(--color-fg-subtle);
+  --lexxy-color-link: var(--color-accent-alternative);
+  --lexxy-color-selected: var(--color-accent-bg);
+  --lexxy-color-selected-hover: var(--color-accent-alternative-bg);
+  --lexxy-color-selected-dark: var(--color-accent-alternative);
+  --lexxy-color-code-bg: var(--color-bg-subtle);
+
+  --lexxy-color-table-header-bg: var(--color-bg-subtle);
+  --lexxy-color-table-cell-border: var(--color-stroke-base);
+  --lexxy-color-table-cell-selected-bg: var(--color-accent-bg);
+  --lexxy-color-table-cell-selected-border: var(--color-accent-alternative);
+  --lexxy-color-table-cell-toggle: var(--color-accent-bg);
+
+  --lexxy-focus-ring-color: var(--color-accent-alternative);
+}
+
+/* Full-page / note editors keep a bordered surface. */
+lexxy-editor:not(.composer--editor) {
   width: 100%;
   height: 100%;
   border: 0.5px solid var(--color-stroke-base);
   background-color: var(--color-bg-base);
 }
+
+/*
+ * Composer overrides must stay unlayered: Lexxy's :where(lexxy-editor) rules
+ * otherwise beat anything inside @layer components, including height/padding.
+ * Without attr(rows lh) support the gem falls back to 8lh — force 1lh here.
+ */
+.composer--field lexxy-editor.composer--editor {
+  /* Lexxy's default paragraph margin is 1rem — that alone makes a "one-line"
+     chat field taller than the flanking icon buttons. */
+  --lexxy-content-margin: 0;
+  --lexxy-editor-rows: 1.25lh;
+  --lexxy-editor-padding: 0;
+  --lexxy-color-canvas: transparent;
+
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  max-height: 40dvh;
+  overflow-y: auto;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-fg-base);
+}
+
+.lexxy-editor__content {
+  display: inline;
+}
+
+.composer--field lexxy-editor.composer--editor .lexxy-editor__content {
+  min-block-size: 1.25lh;
+  padding-block: 0;
+  line-height: 1.25;
+}
+
+.composer--field lexxy-editor.composer--editor .lexxy-editor__content p {
+  margin: 0;
+}
+
+.composer--fullscreen .composer--field lexxy-editor.composer--editor {
+  --lexxy-content-margin: 1rem;
+  --lexxy-editor-rows: 12lh;
+  --lexxy-editor-padding: 1ch;
+  --lexxy-color-canvas: var(--color-bg-base);
+
+  max-height: none;
+  height: 100%;
+  border: 0.5px solid var(--color-stroke-base);
+  border-radius: var(--radius-base);
+  background-color: var(--color-bg-base);
+}
+
+.composer--fullscreen .composer--field lexxy-editor.composer--editor .lexxy-editor__content {
+  min-block-size: var(--lexxy-editor-rows);
+  padding: var(--lexxy-editor-padding);
+}
+
+.composer--fullscreen .composer--field lexxy-editor.composer--editor .lexxy-editor__content p {
+  margin-block: 0 var(--lexxy-content-margin);
+}
+
 lexxy-toolbar {
   position: sticky;
   top: 0;
@@ -15,14 +114,17 @@ lexxy-toolbar {
 .lexxy-content {
   color: var(--color-fg-base);
 }
+
 .lexxy-editor__toolbar-button {
   background: transparent;
   color: var(--color-fg-base);
+
   &:hover {
     background: var(--color-bg-subtle) !important;
     color: var(--color-fg-subtle) !important;
   }
-  &[aria-pressed=true] {
+
+  &[aria-pressed="true"] {
     background-color: var(--color-fg-base);
     color: var(--color-fg-strong);
   }

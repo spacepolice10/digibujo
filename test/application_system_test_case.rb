@@ -3,7 +3,11 @@
 require 'test_helper'
 
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
-  driven_by :selenium, using: :headless_chrome, screen_size: [1400, 1400]
+  # Fake media devices let the voice composer record without a real microphone.
+  driven_by :selenium, using: :headless_chrome, screen_size: [1400, 1400] do |options|
+    options.add_argument('--use-fake-device-for-media-stream')
+    options.add_argument('--use-fake-ui-for-media-stream')
+  end
 
   include ActiveJob::TestHelper
 

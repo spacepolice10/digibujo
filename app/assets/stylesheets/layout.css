@@ -25,13 +25,18 @@
     justify-content: space-between;
     align-items: center;
     padding: var(--spacing-vertical) var(--spacing-horizontal);
+    pointer-events: none;
+    & > * {
+      pointer-events: auto;
+    }
   }
 
   .layout--page {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-vertical);
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    padding-top: var(--spacing-vertical);
+    padding-inline:  var(--spacing-horizontal);
     padding-bottom: var(--layout-scroll-padding);
   }
 
@@ -132,10 +137,12 @@
   }
 
   .layout--surface {
-    background: var(--color-bg-subtle);
     border: 0.5px solid var(--color-stroke-base);
     border-radius: var(--radius-base);
     box-shadow: var(--shadow-subtle);
+    @media (min-width: 800px) {
+    background: var(--color-bg-subtle);
+    }
   }
 
   .layout--surface-sunken {

@@ -6,7 +6,7 @@ export default class extends Controller {
 
   changeAppearance(event) {
     const appearance = event.target.value
-    document.body.dataset.appearance = appearance
+    document.documentElement.dataset.appearance = appearance
 
     post(this.urlValue, { body: { appearance } })
   }

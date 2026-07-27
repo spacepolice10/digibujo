@@ -25,9 +25,9 @@ class BulletsController < ApplicationController
     @bullet = Current.user.bullets.new(bullet_params)
 
     if @bullet.save
-      redirect_to helpers.bullet_composer_return_path(@bullet), status: :see_other
+      created_response
     else
-      render :new, status: :unprocessable_entity
+      failed_create_response
     end
   end
 
@@ -62,6 +62,29 @@ class BulletsController < ApplicationController
   end
 
   private
+
+  # The chat composer stays on the page and appends the new row; the full-page
+  # composer at /bullets/new still navigates back to where it came from.
+  def created_response
+    return return_from_composer unless inline_composer?
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { return_from_composer }
+    end
+  end
+
+  def failed_create_response
+    inline_composer? ? notify_failure : render(:new, status: :unprocessable_entity)
+  end
+
+  def return_from_composer
+    redirect_to helpers.bullet_composer_return_path(@bullet), status: :see_other
+  end
+
+  def inline_composer?
+    params[:inline_composer].present?
+  end
 
   def set_bullet
     @bullet = Current.user.bullets.find(params[:id])
@@ -100,8 +123,15 @@ class BulletsController < ApplicationController
     render turbo_stream: turbo_stream.update(
       'toasts',
       partial: 'shared/toasts',
-      locals: { type: 'errmsg', messages: @bullet.errors.full_messages }
+      locals: { type: 'errmsg', messages: bullet_error_messages }
     ), status: :unprocessable_entity
+  end
+
+  # "Bulletable is invalid" tells the user nothing; surface the nested errors.
+  def bullet_error_messages
+    own = @bullet.errors.reject { |error| error.attribute == :bulletable }.map(&:full_message)
+    nested = Array(@bullet.bulletable&.errors&.full_messages)
+    (own + nested).uniq.presence || ['Bullet could not be saved']
   end
 
   def bullet_type_required

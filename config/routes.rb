@@ -21,8 +21,11 @@ Rails.application.routes.draw do
 
   # --- Logs ---
   resource :daylog, only: %i[show create], controller: 'daylogs' do
-    resource :mood_entity, only: %i[create destroy], module: :daylogs
-    resource :picture, only: %i[create destroy], module: :daylogs
+    scope module: :daylogs do
+      resources :bullets, only: :index
+      resource :mood_entity, only: %i[create destroy]
+      resource :picture, only: %i[create destroy]
+    end
   end
 
   get 'monthlylog', to: 'monthlylogs#show', as: :current_monthlylog

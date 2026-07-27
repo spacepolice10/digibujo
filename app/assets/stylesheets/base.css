@@ -5,6 +5,16 @@
  */
 
 @layer base {
+  html {
+    background-color: var(--color-bg-base);
+    background-image: radial-gradient(
+      circle,
+      var(--dot-grid-color) var(--dot-grid-dot),
+      transparent var(--dot-grid-dot)
+    );
+    background-size: var(--dot-grid-size) var(--dot-grid-size);
+  }
+
   html,
   body {
     display: flex;
@@ -12,12 +22,12 @@
     width: 100%;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-size: var(--font-size-base);
-    background: var(--color-bg-base);
     color: var(--color-fg-base);;
   }
 
   /* Named container: body width is the centered page column. */
   body {
+    background: transparent;
     margin-inline: auto;
     max-width: 100%;
     container-type: inline-size;
@@ -73,7 +83,7 @@
     color: currentColor;
   }
 
-  /* Appearance. Theming colors — on body so Turbo morph refresh reapplies tokens. */
+  /* Appearance. Theming colors — on html with the dot-grid background. */
 
   html[data-appearance="warm"] {
     --color-bg-base: light-dark(oklch(0.97 0.015 78), oklch(0.19 0.025 78));

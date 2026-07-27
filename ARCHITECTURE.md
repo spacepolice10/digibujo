@@ -18,24 +18,42 @@ Per-user settings live in a dedicated `user_settings` table (one row per user), 
 
 | Type    | Concerns     | Notes                              |
 |---------|--------------|------------------------------------|
-| `Task`  | `Bulletable` | Completable + temporal; plain `body` text |
-| `Note`  | `Bulletable` | Long-form; Action Text/Lexxy `body` |
-| `Event` | `Bulletable` | Temporal; plain `body`; date range |
-| `Voice` | `Bulletable` | Audio memo; plain caption `body` |
+| `Task`  | `Bulletable` | Completable + temporal |
+| `Note`  | `Bulletable` | Long-form |
+| `Event` | `Bulletable` | Temporal; date range |
+| `Voice` | `Bulletable` | Audio memo; body is the caption |
 
-Each bulletable includes **`Bulletable`** (`has_one :bullet`, display defaults, `to_partial_path` / `to_form_path`, `permitted_bullet_attributes`). **Note alone** declares `has_rich_text :body` (Action Text via Lexxy). Task/Event/Voice store a plain **`body` text column**. **`Bulletable#name` / `#excerpt`** default from `body`; Note overrides for rich text. **`Bullet` delegates `:body`** (and type-specific display helpers) to the bulletable. Create/update params nest body under `bulletable_attributes`.
+Each bulletable includes **`Bulletable`** (`has_one :bullet`, `has_rich_text :body`, display defaults, `to_partial_path` / `to_form_path`, `permitted_bullet_attributes`). **Every type stores `body` as Action Text (Lexxy)** — there are no plain `body` columns. **`Bulletable#body_as_text`** is the `to_plain_text` form; **`#name`** is its first line, **`#long?`** compares it against `EXCERPT_LIMIT`, and **`#excerpt`** returns the rich `body` for short bodies and a truncated plain-text tail for long ones. **`Bullet` delegates `:body` / `:body_as_text`** (and type-specific display helpers) to the bulletable. Create/update params nest body under `bulletable_attributes`.
 
-**Composers:** type partials via `Bullet#to_form_path` (`tasks/form`, `notes/form`, …) wrap a thin layout shell [`bullets/_form`](app/views/bullets/_form.html.erb) (`form_with`, hiddens, rail; Stimulus wiring lives on the form shell / type locals, not on the model). Task/Event/Voice use a plain `text_field`; Note uses Lexxy preset **`note`**. Rendered note rich text uses `.rich-text-content` alongside Lexxy's `.lexxy-content`. **Projects** sync from Action Text `#` attachables **only on Notes**. Each type declares permitted attributes via `permitted_bullet_attributes`.
+**Composers:** type partials via `Bullet#to_form_path` (`tasks/form`, `notes/form`, …) wrap a thin layout shell [`bullets/_form`](app/views/bullets/_form.html.erb) (`form_with`, hiddens, rail; Stimulus wiring lives on the form shell / type locals, not on the model). Task/Event/Voice use Lexxy preset **`inline`** (no toolbar, no attachments); Note uses preset **`note`**. Rendered rich text uses `.rich-text-content` alongside Lexxy's `.lexxy-content`. **Projects** sync from Action Text `#` attachables on **every** bulletable type. Each type declares permitted attributes via `permitted_bullet_attributes`.
 
 **Bucket membership:** `Bullet` **requires** `belongs_to :bucket` (Daylog, Monthlylog, Future, or Collection). **`bucket_id` must belong to the same user** and must be supplied on create (composer hidden field / `new` query params). Homes are exclusive: the daylog page never unions monthly/future bullets. **`Migratable#migrate_to!`** moves a bullet to a destination with an explicit BuJo `action` (`collected` or `rescheduled`) and a caller-resolved `pops_on`. **`Collectable#collect!`** and **`Postponable#postpone!`** own destination/`pops_on` rules and call that API. There is no uncollect — migration is one-way.
 
 ### Composer UX
 
-All bullet types are created via **`POST /bullets`** (`BulletsController`) — there are no nested `daylog/bullets` or `monthlylogs/:id/bullets` routes.
+All bullet types are created via **`POST /bullets`** (`BulletsController`) — there are no nested create routes. (`GET /daylog/bullets` exists, but only serves older chat pages; see **Chat daylog**.)
 
-**Create buttons** (`BulletsHelper#create_bullet_buttons`): type links stay on the page and always navigate with `data-turbo-frame="_top"` to **`GET /bullets/new`** as a full Drive page (no dialog). Callers pass `bucket_id`, `pops_on`, and `bulletable_type` (array of Task/Note/Event/Voice). Daylog/collection views wrap buttons in `bullets-form--dock`; monthly/future cells use their own layout wrappers. After create, redirect to `bullet_composer_return_path` (daylog date / collection / monthlylog / future from `bucket` + `pops_on`). Rail Back is the same path; Esc / cancel follow it. Open/close uses a shared-element **view transition** between empty shells (`::before` on the create button and on `.bullets-form--page`) so the control expands into the page and collapses on return — text/icons stay out of the named snapshot. A tiny `composer-expand` Stimulus only toggles `is-composer-expanding` on the matched control (click outbound, `turbo:before-render` inbound); CSS owns `view-transition-name: bullet-composer`. On desktop, the root page crossfade is disabled so only this named transition runs; mobile keeps tabbar / root VT.
+**Chat composer** ([`bullets/_composer`](app/views/bullets/_composer.html.erb), `chat-composer` Stimulus): a fixed dock mounted on daylog and collection pages (`bottom` clears the floating tabbar / iOS keyboard). Callers pass `bucket_id` and optionally `pops_on`. One Lexxy `inline` editor serves every type; a hidden `bulletable_type` field is switched by the type picker (`BulletsHelper::COMPOSER_TYPES` — Note/Task/Event; Voice is reached through the mic button only) and the last pick is remembered in `localStorage`. Enter submits, Shift+Enter breaks the line, and neither sends while the editor is fullscreen or a Lexxy prompt menu is open. The row is single-line by default: a `ResizeObserver` adds `composer--multiline` once the editor grows past its blank height, which drops the controls below the field. Expand remounts the editor on the `note` preset (toolbar on); collapse / successful send restore `inline`. Starting a voice take **swaps the compose row** for a matching pill shell (`composer--voice`): pause on the left, live waveform in the middle, send on the right; discard appears after the take is stopped.
+
+**Composer voice mode:** the mic button hands control to `voice-recorder` on the same element (`manage-submit: false`, so the composer owns the submit button and reacts to `voice-recorder:change` / `voice-recorder:denied`). The editor is hidden while recording; a blank caption is filled in server-side by `Voice#apply_default_caption`.
+
+**Inline create responses:** the composer posts with `inline_composer=1`, so `BulletsController#create` renders [`create.turbo_stream.erb`](app/views/bullets/create.turbo_stream.erb) — append the row to `dom_id(bucket.bucketable, :bullets_container)`, remove `no_bullets_container` — instead of redirecting. The list id is never a form param: daylog/collection mount that same `…_bullets_container` id on the page. Failures render a toast (422) built from the bullet's **and** the bulletable's error messages. Without `inline_composer`, create still redirects to `bullet_composer_return_path`.
+
+**Create buttons** (`BulletsHelper#create_bullet_buttons`): type links stay on the page and always navigate with `data-turbo-frame="_top"` to **`GET /bullets/new`** as a full Drive page (no dialog). Callers pass `bucket_id`, `pops_on`, and `bulletable_type` (array of Task/Note/Event/Voice). This is now the fallback path: daylog and collection use the chat composer, while monthly/future cells and `bullets/new` itself keep the buttons. After create, redirect to `bullet_composer_return_path` (daylog date / collection / monthlylog / future from `bucket` + `pops_on`). Rail Back is the same path; Esc / cancel follow it. Open/close uses a shared-element **view transition** between empty shells (`::before` on the create button and on `.bullets-form--page`) so the control expands into the page and collapses on return — text/icons stay out of the named snapshot. A tiny `composer-expand` Stimulus only toggles `is-composer-expanding` on the matched control (click outbound, `turbo:before-render` inbound); CSS owns `view-transition-name: bullet-composer`. On desktop, the root page crossfade is disabled so only this named transition runs; mobile keeps tabbar / root VT.
 
 **Monthly spread / Future:** no dock wrapper. Planned cells: Task + Event; unplanned: Note — same helper, subset `bulletable_type`.
+
+## Chat daylog
+
+Only the daylog reads like a chat; every other surface still scrolls the page and pages with `geared_pagination`.
+
+**Shell:** `.daylog--chat` is always full-viewport on mobile (`100dvh`, full width). On desktop it keeps the laptop max-width, stretches to the bottom, and leaves a `10ch` top inset so the Digibujo header stays visible. Inside it, `.daylog--shell` is header + `.daylog--scroller` only. The chat composer is a **fixed dock** outside the shell — `bottom: max(keyboard inset, tabbar inset)`. The scroller keeps a static bottom padding (`--layout-scroll-padding` + `--daylog-composer-clearance`) so the last bullet can scroll clear of the dock; no JS height sync.
+
+**Cursor paging** (`Bullet::Pageable`): `last_page` takes the newest `PAGE_SIZE` rows in reading order (`chronologically.last(n)` — reversed in SQL, no OFFSET), `page_before(bullet)` takes the batch just older than a cursor, breaking `created_at` ties on `id`. `DaylogsController#show` renders `last_page` and sets `@more_bullets` when it came back full; **`GET /daylog/bullets?before=<id>`** (`Daylogs::BulletsController#index`) renders bare rows for the page before the cursor and answers **204** once nothing older is left (also for unknown or foreign cursors). Offsets would drift here, because the composer keeps appending to the end of the same list.
+
+**Short-day pin (CSS):** the list (`[data-daylog-scroll-target="list"]`, id `dom_id(daylog, :bullets_container)`) is `min-height: 100%` with `justify-content: flex-end`, so a sparse day packs against the composer without putting `.daylog--older-trigger` in view (which would auto-fetch every page). Once the list overflows the scrollport, free space is gone and the feed reads top-to-bottom as usual. Empty state lives inside the list so the pin still applies.
+
+**Scrolling** (`daylog-scroll` + [`helpers/scroll_helpers`](app/javascript/helpers/scroll_helpers.js)): open at the bottom; an `IntersectionObserver` on `.daylog--older-trigger` fetches the next older page and prepends it inside `keepScroll`, which restores the distance to the bottom edge so the row being read never moves. `pauseInertiaScroll` clamps overflow for a frame first, or iOS momentum would override the write. The observer is re-armed after each prepend (it only reports *changes*, so a trigger still on screen would otherwise go quiet), and the loop ends when the new rows push it out of range or the endpoint answers 204. New rows follow the reader only while they are already at the bottom — tracked on every scroll event, deliberately unthrottled, since a dropped trailing call would leave the list yanking itself down under someone reading history.
 
 ## Bullet row rendering
 
@@ -149,7 +167,7 @@ Planned bullet recycling (not yet in code):
 
 The architecture is intentionally closer to analog Bullet Journal behavior:
 
-- **Rapid logging** uses type-specific composers (`tasks/_form`, `events/_form`, `voices/_form`, `notes/_form`) wrapping `bullets/_form`; Task/Event/Voice are plain text; Note uses Lexxy preset `note`; create opens full-page `/bullets/new` and returns via `bullet_composer_return_path`
+- **Rapid logging** uses type-specific composers (`tasks/_form`, `events/_form`, `voices/_form`, `notes/_form`) wrapping `bullets/_form`; Task/Event/Voice use Lexxy preset `inline`, Note uses preset `note`; create opens full-page `/bullets/new` and returns via `bullet_composer_return_path`
 - **Daily focus** is explicit (`/daylog` and dated daylog paths show the daily log)
 - **Migration over rewrite** happens where needed by editing or changing bullet type
 - **Deferred decisions** are supported by moving `pops_on` forward (postpone) or tagging a project
@@ -159,7 +177,7 @@ The architecture is intentionally closer to analog Bullet Journal behavior:
 
 `Project` is a first-class model (`belongs_to :user`) with `name` and `colour`. Shared behaviour: `Colourable`, `Pinnable`, `ActionText::Attachable`. Mark is fixed (`#` → hash icon). Bullets link via `bullet_projects` (many-to-many). Surface: `GET /projects`. Lexxy `#` prompt exists **only on the Note composer**. Pin/unpin uses `projects/pin` on the show page.
 
-Projects link via `bullet_projects` (many-to-many). Body attachable sync (`sync_projects_from_body!`) runs **only for Notes**. Explicit add/remove intents are deferred to a future API.
+Projects link via `bullet_projects` (many-to-many). Body attachable sync (`sync_projects_from_body!`) runs for **every bulletable type**, triggered by the Action Text `body` after_save hook. Explicit add/remove intents are deferred to a future API.
 
 ## Buckets and memberships
 
@@ -178,7 +196,7 @@ Bucket **identity** (`name`, `colour`, `icon`, optional `description`) lives on 
 
 ## Pinned workspace
 
-Desktop footer has a single **Pinned** button (pin icon) in [`shared/_footer.html.erb`](app/views/shared/_footer.html.erb) (`#pinned_dock`). Clicking opens a lazy popover (`turbo-frame#pinned_list`) that loads a flat list of all pinned entities (Bullet, Bucket, Project) via [`pinned#index`](app/controllers/pinned_controller.rb) with `Turbo-Frame: pinned_list`. Mobile uses the bottom tab bar via [`shared/_footer.html+mobile.erb`](app/views/shared/_footer.html+mobile.erb) and **`GET /pinned`** for the same flat list in full-page mode (with bulk menu for bullets). Pin/unpin Turbo Streams replace bullet rows (`render "bullets/bullet"`) and entity pin buttons only — the footer button is static.
+Desktop footer has a single **Pinned** button (pin icon) in [`shared/_footer.html.erb`](app/views/shared/_footer.html.erb) ([`pinned/pinned_button`](app/views/pinned/_pinned_button.html.erb)). Clicking opens a lazy popover (`turbo-frame#pinned_list`) that loads a flat list of all pinned entities (Bullet, Bucket, Project) via [`pinned#index`](app/controllers/pinned_controller.rb) with `Turbo-Frame: pinned_list` (popover chrome + [`pinned/pinned_entity`](app/views/pinned/_pinned_entity.html.erb) rows live in that same template). Mobile uses the bottom tab bar via [`shared/_footer.html+mobile.erb`](app/views/shared/_footer.html+mobile.erb) and **`GET /pinned`** for the same flat list in full-page mode (with bulk menu for bullets). Pin/unpin Turbo Streams replace bullet rows (`render "bullets/bullet"`) and entity pin buttons only — the footer button is static.
 
 ## Publishing
 
@@ -250,6 +268,7 @@ resources :projects
 POST   /monthlylogs/:monthlylog_id/trackers  → monthlylogs/trackers#create
 resources :trackers, only: %i[show edit update destroy]
   nested: trackers/:tracker_id/completion     → trackers/completions#create/destroy
+GET    /daylog/bullets?before=:id            → daylogs/bullets#index (older chat page, 204 when exhausted)
 POST   /daylog/mood_entity                   → daylogs/mood_entities#create
 DELETE /daylog/mood_entity                   → daylogs/mood_entities#destroy
 POST   /daylog/picture                       → daylogs/pictures#create
@@ -317,7 +336,9 @@ Common blocks (use these class names in markup — not legacy `button-primary`-s
 | `bucket.css` | `bucket--list`, `bucket--list-item-link`, `bucket--list-item-marker`, … | Bucket list chrome and item styling (pair with `layout--list` / `layout--list-item`) |
 | `dialog.css` | `dialog`, `dialog--large`, `dialog--header`, `dialog--body`, `dialog--footer` | Native `<dialog>` chrome (shared pickers, etc.) |
 | `hotkey-hint.css` | `hotkey-hint`, `hotkey-hint--always` | Keyboard shortcut badges on buttons |
-| `bullets-form.css` | `bullets-form`, `bullets-form--dock`, `bullets-form--rail`, … | Composer form and dock type-picker |
+| `bullets-form.css` | `bullets-form`, `bullets-form--dock`, `bullets-form--rail`, … | Full-page composer form and dock type-picker |
+| `composer.css` | `composer`, `composer--row`, `composer--multiline`, `composer--fullscreen`, … | Fixed chat composer dock |
+| `daylog.css` | `daylog--chat`, `daylog--shell`, `daylog--scroller`, `daylog--older-trigger`, `daylog--date-picker`, `daylog--mood`, … | Chat shell and day-level artifacts on the daylog |
 | `bullet.css` | `bullet`, `bullet--body`, `bullet--marker`, … | Shared bullet row chrome |
 | `task.css`, `note.css`, `event.css`, `voice.css` | Type-specific body/toolbar classes | Pair with `bullets/_bullet` + `{type}s/_{type}` |
 | `review.css` | `review--page`, `review--to-review`, `review--calendar`, … | Review workspace columns |

@@ -1,6 +1,17 @@
-<%= render "shared/dropdown",
-      name: "Create",
-      popover_target: "home_create" do %>
+<div class="dropdown--element-header">
+  <h2>Create</h2>
+  <button
+    type="button"
+    class="button--primary button--icon button--circle dropdown--element-hide"
+    popovertarget="home_create"
+    popovertargetaction="hide"
+    aria-label="Close create"
+  >
+    <%= icon_tag("x") %>
+  </button>
+</div>
+
+<div class="dropdown--element-body">
   <nav class="dropdown--menu" aria-label="Create">
     <%= link_to new_collection_path,
           class: "dropdown-item",
@@ -46,4 +57,4 @@
       New project
     <% end %>
   </nav>
-<% end %>
+</div>

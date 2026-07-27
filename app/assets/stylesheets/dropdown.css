@@ -4,7 +4,7 @@
  * Markup patterns:
  *   <details class="dropdown"> … <div class="dropdown-body">
  *   <div class="dropdown--dock"> … <* class="dropdown dropdown--element …" popover>
- *     <%= render "shared/dropdown", name:, popover_target: do %> … <% end %>
+ *     [.dropdown--element-header] + .dropdown--element-body
  *   <div class="dropdown-menu dropdown-menu--anchor …" popover>
  * Trigger: anchor-name on .dropdown--dock. Panel: position-anchor (component CSS).
  */
@@ -189,9 +189,9 @@
     padding: var(--spacing-horizontal-half) var(--spacing-horizontal-half) var(--spacing-vertical-half);
   }
 
-  /* List rows inside overlay menus (mood, create, bulk pickers, …). */
+  /* List rows flush to panel edges; item padding owns the inset. */
   .dropdown--element-body:has(.dropdown--menu) {
-    padding-inline: 0;
+    padding: 0;
   }
 
   .dropdown--menu {
@@ -211,8 +211,9 @@
     gap: var(--spacing-horizontal-half);
     box-sizing: border-box;
     width: 100%;
+    min-height: var(--spacing-horizontal-triple);
     margin: 0;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-double);
     border: 0;
     border-radius: 0;
     background: transparent;
@@ -233,12 +234,26 @@
       }
     }
 
-    &:focus-visible,
-    &[aria-selected="true"],
-    &.dropdown-item--current {
+    /* Keyboard / pointer highlight — not the same as selected. */
+    &:focus-visible {
       background: var(--color-bg-subtle);
       color: var(--color-fg-base);
       outline: none;
+    }
+
+    /* Persistent selection (mood, type radio, etc.). */
+    &[aria-selected="true"],
+    &[aria-checked="true"],
+    &.dropdown-item--current {
+      background: var(--color-accent-bg);
+      color: var(--color-fg-base);
+    }
+
+    &[aria-selected="true"]:focus-visible,
+    &[aria-checked="true"]:focus-visible,
+    &.dropdown-item--current:focus-visible {
+      background: var(--color-accent-bg);
+      box-shadow: inset 0 0 0 1px var(--color-accent);
     }
   }
 

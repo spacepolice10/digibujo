@@ -7,10 +7,10 @@ class DaylogsController < ApplicationController
     return unless @daylog
 
     @daylog_bucket = @daylog.bucket
-    @bullets = set_page_and_extract_portion_from(
-      @daylog.bullets.where(pops_on: @selected_date).active.order(created_at: :asc),
-      per_page: [ 15, 30, 50 ]
-    )
+    # Chat order: newest page first on screen, older pages pulled in from the top
+    # by Daylogs::BulletsController.
+    @bullets = @daylog.bullets.where(pops_on: @selected_date).active.last_page
+    @more_bullets = @bullets.size == Bullet::Pageable::PAGE_SIZE
     @mood_entity = @daylog.mood_entities.find_by(date: @selected_date)
     @picture = @daylog.pictures.find_by(date: @selected_date)
   end

@@ -8,7 +8,11 @@ export default class extends Controller {
   ]
 
   static values = {
-    durationSeconds: { type: Number, default: 60 }
+    durationSeconds: { type: Number, default: 60 },
+    manageSubmit: { type: Boolean, default: true },
+    // Composer shell: pause while recording, discard only after a take is ready.
+    // The standalone voice form keeps Discard available for the whole take.
+    shell: { type: Boolean, default: false }
   }
 
   // Detect MediaRecorder support and lock submit until a take exists.
@@ -48,10 +52,16 @@ export default class extends Controller {
     event.preventDefault()
     if (!this.supported) return
 
+    if (this.hasStopButtonTarget) this.stopButtonTarget.hidden = false
+    this.discardButtonTarget.hidden = this.shellValue
+    this.previewContainerTarget.hidden = true
+
     try {
       this.stream = await navigator.mediaDevices.getUserMedia({ audio: true })
     } catch {
       this.updateStatus("Microphone access denied.")
+      this.#resetUi()
+      this.dispatch("denied")
       return
     }
 
@@ -72,8 +82,6 @@ export default class extends Controller {
 
     this.mediaRecorder.start(250)
     this.recordButtonTarget.hidden = true
-    this.discardButtonTarget.hidden = false
-    this.previewContainerTarget.hidden = true
     this.updateStatus("Recording…")
     this.#createWaveform()
 
@@ -123,8 +131,12 @@ export default class extends Controller {
     this.cleanupTimers()
   }
 
-  // Enable Save only when a finished recording is attached.
+  // Enable Save only when a finished recording is attached. Composers that own
+  // their own submit state opt out and listen for the dispatched event instead.
   updateSubmitStatus() {
+    this.dispatch("change", { detail: { ready: this.doneRecording } })
+    if (!this.manageSubmitValue) return
+
     this.element.querySelectorAll('button[type="submit"]').forEach((button) => {
       button.disabled = !this.doneRecording
     })
@@ -138,7 +150,7 @@ export default class extends Controller {
     this.remainingTarget.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`
   }
 
-  // Show or hide the status line message.
+  // Announce status to assistive tech only — never paint it on screen.
   updateStatus(message) {
     if (!this.hasStatusTarget) return
 
@@ -184,6 +196,7 @@ export default class extends Controller {
     this.previewContainerTarget.hidden = true
     this.recordButtonTarget.hidden = false
     this.discardButtonTarget.hidden = true
+    if (this.hasStopButtonTarget) this.stopButtonTarget.hidden = this.shellValue
     this.recordButtonTarget.disabled = !this.supported
     this.updateStatus("")
     this.updateRemaining()
@@ -213,6 +226,8 @@ export default class extends Controller {
     this.previewTarget.load()
     this.#syncPreviewDuration(duration)
     this.previewContainerTarget.hidden = false
+    if (this.hasStopButtonTarget) this.stopButtonTarget.hidden = this.shellValue
+    this.discardButtonTarget.hidden = false
 
     this.#appendRecording(file)
   }
@@ -224,7 +239,7 @@ export default class extends Controller {
     this.fileTarget.files = data.files
 
     this.doneRecording = true
-    this.updateStatus("Ready to save.")
+    this.updateStatus("")
     this.updateSubmitStatus()
   }
 
@@ -267,54 +282,75 @@ export default class extends Controller {
     return this.waveformTarget.querySelectorAll(".voice--waveform-item")
   }
 
-  // Open AudioContext/analyser on the mic stream and start the 150ms bar tick.
+  // Open AudioContext/analyser on the mic stream and start the bar tick.
+  // Progress uses wall-clock time so bars advance many times a second; each bar
+  // freezes its height when entered instead of pulsing in place for a full second.
   #createWaveform() {
     this.waveformTarget.hidden = false
+    this.recordingStartedAt = performance.now()
+    this.waveformBarIndex = -1
     this.audioContext = new AudioContext()
     this.analyser = this.audioContext.createAnalyser()
     this.analyser.fftSize = 256
+    this.analyser.smoothingTimeConstant = 0.35
     this.audioContext.createMediaStreamSource(this.stream).connect(this.analyser)
     this.audioContext.resume()
 
-    this.waveformInterval = window.setInterval(() => this.#tickWaveform(), 150)
+    this.waveformInterval = window.setInterval(() => this.#tickWaveform(), 50)
     this.#tickWaveform()
   }
 
-  // Advance filled items from elapsedSeconds; set current item height from loudness.
+  // Paint newly reached bars once from the current loudness sample.
   #tickWaveform() {
-    if (!this.analyser) return
+    if (!this.analyser || this.recordingStartedAt == null) return
 
     const items = this.#waveformItems()
-    const level = this.#sampleLoudness()
-    const filled = Math.floor(items.length * this.elapsedSeconds / this.durationSecondsValue)
-    const h = Math.max(2, Math.round(level * 28))
+    if (items.length === 0) return
 
-    items.forEach((item, i) => {
-      const active = i <= filled
-      item.classList.toggle("is-filled", active)
-      if (i == filled) {
-        item.setAttribute("height", h)
-        item.setAttribute("y", (32 - h) / 2)
-      } else if (!active) {
-        item.setAttribute("height", "2")
-        item.setAttribute("y", "15")
-      }
-    })
+    const elapsed = Math.min(
+      this.durationSecondsValue,
+      (performance.now() - this.recordingStartedAt) / 1000
+    )
+    const index = Math.min(
+      items.length - 1,
+      Math.floor((items.length * elapsed) / this.durationSecondsValue)
+    )
+
+    if (index <= this.waveformBarIndex) return
+
+    const level = this.#sampleLoudness()
+    const height = Math.max(2, Math.round(2 + level * 28))
+    const y = (32 - height) / 2
+
+    for (let i = this.waveformBarIndex + 1; i <= index; i += 1) {
+      const item = items[i]
+      item.classList.add("is-filled")
+      item.setAttribute("height", height)
+      item.setAttribute("y", y)
+    }
+
+    this.waveformBarIndex = index
   }
 
-  // Peak amplitude 0..1 from the analyser time-domain buffer.
+  // RMS amplitude 0..1 from the analyser time-domain buffer, boosted so quiet
+  // mics still move the meter.
   #sampleLoudness() {
     const data = new Uint8Array(this.analyser.fftSize)
     this.analyser.getByteTimeDomainData(data)
-    let peak = 0
-    for (const v of data) peak = Math.max(peak, Math.abs(v - 128))
-    return Math.min(1, peak / 64)
+    let sum = 0
+    for (const value of data) {
+      const delta = (value - 128) / 128
+      sum += delta * delta
+    }
+    return Math.min(1, Math.sqrt(sum / data.length) * 4.5)
   }
 
   // Cancel tick, close AudioContext, reset items, hide waveform.
   #stopWaveform() {
     window.clearInterval(this.waveformInterval)
     this.waveformInterval = null
+    this.recordingStartedAt = null
+    this.waveformBarIndex = -1
     this.audioContext?.close()
     this.audioContext = null
     this.analyser = null

@@ -2,9 +2,10 @@
 <%= render layout: "bullets/form", locals: { bullet:, editing:, return_path: } do |fr, bulletable| %>
   <%= fr.fields_for :bulletable, bulletable do |bf| %>
     <%= bf.hidden_field :id if bulletable.persisted? %>
-    <%= bf.text_area :body,
+    <%= bf.rich_text_area :body,
+          value: bulletable.body,
+          preset: "inline",
           placeholder: "What need to be done?",
-          autofocus: true,
-          class: "bullets-form--body" %>
+          autofocus: true %>
   <% end %>
 <% end %>

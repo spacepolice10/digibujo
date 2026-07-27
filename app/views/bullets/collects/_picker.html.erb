@@ -1,7 +1,18 @@
 <%# locals: (bullet_ids:, return_to:, collects_q:, collections:, collections_page:) %>
-<%= render "shared/dropdown",
-      name: "Save to collection",
-      popover_target: "collects_picker_dropdown_id" do %>
+<div class="dropdown--element-header">
+  <h2>Save to collection</h2>
+  <button
+    type="button"
+    class="button--primary button--icon button--circle dropdown--element-hide"
+    popovertarget="collects_picker_dropdown_id"
+    popovertargetaction="hide"
+    aria-label="Close save to collection"
+  >
+    <%= icon_tag("x") %>
+  </button>
+</div>
+
+<div class="dropdown--element-body">
   <div class="bulk-menu--collect-picker"
        data-controller="combobox"
        data-combobox-path-value="<%= new_collect_path %>">
@@ -35,4 +46,4 @@
       <p class="bulk-menu--collect-empty">No collections found.</p>
     <% end %>
   </div>
-<% end %>
+</div>

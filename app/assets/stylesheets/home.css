@@ -193,8 +193,7 @@
   }
 
   .home--activity {
-    flex-direction: column;
-    gap: var(--spacing-vertical-half);
+    display: block;
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     max-width: 280px;
     margin-top: var(--spacing-vertical-quad);

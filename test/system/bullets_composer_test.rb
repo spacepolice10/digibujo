@@ -17,13 +17,13 @@ class BulletsComposerSystemTest < ApplicationSystemTestCase
       bucket_id: @bucket.id
     )
 
-    body = find('textarea.bullets-form--body')
+    body = find('lexxy-editor[preset=inline] .lexxy-editor__content')
     body.send_keys('Buy oat milk')
     body.send_keys([modifier_key, :enter])
 
     assert_current_path daylog_path(date: Date.current.iso8601)
     assert_text 'Buy oat milk'
-    assert Task.joins(:bullet).where(body: 'Buy oat milk', bullets: { user_id: @user.id }).exists?
+    assert @user.bullets.any? { |bullet| bullet.body_as_text.strip == 'Buy oat milk' }
   end
 
   private

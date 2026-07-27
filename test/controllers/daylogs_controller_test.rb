@@ -89,7 +89,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'desktop daylog dock links navigate to full page composer' do
+  test 'desktop daylog mounts the chat composer' do
     selected_date = Date.current - 2.days
     bucket_id = @user.daylog.bucket.id
 
@@ -97,48 +97,28 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select 'dialog#daylog_composer', count: 0
-    assert_select '.bullets-form--dock' do
-      assert_select 'a[data-turbo-frame=?][href=?]',
-                    '_top',
-                    new_bullet_path(
-                      pops_on: selected_date,
-                      bucket_id: bucket_id,
-                      bulletable_type: 'Task'
-                    )
-      assert_select 'a[data-turbo-frame=?][href=?]',
-                    '_top',
-                    new_bullet_path(
-                      pops_on: selected_date,
-                      bucket_id: bucket_id,
-                      bulletable_type: 'Event'
-                    )
-      assert_select 'a[data-turbo-frame=?][href=?]',
-                    '_top',
-                    new_bullet_path(
-                      pops_on: selected_date,
-                      bucket_id: bucket_id,
-                      bulletable_type: 'Note'
-                    )
+    assert_select '#bullet_composer' do
+      assert_select 'lexxy-editor[preset=inline]'
+      assert_select "input[name='bullet[bucket_id]'][value=?]", bucket_id.to_s
+      assert_select "input[name='bullet[pops_on]'][value=?]", selected_date.iso8601
+      assert_select "input[name='bullet[bulletable_type]'][value=?]", 'Note'
+      assert_select "input[name='list_id']", count: 0
+      assert_select 'button[data-composer-type=?]', 'Task'
+      assert_select 'button[data-composer-type=?]', 'Event'
+      assert_select '.composer--record.button--secondary'
     end
     assert_no_match(/Add bullet/, response.body)
   end
 
-  test 'mobile daylog dock links navigate to full page composer' do
+  test 'mobile daylog mounts the chat composer' do
     selected_date = Date.current - 2.days
     mobile_ua = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)'
-    bucket_id = @user.daylog.bucket.id
 
     get daylog_path(date: selected_date.iso8601), headers: { 'User-Agent' => mobile_ua }
 
     assert_response :success
     assert_select 'dialog#daylog_composer', count: 0
-    assert_select 'a[data-turbo-frame=?][href=?]',
-                  '_top',
-                  new_bullet_path(
-                    pops_on: selected_date,
-                    bucket_id: bucket_id,
-                    bulletable_type: 'Task'
-                  )
+    assert_select '#bullet_composer lexxy-editor[preset=inline]'
   end
 
   test 'root path is home' do
@@ -176,6 +156,46 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'nav.tabbar--navigation a[href=?]', home_path
     assert_select 'nav.tabbar--navigation a[href=?]', daylog_path
     assert_select 'nav.tabbar--navigation a[href=?]', pinned_index_path
+  end
+
+  test 'daylog opens on the newest page in chronological order' do
+    total = Bullet::Pageable::PAGE_SIZE + 2
+    bullets = Array.new(total) do |index|
+      create_bullet!(@user, bulletable: Note.new(body: "Line #{index}"), created_at: (total - index).minutes.ago)
+    end
+    container = ActionView::RecordIdentifier.dom_id(@user.daylog, :bullets_container)
+
+    get daylog_path
+
+    assert_response :success
+    assert_no_match(/Line 0\b/, response.body)
+    assert_no_match(/Line 1\b/, response.body)
+    assert_select "##{container} .bullet", Bullet::Pageable::PAGE_SIZE
+    assert_operator response.body.index('Line 2'), :<, response.body.index("Line #{total - 1}")
+    assert_select "##{container} > ##{ActionView::RecordIdentifier.dom_id(bullets[2])}:first-child"
+    assert_select '.daylog--older-trigger'
+  end
+
+  test 'daylog offers the older page trigger only when a full page came back' do
+    create_bullet!(@user, bulletable: Note.new(body: 'Lonely line'))
+
+    get daylog_path
+
+    assert_response :success
+    assert_select '.daylog--older-trigger', count: 0
+  end
+
+  test 'daylog mounts the chat scroller pointed at the cursor endpoint' do
+    container = ActionView::RecordIdentifier.dom_id(@user.daylog, :bullets_container)
+
+    get daylog_path
+
+    assert_response :success
+    assert_select "[data-controller~='daylog-scroll'][data-daylog-scroll-url-value=?]", daylog_bullets_path do
+      assert_select "[data-daylog-scroll-target='scroller'] ##{container}[data-daylog-scroll-target='list']"
+      assert_select '#bullet_composer', count: 0
+    end
+    assert_select 'turbo-frame#daylog > #bullet_composer'
   end
 
   test 'daylog renders mixed bullet types on the same page' do

@@ -44,57 +44,102 @@
           <%= icon_tag("dots", style: "color: var(--color-text-base);", class: "button--icon") %>
           Actions
         </button>
-        <div id="<%= dom_id(@bullet, :actions) %>" class="dropdown dropdown--element dropdown--element-bottom animations--side-in" style="position-anchor: <%= dom_id(@bullet, :actions) %>" popover>
-          <%= render "shared/dropdown", name: "Actions", popover_target: dom_id(@bullet, :actions) do %>
-        <% unless @bullet.bulletable_type == "Voice" %>
-        <%= link_to edit_bullet_path(@bullet),
-              class: "button--tertiary button--sm",
-              data: { turbo_frame: "_top" } do %>
-          <%= icon_tag("pencil", style: "color: var(--color-text-base);", class: "button--icon") %>
-          Edit
-        <% end %>
-      <% end %>
-        <% if @bullet.published? %>
-          <%= button_to publish_path,
-                method: :delete,
-                params: { bullet_ids: @bullet.id },
-                class: "button--tertiary button--sm",
-                aria: { label: "Unpublish #{@bullet.name}" } do %>
-            <%= icon_tag("link", style: "color: var(--color-text-base);", class: "button--icon") %>
-            Unpublish
-          <% end %>
-        <% else %>
-          <%= button_to publish_path,
-                method: :post,
-                params: { bullet_ids: @bullet.id },
-                class: "button--tertiary button--sm",
-                aria: { label: "Publish #{@bullet.name}" } do %>
-            <%= icon_tag("link", style: "color: var(--color-text-base);", class: "button--icon") %>
-            Publish
-          <% end %>
-        <% end %>
+        <div id="<%= dom_id(@bullet, :actions) %>"
+             class="dropdown dropdown--element dropdown--element-bottom animations--side-in"
+             style="position-anchor: <%= dom_id(@bullet, :actions) %>"
+             popover
+             data-controller="grid-navigation"
+             data-grid-navigation-columns-value="1"
+             data-action="keydown->grid-navigation#navigate">
+          <div class="dropdown--element-header">
+            <h2>Actions</h2>
+            <button
+              type="button"
+              class="button--primary button--icon button--circle dropdown--element-hide"
+              popovertarget="<%= dom_id(@bullet, :actions) %>"
+              popovertargetaction="hide"
+              aria-label="Close actions"
+            >
+              <%= icon_tag("x") %>
+            </button>
+          </div>
 
-        <% if @bullet.archived? %>
-          <%= button_to archive_path,
-                method: :delete,
-                params: { bullet_ids: @bullet.id },
-                class: "button--tertiary button--sm",
-                aria: { label: "Unarchive #{@bullet.name}" } do %>
-            <%= icon_tag("archive", style: "color: var(--color-text-base);", class: "button--icon") %>
-            Unarchive
-          <% end %>
-        <% else %>
-          <%= button_to archive_path,
-                method: :post,
-                params: { bullet_ids: @bullet.id },
-                class: "button--tertiary button--sm button--danger",
-                form: { data: { turbo_confirm: "Are you sure?" } },
-                aria: { label: "Archive #{@bullet.name}" } do %>
-            <%= icon_tag("archive", style: "color: var(--color-text-base);", class: "button--icon") %>
-            Archive
-          <% end %>
-        <% end %>
-        <% end %>
+          <div class="dropdown--element-body">
+            <nav class="dropdown--menu" aria-label="Actions">
+              <% unless @bullet.bulletable_type == "Voice" %>
+                <%= link_to edit_bullet_path(@bullet),
+                      class: "dropdown-item",
+                      data: {
+                        turbo_frame: "_top",
+                        grid_navigation_target: "item",
+                        action: "focus->grid-navigation#syncPosition"
+                      } do %>
+                  <%= icon_tag("pencil") %>
+                  Edit
+                <% end %>
+              <% end %>
+              <% if @bullet.published? %>
+                <%= button_to publish_path,
+                      method: :delete,
+                      params: { bullet_ids: @bullet.id },
+                      class: "dropdown-item",
+                      form_class: "dropdown--menu-form",
+                      data: {
+                        grid_navigation_target: "item",
+                        action: "focus->grid-navigation#syncPosition"
+                      },
+                      aria: { label: "Unpublish #{@bullet.name}" } do %>
+                  <%= icon_tag("link") %>
+                  Unpublish
+                <% end %>
+              <% else %>
+                <%= button_to publish_path,
+                      method: :post,
+                      params: { bullet_ids: @bullet.id },
+                      class: "dropdown-item",
+                      form_class: "dropdown--menu-form",
+                      data: {
+                        grid_navigation_target: "item",
+                        action: "focus->grid-navigation#syncPosition"
+                      },
+                      aria: { label: "Publish #{@bullet.name}" } do %>
+                  <%= icon_tag("link") %>
+                  Publish
+                <% end %>
+              <% end %>
+
+              <% if @bullet.archived? %>
+                <%= button_to archive_path,
+                      method: :delete,
+                      params: { bullet_ids: @bullet.id },
+                      class: "dropdown-item",
+                      form_class: "dropdown--menu-form",
+                      data: {
+                        grid_navigation_target: "item",
+                        action: "focus->grid-navigation#syncPosition"
+                      },
+                      aria: { label: "Unarchive #{@bullet.name}" } do %>
+                  <%= icon_tag("archive") %>
+                  Unarchive
+                <% end %>
+              <% else %>
+                <%= button_to archive_path,
+                      method: :post,
+                      params: { bullet_ids: @bullet.id },
+                      class: "dropdown-item",
+                      form_class: "dropdown--menu-form",
+                      form: { data: { turbo_confirm: "Are you sure?" } },
+                      data: {
+                        grid_navigation_target: "item",
+                        action: "focus->grid-navigation#syncPosition"
+                      },
+                      aria: { label: "Archive #{@bullet.name}" } do %>
+                  <%= icon_tag("archive") %>
+                  Archive
+                <% end %>
+              <% end %>
+            </nav>
+          </div>
         </div>
       </div>
     </div>

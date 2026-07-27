@@ -34,27 +34,20 @@
         <div
           data-bulk-menu-target="list"
         >
-          <% if @bullets.any? %>
-            <%= render layout: "pagination/paginated_list",
-                  locals: {
-                    page: @page,
-                    container_id: dom_id(@collection, :bullets_container),
-                    pagination_link_path: ->(next_param) { collection_path(@collection, page: next_param) }
-                  } do %>
-              <% @page.records.each do |bullet| %>
-                <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
-              <% end %>
+          <%= render layout: "pagination/paginated_list",
+                locals: {
+                  page: @page,
+                  container_id: dom_id(@collection, :bullets_container),
+                  pagination_link_path: ->(next_param) { collection_path(@collection, page: next_param) }
+                } do %>
+            <% @page.records.each do |bullet| %>
+              <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
             <% end %>
-          <% else %>
           <% end %>
         </div>
   </div>
-</div>
-<div class="bullets-form--dock<%= " bullets-form--dock-mobile" if request.variant.include?(:mobile) %>">
-  <div class="bullets-form--buttons">
-    <%= create_bullet_buttons bucket_id: @collection.bucket.id,
-          pops_on: nil,
-          bulletable_type: Bullet.bulletable_types %>
-  </div>
+
+  <%= render "bullets/composer",
+        bucket_id: @collection.bucket.id %>
 </div>
 </div>

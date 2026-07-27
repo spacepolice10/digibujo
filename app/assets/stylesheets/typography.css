@@ -7,7 +7,6 @@
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-strong);
 }
-
 .typography--paragraph-md {
   font-size: var(--font-size-md);
   color: var(--color-fg-base);
@@ -19,8 +18,8 @@
 .typography--center {
   text-align: center;
 }
-.typography--justify {
-  text-align: justify;
+.typography--balanced {
+  text-wrap: balance;
 }
 .typography--bold {
   font-weight: var(--font-weight-strong);

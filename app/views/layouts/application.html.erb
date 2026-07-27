@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 
-<html data-controller="hotkey-hint">
+<html
+  data-controller="hotkey-hint"
+  <% if Current.user %>
+    data-appearance="<%= Current.user.settings!.appearance %>"
+  <% end %>
+>
   <head>
     <title><%= content_for(:title) || "Digibujo" %></title>
 
@@ -33,12 +38,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body
-    data-controller="dialog timezone-cookie bulk-menu composer-expand"
-    <% if Current.user %>
-      data-appearance="<%= Current.user.settings!.appearance %>"
-    <% end %>
-  >
+  <body data-controller="dialog timezone-cookie bulk-menu composer-expand">
     <div
       id="toasts"
       class="toasts"

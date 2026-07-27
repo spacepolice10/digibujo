@@ -1,7 +1,7 @@
-<div class="dropdown--dock pinned--dock">
+<div class="dropdown--dock pinned--button">
   <button
     type="button"
-    class="button--secondary button--circle hotkey-hint pinned--dock-button"
+    class="button--secondary button--circle hotkey-hint pinned--button-control"
     popovertarget="pinned_list"
     data-controller="hotkey"
     data-hotkey="P"
@@ -17,5 +17,8 @@
     src="<%= pinned_index_path %>"
     loading="lazy"
     popover
+    data-controller="grid-navigation"
+    data-grid-navigation-columns-value="1"
+    data-action="keydown->grid-navigation#navigate"
   ></turbo-frame>
 </div>

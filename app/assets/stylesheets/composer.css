@@ -1,0 +1,278 @@
+@layer components {
+  /* Fixed dock above the tabbar (or the viewport bottom on desktop). The daylog
+     stays full-viewport; its scroller padding clears this dock instead. */
+  .composer {
+    --composer-keyboard-inset: 0px;
+    --composer-tabbar-inset: 0px;
+
+    position: fixed;
+    inset-inline: 0;
+    bottom: max(var(--composer-keyboard-inset), var(--composer-tabbar-inset));
+    z-index: var(--z-dropdown);
+    margin: 0;
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+    margin-inline: auto;
+    width: 90%;
+  }
+
+  .composer--form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical-half);
+    max-width: var(--breakpoint-laptop);
+    margin-inline: auto;
+    border: 1px solid var(--color-stroke-base);
+    /* Finite pill radius (≈ half the single-line chrome), not 9999px: otherwise
+       border-radius transition stays visually round until the last frames. */
+    border-radius: 1.5rem;
+    background: var(--color-bg-base);
+    /* Tight vertical padding so the 1-line editor sits level with the icon buttons. */
+    padding: 0.25rem var(--spacing-horizontal-half);
+    box-shadow: var(--shadow-base);
+    transition: border-radius 180ms ease;
+  }
+
+  .composer--row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+  }
+
+  .composer--lead,
+  .composer--actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+  }
+
+  .composer--lead {
+    order: 1;
+  }
+
+  .composer--field {
+    order: 2;
+    flex: 1 1 8rem;
+    min-width: 0;
+  }
+
+  .composer--actions {
+    order: 3;
+  }
+
+  /* Wrapped text: the field claims the row and the controls drop below it. */
+  .composer--multiline .composer--form {
+    border-radius: var(--radius-base);
+  }
+
+  .composer--multiline .composer--field,
+  .composer--fullscreen .composer--field {
+    order: 1;
+    flex-basis: 100%;
+  }
+
+  .composer--multiline .composer--lead,
+  .composer--fullscreen .composer--lead {
+    order: 2;
+  }
+
+  /* Fullscreen is Note-only with the note toolbar — no type switching mid-edit. */
+  .composer--fullscreen .composer--lead {
+    display: none;
+  }
+
+  .composer--multiline .composer--actions,
+  .composer--fullscreen .composer--actions {
+    order: 3;
+    margin-inline-start: auto;
+  }
+
+  /* Editor chrome (height, canvas, border) lives in actiontext.css so it can
+     beat Lexxy's unlayered defaults. Layout ownership stays here. */
+
+  .composer.composer--fullscreen {
+    position: fixed;
+    inset: 0;
+    bottom: var(--composer-keyboard-inset);
+    /* Above the floating tabbar (also --z-dropdown); below is fine for toasts
+       which mount later in the DOM at --z-toast. */
+    z-index: var(--z-toast);
+    margin: 0;
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    display: flex;
+    align-items: stretch;
+    background: var(--color-bg-base);
+    width: 100%;
+  }
+
+  .composer--fullscreen .composer--form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    max-width: none;
+    border-radius: var(--radius-strong);
+  }
+
+  .composer--fullscreen .composer--row {
+    flex: 1;
+    align-items: stretch;
+    min-height: 0;
+  }
+
+  /* flex shorthand must keep basis at 100% or the field sits beside the
+     controls instead of claiming the row above them. */
+  .composer--fullscreen .composer--field {
+    order: 1;
+    flex: 1 1 100%;
+    display: flex;
+    min-height: 0;
+    height: 92%;
+  }
+
+  .composer--type-button {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    padding: var(--spacing-vertical);
+    border: none;
+    background: none;
+  }
+
+  .composer--type-icon {
+    display: flex;
+    align-items: center;
+  }
+
+  .composer--type-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15em;
+    min-width: 0;
+  }
+
+  .composer--type-heading {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+  }
+
+  .composer--type-name {
+    color: var(--color-fg-base);
+  }
+
+  .composer--type-description {
+    color: var(--color-fg-subtle);
+    /* Indent under the name, past the type icon + gap. */
+    padding-inline-start: calc(1.75ch + var(--spacing-horizontal-half));
+  }
+
+  .composer--submit:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* Voice take replaces the compose row with the same pill layout: pause |
+     waveform | send. Match the natural playback height so the dock does not
+     jump — by growing the spectrum, not shrinking playback. */
+  .composer--voice {
+    width: 100%;
+  }
+
+  .composer--voice-field {
+    --composer-voice-chrome-height: 2.75rem;
+
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    min-height: var(--composer-voice-chrome-height);
+    height: var(--composer-voice-chrome-height);
+  }
+
+  .composer--voice-waveform {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .composer--voice-waveform svg {
+    display: block;
+    width: 100%;
+    height: 2.25rem;
+  }
+
+  .composer--voice-remaining {
+    color: var(--color-fg-subtle);
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+
+  .composer--voice-status {
+    color: var(--color-fg-subtle);
+  }
+
+  .composer--voice-field [data-voice-recorder-target="previewContainer"] {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    display: flex;
+    align-items: stretch;
+  }
+
+  .composer--voice-field .voice--playback {
+    min-height: 0;
+    height: 100%;
+    box-sizing: border-box;
+  }
+
+  .composer--voice-field:has([data-voice-recorder-target="previewContainer"]:not([hidden])) .composer--voice-waveform,
+  .composer--voice-field:has([data-voice-recorder-target="previewContainer"]:not([hidden])) .composer--voice-remaining {
+    display: none;
+  }
+
+  /* Expand / collapse: morph the dock into the fullscreen sheet. */
+  .composer.is-composer-morphing {
+    view-transition-name: chat-composer;
+  }
+
+  html[data-chat-composer-vt] {
+    & ::view-transition-old(root),
+    & ::view-transition-new(root) {
+      animation: none;
+      mix-blend-mode: normal;
+    }
+
+    & ::view-transition-old(root) {
+      display: none;
+    }
+  }
+
+  ::view-transition-group(chat-composer) {
+    z-index: var(--z-toast);
+    animation-duration: 220ms;
+    animation-timing-function: cubic-bezier(.2, .8, .2, 1);
+  }
+
+  ::view-transition-old(chat-composer),
+  ::view-transition-new(chat-composer) {
+    height: 100%;
+    overflow: clip;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .composer--form {
+      transition: none;
+    }
+
+    .composer.is-composer-morphing {
+      view-transition-name: none;
+    }
+
+    ::view-transition-group(chat-composer) {
+      animation: none;
+    }
+  }
+}

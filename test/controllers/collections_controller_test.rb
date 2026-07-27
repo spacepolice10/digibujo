@@ -101,18 +101,18 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Moved into inbox.', response.body
   end
 
-  test 'show renders composer create buttons for all bullet types' do
+  test 'show mounts the chat composer scoped to the collection bucket' do
     collection = create_collection!(@user, name: 'Inbox')
 
     get collection_path(collection)
 
     assert_response :success
-    assert_select 'a[aria-label=?]', 'Add Note' do
-      assert_select '[href=?]', new_bullet_path(
-        bulletable_type: 'Note', bucket_id: collection.bucket.id, pops_on: nil
-      )
+    assert_select '#bullet_composer' do
+      assert_select 'lexxy-editor[preset=inline]'
+      assert_select "input[name='bullet[bucket_id]'][value=?]", collection.bucket.id.to_s
+      assert_select "input[name='list_id']", count: 0
+      assert_select 'button.composer--type-option', count: 3
     end
-    assert_select '.bullets-form--dock a.bullets-form--create-button', count: 4
   end
 
   test 'update changes bucket attributes and description' do

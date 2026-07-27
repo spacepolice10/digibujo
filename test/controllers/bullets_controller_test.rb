@@ -24,7 +24,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match(/turbo-stream action="replace"/, response.body)
     assert_no_match(/turbo-stream action="after"/, response.body)
-    assert_equal 'Updated', @bullet.reload.body
+    assert_equal 'Updated', @bullet.reload.body_as_text
   end
 
   test 'create redirects to the originating daylog' do
@@ -60,6 +60,44 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to daylog_path(date: Date.current.iso8601)
   end
 
+  test 'inline composer create appends the row and drops the empty state' do
+    container = ActionView::RecordIdentifier.dom_id(@user.daylog, :bullets_container)
+
+    post bullets_path,
+         params: {
+           inline_composer: '1',
+           bullet: {
+             bulletable_type: 'Task',
+             bulletable_attributes: { body: '<p>Chat task</p>' },
+             pops_on: Date.current.iso8601,
+             bucket_id: @daylog.id
+           }
+         },
+         as: :turbo_stream
+
+    assert_response :success
+    assert_match %(turbo-stream action="append" target="#{container}"), response.body
+    assert_match 'Chat task', response.body
+    assert_match %(turbo-stream action="remove" target="no_bullets_container"), response.body
+  end
+
+  test 'inline composer create reports validation errors as a toast' do
+    post bullets_path,
+         params: {
+           inline_composer: '1',
+           bullet: {
+             bulletable_type: 'Voice',
+             bulletable_attributes: { body: 'No recording attached' },
+             bucket_id: @daylog.id
+           }
+         },
+         as: :turbo_stream
+
+    assert_response :unprocessable_entity
+    assert_match %(turbo-stream action="update" target="toasts"), response.body
+    assert_match 'Recording', response.body
+  end
+
   test 'create tags note from project attachment in body' do
     project = create_project!(@user, name: 'Tagged')
     body_html = ActionText::Content.new('').append_attachables(project).to_html
@@ -79,8 +117,8 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_includes bullet.projects, project
   end
 
-  test 'create does not sync projects from Task plain body' do
-    project = create_project!(@user, name: 'Ignored')
+  test 'create tags task from project attachment in body' do
+    project = create_project!(@user, name: 'Tagged task')
     body_html = ActionText::Content.new('').append_attachables(project).to_html
 
     post bullets_path,
@@ -95,7 +133,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
     bullet = @user.bullets.order(:created_at).last
     assert_equal 'Task', bullet.bulletable_type
-    assert_empty bullet.projects
+    assert_includes bullet.projects, project
   end
 
   test 'create persists rich content in note body' do
@@ -198,13 +236,12 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'a[aria-label=?]', 'Add Task'
   end
 
-  test 'new composer renders full page plain editor' do
+  test 'new composer renders full page inline editor' do
     get new_bullet_path(bulletable_type: 'Task')
 
     assert_response :success
     assert_select 'form.bullets-form'
-    assert_select 'textarea.bullets-form--body'
-    assert_select 'lexxy-editor', false
+    assert_select 'lexxy-editor[preset=inline]'
     assert_select '.bullets-form--rail'
     assert_select '.bullets-form--type-pill[data-bullet-type=?]', 'task', text: /Task/
     assert_select '.bullets-form--rail-submit button[type=submit]'
@@ -215,7 +252,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select 'lexxy-editor[preset=note]'
-    assert_select 'textarea.bullets-form--body', false
+    assert_select 'lexxy-editor[preset=inline]', false
     assert_select '.bullets-form--type-pill[data-bullet-type=?]', 'note', text: /Note/
   end
 
@@ -283,7 +320,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     patch bullet_path(bullet), params: { bullet: { bulletable_attributes: { body: 'Changed' } } }
 
     assert_redirected_to bullet_path(bullet)
-    assert_equal 'Voice caption', bullet.reload.body
+    assert_equal 'Voice caption', bullet.reload.body_as_text
   end
 
   private

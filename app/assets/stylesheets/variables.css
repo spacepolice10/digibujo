@@ -150,7 +150,11 @@
     --radius-base: 6px;
     --radius-strong: 12px;
     --radius-full: 9999px;
-    
+
+    /* dot grid — bullet journal paper (5 mm spacing at 16 px root) */
+    --dot-grid-size: 1.25rem;
+    --dot-grid-dot: 0.5px;
+    --dot-grid-color: color-mix(in oklch, var(--color-fg-subtle) 30%, transparent);
   }
 
 

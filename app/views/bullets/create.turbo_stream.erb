@@ -1,0 +1,5 @@
+<%= turbo_stream.append dom_id(@bullet.bucket.bucketable, :bullets_container) do %>
+  <%= render partial: @bullet.to_partial_path, locals: { bullet: @bullet } %>
+<% end %>
+
+<%= turbo_stream.remove "no_bullets_container" %>
