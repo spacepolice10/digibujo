@@ -112,116 +112,12 @@
   /* Pin short days to the composer edge without keeping the older-trigger in
      view (that would auto-fetch every page). The list is at least one
      scrollport tall; bullets pack to its end. When content overflows, this is
-     just a normal top-to-bottom feed. Day meta grows into the free space so an
-     empty/sparse day isn’t a blank void. */
+     just a normal top-to-bottom feed. */
   .daylog--scroller > [data-daylog-scroll-target="list"] {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     min-height: 100%;
-  }
-
-  /* Day meta sits at the top of the list (mood + photo + empty copy). It
-     flex-grows into short-day free space as a hero; once the feed overflows it
-     keeps its natural height and simply scrolls away above the newest bullets. */
-  .daylog--day-meta {
-    flex: 1 0 auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-self: stretch;
-    margin-block: 0;
-  }
-
-  .daylog--day-meta-surface {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: var(--spacing-vertical);
-    width: 100%;
-    padding: var(--spacing-vertical-double) var(--spacing-horizontal);
-  }
-
-  .daylog--day-meta-media,
-  .daylog--day-meta-mood {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .daylog--day-meta-mood .button--tertiary {
-    font-size: var(--font-size-xl);
-    line-height: 1;
-    min-width: 2.75rem;
-    min-height: 2.75rem;
-  }
-
-  .daylog--day-meta .daylog--picture-container,
-  .daylog--day-meta .daylog--picture {
-    position: static;
-    width: min(12rem, 56vw);
-    transform: none;
-    padding: 0;
-    background: transparent;
-    border: 0;
-    box-shadow: none;
-  }
-
-  .daylog--day-meta .daylog--picture {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--spacing-vertical-half);
-  }
-
-  .daylog--day-meta .daylog--picture-thumbnail {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    border-radius: var(--radius-strong);
-    border: 1px solid var(--color-stroke-base);
-    box-shadow: var(--shadow-base);
-  }
-
-  .daylog--day-meta .daylog--picture-controls {
-    display: flex;
-    justify-content: center;
-    gap: var(--spacing-horizontal-half);
-  }
-
-  .daylog--day-meta form:has(.button--icon) .button--icon {
-    width: 4.5rem;
-    height: 4.5rem;
-    border: 1px dashed var(--color-stroke-base);
-    border-radius: var(--radius-strong);
-    background: var(--color-bg-subtle);
-  }
-
-  .daylog--day-meta form:has(.button--icon) .button--icon .icon {
-    width: 1.5rem;
-    height: 1.5rem;
-  }
-
-  .daylog--day-meta-empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--spacing-vertical-half);
-    max-width: 28ch;
-    margin-inline: auto;
-  }
-
-  .daylog--day-meta-empty-title {
-    margin: 0;
-    font-size: var(--font-size-xl);
-    font-weight: var(--font-weight-medium);
-    color: var(--color-fg-base);
-    text-align: center;
-  }
-
-  .daylog--day-meta-empty-copy {
-    margin: 0;
   }
 
   .daylog--older-trigger {

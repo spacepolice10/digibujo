@@ -81,15 +81,7 @@ export default class extends Controller {
     this.prepending = true
 
     pauseInertiaScroll(this.scrollerTarget)
-    keepScroll(this.scrollerTarget, () => {
-      // Day meta stays first; older pages slot in ahead of the oldest bullet.
-      const oldest = this.listTarget.querySelector(".bullet")
-      if (oldest) {
-        oldest.insertAdjacentHTML("beforebegin", html)
-      } else {
-        this.listTarget.insertAdjacentHTML("beforeend", html)
-      }
-    })
+    keepScroll(this.scrollerTarget, () => this.listTarget.insertAdjacentHTML("afterbegin", html))
     this.#observeTrigger(this.triggerTarget)
 
     setTimeout(() => { this.prepending = false })
@@ -129,6 +121,6 @@ export default class extends Controller {
   }
 
   get #oldestRowId() {
-    return this.listTarget.querySelector(".bullet")?.id?.split("_").pop()
+    return this.listTarget.firstElementChild?.id?.split("_").pop()
   }
 }

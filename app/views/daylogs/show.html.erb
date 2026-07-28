@@ -36,6 +36,14 @@
             <%= icon_tag("arrow-right") %>
           <% end %>
         </div>
+        <div class="layout--flex layout--gapped">
+          <%= render "daylogs/mood_entity",
+                date: @selected_date,
+                entity: @mood_entity %>
+          <%= render "daylogs/picture",
+                date: @selected_date,
+                picture: @picture %>
+        </div>
       </div>
 
       <div class="layout--padded daylog--scroller" data-daylog-scroll-target="scroller">
@@ -47,14 +55,15 @@
         <% end %>
 
         <div id="<%= dom_id(@daylog, :bullets_container) %>" class="layout--list" data-daylog-scroll-target="list">
-          <%= render "daylogs/day_meta",
-                date: @selected_date,
-                mood_entity: @mood_entity,
-                picture: @picture,
-                empty: @bullets.empty? %>
-
           <% @bullets.each do |bullet| %>
             <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
+          <% end %>
+
+          <% if @bullets.empty? %>
+            <p id="no_bullets_container" class="typography--paragraph-sm typography--center layout--padded layout--mx-auto">
+                No bullets yet, check your monthly bucket, references or start a
+                braindumping session.
+            </p>
           <% end %>
         </div>
       </div>

@@ -174,9 +174,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match(/Line 1\b/, response.body)
     assert_select "##{container} .bullet", Bullet::Pageable::PAGE_SIZE
     assert_operator response.body.index('Line 2'), :<, response.body.index("Line #{total - 1}")
-    assert_select "##{container} .daylog--day-meta", count: 1
-    assert_select "##{container} > ##{ActionView::RecordIdentifier.dom_id(bullets[2])}"
-    assert_operator response.body.index('daylog--day-meta'), :<, response.body.index(ActionView::RecordIdentifier.dom_id(bullets[2]))
+    assert_select "##{container} > ##{ActionView::RecordIdentifier.dom_id(bullets[2])}:first-child"
     assert_select '.daylog--older-trigger'
   end
 
@@ -200,9 +198,6 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
       assert_select '#bullet_composer', count: 0
     end
     assert_select '.daylog--chat > #bullet_composer'
-    assert_select "##{container} .daylog--day-meta #no_bullets_container", text: /No bullets yet/
-    assert_select "##{container} .daylog--day-meta .daylog--mood"
-    assert_select '#bullets-header .daylog--mood', count: 0
   end
 
   test 'daylog renders mixed bullet types on the same page' do
