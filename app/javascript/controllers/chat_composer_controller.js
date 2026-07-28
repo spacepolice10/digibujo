@@ -3,7 +3,6 @@ import { Controller } from "@hotwired/stimulus"
 const TYPE_STORAGE_KEY = "digibujo.composer.type"
 const VOICE_TYPE = "Voice"
 const NOTE_TYPE = "Note"
-const EXPAND_MIN_CHARS = 80
 const COLLAPSE_CONFIRM =
   "Collapse and discard this draft? Rich formatting will be lost."
 
@@ -41,6 +40,7 @@ export default class extends Controller {
     this.element.removeEventListener("focusin", this.boundOnComposerFocusIn)
     this.resizeObserver?.disconnect()
     this.#clearChatViewport()
+    this.#chatShell?.style.removeProperty("--daylog-tabbar-clearance")
     this.element.classList.remove("composer--keyboard-open")
     this.element.style.removeProperty("--composer-keyboard-inset")
     this.element.style.removeProperty("--composer-tabbar-inset")
@@ -63,10 +63,10 @@ export default class extends Controller {
   }
 
   // Enter sends, Shift+Enter breaks the line, and fullscreen always breaks the
-  // line. Shift+Tab cycles Note → Task → Event. Shift+Ctrl+E expands when the
-  // draft qualifies. Shift+R starts a voice take (hotkey on the mic ignores the
-  // editor; this path covers the focused field). Runs on capture so Lexical
-  // never sees a sending Enter.
+  // line. Shift+Tab cycles Note → Task → Event. Shift+Ctrl+E expands Note.
+  // Shift+R starts a voice take (hotkey on the mic ignores the editor; this
+  // path covers the focused field). Runs on capture so Lexical never sees a
+  // sending Enter.
   keydown(event) {
     if (event.isComposing) return
 
@@ -140,8 +140,7 @@ export default class extends Controller {
   }
 
   // Keep send / mic / expand visibility and wrap-aware layout in sync with the
-  // editor. Expand is Note-only and waits until the draft is long enough to
-  // bother with a fullscreen sheet; once open it stays available to collapse.
+  // editor. Expand is Note-only; once open it stays available to collapse.
   refresh() {
     const ready = this.#submittable
     this.submitTarget.disabled = !ready
@@ -317,9 +316,8 @@ export default class extends Controller {
 
     const chat = this.#chatShell
     if (chat && !this.#desktopChat) {
-      // Daylog: shrink the fixed shell to the visual viewport so Safari does not
-      // pan the whole page. Composer is position:absolute inside that shell, so
-      // bottom:0 already clears the keyboard — no layout-viewport inset needed.
+      // Daylog: shrink the shell to the visual viewport. Composer is absolute
+      // inside that shell (levitating over the full-height bullets surface).
       this.#syncChatViewport(chat, viewport, keyboardOpen)
       this.element.style.setProperty("--composer-keyboard-inset", "0px")
     } else {
@@ -337,8 +335,8 @@ export default class extends Controller {
     this.#syncKeyboardInset()
   }
 
-  // Match .daylog--chat height to the visual viewport. Keep top at 0 — following
-  // offsetTop made the shell jump with Safari's pan and looked like a scroll-up.
+  // Pin .daylog--chat to the visual viewport (top + height). Following offsetTop
+  // keeps the shell aligned if Safari still pans; scrollTo(0,0) tries to stop it.
   #syncChatViewport(chat, viewport, keyboardOpen) {
     if (!keyboardOpen) {
       this.#clearChatViewport(chat)
@@ -347,9 +345,8 @@ export default class extends Controller {
 
     window.scrollTo(0, 0)
 
-    const height = Math.round(viewport.height)
-    chat.style.setProperty("--daylog-vv-top", "0px")
-    chat.style.setProperty("--daylog-vv-height", `${height}px`)
+    chat.style.setProperty("--daylog-vv-top", `${Math.round(viewport.offsetTop)}px`)
+    chat.style.setProperty("--daylog-vv-height", `${Math.round(viewport.height)}px`)
     chat.classList.add("daylog--keyboard-open")
 
     // Height changes across the keyboard animation — pin the list each time so
@@ -366,7 +363,7 @@ export default class extends Controller {
   }
 
   // Shell just shrank around the keyboard — keep the latest bullets in view
-  // above the composer so the writer can orient on them.
+  // above the floating composer.
   #revealLatestBullets() {
     const scroller = this.#chatShell?.querySelector(".daylog--scroller")
     if (!scroller) return
@@ -374,18 +371,26 @@ export default class extends Controller {
     scroller.scrollTop = scroller.scrollHeight
   }
 
-  // Tabbar clearance when the keyboard is closed. Ignored while typing so the
-  // dock sits flush on the keyboard, not stacked above the hidden tabbar.
+  // Tabbar clearance: collections use it as fixed `bottom`; daylog uses it as
+  // shell padding + composer `bottom` so the dock clears the tabbar.
   #syncTabbarInset() {
     const tabbar = document.querySelector(".tabbar--navigation")
-    if (!tabbar) {
-      this.element.style.setProperty("--composer-tabbar-inset", "0px")
-      return
-    }
+    const inset = tabbar
+      ? Math.max(0, Math.round(window.innerHeight - tabbar.getBoundingClientRect().top))
+      : 0
 
-    const rect = tabbar.getBoundingClientRect()
-    const inset = Math.max(0, Math.round(window.innerHeight - rect.top))
     this.element.style.setProperty("--composer-tabbar-inset", `${inset}px`)
+
+    const chat = this.#chatShell
+    if (!chat) return
+
+    // Leave the CSS default (desktop air / mobile layout-scroll-padding) when
+    // there is no tabbar to measure.
+    if (tabbar) {
+      chat.style.setProperty("--daylog-tabbar-clearance", `${inset}px`)
+    } else {
+      chat.style.removeProperty("--daylog-tabbar-clearance")
+    }
   }
 
   get #chatShell() {
@@ -421,16 +426,7 @@ export default class extends Controller {
   }
 
   get #expandable() {
-    if (this.#fullscreen) return true
-
-    return this.typeFieldTarget.value === NOTE_TYPE && this.#characterCount >= EXPAND_MIN_CHARS
-  }
-
-  get #characterCount() {
-    const root = this.editorTarget.querySelector(".lexxy-editor__content")
-    const text = root?.innerText ?? ""
-    // Lexical keeps a zero-width placeholder; strip it so an empty field is 0.
-    return text.replace(/\u200b/g, "").length
+    return this.#fullscreen || this.typeFieldTarget.value === NOTE_TYPE
   }
 
   get #voiceMode() {

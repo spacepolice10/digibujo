@@ -11,18 +11,19 @@
     padding-bottom: calc(var(--spacing-vertical-quad) + var(--layout-scroll-padding)) !important ;
   }
 
-  /* Chat shell: always the full viewport. Mobile takes width + height; desktop
-     keeps the laptop max-width and only stretches in height. The fixed composer
-     floats on top — scroller padding clears it so bullets can scroll above.
+  /* Chat shell: full-viewport column. The bullets surface fills the shell to
+     the bottom; the composer is an absolute dock that levitates over it.
      --daylog-vv-* shrinks the shell to the visual viewport while the keyboard
-     is open so Safari does not pan the whole page (see chat-composer).
-     Top stays 0 — only height tracks visualViewport. */
+     is open. Tabbar clearance is padding on the shell so Safari has no
+     document scroll extent to pan when the editor focuses. */
   .layout--page.daylog.daylog--chat {
-    --daylog-composer-clearance: calc(
-      var(--spacing-vertical-double) + var(--spacing-vertical) + var(--spacing-horizontal-double)
-    );
     --daylog-vv-top: 0px;
     --daylog-vv-height: 100dvh;
+    --daylog-tabbar-clearance: var(--layout-scroll-padding);
+    /* Dock height + air — scroller padding so bullets clear the floating composer. */
+    --daylog-composer-clearance: calc(
+      var(--spacing-vertical-quad) + var(--spacing-vertical-double)
+    );
 
     position: fixed;
     top: var(--daylog-vv-top);
@@ -38,20 +39,30 @@
     max-height: var(--daylog-vv-height);
     margin: 0;
     padding: var(--spacing-vertical) var(--spacing-horizontal);
-    padding-bottom: 0 !important;
+    padding-bottom: var(--daylog-tabbar-clearance) !important;
     gap: 0;
   }
 
-  /* Document scroll is unused on the chat page (shell is fixed). Lock it so
-     Safari cannot pan the layout viewport when the composer focuses. */
+  /* No document scroll on the chat page — only .daylog--scroller scrolls. */
   html:has(.layout--page.daylog.daylog--chat) {
     overflow: hidden;
     height: 100%;
+    overscroll-behavior: none;
   }
 
   html:has(.layout--page.daylog.daylog--chat) body {
     overflow: hidden;
     height: 100%;
+    overscroll-behavior: none;
+    /* Kill the tabbar page padding — clearance lives on the chat shell. */
+    padding-bottom: 0 !important;
+    scroll-padding-bottom: 0 !important;
+  }
+
+  /* Keyboard open: shell matches the visual viewport; tabbar is under the
+     keyboard so shell padding drops to zero. */
+  .layout--page.daylog.daylog--chat.daylog--keyboard-open {
+    padding-bottom: 0 !important;
   }
 
   /* Composer lives inside this shell, so its own z-index cannot escape past the
@@ -70,27 +81,20 @@
       max-width: var(--breakpoint-laptop);
       height: auto;
       max-height: none;
-      /* No mobile tabbar — composer dock + a little air above it. */
+      --daylog-tabbar-clearance: var(--spacing-vertical-double);
       --daylog-composer-clearance: calc(
         var(--spacing-vertical-quad) + var(--spacing-vertical-triple)
       );
     }
-
-    .daylog--chat .daylog--scroller {
-      padding-bottom: calc(var(--daylog-composer-clearance) + var(--spacing-vertical-double)) !important;
-    }
-
-    .daylog--chat > .composer {
-      bottom: var(--spacing-vertical-double);
-    }
   }
 
+  /* Surface fills the shell (including under the floating composer). Composer
+     is out of flow, so flex:1 claims the full column above tabbar padding. */
   .daylog--shell {
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
     min-height: 0;
-    height: 100%;
   }
 
   .daylog--scroller {
@@ -101,25 +105,123 @@
        fight it. */
     overflow-anchor: none;
     overscroll-behavior: contain;
-    /* Tabbar clearance + room to park the last bullet above the composer dock. */
-    padding-bottom: calc(var(--layout-scroll-padding) + var(--daylog-composer-clearance)) !important;
-  }
-
-  /* Keyboard open: shell already matches the visual viewport, tabbar is under
-     the keyboard — only clear the composer dock. */
-  .daylog--chat.daylog--keyboard-open .daylog--scroller {
+    /* Room for the levitating composer dock over the bottom of the surface. */
     padding-bottom: calc(var(--daylog-composer-clearance) + var(--spacing-vertical)) !important;
   }
 
   /* Pin short days to the composer edge without keeping the older-trigger in
      view (that would auto-fetch every page). The list is at least one
      scrollport tall; bullets pack to its end. When content overflows, this is
-     just a normal top-to-bottom feed. */
+     just a normal top-to-bottom feed. Day meta grows into the free space so an
+     empty/sparse day isn’t a blank void. */
   .daylog--scroller > [data-daylog-scroll-target="list"] {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     min-height: 100%;
+  }
+
+  /* Day meta sits at the top of the list (mood + photo + empty copy). It
+     flex-grows into short-day free space as a hero; once the feed overflows it
+     keeps its natural height and simply scrolls away above the newest bullets. */
+  .daylog--day-meta {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-self: stretch;
+    margin-block: 0;
+  }
+
+  .daylog--day-meta-surface {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-vertical);
+    width: 100%;
+    padding: var(--spacing-vertical-double) var(--spacing-horizontal);
+  }
+
+  .daylog--day-meta-media,
+  .daylog--day-meta-mood {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .daylog--day-meta-mood .button--tertiary {
+    font-size: var(--font-size-xl);
+    line-height: 1;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+
+  .daylog--day-meta .daylog--picture-container,
+  .daylog--day-meta .daylog--picture {
+    position: static;
+    width: min(12rem, 56vw);
+    transform: none;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .daylog--day-meta .daylog--picture {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-vertical-half);
+  }
+
+  .daylog--day-meta .daylog--picture-thumbnail {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: var(--radius-strong);
+    border: 1px solid var(--color-stroke-base);
+    box-shadow: var(--shadow-base);
+  }
+
+  .daylog--day-meta .daylog--picture-controls {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-horizontal-half);
+  }
+
+  .daylog--day-meta form:has(.button--icon) .button--icon {
+    width: 4.5rem;
+    height: 4.5rem;
+    border: 1px dashed var(--color-stroke-base);
+    border-radius: var(--radius-strong);
+    background: var(--color-bg-subtle);
+  }
+
+  .daylog--day-meta form:has(.button--icon) .button--icon .icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .daylog--day-meta-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-vertical-half);
+    max-width: 28ch;
+    margin-inline: auto;
+  }
+
+  .daylog--day-meta-empty-title {
+    margin: 0;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-fg-base);
+    text-align: center;
+  }
+
+  .daylog--day-meta-empty-copy {
+    margin: 0;
   }
 
   .daylog--older-trigger {

@@ -1,7 +1,7 @@
 <% if @daylog %>
   <div class="layout--page layout--container layout--container-md daylog daylog--chat">
-    <%# Shell is header + list only. Composer is a fixed dock above the tabbar;
-        the full-viewport shell clears it with scroller padding. %>
+    <%# Shell (surface) fills the chat to the bottom; composer levitates over it.
+        Keyboard open shrinks the shell to the visual viewport (see chat-composer). %>
     <div data-bulk-menu-target="list"
          class="layout--surface daylog--shell"
          data-controller="daylog-scroll"
@@ -36,14 +36,6 @@
             <%= icon_tag("arrow-right") %>
           <% end %>
         </div>
-        <div class="layout--flex layout--gapped">
-          <%= render "daylogs/mood_entity",
-                date: @selected_date,
-                entity: @mood_entity %>
-          <%= render "daylogs/picture",
-                date: @selected_date,
-                picture: @picture %>
-        </div>
       </div>
 
       <div class="layout--padded daylog--scroller" data-daylog-scroll-target="scroller">
@@ -55,15 +47,14 @@
         <% end %>
 
         <div id="<%= dom_id(@daylog, :bullets_container) %>" class="layout--list" data-daylog-scroll-target="list">
+          <%= render "daylogs/day_meta",
+                date: @selected_date,
+                mood_entity: @mood_entity,
+                picture: @picture,
+                empty: @bullets.empty? %>
+
           <% @bullets.each do |bullet| %>
             <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
-          <% end %>
-
-          <% if @bullets.empty? %>
-            <p id="no_bullets_container" class="typography--paragraph-sm typography--center layout--padded layout--mx-auto">
-                No bullets yet, check your monthly bucket, references or start a
-                braindumping session.
-            </p>
           <% end %>
         </div>
       </div>

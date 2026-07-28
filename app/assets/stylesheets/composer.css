@@ -1,6 +1,6 @@
 @layer components {
-  /* Fixed dock above the tabbar (or the viewport bottom on desktop). The daylog
-     stays full-viewport; its scroller padding clears this dock instead. */
+  /* Fixed dock above the tabbar (or the viewport bottom on desktop). Used on
+     collections and other non-chat surfaces. Daylog overrides below. */
   .composer {
     --composer-keyboard-inset: 0px;
     --composer-tabbar-inset: 0px;
@@ -12,24 +12,32 @@
     margin: 0;
     padding: var(--spacing-vertical-half) var(--spacing-horizontal);
     margin-inline: auto;
-    width: 95%;
+    width: 100%;
+    @media (min-width: 680px) { 
+      width: 80%;
+    }
   }
 
-  /* Daylog chat owns a fixed shell — dock inside it so visual-viewport resize
-     keeps the composer on the shell bottom (not the layout-viewport bottom). */
+  /* Daylog: absolute dock inside the chat shell — levitates over the bullets
+     surface (which fills the shell to the bottom). Still inside the VV-sized
+     shell, so Safari scroll-into-view does not pan the document. */
   .daylog--chat > .composer {
     position: absolute;
+    inset-inline: var(--spacing-horizontal);
+    bottom: var(--daylog-tabbar-clearance);
+    flex: none;
+    z-index: var(--z-dropdown);
+    padding-inline: 0;
+    margin-bottom: var(--spacing-vertical-double);
   }
 
-  /* Keyboard open: sit on the keyboard only. Tabbar stays under it.
-     On daylog the shell is already VV-sized, so bottom:0 is correct.
-     Elsewhere (collections) use the layout-viewport keyboard inset. */
+  .daylog--chat.daylog--keyboard-open > .composer {
+    bottom: 0;
+  }
+
+  /* Keyboard open: sit on the keyboard only (non-daylog surfaces). */
   .composer.composer--keyboard-open {
     bottom: var(--composer-keyboard-inset);
-  }
-
-  .daylog--chat > .composer.composer--keyboard-open {
-    bottom: 0;
   }
 
   .composer--form {
@@ -42,7 +50,7 @@
     /* Finite pill radius (≈ half the single-line chrome), not 9999px: otherwise
        border-radius transition stays visually round until the last frames. */
     border-radius: 1.5rem;
-    background: var(--color-bg-base);
+    background: var(--color-bg-subtle);
     /* Tight vertical padding so the 1-line editor sits level with the icon buttons. */
     padding: 0.25rem var(--spacing-horizontal-half);
     box-shadow: var(--shadow-base);
@@ -127,6 +135,7 @@
     position: absolute;
     inset: 0;
     bottom: 0;
+    z-index: var(--z-toast);
   }
 
   .composer--fullscreen .composer--form {
@@ -194,6 +203,15 @@
   .composer--submit:disabled {
     opacity: 0.4;
     cursor: not-allowed;
+  }
+
+  /* Plus → × when the note sheet is open. */
+  .composer--expand .button--icon {
+    transition: transform 180ms ease;
+  }
+
+  .composer--expand[aria-pressed="true"] .button--icon {
+    transform: rotate(45deg);
   }
 
   /* Voice take replaces the compose row with the same pill layout: pause |
@@ -288,6 +306,10 @@
 
   @media (prefers-reduced-motion: reduce) {
     .composer--form {
+      transition: none;
+    }
+
+    .composer--expand .button--icon {
       transition: none;
     }
 

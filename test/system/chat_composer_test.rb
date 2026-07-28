@@ -120,30 +120,17 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     assert_selector '#bullet_composer.composer--multiline'
   end
 
-  test 'expand stays hidden until a long Note draft' do
+  test 'expand is always visible for Note' do
     visit daylog_path(date: Date.current.iso8601)
-
-    assert_no_selector '.composer--expand'
-
-    focus_composer
-    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
-    editor.send_keys('Short note')
-
-    assert_no_selector '.composer--expand'
-
-    editor.send_keys('x' * 80)
 
     assert_selector '.composer--actions .composer--expand'
   end
 
-  test 'expand is Note-only even with a long draft' do
+  test 'expand is Note-only' do
     visit daylog_path(date: Date.current.iso8601)
 
     find('.composer--type-button').click
     find('.composer--type-option[data-composer-type="Task"]').click
-
-    focus_composer
-    find('#bullet_composer lexxy-editor .lexxy-editor__content').send_keys('x' * 90)
 
     assert_no_selector '.composer--expand'
   end
@@ -153,10 +140,10 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
 
     assert_selector '#bullet_composer lexxy-editor[preset=inline]'
     assert_no_selector '#bullet_composer lexxy-toolbar'
-    assert_no_selector '.composer--expand'
+    assert_selector '.composer--actions .composer--expand'
 
     focus_composer
-    find('#bullet_composer lexxy-editor .lexxy-editor__content').send_keys('x' * 80)
+    find('#bullet_composer lexxy-editor .lexxy-editor__content').send_keys('Draft note')
 
     find('.composer--expand').click
 
@@ -164,7 +151,9 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     assert_selector '#bullet_composer lexxy-editor[preset=note]'
     assert_selector '#bullet_composer lexxy-toolbar'
     assert_no_selector '.composer--type-button', visible: true
-    assert_equal 'fixed', page.evaluate_script("getComputedStyle(document.querySelector('#bullet_composer')).position")
+    # Daylog mounts the composer inside the fixed chat shell, so fullscreen is
+    # absolute within that shell rather than fixed to the viewport.
+    assert_equal 'absolute', page.evaluate_script("getComputedStyle(document.querySelector('#bullet_composer')).position")
 
     accept_confirm 'Collapse and discard this draft? Rich formatting will be lost.' do
       find('.composer--expand').click
@@ -181,7 +170,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     visit daylog_path(date: Date.current.iso8601)
 
     focus_composer
-    find('#bullet_composer lexxy-editor .lexxy-editor__content').send_keys('x' * 80)
+    find('#bullet_composer lexxy-editor .lexxy-editor__content').send_keys('Keep me')
     find('.composer--expand').click
     assert_selector '#bullet_composer.composer--fullscreen'
 
@@ -190,7 +179,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     end
 
     assert_selector '#bullet_composer.composer--fullscreen'
-    assert_text 'x' * 80
+    assert_text 'Keep me'
   end
 
   test 'shift r starts a voice recording from the focused composer' do
@@ -258,11 +247,10 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     assert_selector '#bullet_composer[data-bullet-type="note"]'
   end
 
-  test 'shift control e expands a long Note draft' do
+  test 'shift control e expands a Note draft' do
     visit daylog_path(date: Date.current.iso8601)
 
     focus_composer
-    find('#bullet_composer lexxy-editor .lexxy-editor__content').send_keys('x' * 80)
     assert_selector '.composer--expand'
 
     page.execute_script(<<~JS)
