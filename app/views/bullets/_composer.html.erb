@@ -113,14 +113,23 @@
 
       <div class="composer--actions">
         <button type="button"
-                class="composer--expand"
-                data-action="chat-composer#toggleFullscreen"
-                data-chat-composer-target="expandButton"
-                aria-label="Expand editor"
+                class="composer--toolbar-toggle"
+                data-action="chat-composer#toggleToolbar"
+                data-chat-composer-target="toolbarButton"
+                aria-label="Show formatting toolbar"
                 aria-keyshortcuts="Control+Shift+E"
                 aria-pressed="false"
                 hidden>
-          <%= icon_tag("plus", class: "button--icon") %>
+          <%= icon_tag("text", class: "button--icon") %>
+        </button>
+
+        <button type="button"
+                class="composer--clear"
+                data-action="chat-composer#clear"
+                data-chat-composer-target="clearButton"
+                aria-label="Clear draft"
+                hidden>
+          <%= icon_tag("x", class: "button--icon") %>
         </button>
 
         <button type="button"

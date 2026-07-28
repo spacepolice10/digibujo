@@ -22,6 +22,7 @@ module Tasks
       assert second.reload.bulletable.completed?
       assert_match %(turbo-stream action="replace" targets="#bullet_#{@bullet.id}"), response.body
       assert_match %(turbo-stream action="replace" targets="#bullet_#{second.id}"), response.body
+      assert_match '2 bullets completed', response.body
     end
 
     test 'bulk destroy uncompletes selected tasks' do
@@ -34,6 +35,7 @@ module Tasks
       assert_response :success
       assert_not @bullet.reload.bulletable.completed?
       assert_match %(turbo-stream action="replace" targets="#bullet_#{@bullet.id}"), response.body
+      assert_match 'Bullet uncompleted', response.body
     end
 
     test 'bulk complete replaces monthly bucket bullet with unified row' do
@@ -51,6 +53,7 @@ module Tasks
       assert bullet.reload.bulletable.completed?
       assert_match 'data-task-completed="true"', response.body
       assert_match 'bullet--marker-select', response.body
+      assert_match 'Bullet completed', response.body
     end
   end
 end

@@ -74,7 +74,7 @@
     </div>
 
     <div data-bulk-menu-target="conditionalAction" data-require-publishable="unpublished" hidden>
-      <%= form_with url: publish_path, method: :post, data: { turbo_frame: "_top" } do %>
+      <%= form_with url: publish_path, method: :post, data: { turbo_stream: true } do %>
         <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
         <%= button_tag type: :submit,
               class: "button--secondary hotkey-hint hotkey-hint--always",
@@ -161,8 +161,9 @@
 
 
     <button type="button"
-            class="button--primary button--icon button--circle bulk-menu--hide"
-            data-action="bulk-menu#clear">
+            class="button--primary button--icon button--circle dropdown--element-hide bulk-menu--hide"
+            data-action="bulk-menu#clear"
+            aria-label="Clear selection">
       <%= icon_tag("x") %>
     </button>
   </div>

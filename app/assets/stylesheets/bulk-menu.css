@@ -52,10 +52,6 @@
     position: absolute;
     right: var(--spacing-vertical-half);
     top: var(--spacing-vertical-half);
-    width: var(--spacing-horizontal-double);
-    height: var(--spacing-horizontal-double);
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-full);
   }
 
   .bulk-menu--amount {

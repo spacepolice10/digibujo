@@ -229,6 +229,8 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     get edit_bullet_path(note)
 
     assert_response :success
+    assert_select '.layout--surface'
+    assert_select '.bullet--header h2', text: 'Edit bullet'
     assert_select 'lexxy-editor[preset=note]', count: 1
     assert_match 'Expanded content', response.body
   end

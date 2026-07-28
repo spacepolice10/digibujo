@@ -87,6 +87,7 @@
     position: fixed;
     inset: 0;
     padding: var(--spacing-vertical) var(--spacing-horizontal);
+    overflow-y: auto;
   }
 
   .bullets-form {
@@ -95,7 +96,8 @@
     gap: var(--spacing-vertical-half);
     align-items: center;
     opacity: 1;
-    overflow: scroll;
+    /* Visible so Lexxy toolbar dropdowns (position: absolute) are not clipped. */
+    overflow: visible;
     overscroll-behavior: none;
     transform: translateY(0);
     transition:

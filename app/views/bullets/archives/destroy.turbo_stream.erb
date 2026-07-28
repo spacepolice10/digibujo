@@ -6,4 +6,8 @@
   <% @bullets.each do |bullet| %>
     <%= turbo_stream.remove_all bullet %>
   <% end %>
+  <%= turbo_stream.update "toasts" do %>
+    <% message = @bullets.size == 1 ? "Bullet unarchived" : "#{@bullets.size} bullets unarchived" %>
+    <%= render "shared/toasts", type: "notify", messages: [message] %>
+  <% end %>
 <% end %>

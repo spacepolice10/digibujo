@@ -30,56 +30,43 @@
     </label>
 
     <% if bullet.collected_migration? || bullet.rescheduled_migration? %>
-      <span class="bullet--metadata-marker">
-        <% if bullet.collected_migration? && (activity = bullet.migration_activity) %>
-          <% collected_hint_id = dom_id(bullet, :hint_collected) %>
-          <% collected_anchor = "--hint-#{bullet.id}-collected" %>
-          <%= link_to activity_path(activity),
-                class: "bullet--metadata-link",
-                data: { turbo_frame: "_top" },
-                interestfor: collected_hint_id,
-                style: "anchor-name: #{collected_anchor}",
-                aria: { label: "Collected" } do %>
-            <%= icon_tag("arrow-left", class: "bullet--metadata-icon") %>
-          <% end %>
-        <% end %>
-        <% if bullet.rescheduled_migration? && (activity = bullet.migration_activity) %>
-          <% rescheduled_hint_id = dom_id(bullet, :hint_rescheduled) %>
-          <% rescheduled_anchor = "--hint-#{bullet.id}-rescheduled" %>
-          <%= link_to activity_path(activity),
-                class: "bullet--metadata-link",
-                data: { turbo_frame: "_top" },
-                interestfor: rescheduled_hint_id,
-                style: "anchor-name: #{rescheduled_anchor}",
-                aria: { label: "Rescheduled" } do %>
-            <%= icon_tag("arrow-right", class: "bullet--metadata-icon") %>
-          <% end %>
-        <% end %>
+      <% migration_popover_id = dom_id(bullet, :migration) %>
+      <% migration_anchor = "--migration-#{bullet.id}" %>
+      <% migration_title = bullet.collected_migration? ? "Collected" : "Rescheduled" %>
+      <% migration_icon = bullet.collected_migration? ? "arrow-left" : "arrow-right" %>
+      <span class="bullet--metadata-marker dropdown--dock" style="anchor-name: <%= migration_anchor %>">
+        <button
+          type="button"
+          class="bullet--metadata-link"
+          popovertarget="<%= migration_popover_id %>"
+          aria-label="<%= migration_title %>"
+          aria-haspopup="dialog"
+        >
+          <%= icon_tag(migration_icon, class: "bullet--metadata-icon") %>
+        </button>
+        <div
+          id="<%= migration_popover_id %>"
+          class="dropdown dropdown--element dropdown--element-up animations--side-in bullet--migration-dropdown"
+          style="position-anchor: <%= migration_anchor %>"
+          popover
+        >
+          <div class="dropdown--element-header">
+            <h2><%= migration_title %></h2>
+            <button
+              type="button"
+              class="button--primary button--icon button--circle dropdown--element-hide"
+              popovertarget="<%= migration_popover_id %>"
+              popovertargetaction="hide"
+              aria-label="Close <%= migration_title.downcase %>"
+            >
+              <%= icon_tag("x") %>
+            </button>
+          </div>
+          <div class="dropdown--element-body">
+            <p class="bullet--migration-text"><%= bullet.migration_hint %></p>
+          </div>
+        </div>
       </span>
-      <% if bullet.collected_migration? %>
-        <% collected_hint_id = dom_id(bullet, :hint_collected) %>
-        <% collected_anchor = "--hint-#{bullet.id}-collected" %>
-        <div
-          id="<%= collected_hint_id %>"
-          class="hint"
-          popover="hint"
-          style="position-anchor: <%= collected_anchor %>"
-        >
-          <%= bullet.migration_hint %>
-        </div>
-      <% end %>
-      <% if bullet.rescheduled_migration? %>
-        <% rescheduled_hint_id = dom_id(bullet, :hint_rescheduled) %>
-        <% rescheduled_anchor = "--hint-#{bullet.id}-rescheduled" %>
-        <div
-          id="<%= rescheduled_hint_id %>"
-          class="hint"
-          popover="hint"
-          style="position-anchor: <%= rescheduled_anchor %>"
-        >
-          <%= bullet.migration_hint %>
-        </div>
-      <% end %>
     <% end %>
   </div>
 

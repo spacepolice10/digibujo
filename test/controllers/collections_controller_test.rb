@@ -97,7 +97,11 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     get collection_path(collection)
 
     assert_response :success
-    assert_select 'a.bullet--metadata-link[aria-label=?]', 'Collected', minimum: 1
+    assert_select 'button.bullet--metadata-link[aria-label=?]', 'Collected', minimum: 1
+    assert_select '.bullet--migration-dropdown' do
+      assert_select 'h2', text: 'Collected'
+      assert_select 'button.dropdown--element-hide'
+    end
     assert_match 'Moved into inbox.', response.body
   end
 

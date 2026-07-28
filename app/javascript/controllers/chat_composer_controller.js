@@ -8,8 +8,11 @@ const NOTE_TYPE = "Note"
 // so the toolbar exists once), a type picker that persists across visits, and
 // an inline voice mode driven by voice-recorder on the same element.
 export default class extends Controller {
-  static targets = ["form", "editor", "typeField", "typeIcon", "typeOption", "composeRow", "voicePanel", "submit", "voiceSubmit", "expandButton", "uploadButton", "recordButton"]
-
+  static targets = [
+    "form", "editor", "typeField", "typeIcon", "typeOption", "composeRow",
+    "voicePanel", "submit", "voiceSubmit", "toolbarButton", "clearButton",
+    "uploadButton", "recordButton"
+  ]
 
   connect() {
     this.typeBeforeVoice = null
@@ -49,7 +52,7 @@ export default class extends Controller {
   }
 
   selectType(event) {
-    if (this.#fullscreen) return
+    if (this.#toolbarOpen) return
 
     const type = event.currentTarget.dataset.composerType
     if (!type) return
@@ -60,12 +63,19 @@ export default class extends Controller {
     this.focus()
   }
 
-  focus() {
+  // Field click focuses the editor — but not when the click is on Lexxy chrome
+  // (toolbar / dropdowns / prompt). Otherwise the bubble refocuses content and
+  // Lexxy's selection listener immediately closes the menu that just opened.
+  focus(event) {
+    if (event?.target instanceof Element && this.#isLexxyChrome(event.target)) return
+
     this.editorTarget.focus()
   }
 
-  // Enter sends, Shift+Enter breaks the line, and expand always breaks the
-  // line. Shift+Tab cycles Note → Task → Event. Shift+Ctrl+E expands Note.
+  // Enter sends on desktop (Shift+Enter breaks the line). On touch / coarse
+  // pointers Enter always inserts a newline — send via the submit control.
+  // While the formatting toolbar is open, Enter always breaks the line.
+  // Shift+Tab cycles Note → Task → Event. Shift+Ctrl+E toggles the Note toolbar.
   // Shift+R starts a voice take (hotkey on the mic ignores the editor; this
   // path covers the focused field). Runs on capture so Lexical never sees a
   // sending Enter.
@@ -73,12 +83,13 @@ export default class extends Controller {
     if (event.isComposing) return
 
     if (this.#handleTypeCycleKey(event)) return
-    if (this.#handleExpandKey(event)) return
+    if (this.#handleToolbarKey(event)) return
     if (this.#handleRecordKey(event)) return
 
     if (event.key !== "Enter") return
     if (event.shiftKey || event.metaKey || event.ctrlKey) return
-    if (this.#fullscreen) return
+    if (this.#toolbarOpen) return
+    if (this.#touchDevice) return
     if (this.editorTarget.hasOpenPrompt) return
 
     event.preventDefault()
@@ -108,13 +119,21 @@ export default class extends Controller {
     this.refresh()
   }
 
-  toggleFullscreen() {
-    if (this.#fullscreen) {
-      this.#collapseFullscreen()
+  toggleToolbar() {
+    if (this.#toolbarOpen) {
+      this.#hideToolbar()
       return
     }
 
-    this.#expandFullscreen()
+    this.#showToolbar()
+  }
+
+  clear() {
+    this.editorTarget.value = ""
+    this.element.classList.remove("composer--toolbar", "composer--multiline")
+    this.#syncToolbarButton(false)
+    this.refresh()
+    this.focus()
   }
 
   submitEnd(event) {
@@ -128,23 +147,24 @@ export default class extends Controller {
     this.editorTarget.value = ""
     this.voicePanelTarget.hidden = true
     this.composeRowTarget.hidden = false
-    this.element.classList.remove("composer--fullscreen", "composer--multiline")
-    this.expandButtonTarget.setAttribute("aria-pressed", "false")
-    this.expandButtonTarget.setAttribute("aria-label", "Expand editor")
+    this.element.classList.remove("composer--toolbar", "composer--multiline")
+    this.#syncToolbarButton(false)
     this.#applyType(this.typeBeforeVoice || this.#storedType)
     this.typeBeforeVoice = null
     this.refresh()
   }
 
-  // Keep send / mic / expand / upload visibility and wrap-aware layout in sync.
-  // Expand is Note-only and waits for a second line; upload is Note-only always.
+  // Keep send / mic / toolbar / clear / upload visibility and wrap-aware layout
+  // in sync. Toolbar toggle is Note-only and waits for multiline; clear shows
+  // whenever a multiline draft has text; upload is Note-only always.
   refresh() {
     const ready = this.#submittable
     this.submitTarget.disabled = !ready
     if (this.hasVoiceSubmitTarget) this.voiceSubmitTarget.disabled = !ready
     this.recordButtonTarget.hidden = this.#voiceMode || !this.editorTarget.isBlank
     this.#syncMultiline()
-    this.expandButtonTarget.hidden = !this.#expandable
+    this.toolbarButtonTarget.hidden = !this.#toolbarToggleable
+    this.clearButtonTarget.hidden = !this.#clearable
     this.uploadButtonTarget.hidden = !this.#uploadable
   }
 
@@ -155,22 +175,34 @@ export default class extends Controller {
     this.editorTarget.querySelector('lexxy-toolbar button[name="file"]')?.click()
   }
 
-  #expandFullscreen() {
-    this.element.classList.add("composer--fullscreen")
-    this.expandButtonTarget.setAttribute("aria-pressed", "true")
-    this.expandButtonTarget.setAttribute("aria-label", "Collapse editor")
+  #showToolbar() {
+    this.element.classList.add("composer--toolbar")
+    this.#syncToolbarButton(true)
     this.refresh()
     this.focus()
   }
 
-  // Same Lexxy instance — expand only reveals the toolbar via CSS. Keep the
-  // draft; no remount, no confirm.
-  #collapseFullscreen() {
-    this.element.classList.remove("composer--fullscreen")
-    this.expandButtonTarget.setAttribute("aria-pressed", "false")
-    this.expandButtonTarget.setAttribute("aria-label", "Expand editor")
+  #hideToolbar() {
+    this.element.classList.remove("composer--toolbar")
+    this.#syncToolbarButton(false)
     this.refresh()
     this.focus()
+  }
+
+  #syncToolbarButton(pressed) {
+    this.toolbarButtonTarget.setAttribute("aria-pressed", String(pressed))
+    this.toolbarButtonTarget.setAttribute(
+      "aria-label",
+      pressed ? "Hide formatting toolbar" : "Show formatting toolbar"
+    )
+  }
+
+  #isLexxyChrome(target) {
+    return Boolean(
+      target.closest(
+        "lexxy-toolbar, lexxy-toolbar-dropdown, lexxy-link-dropdown, lexxy-highlight-dropdown, .lexxy-prompt-menu, [data-dropdown-panel]"
+      )
+    )
   }
 
   #applyType(type) {
@@ -208,7 +240,7 @@ export default class extends Controller {
   #handleTypeCycleKey(event) {
     if (event.key !== "Tab" || !event.shiftKey) return false
     if (event.metaKey || event.ctrlKey || event.altKey) return false
-    if (this.#fullscreen || this.#voiceMode) return false
+    if (this.#toolbarOpen || this.#voiceMode) return false
 
     event.preventDefault()
     event.stopPropagation()
@@ -216,14 +248,14 @@ export default class extends Controller {
     return true
   }
 
-  #handleExpandKey(event) {
+  #handleToolbarKey(event) {
     if (event.key !== "e" && event.key !== "E") return false
     if (!event.shiftKey || !event.ctrlKey || event.metaKey || event.altKey) return false
-    if (!this.#expandable) return false
+    if (!this.#toolbarToggleable) return false
 
     event.preventDefault()
     event.stopPropagation()
-    this.toggleFullscreen()
+    this.toggleToolbar()
     return true
   }
 
@@ -289,7 +321,8 @@ export default class extends Controller {
 
   #latchMultiline() {
     this.element.classList.add("composer--multiline")
-    this.expandButtonTarget.hidden = !this.#expandable
+    this.toolbarButtonTarget.hidden = !this.#toolbarToggleable
+    this.clearButtonTarget.hidden = !this.#clearable
   }
 
   #hasAttachment() {
@@ -358,11 +391,18 @@ export default class extends Controller {
     return this.#voiceMode ? this.#hasRecording : !this.editorTarget.isBlank
   }
 
-  get #expandable() {
-    if (this.#fullscreen) return true
+  get #toolbarToggleable() {
+    if (this.#toolbarOpen) return true
     if (this.typeFieldTarget.value !== NOTE_TYPE) return false
 
     return this.element.classList.contains("composer--multiline")
+  }
+
+  get #clearable() {
+    if (this.#voiceMode) return false
+    if (!this.element.classList.contains("composer--multiline")) return false
+
+    return !this.editorTarget.isBlank
   }
 
   get #uploadable() {
@@ -377,11 +417,17 @@ export default class extends Controller {
     return this.formTarget.querySelector('input[type="file"]')?.files?.length > 0
   }
 
-  get #fullscreen() {
-    return this.element.classList.contains("composer--fullscreen")
+  get #toolbarOpen() {
+    return this.element.classList.contains("composer--toolbar")
   }
 
   get #visualViewport() {
     return window.visualViewport
+  }
+
+  // Soft keyboards treat Enter as newline; don't send on touch / coarse pointers.
+  get #touchDevice() {
+    return window.matchMedia("(pointer: coarse)").matches ||
+      window.matchMedia("(hover: none)").matches
   }
 }

@@ -5,9 +5,9 @@
   .composer {
     --composer-keyboard-inset: 0px;
     --composer-tabbar-inset: 0px;
-    /* Shared hit-target for type / upload / expand / mic / submit. */
+    /* Shared hit-target for type / toolbar / clear / upload / mic / submit. */
     --composer-control-size: var(--spacing-horizontal-triple);
-    /* Expanded editor grows up from the dock within the safe viewport. */
+    /* Multiline editor grows up from the dock within the safe viewport. */
     --composer-expanded-max: calc(
       100dvh
       - env(safe-area-inset-top, 0px)
@@ -95,48 +95,22 @@
     order: 3;
   }
 
-  /* Wrapped text: the field claims the row and the controls drop below it. */
+  /* Wrapped text: the field claims the row and the controls drop below it.
+     Form grows with content up to the safe viewport. */
   .composer--multiline .composer--form {
-    border-radius: var(--radius-base);
-  }
-
-  .composer--multiline .composer--field {
-    order: 1;
-    flex-basis: 100%;
-  }
-
-  .composer--multiline .composer--lead,
-  .composer--fullscreen .composer--lead {
-    order: 2;
-  }
-
-  /* Expanded note: toolbar via note preset; type picker hidden mid-edit. */
-  .composer--fullscreen .composer--lead {
-    display: none;
-  }
-
-  .composer--multiline .composer--actions,
-  .composer--fullscreen .composer--actions {
-    order: 3;
-    margin-inline-start: auto;
-  }
-
-  /* Expanded stays a fixed dock (same bottom/keyboard rules as compact).
-     Form grows with content up to the safe viewport; actions stay under the field. */
-  .composer--fullscreen .composer--form {
     flex-direction: column;
     max-height: var(--composer-expanded-max);
     border-radius: var(--radius-base);
   }
 
-  .composer--fullscreen .composer--row {
+  .composer--multiline .composer--row {
     flex-direction: column;
     flex-wrap: nowrap;
     align-items: stretch;
     min-height: 0;
   }
 
-  .composer--fullscreen .composer--field {
+  .composer--multiline .composer--field {
     order: 1;
     flex: 0 1 auto;
     flex-basis: 100%;
@@ -144,7 +118,18 @@
     min-height: 0;
   }
 
-  .composer--fullscreen .composer--actions {
+  .composer--multiline .composer--lead {
+    order: 2;
+  }
+
+  /* Formatting toolbar open: hide the type picker mid-edit. */
+  .composer--toolbar .composer--lead {
+    display: none;
+  }
+
+  .composer--multiline .composer--actions {
+    order: 3;
+    margin-inline-start: auto;
     flex: 0 0 auto;
   }
 
@@ -191,8 +176,9 @@
     cursor: not-allowed;
   }
 
-  /* Match Lexxy toolbar icon buttons (expand / upload / mic). */
-  .composer--expand,
+  /* Match Lexxy toolbar icon buttons (toolbar / clear / upload / mic). */
+  .composer--toolbar-toggle,
+  .composer--clear,
   .composer--upload,
   .composer--record {
     width: var(--composer-control-size);
@@ -208,17 +194,25 @@
     flex-shrink: 0;
   }
 
-  .composer--expand:hover,
+  .composer--toolbar-toggle:hover,
+  .composer--clear:hover,
   .composer--upload:hover,
   .composer--record:hover {
     background: var(--color-bg-base);
     color: var(--color-fg-subtle);
   }
 
-  .composer--expand .button--icon,
+  .composer--toolbar-toggle[aria-pressed="true"] {
+    background: var(--color-bg-base);
+    color: var(--color-fg-base);
+  }
+
+  .composer--toolbar-toggle .button--icon,
+  .composer--clear .button--icon,
   .composer--upload .button--icon,
   .composer--record .button--icon,
-  .composer--expand .icon,
+  .composer--toolbar-toggle .icon,
+  .composer--clear .icon,
   .composer--upload .icon,
   .composer--record .icon {
     width: var(--lexxy-toolbar-icon-size, 1.125em);
@@ -228,12 +222,6 @@
   .composer--submit.button--icon {
     width: var(--composer-control-size);
     height: var(--composer-control-size);
-  }
-
-  /* Plus → × when expanded (no animation). */
-  .composer--expand[aria-pressed="true"] .button--icon,
-  .composer--expand[aria-pressed="true"] .icon {
-    transform: rotate(45deg);
   }
 
   /* Voice take replaces the compose row with the same pill layout: pause |

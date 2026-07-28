@@ -120,10 +120,11 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     assert_selector '#bullet_composer.composer--multiline'
   end
 
-  test 'expand appears for Note once the draft wraps to two lines' do
+  test 'toolbar toggle and clear appear for Note once the draft wraps to two lines' do
     visit daylog_path(date: Date.current.iso8601)
 
-    assert_no_selector '.composer--actions .composer--expand', visible: true
+    assert_no_selector '.composer--actions .composer--toolbar-toggle', visible: true
+    assert_no_selector '.composer--actions .composer--clear', visible: true
     assert_selector '.composer--actions .composer--upload'
     assert_no_selector '#bullet_composer button[name=bold]', visible: true
 
@@ -134,7 +135,8 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     editor.send_keys('Second line')
 
     assert_selector '#bullet_composer.composer--multiline'
-    assert_selector '.composer--actions .composer--expand'
+    assert_selector '.composer--actions .composer--toolbar-toggle'
+    assert_selector '.composer--actions .composer--clear'
     assert_selector '.composer--actions .composer--upload'
     assert_no_selector '#bullet_composer button[name=bold]', visible: true
   end
@@ -159,7 +161,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     assert_no_selector '#bullet_composer button[name=bold]', visible: true
   end
 
-  test 'expand and upload are Note-only' do
+  test 'toolbar toggle and upload are Note-only' do
     visit daylog_path(date: Date.current.iso8601)
 
     assert_selector '.composer--actions .composer--upload'
@@ -169,46 +171,63 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     find('.composer--type-option[data-composer-type="Task"]').click
 
     assert_no_selector '.composer--actions .composer--upload', visible: true
-    assert_no_selector '.composer--expand', visible: true
+    assert_no_selector '.composer--toolbar-toggle', visible: true
   end
 
-  test 'expand reveals the toolbar without remounting the editor' do
+  test 'toolbar toggle reveals formatting without remounting the editor' do
     visit daylog_path(date: Date.current.iso8601)
 
     assert_selector '#bullet_composer lexxy-editor[preset=note]'
     assert_selector '.composer--actions .composer--upload'
     assert_no_selector '#bullet_composer button[name=bold]', visible: true
-    assert_no_selector '.composer--actions .composer--expand', visible: true
+    assert_no_selector '.composer--actions .composer--toolbar-toggle', visible: true
 
     focus_composer
     editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
     editor.send_keys('Draft note')
     editor.send_keys(%i[shift enter])
     editor.send_keys('Second line')
-    assert_selector '.composer--expand'
+    assert_selector '.composer--toolbar-toggle'
+    assert_selector '.composer--clear'
     assert_no_selector '#bullet_composer button[name=bold]', visible: true
     assert_selector '.composer--actions .composer--upload'
 
-    find('.composer--expand').click
+    find('.composer--toolbar-toggle').click
 
-    assert_selector '#bullet_composer.composer--fullscreen'
+    assert_selector '#bullet_composer.composer--toolbar'
     assert_selector '#bullet_composer lexxy-editor[preset=note]'
     assert_selector '.composer--actions .composer--upload'
     assert_selector '#bullet_composer button[name=bold]'
     assert_no_selector '.composer--type-button', visible: true
-    # Expand only grows the docked field — composer stays a fixed dock.
     assert_equal 'fixed', page.evaluate_script("getComputedStyle(document.querySelector('#bullet_composer')).position")
     assert_text 'Draft note'
 
-    find('.composer--expand').click
+    find('.composer--toolbar-toggle').click
 
-    assert_no_selector '#bullet_composer.composer--fullscreen'
+    assert_no_selector '#bullet_composer.composer--toolbar'
     assert_selector '#bullet_composer.composer--multiline'
     assert_selector '#bullet_composer lexxy-editor[preset=note]'
     assert_selector '.composer--actions .composer--upload'
     assert_no_selector '#bullet_composer button[name=bold]', visible: true
     assert_text 'Draft note'
     assert_selector '.composer--type-button', visible: true
+  end
+
+  test 'clear empties a multiline draft' do
+    visit daylog_path(date: Date.current.iso8601)
+
+    focus_composer
+    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
+    editor.send_keys('Draft note')
+    editor.send_keys(%i[shift enter])
+    editor.send_keys('Second line')
+
+    assert_selector '.composer--clear'
+    find('.composer--clear').click
+
+    assert_no_selector '#bullet_composer.composer--multiline'
+    assert_no_selector '.composer--clear', visible: true
+    assert_selector '.composer--submit[disabled]'
   end
 
   test 'shift r starts a voice recording from the focused composer' do
@@ -276,7 +295,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     assert_selector '#bullet_composer[data-bullet-type="note"]'
   end
 
-  test 'shift control e expands a Note draft' do
+  test 'shift control e toggles the Note formatting toolbar' do
     visit daylog_path(date: Date.current.iso8601)
 
     focus_composer
@@ -284,7 +303,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     editor.send_keys('First line')
     editor.send_keys(%i[shift enter])
     editor.send_keys('Second line')
-    assert_selector '.composer--expand'
+    assert_selector '.composer--toolbar-toggle'
 
     page.execute_script(<<~JS)
       document.querySelector('#bullet_composer lexxy-editor').dispatchEvent(
@@ -299,7 +318,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
       )
     JS
 
-    assert_selector '#bullet_composer.composer--fullscreen'
+    assert_selector '#bullet_composer.composer--toolbar'
     assert_selector '#bullet_composer lexxy-editor[preset=note]'
   end
 

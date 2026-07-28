@@ -59,6 +59,7 @@ module Bullets
       assert_response :success
       assert_match 'turbo-stream', response.media_type
       assert @bullet.reload.archived?
+      assert_match 'Bullet archived', response.body
     end
   end
 end

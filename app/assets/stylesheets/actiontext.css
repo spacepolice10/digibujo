@@ -79,8 +79,8 @@ lexxy-editor:not(.composer--editor) {
   animation: composer-ios-focus-lock 0.1s linear;
 }
 
-.composer--fullscreen .composer--field lexxy-editor.composer--editor .lexxy-editor__content:focus,
-.composer--fullscreen .composer--field lexxy-editor.composer--editor .lexxy-editor__content.is-ios-focus-locking {
+.composer--multiline .composer--field lexxy-editor.composer--editor .lexxy-editor__content:focus,
+.composer--multiline .composer--field lexxy-editor.composer--editor .lexxy-editor__content.is-ios-focus-locking {
   animation: none;
 }
 
@@ -117,19 +117,19 @@ lexxy-editor:not(.composer--editor) {
   line-height: inherit;
 }
 
-.composer--multiline:not(.composer--fullscreen) .composer--field lexxy-editor.composer--editor .lexxy-editor__content,
-.composer--fullscreen .composer--field lexxy-editor.composer--editor .lexxy-editor__content {
+.composer--multiline .composer--field lexxy-editor.composer--editor .lexxy-editor__content {
   line-height: 1.25;
   min-block-size: 1.25lh;
 }
 
-.composer--multiline:not(.composer--fullscreen) .composer--field lexxy-editor.composer--editor .lexxy-editor__content p {
+.composer--multiline .composer--field lexxy-editor.composer--editor .lexxy-editor__content p {
   line-height: inherit;
 }
 
-/* Expanded note: editor grows with content up to the safe viewport; toolbar
-   sticks to the top of that scrollport so it stays visible. */
-.composer--fullscreen .composer--field lexxy-editor.composer--editor {
+/* Multiline note: editor grows with content up to the safe viewport.
+   Scroll the content box — not the whole editor — so toolbar dropdown panels
+   (position: absolute) are not clipped by overflow:auto on an ancestor. */
+.composer--multiline .composer--field lexxy-editor.composer--editor {
   --lexxy-content-margin: 0.5rem;
   --lexxy-editor-rows: 6lh;
   --lexxy-editor-padding: 0.5ch;
@@ -146,32 +146,33 @@ lexxy-editor:not(.composer--editor) {
     - 0.5rem
   );
   height: auto;
-  overflow-x: hidden;
-  overflow-y: auto;
-  overscroll-behavior: contain;
+  overflow: visible;
   border: none;
   border-radius: 0;
   background: transparent;
 }
 
-.composer--fullscreen .composer--field lexxy-editor.composer--editor .lexxy-editor__content {
+.composer--multiline .composer--field lexxy-editor.composer--editor .lexxy-editor__content {
   display: block;
-  flex: 0 0 auto;
+  flex: 1 1 auto;
   min-block-size: var(--lexxy-editor-rows);
+  min-height: 0;
   height: auto;
-  max-height: none;
+  max-height: 100%;
   padding: var(--lexxy-editor-padding);
   line-height: normal;
-  overflow: visible;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
-.composer--fullscreen .composer--field lexxy-editor.composer--editor .lexxy-editor__content p {
+.composer--multiline .composer--field lexxy-editor.composer--editor .lexxy-editor__content p {
   margin-block: 0 var(--lexxy-content-margin);
 }
 
-/* One note-preset editor: toolbar stays mounted but hidden until expand.
+/* One note-preset editor: toolbar stays mounted but hidden until toggled on.
    Compact upload lives in composer--actions (next to mic), not in the field. */
-.composer:not(.composer--fullscreen) lexxy-toolbar {
+.composer:not(.composer--toolbar) lexxy-toolbar {
   display: none;
 }
 
@@ -189,19 +190,23 @@ lexxy-editor:not(.composer--editor) {
   display: none;
 }
 
-/* Sticky toolbar stays painted while the content scrolls underneath. */
-.composer--fullscreen lexxy-toolbar {
-  position: sticky;
-  top: 0;
-  z-index: 1;
+/* Toolbar above the scrolling content; overflow visible for dropdown panels. */
+.composer--toolbar lexxy-toolbar {
+  position: relative;
+  z-index: 5;
   order: -1;
   display: flex;
   flex-shrink: 0;
+  overflow: visible;
   margin: 0;
   margin-block-end: var(--spacing-vertical-half);
   padding-block: var(--spacing-vertical-half);
   background-color: var(--color-bg-subtle);
   border-block-end: none;
+}
+
+.composer--toolbar .lexxy-editor__toolbar-dropdown {
+  position: relative;
 }
 
 .lexxy-content {
@@ -223,8 +228,14 @@ lexxy-editor:not(.composer--editor) {
   }
 }
 
+/* Composer sets --lexxy-color-canvas: transparent so the field blends into the
+   pill; Lexxy dropdown panels reuse that token — force an opaque surface. */
+.lexxy-editor__toolbar-dropdown [data-dropdown-panel],
 .lexxy-editor__toolbar-overflow-menu {
-  border: 0.5px solid var(--color-stroke-base);
+  background-color: var(--color-bg-base);
+  border: 1px solid var(--color-stroke-base);
+  box-shadow: var(--shadow-base);
+  color: var(--color-fg-base);
 }
 
 .lexxy-content__table-cell--header {

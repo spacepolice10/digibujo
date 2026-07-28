@@ -17,6 +17,17 @@ module Bullets
       assert_redirected_to published_path(@bullet.public_code)
     end
 
+    test 'create publishes bullet via turbo stream with toast' do
+      post publish_path,
+           params: { bullet_ids: @bullet.id.to_s },
+           headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
+
+      assert_response :success
+      assert @bullet.reload.published?
+      assert_match %(turbo-stream action="replace" targets="#bullet_#{@bullet.id}"), response.body
+      assert_match 'Bullet published', response.body
+    end
+
     test 'create publishes multiple bullets' do
       other = create_bullet!(@user, bulletable: Note.new(body: 'Too'))
 
@@ -37,6 +48,7 @@ module Bullets
       assert_response :success
       assert_not @bullet.reload.published?
       assert_match %(turbo-stream action="replace" targets="#bullet_#{@bullet.id}"), response.body
+      assert_match 'Bullet unpublished', response.body
     end
   end
 end

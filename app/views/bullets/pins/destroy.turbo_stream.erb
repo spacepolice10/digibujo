@@ -8,4 +8,8 @@
       <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
     <% end %>
   <% end %>
+  <%= turbo_stream.update "toasts" do %>
+    <% message = @bullets.size == 1 ? "Bullet unpinned" : "#{@bullets.size} bullets unpinned" %>
+    <%= render "shared/toasts", type: "notify", messages: [message] %>
+  <% end %>
 <% end %>
