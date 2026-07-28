@@ -108,11 +108,32 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select '#bullet_composer' do
-      assert_select 'lexxy-editor[preset=inline]'
+      assert_select 'lexxy-editor[preset=note]'
       assert_select "input[name='bullet[bucket_id]'][value=?]", collection.bucket.id.to_s
       assert_select "input[name='list_id']", count: 0
       assert_select 'button.composer--type-option', count: 3
     end
+  end
+
+  test 'show inserts date pills between days and skips duplicates within a day' do
+    collection = create_collection!(@user, name: 'Inbox')
+    bucket = collection.bucket
+
+    create_bullet!(@user, bucket: bucket, pops_on: nil, bulletable: Note.new(body: 'Older day'),
+                   created_at: 2.days.ago.change(hour: 10))
+    create_bullet!(@user, bucket: bucket, pops_on: nil, bulletable: Note.new(body: 'Yesterday a'),
+                   created_at: 1.day.ago.change(hour: 9))
+    create_bullet!(@user, bucket: bucket, pops_on: nil, bulletable: Note.new(body: 'Yesterday b'),
+                   created_at: 1.day.ago.change(hour: 18))
+    create_bullet!(@user, bucket: bucket, pops_on: nil, bulletable: Note.new(body: 'Today'),
+                   created_at: Time.current.change(hour: 12))
+
+    get collection_path(collection)
+
+    assert_response :success
+    assert_select '.collection--date-pill', count: 3
+    assert_select '.collection--date-pill', text: 'Yesterday', count: 1
+    assert_select '.collection--date-pill', text: 'Today', count: 1
   end
 
   test 'update changes bucket attributes and description' do

@@ -17,42 +17,42 @@
     class="utilities--sr-only"
   >
 
-  <label
-    class="bullet--marker"
-    for="<%= checkbox_id %>"
-    aria-label="Select bullet"
-  >
-    <span aria-hidden="true" style="display: flex;">
-      <%= icon_tag(bullet.marker_icon.to_s.dasherize, style: "color: #{Colourable.colour_variable_of(bullet.colour)};", class: "bullet--marker-type") %>
-      <span class="bullet--marker-select-indicator" aria-hidden="true"></span>
-    </span>
-  </label>
+  <div class="bullet--rail">
+    <label
+      class="bullet--marker"
+      for="<%= checkbox_id %>"
+      aria-label="Select bullet"
+    >
+      <span aria-hidden="true" style="display: flex;">
+        <%= icon_tag(bullet.marker_icon.to_s.dasherize, style: "color: #{Colourable.colour_variable_of(bullet.colour)};", class: "bullet--marker-type") %>
+        <span class="bullet--marker-select-indicator" aria-hidden="true"></span>
+      </span>
+    </label>
 
-  <label class="bullet--select-checkbox" for="<%= checkbox_id %>" aria-hidden="true"></label>
-
-  <% if bullet.collected_migration? || bullet.rescheduled_migration? %>
-
+    <% if bullet.collected_migration? || bullet.rescheduled_migration? %>
       <span class="bullet--metadata-marker">
         <% if bullet.collected_migration? && (activity = bullet.migration_activity) %>
           <% collected_hint_id = dom_id(bullet, :hint_collected) %>
           <% collected_anchor = "--hint-#{bullet.id}-collected" %>
           <%= link_to activity_path(activity),
+                class: "bullet--metadata-link",
                 data: { turbo_frame: "_top" },
                 interestfor: collected_hint_id,
                 style: "anchor-name: #{collected_anchor}",
                 aria: { label: "Collected" } do %>
-<%= icon_tag("arrow-left", style: "color: var(--color-text-base);", class: "") %>
+            <%= icon_tag("arrow-left", class: "bullet--metadata-icon") %>
           <% end %>
         <% end %>
         <% if bullet.rescheduled_migration? && (activity = bullet.migration_activity) %>
           <% rescheduled_hint_id = dom_id(bullet, :hint_rescheduled) %>
           <% rescheduled_anchor = "--hint-#{bullet.id}-rescheduled" %>
           <%= link_to activity_path(activity),
+                class: "bullet--metadata-link",
                 data: { turbo_frame: "_top" },
                 interestfor: rescheduled_hint_id,
                 style: "anchor-name: #{rescheduled_anchor}",
                 aria: { label: "Rescheduled" } do %>
-<%= icon_tag("arrow-right", style: "color: var(--color-text-base);", class: "") %>
+            <%= icon_tag("arrow-right", class: "bullet--metadata-icon") %>
           <% end %>
         <% end %>
       </span>
@@ -80,9 +80,18 @@
           <%= bullet.migration_hint %>
         </div>
       <% end %>
-  <% end %>
+    <% end %>
+  </div>
 
-  <div class="bullet--body">
-    <%= yield %>
+  <label class="bullet--select-checkbox" for="<%= checkbox_id %>" aria-hidden="true"></label>
+
+  <div class="bullet--content">
+    <div class="bullet--body">
+      <%= yield %>
+    </div>
+    <time
+      class="bullet--time"
+      datetime="<%= bullet.created_at.iso8601 %>"
+    ><%= bullet.created_at.strftime("%H:%M") %></time>
   </div>
 <% end %>

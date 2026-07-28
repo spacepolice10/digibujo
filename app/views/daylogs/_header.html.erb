@@ -1,0 +1,48 @@
+<%# locals: (date:, mood_entity:, picture:) %>
+<header
+  id="daylog_header_<%= date.iso8601 %>"
+  class="daylog--chat-header"
+>
+  <%= render "daylogs/header_photo", date: date, picture: picture %>
+
+  <div class="daylog--header-bar">
+    <div class="daylog--header-controls">
+      <%= link_to daylog_path(date: (date - 1.day).iso8601),
+            data: {
+              turbo_action: "advance",
+              controller: "hotkey",
+              hotkey: "←",
+              action: "keydown.shift+left@document->hotkey#click"
+            },
+            class: "button--tertiary button--icon hotkey-hint",
+            aria: { label: "Show previous day", keyshortcuts: "Shift+ArrowLeft" } do %>
+        <%= icon_tag("arrow-left") %>
+      <% end %>
+
+      <span class="daylog--date-label">
+        <%= date.strftime("%a, %b %-d") %>
+      </span>
+
+      <%= link_to daylog_path(date: (date + 1.day).iso8601),
+            data: {
+              turbo_action: "advance",
+              controller: "hotkey",
+              hotkey: "→",
+              action: "keydown.shift+right@document->hotkey#click"
+            },
+            class: "button--tertiary button--icon hotkey-hint",
+            aria: { label: "Show next day", keyshortcuts: "Shift+ArrowRight" } do %>
+        <%= icon_tag("arrow-right") %>
+      <% end %>
+    </div>
+
+    <div class="daylog--header-controls">
+      <%= render "daylogs/mood_entity",
+            date: date,
+            entity: mood_entity %>
+      <%= render "daylogs/picture",
+            date: date,
+            picture: picture %>
+    </div>
+  </div>
+</header>

@@ -67,13 +67,26 @@ lexxy-editor:not(.composer--editor) {
   color: var(--color-fg-base);
 }
 
-/* Short focus animation blocks WebKit from extending the page under the keyboard. */
-.composer--field lexxy-editor.composer--editor:focus-within {
-  animation: composer-ios-focus-lock 0.1s;
+/*
+ * WebKit scroll-into-view lock: must run on the focused node itself (the
+ * contenteditable), not an ancestor. :focus-within on <lexxy-editor> is ignored
+ * for this purpose. Restart via .is-ios-focus-locking from chat-composer JS
+ * when CSS :focus alone does not re-fire (e.g. refocus). Skip when expanded —
+ * transform on the contenteditable skews the caret there.
+ */
+.composer--field lexxy-editor.composer--editor .lexxy-editor__content:focus,
+.composer--field lexxy-editor.composer--editor .lexxy-editor__content.is-ios-focus-locking {
+  animation: composer-ios-focus-lock 0.1s linear;
+}
+
+.composer--fullscreen .composer--field lexxy-editor.composer--editor .lexxy-editor__content:focus,
+.composer--fullscreen .composer--field lexxy-editor.composer--editor .lexxy-editor__content.is-ios-focus-locking {
+  animation: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .composer--field lexxy-editor.composer--editor:focus-within {
+  .composer--field lexxy-editor.composer--editor .lexxy-editor__content:focus,
+  .composer--field lexxy-editor.composer--editor .lexxy-editor__content.is-ios-focus-locking {
     animation: none;
   }
 }
@@ -81,55 +94,114 @@ lexxy-editor:not(.composer--editor) {
 @keyframes composer-ios-focus-lock {
   from {
     opacity: 0.99;
+    transform: translateZ(0);
   }
 
   to {
     opacity: 1;
+    transform: translateZ(0);
   }
 }
 
-.lexxy-editor__content {
-  display: inline;
-}
-
+/* Compact chat line: match icon control height so the caret sits level with
+   type / upload / mic / submit. Expanded needs a normal block box. */
 .composer--field lexxy-editor.composer--editor .lexxy-editor__content {
-  min-block-size: 1.25lh;
+  display: block;
+  min-block-size: var(--composer-control-size, 2lh);
   padding-block: 0;
-  line-height: 1.25;
+  line-height: var(--composer-control-size, 2lh);
 }
 
 .composer--field lexxy-editor.composer--editor .lexxy-editor__content p {
   margin: 0;
+  line-height: inherit;
 }
 
-.composer--fullscreen .composer--field lexxy-editor.composer--editor {
-  --lexxy-content-margin: 1rem;
-  --lexxy-editor-rows: 12lh;
-  --lexxy-editor-padding: 1ch;
-  --lexxy-color-canvas: var(--color-bg-base);
+.composer--multiline:not(.composer--fullscreen) .composer--field lexxy-editor.composer--editor .lexxy-editor__content,
+.composer--fullscreen .composer--field lexxy-editor.composer--editor .lexxy-editor__content {
+  line-height: 1.25;
+  min-block-size: 1.25lh;
+}
 
-  max-height: none;
-  height: 100%;
-  border: 0.5px solid var(--color-stroke-base);
-  border-radius: var(--radius-base);
-  background-color: var(--color-bg-base);
+.composer--multiline:not(.composer--fullscreen) .composer--field lexxy-editor.composer--editor .lexxy-editor__content p {
+  line-height: inherit;
+}
+
+/* Expanded note: editor grows with content up to the safe viewport; toolbar
+   sticks to the top of that scrollport so it stays visible. */
+.composer--fullscreen .composer--field lexxy-editor.composer--editor {
+  --lexxy-content-margin: 0.5rem;
+  --lexxy-editor-rows: 6lh;
+  --lexxy-editor-padding: 0.5ch;
+  --lexxy-color-canvas: transparent;
+
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 6lh;
+  max-height: calc(
+    var(--composer-expanded-max)
+    - var(--composer-control-size)
+    - var(--spacing-vertical-half)
+    - 0.5rem
+  );
+  height: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: none;
+  border-radius: 0;
+  background: transparent;
 }
 
 .composer--fullscreen .composer--field lexxy-editor.composer--editor .lexxy-editor__content {
+  display: block;
+  flex: 0 0 auto;
   min-block-size: var(--lexxy-editor-rows);
+  height: auto;
+  max-height: none;
   padding: var(--lexxy-editor-padding);
+  line-height: normal;
+  overflow: visible;
 }
 
 .composer--fullscreen .composer--field lexxy-editor.composer--editor .lexxy-editor__content p {
   margin-block: 0 var(--lexxy-content-margin);
 }
 
-lexxy-toolbar {
+/* One note-preset editor: toolbar stays mounted but hidden until expand.
+   Compact upload lives in composer--actions (next to mic), not in the field. */
+.composer:not(.composer--fullscreen) lexxy-toolbar {
+  display: none;
+}
+
+/* Lexxy keeps a file control for the actions proxy to click; never show it. */
+.composer lexxy-toolbar button[name="file"] {
+  display: none !important;
+}
+
+.composer lexxy-toolbar .lexxy-editor__toolbar-group-end {
+  margin-inline-end: 0;
+}
+
+.composer lexxy-toolbar .lexxy-editor__toolbar-group-end::after {
+  content: none;
+  display: none;
+}
+
+/* Sticky toolbar stays painted while the content scrolls underneath. */
+.composer--fullscreen lexxy-toolbar {
   position: sticky;
   top: 0;
   z-index: 1;
-  background-color: var(--color-bg-base);
-  border-block-end: 0.5px solid var(--color-stroke-base);
+  order: -1;
+  display: flex;
+  flex-shrink: 0;
+  margin: 0;
+  margin-block-end: var(--spacing-vertical-half);
+  padding-block: var(--spacing-vertical-half);
+  background-color: var(--color-bg-subtle);
+  border-block-end: none;
 }
 
 .lexxy-content {

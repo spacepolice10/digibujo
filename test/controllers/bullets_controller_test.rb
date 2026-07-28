@@ -79,6 +79,54 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_match %(turbo-stream action="append" target="#{container}"), response.body
     assert_match 'Chat task', response.body
     assert_match %(turbo-stream action="remove" target="no_bullets_container"), response.body
+    assert_no_match 'collection--date-pill', response.body
+  end
+
+  test 'inline composer create on a collection prepends a date pill for a new day' do
+    collection = create_collection!(@user, name: 'Inbox')
+    create_bullet!(@user, bucket: collection.bucket, pops_on: nil, bulletable: Note.new(body: 'Yesterday'),
+                   created_at: 1.day.ago)
+    container = ActionView::RecordIdentifier.dom_id(collection, :bullets_container)
+
+    post bullets_path,
+         params: {
+           inline_composer: '1',
+           bullet: {
+             bulletable_type: 'Note',
+             bulletable_attributes: { body: '<p>Fresh today</p>' },
+             bucket_id: collection.bucket.id
+           }
+         },
+         as: :turbo_stream
+
+    assert_response :success
+    assert_match %(turbo-stream action="append" target="#{container}"), response.body
+    assert_match 'collection--date-pill', response.body
+    assert_match 'Today', response.body
+    assert_match 'Fresh today', response.body
+  end
+
+  test 'inline composer create on a collection skips the date pill for the same day' do
+    collection = create_collection!(@user, name: 'Inbox')
+    create_bullet!(@user, bucket: collection.bucket, pops_on: nil, bulletable: Note.new(body: 'Earlier today'),
+                   created_at: 1.hour.ago)
+    container = ActionView::RecordIdentifier.dom_id(collection, :bullets_container)
+
+    post bullets_path,
+         params: {
+           inline_composer: '1',
+           bullet: {
+             bulletable_type: 'Note',
+             bulletable_attributes: { body: '<p>Later today</p>' },
+             bucket_id: collection.bucket.id
+           }
+         },
+         as: :turbo_stream
+
+    assert_response :success
+    assert_match %(turbo-stream action="append" target="#{container}"), response.body
+    assert_match 'Later today', response.body
+    assert_no_match 'collection--date-pill', response.body
   end
 
   test 'inline composer create reports validation errors as a toast' do

@@ -61,7 +61,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
   test 'the mic hides while the field has text and returns when emptied' do
     visit daylog_path(date: Date.current.iso8601)
 
-    assert_selector '.composer--record.button--secondary'
+    assert_selector '.composer--record'
 
     focus_composer
     editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
@@ -120,66 +120,95 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     assert_selector '#bullet_composer.composer--multiline'
   end
 
-  test 'expand is always visible for Note' do
+  test 'expand appears for Note once the draft wraps to two lines' do
     visit daylog_path(date: Date.current.iso8601)
 
+    assert_no_selector '.composer--actions .composer--expand', visible: true
+    assert_selector '.composer--actions .composer--upload'
+    assert_no_selector '#bullet_composer button[name=bold]', visible: true
+
+    focus_composer
+    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
+    editor.send_keys('First line')
+    editor.send_keys(%i[shift enter])
+    editor.send_keys('Second line')
+
+    assert_selector '#bullet_composer.composer--multiline'
     assert_selector '.composer--actions .composer--expand'
+    assert_selector '.composer--actions .composer--upload'
+    assert_no_selector '#bullet_composer button[name=bold]', visible: true
   end
 
-  test 'expand is Note-only' do
+  test 'an attachment latches multiline while upload stays in actions' do
     visit daylog_path(date: Date.current.iso8601)
+
+    assert_no_selector '#bullet_composer.composer--multiline'
+    assert_selector '.composer--actions .composer--upload'
+
+    page.execute_script(<<~JS)
+      const editor = document.querySelector('#bullet_composer lexxy-editor')
+      const content = editor.editorContentElement || editor.querySelector('.lexxy-editor__content')
+      const figure = document.createElement('figure')
+      figure.className = 'attachment attachment--file'
+      content.appendChild(figure)
+      editor.dispatchEvent(new Event('lexxy:change'))
+    JS
+
+    assert_selector '#bullet_composer.composer--multiline'
+    assert_selector '.composer--actions .composer--upload'
+    assert_no_selector '#bullet_composer button[name=bold]', visible: true
+  end
+
+  test 'expand and upload are Note-only' do
+    visit daylog_path(date: Date.current.iso8601)
+
+    assert_selector '.composer--actions .composer--upload'
+    assert_selector '.composer--type-button.button--secondary'
 
     find('.composer--type-button').click
     find('.composer--type-option[data-composer-type="Task"]').click
 
-    assert_no_selector '.composer--expand'
+    assert_no_selector '.composer--actions .composer--upload', visible: true
+    assert_no_selector '.composer--expand', visible: true
   end
 
-  test 'expand switches the editor to the note preset with a toolbar' do
+  test 'expand reveals the toolbar without remounting the editor' do
     visit daylog_path(date: Date.current.iso8601)
 
-    assert_selector '#bullet_composer lexxy-editor[preset=inline]'
-    assert_no_selector '#bullet_composer lexxy-toolbar'
-    assert_selector '.composer--actions .composer--expand'
+    assert_selector '#bullet_composer lexxy-editor[preset=note]'
+    assert_selector '.composer--actions .composer--upload'
+    assert_no_selector '#bullet_composer button[name=bold]', visible: true
+    assert_no_selector '.composer--actions .composer--expand', visible: true
 
     focus_composer
-    find('#bullet_composer lexxy-editor .lexxy-editor__content').send_keys('Draft note')
+    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
+    editor.send_keys('Draft note')
+    editor.send_keys(%i[shift enter])
+    editor.send_keys('Second line')
+    assert_selector '.composer--expand'
+    assert_no_selector '#bullet_composer button[name=bold]', visible: true
+    assert_selector '.composer--actions .composer--upload'
 
     find('.composer--expand').click
 
     assert_selector '#bullet_composer.composer--fullscreen'
     assert_selector '#bullet_composer lexxy-editor[preset=note]'
-    assert_selector '#bullet_composer lexxy-toolbar'
+    assert_selector '.composer--actions .composer--upload'
+    assert_selector '#bullet_composer button[name=bold]'
     assert_no_selector '.composer--type-button', visible: true
-    # Daylog mounts the composer inside the fixed chat shell, so fullscreen is
-    # absolute within that shell rather than fixed to the viewport.
-    assert_equal 'absolute', page.evaluate_script("getComputedStyle(document.querySelector('#bullet_composer')).position")
+    # Expand only grows the docked field — composer stays a fixed dock.
+    assert_equal 'fixed', page.evaluate_script("getComputedStyle(document.querySelector('#bullet_composer')).position")
+    assert_text 'Draft note'
 
-    accept_confirm 'Collapse and discard this draft? Rich formatting will be lost.' do
-      find('.composer--expand').click
-    end
+    find('.composer--expand').click
 
     assert_no_selector '#bullet_composer.composer--fullscreen'
-    assert_selector '#bullet_composer lexxy-editor[preset=inline]'
-    assert_no_selector '#bullet_composer lexxy-toolbar'
-    assert_equal '', find('#bullet_composer lexxy-editor .lexxy-editor__content').text
+    assert_selector '#bullet_composer.composer--multiline'
+    assert_selector '#bullet_composer lexxy-editor[preset=note]'
+    assert_selector '.composer--actions .composer--upload'
+    assert_no_selector '#bullet_composer button[name=bold]', visible: true
+    assert_text 'Draft note'
     assert_selector '.composer--type-button', visible: true
-  end
-
-  test 'dismissing collapse keeps the expanded draft' do
-    visit daylog_path(date: Date.current.iso8601)
-
-    focus_composer
-    find('#bullet_composer lexxy-editor .lexxy-editor__content').send_keys('Keep me')
-    find('.composer--expand').click
-    assert_selector '#bullet_composer.composer--fullscreen'
-
-    dismiss_confirm do
-      find('.composer--expand').click
-    end
-
-    assert_selector '#bullet_composer.composer--fullscreen'
-    assert_text 'Keep me'
   end
 
   test 'shift r starts a voice recording from the focused composer' do
@@ -251,6 +280,10 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     visit daylog_path(date: Date.current.iso8601)
 
     focus_composer
+    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
+    editor.send_keys('First line')
+    editor.send_keys(%i[shift enter])
+    editor.send_keys('Second line')
     assert_selector '.composer--expand'
 
     page.execute_script(<<~JS)

@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = [ "audio", "playButton", "playIcon", "stopIcon", "label", "progress", "progressFill" ]
+  static targets = [ "audio", "playButton", "playIcon", "stopIcon", "progress", "duration" ]
   static values = { duration: Number }
 
   connect() {
@@ -79,11 +79,26 @@ export default class extends Controller {
     return 0
   }
 
+  #formatTime(totalSeconds) {
+    const seconds = Math.max(0, Math.floor(totalSeconds))
+    const minutes = Math.floor(seconds / 60)
+    return `${minutes}:${(seconds % 60).toString().padStart(2, "0")}`
+  }
+
   #timeUpdate() {
     const duration = this.#duration()
-    const percent = duration > 0 ? (this.audioTarget.currentTime / duration) * 100 : 0
-    this.progressFillTarget.style.width = `${percent}%`
-    this.progressTarget.setAttribute("aria-valuenow", Math.floor(this.audioTarget.currentTime))
+    const current = this.audioTarget.currentTime || 0
+    const ratio = duration > 0 ? current / duration : 0
+
+    this.progressTarget.setAttribute("aria-valuenow", Math.floor(current))
+    if (this.hasDurationTarget) {
+      const remaining = duration > 0 ? Math.max(0, duration - current) : duration
+      this.durationTarget.textContent = this.#formatTime(this.playing ? remaining : duration)
+    }
+
+    const bars = this.progressTarget.querySelectorAll(".voice--wave-bar")
+    const filled = Math.round(ratio * bars.length)
+    bars.forEach((bar, index) => bar.classList.toggle("is-played", index < filled))
   }
 
   #ended() {
@@ -98,6 +113,6 @@ export default class extends Controller {
     this.playIconTarget.hidden = this.playing
     this.stopIconTarget.hidden = !this.playing
     this.playButtonTarget.setAttribute("aria-label", this.playing ? "Stop" : "Play")
-    if (this.hasLabelTarget) this.labelTarget.textContent = this.playing ? "Stop" : "Play"
+    this.#timeUpdate()
   }
 }

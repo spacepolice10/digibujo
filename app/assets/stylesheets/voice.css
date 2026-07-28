@@ -15,68 +15,89 @@
     white-space: nowrap;
   }
 
+  /* Promo-style voice bar: play | fake spectrum | duration. */
   .voice--playback {
     display: flex;
     align-items: center;
     gap: var(--spacing-horizontal-half);
     width: 100%;
-    min-height: 2.75rem;
-    border-radius: var(--radius-full);
+    min-height: var(--spacing-horizontal-triple);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     border: 1px solid var(--color-stroke-base);
-    padding: var(--spacing-horizontal-half);
+    border-radius: var(--radius-base);
+    background: var(--color-bg-subtle);
+    box-sizing: border-box;
   }
 
   .voice--playback-compact {
     gap: var(--spacing-horizontal-half);
   }
 
-  .voice--play {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
+  .voice--playback .voice--play {
+    display: grid;
+    place-items: center;
     flex-shrink: 0;
+    width: var(--spacing-horizontal-double);
+    height: var(--spacing-horizontal-double);
     margin: 0;
     padding: 0;
     border: 0;
     background: none;
-    color: var(--color-fg-base);
-    font-family: monospace;
-    font-size: var(--font-size-xs);
+    color: var(--bullet-type-color, var(--voice-color, var(--color-fg-base)));
     cursor: pointer;
   }
 
-  .voice--play .icon {
+  .voice--playback .voice--play > * {
+    grid-area: 1 / 1;
+  }
+
+  .voice--playback .voice--play .icon-wrap {
     width: var(--spacing-horizontal-double);
     height: var(--spacing-horizontal-double);
   }
 
-  .voice--stop-icon {
-    margin-inline-start: 0;
-  }
-
-  .voice--progress {
+  .voice--wave {
     flex: 1;
     min-width: 0;
-    height: 4px;
-    border-radius: var(--radius-full);
-    background: var(--color-stroke-base);
+    display: flex;
+    align-items: center;
+    gap: 1.5px;
+    height: 1rem;
     cursor: pointer;
-    overflow: hidden;
   }
 
-  .voice--progress-fill {
-    height: 100%;
-    width: 0;
-    border-radius: inherit;
-    background: var(--bullet-type-color, var(--color-fg-base));
+  .voice--wave-bar {
+    display: block;
+    flex: 1 1 0;
+    max-width: 2px;
+    height: var(--voice-bar-height, 4px);
+    border-radius: 1px;
+    background: color-mix(
+      in oklch,
+      var(--bullet-type-color, var(--voice-color, var(--color-fg-base))) 70%,
+      var(--color-fg-base)
+    );
+    opacity: 0.35;
     pointer-events: none;
-    transition: width 0.05s linear;
+  }
+
+  .voice--wave-bar.is-played {
+    opacity: 0.9;
+  }
+
+  .voice--duration {
+    flex-shrink: 0;
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-xs);
+    color: var(--color-fg-subtle);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
   }
 
   .voice--waveform {
     flex: 1;
     min-width: 0;
-    height: var(--spacing-horizontal-double);
+    height: 1rem;
   }
 
   .voice--waveform svg {

@@ -11,102 +11,198 @@
     padding-bottom: calc(var(--spacing-vertical-quad) + var(--layout-scroll-padding)) !important ;
   }
 
-  /* Chat shell: full-viewport column. The bullets surface fills the shell to
-     the bottom; the composer is an absolute dock that levitates over it.
-     --daylog-vv-* shrinks the shell to the visual viewport while the keyboard
-     is open. Tabbar clearance is padding on the shell so Safari has no
-     document scroll extent to pan when the editor focuses. */
+  /* ── Chat daylog (Campfire list + composer dock) ─────────────────────────
+     The chat column itself is viewport-tall (not html/body locked). Mobile:
+     fixed composer dock above tabbar / keyboard. Desktop: composer sits
+     in-flow at the bottom of the column (no overlay clearance). */
+  html:has(.daylog--chat) body {
+    /* Kill the global tabbar page padding — clearance is scroller padding. */
+    padding-bottom: 0 !important;
+    scroll-padding-bottom: 0 !important;
+  }
+
   .layout--page.daylog.daylog--chat {
-    --daylog-vv-top: 0px;
-    --daylog-vv-height: 100dvh;
-    --daylog-tabbar-clearance: var(--layout-scroll-padding);
-    /* Dock height + air — scroller padding so bullets clear the floating composer. */
     --daylog-composer-clearance: calc(
       var(--spacing-vertical-quad) + var(--spacing-vertical-double)
     );
+    --daylog-inline-padding: var(--spacing-horizontal);
+    --daylog-header-top: max(var(--spacing-vertical-half), env(safe-area-inset-top, 0px));
+    --daylog-header-height: calc(var(--spacing-horizontal-triple) + 0.3rem);
+    /* Top offset + fixed header + air below so older bullets clear it. */
+    --daylog-header-clearance: calc(
+      var(--daylog-header-top)
+      + var(--daylog-header-height)
+      + var(--spacing-vertical)
+    );
 
-    position: fixed;
-    top: var(--daylog-vv-top);
-    right: 0;
-    bottom: auto;
-    left: 0;
+    position: relative;
     z-index: 0;
     display: flex;
     flex-direction: column;
     width: 100%;
     max-width: none;
-    height: var(--daylog-vv-height);
-    max-height: var(--daylog-vv-height);
+    height: 100dvh;
+    max-height: 100dvh;
     margin: 0;
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
-    padding-bottom: var(--daylog-tabbar-clearance) !important;
+    margin-top: 0;
+    /* No page padding — shell is full-bleed; list/header carry inset. */
+    padding: 0 !important;
     gap: 0;
-  }
-
-  /* No document scroll on the chat page — only .daylog--scroller scrolls. */
-  html:has(.layout--page.daylog.daylog--chat) {
     overflow: hidden;
-    height: 100%;
-    overscroll-behavior: none;
-  }
-
-  html:has(.layout--page.daylog.daylog--chat) body {
-    overflow: hidden;
-    height: 100%;
-    overscroll-behavior: none;
-    /* Kill the tabbar page padding — clearance lives on the chat shell. */
-    padding-bottom: 0 !important;
-    scroll-padding-bottom: 0 !important;
-  }
-
-  /* Keyboard open: shell matches the visual viewport; tabbar is under the
-     keyboard so shell padding drops to zero. */
-  .layout--page.daylog.daylog--chat.daylog--keyboard-open {
-    padding-bottom: 0 !important;
-  }
-
-  /* Composer lives inside this shell, so its own z-index cannot escape past the
-     tabbar (a body-level --z-dropdown sibling). Lift the whole chat context. */
-  .layout--page.daylog.daylog--chat:has(.composer--fullscreen) {
-    z-index: var(--z-toast);
   }
 
   @media (min-width: 800px) {
     .layout--page.daylog.daylog--chat {
-      /* Leave the app header (Digibujo) peeking above the shell. */
-      inset-block: 10ch 0;
-      inset-inline: auto;
-      left: 50%;
-      transform: translateX(-50%);
       max-width: var(--breakpoint-laptop);
-      height: auto;
-      max-height: none;
-      --daylog-tabbar-clearance: var(--spacing-vertical-double);
-      --daylog-composer-clearance: calc(
-        var(--spacing-vertical-quad) + var(--spacing-vertical-triple)
-      );
+      margin-inline: auto;
+      height: calc(100dvh - 10ch);
+      max-height: calc(100dvh - 10ch);
+      /* Composer sits in-flow under the shell — no overlay clearance. */
+      --daylog-composer-clearance: 0px;
+    }
+
+    .daylog--chat .daylog--scroller {
+      padding-bottom: var(--spacing-vertical) !important;
+    }
+
+    .daylog--chat .daylog--shell {
+      border: 0.5px solid var(--color-stroke-base);
+      border-radius: var(--radius-strong);
+      box-shadow: var(--shadow-subtle);
+      background: var(--color-bg-subtle);
+    }
+
+    /* In-flow dock pinned to the bottom of the chat column. */
+    .daylog--chat .composer {
+      position: relative;
+      inset: auto;
+      bottom: auto;
+      flex: 0 0 auto;
+      align-self: center;
+      width: 72%;
+      padding-inline: 0;
+      padding-block: var(--spacing-vertical-half);
+      margin-inline: auto;
     }
   }
 
-  /* Surface fills the shell (including under the floating composer). Composer
-     is out of flow, so flex:1 claims the full column above tabbar padding. */
+  /* Messages — Campfire .messages */
   .daylog--shell {
+    position: relative;
     display: flex;
     flex-direction: column;
-    flex: 1 1 auto;
+    flex: 1 1 0;
     min-height: 0;
+    overflow: hidden;
+  }
+
+  /* Levitating day header — fixed height; photo fills the same island. */
+  .daylog--chat-header {
+    --daylog-header-radius: var(--radius-full);
+
+    position: absolute;
+    z-index: var(--z-dropdown);
+    top: var(--daylog-header-top);
+    inset-inline: var(--daylog-inline-padding);
+    height: var(--daylog-header-height);
+    border: none;
+    border-radius: var(--daylog-header-radius);
+    background: transparent;
+    box-shadow: none;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .daylog--chat-header:has(.daylog--header-photo-image) {
+    overflow: hidden;
+    border: 1px solid var(--color-stroke-base);
+    background: transparent;
+    box-shadow: var(--shadow-base);
+  }
+
+  .daylog--header-photo {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .daylog--header-photo-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .daylog--header-photo:has(.daylog--header-photo-image)::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--color-bg-subtle) 35%, transparent);
+  }
+
+  .daylog--header-bar {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-horizontal-half);
+    height: 100%;
+    padding: 0;
+    pointer-events: none;
+  }
+
+  .daylog--header-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+    height: 100%;
+    padding: 0.15rem;
+    border: 1px solid color-mix(in srgb, var(--color-stroke-base) 70%, transparent);
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-bg-subtle) 72%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: var(--shadow-subtle);
+    pointer-events: auto;
+  }
+
+  .daylog--header-controls :is(.button--tertiary, .button--icon, label.button--tertiary) {
+    width: var(--spacing-horizontal-triple);
+    height: var(--spacing-horizontal-triple);
+    border-radius: var(--radius-full);
+  }
+
+  .daylog--header-controls .daylog--date-label {
+    padding-inline: var(--spacing-horizontal-half);
+  }
+
+  .daylog--picture {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+  }
+
+  /* Composer aligns to the same inline inset as the bullet list on mobile. */
+  .daylog--chat .composer {
+    width: 100%;
+    max-width: none;
+    padding-inline: var(--daylog-inline-padding);
   }
 
   .daylog--scroller {
-    flex: 1 1 auto;
+    position: relative;
+    z-index: 1;
+    flex: 1 1 0;
     min-height: 0;
     overflow-y: auto;
-    /* Our own compensation on prepend does the anchoring; the browser's would
-       fight it. */
     overflow-anchor: none;
     overscroll-behavior: contain;
-    /* Room for the levitating composer dock over the bottom of the surface. */
-    padding-bottom: calc(var(--daylog-composer-clearance) + var(--spacing-vertical)) !important;
+    padding-top: var(--daylog-header-clearance);
+    padding-bottom: calc(
+      var(--daylog-composer-clearance) + var(--layout-scroll-padding)
+    ) !important;
   }
 
   /* Pin short days to the composer edge without keeping the older-trigger in
@@ -117,7 +213,13 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    gap: var(--spacing-vertical);
     min-height: 100%;
+    padding-inline: var(--daylog-inline-padding);
+  }
+
+  .daylog--scroller > [data-daylog-scroll-target="list"] > .bullet {
+    margin-block: 0;
   }
 
   .daylog--older-trigger {
@@ -138,7 +240,6 @@
   }
 
   .daylog--page .bullet {
-    gap: var(--spacing-horizontal);
     margin-block: 0;
   }
 
@@ -164,7 +265,7 @@
   .daylog--date-label {
     display: flex;
     align-items: center;
-    font-family: monospace;
+    font-family: var(--font-family-mono);
     font-size: var(--font-size-xs);
     color: var(--color-fg-subtle);
     pointer-events: none;
@@ -211,6 +312,10 @@
     .daylog--page .bucket--list:has(.bullets-form--dock-mobile) {
       padding-bottom: calc(var(--tabbar-scroll-padding, calc(var(--spacing-vertical-double) * 2 + env(safe-area-inset-bottom, 0px))) + var(--spacing-horizontal-double) + var(--spacing-vertical) * 2);
     }
+
+    .layout--page.daylog.daylog--chat {
+      --daylog-inline-padding: var(--spacing-horizontal-half);
+    }
   }
 
   .daylog--meta {
@@ -231,54 +336,5 @@
 
   .daylog--mood-menu-marker {
     font-size: var(--font-size-base);
-  }
-
-  .daylog--picture-container {
-    position: relative;
-  }
-
-  .daylog--picture {
-    position: absolute;
-    width: 65px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--spacing-vertical-half);
-
-    @media (max-width: 799px) {
-      position: relative;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      width: 45px;
-      transform: none;
-      border-radius: var(--radius-full);
-    }
-
-    @media (min-width: 800px) {
-      right: -25px;
-      top: -55px;
-      transform: rotate(10deg);
-      padding: var(--spacing-vertical-half);
-      background: var(--color-bg-base);
-      border: 1px solid var(--color-stroke-base);
-      box-shadow: var(--shadow-base);
-      border-radius: var(--radius-subtle);
-    }
-  }
-
-  .daylog--picture-thumbnail {
-    width: 100%;
-    object-fit: cover;
-    border-radius: var(--radius-subtle);
-    aspect-ratio: 1/1;
-  }
-
-  .daylog--picture-controls {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
-    justify-content: space-between;
   }
 }

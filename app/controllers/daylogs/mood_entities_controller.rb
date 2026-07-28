@@ -3,15 +3,17 @@
 module Daylogs
   class MoodEntitiesController < ApplicationController
     before_action :set_daylog
+    before_action :set_mood_date
 
     def create
-      @daylog.pick_mood(date: mood_date, mood: params.require(:mood))
-      redirect_back fallback_location: daylog_path(date: mood_date.iso8601)
+      @mood_entity = @daylog.pick_mood(date: @date, mood: params.require(:mood))
+      respond_to_mood
     end
 
     def destroy
-      @daylog.remove_mood(date: mood_date)
-      redirect_back fallback_location: daylog_path(date: mood_date.iso8601)
+      @daylog.remove_mood(date: @date)
+      @mood_entity = nil
+      respond_to_mood
     end
 
     private
@@ -21,8 +23,15 @@ module Daylogs
       raise ActiveRecord::RecordNotFound unless @daylog
     end
 
-    def mood_date
-      Date.iso8601(params.require(:date).to_s)
+    def set_mood_date
+      @date = Date.iso8601(params.require(:date).to_s)
+    end
+
+    def respond_to_mood
+      respond_to do |format|
+        format.turbo_stream
+        format.html { redirect_back fallback_location: daylog_path(date: @date.iso8601) }
+      end
     end
   end
 end

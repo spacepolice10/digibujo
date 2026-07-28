@@ -3,27 +3,31 @@ import { Controller } from "@hotwired/stimulus"
 const TYPE_STORAGE_KEY = "digibujo.composer.type"
 const VOICE_TYPE = "Voice"
 const NOTE_TYPE = "Note"
-const COLLAPSE_CONFIRM =
-  "Collapse and discard this draft? Rich formatting will be lost."
 
-// Always-on chat-style bullet composer: one form, one inline Lexxy editor, a
-// type picker that persists across visits, and an inline voice mode driven by
-// the voice-recorder controller mounted on the same element.
+// Always-on chat-style bullet composer: one form, one Lexxy editor (note preset
+// so the toolbar exists once), a type picker that persists across visits, and
+// an inline voice mode driven by voice-recorder on the same element.
 export default class extends Controller {
-  static targets = ["form", "editor", "typeField", "typeIcon", "typeOption", "composeRow", "voicePanel", "submit", "voiceSubmit", "expandButton", "recordButton"]
+  static targets = ["form", "editor", "typeField", "typeIcon", "typeOption", "composeRow", "voicePanel", "submit", "voiceSubmit", "expandButton", "uploadButton", "recordButton"]
 
 
   connect() {
     this.typeBeforeVoice = null
+    this.restingLayoutHeight = window.innerHeight
     this.boundSyncKeyboardInset = () => this.#syncKeyboardInset()
     this.boundSyncTabbarInset = () => this.#syncTabbarInset()
-    this.boundOnComposerFocusIn = () => this.#onComposerFocusIn()
+    this.boundOnEditorInitialized = () => {
+      this.#syncPlaceholder()
+      this.singleLineHeight = null
+      this.#observeEditorHeight()
+      this.#syncMultiline()
+    }
 
     this.#visualViewport?.addEventListener("resize", this.boundSyncKeyboardInset)
     this.#visualViewport?.addEventListener("scroll", this.boundSyncKeyboardInset)
     window.addEventListener("resize", this.boundSyncTabbarInset)
     window.addEventListener("resize", this.boundSyncKeyboardInset)
-    this.element.addEventListener("focusin", this.boundOnComposerFocusIn)
+    this.editorTarget.addEventListener("lexxy:editor-initialized", this.boundOnEditorInitialized)
 
     this.#observeEditorHeight()
     this.#applyType(this.#storedType || this.typeFieldTarget.value)
@@ -37,10 +41,8 @@ export default class extends Controller {
     this.#visualViewport?.removeEventListener("scroll", this.boundSyncKeyboardInset)
     window.removeEventListener("resize", this.boundSyncTabbarInset)
     window.removeEventListener("resize", this.boundSyncKeyboardInset)
-    this.element.removeEventListener("focusin", this.boundOnComposerFocusIn)
+    this.editorTarget.removeEventListener("lexxy:editor-initialized", this.boundOnEditorInitialized)
     this.resizeObserver?.disconnect()
-    this.#clearChatViewport()
-    this.#chatShell?.style.removeProperty("--daylog-tabbar-clearance")
     this.element.classList.remove("composer--keyboard-open")
     this.element.style.removeProperty("--composer-keyboard-inset")
     this.element.style.removeProperty("--composer-tabbar-inset")
@@ -62,7 +64,7 @@ export default class extends Controller {
     this.editorTarget.focus()
   }
 
-  // Enter sends, Shift+Enter breaks the line, and fullscreen always breaks the
+  // Enter sends, Shift+Enter breaks the line, and expand always breaks the
   // line. Shift+Tab cycles Note → Task → Event. Shift+Ctrl+E expands Note.
   // Shift+R starts a voice take (hotkey on the mic ignores the editor; this
   // path covers the focused field). Runs on capture so Lexical never sees a
@@ -126,68 +128,49 @@ export default class extends Controller {
     this.editorTarget.value = ""
     this.voicePanelTarget.hidden = true
     this.composeRowTarget.hidden = false
-    const wasFullscreen = this.#fullscreen
     this.element.classList.remove("composer--fullscreen", "composer--multiline")
     this.expandButtonTarget.setAttribute("aria-pressed", "false")
     this.expandButtonTarget.setAttribute("aria-label", "Expand editor")
     this.#applyType(this.typeBeforeVoice || this.#storedType)
     this.typeBeforeVoice = null
-
-    // Fullscreen swaps the Lexxy preset to `note` (toolbar on); collapse back
-    // so the sticky bar does not keep a leftover toolbar after send.
-    if (wasFullscreen) this.#syncEditorPreset(false)
-    else this.refresh()
+    this.refresh()
   }
 
-  // Keep send / mic / expand visibility and wrap-aware layout in sync with the
-  // editor. Expand is Note-only; once open it stays available to collapse.
+  // Keep send / mic / expand / upload visibility and wrap-aware layout in sync.
+  // Expand is Note-only and waits for a second line; upload is Note-only always.
   refresh() {
     const ready = this.#submittable
     this.submitTarget.disabled = !ready
     if (this.hasVoiceSubmitTarget) this.voiceSubmitTarget.disabled = !ready
     this.recordButtonTarget.hidden = this.#voiceMode || !this.editorTarget.isBlank
-    this.expandButtonTarget.hidden = !this.#expandable
     this.#syncMultiline()
+    this.expandButtonTarget.hidden = !this.#expandable
+    this.uploadButtonTarget.hidden = !this.#uploadable
+  }
+
+  // Proxy to Lexxy's hidden toolbar control so uploads stay in the same pipeline.
+  uploadFile() {
+    if (!this.#uploadable) return
+
+    this.editorTarget.querySelector('lexxy-toolbar button[name="file"]')?.click()
   }
 
   #expandFullscreen() {
-    this.#withComposerTransition(() => {
-      this.element.classList.add("composer--fullscreen")
-      this.expandButtonTarget.setAttribute("aria-pressed", "true")
-      this.expandButtonTarget.setAttribute("aria-label", "Collapse editor")
-      this.#syncEditorPreset(true)
-    })
+    this.element.classList.add("composer--fullscreen")
+    this.expandButtonTarget.setAttribute("aria-pressed", "true")
+    this.expandButtonTarget.setAttribute("aria-label", "Collapse editor")
+    this.refresh()
+    this.focus()
   }
 
-  // Leaving the note sheet drops toolbar markup the inline preset cannot keep,
-  // so collapse discards the whole draft after the user confirms.
+  // Same Lexxy instance — expand only reveals the toolbar via CSS. Keep the
+  // draft; no remount, no confirm.
   #collapseFullscreen() {
-    if (!window.confirm(COLLAPSE_CONFIRM)) return
-
-    this.#withComposerTransition(() => {
-      this.editorTarget.value = ""
-      this.element.classList.remove("composer--fullscreen", "composer--multiline")
-      this.expandButtonTarget.setAttribute("aria-pressed", "false")
-      this.expandButtonTarget.setAttribute("aria-label", "Expand editor")
-      this.#syncEditorPreset(false)
-    })
-  }
-
-  #withComposerTransition(apply) {
-    if (!this.#canViewTransition) {
-      apply()
-      return
-    }
-
-    // Name the dock for the morph, then suppress the root crossfade so only the
-    // composer moves between the chat bar and the fullscreen sheet.
-    this.element.classList.add("is-composer-morphing")
-    document.documentElement.dataset.chatComposerVt = ""
-
-    document.startViewTransition(apply).finished.finally(() => {
-      this.element.classList.remove("is-composer-morphing")
-      delete document.documentElement.dataset.chatComposerVt
-    })
+    this.element.classList.remove("composer--fullscreen")
+    this.expandButtonTarget.setAttribute("aria-pressed", "false")
+    this.expandButtonTarget.setAttribute("aria-label", "Expand editor")
+    this.refresh()
+    this.focus()
   }
 
   #applyType(type) {
@@ -202,8 +185,24 @@ export default class extends Controller {
     this.typeOptionTargets.forEach((option) => {
       const selected = option.dataset.composerType === name
       option.setAttribute("aria-checked", String(selected))
-      if (selected) this.editorTarget.setAttribute("placeholder", option.dataset.composerPlaceholder)
     })
+
+    this.#syncPlaceholder()
+  }
+
+  // Lexxy paints via `attr(placeholder)` on `.lexxy-editor__content`, which is
+  // only copied from the host at mount. Updating the host alone leaves the SSR
+  // Note placeholder stuck on screen — write both, and re-run after remounts.
+  #syncPlaceholder() {
+    const selected = this.typeOptionTargets.find(
+      (option) => option.dataset.composerType === this.typeFieldTarget.value
+    )
+    const text = selected?.dataset.composerPlaceholder
+    if (!text) return
+
+    const editor = this.editorTarget
+    editor.setAttribute("placeholder", text)
+    editor.editorContentElement?.setAttribute("placeholder", text)
   }
 
   #handleTypeCycleKey(event) {
@@ -251,30 +250,6 @@ export default class extends Controller {
     this.focus()
   }
 
-  // Compact mode uses the `inline` preset (no toolbar). Expanding remounts the
-  // same element on `note` so Lexxy builds its toolbar from that preset. Content
-  // is kept via Lexxy's valueBeforeDisconnect — call the lifecycle hooks
-  // directly; the private #reconnect path clears that snapshot.
-  #syncEditorPreset(expanded) {
-    const editor = this.editorTarget
-    const next = expanded ? "note" : "inline"
-    if (editor.getAttribute("preset") === next) {
-      this.focus()
-      return
-    }
-
-    editor.setAttribute("preset", next)
-    editor.querySelector("lexxy-toolbar")?.remove()
-    editor.disconnectedCallback()
-    editor.connectedCallback()
-
-    this.singleLineHeight = null
-    requestAnimationFrame(() => {
-      this.refresh()
-      this.focus()
-    })
-  }
-
   #scrollToLatest() {
     const rows = document.querySelector('[id$="_bullets_container"]')?.querySelectorAll(".bullet")
     rows?.[rows.length - 1]?.scrollIntoView({ block: "center", behavior: "smooth" })
@@ -283,96 +258,73 @@ export default class extends Controller {
   #observeEditorHeight() {
     if (typeof ResizeObserver === "undefined") return
 
+    this.resizeObserver?.disconnect()
     this.resizeObserver = new ResizeObserver(() => this.#syncMultiline())
-    this.resizeObserver.observe(this.editorTarget)
+    // Measure the content box, not the whole editor — the compact uploadFile
+    // control keeps lexxy-editor tall even on a blank one-liner.
+    const content = this.editorTarget.editorContentElement ?? this.editorTarget
+    this.resizeObserver.observe(content)
   }
 
-  // Once the editor wraps past a single line, latch the multiline chrome until
-  // reset (successful send) or a full page remount. Flipping back on every
-  // height blip made the controls jump while the user was still editing.
+  // Once the editor wraps past a single line (or an attachment lands), latch
+  // multiline chrome until reset. Flipping back on every height blip made the
+  // controls jump while the user was still editing.
   #syncMultiline() {
     if (this.element.classList.contains("composer--multiline")) return
 
-    const height = this.editorTarget.offsetHeight
+    if (this.#hasAttachment()) {
+      this.#latchMultiline()
+      return
+    }
+
+    const content = this.editorTarget.editorContentElement ?? this.editorTarget
+    const height = content.offsetHeight
     if (!height) return
 
     if (this.editorTarget.isBlank) this.singleLineHeight = height
     if (!this.singleLineHeight) return
 
-    if (height > this.singleLineHeight + 4) {
-      this.element.classList.add("composer--multiline")
-    }
+    if (height > this.singleLineHeight + 4) this.#latchMultiline()
+  }
+
+  #latchMultiline() {
+    this.element.classList.add("composer--multiline")
+    this.expandButtonTarget.hidden = !this.#expandable
+  }
+
+  #hasAttachment() {
+    const root = this.editorTarget.editorContentElement
+    if (!root) return false
+
+    return Boolean(root.querySelector("figure.attachment, action-text-attachment"))
   }
 
   #syncKeyboardInset() {
     const viewport = this.#visualViewport
     if (!viewport) return
 
-    // Layout viewport bottom under the keyboard (iOS overlays; Chromium often
-    // resizes content and leaves this at zero).
-    const inset = Math.max(0, Math.round(window.innerHeight - viewport.height - viewport.offsetTop))
-    const keyboardOpen = inset > 0
+    const focused = this.element.contains(document.activeElement)
+
+    // Overlay keyboard: layout stays tall, VV shrinks → bottom = inset.
+    const overlayInset = Math.max(
+      0,
+      Math.round(window.innerHeight - viewport.height - viewport.offsetTop)
+    )
+
+    // resizes-content: layout already shrank → overlayInset ~0; still treat as
+    // keyboard-open so bottom:0 sits on the keyboard and the tabbar is hidden.
+    if (!focused) this.restingLayoutHeight = window.innerHeight
+    const resizeDelta = Math.max(
+      0,
+      Math.round((this.restingLayoutHeight ?? window.innerHeight) - window.innerHeight)
+    )
+    const keyboardOpen = overlayInset > 0 || (focused && resizeDelta > 50)
+
+    this.element.style.setProperty("--composer-keyboard-inset", `${overlayInset}px`)
     this.element.classList.toggle("composer--keyboard-open", keyboardOpen)
-
-    const chat = this.#chatShell
-    if (chat && !this.#desktopChat) {
-      // Daylog: shrink the shell to the visual viewport. Composer is absolute
-      // inside that shell (levitating over the full-height bullets surface).
-      this.#syncChatViewport(chat, viewport, keyboardOpen)
-      this.element.style.setProperty("--composer-keyboard-inset", "0px")
-    } else {
-      this.#clearChatViewport()
-      this.element.style.setProperty("--composer-keyboard-inset", `${inset}px`)
-    }
   }
 
-  // Kill Safari's scroll-into-view pan as soon as the editor focuses, then size
-  // the shell to whatever visual viewport we have (keyboard may still be rising).
-  #onComposerFocusIn() {
-    if (this.#desktopChat || !this.#chatShell) return
-
-    window.scrollTo(0, 0)
-    this.#syncKeyboardInset()
-  }
-
-  // Pin .daylog--chat to the visual viewport (top + height). Following offsetTop
-  // keeps the shell aligned if Safari still pans; scrollTo(0,0) tries to stop it.
-  #syncChatViewport(chat, viewport, keyboardOpen) {
-    if (!keyboardOpen) {
-      this.#clearChatViewport(chat)
-      return
-    }
-
-    window.scrollTo(0, 0)
-
-    chat.style.setProperty("--daylog-vv-top", `${Math.round(viewport.offsetTop)}px`)
-    chat.style.setProperty("--daylog-vv-height", `${Math.round(viewport.height)}px`)
-    chat.classList.add("daylog--keyboard-open")
-
-    // Height changes across the keyboard animation — pin the list each time so
-    // the latest bullets stay above the composer without waiting for a settle.
-    this.#revealLatestBullets()
-  }
-
-  #clearChatViewport(chat = this.#chatShell) {
-    if (!chat) return
-
-    chat.classList.remove("daylog--keyboard-open")
-    chat.style.removeProperty("--daylog-vv-top")
-    chat.style.removeProperty("--daylog-vv-height")
-  }
-
-  // Shell just shrank around the keyboard — keep the latest bullets in view
-  // above the floating composer.
-  #revealLatestBullets() {
-    const scroller = this.#chatShell?.querySelector(".daylog--scroller")
-    if (!scroller) return
-
-    scroller.scrollTop = scroller.scrollHeight
-  }
-
-  // Tabbar clearance: collections use it as fixed `bottom`; daylog uses it as
-  // shell padding + composer `bottom` so the dock clears the tabbar.
+  // Fixed composer clears the floating tabbar while the keyboard is closed.
   #syncTabbarInset() {
     const tabbar = document.querySelector(".tabbar--navigation")
     const inset = tabbar
@@ -380,25 +332,6 @@ export default class extends Controller {
       : 0
 
     this.element.style.setProperty("--composer-tabbar-inset", `${inset}px`)
-
-    const chat = this.#chatShell
-    if (!chat) return
-
-    // Leave the CSS default (desktop air / mobile layout-scroll-padding) when
-    // there is no tabbar to measure.
-    if (tabbar) {
-      chat.style.setProperty("--daylog-tabbar-clearance", `${inset}px`)
-    } else {
-      chat.style.removeProperty("--daylog-tabbar-clearance")
-    }
-  }
-
-  get #chatShell() {
-    return this.element.closest(".daylog--chat")
-  }
-
-  get #desktopChat() {
-    return window.matchMedia("(min-width: 800px)").matches
   }
 
   #storeType(type) {
@@ -426,7 +359,14 @@ export default class extends Controller {
   }
 
   get #expandable() {
-    return this.#fullscreen || this.typeFieldTarget.value === NOTE_TYPE
+    if (this.#fullscreen) return true
+    if (this.typeFieldTarget.value !== NOTE_TYPE) return false
+
+    return this.element.classList.contains("composer--multiline")
+  }
+
+  get #uploadable() {
+    return !this.#voiceMode && this.typeFieldTarget.value === NOTE_TYPE
   }
 
   get #voiceMode() {
@@ -439,11 +379,6 @@ export default class extends Controller {
 
   get #fullscreen() {
     return this.element.classList.contains("composer--fullscreen")
-  }
-
-  get #canViewTransition() {
-    return typeof document.startViewTransition === "function"
-      && !matchMedia("(prefers-reduced-motion: reduce)").matches
   }
 
   get #visualViewport() {

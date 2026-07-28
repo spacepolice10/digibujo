@@ -14,6 +14,10 @@ export class TrimToolbarExtension extends Extension {
     toolbar.querySelector("lexxy-link-dropdown")?.remove()
     toolbar.querySelector("lexxy-highlight-dropdown")?.remove()
     toolbar.querySelector('button[name="format"]')?.closest("lexxy-toolbar-dropdown")?.remove()
+    toolbar.querySelectorAll(".lexxy-editor__toolbar-group-end").forEach((button) => {
+      button.classList.remove("lexxy-editor__toolbar-group-end")
+    })
+    toolbar.querySelectorAll(".lexxy-editor__toolbar-separator").forEach((el) => el.remove())
 
     this.editorElement.append(toolbar)
   }

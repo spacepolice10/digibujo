@@ -98,14 +98,14 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select 'dialog#daylog_composer', count: 0
     assert_select '#bullet_composer' do
-      assert_select 'lexxy-editor[preset=inline]'
+      assert_select 'lexxy-editor[preset=note]'
       assert_select "input[name='bullet[bucket_id]'][value=?]", bucket_id.to_s
       assert_select "input[name='bullet[pops_on]'][value=?]", selected_date.iso8601
       assert_select "input[name='bullet[bulletable_type]'][value=?]", 'Note'
       assert_select "input[name='list_id']", count: 0
       assert_select 'button[data-composer-type=?]', 'Task'
       assert_select 'button[data-composer-type=?]', 'Event'
-      assert_select '.composer--record.button--secondary'
+      assert_select '.composer--record'
       assert_select '[data-voice-player-target=?]', 'playIcon'
       assert_select '[data-voice-player-target=?]', 'stopIcon'
     end
@@ -120,7 +120,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select 'dialog#daylog_composer', count: 0
-    assert_select '#bullet_composer lexxy-editor[preset=inline]'
+    assert_select '#bullet_composer lexxy-editor[preset=note]'
   end
 
   test 'root path is home' do

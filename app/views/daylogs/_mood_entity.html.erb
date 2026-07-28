@@ -1,9 +1,10 @@
 <%# locals: (date:, entity:) %>
+<% mood_id = "daylog_mood_entity_#{date.iso8601}" %>
 <% popover_id = "daylog_mood_#{date.iso8601}" %>
 <% anchor_name = "--#{popover_id.tr('-', '_')}" %>
 <% hint_id = "daylog_mood_hint_#{date.iso8601}" %>
 <% hint_anchor = "--hint-mood-#{date.iso8601.tr('-', '_')}" %>
-<div class="dropdown--dock daylog--mood" style="anchor-name: <%= anchor_name %>">
+<div id="<%= mood_id %>" class="dropdown--dock daylog--mood" style="anchor-name: <%= anchor_name %>">
   <button
     type="button"
     class="button--tertiary button--icon"
@@ -63,7 +64,7 @@
                   ("dropdown-item--current" if selected)
                 ],
                 form_class: "dropdown--menu-form",
-                form: { data: { turbo: true } },
+                form: { data: { turbo_stream: true } },
                 data: {
                   grid_navigation_target: "item",
                   action: "focus->grid-navigation#syncPosition"

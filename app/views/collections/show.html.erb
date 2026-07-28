@@ -40,7 +40,13 @@
                   container_id: dom_id(@collection, :bullets_container),
                   pagination_link_path: ->(next_param) { collection_path(@collection, page: next_param) }
                 } do %>
+            <% previous_date = @previous_date %>
             <% @page.records.each do |bullet| %>
+              <% date = bullet.created_at.in_time_zone.to_date %>
+              <% if previous_date != date %>
+                <%= render "collections/date_divider", date: date %>
+                <% previous_date = date %>
+              <% end %>
               <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
             <% end %>
           <% end %>

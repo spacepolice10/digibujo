@@ -1,0 +1,7 @@
+<%# locals: (date:, picture:) %>
+<%= turbo_stream.replace "daylog_picture_#{date.iso8601}" do %>
+  <%= render "daylogs/picture", date: date, picture: picture %>
+<% end %>
+<%= turbo_stream.replace "daylog_header_photo_#{date.iso8601}" do %>
+  <%= render "daylogs/header_photo", date: date, picture: picture %>
+<% end %>

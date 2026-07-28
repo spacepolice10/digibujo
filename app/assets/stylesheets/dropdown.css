@@ -266,8 +266,8 @@
   }
 
   /*
-   * Fade only for dropdown panels. Transform/scale during close fights
-   * position-area and flex-direction-on-:popover-open caused a visible reflow.
+   * Enter: popout keyframe (scale only while opening).
+   * Exit: opacity fade — reversing transform fights position-area.
    */
   .dropdown--element[popover].animations--side-in {
     opacity: 0;
@@ -279,6 +279,7 @@
 
   .dropdown--element[popover].animations--side-in:popover-open {
     opacity: 1;
+    animation: popout 110ms ease-out;
 
     @starting-style {
       opacity: 0;

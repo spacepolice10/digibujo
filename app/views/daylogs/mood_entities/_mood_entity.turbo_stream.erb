@@ -1,0 +1,4 @@
+<%# locals: (date:, entity:) %>
+<%= turbo_stream.replace "daylog_mood_entity_#{date.iso8601}" do %>
+  <%= render "daylogs/mood_entity", date: date, entity: entity %>
+<% end %>

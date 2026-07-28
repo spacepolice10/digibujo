@@ -38,30 +38,81 @@
 
   .bullet {
     display: inline-flex;
-    align-items: center;
+    align-items: flex-start;
     position: relative;
-    gap: var(--spacing-horizontal);
+    gap: var(--spacing-horizontal-half);
     width: 100%;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    border-radius: var(--radius-base);
+    box-sizing: border-box;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
 
     .bullet--select-checkbox {
       display: none;
     }
 
     @media (hover: hover) {
-      &:hover>.bullet--marker::after {
-        content: "";
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        border: 0.5px solid var(--color-stroke-strong);
+      &:hover .bullet--body {
+        border-color: color-mix(
+          in oklch,
+          var(--color-stroke-strong) 35%,
+          var(--color-stroke-base)
+        );
+      }
+
+      &:hover .bullet--marker {
+        border-color: var(--color-stroke-strong);
         box-shadow: var(--shadow-base);
-        border-radius: var(--radius-subtle);
-        background: var(--color-bg-subtle);
+        background: var(--color-bg-base);
         cursor: pointer;
       }
     }
+  }
+
+  .bullet--rail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-vertical-half);
+    flex-shrink: 0;
+  }
+
+  .bullet--content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2em;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .bullet--body {
+    flex: 1 1 auto;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    border: 1px solid transparent;
+    border-radius: var(--radius-strong);
+    background: transparent;
+    box-shadow: none;
+
+    @media (max-width: 799px) {
+      background: color-mix(
+        in oklch,
+        var(--bullet-type-color, transparent) 6%,
+        var(--color-bg-subtle)
+      );
+    }
+  }
+
+  .bullet--time {
+    display: block;
+    padding-inline: var(--spacing-horizontal-half);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-xs);
+    line-height: 1.2;
+    color: var(--color-fg-subtle);
   }
 
   .bullet--marker {
@@ -69,44 +120,104 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    border-radius: var(--radius-subtle);
-    align-self: flex-start;
-    margin-top: 2px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    width: var(--icon-shell-size);
+    height: var(--icon-shell-size);
+    border: 1px solid color-mix(in oklch, currentColor 28%, var(--color-stroke-base));
+    border-radius: var(--radius-full);
+    background: color-mix(in oklch, currentColor 14%, var(--color-bg-subtle));
   }
+
+  .bullet--marker-type {
+    width: var(--icon-shell-glyph) !important;
+    height: var(--icon-shell-glyph) !important;
+
+    .icon {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
   .bullet--metadata-marker {
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
-    border-radius: var(--radius-subtle);
-    align-self: flex-start;
-    margin-top: 2px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    width: calc(var(--icon-shell-size) * 0.78);
+    height: calc(var(--icon-shell-size) * 0.78);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-full);
+    background: var(--color-bg-subtle);
+    color: var(--color-fg-subtle);
   }
 
-
-  [data-bullet-type="task"]>.bullet--marker {
-    color: var(--task-color);
+  .bullet--metadata-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: inherit;
+    text-decoration: none;
   }
 
-  [data-bullet-type="note"]>.bullet--marker {
-    color: var(--note-color);
+  .bullet--metadata-icon {
+    width: calc(var(--icon-shell-glyph) * 0.85) !important;
+    height: calc(var(--icon-shell-glyph) * 0.85) !important;
+
+    .icon {
+      width: 100%;
+      height: 100%;
+    }
   }
 
-  [data-bullet-type="event"]>.bullet--marker {
-    color: var(--event-color);
+  [data-bullet-type="task"] {
+    --bullet-type-color: var(--task-color);
   }
 
-  [data-bullet-type="voice"]>.bullet--marker {
-    color: var(--voice-color);
+  [data-bullet-type="note"] {
+    --bullet-type-color: var(--note-color);
+  }
+
+  [data-bullet-type="event"] {
+    --bullet-type-color: var(--event-color);
+  }
+
+  [data-bullet-type="voice"] {
+    --bullet-type-color: var(--voice-color);
+  }
+
+  [data-bullet-type] .bullet--marker {
+    color: var(--bullet-type-color);
   }
 
   .bullet:has(input:checked) {
-    background: var(--color-bg-base);
-
+    .bullet--body {
+      border-color: var(--bullet-type-color, var(--color-stroke-strong));
+      box-shadow:
+        var(--shadow-base),
+        0 0 0 1px color-mix(
+          in oklch,
+          var(--bullet-type-color, var(--color-stroke-strong)) 45%,
+          transparent
+        );
+      background: color-mix(
+        in oklch,
+        var(--bullet-type-color, var(--color-accent)) 14%,
+        var(--color-bg-subtle)
+      );
+    }
 
     .bullet--marker {
-      background: var(--color-bg-subtle);
-      border-radius: var(--radius-subtle);
+      background: color-mix(
+        in oklch,
+        var(--bullet-type-color, var(--color-stroke-strong)) 18%,
+        var(--color-bg-base)
+      );
+      border-color: var(--bullet-type-color, var(--color-stroke-strong));
+      box-shadow: var(--shadow-base);
     }
 
     .bullet--marker::before {
@@ -115,14 +226,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 100%;
-      height: 100%;
-      border: 0.5px solid var(--color-stroke-strong);
+      inset: 0;
+      border: 1px solid var(--bullet-type-color, var(--color-stroke-strong));
       font-size: var(--font-size-xs);
       box-shadow: var(--shadow-base);
-      border-radius: var(--radius-subtle);
-      color: var(--color-fg-subtle);
-      background: var(--color-bg-subtle);
+      border-radius: var(--radius-full);
+      color: var(--bullet-type-color, var(--color-fg-subtle));
+      background: var(--color-bg-base);
       cursor: pointer;
       z-index: var(--z-dropdown);
     }

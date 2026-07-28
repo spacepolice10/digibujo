@@ -105,8 +105,8 @@
     --breakpoint-pc: 1040px;
 
     /* spacing */
-    --spacing-vertical: 1ch;
-    --spacing-horizontal: 0.75rem;
+    --spacing-vertical: 1.125ch;
+    --spacing-horizontal: 0.875rem;
     --spacing-vertical-half: calc(var(--spacing-vertical) / 2);
     --spacing-horizontal-half: calc(var(--spacing-horizontal) / 2);
     --spacing-vertical-double: calc(var(--spacing-vertical) * 2);
@@ -128,6 +128,10 @@
     --z-dialog: 2;
     --z-dropdown: 3;
     --z-toast: 4;
+
+    /* font families — JetBrains Mono everywhere for now */
+    --font-family-sans: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --font-family-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
     /* font sizes */
     --font-size-xl: 1.5rem;   /* 24px */
@@ -151,10 +155,14 @@
     --radius-strong: 12px;
     --radius-full: 9999px;
 
+    /* touch icon shell — shared by home list icons and bullet markers */
+    --icon-shell-size: calc(var(--spacing-horizontal) * 2.25);
+    --icon-shell-glyph: calc(var(--spacing-horizontal) * 0.95);
+
     /* dot grid — bullet journal paper (5 mm spacing at 16 px root) */
     --dot-grid-size: 1.25rem;
     --dot-grid-color-light: oklch(0.64 0.014 260 / 0.22);
-    --dot-grid-color-dark: oklch(0.58 0.012 82 / 0.48);
+    --dot-grid-color-dark: oklch(0.58 0.012 82 / 0.28);
     --dot-grid-color: light-dark(var(--dot-grid-color-light), var(--dot-grid-color-dark));
     --background-dot-grid-image: radial-gradient(
       circle,

@@ -259,7 +259,6 @@
   }
 
   .review--to-review-list .bullet {
-    gap: var(--spacing-horizontal);
     margin-block: 0;
   }
 

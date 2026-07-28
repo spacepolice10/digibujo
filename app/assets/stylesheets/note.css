@@ -2,16 +2,14 @@
   .bullet[data-bullet-type="note"] .bullet--body {
     position: relative;
     isolation: isolate;
-    display: inline-block;
-    vertical-align: middle;
-    max-width: 100%;
     color: var(--color-fg-base);
     
     & .bullet--document {
-      background: var(--color-bg-subtle);
-      padding: var(--spacing-vertical-half) var(--spacing-horizontal);
-      border: 0.5px solid var(--color-stroke-base);
-      border-radius: var(--radius-base);
+      /* Body is the chat bubble; keep document chrome typographic only. */
+      padding: 0;
+      border: none;
+      background: transparent;
+      border-radius: 0;
     }
 
     & .bullet--name {

@@ -31,6 +31,9 @@
 
   .bullet {
     break-inside: avoid;
+  }
+
+  .bullet--body {
     border: 1px solid #ddd;
   }
 

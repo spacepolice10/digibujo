@@ -40,20 +40,19 @@
     <div class="composer--row" data-chat-composer-target="composeRow">
       <div class="composer--lead dropdown--dock" style="anchor-name: --composer_types">
         <button type="button"
-                class="composer--type-button"
+                class="button--secondary button--icon button--circle composer--type-button"
                 popovertarget="composer_types"
                 aria-haspopup="menu"
                 aria-label="Change bullet type"
                 aria-keyshortcuts="Shift+Tab">
           <% (BulletsHelper::COMPOSER_TYPES + ["Voice"]).each do |type_name| %>
             <% config = bullet_type_config(type_name) %>
-            <div class="composer--type-icon"
+            <span class="composer--type-icon"
                   data-chat-composer-target="typeIcon"
                   data-composer-type="<%= type_name %>"
                   <%= "hidden" if type_name != default_type %>>
               <%= icon_tag(config[:icon], style: "color: #{config[:colour]};") %>
-              <%= icon_tag("chevron-down", class: "button--icon") %>
-            </div>
+            </span>
           <% end %>
         </button>
 
@@ -101,7 +100,7 @@
         <%= fr.fields_for :bulletable, Note.new do |bf| %>
           <%# rows drives Lexxy's --lexxy-editor-rows: start at one chat line. %>
           <%= bf.rich_text_area :body,
-                preset: "inline",
+                preset: "note",
                 rows: 1,
                 placeholder: default_config[:placeholder],
                 class: "lexxy-content composer--editor",
@@ -114,25 +113,27 @@
 
       <div class="composer--actions">
         <button type="button"
-                class="button--secondary button--icon button--circle composer--expand"
+                class="composer--expand"
                 data-action="chat-composer#toggleFullscreen"
                 data-chat-composer-target="expandButton"
                 aria-label="Expand editor"
                 aria-keyshortcuts="Control+Shift+E"
-                aria-pressed="false">
+                aria-pressed="false"
+                hidden>
           <%= icon_tag("plus", class: "button--icon") %>
         </button>
 
-        <button type="submit"
-                class="button--primary button--icon button--circle composer--submit"
-                data-chat-composer-target="submit"
-                aria-label="Save bullet"
-                disabled>
-          <%= icon_tag("arrow-up", class: "button--icon") %>
+        <button type="button"
+                class="composer--upload"
+                data-action="chat-composer#uploadFile"
+                data-chat-composer-target="uploadButton"
+                aria-label="Upload files"
+                hidden>
+          <%= icon_tag("paperclip", class: "button--icon") %>
         </button>
 
         <button type="button"
-                class="button--secondary button--icon button--circle composer--record hotkey-hint"
+                class="composer--record hotkey-hint"
                 data-controller="hotkey"
                 data-hotkey="Shift+R"
                 data-chat-composer-target="recordButton"
@@ -141,6 +142,14 @@
                 aria-label="Record voice memo"
                 aria-keyshortcuts="Shift+R">
           <%= icon_tag("microphone", class: "button--icon") %>
+        </button>
+
+        <button type="submit"
+                class="button--primary button--icon button--circle composer--submit"
+                data-chat-composer-target="submit"
+                aria-label="Save bullet"
+                disabled>
+          <%= icon_tag("arrow-up", class: "button--icon") %>
         </button>
       </div>
     </div>

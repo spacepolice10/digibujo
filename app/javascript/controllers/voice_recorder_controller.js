@@ -257,6 +257,13 @@ export default class extends Controller {
 
     const progress = player.querySelector('[role="slider"]')
     if (progress) progress.setAttribute("aria-valuemax", duration)
+
+    const label = player.querySelector('[data-voice-player-target="duration"]')
+    if (label) {
+      const minutes = Math.floor(duration / 60)
+      const seconds = duration % 60
+      label.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`
+    }
   }
 
   // Pause/clear preview <audio> and zero its duration UI.

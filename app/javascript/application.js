@@ -20,7 +20,7 @@ Lexxy.configure({
   },
   note: {
     attachments: true,
-    toolbar: true,
+    toolbar: { upload: "file" },
     multiLine: true,
     richText: true,
     markdown: true,

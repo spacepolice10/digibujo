@@ -16,6 +16,32 @@
     min-height: 80dvh;
   }
 
+  .collection--date-divider {
+    display: flex;
+    justify-content: center;
+    margin-block: var(--spacing-vertical-double);
+  }
+
+  .collection--date-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-stroke-base);
+    background: var(--color-bg-base);
+    color: var(--color-fg-subtle);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-xs);
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover {
+      color: var(--color-fg-base);
+      border-color: var(--color-stroke-strong);
+    }
+  }
+
   .collection--section-list-item {
     display: flex;
     gap: var(--spacing-horizontal-half);
@@ -24,7 +50,7 @@
     text-decoration: none;
     color: inherit;
     border-radius: var(--radius-base);
-    align-items: baseline;
+    align-items: center;
     height: fit-content;
 
     &:hover {

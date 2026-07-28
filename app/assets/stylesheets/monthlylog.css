@@ -21,7 +21,7 @@
     text-decoration: none;
     color: inherit;
     border-radius: var(--radius-base);
-    align-items: baseline;
+    align-items: center;
     height: fit-content;
 
     &:hover {

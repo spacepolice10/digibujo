@@ -1,4 +1,11 @@
 <%= turbo_stream.append dom_id(@bullet.bucket.bucketable, :bullets_container) do %>
+  <% if @bullet.bucket.collection? %>
+    <% previous = @bullet.bucket.bullets.active.older_than(@bullet).chronologically.last %>
+    <% date = @bullet.created_at.in_time_zone.to_date %>
+    <% if previous.nil? || previous.created_at.in_time_zone.to_date != date %>
+      <%= render "collections/date_divider", date: date %>
+    <% end %>
+  <% end %>
   <%= render partial: @bullet.to_partial_path, locals: { bullet: @bullet } %>
 <% end %>
 

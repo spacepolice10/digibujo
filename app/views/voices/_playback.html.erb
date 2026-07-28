@@ -1,6 +1,9 @@
 <%# locals: (recording: nil, recording_duration: 0) %>
 <% duration = recording_duration.to_i %>
 <% audio_src = recording&.attached? ? url_for(recording) : nil %>
+<% minutes, seconds = duration.divmod(60) %>
+<%# Static decorative heights (promo phone mock); progress fills left→right. %>
+<% wave_heights = [4, 9, 14, 7, 11, 16, 8, 12, 5, 10, 15, 6, 13, 9, 4, 11, 7, 14, 8, 5, 12, 6, 15, 9] %>
 <div class="voice--playback"
      data-controller="voice-player"
      data-voice-player-duration-value="<%= duration %>">
@@ -16,16 +19,15 @@
           data-voice-player-target="playButton"
           data-action="voice-player#toggle"
           aria-label="Play">
-    <span class="button--icon" data-voice-player-target="playIcon">
-      <%= icon_tag("play", class: "button--icon") %>
+    <span data-voice-player-target="playIcon">
+      <%= icon_tag("play") %>
     </span>
-    <span class="button--icon voice--stop-icon" data-voice-player-target="stopIcon" hidden>
-      <%= icon_tag("stop", class: "button--icon") %>
+    <span data-voice-player-target="stopIcon" hidden>
+      <%= icon_tag("stop") %>
     </span>
-    <p data-voice-player-target="label">Play</p>
   </button>
 
-  <div class="voice--progress"
+  <div class="voice--wave"
        data-voice-player-target="progress"
        data-action="click->voice-player#seek keydown->voice-player#progressKeydown"
        role="slider"
@@ -34,6 +36,12 @@
        aria-valuemax="<%= duration %>"
        aria-valuenow="0"
        tabindex="0">
-    <div class="voice--progress-fill" data-voice-player-target="progressFill"></div>
+    <% wave_heights.each do |height| %>
+      <i class="voice--wave-bar" style="--voice-bar-height: <%= height %>px" aria-hidden="true"></i>
+    <% end %>
   </div>
+
+  <span class="voice--duration"
+        data-voice-player-target="duration"
+        aria-hidden="true"><%= minutes %>:<%= seconds.to_s.rjust(2, "0") %></span>
 </div>
