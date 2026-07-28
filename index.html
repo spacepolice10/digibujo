@@ -309,6 +309,7 @@
     /* —— Phone (daylog mock) —— */
     .phone-wrap {
       position: relative;
+      z-index: 100;
       justify-self: start;
       width: 372px;
       overflow: visible;
@@ -397,7 +398,7 @@
       --float-from-y: 28px;
       --float-rot: -4deg;
       position: absolute;
-      z-index: 3;
+      z-index: 100;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -1939,6 +1940,13 @@
       font-size: 13px;
       color: var(--faint);
     }
+    .footer .legal {
+      margin: 8px 0 0;
+      max-width: 42em;
+      font-size: 12px;
+      line-height: 1.5;
+      color: color-mix(in srgb, var(--faint) 88%, var(--muted));
+    }
 
     /* —— Responsive —— */
     @media (max-width: 960px) {
@@ -1996,7 +2004,7 @@
       /* Overlay floats on the phone, just above/right of the bullet list */
       .float-chip {
         position: absolute;
-        z-index: 5;
+        z-index: 100;
         width: max-content;
         max-width: min(168px, 54%);
         padding: 8px 10px;
@@ -2608,6 +2616,9 @@
         <a class="btn btn-ghost" href="https://github.com/spacepolice10/digibujo" target="_blank" rel="noopener noreferrer">View on GitHub</a>
       </div>
       <p class="fine">O'Saasy · self-host OK · no competing SaaS</p>
+      <p class="legal">
+        Digibujo is an independent project. It is not affiliated with, endorsed by, or sponsored by Bullet Journal®, Ryder Carroll, or bulletjournal.com. “Bullet Journal” and related marks belong to their respective owners. Digibujo simply draws inspiration from the publicly shared Bullet Journal method.
+      </p>
     </footer>
   </div>
   <script>
