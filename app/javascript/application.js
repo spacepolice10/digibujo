@@ -6,10 +6,11 @@ import * as ActiveStorage from "@rails/activestorage";
 ActiveStorage.start();
 
 import * as Lexxy from "lexxy";
+import { TrimToolbarExtension } from "extensions/trim_toolbar";
 
 Lexxy.configure({
   global: {
-
+    extensions: [TrimToolbarExtension],
   },
   inline: {
     attachments: true,

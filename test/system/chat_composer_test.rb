@@ -163,7 +163,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
 
     assert_selector '#bullet_composer.composer--multiline'
     assert_selector '.composer--actions .composer--toolbar-toggle'
-    assert_selector '.composer--lead .composer--clear', text: 'Clear'
+    assert_selector '.composer--lead .composer--clear[aria-label="Clear draft"]'
     assert_selector '.composer--actions .composer--upload'
     assert_no_selector '#bullet_composer button[name=bold]', visible: true
   end
@@ -206,7 +206,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
 
     assert_selector '#bullet_composer lexxy-editor[preset=note]'
     assert_selector '.composer--actions .composer--upload'
-    assert_no_selector '#bullet_composer button[name=bold]', visible: true
+    assert_no_selector '#composer_toolbar > button[name=bold]', visible: true
     assert_no_selector '.composer--actions .composer--toolbar-toggle', visible: true
 
     focus_composer
@@ -215,28 +215,30 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     editor.send_keys(%i[shift enter])
     editor.send_keys('Second line')
     assert_selector '.composer--toolbar-toggle'
-    assert_selector '.composer--lead .composer--clear', text: 'Clear'
-    assert_no_selector '#bullet_composer button[name=bold]', visible: true
+    assert_selector '.composer--lead .composer--clear[aria-label="Clear draft"]'
+    assert_no_selector '#composer_toolbar > button[name=bold]', visible: true
     assert_selector '.composer--actions .composer--upload'
 
     find('.composer--toolbar-toggle').click
 
     assert_selector '#bullet_composer.composer--toolbar'
+    assert_selector '#composer_toolbar[aria-hidden="false"]'
     assert_selector '#bullet_composer lexxy-editor[preset=note]'
     assert_selector '.composer--actions .composer--upload'
-    assert_selector '#bullet_composer button[name=bold]'
-    assert_no_selector '.composer--type-button', visible: true
-    assert_selector '.composer--lead .composer--clear', text: 'Clear'
-    assert_equal 'fixed', page.evaluate_script("getComputedStyle(document.querySelector('#bullet_composer')).position")
+    assert_selector '#composer_toolbar > button[name=bold]'
+    assert_selector '.composer--type-button', visible: true
+    assert_selector '.composer--lead .composer--clear[aria-label="Clear draft"]'
     assert_text 'Draft note'
+    assert_selector '#bullet_composer.composer--multiline .composer--chrome'
 
     find('.composer--toolbar-toggle').click
 
     assert_no_selector '#bullet_composer.composer--toolbar'
+    assert_selector '#composer_toolbar[aria-hidden="true"]', visible: :all
     assert_selector '#bullet_composer.composer--multiline'
     assert_selector '#bullet_composer lexxy-editor[preset=note]'
     assert_selector '.composer--actions .composer--upload'
-    assert_no_selector '#bullet_composer button[name=bold]', visible: true
+    assert_no_selector '#composer_toolbar button[name=bold]', visible: true
     assert_text 'Draft note'
     assert_selector '.composer--type-button', visible: true
   end
@@ -250,7 +252,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     editor.send_keys(%i[shift enter])
     editor.send_keys('Second line')
 
-    assert_selector '.composer--lead .composer--clear', text: 'Clear'
+    assert_selector '.composer--lead .composer--clear[aria-label="Clear draft"]'
     find('.composer--lead .composer--clear').click
 
     assert_no_selector '#bullet_composer.composer--multiline'
@@ -347,6 +349,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     JS
 
     assert_selector '#bullet_composer.composer--toolbar'
+    assert_selector '#composer_toolbar > button[name=bold]'
     assert_selector '#bullet_composer lexxy-editor[preset=note]'
   end
 

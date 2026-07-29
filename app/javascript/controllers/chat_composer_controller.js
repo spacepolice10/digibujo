@@ -6,12 +6,13 @@ const NOTE_TYPE = "Note"
 
 // Always-on chat-style bullet composer: one form, one Lexxy editor (note preset
 // so the toolbar exists once), a type picker that persists across visits, and
-// an inline voice mode driven by voice-recorder on the same element.
+// an inline voice mode driven by voice-recorder on the same element. Lexxy is
+// pointed at an external <lexxy-toolbar id="composer_toolbar"> via toolbar=.
 export default class extends Controller {
   static targets = [
     "form", "editor", "typeField", "typeIcon", "typeOption", "composeRow",
-    "voicePanel", "submit", "voiceSubmit", "toolbarButton", "clearButton",
-    "uploadButton", "recordButton"
+    "voicePanel", "submit", "voiceSubmit", "toolbarButton", "toolbarPanel",
+    "clearButton", "uploadButton", "recordButton"
   ]
 
   connect() {
@@ -20,10 +21,12 @@ export default class extends Controller {
     this.boundSyncKeyboardInset = () => this.#syncKeyboardInset()
     this.boundSyncTabbarInset = () => this.#syncTabbarInset()
     this.boundOnEditorInitialized = () => {
+      this.#prepareToolbar()
       this.#syncPlaceholder()
       this.singleLineHeight = null
       this.#observeEditorHeight()
       this.#syncMultiline()
+      this.refresh()
     }
 
     this.#visualViewport?.addEventListener("resize", this.boundSyncKeyboardInset)
@@ -32,11 +35,14 @@ export default class extends Controller {
     window.addEventListener("resize", this.boundSyncKeyboardInset)
     this.editorTarget.addEventListener("lexxy:editor-initialized", this.boundOnEditorInitialized)
 
+    this.#prepareToolbar()
     this.#observeEditorHeight()
     this.#applyType(this.#storedType || this.typeFieldTarget.value)
     this.#syncTabbarInset()
     this.#syncKeyboardInset()
     this.refresh()
+
+    if (this.editorTarget.editorContentElement) this.boundOnEditorInitialized()
   }
 
   disconnect() {
@@ -52,8 +58,6 @@ export default class extends Controller {
   }
 
   selectType(event) {
-    if (this.#toolbarOpen) return
-
     const type = event.currentTarget.dataset.composerType
     if (!type) return
 
@@ -63,21 +67,23 @@ export default class extends Controller {
     this.focus()
   }
 
-  // Field click focuses the editor — but not when the click is on Lexxy chrome
-  // (toolbar / dropdowns / prompt). Otherwise the bubble refocuses content and
-  // Lexxy's selection listener immediately closes the menu that just opened.
+  // Field click focuses the editor — but never when the click already landed
+  // inside <lexxy-editor> or the inline formatting pill (reparented toolbar).
   focus(event) {
-    if (event?.target instanceof Element && this.#isLexxyChrome(event.target)) return
+    if (event?.target instanceof Element) {
+      if (event.target.closest("lexxy-editor")) return
+      if (event.target.closest("lexxy-toolbar, #composer_toolbar")) return
+    }
 
     this.editorTarget.focus()
   }
 
-  // Desktop send: Notes need Cmd/Ctrl+Enter (plain Enter breaks the line);
+  // Desktop send: Notes need Cmd/Ctrl+Enter (plain Enter inserts a newline);
   // Task/Event send on Enter. Shift+Enter always breaks the line. On touch /
   // coarse pointers neither Enter nor Cmd/Ctrl+Enter sends — use the submit
-  // control. While the formatting toolbar is open, Enter always breaks the
+  // control. While the formatting pill is open, Enter always breaks the
   // line. Shift+Tab cycles Note → Task → Event. Shift+Ctrl+E toggles the Note
-  // toolbar. Shift+R starts a voice take (hotkey on the mic ignores the
+  // toolbar pill. Shift+R starts a voice take (hotkey on the mic ignores the
   // editor; this path covers the focused field). Runs on capture so Lexical
   // never sees a sending Enter.
   keydown(event) {
@@ -112,6 +118,7 @@ export default class extends Controller {
   }
 
   startVoice() {
+    this.#hideToolbar()
     this.typeBeforeVoice = this.typeFieldTarget.value
     this.#applyType(VOICE_TYPE)
     this.composeRowTarget.hidden = true
@@ -133,13 +140,15 @@ export default class extends Controller {
       return
     }
 
+    if (!this.#toolbarToggleable) return
+
     this.#showToolbar()
   }
 
   clear() {
     this.editorTarget.value = ""
-    this.element.classList.remove("composer--toolbar", "composer--multiline")
-    this.#syncToolbarButton(false)
+    this.element.classList.remove("composer--multiline")
+    this.#hideToolbar()
     this.refresh()
     this.focus()
   }
@@ -155,8 +164,8 @@ export default class extends Controller {
     this.editorTarget.value = ""
     this.voicePanelTarget.hidden = true
     this.composeRowTarget.hidden = false
-    this.element.classList.remove("composer--toolbar", "composer--multiline")
-    this.#syncToolbarButton(false)
+    this.element.classList.remove("composer--multiline")
+    this.#hideToolbar()
     this.#applyType(this.typeBeforeVoice || this.#storedType)
     this.typeBeforeVoice = null
     this.refresh()
@@ -180,36 +189,105 @@ export default class extends Controller {
   uploadFile() {
     if (!this.#uploadable) return
 
-    this.editorTarget.querySelector('lexxy-toolbar button[name="file"]')?.click()
+    this.#lexxyToolbar?.querySelector('button[name="file"]')?.click()
+  }
+
+  // External <lexxy-toolbar id="composer_toolbar"> starts empty; seed Lexxy's
+  // default controls (and re-bind if the editor already attached to a blank one).
+  // Never move the toolbar — disconnect runs dispose() and kills commands.
+  #prepareToolbar() {
+    if (!this.hasToolbarPanelTarget) return
+
+    const toolbar = this.toolbarPanelTarget
+    this.#bootstrapToolbar(toolbar)
+    this.#preferToolbarScroll(toolbar)
+
+    if (this.editorTarget.editor && typeof toolbar.setEditor === "function") {
+      if (toolbar.editorElement !== this.editorTarget) {
+        toolbar.setEditor(this.editorTarget)
+        this.#preferToolbarScroll(toolbar)
+      }
+    }
+  }
+
+  #bootstrapToolbar(toolbar) {
+    if (toolbar.querySelector("[data-command]")) return
+
+    const Toolbar = customElements.get("lexxy-toolbar")
+    const template = Toolbar?.defaultTemplate
+    if (!template) return
+
+    toolbar.innerHTML = template
+    if (!toolbar.hasAttribute("data-upload")) toolbar.setAttribute("data-upload", "file")
+    if (!toolbar.hasAttribute("data-attachments")) {
+      toolbar.setAttribute("data-attachments", "true")
+    }
+
+    // Match TrimToolbarExtension — keep the composer pill compact.
+    toolbar.querySelector('button[name="image"]')?.remove()
+    toolbar.querySelector('button[name="underline"]')?.remove()
+    toolbar.querySelector('button[name="quote"]')?.remove()
+    toolbar.querySelector('button[name="undo"]')?.remove()
+    toolbar.querySelector('button[name="redo"]')?.remove()
+    toolbar.querySelector("lexxy-link-dropdown")?.remove()
+    toolbar.querySelector("lexxy-highlight-dropdown")?.remove()
+    toolbar.querySelector('button[name="format"]')?.closest("lexxy-toolbar-dropdown")?.remove()
+    toolbar.querySelectorAll(".lexxy-editor__toolbar-group-end").forEach((button) => {
+      button.classList.remove("lexxy-editor__toolbar-group-end")
+    })
+    toolbar.querySelectorAll(".lexxy-editor__toolbar-separator").forEach((el) => el.remove())
+  }
+
+  // Composer scrolls the pill horizontally; disable Lexxy's "more" overflow menu
+  // so buttons stay in the row. Lexxy may already have scheduled a rAF compact
+  // before we stub — restore again on the next frames / when showing.
+  #preferToolbarScroll(toolbar) {
+    toolbar.requestOverflowRefresh = () => this.#restoreOverflowedButtons(toolbar)
+    this.#restoreOverflowedButtons(toolbar)
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => this.#restoreOverflowedButtons(toolbar))
+    })
+  }
+
+  #restoreOverflowedButtons(toolbar) {
+    const overflow = toolbar.querySelector(".lexxy-editor__toolbar-overflow")
+    const menu = overflow?.querySelector(":scope > [data-dropdown-panel], .lexxy-editor__toolbar-overflow-menu")
+    if (menu) {
+      while (menu.firstChild) {
+        const item = menu.firstChild
+        item.removeAttribute("role")
+        toolbar.insertBefore(item, overflow)
+      }
+    }
   }
 
   #showToolbar() {
     this.element.classList.add("composer--toolbar")
+    if (this.hasToolbarPanelTarget) {
+      this.toolbarPanelTarget.setAttribute("aria-hidden", "false")
+      this.#restoreOverflowedButtons(this.toolbarPanelTarget)
+      requestAnimationFrame(() => this.#restoreOverflowedButtons(this.toolbarPanelTarget))
+    }
     this.#syncToolbarButton(true)
-    this.refresh()
     this.focus()
   }
 
   #hideToolbar() {
     this.element.classList.remove("composer--toolbar")
+    if (this.hasToolbarPanelTarget) {
+      this.toolbarPanelTarget.setAttribute("aria-hidden", "true")
+    }
     this.#syncToolbarButton(false)
-    this.refresh()
-    this.focus()
   }
 
   #syncToolbarButton(pressed) {
+    if (!this.hasToolbarButtonTarget) return
+
     this.toolbarButtonTarget.setAttribute("aria-pressed", String(pressed))
+    this.toolbarButtonTarget.setAttribute("aria-expanded", String(pressed))
     this.toolbarButtonTarget.setAttribute(
       "aria-label",
       pressed ? "Hide formatting toolbar" : "Show formatting toolbar"
-    )
-  }
-
-  #isLexxyChrome(target) {
-    return Boolean(
-      target.closest(
-        "lexxy-toolbar, lexxy-toolbar-dropdown, lexxy-link-dropdown, lexxy-highlight-dropdown, .lexxy-prompt-menu, [data-dropdown-panel]"
-      )
     )
   }
 
@@ -248,7 +326,7 @@ export default class extends Controller {
   #handleTypeCycleKey(event) {
     if (event.key !== "Tab" || !event.shiftKey) return false
     if (event.metaKey || event.ctrlKey || event.altKey) return false
-    if (this.#toolbarOpen || this.#voiceMode) return false
+    if (this.#voiceMode) return false
 
     event.preventDefault()
     event.stopPropagation()
@@ -259,7 +337,7 @@ export default class extends Controller {
   #handleToolbarKey(event) {
     if (event.key !== "e" && event.key !== "E") return false
     if (!event.shiftKey || !event.ctrlKey || event.metaKey || event.altKey) return false
-    if (!this.#toolbarToggleable) return false
+    if (!this.#toolbarToggleable && !this.#toolbarOpen) return false
 
     event.preventDefault()
     event.stopPropagation()
@@ -345,6 +423,7 @@ export default class extends Controller {
     if (!viewport) return
 
     const focused = this.element.contains(document.activeElement)
+      || this.toolbarPanelTarget?.contains(document.activeElement)
 
     // Overlay keyboard: layout stays tall, VV shrinks → bottom = inset.
     const overlayInset = Math.max(
@@ -427,6 +506,13 @@ export default class extends Controller {
 
   get #toolbarOpen() {
     return this.element.classList.contains("composer--toolbar")
+  }
+
+  get #lexxyToolbar() {
+    if (this.hasToolbarPanelTarget) return this.toolbarPanelTarget
+
+    return this.editorTarget.querySelector("lexxy-toolbar")
+      ?? this.editorTarget.toolbarElement
   }
 
   get #visualViewport() {

@@ -136,7 +136,8 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select 'dialog#daylog_composer', count: 0
     assert_select '#bullet_composer' do
-      assert_select 'lexxy-editor[preset=note]'
+      assert_select 'lexxy-editor[preset=note][toolbar=composer_toolbar]'
+      assert_select 'lexxy-toolbar#composer_toolbar[data-upload=file]'
       assert_select 'lexxy-prompt[trigger=?][name=project]', '#'
       assert_select "input[name='bullet[bucket_id]'][value=?]", bucket_id.to_s
       assert_select "input[name='bullet[pops_on]'][value=?]", selected_date.iso8601

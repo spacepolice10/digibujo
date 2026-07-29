@@ -34,6 +34,10 @@
   }
 
   .composer--form {
+    --composer-pill-radius: 1.5rem;
+    --composer-pill-padding: 0.15rem;
+    --composer-detach-gap: var(--spacing-vertical-double);
+
     display: flex;
     flex-direction: column;
     gap: var(--spacing-vertical-half);
@@ -42,12 +46,17 @@
     border: 1px solid var(--color-stroke-base);
     /* Finite pill radius (≈ half the single-line chrome), not 9999px: otherwise
        border-radius transition stays visually round until the last frames. */
-    border-radius: 1.5rem;
+    border-radius: var(--composer-pill-radius);
     background: var(--color-bg-subtle);
     /* Minimal inset so type/submit sit flush to the pill edge. */
-    padding: 0.15rem;
+    padding: var(--composer-pill-padding);
     box-shadow: var(--shadow-base);
-    transition: border-radius 180ms ease;
+    transition:
+      border-color 180ms ease,
+      border-radius 180ms ease,
+      background-color 180ms ease,
+      box-shadow 180ms ease,
+      padding 180ms ease;
 
     @media (min-width: 800px) {
       background: var(--color-bg-subtle);
@@ -59,6 +68,12 @@
     flex-wrap: wrap;
     align-items: center;
     gap: var(--spacing-horizontal-half);
+    transition: row-gap 180ms ease;
+  }
+
+  /* Compact: chrome is invisible — lead/actions join the pill row via contents. */
+  .composer--chrome {
+    display: contents;
   }
 
   .composer--lead,
@@ -76,35 +91,102 @@
     order: 2;
     flex: 1 1 8rem;
     min-width: 0;
+    border: 1px solid transparent;
+    border-radius: var(--composer-pill-radius, 1.5rem);
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    transition:
+      border-color 180ms ease,
+      border-radius 180ms ease,
+      background-color 180ms ease,
+      box-shadow 180ms ease,
+      padding 180ms ease;
   }
 
   .composer--actions {
     order: 3;
   }
 
-  /* Multiline: only reorder — editor on top, type / actions below. */
+  /* Multiline: form shell dissolves; field keeps the pill look and floats above
+     a transparent control strip — only each control (and the toolbar pill) has
+     its own surface, so empty space shows between them. */
   .composer--multiline .composer--form {
-    border-radius: var(--radius-base);
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    gap: 0;
+  }
+
+  .composer--multiline .composer--row {
+    /* Override the shorthand `gap` so only the field↔chrome split opens up. */
+    gap: var(--composer-detach-gap) var(--spacing-horizontal-half);
   }
 
   .composer--multiline .composer--field {
     order: 1;
-    flex-basis: 100%;
+    flex: 1 1 100%;
+    position: relative;
+    z-index: 1;
+    border-color: var(--color-stroke-base);
+    background: var(--color-bg-subtle);
+    box-shadow: var(--shadow-base);
+    padding: var(--spacing-horizontal);
   }
 
-  .composer--multiline .composer--lead {
+  .composer--multiline .composer--chrome {
+    display: flex;
     order: 2;
+    flex: 1 1 100%;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .composer--multiline .composer--lead,
+  .composer--multiline .composer--actions {
+    order: unset;
   }
 
   .composer--multiline .composer--actions {
-    order: 3;
     margin-inline-start: auto;
   }
 
-  /* Formatting toolbar open: hide the type picker, keep Clear. */
-  .composer--toolbar .composer--type {
-    display: none;
+  .composer--toolbar.composer--multiline .composer--actions {
+    margin-inline-start: 0;
   }
+
+  /* Floating control chips on the transparent strip. */
+  .composer--multiline .composer--clear,
+  .composer--multiline .composer--toolbar-toggle,
+  .composer--multiline .composer--upload,
+  .composer--multiline .composer--record {
+    background: var(--color-bg-subtle);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-base);
+  }
+
+  .composer--multiline .composer--clear:hover,
+  .composer--multiline .composer--toolbar-toggle:hover,
+  .composer--multiline .composer--upload:hover,
+  .composer--multiline .composer--record:hover {
+    background: var(--color-bg-base);
+  }
+
+  .composer--multiline .composer--toolbar-toggle[aria-pressed="true"] {
+    background: var(--color-bg-base);
+    color: var(--color-fg-base);
+  }
+
+  /* The toolbar pill itself lives unlayered in actiontext.css: Lexxy's
+     :where(lexxy-toolbar) rules beat anything inside @layer components. */
 
   .composer--type-button.button--icon {
     width: var(--composer-control-size);
@@ -149,10 +231,11 @@
     cursor: not-allowed;
   }
 
-  /* Match Lexxy toolbar icon buttons (toolbar / upload / mic). */
+  /* Match Lexxy toolbar icon buttons (toolbar / upload / mic / clear). */
   .composer--toolbar-toggle,
   .composer--upload,
-  .composer--record {
+  .composer--record,
+  .composer--clear {
     width: var(--composer-control-size);
     height: var(--composer-control-size);
     display: grid;
@@ -168,7 +251,8 @@
 
   .composer--toolbar-toggle:hover,
   .composer--upload:hover,
-  .composer--record:hover {
+  .composer--record:hover,
+  .composer--clear:hover {
     background: var(--color-bg-base);
     color: var(--color-fg-subtle);
   }
@@ -181,15 +265,13 @@
   .composer--toolbar-toggle .button--icon,
   .composer--upload .button--icon,
   .composer--record .button--icon,
+  .composer--clear .button--icon,
   .composer--toolbar-toggle .icon,
   .composer--upload .icon,
-  .composer--record .icon {
+  .composer--record .icon,
+  .composer--clear .icon {
     width: var(--lexxy-toolbar-icon-size, 1.125em);
     height: var(--lexxy-toolbar-icon-size, 1.125em);
-  }
-
-  .composer--clear {
-    flex-shrink: 0;
   }
 
   .composer--submit.button--icon {
@@ -263,8 +345,11 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .composer--form {
+    .composer--form,
+    .composer--row,
+    .composer--field {
       transition: none;
     }
+
   }
 }
