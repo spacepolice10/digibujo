@@ -5,7 +5,7 @@
     gap: var(--spacing-vertical);
 
     h1 {
-      font-size: var(--font-size-strong);
+      font-size: var(--font-size-huge);
       font-weight: var(--font-weight-bold);
       color: var(--color-fg-base);
       line-height: 1.15;
@@ -14,7 +14,7 @@
 
     > p {
       color: var(--color-fg-subtle);
-      font-size: var(--font-size-base);
+      font-size: var(--font-size-base-read);
       max-width: 50ch;
     }
 

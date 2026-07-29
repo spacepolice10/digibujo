@@ -137,7 +137,9 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'dialog#daylog_composer', count: 0
     assert_select '#bullet_composer' do
       assert_select 'lexxy-editor[preset=note][toolbar=composer_toolbar]'
-      assert_select 'lexxy-toolbar#composer_toolbar[data-upload=file]'
+      assert_select '.composer--field + lexxy-toolbar#composer_toolbar[data-upload=both] + .composer--chrome'
+      assert_select '.composer--actions .composer--toolbar-toggle'
+      assert_select '.composer--actions .composer--upload', false
       assert_select 'lexxy-prompt[trigger=?][name=project]', '#'
       assert_select "input[name='bullet[bucket_id]'][value=?]", bucket_id.to_s
       assert_select "input[name='bullet[pops_on]'][value=?]", selected_date.iso8601
@@ -161,6 +163,49 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select 'dialog#daylog_composer', count: 0
     assert_select '#bullet_composer lexxy-editor[preset=note]'
+  end
+
+  test 'mobile daylog keeps the day photo out of the DOM until shown' do
+    date = Date.current
+    picture = @user.daylog.pictures.new(date: date)
+    picture.picture.attach(
+      io: StringIO.new(Base64.decode64(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
+      )),
+      filename: 'day.png',
+      content_type: 'image/png'
+    )
+    picture.save!
+
+    get daylog_path, headers: { 'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)' }
+
+    assert_response :success
+    assert_select "#daylog_photo_card_#{date.iso8601}"
+    assert_select '.daylog--photo-card', count: 0
+    assert_select '.daylog--photo-card-image', count: 0
+    assert_select '.daylog--picture [aria-label="Show photo"]'
+    assert_select '[data-controller~=daylog-photo][data-daylog-photo-lazy-value=true]'
+    assert_select "[data-daylog-photo-url-value=?]", daylog_picture_path(date: date.iso8601)
+  end
+
+  test 'desktop daylog embeds the day photo card when attached' do
+    date = Date.current
+    picture = @user.daylog.pictures.new(date: date)
+    picture.picture.attach(
+      io: StringIO.new(Base64.decode64(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
+      )),
+      filename: 'day.png',
+      content_type: 'image/png'
+    )
+    picture.save!
+
+    get daylog_path
+
+    assert_response :success
+    assert_select '.daylog--photo-card'
+    assert_select '.daylog--photo-card-image'
+    assert_select '[data-controller~=daylog-photo][data-daylog-photo-lazy-value=false]'
   end
 
   test 'root path is home' do

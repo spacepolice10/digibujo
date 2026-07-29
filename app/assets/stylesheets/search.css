@@ -76,7 +76,6 @@
 
   .search--section-heading {
     margin-block: var(--spacing-vertical) 0;
-    font-size: var(--font-size-subtle);
     font-weight: var(--font-weight-base);
     color: var(--color-fg-subtle);
   }

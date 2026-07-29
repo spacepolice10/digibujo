@@ -5,7 +5,7 @@
   .composer {
     --composer-keyboard-inset: 0px;
     --composer-tabbar-inset: 0px;
-    /* Shared hit-target for type / toolbar / clear / upload / mic / submit. */
+/* Shared hit-target for type / toolbar / clear / mic / submit. */
     --composer-control-size: var(--spacing-horizontal-triple);
 
     position: fixed;
@@ -37,6 +37,8 @@
     --composer-pill-radius: 1.5rem;
     --composer-pill-padding: 0.15rem;
     --composer-detach-gap: var(--spacing-vertical-double);
+    /* Band the open toolbar row claims — the editor's max-height reserves it. */
+    --composer-toolbar-band: 0px;
 
     display: flex;
     flex-direction: column;
@@ -63,12 +65,15 @@
     }
   }
 
+  /* row-gap stays 0 so the collapsed toolbar line is free; the wrapped lines
+     that do need air (toolbar panel, multiline chrome) pay for it with
+     margin-block-start, which can be transitioned. */
   .composer--row {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--spacing-horizontal-half);
-    transition: row-gap 180ms ease;
+    column-gap: var(--spacing-horizontal-half);
+    row-gap: 0;
   }
 
   /* Compact: chrome is invisible — lead/actions join the pill row via contents. */
@@ -89,7 +94,7 @@
 
   .composer--field {
     order: 2;
-    flex: 1 1 8rem;
+    flex: 1 1 6rem;
     min-width: 0;
     border: 1px solid transparent;
     border-radius: var(--composer-pill-radius, 1.5rem);
@@ -104,13 +109,24 @@
       padding 180ms ease;
   }
 
+  /* Compact: the slot trails the pill row, so opening it wraps under the whole
+     line instead of splitting type / editor / actions. Sizing lives unlayered
+     in actiontext.css. */
+  .composer--toolbar-panel {
+    order: 4;
+  }
+
+  .composer--toolbar .composer--form {
+    --composer-toolbar-band: calc(
+      var(--composer-detach-gap) + var(--composer-control-size)
+    );
+  }
+
   .composer--actions {
     order: 3;
   }
 
-  /* Multiline: form shell dissolves; field keeps the pill look and floats above
-     a transparent control strip — only each control (and the toolbar pill) has
-     its own surface, so empty space shows between them. */
+  /* Multiline: form shell dissolves; field floats above toolbar slot + chip strip. */
   .composer--multiline .composer--form {
     border: none;
     border-radius: 0;
@@ -118,11 +134,6 @@
     box-shadow: none;
     padding: 0;
     gap: 0;
-  }
-
-  .composer--multiline .composer--row {
-    /* Override the shorthand `gap` so only the field↔chrome split opens up. */
-    gap: var(--composer-detach-gap) var(--spacing-horizontal-half);
   }
 
   .composer--multiline .composer--field {
@@ -136,12 +147,17 @@
     padding: var(--spacing-horizontal);
   }
 
+  .composer--multiline .composer--toolbar-panel {
+    order: 2;
+  }
+
   .composer--multiline .composer--chrome {
     display: flex;
-    order: 2;
+    order: 3;
     flex: 1 1 100%;
     align-items: center;
     gap: var(--spacing-horizontal-half);
+    margin-block-start: var(--spacing-horizontal-half);
     border: none;
     border-radius: 0;
     background: transparent;
@@ -158,14 +174,9 @@
     margin-inline-start: auto;
   }
 
-  .composer--toolbar.composer--multiline .composer--actions {
-    margin-inline-start: 0;
-  }
-
   /* Floating control chips on the transparent strip. */
   .composer--multiline .composer--clear,
   .composer--multiline .composer--toolbar-toggle,
-  .composer--multiline .composer--upload,
   .composer--multiline .composer--record {
     background: var(--color-bg-subtle);
     border: 1px solid var(--color-stroke-base);
@@ -175,7 +186,6 @@
 
   .composer--multiline .composer--clear:hover,
   .composer--multiline .composer--toolbar-toggle:hover,
-  .composer--multiline .composer--upload:hover,
   .composer--multiline .composer--record:hover {
     background: var(--color-bg-base);
   }
@@ -185,8 +195,7 @@
     color: var(--color-fg-base);
   }
 
-  /* The toolbar pill itself lives unlayered in actiontext.css: Lexxy's
-     :where(lexxy-toolbar) rules beat anything inside @layer components. */
+  /* Toolbar panel open/closed chrome lives unlayered in actiontext.css. */
 
   .composer--type-button.button--icon {
     width: var(--composer-control-size);
@@ -231,9 +240,8 @@
     cursor: not-allowed;
   }
 
-  /* Match Lexxy toolbar icon buttons (toolbar / upload / mic / clear). */
+  /* Match Lexxy toolbar icon buttons (formatting / mic / clear). */
   .composer--toolbar-toggle,
-  .composer--upload,
   .composer--record,
   .composer--clear {
     width: var(--composer-control-size);
@@ -250,7 +258,6 @@
   }
 
   .composer--toolbar-toggle:hover,
-  .composer--upload:hover,
   .composer--record:hover,
   .composer--clear:hover {
     background: var(--color-bg-base);
@@ -263,11 +270,9 @@
   }
 
   .composer--toolbar-toggle .button--icon,
-  .composer--upload .button--icon,
   .composer--record .button--icon,
   .composer--clear .button--icon,
   .composer--toolbar-toggle .icon,
-  .composer--upload .icon,
   .composer--record .icon,
   .composer--clear .icon {
     width: var(--lexxy-toolbar-icon-size, 1.125em);
@@ -346,7 +351,6 @@
 
   @media (prefers-reduced-motion: reduce) {
     .composer--form,
-    .composer--row,
     .composer--field {
       transition: none;
     }

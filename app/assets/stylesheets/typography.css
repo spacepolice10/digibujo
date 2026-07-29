@@ -4,11 +4,11 @@
 }
 
 .typography--h2 {
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-huge);
   font-weight: var(--font-weight-strong);
 }
 .typography--paragraph-md {
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-base-read);
   color: var(--color-fg-base);
 }
 .typography--paragraph-sm {

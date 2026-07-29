@@ -9,7 +9,6 @@ export class TrimToolbarExtension extends Extension {
   }
 
   initializeToolbar(toolbar) {
-    toolbar.querySelector('button[name="image"]')?.remove()
     toolbar.querySelector('button[name="underline"]')?.remove()
     toolbar.querySelector('button[name="quote"]')?.remove()
     toolbar.querySelector('button[name="undo"]')?.remove()

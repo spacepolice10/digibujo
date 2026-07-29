@@ -180,7 +180,7 @@
     h2 {
       margin: 0;
       min-width: 0;
-      font-size: var(--font-size-base);
+      font-size: var(--font-size-base-read);
       font-weight: var(--font-weight-strong);
     }
   }
@@ -219,7 +219,7 @@
     background: transparent;
     box-shadow: none;
     font: inherit;
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-base-read);
     line-height: inherit;
     text-align: start;
     text-decoration: none;

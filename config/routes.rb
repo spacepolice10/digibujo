@@ -24,7 +24,7 @@ Rails.application.routes.draw do
     scope module: :daylogs do
       resources :bullets, only: :index
       resource :mood_entity, only: %i[create destroy]
-      resource :picture, only: %i[create destroy]
+      resource :picture, only: %i[show create destroy]
     end
   end
 

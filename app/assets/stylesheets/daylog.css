@@ -35,6 +35,19 @@
       + var(--spacing-vertical)
     );
 
+    /* Day photo card — parked past the right edge by default (mobile / narrow).
+       Wide desktop overrides these so the card peeks behind the panel instead. */
+    --daylog-photo-gap: var(--spacing-horizontal);
+    --daylog-photo-width: min(72vw, 16rem);
+    --daylog-photo-peek: 0px;
+    --daylog-photo-duration: 0.45s;
+    --daylog-photo-left: 100vw;
+    --daylog-photo-expanded-width: min(78vw, 18rem);
+    --daylog-photo-shift: calc(
+      -1 * (var(--daylog-photo-expanded-width) + var(--daylog-photo-gap))
+    );
+    --daylog-photo-out: calc(var(--daylog-photo-expanded-width) * 0.4);
+
     position: relative;
     z-index: 0;
     display: flex;
@@ -96,7 +109,7 @@
     overflow: hidden;
   }
 
-  /* Levitating day header — fixed height; photo fills the same island. */
+  /* Levitating day header — fixed height; frosted chips over the chat. */
   .daylog--chat-header {
     --daylog-header-radius: var(--radius-full);
 
@@ -111,34 +124,6 @@
     box-shadow: none;
     overflow: visible;
     pointer-events: none;
-  }
-
-  .daylog--chat-header:has(.daylog--header-photo-image) {
-    overflow: hidden;
-    border: 1px solid var(--color-stroke-base);
-    background: transparent;
-    box-shadow: var(--shadow-base);
-  }
-
-  .daylog--header-photo {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    overflow: hidden;
-  }
-
-  .daylog--header-photo-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .daylog--header-photo:has(.daylog--header-photo-image)::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: color-mix(in srgb, var(--color-bg-subtle) 35%, transparent);
   }
 
   .daylog--header-bar {
@@ -240,6 +225,199 @@
     display: flex;
     align-items: center;
     gap: 0.15rem;
+  }
+
+  /* ── Day photo card ─────────────────────────────────────────────────────
+     Default (narrow desktop): parked fully past the right edge of the
+     viewport; the header arrow pulls it in. Mobile keeps the card out of the
+     DOM until Show photo fetches it into the same shell. Wide desktop
+     overrides the geometry vars so the card peeks behind the panel instead. */
+  /* Controller wrapper must not break the page flex chain (shell + composer). */
+  .daylog--photo-stage {
+    display: contents;
+  }
+
+  .daylog--photo {
+    display: contents;
+  }
+
+  /* Out until the card fully clears the panel/viewport, flip the layer there,
+     then back to the resting spot. Closing runs the same trip in reverse. */
+  @keyframes daylog-photo-fly-out {
+    0% {
+      translate: 0 -50%;
+      rotate: 3deg;
+      width: var(--daylog-photo-width);
+      z-index: var(--z-base);
+      animation-timing-function: cubic-bezier(0.3, 0.9, 0.4, 1);
+    }
+
+    45% {
+      translate: var(--daylog-photo-out) -50%;
+      rotate: -8deg;
+      width: var(--daylog-photo-expanded-width);
+      z-index: var(--z-base);
+      animation-timing-function: cubic-bezier(0.4, 0, 0.25, 1);
+    }
+
+    46% {
+      z-index: var(--z-dialog);
+    }
+
+    100% {
+      translate: var(--daylog-photo-shift) -50%;
+      rotate: -3deg;
+      width: var(--daylog-photo-expanded-width);
+      z-index: var(--z-dialog);
+    }
+  }
+
+  @keyframes daylog-photo-fly-in {
+    0% {
+      translate: var(--daylog-photo-shift) -50%;
+      rotate: -3deg;
+      width: var(--daylog-photo-expanded-width);
+      z-index: var(--z-dialog);
+      animation-timing-function: cubic-bezier(0.3, 0.9, 0.4, 1);
+    }
+
+    45% {
+      translate: var(--daylog-photo-out) -50%;
+      rotate: -8deg;
+      width: var(--daylog-photo-expanded-width);
+      z-index: var(--z-dialog);
+      animation-timing-function: cubic-bezier(0.4, 0, 0.25, 1);
+    }
+
+    46% {
+      z-index: var(--z-base);
+    }
+
+    100% {
+      translate: 0 -50%;
+      rotate: 3deg;
+      width: var(--daylog-photo-width);
+      z-index: var(--z-base);
+    }
+  }
+
+  .daylog--photo-card {
+    position: fixed;
+    z-index: var(--z-base);
+    top: 50%;
+    left: var(--daylog-photo-left);
+    width: var(--daylog-photo-width);
+    height: auto;
+    aspect-ratio: 3 / 4;
+    padding: 0;
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-strong);
+    background: var(--color-bg-subtle);
+    box-shadow: var(--shadow-base);
+    transform-origin: left center;
+    translate: 0 -50%;
+    rotate: 3deg;
+    cursor: pointer;
+    overflow: hidden;
+    transition:
+      scale 0.2s ease-out,
+      box-shadow 0.2s ease-out;
+  }
+
+  .daylog--photo-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+
+  /* Toolbar sits on the visible right edge of the peek / the top-right of the
+     expanded card — frosted chips matching the day header controls. */
+  .daylog--photo-toolbar {
+    position: absolute;
+    z-index: 1;
+    top: var(--spacing-vertical-half);
+    right: var(--spacing-horizontal-half);
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.15rem;
+    border: 1px solid color-mix(in srgb, var(--color-stroke-base) 70%, transparent);
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-bg-subtle) 72%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .daylog--photo-toolbar :is(.button--tertiary, .button--icon) {
+    width: var(--spacing-horizontal-triple);
+    height: var(--spacing-horizontal-triple);
+    border-radius: var(--radius-full);
+  }
+
+  .daylog--photo-card:hover {
+    scale: 1.04;
+    box-shadow: var(--shadow-strong);
+  }
+
+  .daylog--photo-card.is-expanded {
+    z-index: var(--z-dialog);
+    width: var(--daylog-photo-expanded-width);
+    translate: var(--daylog-photo-shift) -50%;
+    rotate: -3deg;
+    box-shadow: var(--shadow-strong);
+    animation: daylog-photo-fly-out var(--daylog-photo-duration) both;
+  }
+
+  .daylog--photo-card.is-collapsing {
+    animation: daylog-photo-fly-in var(--daylog-photo-duration) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .daylog--photo-card {
+      rotate: 0deg;
+      transition: none;
+    }
+
+    .daylog--photo-card.is-expanded {
+      rotate: 0deg;
+    }
+
+    .daylog--photo-card.is-expanded,
+    .daylog--photo-card.is-collapsing {
+      animation: none;
+    }
+  }
+
+  /* Wide enough for a margin: tuck the card behind the panel's right edge. */
+  @media (min-width: 1040px) {
+    .layout--page.daylog.daylog--chat {
+      --daylog-photo-gap: var(--spacing-horizontal-double);
+      --daylog-photo-width: 12rem;
+      --daylog-photo-peek: 3rem;
+      --daylog-photo-left: calc(
+        50vw + var(--breakpoint-laptop) / 2
+        - var(--daylog-photo-width)
+        + var(--daylog-photo-peek)
+      );
+      --daylog-photo-expanded-width: clamp(
+        var(--daylog-photo-width),
+        calc(50vw - var(--breakpoint-laptop) / 2 - var(--daylog-photo-gap) * 2),
+        22rem
+      );
+      --daylog-photo-shift: max(0px, calc(
+        100vw
+        - var(--daylog-photo-gap)
+        - var(--daylog-photo-expanded-width)
+        - var(--daylog-photo-left)
+      ));
+      --daylog-photo-out: calc(
+        var(--daylog-photo-width)
+        - var(--daylog-photo-peek)
+        + var(--daylog-photo-expanded-width) * 0.5
+      );
+    }
   }
 
   /* Composer aligns to the same inline inset as the bullet list on mobile. */
@@ -393,6 +571,6 @@
   }
 
   .daylog--mood-menu-marker {
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-base-read);
   }
 }

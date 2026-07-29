@@ -54,7 +54,6 @@
   }
 
   .tracker--statistics dt {
-    font-size: var(--font-size-subtle);
     color: var(--color-fg-subtle);
   }
 
@@ -66,7 +65,7 @@
 
   .tracker--heading {
     margin: 0;
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-base-read);
     font-weight: var(--font-weight-strong);
   }
 

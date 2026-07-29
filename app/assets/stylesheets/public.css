@@ -31,7 +31,7 @@
   }
 
   .public-app-name {
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-base-read);
     font-weight: var(--font-weight-strong);
     color: var(--color-fg-base);
   }
@@ -42,7 +42,6 @@
     gap: var(--spacing-vertical);
 
     p {
-      font-size: var(--font-size-subtle);
       color: var(--color-fg-subtle);
       margin: 0;
     }
@@ -88,7 +87,6 @@
   }
 
   .public--published-date {
-    font-size: var(--font-size-subtle);
     color: var(--color-fg-subtle);
   }
 }

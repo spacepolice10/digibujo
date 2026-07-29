@@ -147,13 +147,13 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     assert_selector '#bullet_composer.composer--multiline'
   end
 
-  test 'toolbar toggle and clear appear for Note once the draft wraps to two lines' do
+  test 'toolbar toggle is Note-only and clear waits for multiline' do
     visit daylog_path(date: Date.current.iso8601)
 
-    assert_no_selector '.composer--actions .composer--toolbar-toggle', visible: true
+    assert_selector '.composer--actions .composer--toolbar-toggle'
+    assert_no_selector '.composer--actions .composer--upload'
     assert_no_selector '.composer--lead .composer--clear', visible: true
-    assert_selector '.composer--actions .composer--upload'
-    assert_no_selector '#bullet_composer button[name=bold]', visible: true
+    assert_no_selector '#composer_toolbar > button[name=bold]', visible: true
 
     focus_composer
     editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
@@ -164,15 +164,15 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     assert_selector '#bullet_composer.composer--multiline'
     assert_selector '.composer--actions .composer--toolbar-toggle'
     assert_selector '.composer--lead .composer--clear[aria-label="Clear draft"]'
-    assert_selector '.composer--actions .composer--upload'
-    assert_no_selector '#bullet_composer button[name=bold]', visible: true
+    assert_no_selector '#composer_toolbar > button[name=bold]', visible: true
   end
 
-  test 'an attachment latches multiline while upload stays in actions' do
+  test 'an attachment latches multiline' do
     visit daylog_path(date: Date.current.iso8601)
 
     assert_no_selector '#bullet_composer.composer--multiline'
-    assert_selector '.composer--actions .composer--upload'
+    assert_selector '.composer--actions .composer--toolbar-toggle'
+    assert_no_selector '.composer--actions .composer--upload'
 
     page.execute_script(<<~JS)
       const editor = document.querySelector('#bullet_composer lexxy-editor')
@@ -184,30 +184,30 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     JS
 
     assert_selector '#bullet_composer.composer--multiline'
-    assert_selector '.composer--actions .composer--upload'
-    assert_no_selector '#bullet_composer button[name=bold]', visible: true
+    assert_no_selector '#composer_toolbar > button[name=bold]', visible: true
   end
 
-  test 'toolbar toggle and upload are Note-only' do
+  test 'toolbar toggle is Note-only' do
     visit daylog_path(date: Date.current.iso8601)
 
-    assert_selector '.composer--actions .composer--upload'
+    assert_selector '.composer--actions .composer--toolbar-toggle'
+    assert_no_selector '.composer--actions .composer--upload'
     assert_selector '.composer--type-button.button--secondary'
 
     find('.composer--type-button').click
     find('.composer--type-option[data-composer-type="Task"]').click
 
-    assert_no_selector '.composer--actions .composer--upload', visible: true
     assert_no_selector '.composer--toolbar-toggle', visible: true
   end
 
-  test 'toolbar toggle reveals formatting without remounting the editor' do
+  test 'toolbar toggle reveals formatting under the field without remounting' do
     visit daylog_path(date: Date.current.iso8601)
 
     assert_selector '#bullet_composer lexxy-editor[preset=note]'
-    assert_selector '.composer--actions .composer--upload'
+    assert_selector '.composer--actions .composer--toolbar-toggle'
+    assert_no_selector '.composer--actions .composer--upload'
     assert_no_selector '#composer_toolbar > button[name=bold]', visible: true
-    assert_no_selector '.composer--actions .composer--toolbar-toggle', visible: true
+    assert_selector '#bullet_composer .composer--field + #composer_toolbar + .composer--chrome'
 
     focus_composer
     editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
@@ -217,15 +217,15 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     assert_selector '.composer--toolbar-toggle'
     assert_selector '.composer--lead .composer--clear[aria-label="Clear draft"]'
     assert_no_selector '#composer_toolbar > button[name=bold]', visible: true
-    assert_selector '.composer--actions .composer--upload'
 
     find('.composer--toolbar-toggle').click
 
     assert_selector '#bullet_composer.composer--toolbar'
     assert_selector '#composer_toolbar[aria-hidden="false"]'
     assert_selector '#bullet_composer lexxy-editor[preset=note]'
-    assert_selector '.composer--actions .composer--upload'
     assert_selector '#composer_toolbar > button[name=bold]'
+    assert_selector '#composer_toolbar > button[name=file]'
+    assert_selector '#composer_toolbar > button[name=image]'
     assert_selector '.composer--type-button', visible: true
     assert_selector '.composer--lead .composer--clear[aria-label="Clear draft"]'
     assert_text 'Draft note'
@@ -237,8 +237,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     assert_selector '#composer_toolbar[aria-hidden="true"]', visible: :all
     assert_selector '#bullet_composer.composer--multiline'
     assert_selector '#bullet_composer lexxy-editor[preset=note]'
-    assert_selector '.composer--actions .composer--upload'
-    assert_no_selector '#composer_toolbar button[name=bold]', visible: true
+    assert_no_selector '#composer_toolbar > button[name=bold]', visible: true
     assert_text 'Draft note'
     assert_selector '.composer--type-button', visible: true
   end

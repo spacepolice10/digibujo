@@ -4,15 +4,15 @@ const TYPE_STORAGE_KEY = "digibujo.composer.type"
 const VOICE_TYPE = "Voice"
 const NOTE_TYPE = "Note"
 
-// Always-on chat-style bullet composer: one form, one Lexxy editor (note preset
-// so the toolbar exists once), a type picker that persists across visits, and
-// an inline voice mode driven by voice-recorder on the same element. Lexxy is
-// pointed at an external <lexxy-toolbar id="composer_toolbar"> via toolbar=.
+// Always-on chat-style bullet composer: one form, one Lexxy editor (note preset),
+// a type picker that persists across visits, and an inline voice mode driven by
+// voice-recorder. Lexxy points at an external <lexxy-toolbar id="composer_toolbar">
+// under the field via toolbar= — never reparent (disconnect disposes setEditor).
 export default class extends Controller {
   static targets = [
     "form", "editor", "typeField", "typeIcon", "typeOption", "composeRow",
     "voicePanel", "submit", "voiceSubmit", "toolbarButton", "toolbarPanel",
-    "clearButton", "uploadButton", "recordButton"
+    "clearButton", "recordButton"
   ]
 
   connect() {
@@ -68,7 +68,7 @@ export default class extends Controller {
   }
 
   // Field click focuses the editor — but never when the click already landed
-  // inside <lexxy-editor> or the inline formatting pill (reparented toolbar).
+  // inside <lexxy-editor> or the formatting toolbar under the field.
   focus(event) {
     if (event?.target instanceof Element) {
       if (event.target.closest("lexxy-editor")) return
@@ -81,9 +81,9 @@ export default class extends Controller {
   // Desktop send: Notes need Cmd/Ctrl+Enter (plain Enter inserts a newline);
   // Task/Event send on Enter. Shift+Enter always breaks the line. On touch /
   // coarse pointers neither Enter nor Cmd/Ctrl+Enter sends — use the submit
-  // control. While the formatting pill is open, Enter always breaks the
+  // control. While the formatting toolbar is open, Enter always breaks the
   // line. Shift+Tab cycles Note → Task → Event. Shift+Ctrl+E toggles the Note
-  // toolbar pill. Shift+R starts a voice take (hotkey on the mic ignores the
+  // toolbar. Shift+R starts a voice take (hotkey on the mic ignores the
   // editor; this path covers the focused field). Runs on capture so Lexical
   // never sees a sending Enter.
   keydown(event) {
@@ -171,9 +171,9 @@ export default class extends Controller {
     this.refresh()
   }
 
-  // Keep send / mic / toolbar / clear / upload visibility and wrap-aware layout
-  // in sync. Toolbar toggle is Note-only and waits for multiline; clear shows
-  // whenever a multiline draft has text; upload is Note-only always.
+  // Keep send / mic / toolbar / clear visibility and wrap-aware layout in sync.
+  // Formatting is Note-only (always, not only after multiline); clear shows for a
+  // multiline draft with text.
   refresh() {
     const ready = this.#submittable
     this.submitTarget.disabled = !ready
@@ -182,30 +182,21 @@ export default class extends Controller {
     this.#syncMultiline()
     this.toolbarButtonTarget.hidden = !this.#toolbarToggleable
     this.clearButtonTarget.hidden = !this.#clearable
-    this.uploadButtonTarget.hidden = !this.#uploadable
-  }
-
-  // Proxy to Lexxy's hidden toolbar control so uploads stay in the same pipeline.
-  uploadFile() {
-    if (!this.#uploadable) return
-
-    this.#lexxyToolbar?.querySelector('button[name="file"]')?.click()
   }
 
   // External <lexxy-toolbar id="composer_toolbar"> starts empty; seed Lexxy's
   // default controls (and re-bind if the editor already attached to a blank one).
-  // Never move the toolbar — disconnect runs dispose() and kills commands.
   #prepareToolbar() {
     if (!this.hasToolbarPanelTarget) return
 
     const toolbar = this.toolbarPanelTarget
     this.#bootstrapToolbar(toolbar)
-    this.#preferToolbarScroll(toolbar)
+    this.#disableLexxyOverflow(toolbar)
 
     if (this.editorTarget.editor && typeof toolbar.setEditor === "function") {
       if (toolbar.editorElement !== this.editorTarget) {
         toolbar.setEditor(this.editorTarget)
-        this.#preferToolbarScroll(toolbar)
+        this.#disableLexxyOverflow(toolbar)
       }
     }
   }
@@ -218,13 +209,12 @@ export default class extends Controller {
     if (!template) return
 
     toolbar.innerHTML = template
-    if (!toolbar.hasAttribute("data-upload")) toolbar.setAttribute("data-upload", "file")
+    if (!toolbar.hasAttribute("data-upload")) toolbar.setAttribute("data-upload", "both")
     if (!toolbar.hasAttribute("data-attachments")) {
       toolbar.setAttribute("data-attachments", "true")
     }
 
-    // Match TrimToolbarExtension — keep the composer pill compact.
-    toolbar.querySelector('button[name="image"]')?.remove()
+    // Match TrimToolbarExtension — keep the composer toolbar compact.
     toolbar.querySelector('button[name="underline"]')?.remove()
     toolbar.querySelector('button[name="quote"]')?.remove()
     toolbar.querySelector('button[name="undo"]')?.remove()
@@ -238,26 +228,19 @@ export default class extends Controller {
     toolbar.querySelectorAll(".lexxy-editor__toolbar-separator").forEach((el) => el.remove())
   }
 
-  // Composer scrolls the pill horizontally; disable Lexxy's "more" overflow menu
-  // so buttons stay in the row. Lexxy may already have scheduled a rAF compact
-  // before we stub — restore again on the next frames / when showing.
-  #preferToolbarScroll(toolbar) {
-    toolbar.requestOverflowRefresh = () => this.#restoreOverflowedButtons(toolbar)
-    this.#restoreOverflowedButtons(toolbar)
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => this.#restoreOverflowedButtons(toolbar))
-    })
-  }
+  // Prefer CSS horizontal scroll; stop Lexxy from moving controls into its
+  // overflow menu (which we hide). One-shot — no restore loops on show.
+  #disableLexxyOverflow(toolbar) {
+    toolbar.requestOverflowRefresh = () => {}
 
-  #restoreOverflowedButtons(toolbar) {
     const overflow = toolbar.querySelector(".lexxy-editor__toolbar-overflow")
     const menu = overflow?.querySelector(":scope > [data-dropdown-panel], .lexxy-editor__toolbar-overflow-menu")
-    if (menu) {
-      while (menu.firstChild) {
-        const item = menu.firstChild
-        item.removeAttribute("role")
-        toolbar.insertBefore(item, overflow)
-      }
+    if (!menu) return
+
+    while (menu.firstChild) {
+      const item = menu.firstChild
+      item.removeAttribute("role")
+      toolbar.insertBefore(item, overflow)
     }
   }
 
@@ -265,8 +248,7 @@ export default class extends Controller {
     this.element.classList.add("composer--toolbar")
     if (this.hasToolbarPanelTarget) {
       this.toolbarPanelTarget.setAttribute("aria-hidden", "false")
-      this.#restoreOverflowedButtons(this.toolbarPanelTarget)
-      requestAnimationFrame(() => this.#restoreOverflowedButtons(this.toolbarPanelTarget))
+      this.toolbarPanelTarget.removeAttribute("inert")
     }
     this.#syncToolbarButton(true)
     this.focus()
@@ -276,6 +258,7 @@ export default class extends Controller {
     this.element.classList.remove("composer--toolbar")
     if (this.hasToolbarPanelTarget) {
       this.toolbarPanelTarget.setAttribute("aria-hidden", "true")
+      this.toolbarPanelTarget.setAttribute("inert", "")
     }
     this.#syncToolbarButton(false)
   }
@@ -378,8 +361,6 @@ export default class extends Controller {
 
     this.resizeObserver?.disconnect()
     this.resizeObserver = new ResizeObserver(() => this.#syncMultiline())
-    // Measure the content box, not the whole editor — the compact uploadFile
-    // control keeps lexxy-editor tall even on a blank one-liner.
     const content = this.editorTarget.editorContentElement ?? this.editorTarget
     this.resizeObserver.observe(content)
   }
@@ -480,9 +461,8 @@ export default class extends Controller {
 
   get #toolbarToggleable() {
     if (this.#toolbarOpen) return true
-    if (this.typeFieldTarget.value !== NOTE_TYPE) return false
 
-    return this.element.classList.contains("composer--multiline")
+    return !this.#voiceMode && this.typeFieldTarget.value === NOTE_TYPE
   }
 
   get #clearable() {
@@ -490,10 +470,6 @@ export default class extends Controller {
     if (!this.element.classList.contains("composer--multiline")) return false
 
     return !this.editorTarget.isBlank
-  }
-
-  get #uploadable() {
-    return !this.#voiceMode && this.typeFieldTarget.value === NOTE_TYPE
   }
 
   get #voiceMode() {
@@ -506,13 +482,6 @@ export default class extends Controller {
 
   get #toolbarOpen() {
     return this.element.classList.contains("composer--toolbar")
-  }
-
-  get #lexxyToolbar() {
-    if (this.hasToolbarPanelTarget) return this.toolbarPanelTarget
-
-    return this.editorTarget.querySelector("lexxy-toolbar")
-      ?? this.editorTarget.toolbarElement
   }
 
   get #visualViewport() {

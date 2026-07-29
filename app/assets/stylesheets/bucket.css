@@ -43,7 +43,6 @@
   }
 
   .bucket--list-item-meta {
-    font-size: var(--font-size-subtle);
     color: var(--color-fg-subtle);
   }
 
@@ -141,7 +140,6 @@
 
   .bucket--collect-preview-heading {
     margin-bottom: var(--spacing-vertical);
-    font-size: var(--font-size-subtle);
     color: var(--color-fg-subtle);
   }
 

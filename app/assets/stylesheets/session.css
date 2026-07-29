@@ -94,7 +94,6 @@
   .session--flash {
     padding: var(--spacing-vertical) var(--spacing-horizontal);
     border-radius: var(--radius-base);
-    font-size: var(--font-size-subtle);
     margin-bottom: var(--spacing-vertical);
   }
 
@@ -129,7 +128,6 @@
     display: inline-flex;
     align-items: center;
     gap: var(--spacing-horizontal-half);
-    font-size: var(--font-size-subtle);
     color: var(--color-fg-subtle);
     text-decoration: none;
 
@@ -171,7 +169,6 @@
     display: flex;
     flex-direction: column;
     gap: var(--spacing-vertical);
-    font-size: var(--font-size-subtle);
     color: var(--color-fg-subtle);
   }
 

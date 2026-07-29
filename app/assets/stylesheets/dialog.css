@@ -136,7 +136,6 @@
 
   .dialog--footer button {
     flex: 1;
-    font-size: var(--font-size-subtle);
   }
 
   .dialog--footer .button--secondary,

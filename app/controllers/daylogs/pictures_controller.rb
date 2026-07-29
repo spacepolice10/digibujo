@@ -5,6 +5,13 @@ module Daylogs
     before_action :set_daylog
     before_action :set_picture_date
 
+    def show
+      @picture = @daylog.pictures.find_by(date: @date)
+      raise ActiveRecord::RecordNotFound unless @picture&.picture&.attached?
+
+      render layout: false
+    end
+
     def create
       @picture = @daylog.pictures.find_or_initialize_by(date: @date)
       @picture.picture.attach(params.require(:picture))

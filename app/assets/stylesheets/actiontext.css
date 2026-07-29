@@ -128,6 +128,7 @@ lexxy-editor:not(.composer--editor) {
     - max(var(--composer-tabbar-inset, 0px), var(--composer-keyboard-inset, 0px))
     - var(--composer-detach-gap, 0px)
     - var(--composer-control-size)
+    - var(--composer-toolbar-band, 0px)
     - (var(--spacing-vertical-half) * 2)
     - (var(--spacing-horizontal) * 2)
     - max(var(--spacing-vertical-quad) * 4, 12dvh)
@@ -149,15 +150,10 @@ lexxy-editor:not(.composer--editor) {
   overflow: visible;
 }
 
-/* Composer keeps a note-preset toolbar as an external #composer_toolbar
-   (toolbar="composer_toolbar") — never nest a second one in the field. */
+/* Composer keeps a note-preset toolbar as an external #composer_toolbar under
+   the field (toolbar="composer_toolbar") — never nest a second one in the field. */
 .composer--field lexxy-toolbar {
   display: none;
-}
-
-/* Lexxy keeps a file control for the actions proxy to click; never show it. */
-.composer lexxy-toolbar button[name="file"] {
-  display: none !important;
 }
 
 .composer lexxy-toolbar .lexxy-editor__toolbar-group-end {
@@ -169,42 +165,73 @@ lexxy-editor:not(.composer--editor) {
   display: none;
 }
 
-/* Inline toolbar pill between lead and trailing actions. Closed: hidden. Open:
-   control-chip height, horizontal scroll (Lexxy's overflow menu is off), popout
-   on reveal. Stays unlayered — Lexxy's :where(lexxy-toolbar) sets display / gap /
-   padding / max-inline-size and would beat @layer components. */
+/* Toolbar slot under the field. It always keeps its own flex line, so both
+   directions of the toggle animate: closed collapses to zero height with no
+   border and no top margin (the row itself carries row-gap: 0, so the empty
+   line costs nothing), open grows into a chip-height pill. Staying in flow also
+   keeps a real inline size, which Lexxy's overflow pass measures to decide how
+   many buttons fit.
+   Unlayered — Lexxy's :where(lexxy-toolbar) would beat @layer components. */
 .composer .composer--toolbar-panel {
   --lexxy-toolbar-button-size: var(--icon-shell-size);
   --lexxy-toolbar-icon-size: var(--icon-shell-glyph);
 
-  display: none;
+  display: flex;
+  flex: 1 1 100%;
+  flex-wrap: nowrap;
+  align-items: center;
+  box-sizing: border-box;
+  gap: var(--spacing-horizontal-half);
+  width: 100%;
+  max-inline-size: 100%;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  /* Zero width, not transparent: with box-sizing: border-box a 1px border would
+     still floor the collapsed height at 2px and leave a seam in the row. */
+  border: 0 solid transparent;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-subtle);
+  box-shadow: none;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transform: scale(0.94);
+  transform-origin: center left;
+  transition:
+    height 180ms ease,
+    margin-block-start 180ms ease,
+    opacity 180ms ease,
+    padding 180ms ease,
+    border-width 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
 }
 
 .composer--toolbar .composer--toolbar-panel {
-  display: flex;
-  flex: 1 1 auto;
-  flex-wrap: nowrap;
-  align-items: center;
-  align-self: center;
-  gap: var(--spacing-horizontal-half);
-  min-width: 0;
-  max-inline-size: 100%;
   height: var(--composer-control-size);
-  margin: 0;
+  margin-block-start: var(--spacing-horizontal-half);
   padding: 0 var(--spacing-horizontal-half);
-  border: 1px solid var(--color-stroke-base);
-  border-radius: var(--radius-full);
-  background: var(--color-bg-subtle);
+  border-width: 1px;
+  border-color: var(--color-stroke-base);
   box-shadow: var(--shadow-base);
-  overflow-x: scroll;
+  opacity: 1;
+  overflow-x: auto;
   overflow-y: hidden;
   scrollbar-width: thin;
-  animation: popout-opacity 0.2s ease-out;
+  pointer-events: auto;
+  transform: scale(1);
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .composer .composer--toolbar-panel {
+    transform: none;
+    transition: none;
+  }
+
   .composer--toolbar .composer--toolbar-panel {
-    animation: none;
+    transform: none;
   }
 }
 
@@ -223,7 +250,7 @@ lexxy-editor:not(.composer--editor) {
   max-inline-size: none;
 }
 
-/* Horizontal scroll replaces Lexxy's "more" overflow dropdown. */
+/* Prefer horizontal scroll over Lexxy's "more" overflow dropdown. */
 .composer--toolbar-panel .lexxy-editor__toolbar-overflow {
   display: none !important;
 }
@@ -234,6 +261,13 @@ lexxy-editor:not(.composer--editor) {
 
 .lexxy-content {
   color: var(--color-fg-base);
+}
+
+/* Editors stay at the 16px typing size so iOS does not zoom on focus and so
+   composer lh metrics (control size, rows) keep matching the flanking icons.
+   Rendered .lexxy-content inherits --font-size-base-read from body. */
+.lexxy-editor__content {
+  font-size: var(--font-size-base-type);
 }
 
 .lexxy-editor__toolbar-button {

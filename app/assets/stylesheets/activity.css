@@ -14,7 +14,6 @@
 
   .activity--date {
     margin: 0;
-    font-size: var(--font-size-subtle);
     font-weight: var(--font-weight-strong);
     color: var(--color-fg-subtle);
   }
@@ -43,21 +42,19 @@
   }
 
   .activity--subject-name {
-    font-size: var(--font-size-subtle);
     color: var(--color-fg-base);
   }
 
   .activity--detail {
     margin: 0;
     min-width: 0;
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-base-read);
     color: var(--color-fg-subtle);
   }
 
   .activity--time,
   .activity--time-relative {
     min-width: 0;
-    font-size: var(--font-size-subtle);
     color: var(--color-fg-subtle);
   }
 
@@ -91,7 +88,7 @@
 
   .activity--show-summary-text {
     margin: 0;
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-base-read);
     color: var(--color-fg-base);
   }
 }

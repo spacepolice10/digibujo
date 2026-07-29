@@ -8,7 +8,6 @@
   @media (pointer: fine) {
     .hotkey-hint[data-hotkey]::after {
       content: attr(data-hotkey);
-      font-size: var(--font-size-subtle);
       pointer-events: none;
     }
 
@@ -20,7 +19,7 @@
       min-width: 1.5rem;
       height: 1.5rem;
       padding: 0 0.4rem;
-      font-size: var(--font-size-tiny);
+      font-size: var(--font-size-xs);
       font-weight: var(--font-weight-bold);
       color: var(--color-fg-base);
       background: var(--color-bg-base);
@@ -30,7 +29,7 @@
     }
 
     .hotkey-hint--key {
-      font-size: var(--font-size-tiny);
+      font-size: var(--font-size-xs);
     }
 
     .button--primary.hotkey-hint--always[data-hotkey]::after,

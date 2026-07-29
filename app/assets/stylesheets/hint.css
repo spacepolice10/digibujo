@@ -31,7 +31,6 @@
     border: 1px solid var(--color-stroke-strong);
     border-radius: var(--radius-base);
     box-shadow: var(--shadow-base);
-    font-size: var(--font-size-subtle);
     font-weight: var(--font-weight-base);
     pointer-events: none;
     position-area: block-start center;

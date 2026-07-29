@@ -91,7 +91,6 @@
     width: var(--spacing-horizontal-double);
     padding-left: var(--spacing-horizontal-half);
     box-sizing: border-box;
-    font-size: var(--font-size-subtle);
     color: var(--color-fg-subtle);
     text-decoration: none;
 
@@ -150,7 +149,7 @@
 
   .review--side-name {
     margin: 0;
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-base-read);
     font-weight: var(--font-weight-strong);
   }
 

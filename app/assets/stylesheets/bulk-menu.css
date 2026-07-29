@@ -58,7 +58,6 @@
     width: 100%;
     margin: 0;
     padding-top: var(--spacing-vertical-half);
-    font-size: var(--font-size-subtle);
     font-weight: var(--font-weight-base);
     color: var(--color-fg-subtle);
     text-align: center;
@@ -155,7 +154,6 @@
     margin: 0;
     padding: var(--spacing-vertical-half) var(--spacing-horizontal);
     color: var(--color-fg-subtle);
-    font-size: var(--font-size-subtle);
     text-align: center;
   }
 }

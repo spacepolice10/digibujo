@@ -18,7 +18,6 @@
     text-align: center;
     padding: var(--spacing-vertical) var(--spacing-horizontal-double);
     border-radius: var(--radius-strong);
-    font-size: var(--font-size-subtle);
     animation:
       toasts--shaking 0.1s ease-in-out,
       toasts--fade-away 0.1s ease-in-out 3s;

@@ -1,35 +1,51 @@
 <%# locals: (daylog:, daylog_bucket:, selected_date:, bullets:, more_bullets:, mood_entity:, picture:, pending_count: 0) %>
-<%# Campfire-style messages column; header can carry the day photo as its
-    background. Composer is a fixed dock (keyboard covers the tabbar). %>
-<div data-bulk-menu-target="list"
-     class="daylog--shell"
-     data-controller="daylog-scroll"
-     data-daylog-scroll-url-value="<%= daylog_bullets_path %>">
-  <%= render "daylogs/header",
-        date: selected_date,
-        mood_entity: mood_entity,
-        picture: picture,
-        pending_count: pending_count %>
+<%# Campfire-style messages column. The day photo is a card parked off-screen
+    (or peeking behind the panel on wide desktop); the header arrow / peek
+    pulls it out. On mobile the card stays out of the DOM until Show photo.
+    Composer is a fixed dock (keyboard covers the tabbar). %>
+<% photo_lazy = mobile_variant? %>
+<div
+  class="daylog--photo-stage"
+  data-controller="daylog-photo"
+  data-daylog-photo-lazy-value="<%= photo_lazy %>"
+  data-daylog-photo-url-value="<%= daylog_picture_path(date: selected_date.iso8601) %>"
+  data-action="
+    keydown.esc@document->daylog-photo#collapse
+    click@document->daylog-photo#collapseOutside
+  "
+>
+  <%= render "daylogs/photo_card", date: selected_date, picture: picture, lazy: photo_lazy %>
 
-  <div class="daylog--scroller" data-daylog-scroll-target="scroller">
-    <% if more_bullets %>
-      <div class="daylog--older-trigger" data-daylog-scroll-target="trigger">
-        <i class="icon icon--spin" style="--icon-mask: var(--icon-spinner)" aria-hidden="true"></i>
-        <span class="utilities--sr-only">Loading earlier bullets</span>
+  <div data-bulk-menu-target="list"
+       class="daylog--shell"
+       data-controller="daylog-scroll"
+       data-daylog-scroll-url-value="<%= daylog_bullets_path %>">
+    <%= render "daylogs/header",
+          date: selected_date,
+          mood_entity: mood_entity,
+          picture: picture,
+          pending_count: pending_count %>
+
+    <div class="daylog--scroller" data-daylog-scroll-target="scroller">
+      <% if more_bullets %>
+        <div class="daylog--older-trigger" data-daylog-scroll-target="trigger">
+          <i class="icon icon--spin" style="--icon-mask: var(--icon-spinner)" aria-hidden="true"></i>
+          <span class="utilities--sr-only">Loading earlier bullets</span>
+        </div>
+      <% end %>
+
+      <div id="<%= dom_id(daylog, :bullets_container) %>" class="layout--list" data-daylog-scroll-target="list">
+        <% bullets.each do |bullet| %>
+          <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
+        <% end %>
+
+        <% if bullets.empty? %>
+          <p id="no_bullets_container" class="typography--paragraph-sm typography--center layout--padded layout--mx-auto">
+              No bullets yet, check your monthly bucket, references or start a
+              braindumping session.
+          </p>
+        <% end %>
       </div>
-    <% end %>
-
-    <div id="<%= dom_id(daylog, :bullets_container) %>" class="layout--list" data-daylog-scroll-target="list">
-      <% bullets.each do |bullet| %>
-        <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
-      <% end %>
-
-      <% if bullets.empty? %>
-        <p id="no_bullets_container" class="typography--paragraph-sm typography--center layout--padded layout--mx-auto">
-            No bullets yet, check your monthly bucket, references or start a
-            braindumping session.
-        </p>
-      <% end %>
     </div>
   </div>
 </div>

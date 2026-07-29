@@ -6,7 +6,6 @@
     gap: var(--spacing-vertical-half);
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     font-family: inherit;
-    font-size: var(--font-size-subtle);
     white-space: nowrap;
     flex-shrink: 0;
     text-decoration: none;

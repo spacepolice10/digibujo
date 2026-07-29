@@ -206,7 +206,6 @@
     margin: 0;
     padding: var(--spacing-vertical-half) var(--spacing-horizontal);
     color: var(--color-fg-subtle);
-    font-size: var(--font-size-subtle);
   }
 
   [data-bullet-type="task"] {

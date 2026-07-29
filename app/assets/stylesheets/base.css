@@ -10,18 +10,19 @@
     background-attachment: fixed;
   }
 
+  /* No font-size on html: rem stays anchored to the reader's browser default. */
   html,
   body {
     display: flex;
     flex-direction: column;
     width: 100%;
     font-family: var(--font-family-sans);
-    font-size: var(--font-size-base);
-    color: var(--color-fg-base);;
+    color: var(--color-fg-base);
   }
 
   /* Named container: body width is the centered page column. */
   body {
+    font-size: var(--font-size-base-read);
     background: transparent;
     margin-inline: auto;
     max-width: 100%;

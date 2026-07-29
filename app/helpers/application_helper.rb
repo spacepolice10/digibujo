@@ -5,6 +5,10 @@ module ApplicationHelper
     Current.user
   end
 
+  def mobile_variant?
+    request.variant.include?(:mobile)
+  end
+
   def relative_day_label(date)
     date = date.to_date
     case date

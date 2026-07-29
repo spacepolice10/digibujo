@@ -133,10 +133,12 @@
     --font-family-sans: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     --font-family-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-    /* font sizes */
+    /* font sizes — base splits by intent: 16px is the iOS no-zoom floor for
+       anything you type into, 14px is the denser reading size. */
     --font-size-xl: 1.5rem;   /* 24px */
     --font-size-huge: 1.25rem;   /* 20px */
-    --font-size-base: 1rem;      /* 16px */
+    --font-size-base-type: 1rem; /* 16px */
+    --font-size-base-read: 0.875rem; /* 14px */
     --font-size-xs: 0.75rem; /* 12px */
 
     /* font weights */

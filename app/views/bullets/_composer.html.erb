@@ -46,8 +46,8 @@
            aria-keyshortcuts="Shift+F">
         <%= fr.fields_for :bulletable, Note.new do |bf| %>
           <%# rows drives Lexxy's --lexxy-editor-rows: start at one chat line. %>
-          <%# toolbar id points at the external <lexxy-toolbar> in chrome —
-              Lexxy wires setEditor to that node (do not reparent; disconnect disposes it). %>
+          <%# toolbar= points at the external <lexxy-toolbar> sibling under the
+              field (do not reparent; disconnect disposes setEditor). %>
           <%= bf.rich_text_area :body,
                 preset: "note",
                 toolbar: "composer_toolbar",
@@ -69,8 +69,18 @@
         <% end %>
       </div>
 
+      <%# Sits under the field: height 0 when closed, expands between field and
+          chrome chips when .composer--toolbar is on. %>
+      <lexxy-toolbar id="composer_toolbar"
+                     class="composer--toolbar-panel"
+                     data-chat-composer-target="toolbarPanel"
+                     data-upload="both"
+                     data-attachments="true"
+                     aria-hidden="true"
+                     inert></lexxy-toolbar>
+
       <%# display:contents when compact so lead/actions sit in the pill row;
-          becomes its own pill under the floating field when multiline. %>
+          becomes a transparent chip strip under the field when multiline. %>
       <div class="composer--chrome">
         <div class="composer--lead">
           <div class="composer--type dropdown--dock" style="anchor-name: --composer_types">
@@ -137,16 +147,6 @@
           </button>
         </div>
 
-        <%# External Lexxy toolbar (toolbar="composer_toolbar" on the editor).
-            Empty shell is filled from Lexxy's defaultTemplate before/with init.
-            Visibility is driven by .composer--toolbar (animates; no [hidden]). %>
-        <lexxy-toolbar id="composer_toolbar"
-                       class="composer--toolbar-panel"
-                       data-chat-composer-target="toolbarPanel"
-                       data-upload="file"
-                       data-attachments="true"
-                       aria-hidden="true"></lexxy-toolbar>
-
         <div class="composer--actions">
           <button type="button"
                   class="composer--toolbar-toggle"
@@ -158,16 +158,7 @@
                   aria-keyshortcuts="Control+Shift+E"
                   aria-pressed="false"
                   hidden>
-            <%= icon_tag("text-color", class: "button--icon") %>
-          </button>
-
-          <button type="button"
-                  class="composer--upload"
-                  data-action="chat-composer#uploadFile"
-                  data-chat-composer-target="uploadButton"
-                  aria-label="Upload files"
-                  hidden>
-            <%= icon_tag("paperclip", class: "button--icon") %>
+            <%= icon_tag("plus", class: "button--icon") %>
           </button>
 
           <button type="button"

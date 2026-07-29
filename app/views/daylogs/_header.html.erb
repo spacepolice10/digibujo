@@ -3,8 +3,6 @@
   id="daylog_header_<%= date.iso8601 %>"
   class="daylog--chat-header"
 >
-  <%= render "daylogs/header_photo", date: date, picture: picture %>
-
   <div class="daylog--header-bar">
     <div class="daylog--header-controls">
       <%= link_to daylog_path(date: (date - 1.day).iso8601),
