@@ -150,7 +150,7 @@ lexxy-editor:not(.composer--editor) {
   overflow: visible;
 }
 
-/* Composer keeps a note-preset toolbar as an external #composer_toolbar under
+/* Composer keeps a note-preset toolbar as an external #composer_toolbar ahead of
    the field (toolbar="composer_toolbar") — never nest a second one in the field. */
 .composer--field lexxy-toolbar {
   display: none;

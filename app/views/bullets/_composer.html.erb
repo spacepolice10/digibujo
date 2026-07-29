@@ -38,7 +38,18 @@
           data: { voice_recorder_target: "duration" } %>
 
     <div class="composer--row" data-chat-composer-target="composeRow">
-      <%# Field first in the DOM so multiline can lift it; single-line order is CSS. %>
+      <%# Must precede <lexxy-editor> in the DOM: on a Turbo body swap the
+          elements are already defined, so they upgrade in document order, and
+          the editor's connectedCallback calls setEditor on this toolbar
+          synchronously. Placement is CSS (order) — see composer.css. %>
+      <lexxy-toolbar id="composer_toolbar"
+                     class="composer--toolbar-panel"
+                     data-chat-composer-target="toolbarPanel"
+                     data-upload="both"
+                     data-attachments="true"
+                     aria-hidden="true"
+                     inert></lexxy-toolbar>
+
       <div class="composer--field hotkey-hint"
            data-controller="hotkey"
            data-hotkey="Shift+F"
@@ -46,7 +57,7 @@
            aria-keyshortcuts="Shift+F">
         <%= fr.fields_for :bulletable, Note.new do |bf| %>
           <%# rows drives Lexxy's --lexxy-editor-rows: start at one chat line. %>
-          <%# toolbar= points at the external <lexxy-toolbar> sibling under the
+          <%# toolbar= points at the external <lexxy-toolbar> sibling above the
               field (do not reparent; disconnect disposes setEditor). %>
           <%= bf.rich_text_area :body,
                 preset: "note",
@@ -68,16 +79,6 @@
           <% end %>
         <% end %>
       </div>
-
-      <%# Sits under the field: height 0 when closed, expands between field and
-          chrome chips when .composer--toolbar is on. %>
-      <lexxy-toolbar id="composer_toolbar"
-                     class="composer--toolbar-panel"
-                     data-chat-composer-target="toolbarPanel"
-                     data-upload="both"
-                     data-attachments="true"
-                     aria-hidden="true"
-                     inert></lexxy-toolbar>
 
       <%# display:contents when compact so lead/actions sit in the pill row;
           becomes a transparent chip strip under the field when multiline. %>

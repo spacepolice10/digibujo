@@ -207,7 +207,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     assert_selector '.composer--actions .composer--toolbar-toggle'
     assert_no_selector '.composer--actions .composer--upload'
     assert_no_selector '#composer_toolbar > button[name=bold]', visible: true
-    assert_selector '#bullet_composer .composer--field + #composer_toolbar + .composer--chrome'
+    assert_selector '#bullet_composer #composer_toolbar + .composer--field + .composer--chrome'
 
     focus_composer
     editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
