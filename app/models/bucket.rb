@@ -6,7 +6,7 @@ class Bucket < ApplicationRecord
   belongs_to :user
   has_many :bullets, dependent: :destroy
 
-  delegated_type :bucketable, types: %w[Collection Future Monthlylog Daylog], dependent: :destroy
+  delegated_type :bucketable, types: %w[Collection Future Monthlylog Daylog Pending], dependent: :destroy
 
   validates :name, presence: true
 

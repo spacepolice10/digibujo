@@ -6,6 +6,8 @@ module Iconable
   ICON_MAPPINGS = %w[
     folder briefcase house books lightbulb heart target memo art
     cooking airplane muscle cart music camera money calendar
+    star plant coffee gamepad gift car moon paw movie laptop
+    school flower bike world bed puzzle rocket baby
   ].freeze
 
   DEFAULT_ICON = 'folder'

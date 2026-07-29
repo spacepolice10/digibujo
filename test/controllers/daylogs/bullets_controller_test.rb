@@ -77,6 +77,54 @@ class Daylogs::BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Line 0', response.body
   end
 
+  test 'index json returns older bullets as an array' do
+    bullets = create_bullets(4)
+
+    get daylog_bullets_path(before: bullets[2].id), as: :json
+
+    assert_response :success
+    body = response.parsed_body
+    assert_equal 2, body.size
+    assert_equal [bullets[0].id, bullets[1].id], body.map { |row| row['id'] }
+    assert_equal 'Note', body.first['bulletable_type']
+    assert_equal 'Line 0', body.first['body']
+    assert body.first['url'].present?
+  end
+
+  test 'index json answers no content once exhausted' do
+    bullets = create_bullets(2)
+
+    get daylog_bullets_path(before: bullets.first.id), as: :json
+
+    assert_response :no_content
+  end
+
+  test 'index json returns not modified when etag matches' do
+    bullets = create_bullets(3)
+
+    get daylog_bullets_path(before: bullets.last.id), as: :json
+
+    assert_response :success
+    etag = response.headers['ETag']
+    assert etag.present?
+
+    get daylog_bullets_path(before: bullets.last.id),
+        as: :json,
+        headers: { 'If-None-Match' => etag }
+
+    assert_response :not_modified
+  end
+
+  test 'index json requires authentication' do
+    sign_out
+    bullets = create_bullets(2)
+
+    get daylog_bullets_path(before: bullets.last.id), as: :json
+
+    assert_response :unauthorized
+    assert_equal 'Unauthorized', response.parsed_body['error']
+  end
+
   private
 
   def create_bullets(count)

@@ -32,6 +32,10 @@ User data lives in:
 
 This rule supersedes any workflow, skill, or "just one command" temptation. It cannot be overridden by tool defaults, environment hints, or pre-approved paths.
 
+## CSS: Use Existing Variables
+
+Prefer tokens from [`app/assets/stylesheets/variables.css`](app/assets/stylesheets/variables.css) over hardcoding new values or inventing new custom properties. When a value (color, font-size, radius, weight, opacity, icon size, etc.) doesn't match exactly, map to the nearest existing variable — a 1–2px difference is fine. Keep the token set small. Do not add `line-height` or `letter-spacing` declarations; the reset owns those.
+
 ## Testing Policy
 
 **Tests are only edited when the logic they cover has intentionally changed.** A failing test is a signal to fix the code, not the test. Valid reasons to modify an existing test:

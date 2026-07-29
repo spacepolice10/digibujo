@@ -14,6 +14,9 @@ class OnboardingTest < ActiveSupport::TestCase
     assert_not_nil user.daylog
     assert_not_nil user.daylog.bucket
     assert_equal Onboarding::DAYLOG_ICON, user.daylog.bucket.icon
+    assert_not_nil user.pending
+    assert_not_nil user.pending.bucket
+    assert_equal Onboarding::PENDING_ICON, user.pending.bucket.icon
     assert user.buckets.exists?(bucketable_type: 'Collection', name: 'loose notes')
   end
 
@@ -28,7 +31,9 @@ class OnboardingTest < ActiveSupport::TestCase
     assert_equal 0, Future.where(user: user).count
     assert_equal 0, user.monthlylogs.count
     assert_equal 1, Daylog.where(user: user).count
+    assert_equal 1, Pending.where(user: user).count
     assert_equal 1, user.buckets.where(bucketable_type: 'Daylog').count
+    assert_equal 1, user.buckets.where(bucketable_type: 'Pending').count
     assert_equal 1, user.buckets.where(bucketable_type: 'Collection', name: 'loose notes').count
   end
 end

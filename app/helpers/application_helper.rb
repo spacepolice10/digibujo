@@ -24,4 +24,10 @@ module ApplicationHelper
 
     link_to(url, options.merge(data: data), &block)
   end
+
+  # Serve a resized representation instead of the original blob.
+  def represent_image_tag(blob, variant: :display, **options)
+    image_tag blob.representation(ImageVariant[variant]), **options
+  end
 end
+

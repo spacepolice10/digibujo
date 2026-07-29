@@ -31,4 +31,21 @@ class ApplicationHelperTest < ActionView::TestCase
     assert_match(/click-&gt;navigation#back/, html)
     assert_includes html, 'data-turbo-frame="_top"'
   end
+
+  test 'represent_image_tag uses a resized representation' do
+    blob = ActiveStorage::Blob.create_and_upload!(
+      io: StringIO.new(Base64.decode64(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
+      )),
+      filename: 'photo.png',
+      content_type: 'image/png'
+    )
+
+    html = represent_image_tag(blob, variant: :preview, alt: 'photo.png', class: 'preview')
+
+    assert_includes html, 'class="preview"'
+    assert_includes html, 'alt="photo.png"'
+    assert_includes html, '/representations/'
+    assert_no_match(%r{/rails/active_storage/blobs/redirect/}, html)
+  end
 end

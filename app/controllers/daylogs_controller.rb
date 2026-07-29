@@ -13,6 +13,7 @@ class DaylogsController < ApplicationController
     @more_bullets = @bullets.size == Bullet::Pageable::PAGE_SIZE
     @mood_entity = @daylog.mood_entities.find_by(date: @selected_date)
     @picture = @daylog.pictures.find_by(date: @selected_date)
+    @pending_count = Pending.inbox_count_for(Current.user)
   end
 
   def create

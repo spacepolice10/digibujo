@@ -7,7 +7,11 @@ class Daylog::Picture < ApplicationRecord
 
   belongs_to :daylog
 
-  has_one_attached :picture
+  has_one_attached :picture do |attachable|
+    ImageVariant::TRANSFORMATIONS.each do |name, transformations|
+      attachable.variant name, **transformations
+    end
+  end
 
   validates :date, uniqueness: { scope: :daylog_id }
   validate :picture_must_be_present

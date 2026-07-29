@@ -31,6 +31,23 @@ module SessionTestHelper
   def confirm_login_code(code)
     post authentication_confirmation_path, params: { code: code }
   end
+
+  # JSON magic-link helpers for CLI-style auth tests.
+  def request_login_code_json(email_address)
+    ActionMailer::Base.deliveries.clear
+    post authentication_path, params: { email_address: email_address }, as: :json
+    perform_enqueued_jobs
+    {
+      pending_authentication_code: response.parsed_body['pending_authentication_code'],
+      code: login_code_from_last_email
+    }
+  end
+
+  def confirm_login_code_json(code:, pending_authentication_code:)
+    post authentication_confirmation_path,
+         params: { code: code, pending_authentication_code: pending_authentication_code },
+         as: :json
+  end
 end
 
 ActiveSupport.on_load(:action_dispatch_integration_test) do

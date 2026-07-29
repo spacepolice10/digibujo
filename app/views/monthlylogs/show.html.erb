@@ -34,11 +34,20 @@
           <% if @days.any? %>
             <div class="monthlylog--calendar-body">
               <% @days.each do |date| %>
+                <% picture = @pictures_by_date[date] %>
+                <% has_photo = picture&.picture&.attached? %>
                 <div
                   class="monthlylog--date-band<%= " monthlylog--date-band-current" if date == Date.current %>"
                   <% if date == Date.current %> data-scroll-target="current" <% end %>
                 >
-                  <div class="monthlylog--date-rail">
+                  <div class="monthlylog--date-rail<%= " monthlylog--date-rail--photo" if has_photo %>">
+                    <% if has_photo %>
+                      <div class="monthlylog--date-photo" aria-hidden="true">
+                        <%= image_tag picture.picture.variant(:band),
+                              alt: "",
+                              class: "monthlylog--date-photo-image" %>
+                      </div>
+                    <% end %>
                     <%= link_to daylog_path(date: date.iso8601),
                           class: "monthlylog--date-item",
                           aria: { label: "Open #{date.strftime('%B %-d')} on daily log" } do %>

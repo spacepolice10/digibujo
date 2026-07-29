@@ -26,7 +26,7 @@ module Postponable
       return nil if pops_on.blank?
 
       pops_on.to_date.beginning_of_month
-    when 'Collection'
+    when 'Collection', 'Pending'
       nil
     else
       pops_on

@@ -1,0 +1,74 @@
+<% if request.headers["Turbo-Frame"] == "pending_list" %>
+  <turbo-frame
+    id="pending_list"
+    class="dropdown dropdown--element dropdown--element-bottom animations--side-in daylog--pending-dropdown"
+    style="position-anchor: --pending-inbox"
+    popover
+  >
+    <div class="dropdown--element-header">
+      <h2>Pending</h2>
+      <button
+        type="button"
+        class="button--primary button--icon button--circle dropdown--element-hide"
+        popovertarget="pending_list"
+        popovertargetaction="hide"
+        aria-label="Close pending"
+      >
+        <%= icon_tag("x") %>
+      </button>
+    </div>
+
+    <div class="dropdown--element-body pending--dropdown-body">
+      <% if @bullets.any? %>
+        <div id="<%= dom_id(@pending, :bullets_container) %>" class="layout--list pending--dropdown-list">
+          <% @bullets.each do |bullet| %>
+            <%= render "pendings/bullet", bullet: bullet %>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="pending--no-bullets">Nothing pending right now.</p>
+      <% end %>
+    </div>
+  </turbo-frame>
+<% else %>
+  <% content_for(:title) { "Pending" } %>
+
+  <div class="layout--page layout--container layout--container-md">
+    <div class="layout--mx-auto pending--header">
+      <span class="pending--header-shell" aria-hidden="true">
+        <%= icon_tag("mail", class: "pending--header-icon") %>
+      </span>
+      <h2>Pending</h2>
+      <p class="typography--paragraph-sm">Bullets waiting to be added to your daylog</p>
+    </div>
+
+    <div class="layout--surface">
+      <div class="layout--flex layout--justify-between layout--surface-header">
+        <%= back_link_to daylog_path, class: "button--tertiary button--sm" do %>
+          <%= icon_tag("arrow-left", style: "color: var(--color-text-base);", class: "button--icon") %>
+          Back
+        <% end %>
+      </div>
+
+      <div class="layout--list layout--padded pending--list">
+        <div data-bulk-menu-target="list">
+          <%= render layout: "pagination/paginated_list",
+                locals: {
+                  page: @page,
+                  container_id: dom_id(@pending, :bullets_container),
+                  pagination_link_path: ->(next_param) { pending_path(page: next_param) }
+                } do %>
+            <% if @page.records.empty? && @page.first? %>
+              <p id="no_bullets_container" class="typography--paragraph-sm typography--center layout--padded layout--mx-auto">
+                Nothing pending right now.
+              </p>
+            <% end %>
+            <% @page.records.each do |bullet| %>
+              <%= render "pendings/bullet", bullet: bullet %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

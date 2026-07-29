@@ -10,7 +10,8 @@
 
   <article class="layout--surface attachment--show">
     <% if @blob.representable? %>
-      <%= image_tag @blob,
+      <%= represent_image_tag @blob,
+            variant: :display,
             alt: @blob.filename,
             class: "attachment--show-image" %>
     <% else %>

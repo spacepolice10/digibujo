@@ -1676,9 +1676,6 @@
       line-height: 1;
       flex-shrink: 0;
     }
-    .source-ico-browser {
-      background: #eef1f5;
-    }
     .source-ico svg {
       display: block;
     }
@@ -2448,7 +2445,7 @@
       <span class="section-label">04 — Inbox</span>
       <h2>Inbox is part of the day — not part of the daylog.</h2>
       <p class="section-lede">
-        Planned monthly bullets, webhook captures from bots and other users, and Chrome extension saves land in a separate window. They propose. You decide.
+        Planned monthly bullets, webhook captures from bots and other users, and browser extension saves (Chrome &amp; Firefox) land in a separate window. They propose. You decide.
       </p>
       <div class="inbox-stage">
         <div class="inbox-canvas" aria-hidden="true">
@@ -2526,19 +2523,17 @@
             </div>
           </div>
           <div class="source-card">
-            <div class="source-ico source-ico-browser" aria-hidden="true">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="12" r="10" fill="#DEE1E6"/>
-                <circle cx="12" cy="12" r="10" stroke="#5F6368" stroke-width="1.2"/>
-                <circle cx="12" cy="12" r="4.2" fill="#fff" stroke="#5F6368" stroke-width="1.2"/>
-                <path d="M12 2a10 10 0 0 1 8.66 5H12V2Z" fill="#EA4335"/>
-                <path d="M20.66 7A10 10 0 0 1 12 22v-5.8A4.2 4.2 0 0 0 15.4 9.5h5.26Z" fill="#FBBC05"/>
-                <path d="M12 22A10 10 0 0 1 3.34 7h5.26A4.2 4.2 0 0 0 12 16.2V22Z" fill="#34A853"/>
-                <path d="M3.34 7A10 10 0 0 1 12 2v5H8.6A4.2 4.2 0 0 0 6.9 9.5H3.34Z" fill="#4285F4"/>
+            <div class="source-ico" style="background:var(--sky-bg);color:var(--sky-ink)" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2"/>
+                <path d="M3 8h18" stroke="currentColor" stroke-width="2"/>
+                <circle cx="7" cy="6" r="0.75" fill="currentColor"/>
+                <circle cx="10" cy="6" r="0.75" fill="currentColor"/>
+                <circle cx="13" cy="6" r="0.75" fill="currentColor"/>
               </svg>
             </div>
             <div>
-              <h3>From Chrome</h3>
+              <h3>From Chrome &amp; Firefox</h3>
               <p>Clip a page mid-scroll. It waits in the inbox window — never dumps into today.</p>
             </div>
           </div>

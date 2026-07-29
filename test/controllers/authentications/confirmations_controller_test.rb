@@ -72,5 +72,41 @@ module Authentications
 
       assert_equal 0, @user.auth_codes.count
     end
+
+    test 'create json with valid code returns session code' do
+      @user.update!(onboarded: true)
+      auth = request_login_code_json(@user.email_address)
+
+      confirm_login_code_json(
+        code: auth[:code],
+        pending_authentication_code: auth[:pending_authentication_code]
+      )
+
+      assert_response :success
+      body = response.parsed_body
+      assert body['session_code'].present?
+      assert_equal true, body['onboarded']
+      assert cookies[:session_id].present?
+    end
+
+    test 'create json with invalid code returns unauthorized' do
+      auth = request_login_code_json(@user.email_address)
+
+      confirm_login_code_json(
+        code: 'WRONG1',
+        pending_authentication_code: auth[:pending_authentication_code]
+      )
+
+      assert_response :unauthorized
+    end
+
+    test 'create json with missing pending code returns unauthorized' do
+      request_login_code_json(@user.email_address)
+      cookies.delete(:pending_authentication_code)
+
+      post authentication_confirmation_path, params: { code: 'ABCDEF' }, as: :json
+
+      assert_response :unauthorized
+    end
   end
 end

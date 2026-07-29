@@ -4,7 +4,10 @@ class OnboardingController < ApplicationController
   layout 'session'
 
   rate_limit to: 10, within: 3.minutes, only: :create, with: lambda {
-    redirect_to new_onboarding_path, alert: 'Try again later.'
+    respond_to do |format|
+      format.html { redirect_to new_onboarding_path, alert: 'Try again later.' }
+      format.json { head :too_many_requests }
+    end
   }
 
   def new
@@ -15,7 +18,7 @@ class OnboardingController < ApplicationController
     @onboarding = Onboarding.new(user: Current.user)
 
     if @onboarding.complete
-      redirect_to after_authentication_url
+      redirect_to stashed_authentication_path
     else
       render :new, status: :unprocessable_entity
     end

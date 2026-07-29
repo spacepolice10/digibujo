@@ -113,6 +113,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select '#bullet_composer' do
       assert_select 'lexxy-editor[preset=note]'
+      assert_select 'lexxy-prompt[trigger=?][name=project]', '#'
       assert_select "input[name='bullet[bucket_id]'][value=?]", collection.bucket.id.to_s
       assert_select "input[name='list_id']", count: 0
       assert_select 'button.composer--type-option', count: 3

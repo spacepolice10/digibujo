@@ -373,6 +373,112 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'Voice caption', bullet.reload.body_as_text
   end
 
+  test 'create json returns the bullet' do
+    assert_difference -> { @user.bullets.count }, 1 do
+      post bullets_path,
+           params: {
+             bullet: {
+               bulletable_type: 'Task',
+               bulletable_attributes: { body: '<p>API task</p>' },
+               pops_on: Date.current.iso8601,
+               bucket_id: @daylog.id
+             }
+           },
+           as: :json
+    end
+
+    assert_response :created
+    body = response.parsed_body
+    assert_equal 'Task', body['bulletable_type']
+    assert_equal 'API task', body['body']
+    assert_equal false, body['completed']
+    assert_equal bullet_url(Bullet.find(body['id'])), body['url']
+    assert_equal bullet_url(Bullet.find(body['id'])), response.headers['Location']
+  end
+
+  test 'create json returns validation errors' do
+    post bullets_path,
+         params: {
+           bullet: {
+             bulletable_type: 'Voice',
+             bulletable_attributes: { body: 'No recording' },
+             bucket_id: @daylog.id,
+             pops_on: Date.current.iso8601
+           }
+         },
+         as: :json
+
+    assert_response :unprocessable_entity
+    assert response.parsed_body['recording'].present?
+  end
+
+  test 'create json without bulletable type returns 422' do
+    post bullets_path,
+         params: {
+           bullet: {
+             bulletable_attributes: { body: 'Nope' },
+             bucket_id: @daylog.id,
+             pops_on: Date.current.iso8601
+           }
+         },
+         as: :json
+
+    assert_response :unprocessable_entity
+    assert_equal ['is required'], response.parsed_body['bulletable_type']
+  end
+
+  test 'bearer session code authenticates create json' do
+    sign_out
+    @user.update!(onboarded: true)
+    auth = request_login_code_json(@user.email_address)
+    confirm_login_code_json(
+      code: auth[:code],
+      pending_authentication_code: auth[:pending_authentication_code]
+    )
+    session_code = response.parsed_body['session_code']
+    cookies.delete('session_id')
+
+    post bullets_path,
+         params: {
+           bullet: {
+             bulletable_type: 'Note',
+             bulletable_attributes: { body: '<p>Bearer note</p>' },
+             pops_on: Date.current.iso8601,
+             bucket_id: ensure_daylog!(@user).id
+           }
+         },
+         headers: { 'Authorization' => "Bearer #{session_code}" },
+         as: :json
+
+    assert_response :created
+    assert_equal 'Bearer note', response.parsed_body['body']
+  end
+
+  test 'expired bearer session code is rejected' do
+    sign_out
+    session_record = @user.sessions.create!
+    session_code = Rails.application.message_verifier(:session_code).generate(
+      session_record.id,
+      expires_in: Authentication::SESSION_CODE_EXPIRY
+    )
+
+    travel Authentication::SESSION_CODE_EXPIRY + 1.minute do
+      post bullets_path,
+           params: {
+             bullet: {
+               bulletable_type: 'Note',
+               bulletable_attributes: { body: '<p>Too late</p>' },
+               pops_on: Date.current.iso8601,
+               bucket_id: ensure_daylog!(@user).id
+             }
+           },
+           headers: { 'Authorization' => "Bearer #{session_code}" },
+           as: :json
+
+      assert_response :unauthorized
+    end
+  end
+
   private
 
   def create_blob!(filename:, content_type:, io: StringIO.new('file contents'))

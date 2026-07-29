@@ -9,6 +9,8 @@ class Onboarding
   LOOSE_NOTES_NAME = 'Loose Notes'
   DAYLOG_NAME = 'Daylog'
   DAYLOG_ICON = 'calendar'
+  PENDING_NAME = 'Pending'
+  PENDING_ICON = 'memo'
 
   attr_accessor :user
 
@@ -20,6 +22,7 @@ class Onboarding
     ActiveRecord::Base.transaction do
       ensure_loose_notes!
       ensure_daylog!
+      ensure_pending!
       user.update!(onboarded: true)
     end
 
@@ -41,5 +44,9 @@ class Onboarding
 
   def ensure_daylog!
     Daylog.provision!(user)
+  end
+
+  def ensure_pending!
+    Pending.provision!(user)
   end
 end

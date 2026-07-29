@@ -7,12 +7,15 @@ class User < ApplicationRecord
 
   has_many :sessions, dependent: :destroy
   has_many :auth_codes, dependent: :destroy
+  has_many :access_codes, dependent: :destroy
+  has_many :hooks, dependent: :destroy
   has_many :bullets, dependent: :destroy
   has_many :activities, dependent: :destroy
   has_many :buckets, dependent: :destroy
   has_many :futures, dependent: :destroy
   has_many :monthlylogs, dependent: :destroy
   has_one :daylog, dependent: :destroy
+  has_one :pending, dependent: :destroy
   has_many :collections, through: :buckets, source: :bucketable, source_type: 'Collection'
   has_many :projects, dependent: :destroy
   has_many :pinned_entities, dependent: :destroy

@@ -85,7 +85,8 @@ class DaylogChatSystemTest < ApplicationSystemTestCase
     editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
     editor.click
     editor.send_keys('Fresh line')
-    editor.send_keys(:enter)
+    # Default type is Note — desktop send is Cmd/Ctrl+Enter.
+    editor.send_keys([modifier_key, :enter])
 
     assert_text 'Fresh line'
     assert_pinned_to_bottom
@@ -167,5 +168,9 @@ class DaylogChatSystemTest < ApplicationSystemTestCase
 
   def row_top(id)
     page.evaluate_script("document.getElementById('#{id}').getBoundingClientRect().top")
+  end
+
+  def modifier_key
+    RUBY_PLATFORM.match?(/darwin/i) ? :meta : :control
   end
 end

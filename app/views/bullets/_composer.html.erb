@@ -38,58 +38,68 @@
           data: { voice_recorder_target: "duration" } %>
 
     <div class="composer--row" data-chat-composer-target="composeRow">
-      <div class="composer--lead dropdown--dock" style="anchor-name: --composer_types">
-        <button type="button"
-                class="button--secondary button--icon button--circle composer--type-button"
-                popovertarget="composer_types"
-                aria-haspopup="menu"
-                aria-label="Change bullet type"
-                aria-keyshortcuts="Shift+Tab">
-          <% (BulletsHelper::COMPOSER_TYPES + ["Voice"]).each do |type_name| %>
-            <% config = bullet_type_config(type_name) %>
-            <span class="composer--type-icon"
-                  data-chat-composer-target="typeIcon"
-                  data-composer-type="<%= type_name %>"
-                  <%= "hidden" if type_name != default_type %>>
-              <%= icon_tag(config[:icon], style: "color: #{config[:colour]};") %>
-            </span>
-          <% end %>
-        </button>
+      <div class="composer--lead">
+        <div class="composer--type dropdown--dock" style="anchor-name: --composer_types">
+          <button type="button"
+                  class="button--secondary button--icon button--circle composer--type-button"
+                  popovertarget="composer_types"
+                  aria-haspopup="menu"
+                  aria-label="Change bullet type"
+                  aria-keyshortcuts="Shift+Tab">
+            <% (BulletsHelper::COMPOSER_TYPES + ["Voice"]).each do |type_name| %>
+              <% config = bullet_type_config(type_name) %>
+              <span class="composer--type-icon"
+                    data-chat-composer-target="typeIcon"
+                    data-composer-type="<%= type_name %>"
+                    <%= "hidden" if type_name != default_type %>>
+                <%= icon_tag(config[:icon], style: "color: #{config[:colour]};") %>
+              </span>
+            <% end %>
+          </button>
 
-        <div id="composer_types"
-             class="dropdown dropdown--element animations--side-in"
-             style="position-anchor: --composer_types"
-             popover
-             data-controller="grid-navigation"
-             data-grid-navigation-columns-value="1"
-             data-action="keydown->grid-navigation#navigate">
-          <div class="dropdown--element-body">
-            <nav class="dropdown--menu" aria-label="Bullet type">
-              <% BulletsHelper::COMPOSER_TYPES.each do |type_name| %>
-                <% config = bullet_type_config(type_name) %>
-                <button type="button"
-                        class="dropdown-item composer--type-option"
-                        role="menuitemradio"
-                        aria-checked="<%= type_name == default_type %>"
-                        data-chat-composer-target="typeOption"
-                        data-grid-navigation-target="item"
-                        data-composer-type="<%= type_name %>"
-                        data-composer-placeholder="<%= config[:placeholder] %>"
-                        data-action="chat-composer#selectType focus->grid-navigation#syncPosition"
-                        popovertarget="composer_types"
-                        popovertargetaction="hide">
-                  <span class="composer--type-copy">
-                    <span class="composer--type-heading">
-                      <%= icon_tag(config[:icon], style: "color: #{config[:colour]};") %>
-                      <span class="composer--type-name"><%= type_name %></span>
+          <div id="composer_types"
+               class="dropdown dropdown--element animations--side-in"
+               style="position-anchor: --composer_types"
+               popover
+               data-controller="grid-navigation"
+               data-grid-navigation-columns-value="1"
+               data-action="keydown->grid-navigation#navigate">
+            <div class="dropdown--element-body">
+              <nav class="dropdown--menu" aria-label="Bullet type">
+                <% BulletsHelper::COMPOSER_TYPES.each do |type_name| %>
+                  <% config = bullet_type_config(type_name) %>
+                  <button type="button"
+                          class="dropdown-item composer--type-option"
+                          role="menuitemradio"
+                          aria-checked="<%= type_name == default_type %>"
+                          data-chat-composer-target="typeOption"
+                          data-grid-navigation-target="item"
+                          data-composer-type="<%= type_name %>"
+                          data-composer-placeholder="<%= config[:placeholder] %>"
+                          data-action="chat-composer#selectType focus->grid-navigation#syncPosition"
+                          popovertarget="composer_types"
+                          popovertargetaction="hide">
+                    <span class="composer--type-copy">
+                      <span class="composer--type-heading">
+                        <%= icon_tag(config[:icon], style: "color: #{config[:colour]};") %>
+                        <span class="composer--type-name"><%= type_name %></span>
+                      </span>
+                      <span class="composer--type-description utilities--text-sm"><%= config[:description] %></span>
                     </span>
-                    <span class="composer--type-description utilities--text-sm"><%= config[:description] %></span>
-                  </span>
-                </button>
-              <% end %>
-            </nav>
+                  </button>
+                <% end %>
+              </nav>
+            </div>
           </div>
         </div>
+
+        <button type="button"
+                class="button--secondary button--sm composer--clear"
+                data-action="chat-composer#clear"
+                data-chat-composer-target="clearButton"
+                hidden>
+          Clear
+        </button>
       </div>
 
       <div class="composer--field hotkey-hint"
@@ -107,7 +117,15 @@
                 data: {
                   chat_composer_target: "editor",
                   action: "keydown->chat-composer#keydown:capture lexxy:change->chat-composer#refresh"
-                } %>
+                } do %>
+            <lexxy-prompt
+              trigger="#"
+              name="project"
+              src="<%= project_suggestions_path %>"
+              remote-filtering
+              supports-space-in-searches
+            ></lexxy-prompt>
+          <% end %>
         <% end %>
       </div>
 
@@ -120,16 +138,7 @@
                 aria-keyshortcuts="Control+Shift+E"
                 aria-pressed="false"
                 hidden>
-          <%= icon_tag("text", class: "button--icon") %>
-        </button>
-
-        <button type="button"
-                class="composer--clear"
-                data-action="chat-composer#clear"
-                data-chat-composer-target="clearButton"
-                aria-label="Clear draft"
-                hidden>
-          <%= icon_tag("x", class: "button--icon") %>
+          <%= icon_tag("text-color", class: "button--icon") %>
         </button>
 
         <button type="button"

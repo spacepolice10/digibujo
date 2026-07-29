@@ -28,6 +28,15 @@ Rails.application.routes.draw do
     end
   end
 
+  resource :pending, only: :show, controller: 'pendings' do
+    scope module: :pendings do
+      resources :bullets, only: [] do
+        resource :accept, only: :create
+        resource :discard, only: :create
+      end
+    end
+  end
+
   get 'monthlylog', to: 'monthlylogs#show', as: :current_monthlylog
   get 'monthly_bucket', to: redirect('/monthlylog')
 
@@ -99,6 +108,10 @@ Rails.application.routes.draw do
   end
 
   resource :user, only: :show
+
+  resources :access_codes, only: %i[index create destroy]
+  resources :hooks, only: %i[index new create destroy]
+  post 'hooks/:code', to: 'hook_intakes#create', as: :hook_intake, constraints: { code: /hk_[A-Za-z0-9]+/ }
 
   resource :menu, controller: 'menu'
   resource :search do

@@ -82,17 +82,44 @@
   }
 
   .monthlylog--date-rail {
+    position: relative;
     display: flex;
     align-items: flex-start;
     gap: var(--spacing-horizontal-half);
     min-width: 0;
     padding-block: var(--spacing-vertical);
-padding-inline: var(--spacing-horizontal);
+    padding-inline: var(--spacing-horizontal);
     border-bottom: 0.5px solid var(--color-stroke-base);
+  }
+
+  .monthlylog--date-rail--photo {
+    overflow: hidden;
+  }
+
+  .monthlylog--date-photo {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .monthlylog--date-photo-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .monthlylog--date-photo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--color-bg-subtle) 62%, transparent);
   }
 
   .monthlylog--date-item {
     position: relative;
+    z-index: 1;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
@@ -122,6 +149,8 @@ padding-inline: var(--spacing-horizontal);
   }
 
   .monthlylog--date-entries {
+    position: relative;
+    z-index: 1;
     flex: 1;
     min-width: 0;
     align-self: stretch;

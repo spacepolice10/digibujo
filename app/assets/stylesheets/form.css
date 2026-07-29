@@ -242,7 +242,7 @@
 
   .form--submit {
     width: fit-content;
-    margin-inline: auto;
+    align-self: flex-end;
     margin-top: var(--spacing-vertical-double);
   }
 }

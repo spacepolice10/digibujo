@@ -10,7 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_26_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_29_092000) do
+  create_table "access_codes", force: :cascade do |t|
+    t.string "code_digest", null: false
+    t.string "code_prefix", null: false
+    t.datetime "created_at", null: false
+    t.string "description"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["code_digest"], name: "index_access_codes_on_code_digest", unique: true
+    t.index ["user_id"], name: "index_access_codes_on_user_id"
+  end
+
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -109,6 +120,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_26_120000) do
   end
 
   create_table "bullets", force: :cascade do |t|
+    t.string "author_name"
     t.integer "bucket_id", null: false
     t.integer "bulletable_id", null: false
     t.string "bulletable_type", null: false
@@ -173,6 +185,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_26_120000) do
     t.index ["user_id"], name: "index_futures_on_user_id"
   end
 
+  create_table "hooks", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.string "code_digest", null: false
+    t.string "code_prefix", null: false
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["code_digest"], name: "index_hooks_on_code_digest", unique: true
+    t.index ["user_id"], name: "index_hooks_on_user_id"
+  end
+
   create_table "monthlylogs", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "period_from"
@@ -184,6 +208,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_26_120000) do
   end
 
   create_table "notes", force: :cascade do |t|
+  end
+
+  create_table "pendings", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_pendings_on_user_id", unique: true
   end
 
   create_table "pinned_entities", force: :cascade do |t|
@@ -314,6 +345,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_26_120000) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "access_codes", "users"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "activities", "users"
@@ -328,7 +360,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_26_120000) do
   add_foreign_key "daylog_pictures", "daylogs"
   add_foreign_key "daylogs", "users"
   add_foreign_key "futures", "users"
+  add_foreign_key "hooks", "users"
   add_foreign_key "monthlylogs", "users"
+  add_foreign_key "pendings", "users"
   add_foreign_key "pinned_entities", "users"
   add_foreign_key "projects", "users"
   add_foreign_key "published_entities", "users"

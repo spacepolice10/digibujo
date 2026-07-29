@@ -29,4 +29,36 @@ class BulletTest < ActiveSupport::TestCase
 
     assert_empty @user.bullets.in_review(Date.current..Date.current)
   end
+
+  test 'accept_from_pending! moves bullet to daylog for today' do
+    pending = Pending.provision!(@user)
+    bullet = create_bullet!(@user, bucket: pending.bucket, bulletable: Note.new(body: 'Inbox'), pops_on: nil)
+
+    bullet.accept_from_pending!
+
+    assert_equal @user.daylog.bucket, bullet.reload.bucket
+    assert_equal Date.current, bullet.pops_on
+    assert bullet.rescheduled_migration?
+  end
+
+  test 'accept_from_pending! moves monthlylog today bullet to daylog' do
+    monthlylog = create_monthlylog!(@user, name: 'This month')
+    bullet = create_bullet!(
+      @user,
+      bucket: monthlylog.bucket,
+      bulletable: Task.new(body: 'Planned today'),
+      pops_on: Date.current
+    )
+
+    bullet.accept_from_pending!
+
+    assert_equal @user.daylog.bucket, bullet.reload.bucket
+    assert_equal Date.current, bullet.pops_on
+  end
+
+  test 'accept_from_pending! raises when bullet is not in the pending inbox' do
+    bullet = create_bullet!(@user, bulletable: Note.new(body: 'Daylog note'))
+
+    assert_raises(ArgumentError) { bullet.accept_from_pending! }
+  end
 end

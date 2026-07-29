@@ -1,4 +1,4 @@
-<%# locals: (date:, mood_entity:, picture:) %>
+<%# locals: (date:, mood_entity:, picture:, pending_count: 0) %>
 <header
   id="daylog_header_<%= date.iso8601 %>"
   class="daylog--chat-header"
@@ -22,6 +22,10 @@
       <span class="daylog--date-label">
         <%= date.strftime("%a, %b %-d") %>
       </span>
+
+      <% if pending_count.positive? %>
+        <%= render "daylogs/pending_inbox", pending_count: pending_count %>
+      <% end %>
 
       <%= link_to daylog_path(date: (date + 1.day).iso8601),
             data: {

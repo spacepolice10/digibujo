@@ -75,6 +75,44 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select "button[popovertarget='pinned_list'][data-action*='keydown.shift+p@document->hotkey#click'][data-hotkey='P']"
   end
 
+  test 'daylog header shows pending inbox when bullets await triage' do
+    pending = Pending.provision!(@user)
+    create_bullet!(@user, bucket: pending.bucket, bulletable: Note.new(body: 'Stashed'), pops_on: nil)
+
+    get daylog_path
+
+    assert_response :success
+    assert_select '#pending_inbox.daylog--pending-inbox' do
+      assert_select 'button.daylog--pending-inbox-trigger[popovertarget=pending_list]'
+      assert_select '#pending_inbox_count.daylog--pending-count', text: '1'
+      assert_select 'turbo-frame#pending_list[popover][src=?]', pending_path
+    end
+  end
+
+  test 'daylog header pending count includes monthlylog bullets for today' do
+    monthlylog = create_monthlylog!(@user, name: 'This month')
+    create_bullet!(
+      @user,
+      bucket: monthlylog.bucket,
+      bulletable: Task.new(body: 'Monthly today'),
+      pops_on: Date.current
+    )
+
+    get daylog_path
+
+    assert_response :success
+    assert_select '#pending_inbox_count.daylog--pending-count', text: '1'
+  end
+
+  test 'daylog header hides pending inbox when empty' do
+    Pending.provision!(@user)
+
+    get daylog_path
+
+    assert_response :success
+    assert_select '#pending_inbox', count: 0
+  end
+
   test 'daylog scopes bulk menu controls to the bullets list' do
     create_bullet!(@user, bulletable: Task.new(body: 'Selectable card'), pops_on: Date.current)
 
@@ -99,6 +137,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'dialog#daylog_composer', count: 0
     assert_select '#bullet_composer' do
       assert_select 'lexxy-editor[preset=note]'
+      assert_select 'lexxy-prompt[trigger=?][name=project]', '#'
       assert_select "input[name='bullet[bucket_id]'][value=?]", bucket_id.to_s
       assert_select "input[name='bullet[pops_on]'][value=?]", selected_date.iso8601
       assert_select "input[name='bullet[bulletable_type]'][value=?]", 'Note'

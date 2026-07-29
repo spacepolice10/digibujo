@@ -11,7 +11,10 @@ module Daylogs
       @bullets = daylog_bullets.where(pops_on: cursor.pops_on).page_before(cursor)
       return head :no_content if @bullets.empty?
 
-      render layout: false
+      respond_to do |format|
+        format.html { render layout: false }
+        format.json { render if stale?(etag: @bullets) }
+      end
     end
 
     private

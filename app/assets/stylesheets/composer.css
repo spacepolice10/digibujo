@@ -7,13 +7,6 @@
     --composer-tabbar-inset: 0px;
     /* Shared hit-target for type / toolbar / clear / upload / mic / submit. */
     --composer-control-size: var(--spacing-horizontal-triple);
-    /* Multiline editor grows up from the dock within the safe viewport. */
-    --composer-expanded-max: calc(
-      100dvh
-      - env(safe-area-inset-top, 0px)
-      - var(--composer-tabbar-inset)
-      - (2 * var(--spacing-vertical-half))
-    );
 
     position: fixed;
     inset-inline: 0;
@@ -31,12 +24,6 @@
 
   /* Keyboard open: sit on the keyboard; hide the tabbar so it cannot overlap. */
   .composer.composer--keyboard-open {
-    --composer-expanded-max: calc(
-      100dvh
-      - env(safe-area-inset-top, 0px)
-      - var(--composer-keyboard-inset)
-      - (2 * var(--spacing-vertical-half))
-    );
     bottom: var(--composer-keyboard-inset);
     z-index: var(--z-toast);
   }
@@ -63,7 +50,7 @@
     transition: border-radius 180ms ease;
 
     @media (min-width: 800px) {
-      background: var(--color-bg-base);
+      background: var(--color-bg-subtle);
     }
   }
 
@@ -95,42 +82,28 @@
     order: 3;
   }
 
-  /* Wrapped text: the field claims the row and the controls drop below it.
-     Form grows with content up to the safe viewport. */
+  /* Multiline: only reorder — editor on top, type / actions below. */
   .composer--multiline .composer--form {
-    flex-direction: column;
-    max-height: var(--composer-expanded-max);
     border-radius: var(--radius-base);
-  }
-
-  .composer--multiline .composer--row {
-    flex-direction: column;
-    flex-wrap: nowrap;
-    align-items: stretch;
-    min-height: 0;
   }
 
   .composer--multiline .composer--field {
     order: 1;
-    flex: 0 1 auto;
     flex-basis: 100%;
-    width: 100%;
-    min-height: 0;
   }
 
   .composer--multiline .composer--lead {
     order: 2;
   }
 
-  /* Formatting toolbar open: hide the type picker mid-edit. */
-  .composer--toolbar .composer--lead {
-    display: none;
-  }
-
   .composer--multiline .composer--actions {
     order: 3;
     margin-inline-start: auto;
-    flex: 0 0 auto;
+  }
+
+  /* Formatting toolbar open: hide the type picker, keep Clear. */
+  .composer--toolbar .composer--type {
+    display: none;
   }
 
   .composer--type-button.button--icon {
@@ -176,9 +149,8 @@
     cursor: not-allowed;
   }
 
-  /* Match Lexxy toolbar icon buttons (toolbar / clear / upload / mic). */
+  /* Match Lexxy toolbar icon buttons (toolbar / upload / mic). */
   .composer--toolbar-toggle,
-  .composer--clear,
   .composer--upload,
   .composer--record {
     width: var(--composer-control-size);
@@ -195,7 +167,6 @@
   }
 
   .composer--toolbar-toggle:hover,
-  .composer--clear:hover,
   .composer--upload:hover,
   .composer--record:hover {
     background: var(--color-bg-base);
@@ -208,15 +179,17 @@
   }
 
   .composer--toolbar-toggle .button--icon,
-  .composer--clear .button--icon,
   .composer--upload .button--icon,
   .composer--record .button--icon,
   .composer--toolbar-toggle .icon,
-  .composer--clear .icon,
   .composer--upload .icon,
   .composer--record .icon {
     width: var(--lexxy-toolbar-icon-size, 1.125em);
     height: var(--lexxy-toolbar-icon-size, 1.125em);
+  }
+
+  .composer--clear {
+    flex-shrink: 0;
   }
 
   .composer--submit.button--icon {

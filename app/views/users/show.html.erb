@@ -19,9 +19,14 @@
     <div class="layout--padded layout--flex layout--gapped">
   
 
-      <%= link_to "#", class: "button--secondary" do %>
+      <%= link_to access_codes_path, class: "button--secondary" do %>
+        <%= icon_tag("code") %>
+        Access codes
+      <% end %>
+
+      <%= link_to hooks_path, class: "button--secondary" do %>
         <%= icon_tag("webhook") %>
-        Webhooks
+        Hooks
       <% end %>
 
       <%= button_to authentication_path,

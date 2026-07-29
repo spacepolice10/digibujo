@@ -1,0 +1,29 @@
+<%# locals: (pending_count:) %>
+<% label = "#{pending_count} pending #{"bullet".pluralize(pending_count)}" %>
+<div
+  id="pending_inbox"
+  class="dropdown--dock daylog--pending-inbox"
+  style="anchor-name: --pending-inbox"
+>
+  <button
+    type="button"
+    class="daylog--pending-inbox-trigger"
+    popovertarget="pending_list"
+    aria-label="<%= label %>"
+    aria-haspopup="dialog"
+  >
+    <span class="daylog--pending-inbox-shell" aria-hidden="true">
+      <%= icon_tag("mail", class: "daylog--pending-inbox-icon") %>
+      <span id="pending_inbox_count" class="daylog--pending-count"><%= pending_count %></span>
+    </span>
+  </button>
+
+  <turbo-frame
+    id="pending_list"
+    class="dropdown dropdown--element dropdown--element-bottom animations--side-in daylog--pending-dropdown"
+    style="position-anchor: --pending-inbox"
+    src="<%= pending_path %>"
+    loading="lazy"
+    popover
+  ></turbo-frame>
+</div>

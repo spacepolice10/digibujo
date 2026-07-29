@@ -104,7 +104,7 @@ lexxy-editor:not(.composer--editor) {
 }
 
 /* Compact chat line: match icon control height so the caret sits level with
-   type / upload / mic / submit. Expanded needs a normal block box. */
+   type / upload / mic / submit. Multiline only relaxes line-height. */
 .composer--field lexxy-editor.composer--editor .lexxy-editor__content {
   display: block;
   min-block-size: var(--composer-control-size, 2lh);
@@ -126,48 +126,11 @@ lexxy-editor:not(.composer--editor) {
   line-height: inherit;
 }
 
-/* Multiline note: editor grows with content up to the safe viewport.
-   Scroll the content box — not the whole editor — so toolbar dropdown panels
-   (position: absolute) are not clipped by overflow:auto on an ancestor. */
-.composer--multiline .composer--field lexxy-editor.composer--editor {
-  --lexxy-content-margin: 0.5rem;
-  --lexxy-editor-rows: 6lh;
-  --lexxy-editor-padding: 0.5ch;
-  --lexxy-color-canvas: transparent;
-
+/* Toolbar open: stack Lexxy chrome above content without changing dock height. */
+.composer--toolbar .composer--field lexxy-editor.composer--editor {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  min-height: 6lh;
-  max-height: calc(
-    var(--composer-expanded-max)
-    - var(--composer-control-size)
-    - var(--spacing-vertical-half)
-    - 0.5rem
-  );
-  height: auto;
   overflow: visible;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-}
-
-.composer--multiline .composer--field lexxy-editor.composer--editor .lexxy-editor__content {
-  display: block;
-  flex: 1 1 auto;
-  min-block-size: var(--lexxy-editor-rows);
-  min-height: 0;
-  height: auto;
-  max-height: 100%;
-  padding: var(--lexxy-editor-padding);
-  line-height: normal;
-  overflow-x: hidden;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-}
-
-.composer--multiline .composer--field lexxy-editor.composer--editor .lexxy-editor__content p {
-  margin-block: 0 var(--lexxy-content-margin);
 }
 
 /* One note-preset editor: toolbar stays mounted but hidden until toggled on.
@@ -229,13 +192,19 @@ lexxy-editor:not(.composer--editor) {
 }
 
 /* Composer sets --lexxy-color-canvas: transparent so the field blends into the
-   pill; Lexxy dropdown panels reuse that token — force an opaque surface. */
+   pill; Lexxy dropdown panels and prompt menus reuse that token — force opaque. */
 .lexxy-editor__toolbar-dropdown [data-dropdown-panel],
-.lexxy-editor__toolbar-overflow-menu {
+.lexxy-editor__toolbar-overflow-menu,
+.lexxy-prompt-menu {
   background-color: var(--color-bg-base);
   border: 1px solid var(--color-stroke-base);
   box-shadow: var(--shadow-base);
   color: var(--color-fg-base);
+}
+
+/* Prompt menus are position:absolute inside the editor — don't clip them. */
+.composer--field lexxy-editor.composer--editor:has(.lexxy-prompt-menu--visible) {
+  overflow: visible;
 }
 
 .lexxy-content__table-cell--header {

@@ -1,0 +1,14 @@
+<% if @failed_message.present? %>
+  <%= turbo_stream.update "toasts" do %>
+    <%= render "shared/toasts", type: "errmsg", messages: [@failed_message] %>
+  <% end %>
+<% else %>
+  <%= render "pendings/inbox_removed", bullet: @bullet %>
+  <%= turbo_stream.append dom_id(@bullet.bucket.bucketable, :bullets_container) do %>
+    <%= render partial: @bullet.to_partial_path, locals: { bullet: @bullet } %>
+  <% end %>
+  <%= turbo_stream.remove "no_bullets_container" %>
+  <%= turbo_stream.update "toasts" do %>
+    <%= render "shared/toasts", type: "notify", messages: ["Added to today"] %>
+  <% end %>
+<% end %>

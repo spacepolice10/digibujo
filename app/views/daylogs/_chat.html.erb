@@ -1,4 +1,4 @@
-<%# locals: (daylog:, daylog_bucket:, selected_date:, bullets:, more_bullets:, mood_entity:, picture:) %>
+<%# locals: (daylog:, daylog_bucket:, selected_date:, bullets:, more_bullets:, mood_entity:, picture:, pending_count: 0) %>
 <%# Campfire-style messages column; header can carry the day photo as its
     background. Composer is a fixed dock (keyboard covers the tabbar). %>
 <div data-bulk-menu-target="list"
@@ -8,7 +8,8 @@
   <%= render "daylogs/header",
         date: selected_date,
         mood_entity: mood_entity,
-        picture: picture %>
+        picture: picture,
+        pending_count: pending_count %>
 
   <div class="daylog--scroller" data-daylog-scroll-target="scroller">
     <% if more_bullets %>

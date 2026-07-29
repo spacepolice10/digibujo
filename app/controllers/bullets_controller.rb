@@ -65,17 +65,24 @@ class BulletsController < ApplicationController
 
   # The chat composer stays on the page and appends the new row; the full-page
   # composer at /bullets/new still navigates back to where it came from.
+  # JSON clients always get a 201 body (no inline_composer required).
   def created_response
-    return return_from_composer unless inline_composer?
-
     respond_to do |format|
-      format.turbo_stream
+      format.json do
+        response.set_header('Location', bullet_url(@bullet))
+        render :create, status: :created
+      end
+      format.turbo_stream { inline_composer? ? render(:create) : return_from_composer }
       format.html { return_from_composer }
     end
   end
 
   def failed_create_response
-    inline_composer? ? notify_failure : render(:new, status: :unprocessable_entity)
+    respond_to do |format|
+      format.json { render json: bullet_errors_by_attribute, status: :unprocessable_entity }
+      format.turbo_stream { notify_failure }
+      format.html { inline_composer? ? notify_failure : render(:new, status: :unprocessable_entity) }
+    end
   end
 
   def return_from_composer
@@ -134,7 +141,23 @@ class BulletsController < ApplicationController
     (own + nested).uniq.presence || ['Bullet could not be saved']
   end
 
+  def bullet_errors_by_attribute
+    errors = {}
+    @bullet.errors.each do |error|
+      next if error.attribute == :bulletable
+
+      (errors[error.attribute] ||= []) << error.message
+    end
+    @bullet.bulletable&.errors&.each do |error|
+      (errors[error.attribute] ||= []) << error.message
+    end
+    errors.presence || { base: ['Bullet could not be saved'] }
+  end
+
   def bullet_type_required
-    redirect_to new_bullet_path, alert: 'Pick a bullet type first'
+    respond_to do |format|
+      format.html { redirect_to new_bullet_path, alert: 'Pick a bullet type first' }
+      format.json { render json: { bulletable_type: ['is required'] }, status: :unprocessable_entity }
+    end
   end
 end

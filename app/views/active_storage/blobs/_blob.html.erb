@@ -1,6 +1,7 @@
 <%= tag.figure class: "attachment attachment--#{blob.representable? ? "preview" : "file"} attachment--#{blob.filename.extension}" do %>
   <% if blob.representable? %>
-    <%= image_tag blob,
+    <%= represent_image_tag blob,
+          variant: :preview,
           alt: blob.filename %>
   <% end %>
 

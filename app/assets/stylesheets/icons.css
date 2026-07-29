@@ -80,6 +80,7 @@
     --icon-sign-out: url("icon-sign-out.svg");
     --icon-phone: url("icon-phone.svg");
     --icon-text: url("icon-text.svg");
+    --icon-text-color: url("icon-text-color.svg");
     --icon-webhook: url("icon-webhook.svg");
     --icon-folder: url("icon-folder.svg");
     --icon-briefcase: url("icon-briefcase.svg");
@@ -97,6 +98,24 @@
     --icon-music: url("icon-music.svg");
     --icon-camera: url("icon-camera.svg");
     --icon-money: url("icon-money.svg");
+    --icon-star: url("icon-star.svg");
+    --icon-plant: url("icon-plant.svg");
+    --icon-coffee: url("icon-coffee.svg");
+    --icon-gamepad: url("icon-gamepad.svg");
+    --icon-gift: url("icon-gift.svg");
+    --icon-car: url("icon-car.svg");
+    --icon-moon: url("icon-moon.svg");
+    --icon-paw: url("icon-paw.svg");
+    --icon-movie: url("icon-movie.svg");
+    --icon-laptop: url("icon-laptop.svg");
+    --icon-school: url("icon-school.svg");
+    --icon-flower: url("icon-flower.svg");
+    --icon-bike: url("icon-bike.svg");
+    --icon-world: url("icon-world.svg");
+    --icon-bed: url("icon-bed.svg");
+    --icon-puzzle: url("icon-puzzle.svg");
+    --icon-rocket: url("icon-rocket.svg");
+    --icon-baby: url("icon-baby.svg");
     --icon-zoom-in: url("icon-zoom-in.svg");
     --icon-dots: url("icon-dots.svg");
   }

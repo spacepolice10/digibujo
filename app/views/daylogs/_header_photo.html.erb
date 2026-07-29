@@ -1,7 +1,7 @@
 <%# locals: (date:, picture:) %>
 <div id="daylog_header_photo_<%= date.iso8601 %>" class="daylog--header-photo" aria-hidden="true">
   <% if picture&.picture&.attached? %>
-    <%= image_tag picture.picture,
+    <%= image_tag picture.picture.variant(:header),
           alt: "",
           class: "daylog--header-photo-image" %>
   <% end %>

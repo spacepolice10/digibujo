@@ -264,6 +264,26 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     assert_match '✨', response.body
   end
 
+  test 'show paints daylog picture as date-rail background' do
+    ensure_daylog!(@user)
+    picture = @user.daylog.pictures.new(date: Date.current)
+    picture.picture.attach(
+      io: StringIO.new(Base64.decode64(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
+      )),
+      filename: 'day.png',
+      content_type: 'image/png'
+    )
+    picture.save!
+    monthlylog = create_monthlylog!(@user, name: Date.current.strftime('%B %Y'))
+
+    get monthlylog_path(monthlylog)
+
+    assert_response :success
+    assert_select '.monthlylog--date-rail--photo', count: 1
+    assert_select '.monthlylog--date-photo-image', count: 1
+  end
+
   test 'show includes tracker toggles on scheduled days' do
     monthlylog = create_monthlylog!(@user, name: Date.current.strftime('%B %Y'))
     tracker = create_tracker!(@user, name: 'Meditate', monthlylog: monthlylog, icon: 'heart')

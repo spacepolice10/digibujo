@@ -37,7 +37,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     JS
   end
 
-  test 'enter appends the bullet without leaving the daylog' do
+  test 'cmd enter appends a note without leaving the daylog' do
     visit daylog_path(date: Date.current.iso8601)
 
     compose 'Buy oat milk'
@@ -45,6 +45,33 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     assert_text 'Buy oat milk'
     assert_current_path daylog_path(date: Date.current.iso8601)
     assert(@user.bullets.reload.any? { |bullet| bullet.body_as_text.strip == 'Buy oat milk' })
+  end
+
+  test 'plain enter does not send a note' do
+    visit daylog_path(date: Date.current.iso8601)
+
+    focus_composer
+    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
+    editor.send_keys('Still drafting')
+    editor.send_keys(:enter)
+
+    assert_equal 0, @user.bullets.reload.count
+    assert_selector '#bullet_composer.composer--multiline'
+  end
+
+  test 'enter sends a task' do
+    visit daylog_path(date: Date.current.iso8601)
+
+    find('.composer--type-button').click
+    find('.composer--type-option[data-composer-type="Task"]').click
+
+    focus_composer
+    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
+    editor.send_keys('Buy oat milk')
+    editor.send_keys(:enter)
+
+    assert_text 'Buy oat milk'
+    assert_equal 'Task', @user.bullets.reload.last.bulletable_type
   end
 
   test 'the composer clears itself after a send' do
@@ -124,7 +151,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     visit daylog_path(date: Date.current.iso8601)
 
     assert_no_selector '.composer--actions .composer--toolbar-toggle', visible: true
-    assert_no_selector '.composer--actions .composer--clear', visible: true
+    assert_no_selector '.composer--lead .composer--clear', visible: true
     assert_selector '.composer--actions .composer--upload'
     assert_no_selector '#bullet_composer button[name=bold]', visible: true
 
@@ -136,7 +163,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
 
     assert_selector '#bullet_composer.composer--multiline'
     assert_selector '.composer--actions .composer--toolbar-toggle'
-    assert_selector '.composer--actions .composer--clear'
+    assert_selector '.composer--lead .composer--clear', text: 'Clear'
     assert_selector '.composer--actions .composer--upload'
     assert_no_selector '#bullet_composer button[name=bold]', visible: true
   end
@@ -188,7 +215,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     editor.send_keys(%i[shift enter])
     editor.send_keys('Second line')
     assert_selector '.composer--toolbar-toggle'
-    assert_selector '.composer--clear'
+    assert_selector '.composer--lead .composer--clear', text: 'Clear'
     assert_no_selector '#bullet_composer button[name=bold]', visible: true
     assert_selector '.composer--actions .composer--upload'
 
@@ -199,6 +226,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     assert_selector '.composer--actions .composer--upload'
     assert_selector '#bullet_composer button[name=bold]'
     assert_no_selector '.composer--type-button', visible: true
+    assert_selector '.composer--lead .composer--clear', text: 'Clear'
     assert_equal 'fixed', page.evaluate_script("getComputedStyle(document.querySelector('#bullet_composer')).position")
     assert_text 'Draft note'
 
@@ -222,8 +250,8 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     editor.send_keys(%i[shift enter])
     editor.send_keys('Second line')
 
-    assert_selector '.composer--clear'
-    find('.composer--clear').click
+    assert_selector '.composer--lead .composer--clear', text: 'Clear'
+    find('.composer--lead .composer--clear').click
 
     assert_no_selector '#bullet_composer.composer--multiline'
     assert_no_selector '.composer--clear', visible: true
@@ -328,12 +356,24 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     focus_composer
     editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
     editor.send_keys(text)
-    editor.send_keys(:enter)
+    # Notes need Cmd/Ctrl+Enter; Task/Event send on plain Enter.
+    type = page.evaluate_script(<<~JS)
+      document.querySelector('#bullet_composer [data-chat-composer-target="typeField"]')?.value
+    JS
+    if type == 'Note'
+      editor.send_keys([modifier_key, :enter])
+    else
+      editor.send_keys(:enter)
+    end
   end
 
   def focus_composer
     page.execute_script(<<~JS)
       document.querySelector('#bullet_composer lexxy-editor')?.focus()
     JS
+  end
+
+  def modifier_key
+    RUBY_PLATFORM.match?(/darwin/i) ? :meta : :control
   end
 end

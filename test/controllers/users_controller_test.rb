@@ -12,6 +12,8 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     get user_path
 
     assert_response :success
+    assert_select 'a[href=?]', access_codes_path, text: /Access codes/
+    assert_select 'a[href=?]', hooks_path, text: /Hooks/
     assert_select 'form[action=?][data-turbo-confirm=?]', authentication_path, 'Sign out of Digibujo?'
     assert_select 'button', text: /Sign out/
   end

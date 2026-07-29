@@ -7,7 +7,7 @@ module BulletsHelper
       modifier: 'task',
       hotkey: 'Shift+T',
       colour: 'var(--model-color-2)',
-      placeholder: 'What need to be done?',
+      placeholder: 'What needs to be done?',
       description: 'Something to do',
       hotkey_action: 'keydown.shift+t@document->hotkey#click'
     },
@@ -17,7 +17,7 @@ module BulletsHelper
       hotkey: 'Shift+N',
       colour: 'var(--model-color-4)',
       placeholder: 'Write it down…',
-      description: 'Thoughts, ideas, anything',
+      description: 'Thoughts, ideas, files, markdown, anything',
       hotkey_action: 'keydown.shift+n@document->hotkey#click'
     },
     'Event' => {
@@ -25,7 +25,7 @@ module BulletsHelper
       modifier: 'event',
       hotkey: 'Shift+E',
       colour: 'var(--model-color-5)',
-      placeholder: 'Write down appointments or notable events…',
+      placeholder: "What's in agenda?",
       description: 'Appointments and dates',
       hotkey_action: 'keydown.shift+e@document->hotkey#click'
     },
@@ -66,6 +66,8 @@ module BulletsHelper
       daylog_path(date: (bullet.pops_on || Date.current).iso8601)
     when Collection
       collection_path(bucketable)
+    when Pending
+      pending_path
     when Monthlylog
       monthlylog_path(bucketable)
     when Future

@@ -51,4 +51,29 @@ class AuthenticationControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to new_authentication_path
     assert_empty cookies[:session_id]
   end
+
+  test 'create json returns pending authentication code' do
+    post authentication_path, params: { email_address: @user.email_address }, as: :json
+
+    assert_response :created
+    assert response.parsed_body['pending_authentication_code'].present?
+    assert cookies[:pending_authentication_code].present?
+    assert_enqueued_emails 1
+  end
+
+  test 'create json with invalid email returns 422' do
+    post authentication_path, params: { email_address: 'not-an-email' }, as: :json
+
+    assert_response :unprocessable_entity
+    assert response.parsed_body['email_address'].present?
+  end
+
+  test 'destroy json returns no content' do
+    sign_in_as(@user)
+
+    delete authentication_path, as: :json
+
+    assert_response :no_content
+    assert_empty cookies[:session_id]
+  end
 end

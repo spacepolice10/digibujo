@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# Shared `prepare_bullets_from` handler for Rails `bullet_ids` parameter.
+# It helps to provide bulk set of bullets to the controller action.
 module PrepareBullets
   extend ActiveSupport::Concern
 

@@ -4,7 +4,7 @@
         class: "daylog--photo-thumb",
         aria: { label: "Open photo for #{date.strftime('%b %-d')}" },
         data: { turbo_frame: "_top" } do %>
-    <%= image_tag picture.picture.variant(resize_to_limit: [64, 64]),
+    <%= image_tag picture.picture.variant(:thumb),
           alt: "",
           class: "daylog--photo-thumb-image" %>
   <% end %>

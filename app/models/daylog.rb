@@ -42,6 +42,6 @@ class Daylog < ApplicationRecord
   end
 
   def pictures_by_date(dates)
-    pictures.where(date: dates).index_by(&:date)
+    pictures.where(date: dates).with_attached_picture.index_by(&:date)
   end
 end

@@ -72,13 +72,14 @@ export default class extends Controller {
     this.editorTarget.focus()
   }
 
-  // Enter sends on desktop (Shift+Enter breaks the line). On touch / coarse
-  // pointers Enter always inserts a newline — send via the submit control.
-  // While the formatting toolbar is open, Enter always breaks the line.
-  // Shift+Tab cycles Note → Task → Event. Shift+Ctrl+E toggles the Note toolbar.
-  // Shift+R starts a voice take (hotkey on the mic ignores the editor; this
-  // path covers the focused field). Runs on capture so Lexical never sees a
-  // sending Enter.
+  // Desktop send: Notes need Cmd/Ctrl+Enter (plain Enter breaks the line);
+  // Task/Event send on Enter. Shift+Enter always breaks the line. On touch /
+  // coarse pointers neither Enter nor Cmd/Ctrl+Enter sends — use the submit
+  // control. While the formatting toolbar is open, Enter always breaks the
+  // line. Shift+Tab cycles Note → Task → Event. Shift+Ctrl+E toggles the Note
+  // toolbar. Shift+R starts a voice take (hotkey on the mic ignores the
+  // editor; this path covers the focused field). Runs on capture so Lexical
+  // never sees a sending Enter.
   keydown(event) {
     if (event.isComposing) return
 
@@ -87,10 +88,17 @@ export default class extends Controller {
     if (this.#handleRecordKey(event)) return
 
     if (event.key !== "Enter") return
-    if (event.shiftKey || event.metaKey || event.ctrlKey) return
+    if (event.shiftKey) return
     if (this.#toolbarOpen) return
     if (this.#touchDevice) return
     if (this.editorTarget.hasOpenPrompt) return
+
+    const isModEnter = event.metaKey || event.ctrlKey
+    if (this.typeFieldTarget.value === NOTE_TYPE) {
+      if (!isModEnter) return
+    } else if (isModEnter) {
+      return
+    }
 
     event.preventDefault()
     event.stopPropagation()
