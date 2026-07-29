@@ -33,6 +33,10 @@ export default class extends Controller {
     this.#visualViewport?.addEventListener("scroll", this.boundSyncKeyboardInset)
     window.addEventListener("resize", this.boundSyncTabbarInset)
     window.addEventListener("resize", this.boundSyncKeyboardInset)
+    // lexxy:initialize fires straight off the element once the root is mounted.
+    // lexxy:editor-initialized goes through Lexxy's adapter, which is a no-op in
+    // a browser — never rely on it alone.
+    this.editorTarget.addEventListener("lexxy:initialize", this.boundOnEditorInitialized)
     this.editorTarget.addEventListener("lexxy:editor-initialized", this.boundOnEditorInitialized)
 
     this.#prepareToolbar()
@@ -42,7 +46,7 @@ export default class extends Controller {
     this.#syncKeyboardInset()
     this.refresh()
 
-    if (this.editorTarget.editorContentElement) this.boundOnEditorInitialized()
+    this.#setUpWhenEditorUpgrades()
   }
 
   disconnect() {
@@ -50,6 +54,7 @@ export default class extends Controller {
     this.#visualViewport?.removeEventListener("scroll", this.boundSyncKeyboardInset)
     window.removeEventListener("resize", this.boundSyncTabbarInset)
     window.removeEventListener("resize", this.boundSyncKeyboardInset)
+    this.editorTarget.removeEventListener("lexxy:initialize", this.boundOnEditorInitialized)
     this.editorTarget.removeEventListener("lexxy:editor-initialized", this.boundOnEditorInitialized)
     this.resizeObserver?.disconnect()
     this.element.classList.remove("composer--keyboard-open")
@@ -182,6 +187,23 @@ export default class extends Controller {
     this.#syncMultiline()
     this.toolbarButtonTarget.hidden = !this.#toolbarToggleable
     this.clearButtonTarget.hidden = !this.#clearable
+  }
+
+  // Lexxy defines its custom elements from a setTimeout, so a lazily loaded
+  // controller can connect while <lexxy-editor> is still an unknown element —
+  // one where editorContentElement, the toolbar template and isBlank are all
+  // missing. Run setup again once the upgrade lands.
+  #setUpWhenEditorUpgrades() {
+    if (this.editorTarget.editorContentElement) {
+      this.boundOnEditorInitialized()
+      return
+    }
+
+    customElements.whenDefined("lexxy-editor").then(() => {
+      if (!this.element.isConnected) return
+
+      this.boundOnEditorInitialized()
+    })
   }
 
   // External <lexxy-toolbar id="composer_toolbar"> starts empty; seed Lexxy's
@@ -456,7 +478,11 @@ export default class extends Controller {
   }
 
   get #submittable() {
-    return this.#voiceMode ? this.#hasRecording : !this.editorTarget.isBlank
+    if (this.#voiceMode) return this.#hasRecording
+    // Before the upgrade isBlank is undefined, which would read as "has text".
+    if (!this.editorTarget.editorContentElement) return false
+
+    return !this.editorTarget.isBlank
   }
 
   get #toolbarToggleable() {
