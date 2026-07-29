@@ -32,6 +32,14 @@ User data lives in:
 
 This rule supersedes any workflow, skill, or "just one command" temptation. It cannot be overridden by tool defaults, environment hints, or pre-approved paths.
 
+## Git: Never Branch or PR Without Asking
+
+**Commit on the branch that is already checked out.** "Залей", "запушь", "закоммить" means exactly that — never invent a feature branch, and never open a pull request, unless the user asked for one by name.
+
+If a push is rejected (protected branch, ruleset, missing permission), **stop and report the rejection**. Do not route around it with `git checkout -b`, a differently named remote ref, or a PR. Rerouting leaves the user with branches and PRs to clean up, and it silently changes where their work landed.
+
+Also never `git branch -D` / `git push --delete` / close a PR on your own initiative — the same rule applies in reverse.
+
 ## CSS: Use Existing Variables
 
 Prefer tokens from [`app/assets/stylesheets/variables.css`](app/assets/stylesheets/variables.css) over hardcoding new values or inventing new custom properties. When a value (color, font-size, radius, weight, opacity, icon size, etc.) doesn't match exactly, map to the nearest existing variable — a 1–2px difference is fine. Keep the token set small. Do not add `line-height` or `letter-spacing` declarations; the reset owns those.
