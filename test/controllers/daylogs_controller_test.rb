@@ -56,6 +56,17 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match 'Today noise', response.body
   end
 
+  test 'daylog renders project attachment inside bullet body' do
+    project = create_project!(@user, name: 'inline tag')
+    body_html = ActionText::Content.new('<p>tagged note</p>').append_attachables(project).to_html
+    create_bullet!(@user, bulletable: Note.new(body: body_html), pops_on: Date.current)
+
+    get daylog_path
+
+    assert_response :success
+    assert_select "a.pill[href=?]", project_path(project), text: /inline tag/
+  end
+
   test 'invalid calendar date returns not found' do
     get daylog_path(date: "#{Date.current.year}-02-30")
 
