@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class Daylog::MoodEntity < ApplicationRecord
-  self.table_name = 'daylog_mood_entities'
+class CalendarDate::MoodEntity < ApplicationRecord
+  self.table_name = 'calendar_date_mood_entities'
 
   MOODS = {
     positive: 0,
@@ -17,11 +17,13 @@ class Daylog::MoodEntity < ApplicationRecord
     frustrated: '😣'
   }.freeze
 
-  belongs_to :daylog
+  belongs_to :calendar_date
 
   enum :mood, MOODS, validate: true
 
-  validates :date, uniqueness: { scope: :daylog_id }
+  delegate :date, to: :calendar_date
+
+  validates :calendar_date_id, uniqueness: true
 
   def marker
     MOOD_MARKERS[mood&.to_sym]

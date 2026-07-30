@@ -18,16 +18,8 @@ module Colourable
     validates :colour, inclusion: { in: COLOUR_MAPPINGS.keys }, allow_nil: true
   end
 
-  def colour_variable
-    COLOUR_MAPPINGS[colour]
-  end
-
   def self.colour_variable_of(colour)
     COLOUR_MAPPINGS[colour]
-  end
-
-  def colour_bg_variable
-    colour_variable&.sub(/\)\z/, '-bg)')
   end
 
   def self.colour_bg_variable_of(colour)

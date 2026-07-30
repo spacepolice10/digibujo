@@ -162,11 +162,10 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     get home_path, headers: { 'User-Agent' => MOBILE_UA }
 
     assert_response :success
-    assert_select 'h1', text: /Hello #{Regexp.escape(@user.email_address)}/
+    assert_select 'h1', text: "Hello, #{@user.name}"
     assert_form_action search_path
     assert_select '#home_create[popover]'
     assert_select '[popovertarget=?]', 'home_create'
-    assert_select '.dropdown--element-header h2', text: 'Create'
     assert_menu_nav_link activities_path, label: 'Activity'
     assert_menu_nav_link review_path, label: 'Review'
     assert_menu_nav_link archived_index_path, label: 'Archived'

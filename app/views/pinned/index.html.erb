@@ -7,19 +7,6 @@
     data-grid-navigation-columns-value="1"
     data-action="keydown->grid-navigation#navigate"
   >
-    <div class="dropdown--element-header">
-      <h2>Pinned</h2>
-      <button
-        type="button"
-        class="button--primary button--icon button--circle dropdown--element-hide"
-        popovertarget="pinned_list"
-        popovertargetaction="hide"
-        aria-label="Close pinned"
-      >
-        <%= icon_tag("x") %>
-      </button>
-    </div>
-
     <div class="dropdown--element-body">
       <% if @pinned_entities.any? %>
         <ul class="layout--list bucket--list">

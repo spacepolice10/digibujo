@@ -21,7 +21,7 @@
       <label class="button--tertiary button--icon" aria-label="Add photo">
         <%= icon_tag("camera") %>
         <%= file_field_tag :picture,
-              accept: Daylog::Picture::ALLOWED_CONTENT_TYPES.join(","),
+              accept: CalendarDate::Picture::ALLOWED_CONTENT_TYPES.join(","),
               class: "utilities--sr-only",
               onchange: "this.form.requestSubmit()" %>
       </label>

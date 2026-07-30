@@ -103,7 +103,7 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "turbo-frame##{dom_id(bullet)}.bullet", text: /Pinned spread task/
-    assert_select "turbo-frame##{dom_id(bullet)}.bullet > .bullet--marker", count: 1
+    assert_select "turbo-frame##{dom_id(bullet)}.bullet .bullet--marker", count: 1
     assert_select "turbo-frame##{dom_id(bullet)}.bullet .bullet--tags", count: 0
     assert_select "turbo-frame##{dom_id(bullet)}.bullet .bullet--metadata", count: 0
   end
@@ -252,7 +252,8 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
 
   test 'show includes mood controls in each date band' do
     ensure_daylog!(@user)
-    @user.daylog.mood_entities.create!(date: Date.current, mood: :inspired)
+    calendar_date = @user.calendar_dates.create!(date: Date.current)
+    @user.daylog.mood_entities.create!(calendar_date: calendar_date, mood: :inspired)
     monthlylog = create_monthlylog!(@user, name: Date.current.strftime('%B %Y'))
 
     get monthlylog_path(monthlylog)
@@ -266,7 +267,8 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
 
   test 'show paints daylog picture as date-rail background' do
     ensure_daylog!(@user)
-    picture = @user.daylog.pictures.new(date: Date.current)
+    calendar_date = @user.calendar_dates.create!(date: Date.current)
+    picture = @user.daylog.pictures.new(calendar_date: calendar_date)
     picture.picture.attach(
       io: StringIO.new(Base64.decode64(
         'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='

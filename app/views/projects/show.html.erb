@@ -2,7 +2,7 @@
 
 <div class="layout--page layout--container layout--container-md">
   <div class="layout--mx-auto project--header">
-    <%= icon_tag("hash", style: "color: #{@project.colour_variable};", class: "project--header-icon") %>
+    <%= icon_tag("hash", style: "color: #{colour(@project.colour)};", class: "project--header-icon") %>
     <h2><%= @project.name %></h2>
   </div>
   <p class="utilities--mx-auto typography--paragraph-sm">Type # symbol during writing note to append it to project</p>
@@ -10,7 +10,7 @@
   <div class="layout--surface">
     <div class="layout--flex layout--justify-between layout--surface-header">
       <%= back_link_to home_path, class: "button--tertiary button--sm" do %>
-        <%= icon_tag("arrow-left", colour: "var(--color-stroke-base)") %>
+        <%= icon_tag("arrow-left", style: "color: var(--color-stroke-base);") %>
       Back
       <% end %>
       <div class="layout--flex layout--gapped">

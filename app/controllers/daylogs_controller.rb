@@ -11,8 +11,9 @@ class DaylogsController < ApplicationController
     # by Daylogs::BulletsController.
     @bullets = @daylog.bullets.where(pops_on: @selected_date).active.last_page
     @more_bullets = @bullets.size == Bullet::Pageable::PAGE_SIZE
-    @mood_entity = @daylog.mood_entities.find_by(date: @selected_date)
-    @picture = @daylog.pictures.find_by(date: @selected_date)
+    calendar_date = Current.user.calendar_dates.includes(:mood_entity, :picture).find_by(date: @selected_date)
+    @mood_entity = calendar_date&.mood_entity
+    @picture = calendar_date&.picture
     @pending_count = Pending.inbox_count_for(Current.user)
   end
 

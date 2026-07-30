@@ -39,22 +39,9 @@
     data-grid-navigation-columns-value="1"
     data-action="keydown->grid-navigation#navigate"
   >
-    <div class="dropdown--element-header">
-      <h2>Mood</h2>
-      <button
-        type="button"
-        class="button--primary button--icon button--circle dropdown--element-hide"
-        popovertarget="<%= popover_id %>"
-        popovertargetaction="hide"
-        aria-label="Close mood"
-      >
-        <%= icon_tag("x") %>
-      </button>
-    </div>
-
     <div class="dropdown--element-body">
       <nav class="dropdown--menu" aria-label="Mood">
-        <% Daylog::MoodEntity::MOOD_MARKERS.each do |mood, emoji| %>
+        <% CalendarDate::MoodEntity::MOOD_MARKERS.each do |mood, emoji| %>
           <% selected = entity&.mood == mood.to_s %>
           <%= button_to daylog_mood_entity_path,
                 method: :post,

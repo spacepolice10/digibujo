@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_29_092000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_30_000001) do
   create_table "access_codes", force: :cascade do |t|
     t.string "code_digest", null: false
     t.string "code_prefix", null: false
@@ -138,29 +138,42 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_092000) do
     t.index ["user_id"], name: "index_bullets_on_user_id_and_pinned"
   end
 
+  create_table "calendar_date_mood_entities", force: :cascade do |t|
+    t.integer "calendar_date_id", null: false
+    t.datetime "created_at", null: false
+    t.date "date"
+    t.integer "daylog_id"
+    t.integer "mood", null: false
+    t.datetime "updated_at", null: false
+    t.index ["calendar_date_id"], name: "index_calendar_date_mood_entities_on_calendar_date_id", unique: true
+    t.index ["daylog_id", "date"], name: "index_calendar_date_mood_entities_on_daylog_id_and_date", unique: true
+    t.index ["daylog_id"], name: "index_calendar_date_mood_entities_on_daylog_id"
+  end
+
+  create_table "calendar_date_pictures", force: :cascade do |t|
+    t.integer "calendar_date_id", null: false
+    t.datetime "created_at", null: false
+    t.date "date"
+    t.integer "daylog_id"
+    t.datetime "updated_at", null: false
+    t.index ["calendar_date_id"], name: "index_calendar_date_pictures_on_calendar_date_id", unique: true
+    t.index ["daylog_id", "date"], name: "index_calendar_date_pictures_on_daylog_id_and_date", unique: true
+    t.index ["daylog_id"], name: "index_calendar_date_pictures_on_daylog_id"
+  end
+
+  create_table "calendar_dates", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.date "date", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id", "date"], name: "index_calendar_dates_on_user_id_and_date", unique: true
+    t.index ["user_id"], name: "index_calendar_dates_on_user_id"
+  end
+
   create_table "collections", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "description"
     t.datetime "updated_at", null: false
-  end
-
-  create_table "daylog_mood_entities", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.date "date", null: false
-    t.integer "daylog_id", null: false
-    t.integer "mood", null: false
-    t.datetime "updated_at", null: false
-    t.index ["daylog_id", "date"], name: "index_daylog_mood_entities_on_daylog_id_and_date", unique: true
-    t.index ["daylog_id"], name: "index_daylog_mood_entities_on_daylog_id"
-  end
-
-  create_table "daylog_pictures", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.date "date", null: false
-    t.integer "daylog_id", null: false
-    t.datetime "updated_at", null: false
-    t.index ["daylog_id", "date"], name: "index_daylog_pictures_on_daylog_id_and_date", unique: true
-    t.index ["daylog_id"], name: "index_daylog_pictures_on_daylog_id"
   end
 
   create_table "daylogs", force: :cascade do |t|
@@ -356,8 +369,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_29_092000) do
   add_foreign_key "bullet_projects", "projects"
   add_foreign_key "bullets", "buckets"
   add_foreign_key "bullets", "users"
-  add_foreign_key "daylog_mood_entities", "daylogs"
-  add_foreign_key "daylog_pictures", "daylogs"
+  add_foreign_key "calendar_date_mood_entities", "calendar_dates"
+  add_foreign_key "calendar_date_mood_entities", "daylogs"
+  add_foreign_key "calendar_date_pictures", "calendar_dates"
+  add_foreign_key "calendar_date_pictures", "daylogs"
+  add_foreign_key "calendar_dates", "users"
   add_foreign_key "daylogs", "users"
   add_foreign_key "futures", "users"
   add_foreign_key "hooks", "users"

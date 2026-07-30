@@ -24,7 +24,7 @@
       aria-label="Select bullet"
     >
       <span aria-hidden="true" style="display: flex;">
-        <%= icon_tag(bullet.marker_icon.to_s.dasherize, style: "color: #{Colourable.colour_variable_of(bullet.colour)};", class: "bullet--marker-type") %>
+        <%= icon_tag(bullet.marker_icon.to_s.dasherize, style: "color: #{colour(bullet.colour)};", class: "bullet--marker-type") %>
         <span class="bullet--marker-select-indicator" aria-hidden="true"></span>
       </span>
     </label>
@@ -50,18 +50,6 @@
           style="position-anchor: <%= migration_anchor %>"
           popover
         >
-          <div class="dropdown--element-header">
-            <h2><%= migration_title %></h2>
-            <button
-              type="button"
-              class="button--primary button--icon button--circle dropdown--element-hide"
-              popovertarget="<%= migration_popover_id %>"
-              popovertargetaction="hide"
-              aria-label="Close <%= migration_title.downcase %>"
-            >
-              <%= icon_tag("x") %>
-            </button>
-          </div>
           <div class="dropdown--element-body">
             <p class="bullet--migration-text"><%= bullet.migration_hint %></p>
           </div>

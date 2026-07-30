@@ -9,6 +9,7 @@ class Daylogs::MoodEntitiesControllerTest < ActionDispatch::IntegrationTest
     ensure_daylog!(@user)
     @date = Date.current
     @mood_dom_id = "daylog_mood_entity_#{@date.iso8601}"
+    @calendar_date = @user.calendar_dates.create!(date: @date)
   end
 
   test 'create mood entity updates picker via turbo stream' do
@@ -19,7 +20,7 @@ class Daylogs::MoodEntitiesControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :success
-    assert_equal 'inspired', @user.daylog.mood_entities.find_by!(date: @date).mood
+    assert_equal 'inspired', @calendar_date.reload.mood_entity.mood
     assert_select "turbo-stream[action=replace][target=#{@mood_dom_id}]", count: 1
   end
 
@@ -44,7 +45,7 @@ class Daylogs::MoodEntitiesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'destroy mood entity updates picker via turbo stream' do
-    @user.daylog.mood_entities.create!(date: @date, mood: :positive)
+    @user.daylog.mood_entities.create!(calendar_date: @calendar_date, mood: :positive)
 
     assert_difference -> { @user.daylog.mood_entities.count }, -1 do
       delete daylog_mood_entity_path,
@@ -57,7 +58,7 @@ class Daylogs::MoodEntitiesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'destroy mood entity redirects html requests back to daylog' do
-    @user.daylog.mood_entities.create!(date: @date, mood: :positive)
+    @user.daylog.mood_entities.create!(calendar_date: @calendar_date, mood: :positive)
 
     assert_difference -> { @user.daylog.mood_entities.count }, -1 do
       delete daylog_mood_entity_path, params: { date: @date.iso8601 }

@@ -14,6 +14,7 @@ class User < ApplicationRecord
   has_many :buckets, dependent: :destroy
   has_many :futures, dependent: :destroy
   has_many :monthlylogs, dependent: :destroy
+  has_many :calendar_dates, dependent: :destroy
   has_one :daylog, dependent: :destroy
   has_one :pending, dependent: :destroy
   has_many :collections, through: :buckets, source: :bucketable, source_type: 'Collection'

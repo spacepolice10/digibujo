@@ -27,8 +27,6 @@ class PendingsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select 'turbo-frame#pending_list[popover].daylog--pending-dropdown' do
-      assert_select '.dropdown--element-header h2', text: 'Pending'
-      assert_select "button.dropdown--element-hide[popovertarget='pending_list'][popovertargetaction='hide']"
       assert_match 'In dropdown', response.body
       assert_select "form[action=?]", pending_bullet_accept_path(@pending.bullets.first)
     end

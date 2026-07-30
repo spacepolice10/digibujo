@@ -77,7 +77,8 @@ class DaylogTest < ActiveSupport::TestCase
       filename: 'day.png',
       content_type: 'image/png'
     )
-    picture = daylog.pictures.new(date: Date.current)
+    calendar_date = user.calendar_dates.create!(date: Date.current)
+    picture = daylog.pictures.new(calendar_date: calendar_date)
     picture.picture.attach(blob)
     picture.save!
 

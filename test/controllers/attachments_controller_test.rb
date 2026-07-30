@@ -67,12 +67,13 @@ class AttachmentsControllerTest < ActionDispatch::IntegrationTest
   def attach_daylog_picture_blob!(user, filename:)
     ensure_daylog!(user)
     daylog = user.reload.daylog
+    calendar_date = user.calendar_dates.create!(date: Date.current)
     blob = ActiveStorage::Blob.create_and_upload!(
       io: StringIO.new(mini_png),
       filename: filename,
       content_type: 'image/png'
     )
-    picture = daylog.pictures.new(date: Date.current)
+    picture = daylog.pictures.new(calendar_date: calendar_date)
     picture.picture.attach(blob)
     picture.save!
     blob

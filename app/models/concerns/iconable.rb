@@ -16,11 +16,9 @@ module Iconable
     validates :icon, inclusion: { in: ICON_MAPPINGS }, allow_nil: true
   end
 
-  def icon_key
+  def icon_name
     icon.in?(ICON_MAPPINGS) ? icon : DEFAULT_ICON
   end
 
-  def icon_mask
-    "var(--icon-#{icon_key})"
-  end
+
 end

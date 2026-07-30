@@ -4,8 +4,6 @@ class Daylog < ApplicationRecord
   include Bucketable
 
   belongs_to :user
-  has_many :mood_entities, class_name: 'Daylog::MoodEntity', dependent: :destroy
-  has_many :pictures, class_name: 'Daylog::Picture', dependent: :destroy
 
   validates :user_id, uniqueness: true
 
@@ -22,26 +20,41 @@ class Daylog < ApplicationRecord
     record.reload
   end
 
+  def mood_entities
+    CalendarDate::MoodEntity.joins(:calendar_date).where(calendar_dates: { user_id: user_id })
+  end
+
+  def pictures
+    CalendarDate::Picture.joins(:calendar_date).where(calendar_dates: { user_id: user_id })
+  end
+
   def pick_mood(date:, mood:)
-    entity = mood_entities.find_or_initialize_by(date: date)
+    calendar_date = user.calendar_dates.find_or_create_by!(date: date)
+    entity = calendar_date.mood_entity || calendar_date.build_mood_entity
     entity.mood = mood
     entity.save!
     entity
   end
 
   def remove_mood(date:)
-    mood_entities.find_by!(date: date).destroy!
+    calendar_date = user.calendar_dates.find_by!(date: date)
+    calendar_date.mood_entity.destroy!
   end
 
   def remove_picture(date:)
-    pictures.find_by!(date: date).destroy!
+    calendar_date = user.calendar_dates.find_by!(date: date)
+    calendar_date.picture.destroy!
   end
 
   def mood_entities_by_date(dates)
-    mood_entities.where(date: dates).index_by(&:date)
+    user.calendar_dates.where(date: dates).includes(:mood_entity).filter_map { |cd|
+      [cd.date, cd.mood_entity] if cd.mood_entity
+    }.to_h
   end
 
   def pictures_by_date(dates)
-    pictures.where(date: dates).with_attached_picture.index_by(&:date)
+    user.calendar_dates.where(date: dates).includes(:picture).filter_map { |cd|
+      [cd.date, cd.picture] if cd.picture
+    }.to_h
   end
 end

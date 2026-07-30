@@ -1,6 +1,6 @@
 <% content_for(:title) { @bullet.name } %>
 
-<% bullet_colour = Colourable.colour_variable_of(@bullet.colour) || "var(--#{@bullet.bulletable_type.downcase}-color)" %>
+<% bullet_colour = colour(@bullet.colour) || "var(--#{@bullet.bulletable_type.downcase}-color)" %>
 
 <div class="layout--page layout--container layout--container-md">
   <div class="layout--mx-auto bullet--header">
@@ -51,19 +51,6 @@
              data-controller="grid-navigation"
              data-grid-navigation-columns-value="1"
              data-action="keydown->grid-navigation#navigate">
-          <div class="dropdown--element-header">
-            <h2>Actions</h2>
-            <button
-              type="button"
-              class="button--primary button--icon button--circle dropdown--element-hide"
-              popovertarget="<%= dom_id(@bullet, :actions) %>"
-              popovertargetaction="hide"
-              aria-label="Close actions"
-            >
-              <%= icon_tag("x") %>
-            </button>
-          </div>
-
           <div class="dropdown--element-body">
             <nav class="dropdown--menu" aria-label="Actions">
               <% unless @bullet.bulletable_type == "Voice" %>

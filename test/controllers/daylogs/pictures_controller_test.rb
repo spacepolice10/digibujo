@@ -10,6 +10,7 @@ class Daylogs::PicturesControllerTest < ActionDispatch::IntegrationTest
     @date = Date.current
     @picture_dom_id = "daylog_picture_#{@date.iso8601}"
     @photo_card_dom_id = "daylog_photo_card_#{@date.iso8601}"
+    @calendar_date = @user.calendar_dates.create!(date: @date)
   end
 
   test 'create picture updates control and photo card via turbo stream' do
@@ -20,7 +21,7 @@ class Daylogs::PicturesControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :success
-    assert @user.daylog.pictures.find_by!(date: @date).picture.attached?
+    assert @calendar_date.reload.picture.picture.attached?
     assert_select "turbo-stream[action=replace][target=#{@picture_dom_id}]", count: 1
     assert_select "turbo-stream[action=replace][target=#{@photo_card_dom_id}]", count: 1
   end
@@ -64,7 +65,7 @@ class Daylogs::PicturesControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_redirected_to daylog_path(date: @date.iso8601)
-    assert @user.daylog.pictures.find_by!(date: @date).picture.attached?
+    assert @calendar_date.reload.picture.picture.attached?
   end
 
   test 'destroy picture updates control and photo card via turbo stream' do
@@ -94,7 +95,7 @@ class Daylogs::PicturesControllerTest < ActionDispatch::IntegrationTest
   private
 
   def attach_picture!
-    picture = @user.daylog.pictures.new(date: @date)
+    picture = @user.daylog.pictures.new(calendar_date: @calendar_date)
     picture.picture.attach(
       io: StringIO.new(mini_png),
       filename: 'day.png',

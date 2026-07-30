@@ -120,9 +120,7 @@ module ActivitiesHelper
   def activity_colour_variable(target, colour: nil)
     resolved = target.is_a?(Archive) ? target.archivable : target
 
-    if resolved.respond_to?(:colour_variable) && resolved.colour_variable.present?
-      resolved.colour_variable
-    elsif resolved.respond_to?(:colour) && resolved.colour.present?
+    if resolved.respond_to?(:colour) && resolved.colour.present?
       Colourable.colour_variable_of(resolved.colour)
     elsif colour.present?
       Colourable.colour_variable_of(colour)

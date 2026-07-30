@@ -2,7 +2,7 @@
 <% publishable = published_entity.publishable %>
 <li id="<%= dom_id(published_entity, :list_item) %>" class="">
   <%= link_to polymorphic_path(publishable), class: "home--section-list-item", data: { turbo_frame: "_top" } do %>
-    <%= icon_tag(publishable.icon, colour: Colourable.colour_variable_of(publishable.colour), class: "home--section-list-item-icon") %>
+    <%= icon_tag(publishable.icon, style: "color: #{colour(publishable.colour)};", class: "home--section-list-item-icon") %>
     <span class="utilities--line-clamp-1"><%= publishable.name %></span>
   <% end %>
 </li>

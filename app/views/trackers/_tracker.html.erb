@@ -1,7 +1,7 @@
 <%# locals: (tracker:) %>
 <li id="<%= dom_id(tracker, :list_item) %>" class="layout--list-item">
   <%= link_to tracker_path(tracker), class: "layout--list-item-link", data: { turbo_frame: "_top" } do %>
-    <%= icon_tag(tracker.icon, colour: Colourable.colour_variable_of(tracker.colour)) %>
+    <%= icon_tag(tracker.icon, style: "color: #{colour(tracker.colour)};") %>
       <span class="utilities--line-clamp-1"><%= tracker.name %></span>
       <span class="typography--paragraph-sm utilities--line-clamp-1">
         <% if tracker.statistics[:streak] > 0 %><%= tracker.statistics[:streak] %> streak · <% end %>

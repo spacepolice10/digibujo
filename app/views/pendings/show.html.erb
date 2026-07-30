@@ -5,19 +5,6 @@
     style="position-anchor: --pending-inbox"
     popover
   >
-    <div class="dropdown--element-header">
-      <h2>Pending</h2>
-      <button
-        type="button"
-        class="button--primary button--icon button--circle dropdown--element-hide"
-        popovertarget="pending_list"
-        popovertargetaction="hide"
-        aria-label="Close pending"
-      >
-        <%= icon_tag("x") %>
-      </button>
-    </div>
-
     <div class="dropdown--element-body pending--dropdown-body">
       <% if @bullets.any? %>
         <div id="<%= dom_id(@pending, :bullets_container) %>" class="layout--list pending--dropdown-list">

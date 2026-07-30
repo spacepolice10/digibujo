@@ -2,7 +2,7 @@
 
 <div class="layout--page layout--container layout--container-md">
   <div class="utilities--mx-auto collection--header">
-    <%= icon_tag(@collection.bucket.icon, style: "color: #{@collection.bucket.colour_variable};", class: "collection--header-icon") %>
+    <%= icon_tag(@collection.bucket.icon, style: "color: #{colour(@collection.bucket.colour)};", class: "collection--header-icon") %>
       <h2><%= @collection.name %></h2>
       <% if @collection.description.present? %>
         <p><%= @collection.description %></p>

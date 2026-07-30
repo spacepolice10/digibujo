@@ -1,6 +1,6 @@
 <% content_for(:title) { "Edit bullet" } %>
 
-<% bullet_colour = Colourable.colour_variable_of(@bullet.colour) || "var(--#{@bullet.bulletable_type.downcase}-color)" %>
+<% bullet_colour = colour(@bullet.colour) || "var(--#{@bullet.bulletable_type.downcase}-color)" %>
 
 <div class="layout--page layout--container layout--container-md">
   <div class="layout--mx-auto bullet--header">

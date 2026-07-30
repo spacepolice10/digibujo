@@ -179,7 +179,8 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
 
   test 'mobile daylog keeps the day photo out of the DOM until shown' do
     date = Date.current
-    picture = @user.daylog.pictures.new(date: date)
+    calendar_date = @user.calendar_dates.create!(date: date)
+    picture = @user.daylog.pictures.new(calendar_date: calendar_date)
     picture.picture.attach(
       io: StringIO.new(Base64.decode64(
         'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
@@ -202,7 +203,8 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
 
   test 'desktop daylog embeds the day photo card when attached' do
     date = Date.current
-    picture = @user.daylog.pictures.new(date: date)
+    calendar_date = @user.calendar_dates.create!(date: date)
+    picture = @user.daylog.pictures.new(calendar_date: calendar_date)
     picture.picture.attach(
       io: StringIO.new(Base64.decode64(
         'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='

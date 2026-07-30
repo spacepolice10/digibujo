@@ -6,14 +6,16 @@ module Daylogs
     before_action :set_picture_date
 
     def show
-      @picture = @daylog.pictures.find_by(date: @date)
+      calendar_date = Current.user.calendar_dates.includes(:picture).find_by!(date: @date)
+      @picture = calendar_date.picture
       raise ActiveRecord::RecordNotFound unless @picture&.picture&.attached?
 
       render layout: false
     end
 
     def create
-      @picture = @daylog.pictures.find_or_initialize_by(date: @date)
+      calendar_date = Current.user.calendar_dates.find_or_create_by!(date: @date)
+      @picture = calendar_date.picture || calendar_date.build_picture
       @picture.picture.attach(params.require(:picture))
       @picture.save!
       respond_to_picture

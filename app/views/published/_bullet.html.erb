@@ -1,4 +1,4 @@
-<% bullet_colour = Colourable.colour_variable_of(bullet.colour) || "var(--#{bullet.bulletable_type.downcase}-color)" %>
+<% bullet_colour = colour(bullet.colour) || "var(--#{bullet.bulletable_type.downcase}-color)" %>
 
 <li id="<%= dom_id(bullet, :published_list_item) %>" class="layout--list-item">
   <%= link_to bullet_path(bullet), class: "home--section-list-item", data: { turbo_frame: "_top" } do %>

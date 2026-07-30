@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-class Daylog::Picture < ApplicationRecord
-  self.table_name = 'daylog_pictures'
+class CalendarDate::Picture < ApplicationRecord
+  self.table_name = 'calendar_date_pictures'
 
   ALLOWED_CONTENT_TYPES = %w[image/jpeg image/png image/webp image/gif].freeze
 
-  belongs_to :daylog
+  belongs_to :calendar_date
 
   has_one_attached :picture do |attachable|
     ImageVariant::TRANSFORMATIONS.each do |name, transformations|
@@ -13,7 +13,9 @@ class Daylog::Picture < ApplicationRecord
     end
   end
 
-  validates :date, uniqueness: { scope: :daylog_id }
+  delegate :date, to: :calendar_date
+
+  validates :calendar_date_id, uniqueness: true
   validate :picture_must_be_present
   validate :picture_must_be_allowed_type
 

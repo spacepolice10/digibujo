@@ -20,9 +20,9 @@
       style="anchor-name: <%= hint_anchor %>"
     >
       <%= icon_tag(
-            tracker.icon_key,
+            tracker.icon_name,
             class: "tracker--day-toggle-icon",
-            style: ("color: #{tracker.colour_variable};" if completed)
+            style: ("color: #{colour(tracker.colour)};" if completed)
           ) %>
     </button>
   <% end %>
