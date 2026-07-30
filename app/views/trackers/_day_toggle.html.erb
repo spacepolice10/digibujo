@@ -5,7 +5,7 @@
 <% hint_anchor = "--hint-tracker-#{tracker.id}-date-#{date.iso8601}" %>
 
 <div id="<%= cell_id %>" class="tracker--day-toggle-wrap">
-  <%= form_with url: tracker_completion_path(tracker),
+  <%= form_with url: tracker_status_path(tracker),
         method: completed ? :delete : :post,
         class: "tracker--day-toggle-form",
         data: { turbo_stream: true } do %>

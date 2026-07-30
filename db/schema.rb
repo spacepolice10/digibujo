@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_30_000001) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_30_000002) do
   create_table "access_codes", force: :cascade do |t|
     t.string "code_digest", null: false
     t.string "code_prefix", null: false
@@ -308,14 +308,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_30_000001) do
     t.datetime "completed_at"
   end
 
-  create_table "tracker_completions", force: :cascade do |t|
+  create_table "tracker_statuses", force: :cascade do |t|
     t.datetime "completed_at", null: false
     t.datetime "created_at", null: false
     t.date "date", null: false
     t.integer "tracker_id", null: false
     t.datetime "updated_at", null: false
-    t.index ["tracker_id", "date"], name: "index_tracker_completions_on_tracker_id_and_date", unique: true
-    t.index ["tracker_id"], name: "index_tracker_completions_on_tracker_id"
+    t.index ["tracker_id", "date"], name: "index_tracker_statuses_on_tracker_id_and_date", unique: true
+    t.index ["tracker_id"], name: "index_tracker_statuses_on_tracker_id"
   end
 
   create_table "trackers", force: :cascade do |t|
@@ -385,7 +385,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_30_000001) do
   add_foreign_key "search_records", "users"
   add_foreign_key "search_selections", "users"
   add_foreign_key "sessions", "users"
-  add_foreign_key "tracker_completions", "trackers"
+  add_foreign_key "tracker_statuses", "trackers"
   add_foreign_key "trackers", "monthlylogs"
   add_foreign_key "user_settings", "users"
 

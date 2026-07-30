@@ -10,7 +10,7 @@
 
 <div id="<%= cell_id %>" class="tracker--heatmap-cell">
   <% if scheduled %>
-    <%= form_with url: tracker_completion_path(tracker),
+    <%= form_with url: tracker_status_path(tracker),
           method: completed ? :delete : :post,
           class: "tracker--heatmap-form",
           data: { turbo_stream: true } do %>

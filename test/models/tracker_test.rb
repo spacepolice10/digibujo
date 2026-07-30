@@ -32,16 +32,16 @@ class TrackerTest < ActiveSupport::TestCase
     assert_not @tracker.scheduled_on?(@monthlylog.period_from - 1.day)
   end
 
-  test "destroy removes completions" do
-    @tracker.completions.create!(date: Date.current, completed_at: Time.current)
+  test "destroy removes statuses" do
+    @tracker.statuses.create!(date: Date.current, completed_at: Time.current)
 
-    assert_difference -> { Tracker::Completion.count }, -1 do
+    assert_difference -> { Tracker::Status.count }, -1 do
       @tracker.destroy!
     end
   end
 
   test "with_completions preloads completed dates" do
-    @tracker.completions.create!(date: Date.current, completed_at: Time.current)
+    @tracker.statuses.create!(date: Date.current, completed_at: Time.current)
     loaded = @monthlylog.trackers.chronological.with_completions
     tracker = loaded.find { |row| row.id == @tracker.id }
 
@@ -51,8 +51,8 @@ class TrackerTest < ActiveSupport::TestCase
 
   test "current streak counts consecutive scheduled days" do
     day = Date.current
-    @tracker.completions.create!(date: day, completed_at: Time.current)
-    @tracker.completions.create!(date: day - 1.day, completed_at: Time.current) if day > @monthlylog.period_from
+    @tracker.statuses.create!(date: day, completed_at: Time.current)
+    @tracker.statuses.create!(date: day - 1.day, completed_at: Time.current) if day > @monthlylog.period_from
     loaded = @monthlylog.trackers.where(id: @tracker.id).with_completions.first
     statistics = loaded.statistics(as_of: day)
 

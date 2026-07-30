@@ -92,7 +92,7 @@ Rails.application.routes.draw do
   # --- Trackers ---
   resources :trackers, only: %i[show edit update destroy] do
     scope module: :trackers do
-      resource :completion
+      resource :status
     end
   end
 

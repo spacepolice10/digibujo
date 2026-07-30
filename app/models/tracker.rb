@@ -7,7 +7,7 @@ class Tracker < ApplicationRecord
 
   belongs_to :monthlylog
   has_one :user, through: :monthlylog
-  has_many :completions, class_name: 'Tracker::Completion', dependent: :destroy
+  has_many :statuses, class_name: 'Tracker::Status', dependent: :destroy
 
   scope :chronological, -> { order(created_at: :asc) }
 
@@ -17,9 +17,9 @@ class Tracker < ApplicationRecord
   def self.with_completions
     records = all.to_a
     ids = records.map(&:id)
-    dates_by_tracker = Tracker::Completion.where(tracker_id: ids)
-                                          .group_by(&:tracker_id)
-                                          .transform_values { |rows| rows.map(&:date).to_set }
+    dates_by_tracker = Tracker::Status.where(tracker_id: ids)
+                                      .group_by(&:tracker_id)
+                                      .transform_values { |rows| rows.map(&:date).to_set }
 
     records.each { |tracker| tracker.preload_completion_dates!(dates_by_tracker[tracker.id] || Set.new) }
     records
@@ -75,7 +75,7 @@ class Tracker < ApplicationRecord
   private
 
   def completion_dates
-    @completion_dates ||= completions.pluck(:date).to_set
+    @completion_dates ||= statuses.pluck(:date).to_set
   end
 
   def scheduled_days_for(from:, to:)

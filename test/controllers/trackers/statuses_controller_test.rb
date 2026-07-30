@@ -2,7 +2,7 @@
 
 require 'test_helper'
 
-class Trackers::CompletionsControllerTest < ActionDispatch::IntegrationTest
+class Trackers::StatusesControllerTest < ActionDispatch::IntegrationTest
   setup do
     @user = users(:one)
     sign_in_as @user
@@ -10,24 +10,24 @@ class Trackers::CompletionsControllerTest < ActionDispatch::IntegrationTest
     @date = Date.current
   end
 
-  test 'create completion' do
-    assert_difference -> { @tracker.completions.count }, 1 do
-      post tracker_completion_path(@tracker),
+  test 'create status' do
+    assert_difference -> { @tracker.statuses.count }, 1 do
+      post tracker_status_path(@tracker),
            params: { date: @date.iso8601, dom_key: 'date' },
            as: :turbo_stream
     end
 
     assert_response :success
-    assert @tracker.completions.exists?(date: @date)
+    assert @tracker.statuses.exists?(date: @date)
     assert_select "turbo-stream[action=replace][target=#{dom_id(@tracker, "date_#{@date.iso8601}")}]", count: 1
     assert_select 'turbo-stream[action=replace]', count: 1
   end
 
   test 'create is idempotent' do
-    @tracker.completions.create!(date: @date, completed_at: 1.hour.ago)
+    @tracker.statuses.create!(date: @date, completed_at: 1.hour.ago)
 
-    assert_no_difference -> { @tracker.completions.count } do
-      post tracker_completion_path(@tracker),
+    assert_no_difference -> { @tracker.statuses.count } do
+      post tracker_status_path(@tracker),
            params: { date: @date.iso8601, dom_key: 'date' },
            as: :turbo_stream
     end
@@ -38,8 +38,8 @@ class Trackers::CompletionsControllerTest < ActionDispatch::IntegrationTest
   test 'create rejects unscheduled day' do
     @tracker.update!(schedule: { 'days' => [(@date + 1.day).wday] })
 
-    assert_no_difference -> { @tracker.completions.count } do
-      post tracker_completion_path(@tracker),
+    assert_no_difference -> { @tracker.statuses.count } do
+      post tracker_status_path(@tracker),
            params: { date: @date.iso8601, dom_key: 'date' },
            as: :turbo_stream
     end
@@ -47,11 +47,11 @@ class Trackers::CompletionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   end
 
-  test 'destroy completion' do
-    @tracker.completions.create!(date: @date, completed_at: Time.current)
+  test 'destroy status' do
+    @tracker.statuses.create!(date: @date, completed_at: Time.current)
 
-    assert_difference -> { @tracker.completions.count }, -1 do
-      delete tracker_completion_path(@tracker),
+    assert_difference -> { @tracker.statuses.count }, -1 do
+      delete tracker_status_path(@tracker),
              params: { date: @date.iso8601, dom_key: 'date' },
              as: :turbo_stream
     end
@@ -60,9 +60,9 @@ class Trackers::CompletionsControllerTest < ActionDispatch::IntegrationTest
     assert_select "turbo-stream[action=replace][target=#{dom_id(@tracker, "date_#{@date.iso8601}")}]", count: 1
   end
 
-  test 'create completion replaces monthlylog day toggle' do
-    assert_difference -> { @tracker.completions.count }, 1 do
-      post tracker_completion_path(@tracker),
+  test 'create status replaces monthlylog day toggle' do
+    assert_difference -> { @tracker.statuses.count }, 1 do
+      post tracker_status_path(@tracker),
            params: { date: @date.iso8601, dom_key: 'monthlylog' },
            as: :turbo_stream
     end

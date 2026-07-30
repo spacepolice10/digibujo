@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Trackers
-  class CompletionsController < ApplicationController
+  class StatusesController < ApplicationController
     COMPLETION_DOM_KEYS = %w[date monthlylog].freeze
 
     before_action :set_tracker
@@ -11,18 +11,18 @@ module Trackers
     def create
       return respond_unprocessable unless @tracker.scheduled_on?(@date)
 
-      @completion = @tracker.completions.find_or_initialize_by(date: @date)
-      @completion.completed_at = Time.current
-      @completion.save!
+      @status = @tracker.statuses.find_or_initialize_by(date: @date)
+      @status.completed_at = Time.current
+      @status.save!
 
-      respond_to_completion
+      respond_to_status
     end
 
     def destroy
-      @completion = @tracker.completions.find_by(date: @date)
-      @completion&.destroy!
+      @status = @tracker.statuses.find_by(date: @date)
+      @status&.destroy!
 
-      respond_to_completion
+      respond_to_status
     end
 
     private
@@ -37,7 +37,7 @@ module Trackers
       head :unprocessable_entity
     end
 
-    def respond_to_completion
+    def respond_to_status
       @tracker = Current.user.trackers.where(id: @tracker.id).with_completions.first
 
       respond_to do |format|

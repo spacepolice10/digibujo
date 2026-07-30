@@ -11,7 +11,7 @@ class TrackersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show renders lifetime statistics and month heatmap' do
-    @tracker.completions.create!(date: Date.current, completed_at: Time.current)
+    @tracker.statuses.create!(date: Date.current, completed_at: Time.current)
 
     get tracker_path(@tracker)
 
@@ -52,7 +52,7 @@ class TrackersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'destroy redirects to monthlylog' do
-    @tracker.completions.create!(date: Date.current, completed_at: Time.current)
+    @tracker.statuses.create!(date: Date.current, completed_at: Time.current)
 
     assert_difference -> { Tracker.count }, -1 do
       delete tracker_path(@tracker)
