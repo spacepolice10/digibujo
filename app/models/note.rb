@@ -8,4 +8,11 @@ class Note < ApplicationRecord
   def colour                   = 'gold'
 
   def self.permitted_bullet_attributes = %i[id body]
+
+  def excerpt
+    return 'Untitled' if body_as_text.strip.empty?
+    return body unless long?
+
+    body_as_text.lines.drop(1).join.truncate(EXCERPT_LIMIT)
+  end
 end

@@ -4,7 +4,6 @@ class Monthlylog < ApplicationRecord
   include Bucketable
 
   belongs_to :user
-  has_many :trackers, dependent: :destroy
 
   validates :period_from, presence: true, uniqueness: { scope: :user_id }
 

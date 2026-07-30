@@ -6,7 +6,6 @@ class CalendarDate::PictureTest < ActiveSupport::TestCase
   setup do
     @user = users(:one)
     ensure_daylog!(@user)
-    @daylog = @user.reload.daylog
     @calendar_date = @user.calendar_dates.create!(date: Date.current)
     @blob = ActiveStorage::Blob.create_and_upload!(
       io: StringIO.new(mini_png),
@@ -16,7 +15,7 @@ class CalendarDate::PictureTest < ActiveSupport::TestCase
   end
 
   test 'creates picture for a day' do
-    picture = @daylog.pictures.new(calendar_date: @calendar_date)
+    picture = @calendar_date.build_picture
     picture.picture.attach(@blob)
 
     assert picture.save
@@ -24,7 +23,7 @@ class CalendarDate::PictureTest < ActiveSupport::TestCase
   end
 
   test 'requires picture' do
-    picture = @daylog.pictures.new(calendar_date: @calendar_date)
+    picture = @calendar_date.build_picture
 
     assert_not picture.valid?
     assert_includes picture.errors[:picture], "can't be blank"
@@ -36,7 +35,7 @@ class CalendarDate::PictureTest < ActiveSupport::TestCase
       filename: 'day.txt',
       content_type: 'text/plain'
     )
-    picture = @daylog.pictures.new(calendar_date: @calendar_date)
+    picture = @calendar_date.build_picture
     picture.picture.attach(bad)
 
     assert_not picture.valid?
@@ -44,11 +43,11 @@ class CalendarDate::PictureTest < ActiveSupport::TestCase
   end
 
   test 'enforces one picture per date' do
-    first = @daylog.pictures.new(calendar_date: @calendar_date)
+    first = @calendar_date.build_picture
     first.picture.attach(@blob)
     first.save!
 
-    duplicate = @daylog.pictures.new(calendar_date: @calendar_date)
+    duplicate = CalendarDate::Picture.new(calendar_date: @calendar_date)
     duplicate.picture.attach(@blob)
 
     assert_not duplicate.valid?

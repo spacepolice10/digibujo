@@ -1,0 +1,31 @@
+
+<div
+  id="triage_chip"
+  class="dropdown--dock daylog--triage-inbox"
+  style="anchor-name: --triage-inbox"
+  data-controller="triage-chip"
+  data-triage-chip-number-url-value="<%= triage_number_path %>"
+
+>
+  <button
+    id="triage_chip_button"
+    type="button"
+    class="triage--chip animations--popout"
+    popovertarget="triage_list"
+    aria-label="Triage chip"
+    aria-haspopup="dialog"
+    hidden
+  >
+      <%= icon_tag("mail", class: "daylog--triage-inbox-icon") %>
+      <span id="triage_chip_number" class="daylog--triage-number"></span>
+  </button>
+
+  <turbo-frame
+    id="triage_list"
+    class="dropdown dropdown--element dropdown--element-bottom animations--side-in daylog--triage-dropdown"
+    style="position-anchor: --triage-inbox"
+    src="<%= triage_path %>"
+    loading="lazy"
+    popover
+  ></turbo-frame>
+</div>

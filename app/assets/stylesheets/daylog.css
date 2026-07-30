@@ -163,7 +163,7 @@
     padding-inline: var(--spacing-horizontal-half);
   }
 
-  .daylog--pending-inbox {
+  .daylog--triage-inbox {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -171,7 +171,7 @@
     height: var(--spacing-horizontal-triple);
   }
 
-  .daylog--pending-inbox-trigger {
+  .daylog--triage-inbox-trigger {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -184,7 +184,7 @@
     cursor: pointer;
   }
 
-  .daylog--pending-inbox-shell {
+  .daylog--triage-inbox-shell {
     position: relative;
     display: grid;
     place-items: center;
@@ -195,12 +195,12 @@
     color: var(--color-fg-strong);
   }
 
-  .daylog--pending-inbox-icon {
+  .daylog--triage-inbox-icon {
     width: var(--icon-shell-glyph) !important;
     height: var(--icon-shell-glyph) !important;
   }
 
-  .daylog--pending-count {
+  .daylog--triage-count {
     position: absolute;
     top: -0.2rem;
     right: -0.25rem;
@@ -216,7 +216,7 @@
     text-align: center;
   }
 
-  .daylog--pending-dropdown {
+  .daylog--triage-dropdown {
     width: min(28rem, calc(100vw - 2 * var(--spacing-horizontal)));
     max-height: min(70dvh, 32rem);
   }
@@ -227,86 +227,64 @@
     gap: 0.15rem;
   }
 
-  /* ── Day photo card ─────────────────────────────────────────────────────
-     Default (narrow desktop): parked fully past the right edge of the
-     viewport; the header arrow pulls it in. Mobile keeps the card out of the
-     DOM until Show photo fetches it into the same shell. Wide desktop
-     overrides the geometry vars so the card peeks behind the panel instead. */
-  /* Controller wrapper must not break the page flex chain (shell + composer). */
+  /* ── Metadata panel (animated frame) ──────────────────────────────────
+     The entire turbo-frame slides in/out — mood picker, picture controls,
+     and photo card all move together. Default: tucked behind the shell.
+     Expanded: slides into view on the right. */
   .daylog--photo-stage {
     display: contents;
   }
 
-  .daylog--photo {
-    display: contents;
-  }
-
-  /* Out until the card fully clears the panel/viewport, flip the layer there,
-     then back to the resting spot. Closing runs the same trip in reverse. */
-  @keyframes daylog-photo-fly-out {
-    0% {
-      translate: 0 -50%;
-      rotate: 3deg;
-      width: var(--daylog-photo-width);
-      z-index: var(--z-base);
-      animation-timing-function: cubic-bezier(0.3, 0.9, 0.4, 1);
-    }
-
-    45% {
-      translate: var(--daylog-photo-out) -50%;
-      rotate: -8deg;
-      width: var(--daylog-photo-expanded-width);
-      z-index: var(--z-base);
-      animation-timing-function: cubic-bezier(0.4, 0, 0.25, 1);
-    }
-
-    46% {
-      z-index: var(--z-dialog);
-    }
-
-    100% {
-      translate: var(--daylog-photo-shift) -50%;
-      rotate: -3deg;
-      width: var(--daylog-photo-expanded-width);
-      z-index: var(--z-dialog);
-    }
-  }
-
-  @keyframes daylog-photo-fly-in {
-    0% {
-      translate: var(--daylog-photo-shift) -50%;
-      rotate: -3deg;
-      width: var(--daylog-photo-expanded-width);
-      z-index: var(--z-dialog);
-      animation-timing-function: cubic-bezier(0.3, 0.9, 0.4, 1);
-    }
-
-    45% {
-      translate: var(--daylog-photo-out) -50%;
-      rotate: -8deg;
-      width: var(--daylog-photo-expanded-width);
-      z-index: var(--z-dialog);
-      animation-timing-function: cubic-bezier(0.4, 0, 0.25, 1);
-    }
-
-    46% {
-      z-index: var(--z-base);
-    }
-
-    100% {
-      translate: 0 -50%;
-      rotate: 3deg;
-      width: var(--daylog-photo-width);
-      z-index: var(--z-base);
-    }
-  }
-
-  .daylog--photo-card {
+  .daylog--metadata-frame {
     position: fixed;
-    z-index: var(--z-base);
+    z-index: -1;
     top: 50%;
     left: var(--daylog-photo-left);
     width: var(--daylog-photo-width);
+    translate: 0 -50%;
+    rotate: 3deg;
+    transition:
+      translate var(--daylog-photo-duration) cubic-bezier(0.3, 0.9, 0.4, 1),
+      width var(--daylog-photo-duration) cubic-bezier(0.3, 0.9, 0.4, 1);
+  }
+
+  .daylog--photo-stage.is-expanded .daylog--metadata-frame,
+  .daylog--photo-stage.is-collapsing .daylog--metadata-frame {
+    z-index: var(--z-dialog);
+  }
+
+  .daylog--photo-stage.is-expanded .daylog--metadata-frame {
+    width: var(--daylog-photo-expanded-width);
+    translate: var(--daylog-photo-shift) -50%;
+    rotate: -3deg;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .daylog--metadata-frame {
+      rotate: 0deg;
+      transition: none;
+    }
+    .daylog--photo-stage.is-expanded .daylog--metadata-frame {
+      rotate: 0deg;
+    }
+  }
+
+  /* ── Children inside the frame ─────────────────────────────────────────
+     Mood/picture controls stack above the photo card. */
+  .daylog--metadata-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical-half);
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
+  }
+
+  .daylog--photo {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .daylog--photo-card {
+    width: 100%;
     height: auto;
     aspect-ratio: 3 / 4;
     padding: 0;
@@ -314,11 +292,8 @@
     border-radius: var(--radius-strong);
     background: var(--color-bg-subtle);
     box-shadow: var(--shadow-base);
-    transform-origin: left center;
-    translate: 0 -50%;
-    rotate: 3deg;
-    cursor: pointer;
     overflow: hidden;
+    cursor: pointer;
     transition:
       scale 0.2s ease-out,
       box-shadow 0.2s ease-out;
@@ -331,8 +306,6 @@
     pointer-events: none;
   }
 
-  /* Toolbar sits on the visible right edge of the peek / the top-right of the
-     expanded card — frosted chips matching the day header controls. */
   .daylog--photo-toolbar {
     position: absolute;
     z-index: 1;
@@ -361,36 +334,11 @@
     box-shadow: var(--shadow-strong);
   }
 
-  .daylog--photo-card.is-expanded {
-    z-index: var(--z-dialog);
-    width: var(--daylog-photo-expanded-width);
-    translate: var(--daylog-photo-shift) -50%;
-    rotate: -3deg;
-    box-shadow: var(--shadow-strong);
-    animation: daylog-photo-fly-out var(--daylog-photo-duration) both;
+  .daylog--metadata-placeholder {
+    display: none;
   }
 
-  .daylog--photo-card.is-collapsing {
-    animation: daylog-photo-fly-in var(--daylog-photo-duration) both;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .daylog--photo-card {
-      rotate: 0deg;
-      transition: none;
-    }
-
-    .daylog--photo-card.is-expanded {
-      rotate: 0deg;
-    }
-
-    .daylog--photo-card.is-expanded,
-    .daylog--photo-card.is-collapsing {
-      animation: none;
-    }
-  }
-
-  /* Wide enough for a margin: tuck the card behind the panel's right edge. */
+  /* Wide enough for a margin: tuck the panel behind the shell's right edge. */
   @media (min-width: 1040px) {
     .layout--page.daylog.daylog--chat {
       --daylog-photo-gap: var(--spacing-horizontal-double);
@@ -412,11 +360,6 @@
         - var(--daylog-photo-expanded-width)
         - var(--daylog-photo-left)
       ));
-      --daylog-photo-out: calc(
-        var(--daylog-photo-width)
-        - var(--daylog-photo-peek)
-        + var(--daylog-photo-expanded-width) * 0.5
-      );
     }
   }
 

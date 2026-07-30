@@ -11,7 +11,7 @@ class AttachmentsController < ApplicationController
   private
 
   def owned_by_current_user?(blob)
-    note_attachment_owned?(blob) || daylog_picture_owned?(blob)
+    note_attachment_owned?(blob) || picture_owned?(blob)
   end
 
   def note_attachment_owned?(blob)
@@ -26,11 +26,9 @@ class AttachmentsController < ApplicationController
     Current.user.bullets.exists?(bulletable_type: 'Note', bulletable_id: note_ids)
   end
 
-  def daylog_picture_owned?(blob)
-    daylog = Current.user.daylog
-    return false unless daylog
-
-    daylog.pictures.joins(:picture_attachment)
-          .exists?(active_storage_attachments: { blob_id: blob.id })
+  def picture_owned?(blob)
+    CalendarDate::Picture.joins(:calendar_date, :picture_attachment)
+                         .where(calendar_dates: { user_id: Current.user.id })
+                         .exists?(active_storage_attachments: { blob_id: blob.id })
   end
 end

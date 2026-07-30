@@ -34,7 +34,7 @@ class HookTest < ActiveSupport::TestCase
       body: 'From outside'
     )
 
-    assert bullet.pending?
+    assert_equal @user.pending.bucket, bullet.bucket
     assert_equal 'Zapier', bullet.author_name
     assert_equal 'From outside', bullet.body_as_text
   end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Bucket < ApplicationRecord
-  include Archivable, Colourable, Iconable, Pinnable, Bucket::Searchable, ActivityTrackable
+  include Archivable, Colourable, Iconable, Pinnable, Bucket::Searchable, Bucket::NameMatching, ActivityTrackable
 
   belongs_to :user
   has_many :bullets, dependent: :destroy
@@ -11,13 +11,4 @@ class Bucket < ApplicationRecord
   validates :name, presence: true
 
   normalizes :name, with: ->(name) { name.strip.downcase }
-
-  scope :matching_name, lambda { |query|
-    sanitized = sanitized_name_query(query)
-    sanitized ? where('LOWER(name) LIKE ?', "#{sanitized}%") : all
-  }
-
-  def self.sanitized_name_query(query)
-    sanitize_sql_like(query.to_s.strip.downcase).presence
-  end
 end

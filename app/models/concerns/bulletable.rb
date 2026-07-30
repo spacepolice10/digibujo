@@ -16,20 +16,12 @@ module Bulletable
   def ends_date        = nil
   def body_as_text     = body.to_plain_text.to_s
   def name             = body_as_text.lines.first&.strip.presence || 'Untitled'
+  def excerpt          = body
   def long?            = body_as_text.length > EXCERPT_LIMIT
   def marker_icon      = :line_dashed
   def completed?       = false
   def icon             = nil
   def colour           = nil
-
-  # Short bodies render as rich text; long ones collapse to a plain-text tail
-  # because the first line is already shown as a heading.
-  def excerpt
-    return 'Untitled' if body_as_text.strip.empty?
-    return body unless long?
-
-    body_as_text.lines.drop(1).join.truncate(EXCERPT_LIMIT)
-  end
 
   def to_partial_path
     "#{self.class.model_name.route_key}/#{self.class.model_name.element}"

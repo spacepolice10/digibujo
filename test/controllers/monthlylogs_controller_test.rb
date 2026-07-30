@@ -253,7 +253,7 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
   test 'show includes mood controls in each date band' do
     ensure_daylog!(@user)
     calendar_date = @user.calendar_dates.create!(date: Date.current)
-    @user.daylog.mood_entities.create!(calendar_date: calendar_date, mood: :inspired)
+    CalendarDate::MoodEntity.create!(calendar_date: calendar_date, mood: :inspired)
     monthlylog = create_monthlylog!(@user, name: Date.current.strftime('%B %Y'))
 
     get monthlylog_path(monthlylog)
@@ -268,7 +268,7 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
   test 'show paints daylog picture as date-rail background' do
     ensure_daylog!(@user)
     calendar_date = @user.calendar_dates.create!(date: Date.current)
-    picture = @user.daylog.pictures.new(calendar_date: calendar_date)
+    picture = calendar_date.build_picture
     picture.picture.attach(
       io: StringIO.new(Base64.decode64(
         'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
@@ -288,14 +288,15 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
 
   test 'show includes tracker toggles on scheduled days' do
     monthlylog = create_monthlylog!(@user, name: Date.current.strftime('%B %Y'))
-    tracker = create_tracker!(@user, name: 'Meditate', monthlylog: monthlylog, icon: 'heart')
+    tracker = create_tracker!(@user, name: 'Meditate', icon: 'heart')
+    tracker.update!(start_date: monthlylog.period_from)
     weekday_only = [(Date.current + 1.day).wday]
     tracker.update!(schedule: { 'days' => weekday_only })
 
     get monthlylog_path(monthlylog)
 
     assert_response :success
-    scheduled_count = monthlylog.spread_days.count { |day| weekday_only.include?(day.wday) }
+    scheduled_count = monthlylog.spread_days.count { |day| weekday_only.include?(day.wday) && day <= Date.current }
     assert_select '.tracker--day-toggle', count: scheduled_count
     assert_select '.monthlylog--date-trackers .tracker--day-toggle-done', count: 0
   end

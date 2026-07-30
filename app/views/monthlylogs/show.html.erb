@@ -21,7 +21,7 @@
       <% end %>
       <div class="layout--flex layout--gapped">
       <%= render "buckets/pins_button", bucket: @monthlylog.bucket %>
-      <%= link_to "Add tracker", new_monthlylog_tracker_path(@monthlylog), class: "button--secondary button--sm" %>
+      <%= link_to "Add tracker", new_tracker_path, class: "button--secondary button--sm" %>
       </div>
     </div>
 
@@ -85,7 +85,7 @@
                         <% if scheduled_trackers.any? %>
                           <div class="monthlylog--date-trackers">
                             <% scheduled_trackers.each do |tracker| %>
-                              <%= render "trackers/day_toggle", tracker: tracker, date: date %>
+                              <%= render "trackers/date_toggle", tracker: tracker, date: date %>
                             <% end %>
                           </div>
                         <% end %>

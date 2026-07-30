@@ -5,19 +5,20 @@ class Tracker < ApplicationRecord
 
   DEFAULT_SCHEDULE = { 'days' => (0..6).to_a }.freeze
 
-  belongs_to :monthlylog
-  has_one :user, through: :monthlylog
+  belongs_to :user
   has_many :statuses, class_name: 'Tracker::Status', dependent: :destroy
 
   scope :chronological, -> { order(created_at: :asc) }
 
   validates :name, presence: true
   validates :schedule, presence: true
+  validates :start_date, presence: true
 
   def self.with_completions
     records = all.to_a
     ids = records.map(&:id)
     dates_by_tracker = Tracker::Status.where(tracker_id: ids)
+                                      .includes(:calendar_date)
                                       .group_by(&:tracker_id)
                                       .transform_values { |rows| rows.map(&:date).to_set }
 
@@ -26,16 +27,16 @@ class Tracker < ApplicationRecord
   end
 
   def active_from
-    monthlylog.period_from
+    start_date
   end
 
   def active_to
-    [monthlylog.period_to, Date.current].min
+    Date.current
   end
 
   def active_on?(date)
     day = date.to_date
-    day >= monthlylog.period_from && day <= monthlylog.period_to
+    day >= start_date && day <= Date.current
   end
 
   def scheduled_on?(date)
@@ -75,7 +76,7 @@ class Tracker < ApplicationRecord
   private
 
   def completion_dates
-    @completion_dates ||= statuses.pluck(:date).to_set
+    @completion_dates ||= statuses.joins(:calendar_date).pluck("calendar_dates.date").to_set
   end
 
   def scheduled_days_for(from:, to:)

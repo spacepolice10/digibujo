@@ -28,7 +28,7 @@ class HookIntakesControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'Note', body['bulletable_type']
 
     bullet = @user.bullets.find(body['id'])
-    assert bullet.pending?
+    assert_equal @user.pending.bucket, bullet.bucket
     assert_nil bullet.pops_on
     assert_equal 'GitHub', bullet.author_name
   end

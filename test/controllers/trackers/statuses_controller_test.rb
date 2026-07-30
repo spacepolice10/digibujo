@@ -8,6 +8,7 @@ class Trackers::StatusesControllerTest < ActionDispatch::IntegrationTest
     sign_in_as @user
     @tracker = create_tracker!(@user, name: 'Run')
     @date = Date.current
+    @calendar_date = @user.calendar_dates.create!(date: @date)
   end
 
   test 'create status' do
@@ -18,13 +19,13 @@ class Trackers::StatusesControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :success
-    assert @tracker.statuses.exists?(date: @date)
+    assert @tracker.statuses.joins(:calendar_date).exists?(calendar_dates: { date: @date })
     assert_select "turbo-stream[action=replace][target=#{dom_id(@tracker, "date_#{@date.iso8601}")}]", count: 1
     assert_select 'turbo-stream[action=replace]', count: 1
   end
 
   test 'create is idempotent' do
-    @tracker.statuses.create!(date: @date, completed_at: 1.hour.ago)
+    @tracker.statuses.create!(calendar_date: @calendar_date, completed_at: 1.hour.ago)
 
     assert_no_difference -> { @tracker.statuses.count } do
       post tracker_status_path(@tracker),
@@ -48,7 +49,7 @@ class Trackers::StatusesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'destroy status' do
-    @tracker.statuses.create!(date: @date, completed_at: Time.current)
+    @tracker.statuses.create!(calendar_date: @calendar_date, completed_at: Time.current)
 
     assert_difference -> { @tracker.statuses.count }, -1 do
       delete tracker_status_path(@tracker),

@@ -8,12 +8,12 @@
       class="button--tertiary button--icon"
       aria-label="Show photo"
       aria-controls="daylog_photo_card_<%= date.iso8601 %>"
-      data-action="daylog-photo#toggle"
+      data-action="daylog-metadata#toggle"
     >
       <%= icon_tag("arrow-left") %>
     </button>
   <% else %>
-    <%= form_with url: daylog_picture_path,
+    <%= form_with url: calendar_date_picture_path,
           method: :post,
           multipart: true,
           data: { turbo_stream: true } do %>

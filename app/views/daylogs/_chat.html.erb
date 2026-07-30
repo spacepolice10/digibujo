@@ -1,30 +1,11 @@
-<%# locals: (daylog:, daylog_bucket:, selected_date:, bullets:, more_bullets:, mood_entity:, picture:, pending_count: 0) %>
-<%# Campfire-style messages column. The day photo is a card parked off-screen
-    (or peeking behind the panel on wide desktop); the header arrow / peek
-    pulls it out. On mobile the card stays out of the DOM until Show photo.
-    Composer is a fixed dock (keyboard covers the tabbar). %>
-<% photo_lazy = mobile_variant? %>
-<div
-  class="daylog--photo-stage"
-  data-controller="daylog-photo"
-  data-daylog-photo-lazy-value="<%= photo_lazy %>"
-  data-daylog-photo-url-value="<%= daylog_picture_path(date: selected_date.iso8601) %>"
-  data-action="
-    keydown.esc@document->daylog-photo#collapse
-    click@document->daylog-photo#collapseOutside
-  "
->
-  <%= render "daylogs/photo_card", date: selected_date, picture: picture, lazy: photo_lazy %>
-
+<%# locals: (daylog:, daylog_bucket:, selected_date:, bullets:, more_bullets:, trackers: []) %>
   <div data-bulk-menu-target="list"
        class="daylog--shell"
        data-controller="daylog-scroll"
        data-daylog-scroll-url-value="<%= daylog_bullets_path %>">
     <%= render "daylogs/header",
           date: selected_date,
-          mood_entity: mood_entity,
-          picture: picture,
-          pending_count: pending_count %>
+          trackers: trackers %>
 
     <div class="daylog--scroller" data-daylog-scroll-target="scroller">
       <% if more_bullets %>
@@ -48,7 +29,16 @@
       </div>
     </div>
   </div>
-</div>
+
+  <turbo-frame
+    id="daylog_metadata_<%= selected_date.iso8601 %>"
+    class="daylog--metadata-frame"
+    src="<%= daylog_metadata_path(date: selected_date.iso8601) %>"
+    loading="eager"
+  >
+    <div class="daylog--metadata-placeholder"></div>
+  </turbo-frame>
+
 
 <%= render "bullets/composer",
       bucket_id: daylog_bucket.id,

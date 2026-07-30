@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_30_000002) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_30_000004) do
   create_table "access_codes", force: :cascade do |t|
     t.string "code_digest", null: false
     t.string "code_prefix", null: false
@@ -309,12 +309,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_30_000002) do
   end
 
   create_table "tracker_statuses", force: :cascade do |t|
+    t.integer "calendar_date_id", null: false
     t.datetime "completed_at", null: false
     t.datetime "created_at", null: false
-    t.date "date", null: false
+    t.date "date"
     t.integer "tracker_id", null: false
     t.datetime "updated_at", null: false
-    t.index ["tracker_id", "date"], name: "index_tracker_statuses_on_tracker_id_and_date", unique: true
+    t.index ["tracker_id", "calendar_date_id"], name: "index_tracker_statuses_on_tracker_and_calendar_date", unique: true
     t.index ["tracker_id"], name: "index_tracker_statuses_on_tracker_id"
   end
 
@@ -322,12 +323,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_30_000002) do
     t.string "colour"
     t.datetime "created_at", null: false
     t.string "icon"
-    t.integer "monthlylog_id", null: false
     t.string "name", null: false
     t.json "schedule", default: {"days" => [0, 1, 2, 3, 4, 5, 6]}, null: false
+    t.date "start_date", null: false
     t.datetime "updated_at", null: false
-    t.index ["created_at"], name: "index_trackers_on_user_id_and_created_at"
-    t.index ["monthlylog_id"], name: "index_trackers_on_monthlylog_id"
+    t.integer "user_id", null: false
+    t.index ["user_id", "created_at"], name: "index_trackers_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_trackers_on_user_id"
   end
 
   create_table "user_settings", force: :cascade do |t|
@@ -385,8 +387,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_30_000002) do
   add_foreign_key "search_records", "users"
   add_foreign_key "search_selections", "users"
   add_foreign_key "sessions", "users"
+  add_foreign_key "tracker_statuses", "calendar_dates"
   add_foreign_key "tracker_statuses", "trackers"
-  add_foreign_key "trackers", "monthlylogs"
+  add_foreign_key "trackers", "users"
   add_foreign_key "user_settings", "users"
 
   # Virtual tables defined in this database.

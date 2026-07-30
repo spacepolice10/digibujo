@@ -130,7 +130,8 @@ class DaylogPhotoSystemTest < ApplicationSystemTestCase
   end
 
   def attach_picture!(date)
-    picture = @user.daylog.pictures.new(date: date)
+    calendar_date = @user.calendar_dates.find_or_create_by!(date: date)
+    picture = calendar_date.build_picture
     picture.picture.attach(
       io: StringIO.new(mini_png),
       filename: 'day.png',

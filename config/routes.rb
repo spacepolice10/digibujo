@@ -23,19 +23,25 @@ Rails.application.routes.draw do
   resource :daylog, only: %i[show create], controller: 'daylogs' do
     scope module: :daylogs do
       resources :bullets, only: :index
-      resource :mood_entity, only: %i[create destroy]
-      resource :picture, only: %i[show create destroy]
+      resource :metadata, only: :show
     end
   end
 
-  resource :pending, only: :show, controller: 'pendings' do
-    scope module: :pendings do
+  scope 'calendar_date', module: :calendar_dates, as: :calendar_date do
+    resource :mood_entity, only: %i[create destroy]
+    resource :picture, only: %i[show create destroy]
+  end
+
+  resource :triage, only: :show, controller: 'triage' do
+    scope module: :triage do
       resources :bullets, only: [] do
         resource :accept, only: :create
         resource :discard, only: :create
       end
     end
   end
+
+  get 'triage/number', to: 'triage#number', as: :triage_number
 
   get 'monthlylog', to: 'monthlylogs#show', as: :current_monthlylog
   get 'monthly_bucket', to: redirect('/monthlylog')
@@ -44,9 +50,7 @@ Rails.application.routes.draw do
 
   resources :futures, only: %i[show new create]
 
-  resources :monthlylogs, only: %i[new create show] do
-    resources :trackers, only: %i[new create], module: :monthlylogs
-  end
+  resources :monthlylogs, only: %i[new create show]
 
   get 'future_buckets/:id', to: redirect('/futures/%{id}')
   get 'monthly_buckets/:id', to: redirect('/monthlylogs/%{id}')
@@ -90,7 +94,7 @@ Rails.application.routes.draw do
   resources :buckets, only: :show
 
   # --- Trackers ---
-  resources :trackers, only: %i[show edit update destroy] do
+  resources :trackers, only: %i[new create show edit update destroy] do
     scope module: :trackers do
       resource :status
     end

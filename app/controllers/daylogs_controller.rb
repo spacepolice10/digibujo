@@ -2,19 +2,11 @@
 
 class DaylogsController < ApplicationController
   def show
-    @selected_date = daylog_date_from_params or return
+    @selected_date = daylog_date_from_params
     @daylog = Current.user.daylog
-    return unless @daylog
-
     @daylog_bucket = @daylog.bucket
-    # Chat order: newest page first on screen, older pages pulled in from the top
-    # by Daylogs::BulletsController.
     @bullets = @daylog.bullets.where(pops_on: @selected_date).active.last_page
     @more_bullets = @bullets.size == Bullet::Pageable::PAGE_SIZE
-    calendar_date = Current.user.calendar_dates.includes(:mood_entity, :picture).find_by(date: @selected_date)
-    @mood_entity = calendar_date&.mood_entity
-    @picture = calendar_date&.picture
-    @pending_count = Pending.inbox_count_for(Current.user)
   end
 
   def create

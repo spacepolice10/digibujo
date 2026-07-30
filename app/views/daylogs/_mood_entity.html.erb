@@ -43,7 +43,7 @@
       <nav class="dropdown--menu" aria-label="Mood">
         <% CalendarDate::MoodEntity::MOOD_MARKERS.each do |mood, emoji| %>
           <% selected = entity&.mood == mood.to_s %>
-          <%= button_to daylog_mood_entity_path,
+          <%= button_to calendar_date_mood_entity_path,
                 method: :post,
                 params: { date: date.iso8601, mood: mood },
                 class: [

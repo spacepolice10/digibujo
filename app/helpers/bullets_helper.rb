@@ -67,7 +67,7 @@ module BulletsHelper
     when Collection
       collection_path(bucketable)
     when Pending
-      pending_path
+      triage_path
     when Monthlylog
       monthlylog_path(bucketable)
     when Future

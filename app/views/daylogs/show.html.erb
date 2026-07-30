@@ -6,10 +6,8 @@
           selected_date: @selected_date,
           bullets: @bullets,
           more_bullets: @more_bullets,
-          mood_entity: @mood_entity,
-          picture: @picture,
-          pending_count: @pending_count %>
+          trackers: @trackers %>
   </div>
 <% else %>
-  <%= render "daylogs/empty" %>
+  <%= render "daylogs/placeholder" %>
 <% end %>

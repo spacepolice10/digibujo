@@ -11,7 +11,8 @@ module Trackers
     def create
       return respond_unprocessable unless @tracker.scheduled_on?(@date)
 
-      @status = @tracker.statuses.find_or_initialize_by(date: @date)
+      calendar_date = Current.user.calendar_dates.find_or_create_by!(date: @date)
+      @status = @tracker.statuses.find_or_initialize_by(calendar_date: calendar_date)
       @status.completed_at = Time.current
       @status.save!
 
@@ -19,7 +20,8 @@ module Trackers
     end
 
     def destroy
-      @status = @tracker.statuses.find_by(date: @date)
+      calendar_date = Current.user.calendar_dates.find_by!(date: @date)
+      @status = @tracker.statuses.find_by(calendar_date: calendar_date)
       @status&.destroy!
 
       respond_to_status

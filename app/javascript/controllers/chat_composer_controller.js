@@ -273,7 +273,6 @@ export default class extends Controller {
       this.toolbarPanelTarget.removeAttribute("inert")
     }
     this.#syncToolbarButton(true)
-    this.focus()
   }
 
   #hideToolbar() {

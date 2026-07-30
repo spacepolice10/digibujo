@@ -5,12 +5,10 @@
   tabindex="0"
   aria-expanded="false"
   aria-label="Photo for <%= date.strftime('%b %-d') %>"
-  data-daylog-photo-target="card"
   data-action="
-    click->daylog-photo#toggle
-    keydown.enter->daylog-photo#toggle
-    keydown.space->daylog-photo#toggle:prevent
-    animationend->daylog-photo#settle
+    click->daylog-metadata#toggle
+    keydown.enter->daylog-metadata#toggle
+    keydown.space->daylog-metadata#toggle:prevent
   "
 >
   <%= image_tag picture.picture.variant(:preview),
@@ -20,7 +18,6 @@
 
   <div
     class="daylog--photo-toolbar"
-    data-action="click->daylog-photo#stop"
   >
     <%= link_to attachment_path(picture.picture.blob.signed_id),
           class: "button--tertiary button--icon",
@@ -28,7 +25,7 @@
           aria: { label: "View photo" } do %>
       <%= icon_tag("expand") %>
     <% end %>
-    <%= button_to daylog_picture_path(date: date.iso8601),
+    <%= button_to calendar_date_picture_path(date: date.iso8601),
           method: :delete,
           class: "button--tertiary button--icon",
           form: {

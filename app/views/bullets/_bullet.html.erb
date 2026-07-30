@@ -1,5 +1,5 @@
 <%# locals: (bullet:) %>
-<%= tag.turbo_frame id: dom_id(bullet), class: "bullet",
+<%= tag.turbo_frame id: dom_id(bullet), class: "bullet animations--fall-in",
       data: { bullet_type: bullet.bulletable_type.downcase,
               **(bullet.data_attributes) } do %>
   <% checkbox_id = dom_id(bullet, :select_checkbox) %>

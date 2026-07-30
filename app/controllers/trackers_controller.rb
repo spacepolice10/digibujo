@@ -3,9 +3,24 @@
 class TrackersController < ApplicationController
   before_action :set_tracker, only: %i[show edit update destroy]
 
+  def new
+    @tracker = Current.user.trackers.new(schedule: Tracker::DEFAULT_SCHEDULE.dup)
+  end
+
+  def create
+    @tracker = Current.user.trackers.build(tracker_attributes)
+    @tracker.start_date = Date.current
+
+    if @tracker.save
+      redirect_to root_path, notice: 'Tracker created'
+    else
+      render :new, status: :unprocessable_entity
+    end
+  end
+
   def show
     @tracker = Current.user.trackers.where(id: @tracker.id).with_completions.first
-    @heatmap_days = @tracker.monthlylog.spread_days
+    @heatmap_days = (30.days.ago.to_date..Date.current).to_a
   end
 
   def edit; end
@@ -19,9 +34,8 @@ class TrackersController < ApplicationController
   end
 
   def destroy
-    monthlylog = @tracker.monthlylog
     @tracker.destroy!
-    redirect_to monthlylog_path(monthlylog), notice: 'Tracker deleted'
+    redirect_to root_path, notice: 'Tracker deleted'
   end
 
   private
@@ -37,7 +51,8 @@ class TrackersController < ApplicationController
     attrs = {
       name: permitted[:name],
       schedule: {
-        'days' => Array(permitted[:schedule_days]).reject(&:blank?).map(&:to_i).uniq.sort
+        'days' => Array(permitted[:schedule_days]).reject(&:blank?).map(&:to_i).uniq.sort.presence ||
+          Tracker::DEFAULT_SCHEDULE['days']
       }
     }
     attrs[:colour] = permitted[:colour].presence if permitted.key?(:colour)

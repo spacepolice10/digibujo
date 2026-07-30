@@ -1,0 +1,7 @@
+<turbo-frame id="daylog_metadata_<%= @date.iso8601 %>" data-daylog-metadata-target="frame">
+<div class="daylog--metadata-content" data-daylog-metadata-target="content">
+  <%= render "daylogs/mood_entity", date: @date, entity: @mood_entity %>
+  <%= render "daylogs/picture", date: @date, picture: @picture %>
+</div>
+<%= render "daylogs/photo_card", date: @date, picture: @picture %>
+</turbo-frame>

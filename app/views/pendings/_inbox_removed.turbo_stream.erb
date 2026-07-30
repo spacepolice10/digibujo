@@ -1,8 +1,0 @@
-<%# locals: (bullet:) %>
-<%= turbo_stream.remove dom_id(bullet, :pending) %>
-<% remaining = Pending.inbox_count_for(Current.user) %>
-<% if remaining.zero? %>
-  <%= turbo_stream.remove "pending_inbox" %>
-<% else %>
-  <%= turbo_stream.update "pending_inbox_count", remaining %>
-<% end %>

@@ -53,10 +53,9 @@ class MonthlylogsController < ApplicationController
     grouped = scoped.where(pops_on: @days).group_by(&:pops_on)
     @bullets_by_date = @days.index_with { |day| grouped[day] || [] }
     @unplanned_bullets = scoped.where(pops_on: nil).order(created_at: :asc)
-    @trackers = @monthlylog.trackers.chronological.with_completions
-    daylog = Current.user.daylog
-    @mood_entities_by_date = daylog&.mood_entities_by_date(@days) || {}
-    @pictures_by_date = daylog&.pictures_by_date(@days) || {}
+    @trackers = Current.user.trackers.where("start_date <= ?", @monthlylog.period_to).chronological.with_completions
+    @mood_entities_by_date = CalendarDate.mood_entities_by_date(Current.user, @days)
+    @pictures_by_date = CalendarDate.pictures_by_date(Current.user, @days)
   end
 
   def occupied_months

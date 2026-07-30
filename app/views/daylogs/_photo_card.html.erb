@@ -1,13 +1,9 @@
-<%# locals: (date:, picture:, lazy: false) %>
-<%# Shell only — daylog-photo Stimulus lives on the chat wrapper so the header
-    arrow can toggle the same controller. On mobile (`lazy: true`) the card
-    stays out of the DOM until Show photo fetches it. %>
+<%# locals: (date:, picture:) %>
 <div
   id="daylog_photo_card_<%= date.iso8601 %>"
   class="daylog--photo"
-  data-daylog-photo-target="shell"
 >
-  <% if !lazy && picture&.picture&.attached? %>
+  <% if picture&.picture&.attached? %>
     <%= render "daylogs/photo_card_content", date: date, picture: picture %>
   <% end %>
 </div>

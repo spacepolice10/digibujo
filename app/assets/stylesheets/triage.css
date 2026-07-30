@@ -1,0 +1,73 @@
+@layer components {
+  .triage--header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-vertical-half);
+    padding-block: var(--spacing-vertical-quad);
+    text-align: center;
+  }
+
+  .triage--chip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-horizontal-half);
+    height: var(--spacing-vertical-double);
+    width: var(--spacing-horizontal-triple);
+    border: none;
+    border-radius: var(--radius-strong);
+    background: var(--color-accent);
+    color: var(--color-fg-strong);
+    overflow: hidden;
+    &:hover {
+      background: var(--color-accent-bg);
+    }
+  }
+
+
+  .triage--author {
+    color: var(--color-fg-subtle);
+    margin: 0;
+  }
+
+  .triage--actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    margin-inline-start: calc(var(--icon-shell-size) + var(--spacing-horizontal-half));
+  }
+
+  .triage--action-form {
+    display: inline-flex;
+  }
+
+  .triage--bullet {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical-half);
+    background: var(--color-bg-subtle);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-strong);
+    padding: var(--spacing-vertical-half);
+  }
+
+  .triage--action {
+    padding: 0 var(--spacing-horizontal-half);
+    font-size: var(--font-size-xs);
+    color: var(--color-fg-subtle);
+    gap: 0.15rem;
+
+    .button--icon,
+    .icon {
+      width: var(--icon-shell-glyph);
+      height: var(--icon-shell-glyph);
+    }
+  }
+
+  .triage--no-bullets {
+    text-align: center;
+    color: var(--color-fg-subtle);
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
+  }
+}

@@ -33,30 +33,32 @@ class PendingTest < ActiveSupport::TestCase
     assert_not_nil repaired.bucket
   end
 
-  test 'inbox_for includes pending and monthlylog bullets for today' do
+  test 'pending_of returns active bullets from pending bucket' do
     user = users(:one)
-    ensure_daylog!(user)
     pending = Pending.provision!(user)
-    monthlylog = create_monthlylog!(user, name: 'This month')
 
     capture = create_bullet!(user, bucket: pending.bucket, bulletable: Note.new(body: 'Capture'), pops_on: nil)
-    today = create_bullet!(
-      user,
-      bucket: monthlylog.bucket,
-      bulletable: Task.new(body: 'Today cell'),
-      pops_on: Date.current
-    )
-    create_bullet!(
-      user,
-      bucket: monthlylog.bucket,
-      bulletable: Task.new(body: 'Other day'),
-      pops_on: Date.current + 2.days
-    )
 
-    inbox = Pending.inbox_for(user)
+    assert_includes Pending.pending_of(user), capture
+  end
 
-    assert_includes inbox, capture
-    assert_includes inbox, today
-    assert_equal 2, inbox.count
+  test 'pending_of excludes archived bullets' do
+    user = users(:one)
+    pending = Pending.provision!(user)
+
+    bullet = create_bullet!(user, bucket: pending.bucket, bulletable: Note.new(body: 'Archived me'), pops_on: nil)
+    bullet.archive!
+
+    assert_empty Pending.pending_of(user)
+  end
+
+  test 'pending_number_of returns count of active pending bullets' do
+    user = users(:one)
+    pending = Pending.provision!(user)
+
+    create_bullet!(user, bucket: pending.bucket, bulletable: Note.new(body: 'First'), pops_on: nil)
+    create_bullet!(user, bucket: pending.bucket, bulletable: Note.new(body: 'Second'), pops_on: nil)
+
+    assert_equal 2, Pending.pending_number_of(user)
   end
 end

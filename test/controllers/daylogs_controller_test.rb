@@ -86,42 +86,26 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select "button[popovertarget='pinned_list'][data-action*='keydown.shift+p@document->hotkey#click'][data-hotkey='P']"
   end
 
-  test 'daylog header shows pending inbox when bullets await triage' do
-    pending = Pending.provision!(@user)
-    create_bullet!(@user, bucket: pending.bucket, bulletable: Note.new(body: 'Stashed'), pops_on: nil)
-
+  test 'daylog header renders triage chip with stimulus controller' do
     get daylog_path
 
     assert_response :success
-    assert_select '#pending_inbox.daylog--pending-inbox' do
-      assert_select 'button.daylog--pending-inbox-trigger[popovertarget=pending_list]'
-      assert_select '#pending_inbox_count.daylog--pending-count', text: '1'
-      assert_select 'turbo-frame#pending_list[popover][src=?]', pending_path
+    assert_select '#triage_chip.daylog--triage-inbox[hidden]' do
+      assert_select '[data-controller~="triage-chip"]'
+      assert_select '[data-triage-chip-number-url-value="/triage/number"]'
+      assert_select 'button.daylog--triage-inbox-trigger[popovertarget=triage_list]'
+      assert_select '#triage_inbox_count.daylog--triage-count'
+      assert_select 'turbo-frame#triage_list[popover][src=?]', triage_path
     end
   end
 
-  test 'daylog header pending count includes monthlylog bullets for today' do
-    monthlylog = create_monthlylog!(@user, name: 'This month')
-    create_bullet!(
-      @user,
-      bucket: monthlylog.bucket,
-      bulletable: Task.new(body: 'Monthly today'),
-      pops_on: Date.current
-    )
-
-    get daylog_path
-
-    assert_response :success
-    assert_select '#pending_inbox_count.daylog--pending-count', text: '1'
-  end
-
-  test 'daylog header hides pending inbox when empty' do
+  test 'daylog header hides triage chip when empty' do
     Pending.provision!(@user)
 
     get daylog_path
 
     assert_response :success
-    assert_select '#pending_inbox', count: 0
+    assert_select '#triage_chip[hidden]'
   end
 
   test 'daylog scopes bulk menu controls to the bullets list' do
@@ -177,49 +161,57 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select '#bullet_composer lexxy-editor[preset=note]'
   end
 
-  test 'mobile daylog keeps the day photo out of the DOM until shown' do
+  test 'daylog renders metadata turbo frame' do
     date = Date.current
-    calendar_date = @user.calendar_dates.create!(date: date)
-    picture = @user.daylog.pictures.new(calendar_date: calendar_date)
-    picture.picture.attach(
-      io: StringIO.new(Base64.decode64(
-        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
-      )),
-      filename: 'day.png',
-      content_type: 'image/png'
-    )
-    picture.save!
-
-    get daylog_path, headers: { 'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)' }
-
-    assert_response :success
-    assert_select "#daylog_photo_card_#{date.iso8601}"
-    assert_select '.daylog--photo-card', count: 0
-    assert_select '.daylog--photo-card-image', count: 0
-    assert_select '.daylog--picture [aria-label="Show photo"]'
-    assert_select '[data-controller~=daylog-photo][data-daylog-photo-lazy-value=true]'
-    assert_select "[data-daylog-photo-url-value=?]", daylog_picture_path(date: date.iso8601)
-  end
-
-  test 'desktop daylog embeds the day photo card when attached' do
-    date = Date.current
-    calendar_date = @user.calendar_dates.create!(date: date)
-    picture = @user.daylog.pictures.new(calendar_date: calendar_date)
-    picture.picture.attach(
-      io: StringIO.new(Base64.decode64(
-        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
-      )),
-      filename: 'day.png',
-      content_type: 'image/png'
-    )
-    picture.save!
 
     get daylog_path
 
     assert_response :success
+    assert_select "turbo-frame#daylog_metadata_#{date.iso8601}[src=?][loading=eager]",
+      daylog_metadata_path(date: date.iso8601)
+    assert_select '[data-controller~=daylog-metadata]'
+  end
+
+  test 'daylog header has metadata toggle button' do
+    get daylog_path
+
+    assert_response :success
+    assert_match %r{data-action="[^"]*daylog-metadata#toggle[^"]*}, response.body
+    assert_select '.daylog--header-controls .button--icon[aria-label="Metadata"]'
+  end
+
+  test 'metadata controller returns mood and picture fragment' do
+    date = Date.current
+    calendar_date = @user.calendar_dates.create!(date: date)
+    picture = calendar_date.build_picture
+    picture.picture.attach(
+      io: StringIO.new(Base64.decode64(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
+      )),
+      filename: 'day.png',
+      content_type: 'image/png'
+    )
+    picture.save!
+    calendar_date.create_mood_entity!(mood: :inspired)
+
+    get daylog_metadata_path(date: date.iso8601)
+
+    assert_response :success
     assert_select '.daylog--photo-card'
     assert_select '.daylog--photo-card-image'
-    assert_select '[data-controller~=daylog-photo][data-daylog-photo-lazy-value=false]'
+    assert_select '.daylog--mood'
+    assert_select '.daylog--picture'
+  end
+
+  test 'metadata controller returns empty state when no mood or picture' do
+    date = Date.current
+
+    get daylog_metadata_path(date: date.iso8601)
+
+    assert_response :success
+    assert_select '.daylog--photo-card', count: 0
+    assert_select '.daylog--mood'
+    assert_select '.daylog--picture'
   end
 
   test 'root path is home' do

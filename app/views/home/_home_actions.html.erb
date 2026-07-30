@@ -8,6 +8,11 @@
   Add future log
 <% end %>
 
+<%= link_to new_tracker_path, class: "button--secondary home--action", data: { turbo_frame: "_top" } do %>
+  <%= icon_tag("target", style: "color: var(--color-text-base);") %>
+  Add tracker
+<% end %>
+
 <%= link_to new_monthlylog_path, class: "button--secondary home--action", data: { turbo_frame: "_top" } do %>
   <%= icon_tag("calendar", style: "color: var(--color-text-base);") %>
   Add monthly log

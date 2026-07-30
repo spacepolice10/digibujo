@@ -6,7 +6,7 @@
 
     <div class="layout--header">
       <div class="layout--header-actions">
-        <%= back_link_to monthlylog_path(@tracker.monthlylog), class: "button--secondary" do %>
+        <%= back_link_to root_path, class: "button--secondary" do %>
           <%= icon_tag("arrow-left", style: "color: var(--color-stroke-base);") %> Back
         <% end %>
       </div>
@@ -42,8 +42,8 @@
       </div>
     </dl>
 
-    <section class="tracker--heatmap layout--surface" aria-label="This month">
-      <h2 class="tracker--heading">This month</h2>
+    <section class="tracker--heatmap layout--surface" aria-label="Last 30 days">
+      <h2 class="tracker--heading">Last 30 days</h2>
 
       <div class="tracker--heatmap-days">
         <% @heatmap_days.each do |day| %>
