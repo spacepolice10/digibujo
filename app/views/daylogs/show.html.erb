@@ -1,12 +1,105 @@
 <% if @daylog %>
   <div class="layout--page layout--container layout--container-md daylog daylog--chat">
-    <%= render "daylogs/chat",
-          daylog: @daylog,
-          daylog_bucket: @daylog_bucket,
-          selected_date: @selected_date,
-          bullets: @bullets,
-          more_bullets: @more_bullets,
-          trackers: @trackers %>
+    <header
+      id="daylog_header_<%= @selected_date.iso8601 %>"
+      class="daylog--chat-header"
+    >
+      <div class="layout--flex layout--gapped layout--justify-between">
+        <div class="daylog--header-controls">
+          <%= link_to daylog_path(date: (@selected_date - 1.day).iso8601),
+              data: {
+                turbo_action: "advance",
+                controller: "hotkey",
+                hotkey: "←",
+                action: "keydown.shift+left@document->hotkey#click"
+              },
+              class: "button--tertiary button--circle hotkey-hint",
+              aria: { label: "Show previous day", keyshortcuts: "Shift+ArrowLeft" } do %>
+            <%= icon_tag("arrow-left") %>
+          <% end %>
+
+          <span class="typography--mono typography--paragraph-sm">
+            <%= @selected_date.strftime("%a, %b %-d") %>
+          </span>
+
+          <%= render "daylogs/triage_chip" %>
+
+          <%= link_to daylog_path(date: (@selected_date + 1.day).iso8601),
+              data: {
+                turbo_action: "advance",
+                controller: "hotkey",
+                hotkey: "→",
+                action: "keydown.shift+right@document->hotkey#click"
+              },
+              class: "button--tertiary button--circle hotkey-hint",
+              aria: { label: "Show next day", keyshortcuts: "Shift+ArrowRight" } do %>
+            <%= icon_tag("arrow-right") %>
+          <% end %>
+        </div>
+
+        <div class="daylog--header-controls">
+          <a
+            href="<%= daylog_metadata_path(date: @selected_date.iso8601) %>"
+            data-turbo-frame="daylog_metadata_<%= @selected_date.iso8601 %>"
+            class="button--tertiary button--circle"
+            aria-label="Metadata"
+          >
+            <%= icon_tag("arrow-left") %>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <div
+      data-bulk-menu-target="list"
+      class="daylog--wrap"
+      data-controller="daylog-scroll"
+      data-daylog-scroll-path-value="<%= daylog_bullets_path %>"
+    >
+      <div id="daylog_scroller" class="daylog--scroller" data-daylog-scroll-target="scroller">
+        <% if @more_bullets %>
+          <div
+            class="daylog--load-more-trigger"
+            data-daylog-scroll-target="trigger"
+          >
+            <%= icon_tag("spinner", class: "icon icon--spin") %>
+            <span class="utilities--sr-only">Loading more bullets</span>
+          </div>
+        <% end %>
+
+        <div
+          id="<%= dom_id(@daylog, :bullets_container) %>"
+          class="layout--list"
+          data-daylog-scroll-target="list"
+        >
+          <% @bullets.each do |bullet| %>
+            <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
+          <% end %>
+
+          <% if @bullets.empty? %>
+            <p
+              id="no_bullets_container"
+              class="
+                typography--paragraph-sm typography--center layout--padded
+                layout--mx-auto
+              "
+            >
+              No bullets yet, check your monthly bucket, references or start a
+              braindumping session.
+            </p>
+          <% end %>
+        </div>
+      </div>
+    
+    </div>
+    
+
+    <turbo-frame id="daylog_metadata_<%= @selected_date.iso8601 %>" class="utilities--contents">
+    </turbo-frame>
+
+    <%= render "bullets/composer",
+      bucket_id: @daylog.bucket.id,
+      pops_on: @selected_date %>
   </div>
 <% else %>
   <%= render "daylogs/placeholder" %>

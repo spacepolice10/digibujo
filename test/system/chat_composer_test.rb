@@ -18,7 +18,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     assert_selector '.composer--field.hotkey-hint[data-hotkey="Shift+F"]'
     assert_selector '.composer--record.hotkey-hint[data-hotkey="Shift+R"]'
 
-    page.execute_script("document.activeElement?.blur()")
+    page.execute_script('document.activeElement?.blur()')
     page.execute_script(<<~JS)
       document.body.dispatchEvent(new KeyboardEvent('keydown', {
         key: 'f',
@@ -278,9 +278,9 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     JS
 
     assert_selector '#bullet_composer[data-bullet-type="voice"]'
-    assert_selector '.composer--voice:not([hidden])'
-    assert_selector '.composer--voice-pause'
-    assert_no_selector '.composer--row:not(.composer--voice)', visible: true
+    assert_selector '.composer--rail-recorder:not([hidden])'
+    assert_selector '.composer--rail-recorder-pause'
+    assert_no_selector '.composer--rail:not(.composer--rail-recorder)', visible: true
   end
 
   test 'the mic button records a voice bullet without touching the type picker' do
@@ -289,23 +289,23 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     find('.composer--record').click
 
     assert_selector '#bullet_composer[data-bullet-type="voice"]'
-    assert_selector '.composer--voice:not([hidden])'
-    assert_selector '.composer--voice-pause'
-    assert_selector '.composer--voice-waveform'
+    assert_selector '.composer--rail-recorder:not([hidden])'
+    assert_selector '.composer--rail-recorder-pause'
+    assert_selector '.composer--rail-recorder-waveform'
     assert_no_selector '.composer--type-button', visible: true
 
     # MediaRecorder emits its first chunk after 250ms; wait until the countdown
     # has ticked once so the take actually has data.
-    assert_selector '.composer--voice-remaining', text: '0:59'
-    find('.composer--voice-pause').click
+    assert_selector '.composer--rail-recorder-remaining', text: '0:59'
+    find('.composer--rail-recorder-pause').click
 
-    assert_selector '.composer--voice .composer--submit:not([disabled])'
-    find('.composer--voice .composer--submit').click
+    assert_selector '.composer--rail-recorder .composer--submit:not([disabled])'
+    find('.composer--rail-recorder .composer--submit').click
 
     assert_selector '.bullet[data-bullet-type="voice"]'
     assert_equal 'Voice', @user.bullets.reload.last.bulletable_type
     assert_selector '#bullet_composer[data-bullet-type="note"]'
-    assert_selector '.composer--row:not(.composer--voice)', visible: true
+    assert_selector '.composer--rail:not(.composer--rail-recorder)', visible: true
   end
 
   test 'shift tab cycles the bullet type while the editor is focused' do

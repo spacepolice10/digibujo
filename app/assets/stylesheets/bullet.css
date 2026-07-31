@@ -122,16 +122,16 @@
     position: relative;
     flex-shrink: 0;
     box-sizing: border-box;
-    width: var(--icon-shell-size);
-    height: var(--icon-shell-size);
+    width: var(--spacing-horizontal-double);
+    height: var(--spacing-horizontal-double);
     border: 1px solid color-mix(in oklch, currentColor 28%, var(--color-stroke-base));
     border-radius: var(--radius-full);
     background: color-mix(in oklch, currentColor 14%, var(--color-bg-subtle));
   }
 
   .bullet--marker-type {
-    width: var(--icon-shell-glyph) !important;
-    height: var(--icon-shell-glyph) !important;
+    width: var(--spacing-horizontal) !important;
+    height: var(--spacing-horizontal) !important;
 
     .icon {
       width: 100%;
@@ -145,10 +145,10 @@
     justify-content: center;
     flex-shrink: 0;
     box-sizing: border-box;
-    width: calc(var(--icon-shell-size) * 0.78);
-    height: calc(var(--icon-shell-size) * 0.78);
-    min-width: calc(var(--icon-shell-size) * 0.78);
-    min-height: calc(var(--icon-shell-size) * 0.78);
+    width: calc(var(--spacing-vertical-triple));
+    height: calc(var(--spacing-vertical-triple));
+    min-width: calc(var(--spacing-vertical-triple));
+    min-height: calc(var(--spacing-vertical-triple));
     border: 1px solid var(--color-stroke-base);
     border-radius: var(--radius-full);
     background: var(--color-bg-subtle);
@@ -185,8 +185,8 @@
   }
 
   .bullet--metadata-icon {
-    width: calc(var(--icon-shell-glyph) * 0.85) !important;
-    height: calc(var(--icon-shell-glyph) * 0.85) !important;
+    width: calc(var(--spacing-vertical-double)) !important;
+    height: calc(var(--spacing-vertical-double)) !important;
 
     .icon {
       width: 100%;

@@ -2,9 +2,10 @@
 
 class DaylogsController < ApplicationController
   def show
-    @selected_date = daylog_date_from_params
     @daylog = Current.user.daylog
-    @daylog_bucket = @daylog.bucket
+    @selected_date = daylog_date_from_params
+    return unless @daylog
+
     @bullets = @daylog.bullets.where(pops_on: @selected_date).active.last_page
     @more_bullets = @bullets.size == Bullet::Pageable::PAGE_SIZE
   end

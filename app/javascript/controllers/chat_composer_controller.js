@@ -1,8 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
+import { scrollToBottom } from "helpers/scroll_helpers"
 
-const TYPE_STORAGE_KEY = "digibujo.composer.type"
-const VOICE_TYPE = "Voice"
-const NOTE_TYPE = "Note"
+const TYPE_STORAGE_NAME = "digibujo.composer.type"
 
 // Always-on chat-style bullet composer: one form, one Lexxy editor (note preset),
 // a type picker that persists across visits, and an inline voice mode driven by
@@ -10,9 +9,9 @@ const NOTE_TYPE = "Note"
 // under the field via toolbar= — never reparent (disconnect disposes setEditor).
 export default class extends Controller {
   static targets = [
-    "form", "editor", "typeField", "typeIcon", "typeOption", "composeRow",
-    "voicePanel", "submit", "voiceSubmit", "toolbarButton", "toolbarPanel",
-    "clearButton", "recordButton"
+    "form", "editor", "typeField", "typeIcon", "typeOption", "composerRail",
+    "recorderWrap", "submit", "submitFinished", "toolbarButton", "toolbarWrap",
+    "cleanupButton", "recordButton"
   ]
 
   connect() {
@@ -41,12 +40,11 @@ export default class extends Controller {
 
     this.#prepareToolbar()
     this.#observeEditorHeight()
-    this.#applyType(this.#storedType || this.typeFieldTarget.value)
+    this.#switchType(this.#storedType || this.typeFieldTarget.value)
     this.#syncTabbarInset()
     this.#syncKeyboardInset()
     this.refresh()
-
-    this.#setUpWhenEditorUpgrades()
+    this.#reinitializeWhenEditorUpgrades()
   }
 
   disconnect() {
@@ -66,20 +64,19 @@ export default class extends Controller {
     const type = event.currentTarget.dataset.composerType
     if (!type) return
 
-    this.#applyType(type)
-    this.#storeType(type)
+    this.#switchType(type)
+    this.#saveTypeInLS(type)
     this.refresh()
-    this.focus()
+    this.refocus()
   }
 
   // Field click focuses the editor — but never when the click already landed
   // inside <lexxy-editor> or the formatting toolbar under the field.
-  focus(event) {
+ refocus(event) {
     if (event?.target instanceof Element) {
       if (event.target.closest("lexxy-editor")) return
       if (event.target.closest("lexxy-toolbar, #composer_toolbar")) return
     }
-
     this.editorTarget.focus()
   }
 
@@ -93,26 +90,16 @@ export default class extends Controller {
   // never sees a sending Enter.
   keydown(event) {
     if (event.isComposing) return
+    if (this.#handleSwitchToNextVariantKeydown(event)) return
+    if (this.#handleToolbarKeydown(event)) return
+    if (this.#handleRecordKeydown(event)) return
 
-    if (this.#handleTypeCycleKey(event)) return
-    if (this.#handleToolbarKey(event)) return
-    if (this.#handleRecordKey(event)) return
-
-    if (event.key !== "Enter") return
-    if (event.shiftKey) return
     if (this.#toolbarOpen) return
-    if (this.#touchDevice) return
+    if (this.#mobileDevice) return
     if (this.editorTarget.hasOpenPrompt) return
-
-    const isModEnter = event.metaKey || event.ctrlKey
-    if (this.typeFieldTarget.value === NOTE_TYPE) {
-      if (!isModEnter) return
-    } else if (isModEnter) {
-      return
-    }
+    if (event.key != "Enter" || (event.key && !event.metaKey )) return
 
     event.preventDefault()
-    event.stopPropagation()
     this.submit()
   }
 
@@ -122,19 +109,19 @@ export default class extends Controller {
     this.formTarget.requestSubmit()
   }
 
-  startVoice() {
+  switchToRecorderMode() {
     this.#hideToolbar()
     this.typeBeforeVoice = this.typeFieldTarget.value
-    this.#applyType(VOICE_TYPE)
-    this.composeRowTarget.hidden = true
-    this.voicePanelTarget.hidden = false
+    this.#switchType("Voice")
+    this.composerRailTarget.hidden = true
+    this.recorderWrapTarget.hidden = false
     this.refresh()
   }
 
-  cancelVoice() {
-    this.voicePanelTarget.hidden = true
-    this.composeRowTarget.hidden = false
-    this.#applyType(this.typeBeforeVoice || this.#storedType)
+  switchToTextMode() {
+    this.recorderWrapTarget.hidden = true
+    this.composerRailTarget.hidden = false
+    this.#switchType(this.typeBeforeVoice || this.#storedType || "Note")
     this.typeBeforeVoice = null
     this.refresh()
   }
@@ -150,28 +137,28 @@ export default class extends Controller {
     this.#showToolbar()
   }
 
-  clear() {
+  cleanup() {
     this.editorTarget.value = ""
     this.element.classList.remove("composer--multiline")
     this.#hideToolbar()
     this.refresh()
-    this.focus()
+    this.refocus()
   }
 
-  submitEnd(event) {
+  submitFinished(event) {
     if (!event.detail.success) return
 
-    this.reset()
+    this.reinitializeComposer()
     this.#scrollToLatest()
   }
 
-  reset() {
+  reinitializeComposer() {
     this.editorTarget.value = ""
-    this.voicePanelTarget.hidden = true
-    this.composeRowTarget.hidden = false
+    this.recorderWrapTarget.hidden = true
+    this.composerRailTarget.hidden = false
     this.element.classList.remove("composer--multiline")
     this.#hideToolbar()
-    this.#applyType(this.typeBeforeVoice || this.#storedType)
+    this.#switchType(this.typeBeforeVoice || this.#storedType || "Note")
     this.typeBeforeVoice = null
     this.refresh()
   }
@@ -180,20 +167,18 @@ export default class extends Controller {
   // Formatting is Note-only (always, not only after multiline); clear shows for a
   // multiline draft with text.
   refresh() {
-    const ready = this.#submittable
-    this.submitTarget.disabled = !ready
-    if (this.hasVoiceSubmitTarget) this.voiceSubmitTarget.disabled = !ready
-    this.recordButtonTarget.hidden = this.#voiceMode || !this.editorTarget.isBlank
+    this.submitTarget.disabled = !this.#submittable
+    this.recordButtonTarget.hidden = this.#recorderMode || !this.editorTarget.isBlank
     this.#syncMultiline()
     this.toolbarButtonTarget.hidden = !this.#toolbarToggleable
-    this.clearButtonTarget.hidden = !this.#clearable
+    this.cleanupButtonTarget.hidden = !this.#clearable
   }
 
   // Lexxy defines its custom elements from a setTimeout, so a lazily loaded
   // controller can connect while <lexxy-editor> is still an unknown element —
   // one where editorContentElement, the toolbar template and isBlank are all
   // missing. Run setup again once the upgrade lands.
-  #setUpWhenEditorUpgrades() {
+  #reinitializeWhenEditorUpgrades() {
     if (this.editorTarget.editorContentElement) {
       this.boundOnEditorInitialized()
       return
@@ -209,16 +194,14 @@ export default class extends Controller {
   // External <lexxy-toolbar id="composer_toolbar"> starts empty; seed Lexxy's
   // default controls (and re-bind if the editor already attached to a blank one).
   #prepareToolbar() {
-    if (!this.hasToolbarPanelTarget) return
+    if (!this.hasToolbarWrapTarget) return
 
-    const toolbar = this.toolbarPanelTarget
+    const toolbar = this.toolbarWrapTarget
     this.#bootstrapToolbar(toolbar)
-    this.#disableLexxyOverflow(toolbar)
 
     if (this.editorTarget.editor && typeof toolbar.setEditor === "function") {
       if (toolbar.editorElement !== this.editorTarget) {
         toolbar.setEditor(this.editorTarget)
-        this.#disableLexxyOverflow(toolbar)
       }
     }
   }
@@ -252,34 +235,22 @@ export default class extends Controller {
 
   // Prefer CSS horizontal scroll; stop Lexxy from moving controls into its
   // overflow menu (which we hide). One-shot — no restore loops on show.
-  #disableLexxyOverflow(toolbar) {
-    toolbar.requestOverflowRefresh = () => {}
 
-    const overflow = toolbar.querySelector(".lexxy-editor__toolbar-overflow")
-    const menu = overflow?.querySelector(":scope > [data-dropdown-panel], .lexxy-editor__toolbar-overflow-menu")
-    if (!menu) return
-
-    while (menu.firstChild) {
-      const item = menu.firstChild
-      item.removeAttribute("role")
-      toolbar.insertBefore(item, overflow)
-    }
-  }
 
   #showToolbar() {
-    this.element.classList.add("composer--toolbar")
-    if (this.hasToolbarPanelTarget) {
-      this.toolbarPanelTarget.setAttribute("aria-hidden", "false")
-      this.toolbarPanelTarget.removeAttribute("inert")
+    this.element.classList.add("composer--toolbar-open")
+    if (this.hasToolbarWrapTarget) {
+      this.toolbarWrapTarget.setAttribute("aria-hidden", "false")
+      this.toolbarWrapTarget.removeAttribute("inert")
     }
     this.#syncToolbarButton(true)
   }
 
   #hideToolbar() {
-    this.element.classList.remove("composer--toolbar")
-    if (this.hasToolbarPanelTarget) {
-      this.toolbarPanelTarget.setAttribute("aria-hidden", "true")
-      this.toolbarPanelTarget.setAttribute("inert", "")
+    this.element.classList.remove("composer--toolbar-open")
+    if (this.hasToolbarWrapTarget) {
+      this.toolbarWrapTarget.setAttribute("aria-hidden", "true")
+      this.toolbarWrapTarget.setAttribute("inert", "")
     }
     this.#syncToolbarButton(false)
   }
@@ -295,7 +266,7 @@ export default class extends Controller {
     )
   }
 
-  #applyType(type) {
+  #switchType(type) {
     const name = type || this.typeFieldTarget.value
     this.typeFieldTarget.value = name
     this.element.dataset.bulletType = name.toLowerCase()
@@ -312,9 +283,6 @@ export default class extends Controller {
     this.#syncPlaceholder()
   }
 
-  // Lexxy paints via `attr(placeholder)` on `.lexxy-editor__content`, which is
-  // only copied from the host at mount. Updating the host alone leaves the SSR
-  // Note placeholder stuck on screen — write both, and re-run after remounts.
   #syncPlaceholder() {
     const selected = this.typeOptionTargets.find(
       (option) => option.dataset.composerType === this.typeFieldTarget.value
@@ -327,21 +295,19 @@ export default class extends Controller {
     editor.editorContentElement?.setAttribute("placeholder", text)
   }
 
-  #handleTypeCycleKey(event) {
-    if (event.key !== "Tab" || !event.shiftKey) return false
-    if (event.metaKey || event.ctrlKey || event.altKey) return false
-    if (this.#voiceMode) return false
+  #handleSwitchToNextVariantKeydown(event) {
+    const isShiftTabbed = event.key == "Tab" && event.shiftKey
+    if (this.#recorderMode || !isShiftTabbed) return false
 
     event.preventDefault()
     event.stopPropagation()
-    this.#cycleType()
+    this.#switchToNextVariant()
     return true
   }
 
-  #handleToolbarKey(event) {
-    if (event.key !== "e" && event.key !== "E") return false
-    if (!event.shiftKey || !event.ctrlKey || event.metaKey || event.altKey) return false
-    if (!this.#toolbarToggleable && !this.#toolbarOpen) return false
+  #handleToolbarKeydown(event) {
+    const isShiftCtrlE = event.key == "e" && event.shiftKey && event.ctrlKey && event.metaKey
+    if (!isShiftCtrlE || !this.#toolbarToggleable) return false
 
     event.preventDefault()
     event.stopPropagation()
@@ -349,10 +315,9 @@ export default class extends Controller {
     return true
   }
 
-  #handleRecordKey(event) {
-    if (event.key !== "r" && event.key !== "R") return false
-    if (!event.shiftKey || event.metaKey || event.ctrlKey || event.altKey) return false
-    if (this.recordButtonTarget.hidden || this.#voiceMode) return false
+  #handleRecordKeydown(event) {
+    const isShiftR = event.key == "r" && event.shiftKey
+    if (!isShiftR || this.recordButtonTarget.hidden || this.#recorderMode) return false
 
     event.preventDefault()
     event.stopPropagation()
@@ -360,21 +325,23 @@ export default class extends Controller {
     return true
   }
 
-  #cycleType() {
-    const types = this.typeOptionTargets.map((option) => option.dataset.composerType)
-    if (types.length === 0) return
+  #switchToNextVariant() {
+    const variants = this.typeOptionTargets.map((option) => option.dataset.composerType)
+    if (variants.length === 0) return
 
-    const index = types.indexOf(this.typeFieldTarget.value)
-    const next = types[(index + 1) % types.length]
-    this.#applyType(next)
-    this.#storeType(next)
+    const index = variants.indexOf(this.typeFieldTarget.value)
+    const nextVariant = variants[(index + 1) % variants.length]
+    this.#switchType(nextVariant)
+    this.#saveTypeInLS(nextVariant)
     this.refresh()
-    this.focus()
+    this.refocus()
   }
 
   #scrollToLatest() {
-    const rows = document.querySelector('[id$="_bullets_container"]')?.querySelectorAll(".bullet")
-    rows?.[rows.length - 1]?.scrollIntoView({ block: "center", behavior: "smooth" })
+    const scroller = document.querySelector('[id$="_scroller"]')
+    scrollToBottom(scroller)
+    // const rows = document.querySelector('[id^="bullets_container_"]')?.querySelectorAll('[id^="bullet_"]')
+    // rows?.[rows.length - 1]?.firstChild?.scrollIntoView({ block: "center", behavior: "smooth" })
   }
 
   #observeEditorHeight() {
@@ -410,7 +377,7 @@ export default class extends Controller {
   #latchMultiline() {
     this.element.classList.add("composer--multiline")
     this.toolbarButtonTarget.hidden = !this.#toolbarToggleable
-    this.clearButtonTarget.hidden = !this.#clearable
+    this.cleanupButtonTarget.hidden = !this.#clearable
   }
 
   #hasAttachment() {
@@ -425,7 +392,7 @@ export default class extends Controller {
     if (!viewport) return
 
     const focused = this.element.contains(document.activeElement)
-      || this.toolbarPanelTarget?.contains(document.activeElement)
+      || this.toolbarWrapTarget?.contains(document.activeElement)
 
     // Overlay keyboard: layout stays tall, VV shrinks → bottom = inset.
     const overlayInset = Math.max(
@@ -456,7 +423,7 @@ export default class extends Controller {
     this.element.style.setProperty("--composer-tabbar-inset", `${inset}px`)
   }
 
-  #storeType(type) {
+  #saveTypeInLS(type) {
     try {
       window.localStorage?.setItem(TYPE_STORAGE_KEY, type)
     } catch {
@@ -477,36 +444,32 @@ export default class extends Controller {
   }
 
   get #submittable() {
-    if (this.#voiceMode) return this.#hasRecording
-    // Before the upgrade isBlank is undefined, which would read as "has text".
-    if (!this.editorTarget.editorContentElement) return false
-
-    return !this.editorTarget.isBlank
+    return true
   }
 
   get #toolbarToggleable() {
     if (this.#toolbarOpen) return true
 
-    return !this.#voiceMode && this.typeFieldTarget.value === NOTE_TYPE
+    return !this.#recorderMode && this.typeFieldTarget.value === "Note"
   }
 
   get #clearable() {
-    if (this.#voiceMode) return false
+    if (this.#recorderMode) return false
     if (!this.element.classList.contains("composer--multiline")) return false
 
     return !this.editorTarget.isBlank
   }
 
-  get #voiceMode() {
-    return this.typeFieldTarget.value === VOICE_TYPE
+  get #recorderMode() {
+    return this.typeFieldTarget.value === "Voice"
   }
 
-  get #hasRecording() {
+  get #withRecording() {
     return this.formTarget.querySelector('input[type="file"]')?.files?.length > 0
   }
 
   get #toolbarOpen() {
-    return this.element.classList.contains("composer--toolbar")
+    return this.element.classList.contains("composer--toolbar-open")
   }
 
   get #visualViewport() {
@@ -514,7 +477,7 @@ export default class extends Controller {
   }
 
   // Soft keyboards treat Enter as newline; don't send on touch / coarse pointers.
-  get #touchDevice() {
+  get #mobileDevice() {
     return window.matchMedia("(pointer: coarse)").matches ||
       window.matchMedia("(hover: none)").matches
   }

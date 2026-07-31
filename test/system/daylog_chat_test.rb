@@ -33,7 +33,7 @@ class DaylogChatSystemTest < ApplicationSystemTestCase
     scroll_to_top
     wait_for_stable_bullet_count(minimum: PAGE * 2)
 
-    assert_selector '.daylog--older-trigger'
+    assert_selector '.daylog--load-more-trigger'
     previous = page.all("#{@list} .bullet").size
     anchor = find("#{@list} .bullet", match: :first)[:id]
     scroll_to_top
@@ -69,11 +69,11 @@ class DaylogChatSystemTest < ApplicationSystemTestCase
   test 'the older trigger disappears once the whole day is loaded' do
     create_lines(PAGE + 5)
     visit daylog_path
-    assert_selector '.daylog--older-trigger'
+    assert_selector '.daylog--load-more-trigger'
 
     scroll_to_top
 
-    assert_no_selector '.daylog--older-trigger'
+    assert_no_selector '.daylog--load-more-trigger'
     assert_selector "#{@list} .bullet", count: PAGE + 5
     assert_text 'Line 0'
   end
@@ -92,6 +92,22 @@ class DaylogChatSystemTest < ApplicationSystemTestCase
     assert_pinned_to_bottom
   end
 
+  test 'sending a bullet while reading older entries scrolls to the newest row' do
+    create_lines(70)
+    visit daylog_path
+    assert_selector "#{@list} .bullet", count: PAGE
+
+    scroll_to_top
+
+    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
+    editor.click
+    editor.send_keys('Fresh line from above')
+    editor.send_keys([modifier_key, :enter])
+
+    assert_text 'Fresh line from above'
+    assert_pinned_to_bottom
+  end
+
   test 'switching dates loads the other day and remounts the composer' do
     yesterday = Date.current - 1.day
     create_bullet!(@user, bulletable: Note.new(body: 'Yesterday line'), pops_on: yesterday)
@@ -105,7 +121,7 @@ class DaylogChatSystemTest < ApplicationSystemTestCase
     assert_text 'Yesterday line'
     assert_selector '#bullet_composer lexxy-editor .lexxy-editor__content'
     assert_equal yesterday.iso8601,
-      find("#bullet_composer input[name='bullet[pops_on]']", visible: false).value
+                 find("#bullet_composer input[name='bullet[pops_on]']", visible: false).value
   end
 
   private

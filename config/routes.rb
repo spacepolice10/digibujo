@@ -28,8 +28,8 @@ Rails.application.routes.draw do
   end
 
   scope 'calendar_date', module: :calendar_dates, as: :calendar_date do
-    resource :mood_entity, only: %i[create destroy]
-    resource :picture, only: %i[show create destroy]
+    resource :mood_entity, only: %i[create]
+    resource :picture, only: %i[create destroy]
   end
 
   resource :triage, only: :show, controller: 'triage' do

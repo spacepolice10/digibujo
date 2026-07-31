@@ -1,7 +1,7 @@
 <%# locals: (bucket_id:, pops_on: nil) %>
 <%
   bullet = Current.user.bullets.new(bulletable_type: "Note", bucket_id: bucket_id, pops_on: pops_on)
-  default_type = BulletsHelper::COMPOSER_TYPES.first
+  default_type = BulletsHelper::COMPOSER_VARIANTS.first
   default_config = bullet_type_config(default_type)
 %>
 
@@ -12,14 +12,14 @@
   data-controller="chat-composer voice-recorder"
   data-voice-recorder-manage-submit-value="false"
   data-voice-recorder-shell-value="true"
-  data-action="voice-recorder:change->chat-composer#refresh voice-recorder:denied->chat-composer#cancelVoice"
+  data-action="voice-recorder:change->chat-composer#refresh voice-recorder:denied->chat-composer#reinitializeComposer"
 >
   <%= form_with model: bullet,
         class: "composer--form",
         multipart: true,
         data: {
           chat_composer_target: "form",
-          action: "turbo:submit-end->chat-composer#submitEnd turbo:submit-end->voice-recorder#clearOnSubmit"
+          action: "turbo:submit-end->chat-composer#submitFinished turbo:submit-end->voice-recorder#clearOnSubmit"
         } do |fr| %>
     <%= hidden_field_tag :inline_composer, "1" %>
     <%= fr.hidden_field :bucket_id, value: bucket_id %>
@@ -37,14 +37,14 @@
           id: "bullet_bulletable_attributes_duration_seconds",
           data: { voice_recorder_target: "duration" } %>
 
-    <div class="composer--row" data-chat-composer-target="composeRow">
+    <div class="composer--rail composer--rail-text" data-chat-composer-target="composerRail">
       <%# Must precede <lexxy-editor> in the DOM: on a Turbo body swap the
           elements are already defined, so they upgrade in document order, and
           the editor's connectedCallback calls setEditor on this toolbar
           synchronously. Placement is CSS (order) — see composer.css. %>
       <lexxy-toolbar id="composer_toolbar"
-                     class="composer--toolbar-panel"
-                     data-chat-composer-target="toolbarPanel"
+                     class="composer--toolbar-wrap"
+                     data-chat-composer-target="toolbarWrap"
                      data-upload="both"
                      data-attachments="true"
                      aria-hidden="true"
@@ -53,7 +53,7 @@
       <div class="composer--field hotkey-hint"
            data-controller="hotkey"
            data-hotkey="Shift+F"
-           data-action="keydown.shift+f@document->hotkey#click click->chat-composer#focus"
+           data-action="keydown.shift+f@document->hotkey#click click->chat-composer#refocus"
            aria-keyshortcuts="Shift+F">
         <%= fr.fields_for :bulletable, Note.new do |bf| %>
           <%# rows drives Lexxy's --lexxy-editor-rows: start at one chat line. %>
@@ -84,14 +84,14 @@
           becomes a transparent chip strip under the field when multiline. %>
       <div class="composer--chrome">
         <div class="composer--lead">
-          <div class="composer--type dropdown--dock" style="anchor-name: --composer_types">
+          <div class="composer--type dropdown--dock" style="anchor-name: --composer_variants">
             <button type="button"
                     class="button--secondary button--icon button--circle composer--type-button"
-                    popovertarget="composer_types"
+                    popovertarget="composer_variants"
                     aria-haspopup="menu"
                     aria-label="Change bullet type"
                     aria-keyshortcuts="Shift+Tab">
-              <% (BulletsHelper::COMPOSER_TYPES + ["Voice"]).each do |type_name| %>
+              <% (BulletsHelper::COMPOSER_VARIANTS).each do |type_name| %>
                 <% config = bullet_type_config(type_name) %>
                 <span class="composer--type-icon"
                       data-chat-composer-target="typeIcon"
@@ -102,16 +102,16 @@
               <% end %>
             </button>
 
-            <div id="composer_types"
+            <div id="composer_variants"
                  class="dropdown dropdown--element animations--side-in"
-                 style="position-anchor: --composer_types"
+                 style="position-anchor: --composer_variants"
                  popover
                  data-controller="grid-navigation"
                  data-grid-navigation-columns-value="1"
                  data-action="keydown->grid-navigation#navigate">
               <div class="dropdown--element-body">
                 <nav class="dropdown--menu" aria-label="Bullet type">
-                  <% BulletsHelper::COMPOSER_TYPES.each do |type_name| %>
+                  <% BulletsHelper::COMPOSER_VARIANTS.each do |type_name| %>
                     <% config = bullet_type_config(type_name) %>
                     <button type="button"
                             class="dropdown-item composer--type-option"
@@ -122,7 +122,7 @@
                             data-composer-type="<%= type_name %>"
                             data-composer-placeholder="<%= config[:placeholder] %>"
                             data-action="chat-composer#selectType focus->grid-navigation#syncPosition"
-                            popovertarget="composer_types"
+                            popovertarget="composer_variants"
                             popovertargetaction="hide">
                       <span class="composer--type-copy">
                         <span class="composer--type-heading">
@@ -139,9 +139,9 @@
           </div>
 
           <button type="button"
-                  class="composer--clear"
-                  data-action="chat-composer#clear"
-                  data-chat-composer-target="clearButton"
+                  class="composer--cleanup-button"
+                  data-action="chat-composer#cleanup"
+                  data-chat-composer-target="cleanupButton"
                   aria-label="Clear draft"
                   hidden>
             <%= icon_tag("trash", class: "button--icon") %>
@@ -186,34 +186,34 @@
     </div>
 
     <%# Separate shell: same pill chrome, waveform instead of text, pause + send. %>
-    <div class="composer--row composer--voice" data-chat-composer-target="voicePanel" hidden>
+    <div class="composer--rail composer--rail-recorder" data-chat-composer-target="recorderWrap" hidden>
       <div class="composer--lead">
         <button type="button"
-                class="button--secondary button--icon button--circle composer--voice-pause"
+                class="button--secondary button--icon button--circle composer--rail-recorder-pause"
                 data-voice-recorder-target="stopButton"
                 data-action="voice-recorder#stop"
                 aria-label="Stop recording">
           <%= icon_tag("pause", class: "button--icon") %>
         </button>
         <button type="button"
-                class="button--secondary button--icon button--circle composer--voice-discard"
+                class="button--secondary button--icon button--circle composer--rail-recorder-discard"
                 data-voice-recorder-target="discardButton"
-                data-action="voice-recorder#discard chat-composer#cancelVoice"
+                data-action="voice-recorder#discard chat-composer#reinitializeComposer"
                 aria-label="Discard recording"
                 hidden>
           <%= icon_tag("trash", class: "button--icon") %>
         </button>
       </div>
 
-      <div class="composer--field composer--voice-field">
-        <div class="composer--voice-waveform" data-voice-recorder-target="waveform" aria-hidden="true" hidden>
+      <div class="composer--field composer--rail-recorder-field">
+        <div class="composer--rail-recorder-waveform" data-voice-recorder-target="waveform" aria-hidden="true" hidden>
           <svg viewBox="0 0 160 32" preserveAspectRatio="none">
             <% 80.times do |index| %>
               <rect class="voice--waveform-item" x="<%= index * 2 %>" y="15" width="1.25" height="2" rx="0.5" />
             <% end %>
           </svg>
         </div>
-        <span class="composer--voice-remaining utilities--text-sm"
+        <span class="composer--rail-recorder-remaining utilities--text-sm"
               data-voice-recorder-target="remaining"
               aria-live="polite">0:00</span>
 
@@ -225,7 +225,7 @@
            data-voice-recorder-target="status"
            aria-live="polite"
            hidden></p>
-        <p class="composer--voice-status utilities--text-sm" data-voice-recorder-target="unsupported" hidden>
+        <p class="composer--rail-recorder-status utilities--text-sm" data-voice-recorder-target="unsupported" hidden>
           Voice recording is not supported in this browser.
         </p>
       </div>
@@ -233,7 +233,7 @@
       <div class="composer--actions">
         <button type="submit"
                 class="button--primary button--icon button--circle composer--submit"
-                data-chat-composer-target="voiceSubmit"
+                data-chat-composer-target="submitFinished"
                 aria-label="Save voice memo"
                 disabled>
           <%= icon_tag("arrow-up", class: "button--icon") %>

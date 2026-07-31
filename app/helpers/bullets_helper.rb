@@ -41,7 +41,7 @@ module BulletsHelper
   }.freeze
 
   # Voice is driven by the mic button, not the type picker.
-  COMPOSER_TYPES = %w[Note Task Event].freeze
+  COMPOSER_VARIANTS = %w[Note Task Event].freeze
 
   def create_bullet_buttons(bucket_id:, pops_on:, bulletable_type:)
     safe_join(

@@ -1,7 +1,7 @@
 @layer components {
 
   .icon-wrap {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
     width: 1.75ch;

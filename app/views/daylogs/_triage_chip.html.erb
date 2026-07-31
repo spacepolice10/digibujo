@@ -1,8 +1,8 @@
 
 <div
   id="triage_chip"
-  class="dropdown--dock daylog--triage-inbox"
-  style="anchor-name: --triage-inbox"
+  class="dropdown--dock daylog--triage-chip"
+  style="anchor-name: --triage-chip"
   data-controller="triage-chip"
   data-triage-chip-number-url-value="<%= triage_number_path %>"
 
@@ -16,16 +16,16 @@
     aria-haspopup="dialog"
     hidden
   >
-      <%= icon_tag("mail", class: "daylog--triage-inbox-icon") %>
+      <%= icon_tag("mail", class: "daylog--triage-chip-icon") %>
       <span id="triage_chip_number" class="daylog--triage-number"></span>
   </button>
 
   <turbo-frame
     id="triage_list"
-    class="dropdown dropdown--element dropdown--element-bottom animations--side-in daylog--triage-dropdown"
-    style="position-anchor: --triage-inbox"
+    class="dropdown dropdown--element dropdown--element-bottom animations--side-in"
+    style="position-anchor: --triage-chip"
     src="<%= triage_path %>"
-    loading="lazy"
+    loading="eager"
     popover
   ></turbo-frame>
 </div>

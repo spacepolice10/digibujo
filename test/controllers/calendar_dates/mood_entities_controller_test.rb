@@ -9,7 +9,7 @@ module CalendarDates
       sign_in_as @user
       ensure_daylog!(@user)
       @date = Date.current
-      @mood_dom_id = "daylog_mood_entity_#{@date.iso8601}"
+      @mood_dom_id = "mood_entity_#{@date.iso8601}"
       @calendar_date = @user.calendar_dates.create!(date: @date)
     end
 
@@ -43,29 +43,6 @@ module CalendarDates
       end
 
       assert_redirected_to monthlylog_path(monthlylog)
-    end
-
-    test 'destroy mood entity updates picker via turbo stream' do
-      CalendarDate::MoodEntity.create!(calendar_date: @calendar_date, mood: :positive)
-
-      assert_difference -> { CalendarDate::MoodEntity.count }, -1 do
-        delete calendar_date_mood_entity_path,
-               params: { date: @date.iso8601 },
-               as: :turbo_stream
-      end
-
-      assert_response :success
-      assert_select "turbo-stream[action=replace][target=#{@mood_dom_id}]", count: 1
-    end
-
-    test 'destroy mood entity redirects html requests back to daylog' do
-      CalendarDate::MoodEntity.create!(calendar_date: @calendar_date, mood: :positive)
-
-      assert_difference -> { CalendarDate::MoodEntity.count }, -1 do
-        delete calendar_date_mood_entity_path, params: { date: @date.iso8601 }
-      end
-
-      assert_redirected_to daylog_path(date: @date.iso8601)
     end
   end
 end

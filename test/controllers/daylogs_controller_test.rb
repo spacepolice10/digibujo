@@ -17,7 +17,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_match 'No daily log yet', response.body
-    assert_select "form[action=?]", daylog_path
+    assert_select 'form[action=?]', daylog_path
     assert_match 'Create daylog', response.body
   end
 
@@ -64,7 +64,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     get daylog_path
 
     assert_response :success
-    assert_select "a.pill[href=?]", project_path(project), text: /inline tag/
+    assert_select 'a.pill[href=?]', project_path(project), text: /inline tag/
   end
 
   test 'invalid calendar date returns not found' do
@@ -90,13 +90,14 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     get daylog_path
 
     assert_response :success
-    assert_select '#triage_chip.daylog--triage-inbox[hidden]' do
+    assert_select '#triage_chip.daylog--triage-chip' do
       assert_select '[data-controller~="triage-chip"]'
       assert_select '[data-triage-chip-number-url-value="/triage/number"]'
-      assert_select 'button.daylog--triage-inbox-trigger[popovertarget=triage_list]'
-      assert_select '#triage_inbox_count.daylog--triage-count'
+      assert_select 'button#triage_chip_button[popovertarget=triage_list]'
+      assert_select '#triage_chip_number.daylog--triage-number'
       assert_select 'turbo-frame#triage_list[popover][src=?]', triage_path
     end
+    assert_select '#triage_chip_button[hidden]'
   end
 
   test 'daylog header hides triage chip when empty' do
@@ -105,7 +106,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     get daylog_path
 
     assert_response :success
-    assert_select '#triage_chip[hidden]'
+    assert_select '#triage_chip_button[hidden]'
   end
 
   test 'daylog scopes bulk menu controls to the bullets list' do
@@ -167,17 +168,20 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     get daylog_path
 
     assert_response :success
-    assert_select "turbo-frame#daylog_metadata_#{date.iso8601}[src=?][loading=eager]",
-      daylog_metadata_path(date: date.iso8601)
-    assert_select '[data-controller~=daylog-metadata]'
+    assert_select "turbo-frame#daylog_metadata_#{date.iso8601}"
+    assert_select 'a[data-turbo-frame=?][href=?]',
+                  "daylog_metadata_#{date.iso8601}",
+                  daylog_metadata_path(date: date.iso8601)
   end
 
-  test 'daylog header has metadata toggle button' do
+  test 'daylog header links to the metadata turbo frame' do
+    date = Date.current
+
     get daylog_path
 
     assert_response :success
-    assert_match %r{data-action="[^"]*daylog-metadata#toggle[^"]*}, response.body
-    assert_select '.daylog--header-controls .button--icon[aria-label="Metadata"]'
+    assert_select ".daylog--header-controls a[aria-label=Metadata][data-turbo-frame=?]",
+                  "daylog_metadata_#{date.iso8601}"
   end
 
   test 'metadata controller returns mood and picture fragment' do
@@ -186,8 +190,8 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     picture = calendar_date.build_picture
     picture.picture.attach(
       io: StringIO.new(Base64.decode64(
-        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
-      )),
+                         'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
+                       )),
       filename: 'day.png',
       content_type: 'image/png'
     )
@@ -197,8 +201,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     get daylog_metadata_path(date: date.iso8601)
 
     assert_response :success
-    assert_select '.daylog--photo-card'
-    assert_select '.daylog--photo-card-image'
+    assert_select '.daylog--metadata'
     assert_select '.daylog--mood'
     assert_select '.daylog--picture'
   end
@@ -209,9 +212,9 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     get daylog_metadata_path(date: date.iso8601)
 
     assert_response :success
-    assert_select '.daylog--photo-card', count: 0
+    assert_select '.daylog--metadata'
     assert_select '.daylog--mood'
-    assert_select '.daylog--picture'
+    assert_select '.daylog--picture', count: 0
   end
 
   test 'root path is home' do
@@ -266,7 +269,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select "##{container} .bullet", Bullet::Pageable::PAGE_SIZE
     assert_operator response.body.index('Line 2'), :<, response.body.index("Line #{total - 1}")
     assert_select "##{container} > ##{ActionView::RecordIdentifier.dom_id(bullets[2])}:first-child"
-    assert_select '.daylog--older-trigger'
+    assert_select '.daylog--load-more-trigger'
   end
 
   test 'daylog offers the older page trigger only when a full page came back' do
@@ -275,7 +278,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     get daylog_path
 
     assert_response :success
-    assert_select '.daylog--older-trigger', count: 0
+    assert_select '.daylog--load-more-trigger', count: 0
   end
 
   test 'daylog mounts the chat scroller pointed at the cursor endpoint' do
@@ -284,7 +287,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     get daylog_path
 
     assert_response :success
-    assert_select "[data-controller~='daylog-scroll'][data-daylog-scroll-url-value=?]", daylog_bullets_path do
+    assert_select "[data-controller~='daylog-scroll'][data-daylog-scroll-path-value=?]", daylog_bullets_path do
       assert_select "[data-daylog-scroll-target='scroller'] ##{container}[data-daylog-scroll-target='list']"
       assert_select '#bullet_composer', count: 0
     end

@@ -102,7 +102,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match %(turbo-stream action="append" target="#{container}"), response.body
     assert_match 'collection--date-pill', response.body
-    assert_match 'Today', response.body
+    assert_match Date.current.strftime('%b %-d, %Y'), response.body
     assert_match 'Fresh today', response.body
   end
 

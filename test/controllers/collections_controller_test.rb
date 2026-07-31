@@ -133,8 +133,12 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select '.collection--date-pill', count: 3
-    assert_select '.collection--date-pill', text: 'Yesterday', count: 1
-    assert_select '.collection--date-pill', text: 'Today', count: 1
+    assert_select '.collection--date-pill',
+                  text: (Date.current - 2.days).strftime('%b %-d, %Y'), count: 1
+    assert_select '.collection--date-pill',
+                  text: (Date.current - 1.day).strftime('%b %-d, %Y'), count: 1
+    assert_select '.collection--date-pill',
+                  text: Date.current.strftime('%b %-d, %Y'), count: 1
   end
 
   test 'update changes bucket attributes and description' do

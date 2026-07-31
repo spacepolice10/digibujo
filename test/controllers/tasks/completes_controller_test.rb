@@ -51,7 +51,8 @@ module Tasks
 
       assert_response :success
       assert bullet.reload.bulletable.completed?
-      assert_match 'data-task-completed="true"', response.body
+      assert_match 'data-bullet-data-attributes=', response.body
+      assert_match 'task_completed', response.body
       assert_match 'bullet--marker-select', response.body
       assert_match 'Bullet completed', response.body
     end

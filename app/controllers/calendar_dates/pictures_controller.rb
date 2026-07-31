@@ -2,21 +2,11 @@
 
 module CalendarDates
   class PicturesController < ApplicationController
-    before_action :set_picture_date
+  before_action :set_picture_date
 
-    def show
-      calendar_date = Current.user.calendar_dates.includes(:picture).find_by!(date: @date)
-      @picture = calendar_date.picture
-      raise ActiveRecord::RecordNotFound unless @picture&.picture&.attached?
-
-      render layout: false
-    end
-
-    def create
+  def create
       calendar_date = Current.user.calendar_dates.find_or_create_by!(date: @date)
-      @picture = calendar_date.picture || calendar_date.build_picture
-      @picture.picture.attach(params.require(:picture))
-      @picture.save!
+      @picture = calendar_date.pick_picture(params.require(:picture))
       respond_to_picture
     end
 

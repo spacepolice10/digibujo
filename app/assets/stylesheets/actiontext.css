@@ -172,9 +172,9 @@ lexxy-editor:not(.composer--editor) {
    keeps a real inline size, which Lexxy's overflow pass measures to decide how
    many buttons fit.
    Unlayered — Lexxy's :where(lexxy-toolbar) would beat @layer components. */
-.composer .composer--toolbar-panel {
-  --lexxy-toolbar-button-size: var(--icon-shell-size);
-  --lexxy-toolbar-icon-size: var(--icon-shell-glyph);
+.composer .composer--toolbar-wrap {
+  --lexxy-toolbar-button-size: var(--spacing-horizontal-double);
+  --lexxy-toolbar-icon-size: var(--spacing-horizontal);
 
   display: flex;
   flex: 1 1 100%;
@@ -209,7 +209,7 @@ lexxy-editor:not(.composer--editor) {
     transform 140ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.composer--toolbar .composer--toolbar-panel {
+.composer--toolbar-open .composer--toolbar-wrap {
   height: calc(var(--composer-control-size) + var(--spacing-vertical-half));
   margin-block-start: var(--spacing-horizontal-half);
   padding: 0 var(--spacing-horizontal-half);
@@ -225,19 +225,19 @@ lexxy-editor:not(.composer--editor) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .composer .composer--toolbar-panel {
+  .composer .composer--toolbar-wrap {
     transform: none;
     transition: none;
   }
 
-  .composer--toolbar .composer--toolbar-panel {
+  .composer--toolbar-open .composer--toolbar-wrap {
     transform: scale(1) translateY(0);
   }
 }
 
 /* Compact round chips. Reset's svg { max-inline-size: 100% } would collapse them
    inside the flex scroller — lock size explicitly. */
-.composer--toolbar-panel .lexxy-editor__toolbar-button {
+.composer--toolbar-wrap .lexxy-editor__toolbar-button {
   flex: 0 0 auto;
   inline-size: var(--lexxy-toolbar-button-size);
   block-size: var(--lexxy-toolbar-button-size);
@@ -246,16 +246,16 @@ lexxy-editor:not(.composer--editor) {
   border-radius: var(--radius-full);
 }
 
-.composer--toolbar-panel .lexxy-editor__toolbar-button svg {
+.composer--toolbar-wrap .lexxy-editor__toolbar-button svg {
   max-inline-size: none;
 }
 
 /* Prefer horizontal scroll over Lexxy's "more" overflow dropdown. */
-.composer--toolbar-panel .lexxy-editor__toolbar-overflow {
+.composer--toolbar-wrap .lexxy-editor__toolbar-overflow {
   display: none !important;
 }
 
-.composer--toolbar-panel .lexxy-editor__toolbar-dropdown {
+.composer--toolbar-wrap .lexxy-editor__toolbar-dropdown {
   position: relative;
 }
 

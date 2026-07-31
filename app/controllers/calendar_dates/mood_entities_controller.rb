@@ -10,13 +10,6 @@ module CalendarDates
       respond_to_mood
     end
 
-    def destroy
-      calendar_date = Current.user.calendar_dates.find_by!(date: @date)
-      calendar_date.remove_mood
-      @mood_entity = nil
-      respond_to_mood
-    end
-
     private
 
     def set_mood_date

@@ -35,7 +35,7 @@
     display: flex;
     align-items: center;
     gap: var(--spacing-horizontal-half);
-    margin-inline-start: calc(var(--icon-shell-size) + var(--spacing-horizontal-half));
+    margin-inline-start: calc(var(--spacing-vertical) + var(--spacing-horizontal-half));
   }
 
   .triage--action-form {
@@ -60,8 +60,8 @@
 
     .button--icon,
     .icon {
-      width: var(--icon-shell-glyph);
-      height: var(--icon-shell-glyph);
+      width: var(--spacing-vertical);
+      height: var(--spacing-vertical);
     }
   }
 

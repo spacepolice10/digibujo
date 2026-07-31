@@ -68,7 +68,7 @@
   /* row-gap stays 0 so the collapsed toolbar line is free; the wrapped lines
      that do need air (toolbar panel, multiline chrome) pay for it with
      margin-block-start, which can be transitioned. */
-  .composer--row {
+  .composer--rail {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -112,11 +112,11 @@
   /* Compact: the slot trails the pill row, so opening it wraps under the whole
      line instead of splitting type / editor / actions. Sizing lives unlayered
      in actiontext.css. */
-  .composer--toolbar-panel {
+  .composer--toolbar-wrap {
     order: 4;
   }
 
-  .composer--toolbar .composer--form {
+  .composer--toolbar-open .composer--form {
     --composer-toolbar-band: calc(
       var(--composer-detach-gap) + var(--composer-control-size)
     );
@@ -147,7 +147,7 @@
     padding: var(--spacing-horizontal);
   }
 
-  .composer--multiline .composer--toolbar-panel {
+  .composer--multiline .composer--toolbar-wrap {
     order: 2;
   }
 
@@ -175,7 +175,7 @@
   }
 
   /* Floating control chips on the transparent strip. */
-  .composer--multiline .composer--clear,
+  .composer--multiline .composer--cleanup-button,
   .composer--multiline .composer--toolbar-toggle,
   .composer--multiline .composer--record {
     background: var(--color-bg-subtle);
@@ -184,7 +184,7 @@
     box-shadow: var(--shadow-base);
   }
 
-  .composer--multiline .composer--clear:hover,
+  .composer--multiline .composer--cleanup-button:hover,
   .composer--multiline .composer--toolbar-toggle:hover,
   .composer--multiline .composer--record:hover {
     background: var(--color-bg-base);
@@ -243,7 +243,7 @@
   /* Match Lexxy toolbar icon buttons (formatting / mic / clear). */
   .composer--toolbar-toggle,
   .composer--record,
-  .composer--clear {
+  .composer--cleanup-button {
     width: var(--composer-control-size);
     height: var(--composer-control-size);
     display: grid;
@@ -259,7 +259,7 @@
 
   .composer--toolbar-toggle:hover,
   .composer--record:hover,
-  .composer--clear:hover {
+  .composer--cleanup-button:hover {
     background: var(--color-bg-base);
     color: var(--color-fg-subtle);
   }
@@ -271,10 +271,10 @@
 
   .composer--toolbar-toggle .button--icon,
   .composer--record .button--icon,
-  .composer--clear .button--icon,
+  .composer--cleanup-button .button--icon,
   .composer--toolbar-toggle .icon,
   .composer--record .icon,
-  .composer--clear .icon {
+  .composer--cleanup-button .icon {
     width: var(--lexxy-toolbar-icon-size, 1.125em);
     height: var(--lexxy-toolbar-icon-size, 1.125em);
   }
@@ -286,11 +286,11 @@
 
   /* Voice take replaces the compose row with the same pill layout: pause |
      waveform | send. Height matches the control buttons so the dock does not grow. */
-  .composer--voice {
+  .composer--rail-recorder {
     width: 100%;
   }
 
-  .composer--voice-field {
+  .composer--rail-recorder-field {
     --composer-voice-chrome-height: var(--composer-control-size);
     --bullet-type-color: var(--voice-color);
 
@@ -301,7 +301,7 @@
     height: var(--composer-voice-chrome-height);
   }
 
-  .composer--voice-waveform {
+  .composer--rail-recorder-waveform {
     flex: 1;
     min-width: 0;
     height: 1rem;
@@ -309,24 +309,24 @@
     align-items: center;
   }
 
-  .composer--voice-waveform svg {
+  .composer--rail-recorder-waveform svg {
     display: block;
     width: 100%;
     height: 1rem;
   }
 
-  .composer--voice-remaining {
+  .composer--rail-recorder-remaining {
     color: var(--color-fg-subtle);
     font-variant-numeric: tabular-nums;
     flex-shrink: 0;
     line-height: 1;
   }
 
-  .composer--voice-status {
+  .composer--rail-recorder-status {
     color: var(--color-fg-subtle);
   }
 
-  .composer--voice-field [data-voice-recorder-target="previewContainer"] {
+  .composer--rail-recorder-field [data-voice-recorder-target="previewContainer"] {
     flex: 1;
     min-width: 0;
     height: 100%;
@@ -335,7 +335,7 @@
   }
 
   /* Preview sits inside the composer pill — drop the bar chrome so height matches. */
-  .composer--voice-field .voice--playback {
+  .composer--rail-recorder-field .voice--playback {
     min-height: 0;
     height: 100%;
     padding: 0;
@@ -344,8 +344,8 @@
     box-sizing: border-box;
   }
 
-  .composer--voice-field:has([data-voice-recorder-target="previewContainer"]:not([hidden])) .composer--voice-waveform,
-  .composer--voice-field:has([data-voice-recorder-target="previewContainer"]:not([hidden])) .composer--voice-remaining {
+  .composer--rail-recorder-field:has([data-voice-recorder-target="previewContainer"]:not([hidden])) .composer--rail-recorder-waveform,
+  .composer--rail-recorder-field:has([data-voice-recorder-target="previewContainer"]:not([hidden])) .composer--rail-recorder-remaining {
     display: none;
   }
 

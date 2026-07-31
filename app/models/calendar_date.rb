@@ -18,19 +18,26 @@ class CalendarDate < ApplicationRecord
     mood_entity&.destroy!
   end
 
+  def pick_picture(upload)
+    record = picture || build_picture
+    record.picture.attach(upload)
+    record.save! if record.changed?
+    record
+  end
+
   def remove_picture
     picture&.destroy!
   end
 
   def self.mood_entities_by_date(user, dates)
-    user.calendar_dates.where(date: dates).includes(:mood_entity).filter_map { |cd|
+    user.calendar_dates.where(date: dates).includes(:mood_entity).filter_map do |cd|
       [cd.date, cd.mood_entity] if cd.mood_entity
-    }.to_h
+    end.to_h
   end
 
   def self.pictures_by_date(user, dates)
-    user.calendar_dates.where(date: dates).includes(:picture).filter_map { |cd|
+    user.calendar_dates.where(date: dates).includes(:picture).filter_map do |cd|
       [cd.date, cd.picture] if cd.picture
-    }.to_h
+    end.to_h
   end
 end

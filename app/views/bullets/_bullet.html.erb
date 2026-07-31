@@ -1,11 +1,10 @@
 <%# locals: (bullet:) %>
-<%= tag.turbo_frame id: dom_id(bullet), class: "bullet animations--fall-in",
-      data: { bullet_type: bullet.bulletable_type.downcase,
-              **(bullet.data_attributes) } do %>
-  <% checkbox_id = dom_id(bullet, :select_checkbox) %>
+<turbo-frame id="<%= dom_id(bullet) %>" class="bullet animations--fall-in" data-bullet-type="<%= bullet.bulletable_type.downcase %>"
+  data-bullet-data-attributes="<%= bullet.data_attributes.to_json %>">
+
   <input
     type="checkbox"
-    id="<%= checkbox_id %>"
+    id="<%= dom_id(bullet, :select_checkbox) %>"
     value="<%= bullet.id %>"
     data-bulk-menu-target="checkbox"
     data-bulk-pinnable="<%= bullet.pinned? ? "pinned" : "unpinned" %>"
@@ -20,7 +19,7 @@
   <div class="bullet--rail">
     <label
       class="bullet--marker"
-      for="<%= checkbox_id %>"
+      for="<%= dom_id(bullet, :select_checkbox) %>"
       aria-label="Select bullet"
     >
       <span aria-hidden="true" style="display: flex;">
@@ -58,7 +57,8 @@
     <% end %>
   </div>
 
-  <label class="bullet--select-checkbox" for="<%= checkbox_id %>" aria-hidden="true"></label>
+  <!-- this is the checkbox for the bullet that allows it to be selected for bulk actions -->
+  <label class="bullet--select-checkbox" for="<%= dom_id(bullet, :select_checkbox) %>" aria-hidden="true"></label>
 
   <div class="bullet--content">
     <div class="bullet--body">
@@ -69,4 +69,4 @@
       datetime="<%= bullet.created_at.iso8601 %>"
     ><%= bullet.created_at.strftime("%H:%M") %></time>
   </div>
-<% end %>
+</turbo-frame>

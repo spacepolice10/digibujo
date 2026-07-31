@@ -10,7 +10,7 @@ const PINNED_THRESHOLD = 80
 // scroller padding (CSS) clears the fixed composer dock.
 export default class extends Controller {
   static targets = ["scroller", "list", "trigger"]
-  static values = { url: String, rootMargin: { type: String, default: "300px" } }
+  static values = { path: String, rootMargin: { type: String, default: "400px" } }
 
   initialize() {
     this.pinned = true
@@ -21,18 +21,16 @@ export default class extends Controller {
   connect() {
     // Deliberately not throttled: a dropped trailing call would leave us
     // believing the reader is still at the bottom after they scrolled away.
-    this.boundTrackPin = () => this.#trackPin()
+    this.boundSettlePinned = () => this.#settlePinned()
 
-    this.scrollerTarget.addEventListener("scroll", this.boundTrackPin, { passive: true })
+    this.scrollerTarget.addEventListener("scroll", this.boundSettlePinned, { passive: true })
 
     scrollToBottom(this.scrollerTarget)
-    this.#followAppendedRows()
     this.#followSettlingLayout()
   }
 
   disconnect() {
-    this.scrollerTarget.removeEventListener("scroll", this.boundTrackPin)
-    this.rowObserver?.disconnect()
+    this.scrollerTarget.removeEventListener("scroll", this.boundSettlePinned)
     this.sizeObserver?.disconnect()
     this.triggerObserver?.disconnect()
   }
@@ -47,26 +45,26 @@ export default class extends Controller {
   #observeTrigger(trigger) {
     this.triggerObserver?.disconnect()
     this.triggerObserver = new IntersectionObserver(
-      ([entry]) => entry.isIntersecting && this.#loadOlderPage(),
+      ([entry]) => entry.isIntersecting && this.#loadPrevPage(),
       { root: this.scrollerTarget, rootMargin: this.rootMarginValue }
     )
     this.triggerObserver.observe(trigger)
   }
 
-  async #loadOlderPage() {
+  async #loadPrevPage() {
     if (this.loading) return
 
-    const cursor = this.#oldestRowId
-    if (!cursor) return this.#stopLoadingOlder()
+    const cursor = this.#oldestRailId
+    if (!cursor) return this.#stopLoadingPrevPage()
 
     this.loading = true
 
     try {
-      const response = await fetch(`${this.urlValue}?before=${encodeURIComponent(cursor)}`, {
+      const response = await fetch(`${this.pathValue}?before=${encodeURIComponent(cursor)}`, {
         headers: { Accept: "text/html" }
       })
 
-      if (response.status === 204) return this.#stopLoadingOlder()
+      if (response.status === 204) return this.#stopLoadingPrevPage()
       if (!response.ok) return
 
       this.#prepend(await response.text())
@@ -87,24 +85,16 @@ export default class extends Controller {
     setTimeout(() => { this.prepending = false })
   }
 
-  #stopLoadingOlder() {
+  #stopLoadingPrevPage() {
     this.triggerObserver?.disconnect()
     this.triggerObserver = null
     if (this.hasTriggerTarget) this.triggerTarget.remove()
   }
 
-  // Rows arrive by Turbo Stream, so watch the list rather than the composer.
-  #followAppendedRows() {
-    this.rowObserver = new MutationObserver(() => {
-      if (this.prepending || !this.pinned) return
-
-      scrollToBottom(this.scrollerTarget, "smooth")
-    })
-    this.rowObserver.observe(this.listTarget, { childList: true })
-  }
-
   // Web fonts, rich text and the editor all settle after the first paint and
-  // leave the list a few pixels taller than when we jumped to the bottom.
+  // leave the list a few pixels taller than when we jumped to the bottom. It
+  // also catches the row the composer just created landing a beat after
+  // turbo:submit-end, when the composer's own #scrollToLatest already ran.
   #followSettlingLayout() {
     if (typeof ResizeObserver === "undefined") return
 
@@ -116,11 +106,11 @@ export default class extends Controller {
     this.sizeObserver.observe(this.listTarget)
   }
 
-  #trackPin() {
+  #settlePinned() {
     this.pinned = distanceFromBottom(this.scrollerTarget) <= PINNED_THRESHOLD
   }
 
-  get #oldestRowId() {
+  get #oldestRailId() {
     return this.listTarget.firstElementChild?.id?.split("_").pop()
   }
 }

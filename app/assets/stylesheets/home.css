@@ -74,13 +74,13 @@
     border: 1px solid var(--color-stroke-subtle);
     border-radius: var(--radius-full);
     background-color: var(--color-bg-base);
-    width: var(--icon-shell-size) !important;
-    height: var(--icon-shell-size) !important;
+    width: var(--spacing-vertical-double) !important;
+    height: var(--spacing-vertical-double) !important;
     padding: 0;
 
     .icon {
-      width: var(--icon-shell-glyph);
-      height: var(--icon-shell-glyph);
+      width: var(--spacing-vertical-double);
+      height: var(--spacing-vertical-double);
     }
   }
 
@@ -177,8 +177,8 @@
     display: block;
     border: 1px solid transparent;
     border-radius: var(--radius-full);
-    width: var(--spacing-horizontal-double);
-    height: var(--spacing-horizontal-double);
+    width: var(--spacing-horizontal);
+    height: var(--spacing-horizontal);
     cursor: pointer;
 
     &:hover {

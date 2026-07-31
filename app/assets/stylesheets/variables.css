@@ -13,10 +13,8 @@
     --color-fg-base: light-dark(oklch(0.35 0.01 260), oklch(0.87 0.013 82));
     --color-fg-subtle: light-dark(oklch(0.53 0.01 260), oklch(0.71 0.012 82));
     /* inverted text on strong surfaces (warm paper white in light mode) */
-    --color-fg-strong: light-dark(
-      oklch(0.99 0.002 80),
-      oklch(0.12 0.005 260)
-    );
+    --color-fg-strong: light-dark(oklch(0.99 0.002 80),
+        oklch(0.12 0.005 260));
     --color-fg-warn: light-dark(oklch(0.68 0.15 90), oklch(0.78 0.15 90));
     --color-fg-negative: light-dark(oklch(0.65 0.16 35), oklch(0.75 0.16 35));
     --color-fg-positive: light-dark(oklch(0.63 0.11 210), oklch(0.73 0.11 210));
@@ -24,76 +22,56 @@
     /* accents — lime + teal */
     --color-accent: light-dark(oklch(0.85 0.22 130), oklch(0.82 0.2 130));
     --color-accent-bg: light-dark(oklch(0.96 0.1 130), oklch(0.28 0.08 130));
-    --color-accent-alternative: light-dark(
-      oklch(0.68 0.16 195),
-      oklch(0.78 0.12 195)
-    );
-    --color-accent-alternative-bg: light-dark(
-      oklch(0.95 0.06 195),
-      oklch(0.31 0.06 195)
-    );
+    --color-accent-alternative: light-dark(oklch(0.68 0.16 195),
+        oklch(0.78 0.12 195));
+    --color-accent-alternative-bg: light-dark(oklch(0.95 0.06 195),
+        oklch(0.31 0.06 195));
 
     /* strokes */
     --color-stroke-base: light-dark(oklch(0.91 0.004 80), oklch(0.33 0.006 82));
-    --color-stroke-subtle: light-dark(
-      oklch(0.99 0.002 80),
-      oklch(0.25 0.006 82)
-    );
+    --color-stroke-subtle: light-dark(oklch(0.99 0.002 80),
+        oklch(0.25 0.006 82));
     /* high-contrast stroke; swaps with strong surfaces in dark mode */
-    --color-stroke-strong: light-dark(
-      oklch(0.18 0.005 260),
-      oklch(0.86 0.006 82)
-    );
+    --color-stroke-strong: light-dark(oklch(0.18 0.005 260),
+        oklch(0.86 0.006 82));
     --color-stroke-warn: light-dark(oklch(0.82 0.13 90), oklch(0.45 0.1 90));
-    --color-stroke-negative: light-dark(
-      oklch(0.74 0.13 35),
-      oklch(0.45 0.1 35)
-    );
-    --color-stroke-positive: light-dark(
-      oklch(0.74 0.09 210),
-      oklch(0.45 0.08 210)
-    );
+    --color-stroke-negative: light-dark(oklch(0.74 0.13 35),
+        oklch(0.45 0.1 35));
+    --color-stroke-positive: light-dark(oklch(0.74 0.09 210),
+        oklch(0.45 0.08 210));
 
     /* model colors — palette (Orange, Sky, Pear, Sunshine, Flame, Blossom, Lilac, Inks) */
-    --model-color-1: light-dark(
-      oklch(0.775 0.154 56),
-      oklch(0.84 0.14 56)
-    ); /* Orange */
+    --model-color-1: light-dark(oklch(0.775 0.154 56),
+        oklch(0.84 0.14 56));
+    /* Orange */
     --model-color-1-bg: light-dark(oklch(0.92 0.08 56), oklch(0.35 0.10 56));
-    --model-color-2: light-dark(
-      oklch(0.743 0.123 241),
-      oklch(0.82 0.11 241)
-    ); /* Sky */
+    --model-color-2: light-dark(oklch(0.743 0.123 241),
+        oklch(0.82 0.11 241));
+    /* Sky */
     --model-color-2-bg: light-dark(oklch(0.92 0.06 241), oklch(0.34 0.09 241));
-    --model-color-3: light-dark(
-      oklch(0.769 0.141 133),
-      oklch(0.84 0.12 133)
-    ); /* Pear */
+    --model-color-3: light-dark(oklch(0.769 0.141 133),
+        oklch(0.84 0.12 133));
+    /* Pear */
     --model-color-3-bg: light-dark(oklch(0.92 0.07 133), oklch(0.34 0.10 133));
-    --model-color-4: light-dark(
-      oklch(0.905 0.184 99),
-      oklch(0.92 0.16 99)
-    ); /* Sunshine */
+    --model-color-4: light-dark(oklch(0.905 0.184 99),
+        oklch(0.92 0.16 99));
+    /* Sunshine */
     --model-color-4-bg: light-dark(oklch(0.92 0.08 99), oklch(0.35 0.10 99));
-    --model-color-5: light-dark(
-      oklch(0.657 0.158 43),
-      oklch(0.78 0.14 43)
-    ); /* Flame */
+    --model-color-5: light-dark(oklch(0.657 0.158 43),
+        oklch(0.78 0.14 43));
+    /* Flame */
     --model-color-5-bg: light-dark(oklch(0.92 0.08 43), oklch(0.34 0.10 43));
-    --model-color-6: light-dark(
-      oklch(0.799 0.090 18),
-      oklch(0.86 0.08 18)
-    ); /* Blossom */
+    --model-color-6: light-dark(oklch(0.799 0.090 18),
+        oklch(0.86 0.08 18));
+    /* Blossom */
     --model-color-6-bg: light-dark(oklch(0.92 0.05 18), oklch(0.34 0.07 18));
-    --model-color-7: light-dark(
-      oklch(0.725 0.132 292),
-      oklch(0.82 0.12 292)
-    ); /* Lilac */
+    --model-color-7: light-dark(oklch(0.725 0.132 292),
+        oklch(0.82 0.12 292));
+    /* Lilac */
     --model-color-7-bg: light-dark(oklch(0.92 0.07 292), oklch(0.33 0.10 292));
-    --model-color-8: light-dark(
-      oklch(0.40 0.06 54),
-      oklch(0.72 0.05 54)
-    ); /* Inks (Liquorice + chroma) */
+    --model-color-8: light-dark(oklch(0.40 0.06 54),
+        oklch(0.72 0.05 54));
+    /* Inks (Liquorice + chroma) */
     --model-color-8-bg: light-dark(oklch(0.92 0.03 54), oklch(0.34 0.04 54));
 
     /* breakpoints */
@@ -105,25 +83,23 @@
     --breakpoint-pc: 1040px;
 
     /* spacing */
-    --spacing-vertical: 1.125ch;
-    --spacing-horizontal: 0.875rem;
+    --spacing-vertical: 1ch;
+    --spacing-horizontal: 1rem;
     --spacing-vertical-half: calc(var(--spacing-vertical) / 2);
     --spacing-horizontal-half: calc(var(--spacing-horizontal) / 2);
     --spacing-vertical-double: calc(var(--spacing-vertical) * 2);
     --spacing-horizontal-double: calc(var(--spacing-horizontal) * 2);
     --spacing-vertical-triple: calc(var(--spacing-vertical) * 3);
     --spacing-horizontal-triple: calc(var(--spacing-horizontal) * 3);
-    --spacing-vertical-quad: calc(var(--spacing-vertical) * 4);
-    --spacing-horizontal-quad: calc(var(--spacing-horizontal) * 4);
 
     /* shadows */
     --shadow-subtle: 0 0 0 1px oklch(0% 0 0 / 0.04);
     --shadow-base: 0 2px 8px oklch(0% 0 0 / 0.07),
       0 0 0 1px oklch(0% 0 0 / 0.04);
     --shadow-strong: 0 4px 0 oklch(0% 0 0 / 0.25);
+    --shadow-border: 0 0 0 1px oklch(0% 0 0 / 0.04);
 
     /* z-index — backdrop < dropdown < dialog < toast */
-    --z-base: 0;
     --z-dialog-backdrop: 1;
     --z-dialog: 2;
     --z-dropdown: 3;
@@ -135,11 +111,14 @@
 
     /* font sizes — base splits by intent: 16px is the iOS no-zoom floor for
        anything you type into, 14px is the denser reading size. */
-    --font-size-xl: 1.5rem;   /* 24px */
-    --font-size-huge: 1.25rem;   /* 20px */
-    --font-size-base-type: 1rem; /* 16px */
-    --font-size-base-read: 0.875rem; /* 14px */
-    --font-size-xs: 0.75rem; /* 12px */
+    --font-size-xl: 1.5rem;
+    /* 24px */
+    --font-size-base-type: 1rem;
+    /* 16px */
+    --font-size-base-read: 0.875rem;
+    /* 14px */
+    --font-size-xs: 0.75rem;
+    /* 12px */
 
     /* font weights */
     --font-weight-strong: 800;
@@ -157,24 +136,6 @@
     --radius-strong: 12px;
     --radius-full: 9999px;
 
-    /* touch icon shell — shared by home list icons and bullet markers */
-    --icon-shell-size: calc(var(--spacing-horizontal) * 2.25);
-    --icon-shell-glyph: calc(var(--spacing-horizontal) * 0.95);
-
-    /* dot grid — bullet journal paper (5 mm spacing at 16 px root) */
-    --dot-grid-size: 1.25rem;
-    --dot-grid-color-light: oklch(0.64 0.014 260 / 0.22);
-    --dot-grid-color-dark: oklch(0.58 0.012 82 / 0.28);
-    --dot-grid-color: light-dark(var(--dot-grid-color-light), var(--dot-grid-color-dark));
-    --background-dot-grid-image: radial-gradient(
-      circle,
-      var(--dot-grid-color) 1px,
-      transparent 1px
-    );
-    --background-paper:
-      var(--background-dot-grid-image) 0 0 / var(--dot-grid-size) var(--dot-grid-size),
-      var(--color-bg-base);
+  
   }
-
-
 }

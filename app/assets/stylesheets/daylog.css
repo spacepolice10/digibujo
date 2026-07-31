@@ -1,9 +1,4 @@
 @layer components {
-  #bullets-timeline {
-    display: flex;
-    flex-direction: column;
-  }
-
   .layout--page.daylog {
     padding: var(--spacing-vertical) var(--spacing-horizontal);
     max-width: var(--breakpoint-laptop);
@@ -11,42 +6,15 @@
     padding-bottom: calc(var(--spacing-vertical-quad) + var(--layout-scroll-padding)) !important ;
   }
 
-  /* ── Chat daylog (Campfire list + composer dock) ─────────────────────────
-     The chat column itself is viewport-tall (not html/body locked). Mobile:
-     fixed composer dock above tabbar / keyboard. Desktop: composer sits
-     in-flow at the bottom of the column (no overlay clearance). */
-  html:has(.daylog--chat) body {
-    /* Kill the global tabbar page padding — clearance is scroller padding. */
-    padding-bottom: 0 !important;
-    scroll-padding-bottom: 0 !important;
-  }
-
   .layout--page.daylog.daylog--chat {
     --daylog-composer-clearance: calc(
       var(--spacing-vertical-quad) + var(--spacing-vertical-double)
     );
-    --daylog-inline-padding: var(--spacing-horizontal);
-    --daylog-header-top: max(var(--spacing-vertical-half), env(safe-area-inset-top, 0px));
-    --daylog-header-height: calc(var(--spacing-horizontal-triple) + 0.3rem);
-    /* Top offset + fixed header + air below so older bullets clear it. */
     --daylog-header-clearance: calc(
       var(--daylog-header-top)
       + var(--daylog-header-height)
       + var(--spacing-vertical)
     );
-
-    /* Day photo card — parked past the right edge by default (mobile / narrow).
-       Wide desktop overrides these so the card peeks behind the panel instead. */
-    --daylog-photo-gap: var(--spacing-horizontal);
-    --daylog-photo-width: min(72vw, 16rem);
-    --daylog-photo-peek: 0px;
-    --daylog-photo-duration: 0.45s;
-    --daylog-photo-left: 100vw;
-    --daylog-photo-expanded-width: min(78vw, 18rem);
-    --daylog-photo-shift: calc(
-      -1 * (var(--daylog-photo-expanded-width) + var(--daylog-photo-gap))
-    );
-    --daylog-photo-out: calc(var(--daylog-photo-expanded-width) * 0.4);
 
     position: relative;
     z-index: 0;
@@ -58,7 +26,6 @@
     max-height: 100dvh;
     margin: 0;
     margin-top: 0;
-    /* No page padding — shell is full-bleed; list/header carry inset. */
     padding: 0 !important;
     gap: 0;
     overflow: hidden;
@@ -70,7 +37,6 @@
       margin-inline: auto;
       height: calc(100dvh - 10ch);
       max-height: calc(100dvh - 10ch);
-      /* Composer sits in-flow under the shell — no overlay clearance. */
       --daylog-composer-clearance: 0px;
     }
 
@@ -78,7 +44,7 @@
       padding-bottom: var(--spacing-vertical) !important;
     }
 
-    .daylog--chat .daylog--shell {
+    .daylog--chat .daylog--wrap {
       border: 0.5px solid var(--color-stroke-base);
       border-radius: var(--radius-strong);
       box-shadow: var(--shadow-subtle);
@@ -100,7 +66,7 @@
   }
 
   /* Messages — Campfire .messages */
-  .daylog--shell {
+  .daylog--wrap {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -111,263 +77,34 @@
 
   /* Levitating day header — fixed height; frosted chips over the chat. */
   .daylog--chat-header {
-    --daylog-header-radius: var(--radius-full);
-
     position: absolute;
     z-index: var(--z-dropdown);
-    top: var(--daylog-header-top);
-    inset-inline: var(--daylog-inline-padding);
-    height: var(--daylog-header-height);
-    border: none;
-    border-radius: var(--daylog-header-radius);
+    top: max(var(--spacing-vertical-half), env(safe-area-inset-top, 0px));
+    inset-inline: var(--spacing-horizontal);
+    height: var(--spacing-horizontal-double);
     background: transparent;
-    box-shadow: none;
     overflow: visible;
-    pointer-events: none;
-  }
-
-  .daylog--header-bar {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--spacing-horizontal-half);
-    height: 100%;
-    padding: 0;
     pointer-events: none;
   }
 
   .daylog--header-controls {
     display: flex;
     align-items: center;
-    gap: 0.15rem;
+    gap: var(--spacing-horizontal-half);
     height: 100%;
-    padding: 0.15rem;
     border: 1px solid color-mix(in srgb, var(--color-stroke-base) 70%, transparent);
     border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--color-bg-subtle) 72%, transparent);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(2px);
     box-shadow: var(--shadow-subtle);
     pointer-events: auto;
   }
 
-  .daylog--header-controls :is(.button--tertiary, .button--icon, label.button--tertiary) {
-    width: var(--spacing-horizontal-triple);
-    height: var(--spacing-horizontal-triple);
-    border-radius: var(--radius-full);
-  }
 
-  .daylog--header-controls .daylog--date-label {
-    padding-inline: var(--spacing-horizontal-half);
-  }
-
-  .daylog--triage-inbox {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--spacing-horizontal-triple);
-    height: var(--spacing-horizontal-triple);
-  }
-
-  .daylog--triage-inbox-trigger {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    padding: 0;
-    border: none;
-    border-radius: var(--radius-full);
-    background: transparent;
-    cursor: pointer;
-  }
-
-  .daylog--triage-inbox-shell {
-    position: relative;
-    display: grid;
-    place-items: center;
-    width: calc(var(--spacing-horizontal-triple) - 0.3rem);
-    height: calc(var(--spacing-horizontal-triple) - 0.3rem);
-    border-radius: var(--radius-base);
-    background: var(--color-accent);
-    color: var(--color-fg-strong);
-  }
-
-  .daylog--triage-inbox-icon {
-    width: var(--icon-shell-glyph) !important;
-    height: var(--icon-shell-glyph) !important;
-  }
-
-  .daylog--triage-count {
-    position: absolute;
-    top: -0.2rem;
-    right: -0.25rem;
-    min-width: 1.4ch;
-    padding: 0.05rem 0.3rem;
-    border-radius: var(--radius-full);
-    background: var(--color-bg-strong);
-    color: var(--color-accent);
-    font-family: var(--font-family-mono);
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.2;
-    text-align: center;
-  }
-
-  .daylog--triage-dropdown {
-    width: min(28rem, calc(100vw - 2 * var(--spacing-horizontal)));
-    max-height: min(70dvh, 32rem);
-  }
-
-  .daylog--picture {
-    display: flex;
-    align-items: center;
-    gap: 0.15rem;
-  }
-
-  /* ── Metadata panel (animated frame) ──────────────────────────────────
-     The entire turbo-frame slides in/out — mood picker, picture controls,
-     and photo card all move together. Default: tucked behind the shell.
-     Expanded: slides into view on the right. */
-  .daylog--photo-stage {
-    display: contents;
-  }
-
-  .daylog--metadata-frame {
-    position: fixed;
-    z-index: -1;
-    top: 50%;
-    left: var(--daylog-photo-left);
-    width: var(--daylog-photo-width);
-    translate: 0 -50%;
-    rotate: 3deg;
-    transition:
-      translate var(--daylog-photo-duration) cubic-bezier(0.3, 0.9, 0.4, 1),
-      width var(--daylog-photo-duration) cubic-bezier(0.3, 0.9, 0.4, 1);
-  }
-
-  .daylog--photo-stage.is-expanded .daylog--metadata-frame,
-  .daylog--photo-stage.is-collapsing .daylog--metadata-frame {
-    z-index: var(--z-dialog);
-  }
-
-  .daylog--photo-stage.is-expanded .daylog--metadata-frame {
-    width: var(--daylog-photo-expanded-width);
-    translate: var(--daylog-photo-shift) -50%;
-    rotate: -3deg;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .daylog--metadata-frame {
-      rotate: 0deg;
-      transition: none;
-    }
-    .daylog--photo-stage.is-expanded .daylog--metadata-frame {
-      rotate: 0deg;
-    }
-  }
-
-  /* ── Children inside the frame ─────────────────────────────────────────
-     Mood/picture controls stack above the photo card. */
-  .daylog--metadata-content {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-vertical-half);
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
-  }
-
-  .daylog--photo {
-    flex: 1;
-    min-height: 0;
-  }
-
-  .daylog--photo-card {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 3 / 4;
-    padding: 0;
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-strong);
-    background: var(--color-bg-subtle);
-    box-shadow: var(--shadow-base);
-    overflow: hidden;
-    cursor: pointer;
-    transition:
-      scale 0.2s ease-out,
-      box-shadow 0.2s ease-out;
-  }
-
-  .daylog--photo-card-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    pointer-events: none;
-  }
-
-  .daylog--photo-toolbar {
-    position: absolute;
-    z-index: 1;
-    top: var(--spacing-vertical-half);
-    right: var(--spacing-horizontal-half);
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-    padding: 0.15rem;
-    border: 1px solid color-mix(in srgb, var(--color-stroke-base) 70%, transparent);
-    border-radius: var(--radius-full);
-    background: color-mix(in srgb, var(--color-bg-subtle) 72%, transparent);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    box-shadow: var(--shadow-subtle);
-  }
-
-  .daylog--photo-toolbar :is(.button--tertiary, .button--icon) {
-    width: var(--spacing-horizontal-triple);
-    height: var(--spacing-horizontal-triple);
-    border-radius: var(--radius-full);
-  }
-
-  .daylog--photo-card:hover {
-    scale: 1.04;
-    box-shadow: var(--shadow-strong);
-  }
-
-  .daylog--metadata-placeholder {
-    display: none;
-  }
-
-  /* Wide enough for a margin: tuck the panel behind the shell's right edge. */
-  @media (min-width: 1040px) {
-    .layout--page.daylog.daylog--chat {
-      --daylog-photo-gap: var(--spacing-horizontal-double);
-      --daylog-photo-width: 12rem;
-      --daylog-photo-peek: 3rem;
-      --daylog-photo-left: calc(
-        50vw + var(--breakpoint-laptop) / 2
-        - var(--daylog-photo-width)
-        + var(--daylog-photo-peek)
-      );
-      --daylog-photo-expanded-width: clamp(
-        var(--daylog-photo-width),
-        calc(50vw - var(--breakpoint-laptop) / 2 - var(--daylog-photo-gap) * 2),
-        22rem
-      );
-      --daylog-photo-shift: max(0px, calc(
-        100vw
-        - var(--daylog-photo-gap)
-        - var(--daylog-photo-expanded-width)
-        - var(--daylog-photo-left)
-      ));
-    }
-  }
-
-  /* Composer aligns to the same inline inset as the bullet list on mobile. */
   .daylog--chat .composer {
     width: 100%;
     max-width: none;
-    padding-inline: var(--daylog-inline-padding);
+    padding-inline: var(--spacing-horizontal);
   }
 
   .daylog--scroller {
@@ -394,126 +131,47 @@
     justify-content: flex-end;
     gap: var(--spacing-vertical);
     min-height: 100%;
-    padding-inline: var(--daylog-inline-padding);
+    padding-inline: var(--spacing-horizontal);
   }
 
   .daylog--scroller > [data-daylog-scroll-target="list"] > .bullet {
     margin-block: 0;
   }
 
-  .daylog--older-trigger {
+  .daylog--load-more-trigger {
     display: flex;
     justify-content: center;
     padding-block: var(--spacing-vertical);
     color: var(--color-fg-subtle);
   }
 
-  .daylog--page #bullets_container {
-    margin-block-end: var(--spacing-vertical);
-  }
-
-  .daylog--page #bullets_container .records-list {
+  .daylog--metadata {
+    position: absolute;
     display: flex;
     flex-direction: column;
     gap: var(--spacing-vertical);
+    z-index: var(--z-dropdown);
+    right: var(--spacing-horizontal);
+    top: var(--spacing-horizontal-double);
+    padding: var(--spacing-horizontal);
+    max-width: var(--breakpoint-mobile);
   }
 
-  .daylog--page .bullet {
-    margin-block: 0;
-  }
-
-  .daylog--header {
-    flex-wrap: wrap;
-    gap: var(--spacing-vertical-half);
-  }
-
-  .daylog--header-today {
-    flex: 0 0 auto;
-    justify-content: flex-end;
-  }
-
-  .daylog--todays-indicator {
-    position: relative;
-    align-items: center;
-    justify-content: center;
-    color: var(--model-color-2);
-    pointer-events: none;
-    user-select: none;
-  }
-
-  .daylog--date-label {
+  .daylog--metadata-trackers {
     display: flex;
     align-items: center;
-    font-family: var(--font-family-mono);
-    font-size: var(--font-size-xs);
-    color: var(--color-fg-subtle);
-    pointer-events: none;
-    user-select: none;
+    justify-items: center;
+    gap: var(--spacing-vertical);
   }
 
-  .daylog--todays-indicator-ring {
-    position: absolute;
-    inset: -0.35em -0.6em;
-    width: calc(100% + 1.2em);
-    height: calc(100% + 0.7em);
-    opacity: 0.85;
-  }
-
-  .daylog--today-indicator-label {
-    position: relative;
-    font-size: var(--font-size-huge);
-    font-weight: var(--font-weight-base);
-    text-transform: lowercase;
-  }
-
-  @media (max-width: 799px) {
-    .daylog--header {
-      position: relative;
+  .daylog--picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--radius-strong);
+    &:hover {
+      cursor: pointer;
+      filter: brightness(0.8);  
     }
-
-    .daylog--header-navigation {
-      justify-content: space-between;
-      position: relative;
-      align-items: center;
-    }
-
-    .daylog--header-today:not(:empty) {
-      position: absolute;
-      inset-block: 0;
-      right: 0;
-      align-items: center;
-    }
-
-    .daylog--page .bucket--list {
-      padding-inline: 0;
-    }
-
-    .daylog--page .bucket--list:has(.bullets-form--dock-mobile) {
-      padding-bottom: calc(var(--tabbar-scroll-padding, calc(var(--spacing-vertical-double) * 2 + env(safe-area-inset-bottom, 0px))) + var(--spacing-horizontal-double) + var(--spacing-vertical) * 2);
-    }
-
-    .layout--page.daylog.daylog--chat {
-      --daylog-inline-padding: var(--spacing-horizontal-half);
-    }
-  }
-
-  .daylog--meta {
-    position: relative;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--spacing-horizontal);
-  }
-
-  .daylog--mood-dropdown.dropdown--element[popover] {
-    min-width: calc(var(--spacing-horizontal-quad));
-    max-width: min(
-      calc(var(--spacing-horizontal-double) * 7),
-      calc(100dvw - (2 * var(--spacing-horizontal)))
-    );
-  }
-
-  .daylog--mood-menu-marker {
-    font-size: var(--font-size-base-read);
   }
 }
