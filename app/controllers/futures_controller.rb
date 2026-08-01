@@ -5,11 +5,7 @@ class FuturesController < ApplicationController
     @future = find_future
     return unless @future
 
-    @months = @future.spread_months
-    scoped = @future.bullets.active.includes(:bulletable)
-    grouped = scoped.where(pops_on: @months).group_by(&:pops_on)
-    @bullets_by_date = @months.index_with { |month| grouped[month] || [] }
-    @unplanned_bullets = scoped.where(pops_on: nil).order(created_at: :asc)
+    @bullets = @future.bullets.active.includes(:bulletable).where(pops_on: nil).order(created_at: :asc)
   end
 
   def new

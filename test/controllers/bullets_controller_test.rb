@@ -530,6 +530,29 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Month note', response.body
   end
 
+  test 'inline composer create appends into future unplanned container' do
+    future = ensure_future!(@user)
+    composer = 'future_bullets_unplanned_composer'
+    container = 'future_bullets_unplanned_container'
+
+    post bullets_path,
+         params: {
+           inline_composer: '1',
+           bullet: {
+             bulletable_type: 'Task',
+             bulletable_attributes: { body: '<p>Someday task</p>' },
+             bucket_id: future.bucket.id
+           }
+         },
+         headers: { 'Turbo-Frame' => composer },
+         as: :turbo_stream
+
+    assert_response :success
+    assert_match %(turbo-stream action="append" target="#{container}"), response.body
+    assert_match 'Someday task', response.body
+    assert_match 'data-controller="bullet-drag"', response.body
+  end
+
   private
 
   def create_blob!(filename:, content_type:, io: StringIO.new('file contents'))

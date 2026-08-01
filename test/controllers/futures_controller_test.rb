@@ -16,18 +16,28 @@ class FuturesControllerTest < ActionDispatch::IntegrationTest
     assert_select "a.button--primary[href=?]", new_future_path
   end
 
-  test 'current future shows spread when covering future exists' do
+  test 'current future shows unplanned chat list when covering future exists' do
     future = ensure_future!(@user)
     create_bullet!(@user,
       bulletable: Note.new(body: 'Someday idea'),
       bucket_id: future.bucket.id
+    )
+    create_bullet!(@user,
+      bulletable: Event.new(body: 'Month card event'),
+      bucket_id: future.bucket.id,
+      pops_on: future.period_from
     )
 
     get current_future_path
 
     assert_response :success
     assert_match 'Someday idea', response.body
-    assert_match 'Unplanned', response.body
+    assert_no_match 'Month card event', response.body
+    assert_select '.future--chat'
+    assert_select '.future--grid', count: 0
+    assert_select '#future_bullets_unplanned_container'
+    assert_select 'turbo-frame#future_bullets_unplanned_composer.composer'
+    assert_select '.bullets-form--create', count: 0
   end
 
   test 'show returns not found for another users future log' do
@@ -39,7 +49,7 @@ class FuturesControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
-  test 'show by id loads the requested spread when multiple futures exist' do
+  test 'show by id loads the requested future when multiple futures exist' do
     first = ensure_future!(@user, period_from: Date.new(2026, 1, 1))
     second = ensure_future!(@user, period_from: Date.new(2026, 7, 1))
     create_bullet!(@user,
