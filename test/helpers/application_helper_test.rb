@@ -48,4 +48,20 @@ class ApplicationHelperTest < ActionView::TestCase
     assert_includes html, '/representations/'
     assert_no_match(%r{/rails/active_storage/blobs/redirect/}, html)
   end
+
+  test 'represent_image_tag reserves layout with scaled width and height' do
+    blob = ActiveStorage::Blob.create_and_upload!(
+      io: StringIO.new(Base64.decode64(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
+      )),
+      filename: 'photo.png',
+      content_type: 'image/png'
+    )
+    blob.update!(metadata: blob.metadata.merge('width' => 1600, 'height' => 900, 'analyzed' => true))
+
+    html = represent_image_tag(blob, variant: :preview, alt: 'photo.png')
+
+    assert_includes html, 'width="800"'
+    assert_includes html, 'height="450"'
+  end
 end

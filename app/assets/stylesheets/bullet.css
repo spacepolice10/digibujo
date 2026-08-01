@@ -103,20 +103,6 @@
         var(--color-bg-subtle)
       );
     }
-    
-    .attachment--preview {
-      display: block;
-      margin: 0;
-      width: 100%;
-      height: auto;
-      max-height: 25rem !important;
-      border-radius: var(--radius-strong);
-      overflow: hidden;
-      & > img {
-        height: 100%;
-        object-fit: cover;
-      }
-    }
   }
 
   .bullet--time {

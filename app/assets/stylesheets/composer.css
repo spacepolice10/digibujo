@@ -260,6 +260,52 @@ lexxy-table-tools {
   color: var(--color-fg-base);
 }
 
+/*
+ * Reserved attachment slots in rendered bullets (unlayered — must beat Lexxy).
+ * Images get a large aspect-ratio box; other files get a compact chip height.
+ */
+.bullet--body .attachment--preview,
+.bullet--show-body .attachment--preview,
+.bullet--body .attachment--file,
+.bullet--show-body .attachment--file {
+  box-sizing: border-box;
+  margin: 0;
+  border-radius: var(--radius-strong);
+  background: var(--color-bg-subtle);
+}
+
+.bullet--body .attachment--preview,
+.bullet--show-body .attachment--preview {
+  display: block;
+  inline-size: 100%;
+  max-inline-size: 100%;
+  overflow: hidden;
+}
+
+.bullet--body .attachment--preview > img,
+.bullet--show-body .attachment--preview > img {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  max-block-size: 25rem;
+  object-fit: cover;
+  background: var(--color-bg-subtle);
+}
+
+/* Fallback slot when blob metadata has no width/height yet. */
+.bullet--body .attachment--preview > img:not([width]),
+.bullet--show-body .attachment--preview > img:not([width]) {
+  aspect-ratio: 3 / 2;
+}
+
+.bullet--body .attachment--file,
+.bullet--show-body .attachment--file {
+  display: flex;
+  align-items: center;
+  min-block-size: calc(var(--spacing-horizontal-double) + var(--spacing-vertical));
+  max-inline-size: 100%;
+}
+
 /* Editors stay at the 16px typing size so iOS does not zoom on focus and so
    composer lh metrics (control size, rows) keep matching the flanking icons.
    Rendered .lexxy-content inherits --font-size-base-read from body. */
