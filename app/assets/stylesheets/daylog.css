@@ -37,7 +37,6 @@
       margin-inline: auto;
       height: calc(100dvh - 10ch);
       max-height: calc(100dvh - 10ch);
-      --daylog-composer-clearance: 0px;
     }
 
     .daylog--chat .daylog--scroller {
