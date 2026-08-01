@@ -173,7 +173,7 @@ Logs are **independent** buckets — no FK ownership between Future, Monthlylog,
 
 **Future** — optional six-month park (`period_from` month start; `period_to` auto end of month 6). `spread_months` lists the six month-starts. Manual create: **`GET/POST /futures`**. Single **`show`**: month card-grid + unplanned on the same page (desktop = mobile). Sometime → covering Future when one exists. No overlap checks between Futures.
 
-**Monthlylog** — optional one calendar month (`period_from` / auto `period_to`). `spread_days` lists each day. Top-level create: **`GET/POST /monthlylogs`**. **`GET /monthlylog`** → current month or empty. **`show`** is a shell: calendar grid (presence indicators + `CalendarDate` picture thumbs; cells are postpone drop targets) plus lazy turbo-frames for the selected date and unplanned list via **`GET /monthlylogs/:id/bullets`** (`?date=` for a day, omit for unplanned; `?before=` cursor pages older rows). Styles in `monthlylog.css` (`monthlylog--*`), separate from Future’s card-grid in `future.css`.
+**Monthlylog** — optional one calendar month (`period_from` / auto `period_to`). `spread_days` lists each day. **`GET /monthlylog`** → covering current month, or an empty placeholder with **`POST /monthlylogs`** → `Monthlylog.provision!` (current month + bucket; idempotent). No month-picker form. **`show`** (by id or current) is a shell: calendar grid / mobile inline calendar plus lazy turbo-frames for the selected date and unplanned list via **`GET /monthlylogs/:id/bullets`**. Mobile tabbar links to current monthlylog. Styles in `monthlylog.css` (`monthlylog--*`), separate from Future’s card-grid in `future.css`.
 
 **Daylog** — **one per user** (`has_one :daylog`), provisioned in `Onboarding#complete` alongside Loose Notes and Pending (via `Daylog.provision!`). Day slice is **`pops_on`**. **`GET /daylog`**: if missing (legacy / destroyed), `show` renders a create form (`POST /daylog` → `Daylog.provision!`); if present, lists that day’s bullets. Day-level mood/photo via **`Daylog::MoodEntity`** / **`Daylog::Picture`**. Call sites that need the daylog bucket read `user.daylog.bucket` (no lazy ensure). Create always requires an explicit `bucket_id`. Daylog name/icon constants live on `Onboarding` (`DAYLOG_NAME`, `DAYLOG_ICON`). When Pending has active bullets, the daylog header (date cluster) shows an inbox link to **`GET /pending`** with the count.
 
@@ -268,7 +268,7 @@ resource :support                           → support#show (unauthenticated, l
 resource :daylog                            → daylogs#show/create
 GET    /monthlylog                      → monthlylogs#show (current)
 GET    /futures/:id                  → futures#show
-resources :monthlylogs                   → monthlylogs#new/create/show
+resources :monthlylogs                   → monthlylogs#create/show
   GET  /monthlylogs/:monthlylog_id/bullets → monthlylogs/bullets#index
 
 # Bullets CRUD (no index — daily log is /daylog)

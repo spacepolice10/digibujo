@@ -282,16 +282,23 @@
     align-items: center;
   }
 
-  .monthlylog--date-section-title {
-    margin: 0;
-    font-size: var(--font-size-base-read);
-    font-weight: var(--font-weight-strong);
-  }
-
-  .monthlylog--date-name {
-    font-weight: var(--font-weight-base);
+  .monthlylog--date-section-name {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-stroke-base);
+    background: var(--color-bg-base);
+    color: var(--color-fg-subtle);
+    font-family: var(--font-family-mono);
     font-size: var(--font-size-xs);
-    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover {
+      color: var(--color-fg-base);
+      border-color: var(--color-stroke-strong);
+    }
   }
 
   .monthlylog--date-entries {

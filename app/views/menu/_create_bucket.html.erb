@@ -13,13 +13,13 @@
     Add future log
   <% end %>
 
-  <%= link_to new_monthlylog_path, class: "button--tertiary menu--create-bucket-link", data: { turbo_frame: "_top" } do %>
+  <%= link_to current_monthlylog_path, class: "button--tertiary menu--create-bucket-link", data: { turbo_frame: "_top" } do %>
     <i
       class="icon"
       style="--icon-mask: var(--icon-calendar)"
       aria-hidden="true"
     ></i>
-    Add monthly log
+    Monthly log
   <% end %>
 
   <%= link_to new_project_path, class: "button--tertiary menu--create-bucket-link", data: { turbo_frame: "_top" } do %>

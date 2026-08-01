@@ -78,7 +78,7 @@
   .daylog--chat-header {
     position: absolute;
     z-index: var(--z-dropdown);
-    top: max(var(--spacing-vertical-half), env(safe-area-inset-top, 0px));
+    top: max(var(--spacing-vertical), env(safe-area-inset-top, 0px));
     inset-inline: var(--spacing-horizontal);
     height: var(--spacing-horizontal-double);
     background: transparent;

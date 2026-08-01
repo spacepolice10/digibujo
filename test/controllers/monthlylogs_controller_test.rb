@@ -15,6 +15,7 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_match 'No monthly spread yet', response.body
+    assert_select "form[action=?]", monthlylogs_path
   end
 
   test 'monthly bucket shows spread shell when current exists' do
@@ -119,58 +120,36 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select '.monthlylog--divider', count: 0
   end
 
-  test 'new form defaults to first available selectable month' do
-    @user.monthlylogs.destroy_all
-
-    get new_monthlylog_path
+  test 'empty current monthlylog shows provision placeholder' do
+    get current_monthlylog_path
 
     assert_response :success
-    assert_select "input[name='monthlylog[period_from]'][type=radio]", count: 13
-    start = Date.current.beginning_of_month - 1.month
-    assert_select "input[name='monthlylog[period_from]'][value=?][checked]",
-                  start.iso8601
-  end
-
-  test 'new form disables occupied months and selects first available' do
-    create_monthlylog!(@user, name: 'june')
-    occupied = Date.current.beginning_of_month
-    start = Date.current.beginning_of_month - 1.month
-    expected = (0..12).map { |i| start + i.months }.find { |m| m != occupied }
-
-    get new_monthlylog_path
-
-    assert_response :success
-    assert_select "input[name='monthlylog[period_from]'][value=?][disabled]",
-                  occupied.iso8601
-    assert_select "input[name='monthlylog[period_from]'][value=?][checked]", expected.iso8601
-    assert_select 'label.monthlylog--period-option--disabled'
-  end
-
-  test 'create rejects duplicate month' do
-    create_monthlylog!(@user, name: 'june')
-
-    assert_no_difference -> { Monthlylog.count } do
-      post monthlylogs_path, params: {
-        monthlylog: { period_from: Date.current.beginning_of_month.iso8601 }
-      }
+    assert_match 'No monthly spread yet', response.body
+    assert_select "form[action=?][method=post]", monthlylogs_path do
+      assert_select "button", text: 'Create monthly spread'
     end
-
-    assert_response :unprocessable_entity
-    assert_match 'has already been taken', response.body
   end
 
-  test 'create succeeds for available month' do
+  test 'create provisions current month' do
     @user.monthlylogs.destroy_all
-    month = Date.current.beginning_of_month
 
     assert_difference -> { Monthlylog.count }, 1 do
-      post monthlylogs_path, params: {
-        monthlylog: { period_from: month.iso8601 }
-      }
+      post monthlylogs_path
     end
 
     created = Monthlylog.last
+    assert_equal Date.current.beginning_of_month, created.period_from
     assert_redirected_to monthlylog_path(created)
+  end
+
+  test 'create is idempotent when current month already exists' do
+    existing = create_monthlylog!(@user, name: 'june')
+
+    assert_no_difference -> { Monthlylog.count } do
+      post monthlylogs_path
+    end
+
+    assert_redirected_to monthlylog_path(existing)
   end
 
   test 'show paints calendar_date picture as date cell thumb' do

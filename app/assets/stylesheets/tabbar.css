@@ -74,6 +74,26 @@
     }
   }
 
+  .tabbar--mark {
+    display: block;
+  }
+
+  .tabbar--mark-ring {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.25;
+  }
+
+  .tabbar--mark-accent {
+    fill: var(--color-accent);
+  }
+
+  .tabbar--mark-date {
+    fill: var(--color-accent);
+    font-family: var(--font-family-mono);
+    font-weight: var(--font-weight-medium);
+  }
+
   ::view-transition-group(tabbar) {
     z-index: 2;
     animation: none;

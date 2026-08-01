@@ -14,6 +14,32 @@ class Monthlylog < ApplicationRecord
     where(period_from: ..day, period_to: day..)
   }
 
+  def self.provision!(user, date: Date.current)
+    month = date.to_date.beginning_of_month
+    if (existing = user.monthlylogs.covering(month).take)
+      return existing if existing.bucket
+
+      user.buckets.create!(
+        bucketable: existing,
+        name: month.strftime('%B %Y'),
+        icon: 'calendar'
+      )
+      return existing.reload
+    end
+
+    record = user.monthlylogs.create!(period_from: month)
+    user.buckets.create!(
+      bucketable: record,
+      name: month.strftime('%B %Y'),
+      icon: 'calendar'
+    )
+    record.bucket.record_activity!(
+      'created',
+      metadata: { 'bucketable_type' => 'Monthlylog' }
+    )
+    record.reload
+  end
+
   def spread_days
     return [] if period_from.blank?
 

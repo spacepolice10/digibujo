@@ -22,7 +22,7 @@
       Add future log
     <% end %>
 
-    <%= link_to new_monthlylog_path,
+    <%= link_to current_monthlylog_path,
           class: "dropdown-item",
           data: {
             turbo_frame: "_top",
@@ -30,7 +30,7 @@
             action: "focus->grid-navigation#syncPosition"
           } do %>
       <%= icon_tag("calendar") %>
-      Add monthly log
+      Monthly log
     <% end %>
 
     <%= link_to new_project_path,

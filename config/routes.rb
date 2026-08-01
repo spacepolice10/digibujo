@@ -50,7 +50,7 @@ Rails.application.routes.draw do
 
   resources :futures, only: %i[show new create]
 
-  resources :monthlylogs, only: %i[new create show] do
+  resources :monthlylogs, only: %i[create show] do
     scope module: :monthlylogs do
       resources :bullets, only: :index
     end

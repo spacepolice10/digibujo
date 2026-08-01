@@ -1,11 +1,10 @@
 <% if @date %>
   <turbo-frame id="monthlylog_date" class="monthlylog--date-section" data-pops-on="<%= @date.iso8601 %>">
-    <header class="monthlylog--date-section-header layout--flex layout--justify-between layout--gapped">
-      <h3 class="monthlylog--date-section-title"><%= @date.strftime("%B %-d") %></h3>
+    <header class="monthlylog--date-section-header layout--flex layout--justify-center layout--gapped">
       <%= link_to daylog_path(date: @date.iso8601),
-            class: "button--tertiary button--sm",
+            class: "monthlylog--date-section-name",
             data: { turbo_frame: "_top" } do %>
-        Daylog
+        <time datetime="<%= @date.iso8601 %>"><%= @date.strftime("%B %-d") %></time>
       <% end %>
     </header>
 

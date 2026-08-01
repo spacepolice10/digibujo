@@ -53,6 +53,50 @@ class MonthlylogTest < ActiveSupport::TestCase
     assert_equal start.end_of_month, monthlylog.period_to
   end
 
+  test 'provision! creates monthlylog and bucket for current month' do
+    user = User.create!(email_address: 'monthlylog-provision@example.com')
+    month = Date.current.beginning_of_month
+
+    monthlylog = Monthlylog.provision!(user)
+
+    assert_equal monthlylog, user.monthlylogs.covering(Date.current).take
+    assert_equal month, monthlylog.period_from
+    assert_equal month.end_of_month, monthlylog.period_to
+    assert_not_nil monthlylog.bucket
+    assert_equal month.strftime('%B %Y').downcase, monthlylog.bucket.name
+    assert_equal 'calendar', monthlylog.bucket.icon
+  end
+
+  test 'provision! is idempotent when covering monthlylog already exists' do
+    user = User.create!(email_address: 'monthlylog-idempotent@example.com')
+    first = Monthlylog.provision!(user)
+
+    assert_no_difference -> { Monthlylog.where(user: user).count } do
+      assert_equal first, Monthlylog.provision!(user)
+    end
+  end
+
+  test 'provision! attaches bucket when monthlylog exists without one' do
+    user = User.create!(email_address: 'monthlylog-orphan@example.com')
+    month = Date.current.beginning_of_month
+    monthlylog = user.monthlylogs.create!(period_from: month)
+
+    repaired = Monthlylog.provision!(user)
+
+    assert_equal monthlylog, repaired
+    assert_not_nil repaired.bucket
+  end
+
+  test 'provision! can target another month via date:' do
+    user = User.create!(email_address: 'monthlylog-other-month@example.com')
+    target = Date.current.beginning_of_month.next_month
+
+    monthlylog = Monthlylog.provision!(user, date: target)
+
+    assert_equal target, monthlylog.period_from
+    assert_nil user.monthlylogs.covering(Date.current).take
+  end
+
   test 'does not create a daylog after create' do
     monthlylog = create_monthlylog!(@user, name: 'current')
 
