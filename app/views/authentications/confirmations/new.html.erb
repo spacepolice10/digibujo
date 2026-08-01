@@ -1,6 +1,6 @@
 <% content_for(:title) { "Enter code" } %>
 
-<div class="session--page">
+<div class="session--page session--page-auth">
   <div class="session--welcome">
     <%= icon_tag("mail", class: "session--welcome-icon") %>
     <h1 class="session--name">Check your email</h1>
@@ -20,7 +20,7 @@
           placeholder: "······",
           aria: { label: "6-character login code" } %>
 
-    <%= form.button type: "submit", class: "button--primary button--wide" do %>
+    <%= form.button type: "submit", class: "button--primary session--submit" do %>
       Verify code
     <% end %>
   <% end %>

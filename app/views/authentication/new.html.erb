@@ -1,14 +1,22 @@
-<% content_for(:title) { "Continue" } %>
+<% content_for(:title) { "Digibujo — Welcome" } %>
 
-<div class="session--page">
-  <div class="session--welcome">
-    <h1 class="session--name">Continue with email</h1>
-    <p class="typography--paragraph-md typography--center typography--balanced">
-      Enter your email and we'll send you a one-time code to sign in or create an account.
-    </p>
+<div class="session--page session--page-auth">
+  <div
+    class="session--welcome"
+    data-controller="session-hello"
+  >
+    <h1 class="session--name session--hello">
+      <span data-session-hello-target="word" aria-live="polite">Hello</span>
+    </h1>
   </div>
 
-  <%= form_with url: authentication_path, class: "form session--form" do |form| %>
+  <p class="typography--paragraph-md typography--center typography--balanced session--lede">
+    Enter your email and we'll send you a one-time code to sign in or create an account.
+  </p>
+
+  <%= form_with url: authentication_path,
+        class: "form session--form",
+        data: { controller: "session-submit" } do |form| %>
     <% if @user&.errors&.any? %>
       <div class="form--errors" role="alert">
         <ul>
@@ -20,6 +28,7 @@
     <% end %>
 
     <%= form.email_field :email_address,
+          class: "session--email-input",
           required: true,
           autofocus: true,
           autocomplete: "username",
@@ -27,8 +36,11 @@
           aria: { label: "Email" },
           value: params[:email_address] %>
 
-    <%= form.button type: "submit", class: "button--primary button--wide" do %>
-      Continue
+    <%= form.button type: "submit",
+          class: "button--primary session--submit",
+          data: { session_submit_target: "button" } do %>
+      <span class="session--submit-label">Continue</span>
+      <span class="session--submit-spinner" aria-hidden="true"></span>
     <% end %>
   <% end %>
 

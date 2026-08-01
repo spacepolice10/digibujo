@@ -4,6 +4,8 @@ module Authentications
   class ConfirmationsController < ApplicationController
     layout 'session'
 
+    before_action { @session_dots = true }
+
     allow_unauthenticated_access
     rate_limit to: 5, within: 3.minutes, only: :create, with: lambda {
       respond_to do |format|

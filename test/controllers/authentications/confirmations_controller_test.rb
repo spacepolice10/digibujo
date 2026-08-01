@@ -12,6 +12,7 @@ module Authentications
 
       assert_response :success
       assert_select 'header.header', count: 0
+      assert_select '#session-dots canvas'
       assert_select '.session-layout--main form[action=?]', authentication_confirmation_path
     end
 

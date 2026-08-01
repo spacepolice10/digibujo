@@ -3,6 +3,8 @@
 class AuthenticationController < ApplicationController
   layout 'session'
 
+  before_action { @session_dots = true }
+
   allow_unauthenticated_access only: %i[new create]
   rate_limit to: 5, within: 2.minutes, only: :create, with: lambda {
     respond_to do |format|

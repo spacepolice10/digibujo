@@ -20,6 +20,8 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
     get new_onboarding_path
 
     assert_response :success
+    assert_select '#session-dots', count: 0
+    assert_select 'canvas.session-dots', count: 0
     assert_select '.session--name', text: 'Welcome to Digibujo'
     assert_select '.session-layout--main form[action=?]', onboarding_path
     assert_select 'a.onboarding--external-link[href=?]', 'https://bulletjournal.com/'
