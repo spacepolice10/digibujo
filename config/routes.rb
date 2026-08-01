@@ -45,13 +45,16 @@ Rails.application.routes.draw do
 
   get 'monthlylog', to: 'monthlylogs#show', as: :current_monthlylog
   get 'monthly_bucket', to: redirect('/monthlylog')
-  get 'monthlylog_date/:date', to: 'monthlylogs#monthlylog_date', as: :monthlylog_date
 
   get 'future', to: 'futures#show', as: :current_future
 
   resources :futures, only: %i[show new create]
 
-  resources :monthlylogs, only: %i[new create show]
+  resources :monthlylogs, only: %i[new create show] do
+    scope module: :monthlylogs do
+      resources :bullets, only: :index
+    end
+  end
 
   get 'future_buckets/:id', to: redirect('/futures/%{id}')
   get 'monthly_buckets/:id', to: redirect('/monthlylogs/%{id}')

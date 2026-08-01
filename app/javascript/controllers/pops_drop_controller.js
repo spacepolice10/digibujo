@@ -6,7 +6,8 @@ export default class extends Controller {
     popsUrl: { type: String, default: "/bullets/postpone" },
     popsOn: { type: String, default: "" },
     bucketId: { type: String, default: "" },
-    requestedWith: { type: String, default: "pops-drop" }
+    requestedWith: { type: String, default: "" },
+    optimistic: { type: String, default: "" }
   }
 
   dragover(event) {
@@ -64,7 +65,7 @@ export default class extends Controller {
   #optimisticMove(frame) {
     const optimistic = this.application.getControllerForElementAndIdentifier(
       this.element,
-      "drop-postpone-optimistic"
+      this.optimisticValue
     )
     return optimistic?.move(frame) ?? null
   }

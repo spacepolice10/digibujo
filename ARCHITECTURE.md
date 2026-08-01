@@ -118,11 +118,11 @@ Archiving (`Bullet` or `Bucket`) is modelled as a row in **`archives`** (`archiv
 
 **Schedule** (`schedule` json): `{ "days" => […] }` with Ruby `wday` 0–6 (defaults to every day). Active range is the monthlylog period. No `stop!` lifecycle — delete the tracker or leave it for the month.
 
-**UI:** create from monthlylog show (`POST /monthlylogs/:id/trackers`). Monthly show embeds a day toggle for each tracker scheduled on that date (grayscale incomplete / coloured complete). Tracker show page still has the month heatmap. Toggle posts to `POST`/`DELETE /trackers/:id/completion`.
+**UI:** create from monthlylog show (`POST /monthlylogs/:id/trackers`). Tracker show page has the month heatmap. Toggle posts to `POST`/`DELETE /trackers/:id/completion`. (Per-day tracker toggles on the monthly calendar date panel are a follow-up.)
 
 ## Mood tracker
 
-Optional day-level artifacts on **Daylog**: **`Daylog::MoodEntity`** (`daylog_mood_entities`: `date` + mood enum) and **`Daylog::Picture`** (`daylog_pictures`: `date` + Active Storage `picture`). Mark/clear via `POST`/`DELETE /daylog/mood_entity` and `POST`/`DELETE /daylog/picture` (`Daylog#pick_mood` / `#remove_mood` / `#remove_picture`); mobile daylog also fetches the card via `GET /daylog/picture`. Mood picker posts with `data-turbo-stream` and replaces `daylog_mood_entity_<iso-date>` in place (HTML fallback still redirects back). Monthly show embeds the mood picker in each date band (alongside Task/Event create buttons) via `#mood_entities_by_date`, and paints that day's daylog picture as the date-rail background via `#pictures_by_date`. On the daylog page the day header levitates over the chat; mood and picture are separate header controls.
+Optional day-level artifacts on **Daylog**: **`Daylog::MoodEntity`** (`daylog_mood_entities`: `date` + mood enum) and **`Daylog::Picture`** (`daylog_pictures`: `date` + Active Storage `picture`). Mark/clear via `POST`/`DELETE /daylog/mood_entity` and `POST`/`DELETE /daylog/picture` (`Daylog#pick_mood` / `#remove_mood` / `#remove_picture`); mobile daylog also fetches the card via `GET /daylog/picture`. Mood picker posts with `data-turbo-stream` and replaces `daylog_mood_entity_<iso-date>` in place (HTML fallback still redirects back). Monthly show preloads `CalendarDate` pictures for calendar cell thumbs and paints a single accent presence indicator from planned-bullet counts; mood/tracker chrome on the date panel is a follow-up. On the daylog page the day header levitates over the chat; mood and picture are separate header controls.
 
 **Day photo presentation** uses a single card shell on every viewport ([`daylogs/_photo_card`](app/views/daylogs/_photo_card.html.erb), id `daylog_photo_card_<iso-date>`), driven by one `daylog-photo` Stimulus controller wrapping the card + chat shell so the header control can toggle it:
 
@@ -173,7 +173,7 @@ Logs are **independent** buckets — no FK ownership between Future, Monthlylog,
 
 **Future** — optional six-month park (`period_from` month start; `period_to` auto end of month 6). `spread_months` lists the six month-starts. Manual create: **`GET/POST /futures`**. Single **`show`**: month card-grid + unplanned on the same page (desktop = mobile). Sometime → covering Future when one exists. No overlap checks between Futures.
 
-**Monthlylog** — optional one calendar month (`period_from` / auto `period_to`). `spread_days` lists each day. Top-level create: **`GET/POST /monthlylogs`**. **`GET /monthlylog`** → current month or empty. Single **`show`**: two panels side by side — days stacked vertically (date rail links to daylog) + unplanned (no tabs). Styles in `monthlylog.css` (`monthlylog--*`), separate from Future’s card-grid in `future.css`.
+**Monthlylog** — optional one calendar month (`period_from` / auto `period_to`). `spread_days` lists each day. Top-level create: **`GET/POST /monthlylogs`**. **`GET /monthlylog`** → current month or empty. **`show`** is a shell: calendar grid (presence indicators + `CalendarDate` picture thumbs; cells are postpone drop targets) plus lazy turbo-frames for the selected date and unplanned list via **`GET /monthlylogs/:id/bullets`** (`?date=` for a day, omit for unplanned; `?before=` cursor pages older rows). Styles in `monthlylog.css` (`monthlylog--*`), separate from Future’s card-grid in `future.css`.
 
 **Daylog** — **one per user** (`has_one :daylog`), provisioned in `Onboarding#complete` alongside Loose Notes and Pending (via `Daylog.provision!`). Day slice is **`pops_on`**. **`GET /daylog`**: if missing (legacy / destroyed), `show` renders a create form (`POST /daylog` → `Daylog.provision!`); if present, lists that day’s bullets. Day-level mood/photo via **`Daylog::MoodEntity`** / **`Daylog::Picture`**. Call sites that need the daylog bucket read `user.daylog.bucket` (no lazy ensure). Create always requires an explicit `bucket_id`. Daylog name/icon constants live on `Onboarding` (`DAYLOG_NAME`, `DAYLOG_ICON`). When Pending has active bullets, the daylog header (date cluster) shows an inbox link to **`GET /pending`** with the count.
 
@@ -266,9 +266,10 @@ resource :support                           → support#show (unauthenticated, l
 
 # Logs
 resource :daylog                            → daylogs#show/create
-GET    /monthlylog                      → monthlylogs#current
+GET    /monthlylog                      → monthlylogs#show (current)
 GET    /futures/:id                  → futures#show
 resources :monthlylogs                   → monthlylogs#new/create/show
+  GET  /monthlylogs/:monthlylog_id/bullets → monthlylogs/bullets#index
 
 # Bullets CRUD (no index — daily log is /daylog)
 GET    /bullets/:id                         → bullets#show

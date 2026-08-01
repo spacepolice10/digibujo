@@ -54,78 +54,41 @@
   .monthlylog--calendar {
     min-width: 0;
     overflow-y: auto;
-  }
-
-  .monthlylog--calendar-body {
     display: flex;
     flex-direction: column;
+    gap: var(--spacing-vertical);
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
   }
 
-  .monthlylog--date-band {
-    padding-block: calc(var(--spacing-vertical-half) / 2);
+  .monthlylog--calendar-grid {
+    align-items: stretch;
   }
 
-  .monthlylog--date-band-current .monthlylog--date-item {
-    color: var(--color-fg-base);
+  .monthlylog--weekday {
+    text-align: center;
+    font-size: var(--font-size-xs);
+    color: var(--color-fg-subtle);
+    padding: var(--spacing-vertical-half);
   }
 
-  .monthlylog--date-band-current .monthlylog--date-item::before {
-    content: "";
-    position: absolute;
-    left: -4px;
-    top: var(--spacing-vertical-half);
-    bottom: var(--spacing-vertical-half);
-    width: var(--radius-base);
-    border-radius: var(--radius-full);
-    background: var(--model-color-3);
-    pointer-events: none;
-  }
-
-  .monthlylog--date-rail {
+  .monthlylog--date-cell {
     position: relative;
-    display: flex;
-    align-items: flex-start;
-    gap: var(--spacing-horizontal-half);
-    min-width: 0;
-    padding-block: var(--spacing-vertical);
-    padding-inline: var(--spacing-horizontal);
-    border-bottom: 0.5px solid var(--color-stroke-base);
-  }
-
-  .monthlylog--date-rail--photo {
-    overflow: hidden;
-  }
-
-  .monthlylog--date-photo {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    overflow: hidden;
-  }
-
-  .monthlylog--date-photo-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .monthlylog--date-photo::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: color-mix(in srgb, var(--color-bg-subtle) 62%, transparent);
+    min-height: calc(var(--spacing-vertical-double) * 2);
+    padding: 0;
   }
 
   .monthlylog--date-item {
     position: relative;
     z-index: 1;
-    flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    width: var(--spacing-horizontal-double);
-    padding-left: var(--spacing-horizontal-half);
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-vertical-half);
+    width: 100%;
+    height: 100%;
+    min-height: calc(var(--spacing-vertical-double) * 2);
+    padding: var(--spacing-vertical-half);
     box-sizing: border-box;
     color: var(--color-fg-subtle);
     text-decoration: none;
@@ -134,11 +97,57 @@
     &:focus-visible {
       color: var(--color-fg-base);
     }
+
+    &.is-selected {
+      color: var(--color-fg-base);
+      outline: 2px solid var(--color-stroke-strong);
+      outline-offset: -2px;
+      border-radius: var(--radius-base);
+    }
+  }
+
+  .monthlylog--date-preview {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--radius-base);
+    opacity: var(--opacity-half);
+    pointer-events: none;
   }
 
   .monthlylog--date-number {
+    position: relative;
+    z-index: 1;
     font-weight: var(--font-weight-strong);
     font-size: var(--font-size-xs);
+  }
+
+  .monthlylog--indicator {
+    position: relative;
+    z-index: 1;
+    width: var(--radius-base);
+    height: var(--radius-base);
+    border-radius: var(--radius-full);
+    background: var(--color-accent);
+  }
+
+  .monthlylog--date-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical);
+    min-height: 0;
+  }
+
+  .monthlylog--date-section-header {
+    align-items: center;
+  }
+
+  .monthlylog--date-section-title {
+    margin: 0;
+    font-size: var(--font-size-base-read);
+    font-weight: var(--font-weight-strong);
   }
 
   .monthlylog--date-name {
@@ -158,7 +167,7 @@
   .monthlylog--date-composer {
     display: flex;
     gap: var(--spacing-horizontal);
-    padding-inline: var(--spacing-horizontal-double);
+    padding-block-start: var(--spacing-vertical);
   }
 
   .monthlylog--date-artifacts {
@@ -182,30 +191,11 @@
     gap: var(--spacing-horizontal-half);
   }
 
-  @media (hover: hover) {
-    .monthlylog--calendar .monthlylog--date-composer {
-      visibility: hidden;
-      pointer-events: none;
-    }
-
-    .monthlylog--calendar .monthlylog--date-band:is(:hover, :focus-within) .monthlylog--date-composer {
-      visibility: visible;
-      pointer-events: auto;
-    }
-  }
-
-  @media (hover: none) {
-    .monthlylog--calendar .monthlylog--date-composer {
-      visibility: visible;
-      pointer-events: auto;
-    }
-  }
-
   .monthlylog--divider {
     background: var(--color-stroke-base);
   }
 
-  .monthlylog--by-date-empty {
+  .monthlylog--by-date-placeholder {
     color: var(--color-fg-subtle);
     text-align: center;
     padding: var(--spacing-vertical-quad) var(--spacing-horizontal);

@@ -17,18 +17,20 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'No monthly spread yet', response.body
   end
 
-  test 'monthly bucket shows spread when current exists' do
+  test 'monthly bucket shows spread shell when current exists' do
     monthlylog = create_monthlylog!(@user, name: 'june')
     create_bullet!(@user,
-      bulletable: Task.new(body: 'Unplanned task'),
-      bucket_id: monthlylog.bucket.id
-    )
+                   bulletable: Task.new(body: 'Unplanned task'),
+                   bucket_id: monthlylog.bucket.id)
 
     get current_monthlylog_path
 
     assert_response :success
-    assert_match 'Unplanned task', response.body
     assert_match 'Unplanned', response.body
+    assert_select 'turbo-frame#monthlylog_unplanned[src=?]', monthlylog_bullets_path(monthlylog)
+    assert_select 'turbo-frame#monthlylog_date[src=?]',
+                  monthlylog_bullets_path(monthlylog, date: Date.current.iso8601)
+    assert_no_match 'Unplanned task', response.body
   end
 
   test 'show returns not found for another users monthly bucket' do
@@ -40,122 +42,59 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
-  test 'show by id lists dated bullets in by_date column' do
+  test 'show by id renders calendar and lazy bullet frames without dated bodies' do
     monthlylog = create_monthlylog!(@user, name: 'june')
     day = Date.current.beginning_of_month + 2.days
     create_bullet!(@user,
-      bulletable: Event.new(body: 'Dentist'),
-      bucket_id: monthlylog.bucket.id,
-      pops_on: day
-    )
+                   bulletable: Event.new(body: 'Dentist'),
+                   bucket_id: monthlylog.bucket.id,
+                   pops_on: day)
 
     get monthlylog_path(monthlylog)
 
     assert_response :success
-    assert_match 'Dentist', response.body
+    assert_select '.monthlylog--calendar-grid'
+    assert_select '.monthlylog--indicator:not([hidden])', minimum: 1
+    assert_select 'turbo-frame#monthlylog_date[src=?]',
+                  monthlylog_bullets_path(monthlylog, date: Date.current.iso8601)
+    assert_no_match 'Dentist', response.body
   end
 
-  test 'monthlylog show has date bands, add links, and unplanned panel' do
+  test 'monthlylog show has calendar cells, frames, and unplanned panel' do
     monthlylog = create_monthlylog!(@user, name: 'june')
     day = Date.current.beginning_of_month + 2.days
     create_bullet!(@user,
-      bulletable: Task.new(body: 'Planned task'),
-      bucket_id: monthlylog.bucket.id,
-      pops_on: day
-    )
+                   bulletable: Task.new(body: 'Planned task'),
+                   bucket_id: monthlylog.bucket.id,
+                   pops_on: day)
 
     get monthlylog_path(monthlylog)
 
     assert_response :success
     assert_select '.monthlylog--spread'
-    assert_select '.monthlylog--date-band', minimum: 28
-    assert_select '.monthlylog--calendar', text: /Planned task/
-    assert_select "a.bullets-form--create-button--task[href=?]",
-                  new_bullet_path(
-                    pops_on: day,
-                    bucket_id: monthlylog.bucket.id,
-                    bulletable_type: 'Task'
-                  )
-    assert_select "a.bullets-form--create-button--event[href=?]",
-                  new_bullet_path(
-                    pops_on: day,
-                    bucket_id: monthlylog.bucket.id,
-                    bulletable_type: 'Event'
-                  )
-    assert_select '.monthlylog--unplanned a.bullets-form--create-button--note'
-    assert_select '.monthlylog--unplanned a.bullets-form--create-button--task', count: 0
-    assert_select '.monthlylog--unplanned a.bullets-form--create-button--event', count: 0
-    assert_select '.monthlylog--unplanned a.bullets-form--create-button--voice', count: 0
-    assert_select '.bullets-form--dock', count: 0
+    assert_select '.monthlylog--date-cell', minimum: 28
+    assert_select '.monthlylog--date-band', count: 0
+    assert_select '[data-controller~=scroll]', count: 0
+    assert_select 'a.monthlylog--date-item[href=?]',
+                  monthlylog_bullets_path(monthlylog, date: day.iso8601)
+    assert_select 'turbo-frame#monthlylog_unplanned[src=?]', monthlylog_bullets_path(monthlylog)
     assert_select '.monthlylog--unplanned'
+    assert_select '.bullets-form--dock', count: 0
     assert_select 'dialog#monthlylog_composer', count: 0
+    assert_select '[data-controller~=pops-drop]', minimum: 28
+    assert_select '[data-controller~=monthlylog-calendar-drop-optimistic]', minimum: 28
   end
-
-  test 'monthlylog unplanned bullets render as compact rows without metadata tags' do
-    monthlylog = create_monthlylog!(@user, name: 'june')
-    bullet = create_bullet!(@user,
-      bulletable: Task.new(body: 'Pinned spread task'),
-      bucket_id: monthlylog.bucket.id
-    )
-    PinnedEntity.create!(user: @user, pinnable: bullet)
-
-    get monthlylog_path(monthlylog)
-
-    assert_response :success
-    assert_select "turbo-frame##{dom_id(bullet)}.bullet", text: /Pinned spread task/
-    assert_select "turbo-frame##{dom_id(bullet)}.bullet .bullet--marker", count: 1
-    assert_select "turbo-frame##{dom_id(bullet)}.bullet .bullet--tags", count: 0
-    assert_select "turbo-frame##{dom_id(bullet)}.bullet .bullet--metadata", count: 0
-  end
-
-
-  test 'monthlylog unplanned bullets render body text' do
-    monthlylog = create_monthlylog!(@user, name: 'june')
-    create_bullet!(@user,
-      bulletable: Task.new(body: 'Plain task'),
-      bucket_id: monthlylog.bucket.id
-    )
-    create_bullet!(@user,
-      bulletable: Note.new(body: '<p>Expanded detail</p>'),
-      bucket_id: monthlylog.bucket.id
-    )
-
-    get monthlylog_path(monthlylog)
-
-    assert_response :success
-    assert_match 'Plain task', response.body
-    assert_match 'Expanded detail', response.body
-  end
-
-  test 'dated monthlylog tasks appear in date bands' do
-    monthlylog = create_monthlylog!(@user, name: 'june')
-    day = Date.current.beginning_of_month + 2.days
-    bullet = create_bullet!(@user,
-      bulletable: Task.new(body: 'Buy ointment'),
-      bucket_id: monthlylog.bucket.id,
-      pops_on: day
-    )
-    bullet.bulletable.complete!
-
-    get monthlylog_path(monthlylog)
-
-    assert_response :success
-    assert_select '.monthlylog--calendar', text: /Buy ointment/
-  end
-
 
   test 'mobile monthlylog show keeps both panels without tabs' do
     monthlylog = create_monthlylog!(@user, name: 'june')
     day = Date.current.beginning_of_month
     create_bullet!(@user,
-      bulletable: Task.new(body: 'Planned mobile task'),
-      bucket_id: monthlylog.bucket.id,
-      pops_on: day
-    )
+                   bulletable: Task.new(body: 'Planned mobile task'),
+                   bucket_id: monthlylog.bucket.id,
+                   pops_on: day)
     create_bullet!(@user,
-      bulletable: Note.new(body: 'Unplanned mobile note'),
-      bucket_id: monthlylog.bucket.id
-    )
+                   bulletable: Note.new(body: 'Unplanned mobile note'),
+                   bucket_id: monthlylog.bucket.id)
 
     get monthlylog_path(monthlylog), headers: { 'User-Agent' => MOBILE_UA }
 
@@ -164,36 +103,10 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select '.monthlylog--calendar'
     assert_select '.monthlylog--unplanned'
     assert_select '[role=tab]', count: 0
-    assert_match 'Planned mobile task', response.body
-    assert_match 'Unplanned mobile note', response.body
+    assert_select 'turbo-frame#monthlylog_date[src]'
+    assert_select 'turbo-frame#monthlylog_unplanned[src]'
     assert_select 'dialog#monthlylog_composer', count: 0
     assert_select '[data-controller~=pops-drop]', minimum: 1
-  end
-
-  test 'mobile monthlylog unplanned bullets render without drag' do
-    monthlylog = create_monthlylog!(@user, name: 'june')
-    create_bullet!(@user,
-      bulletable: Task.new(body: 'Mobile spread task'),
-      bucket_id: monthlylog.bucket.id
-    )
-
-    get monthlylog_path(monthlylog), headers: { 'User-Agent' => MOBILE_UA }
-
-    assert_response :success
-    assert_match 'Mobile spread task', response.body
-    assert_select '.bullet[data-layout="spread"]', count: 0
-    assert_select 'turbo-frame.bullet[draggable="true"]', count: 0
-    assert_select '.bullet--marker', minimum: 1
-  end
-
-  test 'monthlylog date rails link to daylog' do
-    monthlylog = create_monthlylog!(@user, name: 'june')
-    day = Date.current.beginning_of_month + 4.days
-
-    get monthlylog_path(monthlylog)
-
-    assert_response :success
-    assert_select "a.monthlylog--date-item[href=?]", daylog_path(date: day.iso8601)
   end
 
   test 'new form defaults to first available selectable month' do
@@ -250,29 +163,14 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to monthlylog_path(created)
   end
 
-  test 'show includes mood controls in each date band' do
-    ensure_daylog!(@user)
-    calendar_date = @user.calendar_dates.create!(date: Date.current)
-    CalendarDate::MoodEntity.create!(calendar_date: calendar_date, mood: :inspired)
-    monthlylog = create_monthlylog!(@user, name: Date.current.strftime('%B %Y'))
-
-    get monthlylog_path(monthlylog)
-
-    assert_response :success
-    assert_select '.monthlylog--date-mood .daylog--mood', count: monthlylog.spread_days.size
-    assert_select '.dropdown-item', text: /Inspired/
-    assert_select 'section.monthlylog--mood', count: 0
-    assert_match '✨', response.body
-  end
-
-  test 'show paints daylog picture as date-rail background' do
+  test 'show paints calendar_date picture as date cell thumb' do
     ensure_daylog!(@user)
     calendar_date = @user.calendar_dates.create!(date: Date.current)
     picture = calendar_date.build_picture
     picture.picture.attach(
       io: StringIO.new(Base64.decode64(
-        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
-      )),
+                         'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
+                       )),
       filename: 'day.png',
       content_type: 'image/png'
     )
@@ -282,26 +180,10 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     get monthlylog_path(monthlylog)
 
     assert_response :success
-    assert_select '.monthlylog--date-rail--photo', count: 1
-    assert_select '.monthlylog--date-photo-image', count: 1
+    assert_select '.monthlylog--date-preview', count: 1
   end
 
-  test 'show includes tracker toggles on scheduled days' do
-    monthlylog = create_monthlylog!(@user, name: Date.current.strftime('%B %Y'))
-    tracker = create_tracker!(@user, name: 'Meditate', icon: 'heart')
-    tracker.update!(start_date: monthlylog.period_from)
-    weekday_only = [(Date.current + 1.day).wday]
-    tracker.update!(schedule: { 'days' => weekday_only })
-
-    get monthlylog_path(monthlylog)
-
-    assert_response :success
-    scheduled_count = monthlylog.spread_days.count { |day| weekday_only.include?(day.wday) && day <= Date.current }
-    assert_select '.tracker--day-toggle', count: scheduled_count
-    assert_select '.monthlylog--date-trackers .tracker--day-toggle-done', count: 0
-  end
-
-  test 'show by id loads the requested spread when multiple months exist' do
+  test 'show by id loads the requested spread shell when multiple months exist' do
     june = create_monthlylog!(
       @user,
       name: 'June 2026',
@@ -315,19 +197,20 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
       period_to: Date.new(2026, 7, 31)
     )
     create_bullet!(@user,
-      bulletable: Task.new(body: 'June-only task'),
-      bucket_id: june.bucket.id
-    )
+                   bulletable: Task.new(body: 'June-only task'),
+                   bucket_id: june.bucket.id)
     create_bullet!(@user,
-      bulletable: Task.new(body: 'July-only task'),
-      bucket_id: july.bucket.id
-    )
+                   bulletable: Task.new(body: 'July-only task'),
+                   bucket_id: july.bucket.id)
 
     get monthlylog_path(june)
 
     assert_response :success
-    assert_match 'June-only task', response.body
-    assert_no_match 'July-only task', response.body
+    assert_select 'h2', text: /june 2026/i
+    assert_select 'turbo-frame#monthlylog_unplanned[src=?]', monthlylog_bullets_path(june)
+    assert_select 'turbo-frame#monthlylog_unplanned[src=?]', monthlylog_bullets_path(july), count: 0
+    assert_select 'turbo-frame#monthlylog_date[src=?]',
+                  monthlylog_bullets_path(june, date: Date.new(2026, 6, 1).iso8601)
     assert_equal "/monthlylogs/#{june.id}", monthlylog_path(june)
   end
 end

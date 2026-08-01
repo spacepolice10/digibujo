@@ -1,38 +1,69 @@
 <% if @monthlylog %>
   <% content_for(:title) { @monthlylog.name } %>
-
-  <div class="layout--mx-auto monthlylog--header">
-    <%= icon_tag("calendar", style: "color: var(--color-text-base);", class: "monthlylog--header-icon") %>
-    <h2><%= @monthlylog.name %></h2>
-    <p class="typography--paragraph-sm">
-      <%= @monthlylog.period_from.strftime("%b %-d") %> –
-      <%= @monthlylog.period_to.strftime("%b %-d, %Y") %>
-    </p>
-  </div>
-  <p class="utilities--mx-auto typography--paragraph-sm layout--padded">This is monthly planning section. Drop your "sometime" bullets here & jot down  the events that will happen in the future.</p>
+  
 
   <div class="layout--page">
   <main class="layout--container layout--container-md layout--surface">
 
-    <div class="layout--flex layout--justify-between layout--surface-header">
-      <%= back_link_to home_path, class: "button--tertiary button--sm" do %>
-        <%= icon_tag("arrow-left", style: "color: var(--color-text-base);", class: "button--icon") %>
-        Home
-      <% end %>
-      <div class="layout--flex layout--gapped">
-      <%= render "buckets/pins_button", bucket: @monthlylog.bucket %>
-      <%= link_to "Add tracker", new_tracker_path, class: "button--secondary button--sm" %>
-      </div>
-    </div>
+ 
 
       <div class="monthlylog--spread">
-        <section
-          class="monthlylog--calendar"
-          aria-label="Planned by date"
-          data-controller="scroll"
-        >
-          <%= render "monthlylogs/calendar_grid", days: @days, date: @date %>
-          <turbo-frame src="<%= monthlylog_date_path(date: @date.iso8601) %>" id="monthlylog_date" class="monthlylog--date-grid">
+        <section class="monthlylog--calendar" aria-label="Planned by date">
+          <% if @days.any? %>
+            <% offset = @days.first.wday %>
+            <% padded = Array.new(offset, nil) + @days %>
+
+            <div class="layout--grid layout--gapped monthlylog--calendar-grid" style="--grid-cols-number: 7;">
+              <% Date::DAYNAMES.each do |weekday| %>
+                <div class="layout--grid-item layout--surface-sunken monthlylog--weekday">
+                  <%= weekday.first(3) %>
+                </div>
+              <% end %>
+
+              <% padded.each do |date| %>
+                <% if date.blank? %>
+                  <div class="layout--grid-item" aria-hidden="true"></div>
+                <% else %>
+                  <% picture = @pictures_by_date[date] %>
+                  <% count = @bullet_counts_by_date[date].to_i %>
+
+                  <div
+                    class="layout--grid-item layout--surface-sunken monthlylog--date-cell"
+                    data-controller="pops-drop monthlylog-calendar-drop-optimistic"
+                    data-pops-drop-pops-url-value="<%= postpone_path %>"
+                    data-pops-drop-bucket-id-value="<%= @monthlylog.bucket.id %>"
+                    data-pops-drop-pops-on-value="<%= date.iso8601 %>"
+                    data-pops-drop-requested-with-value="pops-drop"
+                    data-pops-drop-optimistic-value="monthlylog-calendar-drop-optimistic"
+                    data-drop-zone-value="<%= date.iso8601 %>"
+                    data-monthlylog-calendar-drop-optimistic-count-value="<%= count %>"
+                    data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop"
+                  >
+                    <%= link_to monthlylog_bullets_path(@monthlylog, date: date.iso8601),
+                          data: { turbo_frame: "monthlylog_date" },
+                          class: "monthlylog--date-item#{" is-selected" if date == @date}" do %>
+                      <% if picture&.picture&.attached? %>
+                        <%= image_tag picture.picture.variant(:thumb), class: "monthlylog--date-preview", alt: "" %>
+                      <% end %>
+                      <span class="monthlylog--date-number"><%= date.day %></span>
+                      <span
+                        class="monthlylog--indicator"
+                        data-monthlylog-calendar-drop-optimistic-target="indicator"
+                        <%= "hidden" unless count > 0 %>
+                        aria-hidden="true"></span>
+                    <% end %>
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
+          <% else %>
+            <p class="monthlylog--by-date-placeholder">No period set for this spread.</p>
+          <% end %>
+
+          <turbo-frame
+            id="monthlylog_date"
+            src="<%= monthlylog_bullets_path(@monthlylog, date: @date.iso8601) %>"
+            class="monthlylog--date-section">
           </turbo-frame>
         </section>
 
@@ -46,25 +77,11 @@
             </p>
           </header>
 
-          <div
-            class="monthlylog--unplanned-entries"
-            data-controller="pops-drop drop-postpone-optimistic"
-            data-pops-drop-pops-url-value="<%= postpone_path %>"
-            data-pops-drop-bucket-id-value="<%= @monthlylog.bucket.id %>"
-            data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop"
-          >
-            <%= turbo_frame_tag "monthlylog_bullets_unplanned_container",
-                  class: "monthlylog--bullets-list layout--list",
-                  data: { bulk_menu_target: "list" } do %>
-              <% @unplanned_bullets.each do |bullet| %>
-                <%= render "monthlylogs/bullets/bullet", bullet: bullet %>
-              <% end %>
-            <% end %>
-
-            <%= create_bullet_buttons bucket_id: @monthlylog.bucket.id,
-                  pops_on: nil,
-                  bulletable_type: %w[Note] %>
-          </div>
+          <turbo-frame
+            id="monthlylog_unplanned"
+            src="<%= monthlylog_bullets_path(@monthlylog) %>"
+            class="monthlylog--unplanned-entries">
+          </turbo-frame>
         </section>
       </div>
     </div>
