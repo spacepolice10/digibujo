@@ -2,9 +2,7 @@
 <aside class="review--collections" aria-label="Collections">
   <header class="review--collections-header">
     <h3 class="review--side-name">Collections</h3>
-    <%= link_to new_collection_path, class: "button--primary button--sm", data: { turbo_frame: "_top" } do %>
-    <%= icon_tag("plus", style: "color: var(--color-text-base);", class: "") %>
-    <% end %>
+    <p class="review--side-description">Drop bullets to save them.</p>
   </header>
 
   <div class="review--collections-section">
@@ -24,6 +22,13 @@
               combobox_target: "searchField",
               action: "input->combobox#search search->combobox#commit keydown->combobox#navigate"
             } %>
+    <% end %>
+
+    <%= link_to new_collection_path,
+          class: "collection--section-list-item review--collection-create",
+          data: { turbo_frame: "_top" } do %>
+      <%= icon_tag("plus", style: "color: var(--color-text-base);", class: "home--section-list-item-icon") %>
+      <span class="utilities--line-clamp-1">New collection</span>
     <% end %>
 
     <%= render layout: "pagination/paginated_list",
@@ -46,7 +51,7 @@
           <% end %>
         </ul>
       <% else %>
-        <p class="review--collections-empty utilities--text-sm">
+        <p class="review--collections-empty">
           <%= collections_q.present? ? "No collections found." : "No collections yet." %>
         </p>
       <% end %>

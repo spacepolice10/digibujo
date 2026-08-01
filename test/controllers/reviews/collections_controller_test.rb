@@ -17,6 +17,7 @@ module Reviews
       get review_collections_path(from: @today.iso8601, to: @today.iso8601)
 
       assert_response :success
+      assert_select '.collection--section-list-item', minimum: 2
       assert_select '.utilities--line-clamp-1', text: 'work'
       assert_select '.utilities--line-clamp-1', text: 'personal'
     end

@@ -17,10 +17,6 @@ module Migratable
     migrated? && last_migration['action'] == 'rescheduled'
   end
 
-  def mark_as_reviewed!
-    update!(migrated_at: Time.current, last_migration: {})
-  end
-
   def migrate_to!(bucket:, pops_on:, action:)
     raise ArgumentError, 'bucket is required' if bucket.blank?
     raise ArgumentError, "action must be one of #{MIGRATION_ACTIONS.join(', ')}" unless action.in?(MIGRATION_ACTIONS)

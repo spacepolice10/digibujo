@@ -42,22 +42,28 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'turbo-frame#review_scheduled_frame[src=?]', review_scheduled_path(from: @today.iso8601, to: @today.iso8601)
     assert_select '.review--to-review'
     assert_select '[data-bulk-menu-target="list"]'
+    assert_select '#review-migrate-footer', count: 0
     assert_select '.review--review-actions', count: 0
   end
 
-  test 'show mobile renders inbox list with bulk menu' do
+  test 'show mobile renders three swipeable sections starting with inbox' do
     create_bullet!(@user, bulletable: Task.new(body: 'Mobile review'), pops_on: @today)
 
     get review_path(from: @today.iso8601, to: @today.iso8601), headers: { 'User-Agent' => MOBILE_UA }
 
     assert_response :success
     assert_match 'Mobile review', response.body
-    assert_select '.review--to-review', count: 0
-    assert_select '.review--to-review-list'
-    assert_select '.review--review-actions', count: 0
+    assert_select '.review--page-mobile'
+    assert_select '.review--spread-sections'
+    assert_select '.review--section', count: 3
+    assert_select '.review--section-to-review .review--to-review'
+    assert_select 'turbo-frame#review_collections_frame[src=?]', review_collections_path(from: @today.iso8601, to: @today.iso8601)
+    assert_select 'turbo-frame#review_scheduled_frame[src=?]', review_scheduled_path(from: @today.iso8601, to: @today.iso8601)
+    assert_select '[data-controller~="review-mobile-sections"]'
+    assert_select '[data-review-mobile-sections-target="review"]'
+    assert_select '#review-migrate-footer', count: 0
     assert_select '.review--bullet[draggable="true"]'
     assert_select '[data-bulk-menu-target="list"]'
-
     assert_select '#collects_picker_dropdown_id[popover]'
   end
 
@@ -115,4 +121,15 @@ class ReviewsControllerTest < ActionDispatch::IntegrationTest
     assert_select '#review-amount-in-review', text: '0'
   end
 
+  test 'show groups inbox bullets with date dividers and pagination' do
+    create_bullet!(@user, bulletable: Task.new(body: 'Day one'), pops_on: @today - 1.day)
+    create_bullet!(@user, bulletable: Task.new(body: 'Day two'), pops_on: @today)
+
+    get review_path(from: (@today - 1.day).iso8601, to: @today.iso8601)
+
+    assert_response :success
+    assert_select '.collection--date-divider', minimum: 2
+    assert_select '#paginated-review-to-review[data-controller~=pagination]'
+    assert_select '.review--side-description', text: /total/
+  end
 end

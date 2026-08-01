@@ -1,8 +1,15 @@
-<%# locals: (review_from:, review_to:, page:, amount_in_review:) %>
+<%# locals: (review_from:, review_to:, page:, amount_in_review:, previous_date: nil) %>
 <main class="review--to-review" aria-label="To review">
   <header class="review--to-review-header">
     <h3 class="review--side-name">To review</h3>
-    <p class="review--side-description utilities--text-sm">Timeline bullets for this period.</p>
+    <p class="review--side-description">
+      <% if review_from == review_to %>
+        <%= review_from.strftime("%a, %b %-d, %Y") %>
+      <% else %>
+        <%= review_from.strftime("%b %-d") %> – <%= review_to.strftime("%b %-d, %Y") %>
+      <% end %>
+      · <strong id="review-amount-in-review"><%= amount_in_review %></strong> total
+    </p>
   </header>
 
   <article class="review--to-review-body review--to-review-list" data-bulk-menu-target="list">
@@ -15,26 +22,18 @@
                 review_path(from: review_from.iso8601, to: review_to.iso8601, page: next_param)
               }
             } do %>
+        <% previous_date = previous_date %>
         <% page.records.each do |bullet| %>
+          <% date = bullet.pops_on %>
+          <% if date.present? && previous_date != date %>
+            <%= render "collections/date_divider", date: date %>
+            <% previous_date = date %>
+          <% end %>
           <%= render "reviews/bullet", bullet: bullet %>
         <% end %>
       <% end %>
     <% else %>
-      <p class="review--to-review-empty utilities--text-sm">Nothing to review</p>
+      <p class="review--to-review-empty">Nothing to review</p>
     <% end %>
   </article>
-
-  <% if amount_in_review.to_i.positive? %>
-    <footer id="review-migrate-footer" class="review--to-review-footer">
-      <%= form_with url: mark_as_reviewed_path,
-                    method: :post do %>
-        <%= hidden_field_tag :from, review_from.iso8601 %>
-        <%= hidden_field_tag :to, review_to.iso8601 %>
-        <%= button_tag type: :submit, class: "button--secondary" do %>
-          <span class="review--migration-mark" aria-hidden="true"></span>
-          Mark all as reviewed
-        <% end %>
-      <% end %>
-    </footer>
-  <% end %>
 </main>

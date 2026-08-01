@@ -29,7 +29,6 @@
 
     form {
       display: inline-flex;
-      margin: 0;
     }
 
     @media (min-width: 621px) {
@@ -101,20 +100,13 @@
     flex-direction: column;
     gap: var(--spacing-vertical-half);
     margin: 0;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    padding: 0;
     list-style: none;
   }
 
   .bulk-menu--picker-list-item {
     margin: 0;
     padding: 0;
-  }
-
-  .bulk-menu--picker-list .dropdown-item[aria-selected="true"],
-  .bulk-menu--picker-list .dropdown-item[aria-selected="true"]:focus-visible {
-    background: var(--color-bg-subtle);
-    color: var(--color-fg-base);
-    box-shadow: none;
   }
 
   .bulk-menu--picker-list-item .collection--section-list-item {
@@ -168,12 +160,13 @@
   .bulk-menu--collect-picker {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-vertical-half);
+    gap: var(--spacing-vertical);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half) var(--spacing-horizontal-half);
   }
 
   .bulk-menu--collect-search {
-    margin: 0;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half) 0;
+    margin-top: var(--spacing-vertical-half);
+    padding: 0;
 
     .form-input {
       width: 100%;
@@ -182,7 +175,7 @@
 
   .bulk-menu--collect-empty {
     margin: 0;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+    padding: 0;
     color: var(--color-fg-subtle);
     text-align: center;
   }

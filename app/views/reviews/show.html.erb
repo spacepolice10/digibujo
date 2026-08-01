@@ -1,24 +1,16 @@
 <% content_for(:title) { "Review" } %>
 
 <div class="layout--page review--page">
-  <%= render "reviews/header",
-        review_from: @review_from,
-        review_to: @review_to,
-        amount_in_review: @amount_in_review %>
-
   <div class="review--workspace">
     <turbo-frame id="review_collections_frame" src="<%= review_collections_path(from: @review_from, to: @review_to) %>">
     </turbo-frame>
-
-    <div class="review--divider" aria-hidden="true"></div>
 
     <%= render "reviews/to_review",
           review_from: @review_from,
           review_to: @review_to,
           page: @page,
-          amount_in_review: @amount_in_review %>
-
-    <div class="review--divider" aria-hidden="true"></div>
+          amount_in_review: @amount_in_review,
+          previous_date: @previous_date %>
 
     <turbo-frame id="review_scheduled_frame" src="<%= review_scheduled_path(from: @review_from, to: @review_to) %>">
     </turbo-frame>

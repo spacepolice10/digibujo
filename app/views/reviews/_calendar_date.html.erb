@@ -1,5 +1,5 @@
 <%# locals: (date:, bullets: [], daylog_bucket:) %>
-<div class="review--date-band<%= " review--date-band-current" if date == Date.current %>">
+<div class="review--date-band">
   <div class="review--date-rail">
     <%= link_to daylog_path(date: date.iso8601),
           class: "review--date-number",
@@ -16,6 +16,7 @@
          data-pops-drop-bucket-id-value="<%= daylog_bucket.id %>"
          data-pops-drop-pops-on-value="<%= date.iso8601 %>"
          data-pops-drop-requested-with-value="review-pops-drop"
+         data-pops-drop-optimistic-value="drop-postpone-optimistic"
          data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop">
       <% bullets.each do |bullet| %>
         <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>

@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   get 'manifest', to: 'rails/pwa#manifest', as: :pwa_manifest
   get 'service-worker', to: 'rails/pwa#service_worker', as: :pwa_service_worker
 
-  root 'home#show'
+  root 'daylogs#show'
 
   # --- Authentication ---
   resource :authentication, only: %i[new create destroy], controller: 'authentication' do
@@ -75,7 +75,6 @@ Rails.application.routes.draw do
     resource :archive
     resource :collect, only: %i[new create]
     resource :publish
-    resource :mark_as_reviewed
   end
 
   resources :bullets, except: %i[index new]

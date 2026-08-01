@@ -98,7 +98,7 @@ List views use **`<%= render partial: bullet.to_partial_path, locals: { bullet: 
 
 `Bullet` has a `pinned` boolean column (`default: false, null: false`). Archive state is **not** a column — it lives in a separate polymorphic `Archive` entity (see **Archive entity** below). There is no `status` enum. `Pinnable` adds a `pinned` scope and `pin!` / `unpin!` helpers (used by bullets and buckets; no pin count limit). **`Archivable`** adds `archived` / `active` scopes backed by the `archives` join. Daylog and other list views use the **`active`** scope to hide archived bullets; pinned bullets remain visible and are distinguished by icons in the marker.
 
-`Bullet` tracks **`migrated_at`** (`datetime`, nullable) and **`last_migration`** (json, default `{}`). BuJo moves go through **`Migratable#mark_migration!`** with action `collected` or `rescheduled` (and matching Activity). **`mark_as_reviewed!`** and **`Task#complete!`** only set `migrated_at` (and clear `last_migration` on review) so the bullet leaves the review inbox — they are not BuJo migration actions. Archiving does **not** stamp `migrated_at`. `migrated?` is `migrated_at.present?`. Row markers use `collected_migration?` / `rescheduled_migration?` plus `migration_hint` in an anchored dropdown. Project tags do **not** stamp migration.
+`Bullet` tracks **`migrated_at`** (`datetime`, nullable) and **`last_migration`** (json, default `{}`). BuJo moves go through **`Migratable#mark_migration!`** with action `collected` or `rescheduled` (and matching Activity). **`Task#complete!`** only sets `migrated_at` (and clears `last_migration`) so the bullet leaves the review inbox — it is not a BuJo migration action. Archiving does **not** stamp `migrated_at`. `migrated?` is `migrated_at.present?`. Row markers use `collected_migration?` / `rescheduled_migration?` plus `migration_hint` in an anchored dropdown. Project tags do **not** stamp migration.
 
 ## Archive entity
 
@@ -114,7 +114,7 @@ Archiving (`Bullet` or `Bucket`) is modelled as a row in **`archives`** (`archiv
 
 ## Activity
 
-`Activity` is a polymorphic audit log: **`subject`** (`Bullet`, `Bucket`, or `Archive`), **`action`** (string from a flat `Activity::ACTIONS` list), **`metadata`** (json), **`user_id`**. Recording goes through **`ActivityTrackable#record_activity!`** on subjects, except archive/unarchive which are written from `Archive` callbacks and pin/unpin from `PinnedEntity` callbacks. Actions: `updated`, `collected`, `rescheduled`, `completed`, `uncompleted`, `pinned`, `unpinned`, `project_mentioned` / `project_unmentioned`, `created`, `destroyed`, `archived`, `unarchived`. Bucket `created` is recorded from controllers (collections/monthlylogs); `destroyed` from `CleanSoftDeletedRecordsJob` before hard delete (snapshots `name` / `colour` / `bucketable_type`). Bucket activities are retained after hard delete so `destroyed` rows remain until swept. BuJo migrate intents (`postpone!` → `rescheduled`, `collect!` → `collected`) write bullet activities with migration payload in `metadata`. Complete records Activity `completed` and sets `migrated_at` only; **`mark_as_reviewed!`** sets `migrated_at` with no Activity. Feed copy is built by **`ActivitiesHelper#activity_sentence`** (links via `polymorphic_path`). **`GET /activities`** lists the user's global feed (no subject filter). **`GET /activities/compact`** returns the latest six activities for the home rail.
+`Activity` is a polymorphic audit log: **`subject`** (`Bullet`, `Bucket`, or `Archive`), **`action`** (string from a flat `Activity::ACTIONS` list), **`metadata`** (json), **`user_id`**. Recording goes through **`ActivityTrackable#record_activity!`** on subjects, except archive/unarchive which are written from `Archive` callbacks and pin/unpin from `PinnedEntity` callbacks. Actions: `updated`, `collected`, `rescheduled`, `completed`, `uncompleted`, `pinned`, `unpinned`, `project_mentioned` / `project_unmentioned`, `created`, `destroyed`, `archived`, `unarchived`. Bucket `created` is recorded from controllers (collections/monthlylogs); `destroyed` from `CleanSoftDeletedRecordsJob` before hard delete (snapshots `name` / `colour` / `bucketable_type`). Bucket activities are retained after hard delete so `destroyed` rows remain until swept. BuJo migrate intents (`postpone!` → `rescheduled`, `collect!` → `collected`) write bullet activities with migration payload in `metadata`. Complete records Activity `completed` and sets `migrated_at` only. Feed copy is built by **`ActivitiesHelper#activity_sentence`** (links via `polymorphic_path`). **`GET /activities`** lists the user's global feed (no subject filter). **`GET /activities/compact`** returns the latest six activities for the home rail.
 
 ## Tracker
 
@@ -154,22 +154,22 @@ Current.user.bullets.in_review(@review_from..@review_to)
 
 - **Daylog home only** — monthly/future/collection bullets are excluded.
 - **`pops_on` must be set** — unplanned bullets (`pops_on` nil) are excluded.
-- **Already migrated / reviewed** bullets are excluded (`migrated_at` set by pop, collect, complete, or `mark_as_reviewed!`).
+- **Already migrated** bullets are excluded (`migrated_at` set by pop, collect, or complete).
 - **Archived** bullets are excluded via the **`active`** scope.
 
-**Mark as reviewed:** `POST /bullets/mark_as_reviewed` (`Bullets::MarkAsReviewedsController#create`) calls `mark_as_reviewed!` on all matching bullets (or a `bullet_ids` subset). Redirects back to review. Footer **Mark all as reviewed** and bulk-menu **Mark reviewed** (when `@review_from` / `@review_to` are set via `ApplicationHelper#bulk_menu_review_period`) post here.
+Leaving the inbox is done via collect, postpone, complete, or archive — there is no separate “mark reviewed” action.
 
-**Review UI (desktop, `show.html.erb`, ≥800px):** 3-column workspace in `review.css`:
+**Review UI (desktop, `show.html.erb`):** 3-column workspace in `review.css` (`height: 90dvh` like monthlylog spread; flex row with `flex-wrap`, sides `1fr` / center `2fr` so Collections and Schedule stay equal while To review is widest; columns wrap under each other when the window is too narrow; each column `overflow-y: auto`):
 
 | Column | Frame / route | Behaviour |
 |--------|-------------|-----------|
-| Collections (left) | Lazy `turbo-frame#review_collections_frame` → `GET /review/collections` | Paginated list + combobox search; drop → collect via `collect-drop` |
-| To review (center) | Inline in `show` | Paginated inbox; draggable bullets + bulk-menu; footer marks all reviewed |
-| Schedule (right) | Lazy `turbo-frame#review_scheduled_frame` → `GET /review/scheduled` | 7 days forward from today (`Date.current..Date.current+6`); `.active` bullets per day; drop → postpone via `pops-drop` with `reviewDrop` |
+| Collections (left) | Lazy `turbo-frame#review_collections_frame` → `GET /review/collections` | Paginated list + combobox search; `collection--section-list-item` rows; drop → collect via `collect-drop` |
+| To review (center) | Inline in `show` | Period/count as centered section description; `collection--date-divider` between `pops_on` groups; geared pagination; draggable bullets + bulk-menu |
+| Schedule (right) | Lazy `turbo-frame#review_scheduled_frame` → `GET /review/scheduled` | 7 days forward from today (`Date.current..Date.current+6`); `.active` bullets per day; drop → postpone via `pops-drop` with `X-Requested-With: review-pops-drop` (optimistic append to end of day zone) |
 
 Side partials: `reviews/_collections_side`, `reviews/_to_review`, `reviews/_calendar_side` / `_calendar_date`.
 
-**Mobile** (`show.html+mobile.erb`): inbox list + bulk-menu only (no side columns, no per-row action chrome). Drop handlers POST with optimistic client removal; collect drop still accepts turbo-stream responses (errors re-render via stream). Pops drop uses `X-Requested-With: review-pops-drop` / `pops-drop`; pops controller returns `head :no_content` for drop requests.
+**Mobile** (`show.html+mobile.erb`): same three sections in a horizontal CSS scroll-snap track (`.review--spread-sections`, like monthlylog). Starts on To review (`review-mobile-sections` → `scrollToReview`). Triage on touch via bulk-menu (Later / Save / Archive / Complete). Drop handlers POST with optimistic client updates (append to end of drop zone / remove on collect). Pops drop uses `X-Requested-With: review-pops-drop` / `pops-drop`; pops controller returns `head :no_content` for drop requests.
 
 ## Logs (optional Future / Monthlylog, single Daylog + Pending)
 
@@ -187,11 +187,11 @@ Logs are **independent** buckets — no FK ownership between Future, Monthlylog,
 
 Select bullets via the marker checkbox inlined in **`bullets/_bullet.html.erb`** (and monthly/future drag wrappers) — `bullet--marker` label over a screen-reader checkbox with `data-bulk-menu-target="checkbox"`. The sticky **`_bulk_menu`** (styled in `bulk-menu.css`, driven by `bulk-menu` Stimulus on the page wrapper) keeps selection in **`idListValue`** and syncs a comma-separated `bullet_ids` CSV into every `data-bulk-menu-target="idList"` hidden field.
 
-**Direct intents (no UI fetch):** **pin**, **archive**, **mark reviewed** (on review pages) — `POST`/`DELETE` with `turbo_stream` from menu forms.
+**Direct intents (no UI fetch):** **pin**, **archive** — `POST`/`DELETE` with `turbo_stream` from menu forms.
 
 **UI fetch then intent:** **Later** (postpone) and **Save** (collect) — `openPopsPicker` / `openCollectsPicker` set frame `src` with `bullet_ids` from `idListValue`, then `showPopover()` (lazy turbo-frame + popover, like pinned footer); picker POST/search forms use `data-bulk-menu-target="idList"` (synced on `idListTargetConnected` and `idListValueChanged`). Collect picker search reloads via GET with `q`; **create collection** link passes `bullet_ids` and `return_to` to `new_collection_path`. Menu embeds search via `searches/form` + `searches/palette` + combobox (`GET /search`, turbo-stream for live input); menu shell is `GET /menu`. ⌘J opens menu, ⌘K opens menu and focuses search. Lexxy `#` / `@` suggestions use `filter`.
 
-**Postpone intent:** `POST /bullets/postpone` with required `bucket_id` and optional `pops_on`. Date options send Daylog + date; **This month** sends current Monthlylog when it exists (`pops_on` nil); **Sometime** sends covering Future when it exists (`pops_on` nil). Monthly/Future/review drops always pass an explicit `bucket_id`. **Collect intent:** `POST /bullets/collect` with `bucket_id` migrates into a collection (no uncollect). Pin/Unpin and complete/uncomplete hide based on selection state. Activity records `rescheduled`, `collected`, `completed`, `pinned`, and `unpinned` where applicable (`mark_as_reviewed!` does not create an Activity).
+**Postpone intent:** `POST /bullets/postpone` with required `bucket_id` and optional `pops_on`. Date options send Daylog + date; **This month** sends current Monthlylog when it exists (`pops_on` nil); **Sometime** sends covering Future when it exists (`pops_on` nil). Monthly/Future/review drops always pass an explicit `bucket_id`. **Collect intent:** `POST /bullets/collect` with `bucket_id` migrates into a collection (no uncollect). Pin/Unpin and complete/uncomplete hide based on selection state. Activity records `rescheduled`, `collected`, `completed`, `pinned`, and `unpinned` where applicable.
 
 `Collectable` / `Postponable` resolve destination and `pops_on`, then call **`Migratable#migrate_to!`** with an explicit action; they do not convert bullet type. Archive remains a separate soft-delete entity (not a bucket).
 
@@ -293,7 +293,6 @@ POST   /bullets/postpone                    → bullets/postpones#create (`bucke
 GET    /bullets/postpone/new                → bullets/postpones#new
 POST   /bullets/publish                     → bullets/publishes#create
 DELETE /bullets/publish                     → bullets/publishes#destroy
-POST   /bullets/mark_as_reviewed            → bullets/mark_as_revieweds#create
 
 # Tasks
 POST   /tasks/complete                      → tasks/completes#create

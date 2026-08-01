@@ -102,16 +102,6 @@ class MigratableTest < ActiveSupport::TestCase
     assert_equal 'completed', Activity.order(:created_at).last.action
   end
 
-  test 'mark_as_reviewed! stamps migrated_at without activity' do
-    assert_no_difference -> { Activity.count } do
-      @bullet.mark_as_reviewed!
-    end
-
-    @bullet.reload
-    assert @bullet.migrated?
-    assert_equal({}, @bullet.last_migration)
-  end
-
   test 'archive! does not mark migration' do
     @bullet.archive!
 
@@ -140,8 +130,8 @@ class MigratableTest < ActiveSupport::TestCase
     assert_nil @bullet.migration_hint
   end
 
-  test 'migration_hint is nil for review-only stamp' do
-    @bullet.mark_as_reviewed!
+  test 'migration_hint is nil for complete-only stamp' do
+    @bullet.bulletable.complete!
 
     assert_nil @bullet.migration_hint
   end

@@ -8,30 +8,36 @@
   @media (min-width: 800px) {
     .review--page {
       max-width: none !important;
-      min-height: calc(100vh - var(--spacing-vertical) * 2);
+      overflow: hidden;
+      padding-bottom: var(--spacing-vertical);
+      box-sizing: border-box;
     }
   }
 
-  .review--header {
-    margin-bottom: var(--spacing-vertical);
-  }
-
   .review--workspace {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 1px minmax(0, 2fr) 1px minmax(0, 2fr);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 1px;
     flex: 1;
     min-height: 0;
+    height: 90dvh;
     border: 1px solid var(--color-stroke-base);
-    background: var(--color-bg-subtle);
+    background: var(--color-stroke-base);
     border-radius: var(--radius-strong);
-    overflow: hidden;
+    overflow: auto;
   }
 
+  /* Sides equal; center grows ~2×. Wrap under each other when the window is narrow. */
   .review--workspace > turbo-frame {
     display: flex;
     flex-direction: column;
-    min-width: 0;
+    flex: 1 1 16rem;
+    min-width: min(100%, 16rem);
     min-height: 0;
+    max-height: 90dvh;
+    overflow: hidden;
+    background: var(--color-bg-subtle);
   }
 
   .review--workspace > turbo-frame > * {
@@ -40,37 +46,33 @@
     min-height: 0;
   }
 
+  .review--workspace > .review--to-review {
+    flex: 2 1 24rem;
+    min-width: min(100%, 20rem);
+    max-height: 90dvh;
+    background: var(--color-bg-subtle);
+  }
+
   .review--collections,
-  .review--calendar {
+  .review--calendar,
+  .review--to-review {
+    display: flex;
+    flex-direction: column;
     min-width: 0;
     min-height: 0;
     overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .review--calendar-body {
     display: flex;
     flex-direction: column;
     padding-inline: var(--spacing-horizontal);
+    padding-bottom: var(--spacing-vertical);
   }
 
   .review--date-band {
     padding-block: calc(var(--spacing-vertical-half) / 2);
-  }
-
-  .review--date-band-current .review--date-number {
-    color: var(--color-fg-base);
-  }
-
-  .review--date-band-current .review--date-number::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: var(--spacing-vertical-half);
-    bottom: var(--spacing-vertical-half);
-    width: var(--radius-base);
-    border-radius: var(--radius-full);
-    background: var(--model-color-4);
-    pointer-events: none;
   }
 
   .review--date-rail {
@@ -117,154 +119,117 @@
     align-self: stretch;
   }
 
-  .review--to-review {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    min-height: 0;
-    overflow-y: auto;
-  }
-
   .review--to-review-body {
     padding-inline: var(--spacing-horizontal);
+    padding-bottom: var(--spacing-vertical);
   }
 
   .review--divider {
-    background: var(--color-stroke-base);
+    display: none;
   }
 
   .review--collections-header,
   .review--to-review-header,
   .review--calendar-header {
     display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--spacing-horizontal-half);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    flex-shrink: 0;
+    min-height: calc(var(--spacing-horizontal-double) + var(--spacing-vertical));
     margin-bottom: var(--spacing-vertical);
-    border-bottom: 1px solid var(--color-stroke-base);
     padding-block: var(--spacing-vertical);
     padding-inline: var(--spacing-horizontal);
+    text-align: center;
   }
 
   .review--side-name {
     margin: 0;
-    font-size: var(--font-size-base-read);
+    font-size: var(--font-size-xs);
     font-weight: var(--font-weight-strong);
+    color: var(--color-fg-base);
   }
 
   .review--side-description {
-    margin: var(--spacing-vertical-half) 0 0;
-    color: var(--color-fg-subtle);
-  }
-
-  .review--collections-empty {
     margin: 0;
+    font-size: var(--font-size-xs);
     color: var(--color-fg-subtle);
   }
 
+  .review--collection-create {
+    box-sizing: border-box;
+    width: 100%;
+    margin-block-start: var(--spacing-vertical);
+    margin-block-end: var(--spacing-vertical-half);
+    cursor: pointer;
+
+    @media (hover: hover) {
+      &:hover {
+        border-color: var(--color-stroke-strong);
+      }
+    }
+
+    &:focus-visible {
+      outline: none;
+      border-color: var(--color-stroke-strong);
+      background: var(--color-bg-base);
+    }
+  }
+
+  .review--collections-empty,
   .review--to-review-empty {
     margin: 0;
+    font-size: var(--font-size-xs);
     color: var(--color-fg-subtle);
+    text-align: center;
   }
 
   .review--collections-section {
     padding-inline: var(--spacing-horizontal);
+    padding-bottom: var(--spacing-vertical);
   }
 
   .review--collections-search {
     width: 100%;
     flex-shrink: 0;
+    margin-bottom: var(--spacing-vertical-half);
   }
 
   .review--collections-list {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-vertical-half);
-    padding-block: var(--spacing-vertical);
+    padding-block: var(--spacing-vertical-half);
     margin: 0;
     list-style: none;
   }
 
   .review--collections-item {
     display: flex;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
-    width: 100%;
-  }
-
-  .review--collections-drop-form {
-    flex: 1;
-    min-width: 0;
-    margin: 0;
-  }
-
-  .review--collections-link {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
     width: 100%;
     min-width: 0;
-    padding: var(--spacing-vertical-half) 0;
-    border: 0;
-    background: transparent;
-  }
-
-  .review--collections-item-name {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
-  }
-
-  .review--collections-item-marker {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    width: var(--spacing-horizontal-double);
-    height: var(--spacing-horizontal-double);
-    border-radius: var(--radius-base);
-    border: 1px solid var(--color-stroke-base);
-    overflow: hidden;
-  }
-
-  .review--collections-item-marker[data-bucket-colour] {
-    background: var(--entity-color-bg);
-    border-color: color-mix(
-      in oklch,
-      var(--entity-color) 40%,
-      var(--color-stroke-base)
-    );
-  }
-
-  .review--collections-item-marker .icon {
-    width: var(--spacing-horizontal);
-    height: var(--spacing-horizontal);
-  }
-
-  .review--collections-item-marker[data-bucket-colour] .icon {
-    color: var(--entity-color);
   }
 
   .review--collection-drop-target {
-    border-radius: var(--radius-base);
+    flex: 1;
+    min-width: 0;
+    border-radius: var(--radius-strong);
   }
 
-  .review--to-review-list .records-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-vertical);
+  .review--collection-drop-target .collection--section-list-item {
+    width: 100%;
+    box-sizing: border-box;
+
+    @media (hover: hover) {
+      &:hover {
+        border-color: var(--color-stroke-strong);
+      }
+    }
   }
 
   .review--to-review-list .bullet {
     margin-block: 0;
-  }
-
-  .review--to-review-footer {
-    padding-top: var(--spacing-vertical);
-    width: fit-content;
-    margin-inline: auto;
   }
 
   .review--bullet {
@@ -289,48 +254,88 @@
     border-radius: var(--radius-base);
   }
 
-  .review--page-mobile .review--header {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    background: var(--color-bg-base);
-  }
-
-  .review--page-mobile .review--to-review-list {
-    flex: none;
-    align-self: flex-start;
-    overflow: visible;
+  /* Fixed viewport like monthlylog — no document scroll; sections swipe horizontally. */
+  .review--page-mobile.layout--page {
+    background: transparent;
     width: 100%;
-    padding-inline: 0;
+    max-width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    padding: 0;
+    padding-bottom: var(--layout-scroll-padding);
+    box-sizing: border-box;
+    gap: 0;
+    overflow: hidden;
   }
 
-  .review--migration-mark {
-    font-weight: var(--font-weight-strong);
+  html:has(.review--page-mobile) body {
+    padding-bottom: 0 !important;
+    scroll-padding-bottom: 0 !important;
   }
 
-  @media (max-width: 799px) {
-    .review--workspace {
-      display: flex;
-      flex-direction: column;
-      border: none;
-      background: transparent;
-      border-radius: 0;
-      overflow: visible;
-    }
+  .review--spread-sections {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    flex: 1 1 0;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scroll-snap-stop: always;
+  }
 
-    .review--divider {
-      display: none;
-    }
+  .review--section {
+    flex: 0 0 100%;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    height: 100%;
+    min-height: 0;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+  }
 
-    .review--collections,
-    .review--to-review,
-    .review--calendar {
-      overflow: visible;
-      padding: 0;
-    }
+  .review--section > turbo-frame {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: hidden;
+  }
 
-    .review--to-review-body {
-      overflow: visible;
-    }
+  .review--section > turbo-frame > *,
+  .review--section > .review--collections,
+  .review--section > .review--to-review,
+  .review--section > .review--calendar {
+    flex: 1 1 0;
+    min-height: 0;
+  }
+
+  .review--page-mobile .review--collections,
+  .review--page-mobile .review--to-review,
+  .review--page-mobile .review--calendar {
+    overflow-y: auto;
+    overscroll-behavior: auto;
+    border: 1px solid var(--color-stroke-base);
+    background: var(--color-bg-subtle);
+    border-radius: var(--radius-strong);
+  }
+
+  .review--page-mobile .review--collections-header,
+  .review--page-mobile .review--to-review-header,
+  .review--page-mobile .review--calendar-header {
+    margin-bottom: var(--spacing-vertical-half);
+    padding-block: var(--spacing-vertical-half);
   }
 }
