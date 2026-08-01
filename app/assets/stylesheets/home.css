@@ -71,11 +71,11 @@
     justify-content: center;
     flex-shrink: 0;
     box-sizing: border-box;
-    border: 1px solid var(--color-stroke-subtle);
+    border: 1px solid var(--color-stroke-base);
     border-radius: var(--radius-full);
     background-color: var(--color-bg-base);
-    width: var(--spacing-vertical-double) !important;
-    height: var(--spacing-vertical-double) !important;
+    width: var(--spacing-vertical-triple) !important;
+    height: var(--spacing-vertical-triple) !important;
     padding: 0;
 
     .icon {

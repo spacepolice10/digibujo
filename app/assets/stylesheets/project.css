@@ -12,23 +12,25 @@
         height: 5ch !important;
     }
 
-    .project--list {
+    .project--section-list {
         min-height: 80dvh;
     }
 
-    .project--list-item {
+    .project--section-list-item {
         display: flex;
         gap: var(--spacing-horizontal-half);
-        padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+        padding: var(--spacing-vertical) var(--spacing-horizontal);
         flex: 1;
         text-decoration: none;
         color: inherit;
-        border-radius: var(--radius-base);
+        border: 1px solid var(--color-stroke-base);
+        border-radius: var(--radius-strong);
         align-items: center;
         height: fit-content;
 
         &:hover {
-            background-color: var(--color-bg-base);
+            background: var(--color-bg-subtle);
+            border-color: var(--color-stroke-base);
         }
     }
 }

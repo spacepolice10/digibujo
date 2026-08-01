@@ -29,8 +29,8 @@
     flex: 1;
     overflow-y: auto;
     background: var(--color-bg-subtle);
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
+    border: 1px solid var(--color-stroke-subtle);
+    border-radius: var(--radius-strong);
     box-shadow: var(--elevation-1);
     border: none;
   }
@@ -52,6 +52,8 @@
     width: 100%;
     flex-shrink: 0;
     background: var(--color-bg-subtle);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-strong);
   }
 
   .search--dismiss {

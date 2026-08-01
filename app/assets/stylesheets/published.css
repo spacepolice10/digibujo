@@ -16,7 +16,7 @@
     min-height: 80dvh;
   }
 
-  .published--empty {
+  .published--placeholder {
     text-align: center;
     color: var(--color-fg-subtle);
     padding: var(--spacing-vertical) var(--spacing-horizontal);

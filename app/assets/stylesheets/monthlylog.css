@@ -16,16 +16,16 @@
   .monthlylog--section-list-item {
     display: flex;
     gap: var(--spacing-horizontal-half);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
     flex: 1;
     text-decoration: none;
     color: inherit;
-    border-radius: var(--radius-base);
     align-items: center;
     height: fit-content;
 
     &:hover {
-      background-color: var(--color-bg-base);
+      background: var(--color-bg-subtle);
+      border-color: var(--color-stroke-base);
     }
   }
 

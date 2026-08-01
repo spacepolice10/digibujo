@@ -71,6 +71,7 @@
   .layout--flex {
     display: flex;
     gap: var(--spacing-vertical);
+    flex-wrap: wrap;
 
     &.layout--justify-between {
       justify-content: space-between;

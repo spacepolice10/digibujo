@@ -63,13 +63,13 @@
     }
 
     .icon {
-      width: var(--spacing-horizontal-double);
-      height: var(--spacing-horizontal-double);
+      width: var(--spacing-horizontal);
+      height: var(--spacing-horizontal);
       flex-shrink: 0;
     }
   }
 
-  .menu--navigation-label {
+  .menu--navigation-name {
     width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;

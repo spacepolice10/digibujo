@@ -16,11 +16,9 @@
 
     <div class="layout--list layout--padded published--list">
       <% if @bullets.any? %>
-        <ul class="layout--list">
-          <%= render partial: "published/bullet", collection: @bullets, as: :bullet %>
-        </ul>
+        <%= render partial: "published/bullet", collection: @bullets, as: :bullet %>
       <% else %>
-        <p class="published--empty typography--paragraph-sm">Nothing published yet.</p>
+        <p class="published--placeholder typography--paragraph-sm">Nothing published yet.</p>
       <% end %>
     </div>
   </div>
