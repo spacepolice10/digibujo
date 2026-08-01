@@ -98,17 +98,6 @@ lexxy-table-tools {
     list-style-position: inside;
 }
 
-@keyframes composer-ios-focus-lock {
-  from {
-    opacity: 0.99;
-    transform: translateZ(0);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateZ(0);
-  }
-}
 
 /* Compact chat line: match icon control height so the caret sits level with
    type / upload / mic / submit. Multiline only relaxes line-height. */

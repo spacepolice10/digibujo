@@ -1,0 +1,10 @@
+<h1><%= @date.strftime("%B %-d") %></h1>
+<turbo-frame id="monthlylog_date" class="monthlylog--date-grid" >
+    <div class="layout--grid layout--gapped layout--padded layout--list">
+        <ul>
+            <% @bullets.each do |bullet| %>
+                <%= render "monthlylogs/bullets/bullet", bullet: bullet %>
+            <% end %>
+        </ul>
+    </div>
+</turbo-frame>

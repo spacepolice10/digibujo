@@ -31,78 +31,9 @@
           aria-label="Planned by date"
           data-controller="scroll"
         >
-          <% if @days.any? %>
-            <div class="monthlylog--calendar-body">
-              <% @days.each do |date| %>
-                <% picture = @pictures_by_date[date] %>
-                <% has_photo = picture&.picture&.attached? %>
-                <div
-                  class="monthlylog--date-band<%= " monthlylog--date-band-current" if date == Date.current %>"
-                  <% if date == Date.current %> data-scroll-target="current" <% end %>
-                >
-                  <div class="monthlylog--date-rail<%= " monthlylog--date-rail--photo" if has_photo %>">
-                    <% if has_photo %>
-                      <div class="monthlylog--date-photo" aria-hidden="true">
-                        <%= image_tag picture.picture.variant(:band),
-                              alt: "",
-                              class: "monthlylog--date-photo-image" %>
-                      </div>
-                    <% end %>
-                    <%= link_to daylog_path(date: date.iso8601),
-                          class: "monthlylog--date-item",
-                          aria: { label: "Open #{date.strftime('%B %-d')} on daily log" } do %>
-                      <span class="monthlylog--date-number"><%= date.day %></span>
-                      <span class="monthlylog--date-name"><%= date.strftime("%a") %></span>
-                    <% end %>
-
-                    <div
-                      class="monthlylog--date-entries"
-                      data-controller="pops-drop drop-postpone-optimistic"
-                      data-pops-drop-pops-url-value="<%= postpone_path %>"
-                      data-pops-drop-bucket-id-value="<%= @monthlylog.bucket.id %>"
-                      data-pops-drop-pops-on-value="<%= date.iso8601 %>"
-                      data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop"
-                    >
-                      <div
-                        id="<%= dom_id(@monthlylog, "date_#{date.to_date}_bullets") %>"
-                        class="monthlylog--bullets-list"
-                        data-bulk-menu-target="list"
-                      >
-                        <%= turbo_frame_tag "monthlylog_bullets_#{date.to_date}_container" do %>
-                          <% (@bullets_by_date[date] || []).each do |bullet| %>
-                            <%= render "monthlylogs/bullets/bullet", bullet: bullet %>
-                          <% end %>
-                        <% end %>
-                      </div>
-
-                      <div class="monthlylog--date-artifacts">
-                        <div class="monthlylog--date-mood">
-                          <%= render "monthlylogs/metadata/mood_entity",
-                                date: date,
-                                entity: @mood_entities_by_date[date] %>
-                        </div>
-                        <% scheduled_trackers = @trackers.select { |tracker| tracker.scheduled_on?(date) } %>
-                        <% if scheduled_trackers.any? %>
-                          <div class="monthlylog--date-trackers">
-                            <% scheduled_trackers.each do |tracker| %>
-                              <%= render "trackers/date_toggle", tracker: tracker, date: date %>
-                            <% end %>
-                          </div>
-                        <% end %>
-                      </div>
-                      <div class="monthlylog--date-composer">
-                        <%= create_bullet_buttons bucket_id: @monthlylog.bucket.id,
-                              pops_on: date,
-                              bulletable_type: %w[Task Event] %>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              <% end %>
-            </div>
-          <% else %>
-            <p class="monthlylog--by-date-empty">No period set for this spread.</p>
-          <% end %>
+          <%= render "monthlylogs/calendar_grid", days: @days, date: @date %>
+          <turbo-frame src="<%= monthlylog_date_path(date: @date.iso8601) %>" id="monthlylog_date" class="monthlylog--date-grid">
+          </turbo-frame>
         </section>
 
         <div class="monthlylog--divider" aria-hidden="true"></div>

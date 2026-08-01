@@ -162,25 +162,25 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select '#bullet_composer lexxy-editor[preset=note]'
   end
 
-  test 'daylog renders metadata turbo frame' do
+  test 'daylog renders metadata popover frame' do
     date = Date.current
 
     get daylog_path
 
     assert_response :success
-    assert_select "turbo-frame#daylog_metadata_#{date.iso8601}"
-    assert_select 'a[data-turbo-frame=?][href=?]',
-                  "daylog_metadata_#{date.iso8601}",
+    assert_select "turbo-frame#daylog_metadata_#{date.iso8601}[popover][src=?]",
                   daylog_metadata_path(date: date.iso8601)
+    assert_select 'button[popovertarget=?]',
+                  "daylog_metadata_#{date.iso8601}"
   end
 
-  test 'daylog header links to the metadata turbo frame' do
+  test 'daylog header links to the metadata popover' do
     date = Date.current
 
     get daylog_path
 
     assert_response :success
-    assert_select ".daylog--header-controls a[aria-label=Metadata][data-turbo-frame=?]",
+    assert_select ".daylog--header-controls button[aria-label=Metadata][popovertarget=?]",
                   "daylog_metadata_#{date.iso8601}"
   end
 
@@ -201,7 +201,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     get daylog_metadata_path(date: date.iso8601)
 
     assert_response :success
-    assert_select '.daylog--metadata'
+    assert_select '.dropdown--element-body'
     assert_select '.daylog--mood'
     assert_select '.daylog--picture'
   end
@@ -212,7 +212,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     get daylog_metadata_path(date: date.iso8601)
 
     assert_response :success
-    assert_select '.daylog--metadata'
+    assert_select '.dropdown--element-body'
     assert_select '.daylog--mood'
     assert_select '.daylog--picture', count: 0
   end

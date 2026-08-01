@@ -5,7 +5,17 @@ class MonthlylogsController < ApplicationController
     @monthlylog = find_monthlylog
     return unless @monthlylog
 
+    @date = Date.current
     prepare_show
+  end
+
+  def monthlylog_date
+    @monthlylog = find_monthlylog
+    return unless @monthlylog
+
+    @date = Date.iso8601(params[:date])
+
+    @bullets = @monthlylog.bullets.where(pops_on: params[:date])
   end
 
   def new
@@ -53,7 +63,7 @@ class MonthlylogsController < ApplicationController
     grouped = scoped.where(pops_on: @days).group_by(&:pops_on)
     @bullets_by_date = @days.index_with { |day| grouped[day] || [] }
     @unplanned_bullets = scoped.where(pops_on: nil).order(created_at: :asc)
-    @trackers = Current.user.trackers.where("start_date <= ?", @monthlylog.period_to).chronological.with_completions
+    @trackers = Current.user.trackers.where('start_date <= ?', @monthlylog.period_to).chronological.with_completions
     @mood_entities_by_date = CalendarDate.mood_entities_by_date(Current.user, @days)
     @pictures_by_date = CalendarDate.pictures_by_date(Current.user, @days)
   end

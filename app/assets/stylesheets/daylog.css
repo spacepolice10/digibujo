@@ -149,18 +149,6 @@
     color: var(--color-fg-subtle);
   }
 
-  .daylog--metadata {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-vertical);
-    z-index: var(--z-dropdown);
-    right: var(--spacing-horizontal);
-    top: var(--spacing-horizontal-double);
-    padding: var(--spacing-horizontal);
-    max-width: var(--breakpoint-mobile);
-  }
-
   .daylog--metadata-trackers {
     display: flex;
     align-items: center;

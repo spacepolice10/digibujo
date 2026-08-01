@@ -146,10 +146,9 @@
       calc(100dvh - (2 * var(--spacing-horizontal)))
     );
     overflow: auto;
-    background-color: var(--color-bg-base);
-    border: 1px solid var(--color-stroke-base);
+    background: transparent;
+    border: none;
     border-radius: var(--radius-strong);
-    box-shadow: var(--shadow-base);
     position-area: center;
     margin: var(--spacing-vertical-half) var(--spacing-horizontal-half);
   }
@@ -166,6 +165,10 @@
   }
 
   .dropdown--element-body {
+    background: var(--color-bg-base);
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-strong);
+    box-shadow: var(--shadow-base);
     padding: var(--spacing-horizontal-half) var(--spacing-horizontal-half) var(--spacing-vertical-half);
   }
 

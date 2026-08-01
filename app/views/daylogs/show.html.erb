@@ -38,14 +38,24 @@
         </div>
 
         <div class="daylog--header-controls">
-          <a
-            href="<%= daylog_metadata_path(date: @selected_date.iso8601) %>"
-            data-turbo-frame="daylog_metadata_<%= @selected_date.iso8601 %>"
-            class="button--tertiary button--circle"
-            aria-label="Metadata"
-          >
-            <%= icon_tag("arrow-left") %>
-          </a>
+          <div class="dropdown--dock">
+            <button
+              type="button"
+              class="button--tertiary button--circle"
+              popovertarget="daylog_metadata_<%= @selected_date.iso8601 %>"
+              aria-label="Metadata"
+              aria-haspopup="dialog"
+            >
+              <%= icon_tag("arrow-left") %>
+            </button>
+            <turbo-frame
+              id="daylog_metadata_<%= @selected_date.iso8601 %>"
+              class="dropdown dropdown--element dropdown--element-up animations--side-in"
+              src="<%= daylog_metadata_path(date: @selected_date.iso8601) %>"
+              loading="lazy"
+              popover
+            ></turbo-frame>
+          </div>
         </div>
       </div>
     </header>
@@ -90,12 +100,7 @@
           <% end %>
         </div>
       </div>
-    
     </div>
-    
-
-    <turbo-frame id="daylog_metadata_<%= @selected_date.iso8601 %>" class="utilities--contents">
-    </turbo-frame>
 
     <%= render "bullets/composer",
       bucket_id: @daylog.bucket.id,
