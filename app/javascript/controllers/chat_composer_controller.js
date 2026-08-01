@@ -9,7 +9,7 @@ const TYPE_STORAGE_NAME = "digibujo.composer.type"
 // under the field via toolbar= — never reparent (disconnect disposes setEditor).
 export default class extends Controller {
   static targets = [
-    "form", "editor", "typeField", "typeIcon", "typeOption", "composerRail",
+    "form", "editor", "typeElement", "typeIcon", "typeOption", "composerRail",
     "recorderWrap", "submit", "submitFinished", "toolbarButton", "toolbarWrap",
     "cleanupButton", "recordButton"
   ]
@@ -40,7 +40,7 @@ export default class extends Controller {
 
     this.#prepareToolbar()
     this.#observeEditorHeight()
-    this.#switchType(this.#storedType || this.typeFieldTarget.value)
+    this.#switchType(this.#storedType || this.typeElementTarget.value)
     this.#syncTabbarInset()
     this.#syncKeyboardInset()
     this.refresh()
@@ -72,7 +72,7 @@ export default class extends Controller {
 
   // Field click focuses the editor — but never when the click already landed
   // inside <lexxy-editor> or the formatting toolbar under the field.
- refocus(event) {
+  refocus(event) {
     if (event?.target instanceof Element) {
       if (event.target.closest("lexxy-editor")) return
       if (event.target.closest("lexxy-toolbar, #composer_toolbar")) return
@@ -97,10 +97,21 @@ export default class extends Controller {
     if (this.#toolbarOpen) return
     if (this.#mobileDevice) return
     if (this.editorTarget.hasOpenPrompt) return
-    if (event.key != "Enter" || (event.key && !event.metaKey )) return
+    if (!this.allowedKeydownSubmit(event)) return
 
     event.preventDefault()
     this.submit()
+  }
+
+  allowedKeydownSubmit(event) {
+    const type = this.typeElementTarget.value
+    if (type == "Note" && event.key == 'Enter' && event.metaKey) {
+      return true
+    }
+    else if ((type == "Task" || type == "Event") && event.key == "Enter") {
+      return true
+    }
+    return false
   }
 
   submit() {
@@ -111,7 +122,7 @@ export default class extends Controller {
 
   switchToRecorderMode() {
     this.#hideToolbar()
-    this.typeBeforeVoice = this.typeFieldTarget.value
+    this.typeBeforeVoice = this.typeElementTarget.value
     this.#switchType("Voice")
     this.composerRailTarget.hidden = true
     this.recorderWrapTarget.hidden = false
@@ -126,7 +137,13 @@ export default class extends Controller {
     this.refresh()
   }
 
+  preventBlur(event) {
+    if (this.editorTarget.currentlyFocused) event.preventDefault()
+  }
+
   toggleToolbar() {
+
+    const isFocused = this.editorTarget.currentlyFocused
     if (this.#toolbarOpen) {
       this.#hideToolbar()
       return
@@ -135,6 +152,9 @@ export default class extends Controller {
     if (!this.#toolbarToggleable) return
 
     this.#showToolbar()
+
+    if (!isFocused) return
+    this.editorTarget.focus()
   }
 
   cleanup() {
@@ -267,8 +287,8 @@ export default class extends Controller {
   }
 
   #switchType(type) {
-    const name = type || this.typeFieldTarget.value
-    this.typeFieldTarget.value = name
+    const name = type || this.typeElementTarget.value
+    this.typeElementTarget.value = name
     this.element.dataset.bulletType = name.toLowerCase()
 
     this.typeIconTargets.forEach((icon) => {
@@ -285,7 +305,7 @@ export default class extends Controller {
 
   #syncPlaceholder() {
     const selected = this.typeOptionTargets.find(
-      (option) => option.dataset.composerType === this.typeFieldTarget.value
+      (option) => option.dataset.composerType === this.typeElementTarget.value
     )
     const text = selected?.dataset.composerPlaceholder
     if (!text) return
@@ -329,7 +349,7 @@ export default class extends Controller {
     const variants = this.typeOptionTargets.map((option) => option.dataset.composerType)
     if (variants.length === 0) return
 
-    const index = variants.indexOf(this.typeFieldTarget.value)
+    const index = variants.indexOf(this.typeElementTarget.value)
     const nextVariant = variants[(index + 1) % variants.length]
     this.#switchType(nextVariant)
     this.#saveTypeInLS(nextVariant)
@@ -359,8 +379,8 @@ export default class extends Controller {
   #syncMultiline() {
     if (this.element.classList.contains("composer--multiline")) return
 
-    if (this.#hasAttachment()) {
-      this.#latchMultiline()
+    if (this.#withAttachment() || this.#withRichData()) {
+      this.#growMultiline()
       return
     }
 
@@ -371,20 +391,27 @@ export default class extends Controller {
     if (this.editorTarget.isBlank) this.singleLineHeight = height
     if (!this.singleLineHeight) return
 
-    if (height > this.singleLineHeight + 4) this.#latchMultiline()
+    if (height > this.singleLineHeight + 4) this.#growMultiline()
   }
 
-  #latchMultiline() {
+  #growMultiline() {
     this.element.classList.add("composer--multiline")
     this.toolbarButtonTarget.hidden = !this.#toolbarToggleable
     this.cleanupButtonTarget.hidden = !this.#clearable
   }
 
-  #hasAttachment() {
+  #withAttachment() {
     const root = this.editorTarget.editorContentElement
     if (!root) return false
 
     return Boolean(root.querySelector("figure.attachment, action-text-attachment"))
+  }
+
+  #withRichData() {
+    const root = this.editorTarget.editorContentElement
+    if (!root) return false
+
+    return Boolean(root.querySelector("table, action-text-attachment, ul, ol"))
   }
 
   #syncKeyboardInset() {
@@ -450,7 +477,7 @@ export default class extends Controller {
   get #toolbarToggleable() {
     if (this.#toolbarOpen) return true
 
-    return !this.#recorderMode && this.typeFieldTarget.value === "Note"
+    return !this.#recorderMode && this.typeElementTarget.value === "Note"
   }
 
   get #clearable() {
@@ -461,7 +488,7 @@ export default class extends Controller {
   }
 
   get #recorderMode() {
-    return this.typeFieldTarget.value === "Voice"
+    return this.typeElementTarget.value === "Voice"
   }
 
   get #withRecording() {

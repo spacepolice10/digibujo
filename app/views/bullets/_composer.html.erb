@@ -26,7 +26,7 @@
     <%= fr.hidden_field :pops_on, value: pops_on %>
     <%= fr.hidden_field :bulletable_type,
           value: default_type,
-          data: { chat_composer_target: "typeField" } %>
+          data: { chat_composer_target: "typeElement" } %>
 
     <%# Voice file fields stay mounted for the whole form lifetime. %>
     <%= file_field_tag "bullet[bulletable_attributes][recording]",
@@ -151,7 +151,7 @@
         <div class="composer--actions">
           <button type="button"
                   class="composer--toolbar-toggle"
-                  data-action="chat-composer#toggleToolbar"
+                  data-action="chat-composer#toggleToolbar mousedown->chat-composer#preventBlur"
                   data-chat-composer-target="toolbarButton"
                   aria-label="Show formatting toolbar"
                   aria-expanded="false"

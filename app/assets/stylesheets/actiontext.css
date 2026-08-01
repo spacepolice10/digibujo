@@ -91,6 +91,13 @@ lexxy-editor:not(.composer--editor) {
   }
 }
 
+lexxy-table-tools {
+  margin-top: 1rem;
+}
+  ul, ol {
+    list-style-position: inside;
+}
+
 @keyframes composer-ios-focus-lock {
   from {
     opacity: 0.99;
@@ -131,7 +138,7 @@ lexxy-editor:not(.composer--editor) {
     - var(--composer-toolbar-band, 0px)
     - (var(--spacing-vertical-half) * 2)
     - (var(--spacing-horizontal) * 2)
-    - max(var(--spacing-vertical-quad) * 4, 12dvh)
+    - max(var(--spacing-vertical-triple) * 4, 12dvh)
   );
   overflow-y: auto;
 }
