@@ -1,18 +1,18 @@
 <%# locals: (bullet_ids:, return_to:, collects_q:, collections:, collections_page:) %>
-<div class="dropdown--element-header">
-  <h2>Save to collection</h2>
-  <button
-    type="button"
-    class="button--primary button--icon button--circle dropdown--element-hide"
-    popovertarget="collects_picker_dropdown_id"
-    popovertargetaction="hide"
-    aria-label="Close save to collection"
-  >
-    <%= icon_tag("x") %>
-  </button>
-</div>
-
 <div class="dropdown--element-body">
+  <div class="dropdown--header">
+    <h2>Save to collection</h2>
+    <button
+      type="button"
+      class="button--primary button--icon button--circle dropdown--element-hide"
+      popovertarget="collects_picker_dropdown_id"
+      popovertargetaction="hide"
+      aria-label="Close save to collection"
+    >
+      <%= icon_tag("x") %>
+    </button>
+  </div>
+
   <div class="bulk-menu--collect-picker"
        data-controller="combobox"
        data-combobox-path-value="<%= new_collect_path %>">

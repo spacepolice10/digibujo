@@ -99,14 +99,44 @@
   .bulk-menu--picker-list {
     display: flex;
     flex-direction: column;
+    gap: var(--spacing-vertical-half);
     margin: 0;
-    padding: 0;
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     list-style: none;
   }
 
   .bulk-menu--picker-list-item {
     margin: 0;
     padding: 0;
+  }
+
+  .bulk-menu--picker-list .dropdown-item[aria-selected="true"],
+  .bulk-menu--picker-list .dropdown-item[aria-selected="true"]:focus-visible {
+    background: var(--color-bg-subtle);
+    color: var(--color-fg-base);
+    box-shadow: none;
+  }
+
+  .bulk-menu--picker-list-item .collection--section-list-item {
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    font: inherit;
+    cursor: pointer;
+    appearance: none;
+
+    @media (hover: hover) {
+      &:hover {
+        border-color: var(--color-stroke-strong);
+      }
+    }
+
+    &:focus-visible,
+    &[aria-selected="true"] {
+      outline: none;
+      border-color: var(--color-stroke-strong);
+      background: var(--color-bg-base);
+    }
   }
 
   .bulk-menu--picker-date {
@@ -143,7 +173,7 @@
 
   .bulk-menu--collect-search {
     margin: 0;
-    padding-inline: var(--spacing-horizontal);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half) 0;
 
     .form-input {
       width: 100%;

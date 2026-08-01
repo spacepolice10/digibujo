@@ -42,7 +42,7 @@ module Bullets
           headers: { 'Turbo-Frame' => 'collects_picker_dropdown_id' }
 
       assert_response :success
-      assert_select 'turbo-frame#collects_picker_dropdown_id .dropdown--element-header h2', text: 'Save to collection'
+      assert_select 'turbo-frame#collects_picker_dropdown_id .dropdown--header h2', text: 'Save to collection'
       assert_select 'input[name="bullet_ids"][data-bulk-menu-target="idList"]'
       assert_match collection.name, response.body
     end

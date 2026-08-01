@@ -4,7 +4,7 @@
  * Markup patterns:
  *   <details class="dropdown"> … <div class="dropdown-body">
  *   <div class="dropdown--dock"> … <* class="dropdown dropdown--element …" popover>
- *     [.dropdown--element-header] + .dropdown--element-body
+ *     .dropdown--element-body > [.dropdown--header] + content
  *   <div class="dropdown-menu dropdown-menu--anchor …" popover>
  * Trigger: anchor-name on .dropdown--dock. Panel: position-anchor (component CSS).
  */
@@ -172,8 +172,36 @@
     padding: var(--spacing-horizontal-half) var(--spacing-horizontal-half) var(--spacing-vertical-half);
   }
 
+  /* Sticky title bar for titled overlay pickers (collect / postpone). */
+  .dropdown--header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-dialog-backdrop);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-horizontal);
+    padding: var(--spacing-horizontal-half);
+    background: var(--color-bg-base);
+    /* 1px hairline — no stroke-width token in the design system */
+    border-bottom: 1px solid var(--color-stroke-base);
+    box-shadow: var(--shadow-subtle), var(--shadow-base);
+    border-radius: var(--radius-strong) var(--radius-strong) 0 0;
+
+    & h2 {
+      margin: 0;
+      min-width: 0;
+      font-size: var(--font-size-base-type);
+      font-weight: var(--font-weight-strong);
+    }
+  }
+
   /* List rows flush to panel edges; item padding owns the inset. */
   .dropdown--element-body:has(.dropdown--menu) {
+    padding: 0;
+  }
+
+  .dropdown--element-body:has(> .dropdown--header) {
     padding: 0;
   }
 

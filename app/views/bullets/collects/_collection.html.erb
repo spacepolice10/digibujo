@@ -7,9 +7,16 @@
     <%= hidden_field_tag :bullet_ids, bullet_ids, data: { bulk_menu_target: "idList" } %>
     <%= hidden_field_tag :bucket_id, collection.bucket.id %>
     <button type="submit"
-            class="dropdown-item"
+            class="collection--section-list-item"
             data-combobox-target="item">
-      <%= render "collections/search_palette", collection: collection %>
+      <%= icon_tag(collection.bucket.icon, style: "color: #{colour(collection.bucket.colour)};", class: "home--section-list-item-icon") %>
+      <span class="utilities--line-clamp-1"><%= collection.name %></span>
+      •
+      <span class="typography--paragraph-sm utilities--line-clamp-1">
+        <%= collection.bullets.count %>
+        <%= "bullet".pluralize(collection.bullets.count) %>,
+        <%= collection.created_at.strftime("%b %d") %>
+      </span>
     </button>
   <% end %>
 </li>

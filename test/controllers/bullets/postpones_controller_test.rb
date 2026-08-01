@@ -40,7 +40,7 @@ module Bullets
           headers: { 'Turbo-Frame' => 'postpone_picker_dropdown_id' }
 
       assert_response :success
-      assert_select 'turbo-frame#postpone_picker_dropdown_id .dropdown--element-header h2', text: 'Schedule'
+      assert_select 'turbo-frame#postpone_picker_dropdown_id .dropdown--header h2', text: 'Schedule'
       assert_select 'turbo-frame#postpone_picker_dropdown_id button[data-grid-navigation-target=?]', 'item', count: 5
       assert_select 'input[name="bullet_ids"][data-bulk-menu-target="idList"]', count: 6
     end
