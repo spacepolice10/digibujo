@@ -1,31 +1,15 @@
-
 <div
   id="triage_chip"
-  class="dropdown--dock daylog--triage-chip"
-  style="anchor-name: --triage-chip"
+  class="daylog--triage-chip"
   data-controller="triage-chip"
   data-triage-chip-number-url-value="<%= triage_number_path %>"
-
 >
-  <button
-    id="triage_chip_button"
-    type="button"
-    class="triage--chip animations--popout"
-    popovertarget="triage_list"
-    aria-label="Triage chip"
-    aria-haspopup="dialog"
-    hidden
-  >
-      <%= icon_tag("mail", class: "daylog--triage-chip-icon") %>
-      <span id="triage_chip_number" class="daylog--triage-number"></span>
-  </button>
-
-  <turbo-frame
-    id="triage_list"
-    class="dropdown dropdown--element dropdown--element-bottom animations--side-in"
-    style="position-anchor: --triage-chip"
-    src="<%= triage_path %>"
-    loading="eager"
-    popover
-  ></turbo-frame>
+  <%= link_to triage_path,
+        id: "triage_chip_button",
+        class: "triage--chip animations--popout",
+        aria: { label: "Triage" },
+        hidden: true do %>
+    <%= icon_tag("mail", class: "daylog--triage-chip-icon") %>
+    <span id="triage_chip_number" class="daylog--triage-number"></span>
+  <% end %>
 </div>

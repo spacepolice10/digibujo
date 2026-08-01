@@ -54,6 +54,7 @@
   </div>
 
   <%= render "bullets/composer",
-        bucket_id: @collection.bucket.id %>
+        bucket_id: @collection.bucket.id,
+        composer_id: dom_id(@collection, :bullets_composer) %>
 </div>
 </div>

@@ -31,7 +31,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
 
     assert page.evaluate_script(<<~JS)
       (() => {
-        const editor = document.querySelector('#bullet_composer lexxy-editor')
+        const editor = document.querySelector('#daylog_bullets_composer lexxy-editor')
         return editor === document.activeElement || editor?.contains(document.activeElement)
       })()
     JS
@@ -51,12 +51,12 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     visit daylog_path(date: Date.current.iso8601)
 
     focus_composer
-    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
+    editor = find('#daylog_bullets_composer lexxy-editor .lexxy-editor__content')
     editor.send_keys('Still drafting')
     editor.send_keys(:enter)
 
     assert_equal 0, @user.bullets.reload.count
-    assert_selector '#bullet_composer.composer--multiline'
+    assert_selector '#daylog_bullets_composer.composer--multiline'
   end
 
   test 'enter sends a task' do
@@ -66,7 +66,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     find('.composer--type-option[data-composer-type="Task"]').click
 
     focus_composer
-    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
+    editor = find('#daylog_bullets_composer lexxy-editor .lexxy-editor__content')
     editor.send_keys('Buy oat milk')
     editor.send_keys(:enter)
 
@@ -82,7 +82,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
 
     assert_selector '.composer--submit[disabled]'
     assert_selector '.composer--record'
-    assert_equal '', find('#bullet_composer lexxy-editor .lexxy-editor__content').text
+    assert_equal '', find('#daylog_bullets_composer lexxy-editor .lexxy-editor__content').text
   end
 
   test 'the mic hides while the field has text and returns when emptied' do
@@ -91,7 +91,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     assert_selector '.composer--record'
 
     focus_composer
-    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
+    editor = find('#daylog_bullets_composer lexxy-editor .lexxy-editor__content')
     editor.send_keys('A')
 
     assert_no_selector '.composer--record'
@@ -113,19 +113,19 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     assert_equal 'Task', @user.bullets.reload.last.bulletable_type
 
     visit daylog_path(date: Date.current.iso8601)
-    assert_selector '#bullet_composer[data-bullet-type="task"]'
+    assert_selector '#daylog_bullets_composer[data-bullet-type="task"]'
   end
 
   test 'shift enter keeps writing instead of sending' do
     visit daylog_path(date: Date.current.iso8601)
 
     focus_composer
-    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
+    editor = find('#daylog_bullets_composer lexxy-editor .lexxy-editor__content')
     editor.send_keys('First line')
     editor.send_keys(%i[shift enter])
     editor.send_keys('Second line')
 
-    assert_selector '#bullet_composer.composer--multiline'
+    assert_selector '#daylog_bullets_composer.composer--multiline'
     assert_equal 0, @user.bullets.reload.count
   end
 
@@ -133,18 +133,18 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     visit daylog_path(date: Date.current.iso8601)
 
     focus_composer
-    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
+    editor = find('#daylog_bullets_composer lexxy-editor .lexxy-editor__content')
     editor.send_keys('First line')
     editor.send_keys(%i[shift enter])
     editor.send_keys('Second line')
-    assert_selector '#bullet_composer.composer--multiline'
+    assert_selector '#daylog_bullets_composer.composer--multiline'
 
     page.execute_script(<<~JS)
-      document.querySelector('#bullet_composer lexxy-editor').value = '<p>Short</p>'
-      document.querySelector('#bullet_composer lexxy-editor').dispatchEvent(new Event('lexxy:change'))
+      document.querySelector('#daylog_bullets_composer lexxy-editor').value = '<p>Short</p>'
+      document.querySelector('#daylog_bullets_composer lexxy-editor').dispatchEvent(new Event('lexxy:change'))
     JS
 
-    assert_selector '#bullet_composer.composer--multiline'
+    assert_selector '#daylog_bullets_composer.composer--multiline'
   end
 
   test 'toolbar toggle is Note-only and clear waits for multiline' do
@@ -156,12 +156,12 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     assert_no_selector '#composer_toolbar > button[name=bold]', visible: true
 
     focus_composer
-    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
+    editor = find('#daylog_bullets_composer lexxy-editor .lexxy-editor__content')
     editor.send_keys('First line')
     editor.send_keys(%i[shift enter])
     editor.send_keys('Second line')
 
-    assert_selector '#bullet_composer.composer--multiline'
+    assert_selector '#daylog_bullets_composer.composer--multiline'
     assert_selector '.composer--actions .composer--toolbar-toggle'
     assert_selector '.composer--lead .composer--clear[aria-label="Clear draft"]'
     assert_no_selector '#composer_toolbar > button[name=bold]', visible: true
@@ -170,12 +170,12 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
   test 'an attachment latches multiline' do
     visit daylog_path(date: Date.current.iso8601)
 
-    assert_no_selector '#bullet_composer.composer--multiline'
+    assert_no_selector '#daylog_bullets_composer.composer--multiline'
     assert_selector '.composer--actions .composer--toolbar-toggle'
     assert_no_selector '.composer--actions .composer--upload'
 
     page.execute_script(<<~JS)
-      const editor = document.querySelector('#bullet_composer lexxy-editor')
+      const editor = document.querySelector('#daylog_bullets_composer lexxy-editor')
       const content = editor.editorContentElement || editor.querySelector('.lexxy-editor__content')
       const figure = document.createElement('figure')
       figure.className = 'attachment attachment--file'
@@ -183,7 +183,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
       editor.dispatchEvent(new Event('lexxy:change'))
     JS
 
-    assert_selector '#bullet_composer.composer--multiline'
+    assert_selector '#daylog_bullets_composer.composer--multiline'
     assert_no_selector '#composer_toolbar > button[name=bold]', visible: true
   end
 
@@ -203,14 +203,14 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
   test 'toolbar toggle reveals formatting under the field without remounting' do
     visit daylog_path(date: Date.current.iso8601)
 
-    assert_selector '#bullet_composer lexxy-editor[preset=note]'
+    assert_selector '#daylog_bullets_composer lexxy-editor[preset=note]'
     assert_selector '.composer--actions .composer--toolbar-toggle'
     assert_no_selector '.composer--actions .composer--upload'
     assert_no_selector '#composer_toolbar > button[name=bold]', visible: true
-    assert_selector '#bullet_composer #composer_toolbar + .composer--field + .composer--chrome'
+    assert_selector '#daylog_bullets_composer #composer_toolbar + .composer--field + .composer--chrome'
 
     focus_composer
-    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
+    editor = find('#daylog_bullets_composer lexxy-editor .lexxy-editor__content')
     editor.send_keys('Draft note')
     editor.send_keys(%i[shift enter])
     editor.send_keys('Second line')
@@ -220,23 +220,23 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
 
     find('.composer--toolbar-toggle').click
 
-    assert_selector '#bullet_composer.composer--toolbar'
+    assert_selector '#daylog_bullets_composer.composer--toolbar'
     assert_selector '#composer_toolbar[aria-hidden="false"]'
-    assert_selector '#bullet_composer lexxy-editor[preset=note]'
+    assert_selector '#daylog_bullets_composer lexxy-editor[preset=note]'
     assert_selector '#composer_toolbar > button[name=bold]'
     assert_selector '#composer_toolbar > button[name=file]'
     assert_selector '#composer_toolbar > button[name=image]'
     assert_selector '.composer--type-button', visible: true
     assert_selector '.composer--lead .composer--clear[aria-label="Clear draft"]'
     assert_text 'Draft note'
-    assert_selector '#bullet_composer.composer--multiline .composer--chrome'
+    assert_selector '#daylog_bullets_composer.composer--multiline .composer--chrome'
 
     find('.composer--toolbar-toggle').click
 
-    assert_no_selector '#bullet_composer.composer--toolbar'
+    assert_no_selector '#daylog_bullets_composer.composer--toolbar'
     assert_selector '#composer_toolbar[aria-hidden="true"]', visible: :all
-    assert_selector '#bullet_composer.composer--multiline'
-    assert_selector '#bullet_composer lexxy-editor[preset=note]'
+    assert_selector '#daylog_bullets_composer.composer--multiline'
+    assert_selector '#daylog_bullets_composer lexxy-editor[preset=note]'
     assert_no_selector '#composer_toolbar > button[name=bold]', visible: true
     assert_text 'Draft note'
     assert_selector '.composer--type-button', visible: true
@@ -246,7 +246,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     visit daylog_path(date: Date.current.iso8601)
 
     focus_composer
-    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
+    editor = find('#daylog_bullets_composer lexxy-editor .lexxy-editor__content')
     editor.send_keys('Draft note')
     editor.send_keys(%i[shift enter])
     editor.send_keys('Second line')
@@ -254,7 +254,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     assert_selector '.composer--lead .composer--clear[aria-label="Clear draft"]'
     find('.composer--lead .composer--clear').click
 
-    assert_no_selector '#bullet_composer.composer--multiline'
+    assert_no_selector '#daylog_bullets_composer.composer--multiline'
     assert_no_selector '.composer--clear', visible: true
     assert_selector '.composer--submit[disabled]'
   end
@@ -266,7 +266,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     focus_composer
 
     page.execute_script(<<~JS)
-      document.querySelector('#bullet_composer lexxy-editor').dispatchEvent(
+      document.querySelector('#daylog_bullets_composer lexxy-editor').dispatchEvent(
         new KeyboardEvent('keydown', {
           key: 'R',
           code: 'KeyR',
@@ -277,7 +277,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
       )
     JS
 
-    assert_selector '#bullet_composer[data-bullet-type="voice"]'
+    assert_selector '#daylog_bullets_composer[data-bullet-type="voice"]'
     assert_selector '.composer--rail-recorder:not([hidden])'
     assert_selector '.composer--rail-recorder-pause'
     assert_no_selector '.composer--rail:not(.composer--rail-recorder)', visible: true
@@ -288,7 +288,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
 
     find('.composer--record').click
 
-    assert_selector '#bullet_composer[data-bullet-type="voice"]'
+    assert_selector '#daylog_bullets_composer[data-bullet-type="voice"]'
     assert_selector '.composer--rail-recorder:not([hidden])'
     assert_selector '.composer--rail-recorder-pause'
     assert_selector '.composer--rail-recorder-waveform'
@@ -304,38 +304,38 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
 
     assert_selector '.bullet[data-bullet-type="voice"]'
     assert_equal 'Voice', @user.bullets.reload.last.bulletable_type
-    assert_selector '#bullet_composer[data-bullet-type="note"]'
+    assert_selector '#daylog_bullets_composer[data-bullet-type="note"]'
     assert_selector '.composer--rail:not(.composer--rail-recorder)', visible: true
   end
 
   test 'shift tab cycles the bullet type while the editor is focused' do
     visit daylog_path(date: Date.current.iso8601)
 
-    assert_selector '#bullet_composer[data-bullet-type="note"]'
+    assert_selector '#daylog_bullets_composer[data-bullet-type="note"]'
     focus_composer
-    find('#bullet_composer lexxy-editor .lexxy-editor__content').send_keys(%i[shift tab])
+    find('#daylog_bullets_composer lexxy-editor .lexxy-editor__content').send_keys(%i[shift tab])
 
-    assert_selector '#bullet_composer[data-bullet-type="task"]'
+    assert_selector '#daylog_bullets_composer[data-bullet-type="task"]'
 
-    find('#bullet_composer lexxy-editor .lexxy-editor__content').send_keys(%i[shift tab])
-    assert_selector '#bullet_composer[data-bullet-type="event"]'
+    find('#daylog_bullets_composer lexxy-editor .lexxy-editor__content').send_keys(%i[shift tab])
+    assert_selector '#daylog_bullets_composer[data-bullet-type="event"]'
 
-    find('#bullet_composer lexxy-editor .lexxy-editor__content').send_keys(%i[shift tab])
-    assert_selector '#bullet_composer[data-bullet-type="note"]'
+    find('#daylog_bullets_composer lexxy-editor .lexxy-editor__content').send_keys(%i[shift tab])
+    assert_selector '#daylog_bullets_composer[data-bullet-type="note"]'
   end
 
   test 'shift control e toggles the Note formatting toolbar' do
     visit daylog_path(date: Date.current.iso8601)
 
     focus_composer
-    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
+    editor = find('#daylog_bullets_composer lexxy-editor .lexxy-editor__content')
     editor.send_keys('First line')
     editor.send_keys(%i[shift enter])
     editor.send_keys('Second line')
     assert_selector '.composer--toolbar-toggle'
 
     page.execute_script(<<~JS)
-      document.querySelector('#bullet_composer lexxy-editor').dispatchEvent(
+      document.querySelector('#daylog_bullets_composer lexxy-editor').dispatchEvent(
         new KeyboardEvent('keydown', {
           key: 'E',
           code: 'KeyE',
@@ -347,20 +347,20 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
       )
     JS
 
-    assert_selector '#bullet_composer.composer--toolbar'
+    assert_selector '#daylog_bullets_composer.composer--toolbar'
     assert_selector '#composer_toolbar > button[name=bold]'
-    assert_selector '#bullet_composer lexxy-editor[preset=note]'
+    assert_selector '#daylog_bullets_composer lexxy-editor[preset=note]'
   end
 
   private
 
   def compose(text)
     focus_composer
-    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
+    editor = find('#daylog_bullets_composer lexxy-editor .lexxy-editor__content')
     editor.send_keys(text)
     # Notes need Cmd/Ctrl+Enter; Task/Event send on plain Enter.
     type = page.evaluate_script(<<~JS)
-      document.querySelector('#bullet_composer [data-chat-composer-target="typeField"]')?.value
+      document.querySelector('#daylog_bullets_composer [data-chat-composer-target="typeElement"]')?.value
     JS
     if type == 'Note'
       editor.send_keys([modifier_key, :enter])
@@ -371,7 +371,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
 
   def focus_composer
     page.execute_script(<<~JS)
-      document.querySelector('#bullet_composer lexxy-editor')?.focus()
+      document.querySelector('#daylog_bullets_composer lexxy-editor')?.focus()
     JS
   end
 

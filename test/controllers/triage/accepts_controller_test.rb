@@ -18,8 +18,6 @@ module Triage
     end
 
     test 'create moves pending bullet into today daylog' do
-      container = ActionView::RecordIdentifier.dom_id(@user.daylog, :bullets_container)
-
       assert_changes -> { @bullet.reload.bucket_id }, to: @daylog.id do
         assert_changes -> { @bullet.reload.pops_on }, to: Date.current do
           post triage_bullet_accept_path(@bullet), as: :turbo_stream
@@ -29,9 +27,7 @@ module Triage
       assert_response :success
       assert @bullet.reload.rescheduled_migration?
       assert_match 'Added to today', response.body
-      assert_match %(turbo-stream action="remove" target="#{ActionView::RecordIdentifier.dom_id(@bullet, :pending)}"), response.body
-      assert_match %(turbo-stream action="append" target="#{container}"), response.body
-      assert_match 'Capture me', response.body
+      assert_match %(turbo-stream action="remove" target="#{ActionView::RecordIdentifier.dom_id(@bullet, :triage)}"), response.body
     end
 
     test 'create moves monthlylog today bullet into daylog' do

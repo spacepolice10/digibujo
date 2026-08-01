@@ -4,10 +4,9 @@ import { distanceFromBottom, keepScroll, pauseInertiaScroll, scrollToBottom } fr
 // Distance from the bottom edge that still counts as "reading the latest".
 const PINNED_THRESHOLD = 80
 
-// Chat shell for the daylog: the list owns its own scrollport, opens at the
-// newest bullet, pulls older pages in from the top, and follows new rows only
-// while the reader is already at the bottom. The page is always full-viewport;
-// scroller padding (CSS) clears the fixed composer dock.
+// Generic chat list: owns its scrollport, opens at the newest bullet, pulls
+// older pages from the top, and follows new rows only while the reader is
+// already at the bottom. Scroller padding (CSS) clears the fixed composer dock.
 export default class extends Controller {
   static targets = ["scroller", "list", "trigger"]
   static values = { path: String, rootMargin: { type: String, default: "400px" } }

@@ -152,7 +152,6 @@
     gap: var(--spacing-horizontal-half);
     overflow-x: auto;
     overflow-y: hidden;
-    overscroll-behavior-x: contain;
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x proximity;
   }
@@ -207,30 +206,47 @@
     right: var(--spacing-horizontal);
   }
 
+  /* Fixed viewport like daylog — no document scroll; lists scroll inside. */
   .monthlylog--page-mobile.layout--page {
     background: transparent;
     width: 100%;
     max-width: 100%;
-    padding-inline: 0;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    padding: 0;
+    padding-bottom: var(--layout-scroll-padding);
+    box-sizing: border-box;
+    gap: 0;
     overflow: hidden;
+  }
+
+  html:has(.monthlylog--page-mobile) body {
+    padding-bottom: 0 !important;
+    scroll-padding-bottom: 0 !important;
   }
 
   .monthlylog--page-mobile > .layout--container {
     max-width: none;
     width: 100%;
+    height: 100%;
+    min-height: 0;
     padding-inline: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
 
   .monthlylog--page-mobile .monthlylog--spread-sections {
     display: flex;
     flex-direction: row;
     align-items: stretch;
+    flex: 1 1 0;
     width: 100%;
-    height: auto;
-    max-height: none;
+    height: 100%;
+    min-height: 0;
     overflow-x: auto;
     overflow-y: hidden;
-    overscroll-behavior-x: contain;
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x mandatory;
     scroll-snap-stop: always;
@@ -241,13 +257,27 @@
     width: 100%;
     min-width: 100%;
     max-width: 100%;
-    min-height: 70dvh;
+    height: 100%;
+    min-height: 0;
     scroll-snap-align: start;
     scroll-snap-stop: always;
     box-sizing: border-box;
     overflow-x: hidden;
-    overflow-y: auto;
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+  }
+
+  .monthlylog--page-mobile .monthlylog--section .chat--wrap {
+    flex: 1 1 0;
+    min-height: 0;
+  }
+
+  /* Let horizontal section swipes chain past the list (chat.css sets contain). */
+  .monthlylog--page-mobile .chat--scroller {
+    padding-bottom: var(--spacing-vertical) !important;
+    overscroll-behavior: auto;
   }
 
   .monthlylog--page-mobile .monthlylog--calendar {
@@ -255,6 +285,7 @@
     flex-direction: column;
     gap: var(--spacing-vertical);
     align-items: stretch;
+    min-height: 0;
   }
 
   .monthlylog--page-mobile .monthlylog--calendar,
@@ -276,6 +307,150 @@
     flex-direction: column;
     gap: var(--spacing-vertical);
     min-height: 0;
+    flex: 1 1 0;
+  }
+
+  .monthlylog--pane {
+    min-height: 0;
+  }
+
+  .monthlylog--pane > .monthlylog--date-section,
+  .monthlylog--pane > .monthlylog--unplanned-entries {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-height: 0;
+    gap: var(--spacing-vertical);
+  }
+
+  .monthlylog--chat {
+    --chat-composer-clearance: 0px;
+    --chat-header-clearance: 0px;
+    position: relative;
+  }
+
+  .monthlylog--composer-dock {
+    position: relative;
+    flex: 0 0 auto;
+    margin-block-start: var(--spacing-vertical-half);
+  }
+
+  /* Match collapsed composer pill height: control + form padding + form border
+     + the field's transparent 1px border (see .composer--field). */
+  .monthlylog--create-bullet {
+    --composer-control-size: var(--spacing-horizontal-triple);
+    --composer-pill-radius: 1.5rem;
+    --composer-pill-padding: 0.15rem;
+
+    box-sizing: border-box;
+    width: 100%;
+    height: calc(
+      var(--composer-control-size)
+      + (2 * var(--composer-pill-padding))
+      + 4px
+    );
+    justify-content: center;
+    padding: var(--composer-pill-padding) var(--spacing-horizontal);
+    border-radius: var(--composer-pill-radius);
+    background: var(--color-bg-subtle);
+    box-shadow: var(--shadow-base);
+    transition:
+      transform 180ms cubic-bezier(0.22, 1.4, 0.36, 1),
+      box-shadow 180ms ease,
+      border-color 180ms ease,
+      background-color 180ms ease,
+      opacity 180ms ease;
+  }
+
+  .monthlylog--create-bullet:active {
+    transform: scale(0.97);
+  }
+
+  /* Keep the CTA in the dock: invisible + out of flow while composing so the
+     composer sizes the slot (incl. multiline). Idle dock height comes from the button. */
+  .monthlylog--pane.is-composing .monthlylog--create-bullet {
+    position: absolute;
+    inset: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  /* In-column dock: not the fixed page-bottom composer. */
+  .monthlylog--composer-dock .composer {
+    position: relative;
+    inset: auto;
+    bottom: auto;
+    width: 100%;
+    max-width: none;
+    padding-inline: 0;
+    padding-block: 0;
+    z-index: 1;
+  }
+
+  .monthlylog--composer-dock .composer.is-entering {
+    animation: monthlylog-composer-in 240ms cubic-bezier(0.22, 1.4, 0.36, 1);
+  }
+
+  .monthlylog--chat .chat--scroller {
+    border: 1px solid var(--color-stroke-base);
+    border-radius: var(--radius-strong);
+    background: var(--color-bg-base);
+    padding-bottom: var(--spacing-vertical) !important;
+    min-height: 12rem;
+  }
+
+  .monthlylog--pane.is-composing .chat--scroller {
+    border-color: var(--color-stroke-strong);
+  }
+
+  ::view-transition-group(monthlylog-composer) {
+    animation-duration: 320ms;
+    animation-timing-function: cubic-bezier(0.22, 1.4, 0.36, 1);
+  }
+
+  ::view-transition-old(monthlylog-composer),
+  ::view-transition-new(monthlylog-composer) {
+    height: 100%;
+    width: 100%;
+    mix-blend-mode: normal;
+    animation-duration: 320ms;
+    animation-timing-function: cubic-bezier(0.22, 1.4, 0.36, 1);
+  }
+
+  ::view-transition-old(monthlylog-composer) {
+    animation-name: monthlylog-composer-vt-out;
+  }
+
+  ::view-transition-new(monthlylog-composer) {
+    animation-name: monthlylog-composer-vt-in;
+  }
+
+  @keyframes monthlylog-composer-in {
+    from {
+      opacity: 0;
+      transform: scale(0.96);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes monthlylog-composer-vt-out {
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes monthlylog-composer-vt-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
   }
 
   .monthlylog--date-section-header {

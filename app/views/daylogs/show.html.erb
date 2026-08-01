@@ -62,15 +62,15 @@
 
     <div
       data-bulk-menu-target="list"
-      class="daylog--wrap"
-      data-controller="daylog-scroll"
-      data-daylog-scroll-path-value="<%= daylog_bullets_path %>"
+      class="chat--wrap"
+      data-controller="chat-scroll"
+      data-chat-scroll-path-value="<%= daylog_bullets_path %>"
     >
-      <div id="daylog_scroller" class="daylog--scroller" data-daylog-scroll-target="scroller">
+      <div id="daylog_scroller" class="chat--scroller" data-chat-scroll-target="scroller">
         <% if @more_bullets %>
           <div
-            class="daylog--load-more-trigger"
-            data-daylog-scroll-target="trigger"
+            class="chat--load-more-trigger"
+            data-chat-scroll-target="trigger"
           >
             <%= icon_tag("spinner", class: "icon icon--spin") %>
             <span class="utilities--sr-only">Loading more bullets</span>
@@ -78,9 +78,9 @@
         <% end %>
 
         <div
-          id="<%= dom_id(@daylog, :bullets_container) %>"
-          class="layout--list"
-          data-daylog-scroll-target="list"
+          id="daylog_bullets_container"
+          class="layout--list chat--compact-list-pinned"
+          data-chat-scroll-target="list"
         >
           <% @bullets.each do |bullet| %>
             <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
@@ -104,7 +104,9 @@
 
     <%= render "bullets/composer",
       bucket_id: @daylog.bucket.id,
-      pops_on: @selected_date %>
+      pops_on: @selected_date,
+      variants: BulletsHelper::DAYLOG_COMPOSER_VARIANTS,
+      composer_id: "daylog_bullets_composer" %>
   </div>
 <% else %>
   <%= render "daylogs/placeholder" %>

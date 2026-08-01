@@ -11,8 +11,9 @@ export default class extends Controller {
   static targets = [
     "form", "editor", "typeElement", "typeIcon", "typeOption", "composerRail",
     "recorderWrap", "submit", "submitFinished", "toolbarButton", "toolbarWrap",
-    "cleanupButton", "recordButton"
+    "cleanupButton", "recordButton", "bucketId", "popsOn", "typePicker"
   ]
+  static values = { voice: { type: Boolean, default: true } }
 
   connect() {
     this.typeBeforeVoice = null
@@ -45,6 +46,23 @@ export default class extends Controller {
     this.#syncKeyboardInset()
     this.refresh()
     this.#reinitializeWhenEditorUpgrades()
+  }
+
+  // Update destination + allowlist without remounting Lexxy. Also rewrites this
+  // turbo-frame's id so create.turbo_stream can pair composer → container.
+  changeContext({ bucketId, popsOn, variants, composerId } = {}) {
+    if (bucketId != null && this.hasBucketIdTarget) {
+      this.bucketIdTarget.value = bucketId
+    }
+    if (this.hasPopsOnTarget) {
+      this.popsOnTarget.value = popsOn == null ? "" : popsOn
+    }
+    if (composerId) this.element.id = composerId
+    if (variants) this.#applyVariants(variants)
+
+    const next = this.#storedType || this.#availableVariants[0]
+    if (next) this.#switchType(next)
+    this.refresh()
   }
 
   disconnect() {
@@ -188,10 +206,22 @@ export default class extends Controller {
   // multiline draft with text.
   refresh() {
     this.submitTarget.disabled = !this.#submittable
-    this.recordButtonTarget.hidden = this.#recorderMode || !this.editorTarget.isBlank
+    if (this.hasRecordButtonTarget) {
+      this.recordButtonTarget.hidden =
+        !this.voiceValue || this.#recorderMode || !this.editorTarget.isBlank
+    }
     this.#syncMultiline()
     this.toolbarButtonTarget.hidden = !this.#toolbarToggleable
     this.cleanupButtonTarget.hidden = !this.#clearable
+  }
+
+  #applyVariants(variants) {
+    const names = variants.map(String).filter((name) => name !== "Voice")
+    this.voiceValue = variants.map(String).includes("Voice")
+
+    this.typeOptionTargets.forEach((option) => {
+      option.hidden = !names.includes(option.dataset.composerType)
+    })
   }
 
   // Lexxy defines its custom elements from a setTimeout, so a lazily loaded
@@ -346,7 +376,7 @@ export default class extends Controller {
   }
 
   #switchToNextVariant() {
-    const variants = this.typeOptionTargets.map((option) => option.dataset.composerType)
+    const variants = this.#availableVariants
     if (variants.length === 0) return
 
     const index = variants.indexOf(this.typeElementTarget.value)
@@ -355,6 +385,12 @@ export default class extends Controller {
     this.#saveTypeInLS(nextVariant)
     this.refresh()
     this.refocus()
+  }
+
+  get #availableVariants() {
+    return this.typeOptionTargets
+      .filter((option) => !option.hidden)
+      .map((option) => option.dataset.composerType)
   }
 
   #scrollToLatest() {
@@ -452,7 +488,7 @@ export default class extends Controller {
 
   #saveTypeInLS(type) {
     try {
-      window.localStorage?.setItem(TYPE_STORAGE_KEY, type)
+      window.localStorage?.setItem(TYPE_STORAGE_NAME, type)
     } catch {
       // Private mode and storage-blocked browsers just lose the preference.
     }
@@ -461,13 +497,13 @@ export default class extends Controller {
   get #storedType() {
     let stored = null
     try {
-      stored = window.localStorage?.getItem(TYPE_STORAGE_KEY)
+      stored = window.localStorage?.getItem(TYPE_STORAGE_NAME)
     } catch {
       stored = null
     }
 
-    const known = this.typeOptionTargets.some((option) => option.dataset.composerType === stored)
-    return known ? stored : this.typeOptionTargets[0]?.dataset.composerType
+    const known = this.#availableVariants.includes(stored)
+    return known ? stored : this.#availableVariants[0]
   }
 
   get #submittable() {

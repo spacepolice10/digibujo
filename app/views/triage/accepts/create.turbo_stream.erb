@@ -3,14 +3,7 @@
     <%= render "shared/toasts", type: "errmsg", messages: [@failed_message] %>
   <% end %>
 <% else %>
-  <%= turbo_stream.remove dom_id(@bullet, :pending) %>
-  <%= turbo_stream.replace "triage_chip" do %>
-    <%= render "daylogs/triage_chip", pending_count: Pending.pending_number_of(Current.user) %>
-  <% end %>
-  <%= turbo_stream.append dom_id(@bullet.bucket.bucketable, :bullets_container) do %>
-    <%= render partial: @bullet.to_partial_path, locals: { bullet: @bullet } %>
-  <% end %>
-  <%= turbo_stream.remove "no_bullets_container" %>
+  <%= turbo_stream.remove dom_id(@bullet, :triage) %>
   <%= turbo_stream.update "toasts" do %>
     <%= render "shared/toasts", type: "notify", messages: ["Added to today"] %>
   <% end %>

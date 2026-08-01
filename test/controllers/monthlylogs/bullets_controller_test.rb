@@ -11,48 +11,40 @@ class Monthlylogs::BulletsControllerTest < ActionDispatch::IntegrationTest
     @monthlylog = create_monthlylog!(@user, name: 'june')
   end
 
-  test 'dated index lists planned bullets and create links' do
+  test 'dated index lists planned bullets without create buttons' do
     day = Date.current.beginning_of_month + 2.days
     create_bullet!(@user,
       bulletable: Task.new(body: 'Planned task'),
       bucket_id: @monthlylog.bucket.id,
       pops_on: day
     )
+    container = "date_#{day.iso8601}_bullets_container"
 
     get monthlylog_bullets_path(@monthlylog, date: day.iso8601)
 
     assert_response :success
     assert_match 'Planned task', response.body
     assert_select 'turbo-frame#monthlylog_date'
-    assert_select "a.bullets-form--create-button--task[href=?]",
-                  new_bullet_path(
-                    pops_on: day,
-                    bucket_id: @monthlylog.bucket.id,
-                    bulletable_type: 'Task'
-                  )
-    assert_select "a.bullets-form--create-button--event[href=?]",
-                  new_bullet_path(
-                    pops_on: day,
-                    bucket_id: @monthlylog.bucket.id,
-                    bulletable_type: 'Event'
-                  )
+    assert_select "##{container}"
+    assert_select 'a.bullets-form--create-button--task', count: 0
     assert_select "a[href=?]", daylog_path(date: day.iso8601)
   end
 
-  test 'unplanned index lists unplanned bullets and note create' do
+  test 'unplanned index lists unplanned bullets without create buttons' do
     create_bullet!(@user,
       bulletable: Note.new(body: 'Unplanned note'),
       bucket_id: @monthlylog.bucket.id
     )
+    container = 'monthlylog_bullets_unplanned_container'
 
     get monthlylog_bullets_path(@monthlylog)
 
     assert_response :success
     assert_match 'Unplanned note', response.body
     assert_select 'turbo-frame#monthlylog_unplanned'
-    assert_select 'a.bullets-form--create-button--note'
+    assert_select "##{container}"
+    assert_select 'a.bullets-form--create-button--note', count: 0
     assert_select 'a.bullets-form--create-button--task', count: 0
-    assert_select 'a.bullets-form--create-button--event', count: 0
   end
 
   test 'unplanned bullets render as compact rows without metadata tags' do
@@ -120,6 +112,28 @@ class Monthlylogs::BulletsControllerTest < ActionDispatch::IntegrationTest
     get monthlylog_bullets_path(@monthlylog, date: 'not-a-date')
 
     assert_response :not_found
+  end
+
+  test 'dated index mounts bullets_container id without create buttons' do
+    day = Date.current.beginning_of_month
+    container = "date_#{day.iso8601}_bullets_container"
+
+    get monthlylog_bullets_path(@monthlylog, date: day.iso8601)
+
+    assert_response :success
+    assert_select "##{container}"
+    assert_select '.bullets-form--create', count: 0
+    assert_select '.chat--scroller'
+  end
+
+  test 'unplanned index mounts unplanned_bullets_container' do
+    container = 'monthlylog_bullets_unplanned_container'
+
+    get monthlylog_bullets_path(@monthlylog)
+
+    assert_response :success
+    assert_select "##{container}"
+    assert_select '.bullets-form--create', count: 0
   end
 
   test 'foreign monthlylog returns not found' do

@@ -82,6 +82,12 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select '.monthlylog--unplanned'
     assert_select '.bullets-form--dock', count: 0
     assert_select 'dialog#monthlylog_composer', count: 0
+    assert_select "turbo-frame#date_#{Date.current.iso8601}_bullets_composer.composer"
+    assert_select '[data-controller~=monthlylog-composer]'
+    assert_select '.monthlylog--composer-dock', count: 2
+    assert_select '.monthlylog--pane', count: 2
+    assert_select 'button.monthlylog--create-bullet', count: 2
+    assert_select '.monthlylog--composer-park turbo-frame.composer'
     assert_select '[data-controller~=pops-drop]', minimum: 28
     assert_select '[data-controller~=monthlylog-calendar-drop-optimistic]', minimum: 28
   end

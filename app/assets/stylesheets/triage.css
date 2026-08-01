@@ -8,6 +8,15 @@
     text-align: center;
   }
 
+  .triage--header-icon {
+    width: 5ch !important;
+    height: 5ch !important;
+  }
+
+  .triage--list {
+    min-height: 80dvh;
+  }
+
   .triage--chip {
     display: flex;
     align-items: center;
@@ -19,6 +28,7 @@
     border-radius: var(--radius-strong);
     background: var(--color-accent);
     color: var(--color-fg-strong);
+    text-decoration: none;
     overflow: hidden;
     &:hover {
       background: var(--color-accent-bg);

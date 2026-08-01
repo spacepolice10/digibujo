@@ -93,9 +93,8 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select '#triage_chip.daylog--triage-chip' do
       assert_select '[data-controller~="triage-chip"]'
       assert_select '[data-triage-chip-number-url-value="/triage/number"]'
-      assert_select 'button#triage_chip_button[popovertarget=triage_list]'
+      assert_select 'a#triage_chip_button[href=?]', triage_path
       assert_select '#triage_chip_number.daylog--triage-number'
-      assert_select 'turbo-frame#triage_list[popover][src=?]', triage_path
     end
     assert_select '#triage_chip_button[hidden]'
   end
@@ -131,7 +130,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select 'dialog#daylog_composer', count: 0
-    assert_select '#bullet_composer' do
+    assert_select '#daylog_bullets_composer' do
       assert_select 'lexxy-editor[preset=note][toolbar=composer_toolbar]'
       # Toolbar precedes the editor so a Turbo body swap upgrades it first.
       assert_select 'lexxy-toolbar#composer_toolbar[data-upload=both] + .composer--field + .composer--chrome'
@@ -159,7 +158,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select 'dialog#daylog_composer', count: 0
-    assert_select '#bullet_composer lexxy-editor[preset=note]'
+    assert_select '#daylog_bullets_composer lexxy-editor[preset=note]'
   end
 
   test 'daylog renders metadata popover frame' do
@@ -259,7 +258,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     bullets = Array.new(total) do |index|
       create_bullet!(@user, bulletable: Note.new(body: "Line #{index}"), created_at: (total - index).minutes.ago)
     end
-    container = ActionView::RecordIdentifier.dom_id(@user.daylog, :bullets_container)
+    container = 'daylog_bullets_container'
 
     get daylog_path
 
@@ -269,7 +268,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select "##{container} .bullet", Bullet::Pageable::PAGE_SIZE
     assert_operator response.body.index('Line 2'), :<, response.body.index("Line #{total - 1}")
     assert_select "##{container} > ##{ActionView::RecordIdentifier.dom_id(bullets[2])}:first-child"
-    assert_select '.daylog--load-more-trigger'
+    assert_select '.chat--load-more-trigger'
   end
 
   test 'daylog offers the older page trigger only when a full page came back' do
@@ -278,20 +277,20 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     get daylog_path
 
     assert_response :success
-    assert_select '.daylog--load-more-trigger', count: 0
+    assert_select '.chat--load-more-trigger', count: 0
   end
 
   test 'daylog mounts the chat scroller pointed at the cursor endpoint' do
-    container = ActionView::RecordIdentifier.dom_id(@user.daylog, :bullets_container)
+    container = 'daylog_bullets_container'
 
     get daylog_path
 
     assert_response :success
-    assert_select "[data-controller~='daylog-scroll'][data-daylog-scroll-path-value=?]", daylog_bullets_path do
-      assert_select "[data-daylog-scroll-target='scroller'] ##{container}[data-daylog-scroll-target='list']"
-      assert_select '#bullet_composer', count: 0
+    assert_select "[data-controller~='chat-scroll'][data-chat-scroll-path-value=?]", daylog_bullets_path do
+      assert_select "[data-chat-scroll-target='scroller'] ##{container}[data-chat-scroll-target='list']"
+      assert_select '#daylog_bullets_composer', count: 0
     end
-    assert_select '.daylog--chat > #bullet_composer'
+    assert_select '.daylog--chat > #daylog_bullets_composer'
   end
 
   test 'daylog renders mixed bullet types on the same page' do

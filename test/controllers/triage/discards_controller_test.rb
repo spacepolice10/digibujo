@@ -24,7 +24,7 @@ module Triage
 
       assert_response :success
       assert @bullet.reload.archived?
-      assert_match %(turbo-stream action="remove" target="#{ActionView::RecordIdentifier.dom_id(@bullet, :pending)}"),
+      assert_match %(turbo-stream action="remove" target="#{ActionView::RecordIdentifier.dom_id(@bullet, :triage)}"),
                    response.body
       assert_match 'Discarded', response.body
     end

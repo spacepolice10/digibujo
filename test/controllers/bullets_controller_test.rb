@@ -61,7 +61,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'inline composer create appends the row and drops the empty state' do
-    container = ActionView::RecordIdentifier.dom_id(@user.daylog, :bullets_container)
+    container = 'daylog_bullets_container'
 
     post bullets_path,
          params: {
@@ -73,6 +73,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
              bucket_id: @daylog.id
            }
          },
+         headers: { 'Turbo-Frame' => 'daylog_bullets_composer' },
          as: :turbo_stream
 
     assert_response :success
@@ -87,6 +88,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     create_bullet!(@user, bucket: collection.bucket, pops_on: nil, bulletable: Note.new(body: 'Yesterday'),
                    created_at: 1.day.ago)
     container = ActionView::RecordIdentifier.dom_id(collection, :bullets_container)
+    composer = ActionView::RecordIdentifier.dom_id(collection, :bullets_composer)
 
     post bullets_path,
          params: {
@@ -97,6 +99,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
              bucket_id: collection.bucket.id
            }
          },
+         headers: { 'Turbo-Frame' => composer },
          as: :turbo_stream
 
     assert_response :success
@@ -111,6 +114,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     create_bullet!(@user, bucket: collection.bucket, pops_on: nil, bulletable: Note.new(body: 'Earlier today'),
                    created_at: 1.hour.ago)
     container = ActionView::RecordIdentifier.dom_id(collection, :bullets_container)
+    composer = ActionView::RecordIdentifier.dom_id(collection, :bullets_composer)
 
     post bullets_path,
          params: {
@@ -121,6 +125,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
              bucket_id: collection.bucket.id
            }
          },
+         headers: { 'Turbo-Frame' => composer },
          as: :turbo_stream
 
     assert_response :success
@@ -477,6 +482,52 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
       assert_response :unauthorized
     end
+  end
+
+  test 'inline composer create appends into monthlylog dated container from Turbo-Frame' do
+    monthlylog = create_monthlylog!(@user, name: 'june')
+    day = Date.current.beginning_of_month
+    composer = "date_#{day.iso8601}_bullets_composer"
+    container = "date_#{day.iso8601}_bullets_container"
+
+    post bullets_path,
+         params: {
+           inline_composer: '1',
+           bullet: {
+             bulletable_type: 'Task',
+             bulletable_attributes: { body: '<p>Month task</p>' },
+             pops_on: day.iso8601,
+             bucket_id: monthlylog.bucket.id
+           }
+         },
+         headers: { 'Turbo-Frame' => composer },
+         as: :turbo_stream
+
+    assert_response :success
+    assert_match %(turbo-stream action="append" target="#{container}"), response.body
+    assert_match 'Month task', response.body
+  end
+
+  test 'inline composer create appends into monthlylog unplanned container' do
+    monthlylog = create_monthlylog!(@user, name: 'june')
+    composer = 'monthlylog_bullets_unplanned_composer'
+    container = 'monthlylog_bullets_unplanned_container'
+
+    post bullets_path,
+         params: {
+           inline_composer: '1',
+           bullet: {
+             bulletable_type: 'Note',
+             bulletable_attributes: { body: '<p>Month note</p>' },
+             bucket_id: monthlylog.bucket.id
+           }
+         },
+         headers: { 'Turbo-Frame' => composer },
+         as: :turbo_stream
+
+    assert_response :success
+    assert_match %(turbo-stream action="append" target="#{container}"), response.body
+    assert_match 'Month note', response.body
   end
 
   private

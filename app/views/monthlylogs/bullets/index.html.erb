@@ -1,5 +1,9 @@
 <% if @date %>
-  <turbo-frame id="monthlylog_date" class="monthlylog--date-section" data-pops-on="<%= @date.iso8601 %>">
+  <turbo-frame
+    id="monthlylog_date"
+    class="monthlylog--date-section"
+    data-pops-on="<%= @date.iso8601 %>"
+  >
     <header class="monthlylog--date-section-header layout--flex layout--justify-center layout--gapped">
       <%= link_to daylog_path(date: @date.iso8601),
             class: "monthlylog--date-section-name",
@@ -9,7 +13,7 @@
     </header>
 
     <div
-      class="monthlylog--date-entries"
+      class="chat--scroller monthlylog--date-entries"
       data-controller="pops-drop drop-postpone-optimistic"
       data-pops-drop-pops-url-value="<%= postpone_path %>"
       data-pops-drop-bucket-id-value="<%= @monthlylog.bucket.id %>"
@@ -20,8 +24,8 @@
       data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop"
     >
       <div
-        id="<%= dom_id(@monthlylog, "date_#{@date.iso8601}_bullets") %>"
-        class="monthlylog--bullets-list layout--list"
+        id="<%= "date_#{@date.iso8601}_bullets_container" %>"
+        class="monthlylog--bullets-list layout--list chat--compact-list-pinned"
         data-monthlylog-date-list
         data-bulk-menu-target="list"
       >
@@ -29,18 +33,12 @@
           <%= render "monthlylogs/bullets/bullet", bullet: bullet %>
         <% end %>
       </div>
-
-      <div class="monthlylog--date-composer">
-        <%= create_bullet_buttons bucket_id: @monthlylog.bucket.id,
-              pops_on: @date,
-              bulletable_type: %w[Task Event] %>
-      </div>
     </div>
   </turbo-frame>
 <% else %>
   <turbo-frame id="monthlylog_unplanned" class="monthlylog--unplanned-entries">
     <div
-      class="monthlylog--unplanned-drop"
+      class="chat--scroller monthlylog--unplanned-drop"
       data-controller="pops-drop drop-postpone-optimistic"
       data-pops-drop-pops-url-value="<%= postpone_path %>"
       data-pops-drop-bucket-id-value="<%= @monthlylog.bucket.id %>"
@@ -51,17 +49,13 @@
     >
       <div
         id="monthlylog_bullets_unplanned_container"
-        class="monthlylog--bullets-list layout--list"
+        class="monthlylog--bullets-list layout--list chat--compact-list-pinned"
         data-bulk-menu-target="list"
       >
         <% @bullets.each do |bullet| %>
           <%= render "monthlylogs/bullets/bullet", bullet: bullet %>
         <% end %>
       </div>
-
-      <%= create_bullet_buttons bucket_id: @monthlylog.bucket.id,
-            pops_on: nil,
-            bulletable_type: %w[Note] %>
     </div>
   </turbo-frame>
 <% end %>

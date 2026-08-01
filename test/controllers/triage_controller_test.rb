@@ -20,18 +20,6 @@ class TriageControllerTest < ActionDispatch::IntegrationTest
     assert_select "form[action=?]", triage_bullet_accept_path(bullet)
   end
 
-  test 'show as turbo frame renders triage dropdown' do
-    create_bullet!(@user, bucket: @pending.bucket, bulletable: Note.new(body: 'In dropdown'), pops_on: nil)
-
-    get triage_path, headers: { 'Turbo-Frame' => 'triage_list' }
-
-    assert_response :success
-    assert_select 'turbo-frame#triage_list[popover].daylog--triage-dropdown' do
-      assert_match 'In dropdown', response.body
-      assert_select "form[action=?]", triage_bullet_accept_path(@pending.bullets.first)
-    end
-  end
-
   test 'show lists pending and monthlylog today bullets' do
     monthlylog = create_monthlylog!(@user, name: 'This month')
     create_bullet!(
@@ -62,7 +50,7 @@ class TriageControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show excludes archived bullets' do
-    capture = create_bullet!(@user, bucket: @pending.bucket, bulletable: Note.new(body: 'Inbox me'), pops_on: nil)
+    create_bullet!(@user, bucket: @pending.bucket, bulletable: Note.new(body: 'Inbox me'), pops_on: nil)
     archived = create_bullet!(@user, bucket: @pending.bucket, bulletable: Note.new(body: 'Archived me'), pops_on: nil)
     archived.archive!
 

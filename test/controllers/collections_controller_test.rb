@@ -107,7 +107,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     get collection_path(collection)
 
     assert_response :success
-    assert_select '#bullet_composer' do
+    assert_select "##{ActionView::RecordIdentifier.dom_id(collection, :bullets_composer)}" do
       assert_select 'lexxy-editor[preset=note]'
       assert_select 'lexxy-prompt[trigger=?][name=project]', '#'
       assert_select "input[name='bullet[bucket_id]'][value=?]", collection.bucket.id.to_s

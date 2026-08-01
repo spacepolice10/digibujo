@@ -9,7 +9,7 @@ class DaylogChatSystemTest < ApplicationSystemTestCase
     Onboarding.new(user: users(:one)).complete
     @user = users(:one).reload
     sign_in_as(@user)
-    @list = "##{ActionView::RecordIdentifier.dom_id(@user.daylog, :bullets_container)}"
+    @list = '#daylog_bullets_container'
   end
 
   test 'the daylog opens at the newest bullet with older ones left off screen' do
@@ -33,7 +33,7 @@ class DaylogChatSystemTest < ApplicationSystemTestCase
     scroll_to_top
     wait_for_stable_bullet_count(minimum: PAGE * 2)
 
-    assert_selector '.daylog--load-more-trigger'
+    assert_selector '.chat--load-more-trigger'
     previous = page.all("#{@list} .bullet").size
     anchor = find("#{@list} .bullet", match: :first)[:id]
     scroll_to_top
@@ -57,7 +57,7 @@ class DaylogChatSystemTest < ApplicationSystemTestCase
     list_id = @list.delete_prefix('#')
     gap = page.evaluate_script(<<~JS)
       (() => {
-        const scroller = document.querySelector('.daylog--scroller')
+        const scroller = document.querySelector('.chat--scroller')
         const list = document.getElementById(#{list_id.to_json})
         const pad = parseFloat(getComputedStyle(scroller).paddingBottom) || 0
         return Math.abs((scroller.getBoundingClientRect().bottom - pad) - list.getBoundingClientRect().bottom)
@@ -69,11 +69,11 @@ class DaylogChatSystemTest < ApplicationSystemTestCase
   test 'the older trigger disappears once the whole day is loaded' do
     create_lines(PAGE + 5)
     visit daylog_path
-    assert_selector '.daylog--load-more-trigger'
+    assert_selector '.chat--load-more-trigger'
 
     scroll_to_top
 
-    assert_no_selector '.daylog--load-more-trigger'
+    assert_no_selector '.chat--load-more-trigger'
     assert_selector "#{@list} .bullet", count: PAGE + 5
     assert_text 'Line 0'
   end
@@ -82,7 +82,7 @@ class DaylogChatSystemTest < ApplicationSystemTestCase
     create_lines(70)
     visit daylog_path
 
-    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
+    editor = find('#daylog_bullets_composer lexxy-editor .lexxy-editor__content')
     editor.click
     editor.send_keys('Fresh line')
     # Default type is Note — desktop send is Cmd/Ctrl+Enter.
@@ -99,7 +99,7 @@ class DaylogChatSystemTest < ApplicationSystemTestCase
 
     scroll_to_top
 
-    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
+    editor = find('#daylog_bullets_composer lexxy-editor .lexxy-editor__content')
     editor.click
     editor.send_keys('Fresh line from above')
     editor.send_keys([modifier_key, :enter])
@@ -113,15 +113,15 @@ class DaylogChatSystemTest < ApplicationSystemTestCase
     create_bullet!(@user, bulletable: Note.new(body: 'Yesterday line'), pops_on: yesterday)
 
     visit daylog_path(date: Date.current.iso8601)
-    assert_selector '#bullet_composer lexxy-editor .lexxy-editor__content'
+    assert_selector '#daylog_bullets_composer lexxy-editor .lexxy-editor__content'
 
     find("a[href='#{daylog_path(date: yesterday.iso8601)}']").click
 
     assert_current_path daylog_path(date: yesterday.iso8601)
     assert_text 'Yesterday line'
-    assert_selector '#bullet_composer lexxy-editor .lexxy-editor__content'
+    assert_selector '#daylog_bullets_composer lexxy-editor .lexxy-editor__content'
     assert_equal yesterday.iso8601,
-                 find("#bullet_composer input[name='bullet[pops_on]']", visible: false).value
+                 find("#daylog_bullets_composer input[name='bullet[pops_on]']", visible: false).value
   end
 
   private
@@ -170,13 +170,13 @@ class DaylogChatSystemTest < ApplicationSystemTestCase
   end
 
   def scroll_to_top
-    page.execute_script("document.querySelector('.daylog--scroller').scrollTop = 0")
+    page.execute_script("document.querySelector('.chat--scroller').scrollTop = 0")
   end
 
   def distance_from_bottom
     page.evaluate_script(<<~JS)
       (() => {
-        const scroller = document.querySelector('.daylog--scroller')
+        const scroller = document.querySelector('.chat--scroller')
         return scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight
       })()
     JS

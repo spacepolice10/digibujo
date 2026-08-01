@@ -7,10 +7,10 @@
   }
 
   .layout--page.daylog.daylog--chat {
-    --daylog-composer-clearance: calc(
+    --chat-composer-clearance: calc(
       var(--spacing-vertical-triple) + var(--spacing-vertical-double)
     );
-    --daylog-header-clearance: calc(
+    --chat-header-clearance: calc(
       var(--spacing-vertical-double)
       + var(--spacing-horizontal-double)
       + var(--spacing-vertical-double)
@@ -39,11 +39,11 @@
       max-height: calc(100dvh - 10ch);
     }
 
-    .daylog--chat .daylog--scroller {
+    .daylog--chat .chat--scroller {
       padding-bottom: var(--spacing-vertical) !important;
     }
 
-    .daylog--chat .daylog--wrap {
+    .daylog--chat .chat--wrap {
       border: 0.5px solid var(--color-stroke-base);
       border-radius: var(--radius-strong);
       box-shadow: var(--shadow-subtle);
@@ -62,16 +62,6 @@
       padding-block: var(--spacing-vertical-half);
       margin-inline: auto;
     }
-  }
-
-  /* Messages — Campfire .messages */
-  .daylog--wrap {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 0;
-    min-height: 0;
-    overflow: hidden;
   }
 
   /* Levitating day header — fixed height; frosted chips over the chat. */
@@ -99,54 +89,15 @@
     pointer-events: auto;
   }
 
-
   .daylog--chat .composer {
     width: 100%;
     max-width: none;
     padding-inline: var(--spacing-horizontal);
   }
 
-  .daylog--scroller {
-    position: relative;
-    z-index: 1;
-    flex: 1 1 0;
-    min-height: 0;
-    overflow-y: auto;
-    overflow-anchor: none;
-    overscroll-behavior: contain;
-    padding-top: var(--daylog-header-clearance);
-    padding-bottom: calc(
-      var(--daylog-composer-clearance) + var(--layout-scroll-padding)
-    ) !important;
-  }
-
-  /* Pin short days to the composer edge without keeping the older-trigger in
-     view (that would auto-fetch every page). The list is at least one
-     scrollport tall; bullets pack to its end. When content overflows, this is
-     just a normal top-to-bottom feed. */
-  .daylog--scroller > [data-daylog-scroll-target="list"] {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    gap: var(--spacing-vertical);
-    min-height: 100%;
-    padding-inline: var(--spacing-horizontal);
-  }
-
   html:has(.daylog--chat) body {
     padding-bottom: 0 !important;
     scroll-padding-bottom: 0 !important;
-  }
-
-  .daylog--scroller > [data-daylog-scroll-target="list"] > .bullet {
-    margin-block: 0;
-  }
-
-  .daylog--load-more-trigger {
-    display: flex;
-    justify-content: center;
-    padding-block: var(--spacing-vertical);
-    color: var(--color-fg-subtle);
   }
 
   .daylog--metadata-trackers {
@@ -163,7 +114,7 @@
     border-radius: var(--radius-strong);
     &:hover {
       cursor: pointer;
-      filter: brightness(0.8);  
+      filter: brightness(0.8);
     }
   }
 }

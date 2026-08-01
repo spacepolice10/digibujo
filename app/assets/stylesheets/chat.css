@@ -1,0 +1,46 @@
+@layer components {
+  .chat--wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .chat--scroller {
+    position: relative;
+    z-index: 1;
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-anchor: none;
+    overscroll-behavior: contain;
+    padding-top: var(--chat-header-clearance, 0px);
+    padding-bottom: calc(
+      var(--chat-composer-clearance, 0px) + var(--layout-scroll-padding)
+    ) !important;
+  }
+
+  /* Pin short lists to the composer edge without keeping an older-trigger in
+     view. The list is at least one scrollport tall; bullets pack to its end. */
+  .chat--compact-list-pinned {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: var(--spacing-vertical);
+    min-height: 100%;
+    padding-inline: var(--spacing-horizontal);
+  }
+
+  .chat--compact-list-pinned > .bullet {
+    margin-block: 0;
+  }
+
+  .chat--load-more-trigger {
+    display: flex;
+    justify-content: center;
+    padding-block: var(--spacing-vertical);
+    color: var(--color-fg-subtle);
+  }
+}
