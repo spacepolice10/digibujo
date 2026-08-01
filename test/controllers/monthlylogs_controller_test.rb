@@ -85,7 +85,7 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select '[data-controller~=monthlylog-calendar-drop-optimistic]', minimum: 28
   end
 
-  test 'mobile monthlylog show keeps both panels without tabs' do
+  test 'mobile monthlylog show uses date strip instead of grid' do
     monthlylog = create_monthlylog!(@user, name: 'june')
     day = Date.current.beginning_of_month
     create_bullet!(@user,
@@ -99,14 +99,24 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     get monthlylog_path(monthlylog), headers: { 'User-Agent' => MOBILE_UA }
 
     assert_response :success
-    assert_select '.monthlylog--spread'
-    assert_select '.monthlylog--calendar'
+    assert_select '.monthlylog--page-mobile'
+    assert_select '.monthlylog--spread-sections'
+    assert_select '.monthlylog--section.monthlylog--calendar'
+    assert_select '.monthlylog--section.monthlylog--unplanned'
+    assert_select '.monthlylog--inline-calendar'
+    assert_select '.monthlylog--calendar-grid', count: 0
+    assert_select 'main.layout--surface', count: 0
+    assert_select '.monthlylog--date-cell-inline', minimum: 28
+    assert_select '.monthlylog--date-cell-inline.is-current', count: 1
     assert_select '.monthlylog--unplanned'
     assert_select '[role=tab]', count: 0
     assert_select 'turbo-frame#monthlylog_date[src]'
     assert_select 'turbo-frame#monthlylog_unplanned[src]'
     assert_select 'dialog#monthlylog_composer', count: 0
-    assert_select '[data-controller~=pops-drop]', minimum: 1
+    assert_select '.monthlylog--calendar [data-controller~=pops-drop]', count: 0
+    assert_select '[data-controller~=monthlylog-calendar-drop-optimistic]', count: 0
+    assert_select '[data-controller~=monthlylog-inline-calendar]'
+    assert_select '.monthlylog--divider', count: 0
   end
 
   test 'new form defaults to first available selectable month' do
@@ -206,7 +216,7 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     get monthlylog_path(june)
 
     assert_response :success
-    assert_select 'h2', text: /june 2026/i
+    assert_select 'title', text: /june 2026/i
     assert_select 'turbo-frame#monthlylog_unplanned[src=?]', monthlylog_bullets_path(june)
     assert_select 'turbo-frame#monthlylog_unplanned[src=?]', monthlylog_bullets_path(july), count: 0
     assert_select 'turbo-frame#monthlylog_date[src=?]',

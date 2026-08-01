@@ -124,6 +124,144 @@
     font-size: var(--font-size-xs);
   }
 
+  .monthlylog--date-weekday {
+    display: none;
+    position: relative;
+    z-index: 1;
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    color: var(--color-fg-subtle);
+  }
+
+  .monthlylog--pill {
+    width: 100%;
+    max-width: 100%;
+    margin-inline: 0;
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+    border: 1px solid color-mix(in srgb, var(--color-stroke-base) 70%, transparent);
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-bg-subtle) 72%, transparent);
+    backdrop-filter: blur(2px);
+    box-shadow: var(--shadow-subtle);
+    box-sizing: border-box;
+  }
+
+  .monthlylog--inline-calendar {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+  }
+
+  .monthlylog--date-cell-inline {
+    flex: 0 0 auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    min-width: calc(var(--spacing-horizontal-double) * 2);
+    height: calc(var(--spacing-horizontal-double) + var(--spacing-vertical));
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+    scroll-snap-align: center;
+    border-radius: var(--radius-full);
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    box-sizing: border-box;
+    color: var(--color-fg-subtle);
+    text-decoration: none;
+
+    &.is-current {
+      box-shadow: inset 0 0 0 1.5px var(--color-accent);
+    }
+
+    &.is-selected {
+      color: var(--color-fg-base);
+      background: color-mix(in srgb, var(--color-bg-base) 88%, transparent);
+    }
+
+    &.is-selected.is-current {
+      box-shadow: inset 0 0 0 1.5px var(--color-accent);
+    }
+
+    &:hover,
+    &:focus-visible {
+      color: var(--color-fg-base);
+      background: color-mix(in srgb, var(--color-bg-base) 55%, transparent);
+    }
+  }
+
+  .monthlylog--date-cell-inline .monthlylog--date-weekday {
+    display: block;
+  }
+
+  .monthlylog--date-cell-inline .monthlylog--indicator {
+    position: absolute;
+    top: var(--spacing-vertical);
+    right: var(--spacing-horizontal);
+  }
+
+  .monthlylog--page-mobile.layout--page {
+    background: transparent;
+    width: 100%;
+    max-width: 100%;
+    padding-inline: 0;
+    overflow: hidden;
+  }
+
+  .monthlylog--page-mobile > .layout--container {
+    max-width: none;
+    width: 100%;
+    padding-inline: 0;
+  }
+
+  .monthlylog--page-mobile .monthlylog--spread-sections {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    width: 100%;
+    height: auto;
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scroll-snap-stop: always;
+  }
+
+  .monthlylog--page-mobile .monthlylog--section {
+    flex: 0 0 100%;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    min-height: 70dvh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
+  }
+
+  .monthlylog--page-mobile .monthlylog--calendar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-vertical);
+    align-items: stretch;
+  }
+
+  .monthlylog--page-mobile .monthlylog--calendar,
+  .monthlylog--page-mobile .monthlylog--unplanned {
+    max-height: none;
+  }
+
   .monthlylog--indicator {
     position: relative;
     z-index: 1;
@@ -260,17 +398,26 @@
   }
 
   .monthlylog--unplanned-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    min-height: calc(var(--spacing-horizontal-double) + var(--spacing-vertical));
     margin-bottom: var(--spacing-vertical);
+    text-align: center;
   }
 
-  .monthlylog--unplanned-title {
-    margin: 0 0 var(--spacing-vertical-half);
-    font-size: var(--font-size-base-read);
+  .monthlylog--unplanned-name {
+    margin: 0;
+    font-size: var(--font-size-xs);
     font-weight: var(--font-weight-strong);
+    color: var(--color-fg-base);
   }
 
   .monthlylog--unplanned-description {
     margin: 0;
+    font-size: var(--font-size-xs);
     color: var(--color-fg-subtle);
   }
 
