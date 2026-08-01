@@ -8,15 +8,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script>
-    /* Applied before first paint so a dark session never flashes the light theme. */
-    (() => {
-      let saved = null;
-      try { saved = localStorage.getItem("digibujo-theme"); } catch {}
-      const dark = saved ? saved === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
-      if (dark) document.documentElement.dataset.theme = "dark";
-    })();
-  </script>
   <style>
     :root {
       --paper: #f6f5f2;
@@ -44,7 +35,7 @@
       --shell-2: #26262e;
       --shell-line: #3f3f48;
       --shell-muted: #9a9aa3;
-      /* Stays dark in both themes: pairs with --lime as either text or chip. */
+      /* Dark ink on lime chips / fills — not theme-dependent. */
       --ink-fixed: #222222;
       --grid-dot: #d9d6cf;
       --font-sans: Poppins, ui-sans-serif, system-ui, sans-serif;
@@ -58,33 +49,6 @@
       /* Shared column split for the stage + sidebar sections (03–06). */
       --split: 1fr 1fr;
       --split-gap: 20px;
-    }
-
-    [data-theme="dark"] {
-      --paper: #14151a;
-      --paper-dot: #444449;
-      --ink: #ececf1;
-      --muted: #9a9a9f;
-      --faint: #75767b;
-      --stroke: #2e2f34;
-      --stroke-soft: #212227;
-      --surface: #1c1d24;
-      --surface-soft: #181920;
-      --sky-ink: #aacdec;
-      --sky-bg: #2c3643;
-      --lilac-ink: #cdc1ec;
-      --lilac-bg: #353343;
-      --pear-ink: #bbe08d;
-      --pear-bg: #303b2a;
-      --warm-ink: #ead58b;
-      --warm-bg: #3d382a;
-      --shell: #0e0f13;
-      --shell-2: #0c0d11;
-      --shell-line: #323336;
-      --shell-muted: #939395;
-      --ink-fixed: #14151a;
-      --grid-dot: #2b2c33;
-      color-scheme: dark;
     }
 
     * { box-sizing: border-box; }
@@ -435,7 +399,9 @@
     .hero-aside {
       font-size: 14px;
       color: var(--muted);
+      text-decoration: none;
     }
+    .hero-aside:hover { color: var(--ink); }
 
     /* —— Phone (daylog mock) —— */
     .phone-wrap {
@@ -1612,6 +1578,29 @@
       gap: var(--split-gap);
       align-items: stretch;
     }
+    .inbox-migrate {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 0;
+    }
+    .migrate-copy {
+      background: var(--surface);
+      border: 1px solid var(--stroke);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+    .migrate-copy h3 {
+      margin: 0 0 4px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .migrate-copy p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
     .inbox-canvas {
       position: relative;
       min-height: 320px;
@@ -1718,6 +1707,7 @@
       grid-row: 1 / 3;
     }
     .tag-month { color: var(--sky-ink); background: var(--sky-bg); }
+    .tag-past { color: var(--warm-ink); background: var(--warm-bg); }
     .tag-hook { color: var(--lilac-ink); background: var(--lilac-bg); }
     .tag-ext { color: var(--pear-ink); background: var(--pear-bg); }
     .inbox-row .body {
@@ -2449,33 +2439,6 @@
       }
     }
 
-    /* —— Theme toggle —— */
-    .theme-toggle {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 34px;
-      height: 34px;
-      padding: 0;
-      border-radius: 999px;
-      border: 1px solid var(--stroke);
-      background: var(--surface);
-      color: var(--muted);
-      cursor: pointer;
-      transition: color .18s ease, border-color .18s ease, background-color .18s ease;
-    }
-    .theme-toggle:hover {
-      color: var(--ink);
-      border-color: color-mix(in srgb, var(--ink) 24%, transparent);
-    }
-    .theme-toggle svg {
-      width: 17px;
-      height: 17px;
-      display: block;
-    }
-    .theme-toggle .icon-moon { display: none; }
-    [data-theme="dark"] .theme-toggle .icon-sun { display: none; }
-    [data-theme="dark"] .theme-toggle .icon-moon { display: block; }
   </style>
 </head>
 <body>
@@ -2488,18 +2451,7 @@
       <nav class="nav-links">
         <a href="#features">Features</a>
         <a href="#self-host">Self-host</a>
-        <button type="button" class="theme-toggle" id="theme-toggle" aria-pressed="false" aria-label="Switch to dark theme">
-          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="4"></circle>
-            <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
-          </svg>
-          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-            <circle cx="12" cy="12" r="7.5"></circle>
-            <circle cx="9.4" cy="9.8" r="1.35" fill="currentColor" stroke="none"></circle>
-            <circle cx="14.4" cy="14" r="1.9" fill="currentColor" stroke="none"></circle>
-          </svg>
-        </button>
-        <a class="btn-sm" href="https://digibujo.naysdemo.online/authentication/new">Get started</a>
+        <a class="btn-sm" href="https://digibujo.naysdemo.online/authentication/new">Try demo</a>
       </nav>
     </div>
   </header>
@@ -2517,9 +2469,9 @@
         </p>
         <div class="btn-row">
           <span class="btn-hit">
-            <a class="btn btn-lime" href="https://digibujo.naysdemo.online/authentication/new">Create your own</a>
+            <a class="btn btn-lime" href="https://digibujo.naysdemo.online/authentication/new">Try demo</a>
           </span>
-          <span class="hero-aside">Self-host · O'Saasy</span>
+          <a class="hero-aside" href="https://github.com/spacepolice10/digibujo" target="_blank" rel="noopener noreferrer">Self-host on GitHub</a>
         </div>
       </div>
 
@@ -2858,64 +2810,65 @@
       <span class="section-label">03 — Inbox</span>
       <h2>Inbox is part of the day — not part of the daylog.</h2>
       <p class="section-lede">
-        Planned monthly bullets, webhook captures from bots and other users, and browser extension saves (Chrome &amp; Firefox) land in a separate window. They propose. You decide.
+        Migrations bring last week's open tasks and parked ideas back for triage. Hooks and the browser extension add new candidates the same way. They propose. You decide.
       </p>
       <div class="inbox-stage">
-        <div class="inbox-canvas" aria-hidden="true">
-          <div class="daylog-ghost">
-            <div class="stamp">daylog · untouched</div>
-            <div class="title">Today, Jul 28</div>
-            <div class="line w80"></div>
-            <div class="line w60"></div>
-            <div class="line" style="width:70%"></div>
+        <div class="inbox-migrate">
+          <div class="inbox-canvas" aria-hidden="true">
+            <div class="daylog-ghost">
+              <div class="stamp">daylog · untouched</div>
+              <div class="title">Today, Jul 28</div>
+              <div class="line w80"></div>
+              <div class="line w60"></div>
+              <div class="line" style="width:70%"></div>
+            </div>
+            <div class="inbox-panel">
+              <div class="inbox-head">
+                <div class="icon">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M2 4.5h12v8.5a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4.5Z" stroke="#222222" stroke-width="1.4"/>
+                    <path d="M2 4.5 8 9l6-4.5" stroke="#222222" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M5 2.5h6" stroke="#222222" stroke-width="1.4" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <strong>Inbox</strong>
+                <span class="hint">· from the past</span>
+                <span class="badge">3</span>
+              </div>
+              <div class="inbox-row">
+                <span class="tag tag-month">month</span>
+                <span class="body">Call dentist — planned Jul 28</span>
+                <div class="actions">
+                  <span class="act-yes">Accept</span>
+                  <span class="act-no">Skip</span>
+                </div>
+              </div>
+              <div class="inbox-row">
+                <span class="tag tag-past">migrate</span>
+                <span class="body">Ship promo page — open since Jul 21</span>
+                <div class="actions">
+                  <span class="act-yes">Accept</span>
+                  <span class="act-no">Skip</span>
+                </div>
+              </div>
+              <div class="inbox-row">
+                <span class="tag tag-past">idea</span>
+                <span class="body">Rewrite onboarding — parked note</span>
+                <div class="actions">
+                  <span class="act-yes">Accept</span>
+                  <span class="act-no">Skip</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="inbox-panel">
-            <div class="inbox-head">
-              <div class="icon">
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M2 4.5h12v8.5a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4.5Z" stroke="#222222" stroke-width="1.4"/>
-                  <path d="M2 4.5 8 9l6-4.5" stroke="#222222" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M5 2.5h6" stroke="#222222" stroke-width="1.4" stroke-linecap="round"/>
-                </svg>
-              </div>
-              <strong>Inbox</strong>
-              <span class="hint">· suggested</span>
-              <span class="badge">3</span>
-            </div>
-            <div class="inbox-row">
-              <span class="tag tag-month">month</span>
-              <span class="body">Call dentist — planned Jul 28</span>
-              <div class="actions">
-                <span class="act-yes">Accept</span>
-                <span class="act-no">Skip</span>
-              </div>
-            </div>
-            <div class="inbox-row">
-              <span class="tag tag-hook">hook</span>
-              <span class="body">👩 Darling → pick up oat milk? ♡</span>
-              <div class="actions">
-                <span class="act-yes">Accept</span>
-                <span class="act-no">Skip</span>
-              </div>
-            </div>
-            <div class="inbox-row">
-              <span class="tag tag-ext">ext</span>
-              <span class="body">Article: BuJo for remote teams</span>
-              <div class="actions">
-                <span class="act-yes">Accept</span>
-                <span class="act-no">Skip</span>
-              </div>
-            </div>
+          <div class="migrate-copy">
+            <h3>Filter what still matters</h3>
+            <p>
+              Monthly plans that land on today, unfinished tasks from yesterday, and ideas you parked weeks ago — all surface in the inbox first. Accept what belongs in the daylog. Skip the rest. Migration is triage, not auto-dump.
+            </p>
           </div>
         </div>
         <div class="source-stack">
-          <div class="source-card">
-            <div class="source-ico" style="background:var(--sky-bg)" aria-hidden="true">📅</div>
-            <div>
-              <h3>From the month</h3>
-              <p>Planned bullets surface when their day arrives — as suggestions, not auto-logs.</p>
-            </div>
-          </div>
           <div class="source-card">
             <div class="source-ico" style="background:var(--lilac-bg);color:var(--lilac-ink)" aria-hidden="true">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -2924,13 +2877,15 @@
               </svg>
             </div>
             <div>
-              <h3>From webhooks</h3>
-              <p>Hooks take pushes from bots — and from other people. Exchange bullets, delegate softly, triage when you're ready.</p>
+              <h3>Hooks</h3>
+              <p>
+                Inbound hooks take pushes from Zapier, bots, and other apps — and can go all the way to accepting email into bullets. Captures land in Pending. You decide what enters the day.
+              </p>
               <div class="hook-note" aria-hidden="true">
-                <span class="avatar">👩</span>
+                <span class="avatar">⚡</span>
                 <div class="bubble">
-                  <div class="who">Darling <span class="via">· via hook</span></div>
-                  <div class="msg">Could you pick up oat milk on the way home? <span class="heart">♡</span></div>
+                  <div class="who">Zapier <span class="via">· via hook</span></div>
+                  <div class="msg">Starred Gmail → task: “Reply to lease renewal”</div>
                 </div>
               </div>
             </div>
@@ -2941,8 +2896,8 @@
               <img src="firefox.svg" alt="" width="17" height="17">
             </div>
             <div>
-              <h3>From Chrome &amp; Firefox</h3>
-              <p>Clip a page mid-scroll. It waits in the inbox window — never dumps into today.</p>
+              <h3>Browser extension</h3>
+              <p>Clip a page mid-scroll from Chrome or Firefox. It waits in the inbox window — never dumps into today.</p>
             </div>
           </div>
         </div>
@@ -3141,10 +3096,10 @@
       <h2>Start a journal you actually own.</h2>
       <div class="btn-row">
         <span class="btn-hit">
-          <a class="btn btn-lime" href="https://digibujo.naysdemo.online/authentication/new">Create your own</a>
+          <a class="btn btn-lime" href="https://digibujo.naysdemo.online/authentication/new">Try demo</a>
         </span>
         <span class="btn-hit">
-          <a class="btn btn-ghost" href="https://github.com/spacepolice10/digibujo" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+          <a class="btn btn-ghost" href="https://github.com/spacepolice10/digibujo" target="_blank" rel="noopener noreferrer">Self-host on GitHub</a>
         </span>
       </div>
       <p class="fine">O'Saasy · self-host OK · no competing SaaS</p>
@@ -3200,41 +3155,6 @@
       }, { threshold: 0.5 });
 
       panels.forEach((panel) => observer.observe(panel));
-    })();
-
-    (() => {
-      const root = document.documentElement;
-      const toggle = document.getElementById("theme-toggle");
-      if (!toggle) return;
-
-      const store = {
-        get() { try { return localStorage.getItem("digibujo-theme"); } catch { return null; } },
-        set(value) { try { localStorage.setItem("digibujo-theme", value); } catch {} },
-      };
-
-      const sync = () => {
-        const dark = root.dataset.theme === "dark";
-        toggle.setAttribute("aria-pressed", dark ? "true" : "false");
-        toggle.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
-      };
-
-      toggle.addEventListener("click", () => {
-        const dark = root.dataset.theme !== "dark";
-        if (dark) root.dataset.theme = "dark";
-        else delete root.dataset.theme;
-        store.set(dark ? "dark" : "light");
-        sync();
-      });
-
-      /* Follow the OS until the visitor picks a side themselves. */
-      matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
-        if (store.get()) return;
-        if (event.matches) root.dataset.theme = "dark";
-        else delete root.dataset.theme;
-        sync();
-      });
-
-      sync();
     })();
   </script>
 </body>
