@@ -53,6 +53,8 @@ module Authentications
 
       assert_redirected_to new_authentication_confirmation_path
       assert_nil cookies[:session_id]
+      follow_redirect!
+      assert_select '#toasts .toasts--errmsg', text: /Invalid or expired code/
     end
 
     test 'create with expired code rejects' do

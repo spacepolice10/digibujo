@@ -1,4 +1,4 @@
-/* Toast host: empty shell in layout; turbo-stream updates inject .toasts--message. */
+/* Toast host: seeded from redirect flash; turbo-stream updates inject .toasts--message. */
 
 @layer components {
   #toasts.toasts {

@@ -12,13 +12,15 @@
 
     <%= render "shared/fonts" %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
   </head>
 
   <body>
+    <%= render "shared/toasts_host" %>
+
     <div class="session-layout">
       <header class="session-layout--header">
-        <img src="/icon.svg" alt="" class="public-logo">
-        <span class="public-app-name">Digibujo</span>
+        <img src="/icon.svg" alt="Digibujo" class="public-logo">
       </header>
       <main class="session-layout--main <%= content_for(:main_class) %>">
         <%= yield %>

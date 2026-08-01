@@ -44,12 +44,7 @@
   </head>
 
   <body data-controller="dialog timezone-cookie bulk-menu">
-    <div
-      id="toasts"
-      class="toasts"
-      data-controller="toasts"
-      aria-live="polite"
-    ></div>
+    <%= render "shared/toasts_host" %>
 
     <% unless request.variant.include?(:mobile) %>
       <%= render "shared/header" %>
