@@ -3,17 +3,17 @@
     padding: var(--spacing-vertical) var(--spacing-horizontal);
     max-width: var(--breakpoint-laptop);
     margin-top: 10ch;
-    padding-bottom: calc(var(--spacing-vertical-quad) + var(--layout-scroll-padding)) !important ;
+    padding-bottom: calc(var(--spacing-vertical-triple) + var(--layout-scroll-padding)) !important ;
   }
 
   .layout--page.daylog.daylog--chat {
     --daylog-composer-clearance: calc(
-      var(--spacing-vertical-quad) + var(--spacing-vertical-double)
+      var(--spacing-vertical-triple) + var(--spacing-vertical-double)
     );
     --daylog-header-clearance: calc(
-      var(--daylog-header-top)
-      + var(--daylog-header-height)
-      + var(--spacing-vertical)
+      var(--spacing-vertical-double)
+      + var(--spacing-horizontal-double)
+      + var(--spacing-vertical-double)
     );
 
     position: relative;
@@ -132,6 +132,11 @@
     gap: var(--spacing-vertical);
     min-height: 100%;
     padding-inline: var(--spacing-horizontal);
+  }
+
+  html:has(.daylog--chat) body {
+    padding-bottom: 0 !important;
+    scroll-padding-bottom: 0 !important;
   }
 
   .daylog--scroller > [data-daylog-scroll-target="list"] > .bullet {
