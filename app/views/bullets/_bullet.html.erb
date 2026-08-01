@@ -1,11 +1,12 @@
 <%# locals: (bullet:) %>
-<turbo-frame id="<%= dom_id(bullet) %>" class="bullet animations--fall-in" data-bullet-type="<%= bullet.bulletable_type.downcase %>"
+<turbo-frame id="<%= dom_id(bullet) %>" class="bullet animations--fall-in" data-bullet-type="<%= bullet.bulletable_type.downcase %>" data-task-completed="<%= bullet.completed? ? "true" : "false" %>"
   data-bullet-data-attributes="<%= bullet.data_attributes.to_json %>">
 
   <input
     type="checkbox"
     id="<%= dom_id(bullet, :select_checkbox) %>"
     value="<%= bullet.id %>"
+    
     data-bulk-menu-target="checkbox"
     data-bulk-pinnable="<%= bullet.pinned? ? "pinned" : "unpinned" %>"
     data-bulk-publishable="<%= bullet.published? ? "published" : "unpublished" %>"
