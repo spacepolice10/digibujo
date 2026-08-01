@@ -78,7 +78,7 @@ Rails.application.routes.draw do
     resource :mark_as_reviewed
   end
 
-  resources :bullets, except: :index
+  resources :bullets, except: %i[index new]
 
   # --- Tasks ---
   scope 'tasks', module: :tasks do

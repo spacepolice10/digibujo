@@ -32,10 +32,6 @@ class Bullet < ApplicationRecord
     bulletable.to_partial_path
   end
 
-  def to_form_path
-    bulletable.to_form_path
-  end
-
   def migration_activity
     return unless migrated?
 

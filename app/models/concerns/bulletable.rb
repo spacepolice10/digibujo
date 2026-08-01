@@ -27,10 +27,6 @@ module Bulletable
     "#{self.class.model_name.route_key}/#{self.class.model_name.element}"
   end
 
-  def to_form_path
-    "#{self.class.model_name.route_key}/form"
-  end
-
   def data_attributes
     {}
   end

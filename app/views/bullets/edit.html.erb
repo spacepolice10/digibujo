@@ -30,9 +30,8 @@
       <turbo-frame id="<%= dom_id(@bullet) %>"
                    class="bullet"
                    data-bullet-type="<%= @bullet.bulletable_type.downcase %>">
-        <%= render @bullet.to_form_path,
+        <%= render "bullets/edit_form",
               bullet: @bullet,
-              editing: true,
               return_path: bullet_path(@bullet) %>
       </turbo-frame>
     </div>

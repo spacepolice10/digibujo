@@ -26,7 +26,6 @@
           chat_composer_target: "form",
           action: "turbo:submit-end->chat-composer#submitFinished turbo:submit-end->voice-recorder#clearOnSubmit"
         } do |fr| %>
-    <%= hidden_field_tag :inline_composer, "1" %>
     <%= fr.hidden_field :bucket_id, value: bucket_id, data: { chat_composer_target: "bucketId" } %>
     <%= fr.hidden_field :pops_on, value: pops_on, data: { chat_composer_target: "popsOn" } %>
     <%= fr.hidden_field :bulletable_type,

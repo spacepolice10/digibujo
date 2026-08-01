@@ -1,179 +1,12 @@
 @layer components {
-  .bullets-form--dock {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
-    justify-content: center;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    margin-block: var(--spacing-vertical-half) 0;
-    position: sticky;
-    bottom: 2.5rem;
-  }
-
-  .bullets-form--dock-mobile {
-    position: fixed;
-    inset-inline: var(--spacing-horizontal);
-    bottom: var(--layout-scroll-padding);
-    z-index: var(--z-dropdown);
-    justify-content: center;
-    width: fit-content;
-    max-width: calc(100% - var(--spacing-horizontal-double));
-    margin-inline: auto;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-  }
-  .bullets-form--buttons {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
-    justify-content: center;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-  }
-  .bullets-form--create-button {
-    position: relative;
-    isolation: isolate;
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
-    justify-content: space-between;
-    text-decoration: none;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
-    border-radius: var(--radius-strong);
-    color: var(--color-fg-base);
-    background: transparent;
-    border: none;
-    &::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-      border-radius: inherit;
-      background: var(--color-bg-subtle);
-      border: 1px solid var(--color-stroke-base);
-      box-shadow: var(--shadow-base);
-    }
-    &:hover {
-      color: var(--color-fg-subtle);
-      &::before {
-        background: var(--color-bg-base);
-      }
-    }
-    &.is-composer-expanding::before {
-      view-transition-name: bullet-composer;
-    }
-    &[data-bullet-type="task"] > .icon {
-      color: var(--model-color-2);
-    }
-    &[data-bullet-type="note"] > .icon {
-      color: var(--model-color-3);
-    }
-    &[data-bullet-type="event"] > .icon {
-      color: var(--model-color-4);
-    }
-    &[data-bullet-type="voice"] > .icon {
-      color: var(--model-color-5);
-    }
-  }
-
-  /* Future "+" etc. — no shell, name on the control itself. */
-  [data-composer-expand].is-composer-expanding:not(.bullets-form--create-button) {
-    view-transition-name: bullet-composer;
-  }
-
-  .bullets-form--wrap {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    position: fixed;
-    inset: 0;
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
-    overflow-y: auto;
-  }
-
   .bullets-form {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-vertical-half);
     align-items: center;
-    opacity: 1;
-    /* Visible so Lexxy toolbar dropdowns (position: absolute) are not clipped. */
     overflow: visible;
-    overscroll-behavior: none;
-    transform: translateY(0);
-    transition:
-      opacity 200ms ease-out,
-      transform 200ms ease-out;
-
-    @starting-style {
-      opacity: 0;
-      transform: translateY(var(--spacing-vertical-half));
-    }
   }
 
-  /* During shell morph: hide page snapshot + live form (no editor-on-editor). */
-  html[data-composer-vt] {
-    & ::view-transition-new(root) {
-      opacity: 0 !important;
-      animation: none !important;
-      mix-blend-mode: normal;
-    }
-
-    & .bullets-form--page .bullets-form {
-      opacity: 0;
-      transform: translateY(var(--spacing-vertical-half));
-      transition: none;
-    }
-  }
-
-  /* Empty page shell ↔ button shell (shared-element morph). */
-  .bullets-form--page {
-    max-height: 90vh;
-    position: relative;
-    isolation: isolate;
-    &::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-      border-radius: var(--radius-strong);
-      background: var(--color-bg-subtle);
-      view-transition-name: bullet-composer;
-    }
-  }
-
-  ::view-transition-group(bullet-composer) {
-    z-index: 1;
-    animation-duration: 280ms;
-    animation-timing-function: cubic-bezier(.2, .8, .2, 1);
-  }
-
-  ::view-transition-old(bullet-composer),
-  ::view-transition-new(bullet-composer) {
-    height: 100%;
-    overflow: clip;
-    border-radius: var(--radius-strong);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .bullets-form {
-      transition: none;
-
-      @starting-style {
-        opacity: 1;
-        transform: none;
-      }
-    }
-
-    .bullets-form--create-button.is-composer-expanding::before,
-    [data-composer-expand].is-composer-expanding:not(.bullets-form--create-button),
-    .bullets-form--page::before {
-      view-transition-name: none;
-    }
-
-    ::view-transition-group(bullet-composer) {
-      animation: none;
-    }
-  }
   .bullets-form--rail {
     position: sticky;
     bottom: 0;
@@ -184,37 +17,14 @@
     justify-content: space-between;
     background: var(--color-bg-subtle);
     padding-block: var(--spacing-vertical-half);
-    & .bullets-form--rail-actions {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-horizontal-half);
-      justify-content: space-between;
-    }
-    & .bullets-form--type-pill {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-horizontal-half);
-      justify-content: space-between;
-      border-radius: var(--radius-strong);
-      padding: var(--spacing-vertical-half) var(--spacing-horizontal);
-      &[data-bullet-type="task"] {
-        background: var(--model-color-2-bg);
-        color: var(--model-color-2);
-      }
-      &[data-bullet-type="note"] {
-        background: var(--model-color-4-bg);
-        color: var(--model-color-4);
-      }
-      &[data-bullet-type="event"] {
-        background: var(--model-color-5-bg  );
-        color: var(--model-color-5);
-      }
-      &[data-bullet-type="voice"] {
-        background: var(--model-color-3-bg);
-        color: var(--model-color-3);
-      }
-    }
   }
+
+  .bullets-form--rail-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-horizontal-half);
+  }
+
   .bullets-form--body {
     appearance: none;
     display: block;

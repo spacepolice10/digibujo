@@ -27,7 +27,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'Updated', @bullet.reload.body_as_text
   end
 
-  test 'create redirects to the originating daylog' do
+  test 'html create redirects to the bullet show' do
     assert_difference -> { @user.bullets.count }, 1 do
       post bullets_path,
            params: {
@@ -40,32 +40,35 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
            }
     end
 
-    assert_redirected_to daylog_path(date: Date.current.iso8601)
+    bullet = @user.bullets.order(:created_at).last
+    assert_redirected_to bullet_path(bullet)
   end
 
-  test 'create redirects to originating page even when turbo stream is preferred' do
+  test 'turbo stream create appends the row' do
     assert_difference -> { @user.bullets.count }, 1 do
       post bullets_path,
            params: {
              bullet: {
                bulletable_type: 'Task',
-               bulletable_attributes: { body: 'Full page task' },
+               bulletable_attributes: { body: 'Stream task' },
                pops_on: Date.current.iso8601,
                bucket_id: @daylog.id
              }
            },
+           headers: { 'Turbo-Frame' => 'daylog_bullets_composer' },
            as: :turbo_stream
     end
 
-    assert_redirected_to daylog_path(date: Date.current.iso8601)
+    assert_response :success
+    assert_match %(turbo-stream action="append" target="daylog_bullets_container"), response.body
+    assert_match 'Stream task', response.body
   end
 
-  test 'inline composer create appends the row and drops the empty state' do
+  test 'composer create appends the row and drops the empty state' do
     container = 'daylog_bullets_container'
 
     post bullets_path,
          params: {
-           inline_composer: '1',
            bullet: {
              bulletable_type: 'Task',
              bulletable_attributes: { body: '<p>Chat task</p>' },
@@ -80,10 +83,9 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_match %(turbo-stream action="append" target="#{container}"), response.body
     assert_match 'Chat task', response.body
     assert_match %(turbo-stream action="remove" target="no_bullets_container"), response.body
-    assert_no_match 'collection--date-pill', response.body
   end
 
-  test 'inline composer create on a collection prepends a date pill for a new day' do
+  test 'composer create on a collection appends without a date pill' do
     collection = create_collection!(@user, name: 'Inbox')
     create_bullet!(@user, bucket: collection.bucket, pops_on: nil, bulletable: Note.new(body: 'Yesterday'),
                    created_at: 1.day.ago)
@@ -92,7 +94,6 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
     post bullets_path,
          params: {
-           inline_composer: '1',
            bullet: {
              bulletable_type: 'Note',
              bulletable_attributes: { body: '<p>Fresh today</p>' },
@@ -104,12 +105,11 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_match %(turbo-stream action="append" target="#{container}"), response.body
-    assert_match 'collection--date-pill', response.body
-    assert_match Date.current.strftime('%b %-d, %Y'), response.body
     assert_match 'Fresh today', response.body
+    assert_no_match 'collection--date-pill', response.body
   end
 
-  test 'inline composer create on a collection skips the date pill for the same day' do
+  test 'composer create on a collection skips the date pill for the same day' do
     collection = create_collection!(@user, name: 'Inbox')
     create_bullet!(@user, bucket: collection.bucket, pops_on: nil, bulletable: Note.new(body: 'Earlier today'),
                    created_at: 1.hour.ago)
@@ -118,7 +118,6 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
     post bullets_path,
          params: {
-           inline_composer: '1',
            bullet: {
              bulletable_type: 'Note',
              bulletable_attributes: { body: '<p>Later today</p>' },
@@ -134,10 +133,9 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match 'collection--date-pill', response.body
   end
 
-  test 'inline composer create reports validation errors as a toast' do
+  test 'composer create reports validation errors as a toast' do
     post bullets_path,
          params: {
-           inline_composer: '1',
            bullet: {
              bulletable_type: 'Voice',
              bulletable_attributes: { body: 'No recording attached' },
@@ -237,14 +235,42 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_select '.layout--surface'
     assert_select '.bullet--header h2', text: 'Edit bullet'
     assert_select 'lexxy-editor[preset=note]', count: 1
+    assert_select '.bullets-form--type-pill', count: 0
+    assert_select 'a.bullets-form--back'
     assert_match 'Expanded content', response.body
+  end
+
+  test 'edit task uses inline preset without type pill' do
+    task = create_bullet!(@user, bulletable: Task.new(body: '<p>Do it</p>'))
+
+    get edit_bullet_path(task)
+
+    assert_response :success
+    assert_select 'lexxy-editor[preset=inline]', count: 1
+    assert_select '.bullets-form--type-pill', count: 0
+  end
+
+  test 'update changes body but ignores bulletable_type change' do
+    task = create_bullet!(@user, bulletable: Task.new(body: '<p>Old</p>'))
+
+    patch bullet_path(task),
+          params: {
+            bullet: {
+              bulletable_type: 'Note',
+              bulletable_attributes: { id: task.bulletable_id, body: '<p>New text</p>' }
+            }
+          }
+
+    assert_redirected_to bullet_path(task)
+    task.reload
+    assert_equal 'Task', task.bulletable_type
+    assert_equal 'New text', task.body_as_text
   end
 
   test 'create requires bullet type' do
     post bullets_path, params: { bullet: { bulletable_attributes: { body: 'No type' } } }
 
-    assert_redirected_to new_bullet_path
-    assert_equal 'Pick a bullet type first', flash[:alert]
+    assert_response :bad_request
   end
 
   test 'create allows blank body (becomes untitled)' do
@@ -261,10 +287,10 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     end
 
     bullet = @user.bullets.order(:created_at).last
-    assert_redirected_to daylog_path(date: Date.current.iso8601)
+    assert_redirected_to bullet_path(bullet)
   end
 
-  test 'create renders new with errors when invalid' do
+  test 'create redirects with alert when invalid' do
     assert_no_difference -> { @user.bullets.count } do
       post bullets_path,
            params: {
@@ -277,50 +303,17 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
            }
     end
 
-    assert_response :unprocessable_entity
-    assert_select '.form--errors'
-    assert_match 'can&#39;t be blank', response.body
+    assert_redirected_to daylog_path
+    assert flash[:alert].present?
   end
 
-  test 'new without type asks to pick a type' do
-    get new_bullet_path
+  test 'new bullet path is removed' do
+    get '/bullets/new'
 
-    assert_response :success
-    assert_select 'form.bullets-form', count: 0
-    assert_select '.bullets-form--dock'
-    assert_select 'a[aria-label=?]', 'Add Task'
+    assert_response :not_found
   end
 
-  test 'new composer renders full page inline editor' do
-    get new_bullet_path(bulletable_type: 'Task')
-
-    assert_response :success
-    assert_select 'form.bullets-form'
-    assert_select 'lexxy-editor[preset=inline]'
-    assert_select '.bullets-form--rail'
-    assert_select '.bullets-form--type-pill[data-bullet-type=?]', 'task', text: /Task/
-    assert_select '.bullets-form--rail-submit button[type=submit]'
-  end
-
-  test 'new composer with Note type renders note editor' do
-    get new_bullet_path(bulletable_type: 'Note')
-
-    assert_response :success
-    assert_select 'lexxy-editor[preset=note]'
-    assert_select 'lexxy-editor[preset=inline]', false
-    assert_select '.bullets-form--type-pill[data-bullet-type=?]', 'note', text: /Note/
-  end
-
-  test 'new composer renders navigational back link from bucket' do
-    get new_bullet_path(bulletable_type: 'Task', pops_on: Date.current, bucket_id: @daylog.id)
-
-    assert_response :success
-    assert_select 'a.bullets-form--type-dismiss[data-turbo-frame=_top][href=?]',
-                  daylog_path(date: Date.current.iso8601)
-    assert_select "input[name='return_to']", count: 0
-  end
-
-  test 'create redirects to originating collection' do
+  test 'html create from a collection redirects to the bullet show' do
     collection = create_collection!(@user, name: 'Inbox')
 
     assert_difference -> { @user.bullets.count }, 1 do
@@ -334,7 +327,8 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
            }
     end
 
-    assert_redirected_to collection_path(collection)
+    bullet = @user.bullets.order(:created_at).last
+    assert_redirected_to bullet_path(bullet)
   end
 
   test 'create with non-Note type ignores stale bulletable_attributes' do
@@ -353,7 +347,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_not bullet.bulletable.respond_to?(:mood)
   end
 
-  test 'edit redirects voice bullets to show' do
+  test 'edit and update voice caption' do
     blob = create_blob!(filename: 'voice.webm', content_type: 'audio/webm')
     bullet = create_bullet!(@user,
       bulletable_type: 'Voice',
@@ -362,20 +356,14 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
     get edit_bullet_path(bullet)
 
-    assert_redirected_to bullet_path(bullet)
-  end
+    assert_response :success
+    assert_select 'lexxy-editor[preset=inline]'
 
-  test 'update redirects voice bullets to show' do
-    blob = create_blob!(filename: 'voice.webm', content_type: 'audio/webm')
-    bullet = create_bullet!(@user,
-      bulletable_type: 'Voice',
-      bulletable_attributes: { body: 'Voice caption', recording: blob.signed_id, duration_seconds: 5 }
-    )
-
-    patch bullet_path(bullet), params: { bullet: { bulletable_attributes: { body: 'Changed' } } }
+    patch bullet_path(bullet),
+          params: { bullet: { bulletable_attributes: { id: bullet.bulletable_id, body: '<p>Changed</p>' } } }
 
     assert_redirected_to bullet_path(bullet)
-    assert_equal 'Voice caption', bullet.reload.body_as_text
+    assert_equal 'Changed', bullet.reload.body_as_text
   end
 
   test 'create json returns the bullet' do
@@ -417,7 +405,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert response.parsed_body['recording'].present?
   end
 
-  test 'create json without bulletable type returns 422' do
+  test 'create json without bulletable type returns bad request' do
     post bullets_path,
          params: {
            bullet: {
@@ -428,8 +416,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
          },
          as: :json
 
-    assert_response :unprocessable_entity
-    assert_equal ['is required'], response.parsed_body['bulletable_type']
+    assert_response :bad_request
   end
 
   test 'bearer session code authenticates create json' do
@@ -484,7 +471,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'inline composer create appends into monthlylog dated container from Turbo-Frame' do
+  test 'composer create appends into monthlylog dated container from Turbo-Frame' do
     monthlylog = create_monthlylog!(@user, name: 'june')
     day = Date.current.beginning_of_month
     composer = "date_#{day.iso8601}_bullets_composer"
@@ -492,7 +479,6 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
     post bullets_path,
          params: {
-           inline_composer: '1',
            bullet: {
              bulletable_type: 'Task',
              bulletable_attributes: { body: '<p>Month task</p>' },
@@ -508,14 +494,13 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Month task', response.body
   end
 
-  test 'inline composer create appends into monthlylog unplanned container' do
+  test 'composer create appends into monthlylog unplanned container' do
     monthlylog = create_monthlylog!(@user, name: 'june')
     composer = 'monthlylog_bullets_unplanned_composer'
     container = 'monthlylog_bullets_unplanned_container'
 
     post bullets_path,
          params: {
-           inline_composer: '1',
            bullet: {
              bulletable_type: 'Note',
              bulletable_attributes: { body: '<p>Month note</p>' },
@@ -530,14 +515,13 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Month note', response.body
   end
 
-  test 'inline composer create appends into future unplanned container' do
+  test 'composer create appends into future unplanned container' do
     future = ensure_future!(@user)
     composer = 'future_bullets_unplanned_composer'
     container = 'future_bullets_unplanned_container'
 
     post bullets_path,
          params: {
-           inline_composer: '1',
            bullet: {
              bulletable_type: 'Task',
              bulletable_attributes: { body: '<p>Someday task</p>' },
