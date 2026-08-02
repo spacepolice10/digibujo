@@ -7,7 +7,7 @@
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --paper: #f6f5f2;
@@ -180,23 +180,12 @@
       color: var(--muted);
       text-decoration: none;
     }
-    .nav-links a:hover { color: var(--ink); }
+    .nav-links a:hover:not(.btn-sm) { color: var(--ink); }
 
     /* —— Buttons —— */
-    /*
-      The animated buttons tilt and shift on hover, which drags them out from
-      under the cursor and makes :hover flap. .btn-hit is a wrapper whose
-      ::before is an invisible, never-moving hover target big enough to hold
-      every hovered position of the button inside it.
-    */
     .btn-hit {
       position: relative;
       display: inline-flex;
-    }
-    .btn-hit::before {
-      content: "";
-      position: absolute;
-      inset: -12px -14px;
     }
     .btn {
       display: inline-flex;
@@ -209,22 +198,12 @@
       font-weight: 600;
       text-decoration: none;
       border: 1px solid transparent;
-      isolation: isolate;
       transition:
-        transform .22s cubic-bezier(.34,1.4,.64,1),
-        box-shadow .22s ease,
-        background-color .22s ease,
-        border-color .22s ease,
-        border-radius .22s ease,
-        letter-spacing .22s ease,
-        color .22s ease;
-    }
-    .btn::before,
-    .btn::after {
-      pointer-events: none;
-      position: absolute;
-      opacity: 0;
-      transition: opacity .18s ease, transform .22s cubic-bezier(.34,1.4,.64,1);
+        transform .18s ease,
+        box-shadow .18s ease,
+        background-color .18s ease,
+        border-color .18s ease,
+        color .18s ease;
     }
     .btn-lime {
       background: var(--lime);
@@ -232,54 +211,17 @@
       border-color: color-mix(in srgb, var(--ink) 12%, var(--lime));
       box-shadow: 0 1px 0 color-mix(in srgb, var(--ink) 8%, transparent);
     }
-    .btn-lime::before {
-      content: "★";
-      top: -11px;
-      right: -6px;
-      font-size: 13px;
-      color: var(--ink);
-      transform: rotate(18deg) scale(0.4);
-    }
-    .btn-lime::after {
-      content: "yes →";
-      left: 50%;
-      bottom: -18px;
-      font-family: "Caveat", cursive;
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--ink);
-      letter-spacing: 0.02em;
-      white-space: nowrap;
-      transform: translateX(-50%) rotate(-4deg) translateY(4px);
-    }
     .btn-hit:hover .btn-lime,
     .btn-lime:hover {
-      transform: rotate(-3deg) translate(3px, -4px) skewX(-4deg);
-      letter-spacing: 0.03em;
-      border-radius: 14px 7px 13px 8px;
-      border-color: var(--ink);
-      border-style: solid;
-      background: color-mix(in srgb, var(--lime) 88%, #fff);
-      box-shadow:
-        -7px 8px 0 0 var(--ink),
-        5px -5px 0 0 color-mix(in srgb, var(--orange) 70%, #fff);
-    }
-    .btn-hit:hover .btn-lime::before,
-    .btn-lime:hover::before {
-      opacity: 1;
-      transform: rotate(-12deg) scale(1.15);
-    }
-    .btn-hit:hover .btn-lime::after,
-    .btn-lime:hover::after {
-      opacity: 1;
-      transform: translateX(-50%) rotate(-6deg) translateY(0);
+      transform: translateY(-1px);
+      background: color-mix(in srgb, var(--lime) 86%, #7a9a18);
+      border-color: color-mix(in srgb, var(--ink) 22%, var(--lime));
+      box-shadow: 0 4px 12px color-mix(in srgb, var(--ink) 14%, transparent);
     }
     .btn-hit:active .btn-lime,
     .btn-lime:active {
-      transform: rotate(-1deg) translate(1px, -1px) skewX(-1deg);
-      box-shadow:
-        -2px 3px 0 0 var(--ink),
-        2px -2px 0 0 color-mix(in srgb, var(--orange) 50%, #fff);
+      transform: translateY(0);
+      box-shadow: 0 1px 0 color-mix(in srgb, var(--ink) 8%, transparent);
     }
     .btn-ghost {
       background: var(--surface);
@@ -287,49 +229,17 @@
       color: var(--ink);
       font-weight: 500;
     }
-    .btn-ghost::before {
-      content: "";
-      inset: -3px -5px -5px -3px;
-      border: 1.5px dashed color-mix(in srgb, var(--ink) 35%, transparent);
-      border-radius: 14px 9px 12px 8px;
-      transform: rotate(1.5deg) scale(0.96);
-      z-index: -1;
-    }
-    .btn-ghost::after {
-      content: "hmm";
-      top: -14px;
-      left: 10px;
-      font-family: "Caveat", cursive;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--faint);
-      transform: rotate(-8deg) translateY(3px);
-    }
     .btn-hit:hover .btn-ghost,
     .btn-ghost:hover {
-      transform: rotate(2.5deg) translate(-2px, -3px) skewX(3deg);
-      background: var(--lime);
-      color: var(--ink-fixed);
-      border-color: var(--ink);
-      border-radius: 8px 14px 9px 12px;
-      box-shadow: 6px -5px 0 0 var(--ink);
-      letter-spacing: 0.02em;
-    }
-    .btn-hit:hover .btn-ghost::before,
-    .btn-ghost:hover::before {
-      opacity: 1;
-      transform: rotate(-2deg) scale(1);
-    }
-    .btn-hit:hover .btn-ghost::after,
-    .btn-ghost:hover::after {
-      opacity: 1;
-      color: var(--ink);
-      transform: rotate(-10deg) translateY(0);
+      transform: translateY(-1px);
+      background: var(--surface-soft);
+      border-color: color-mix(in srgb, var(--ink) 22%, var(--stroke));
+      box-shadow: 0 4px 12px color-mix(in srgb, var(--ink) 10%, transparent);
     }
     .btn-hit:active .btn-ghost,
     .btn-ghost:active {
-      transform: rotate(1deg) translate(0, -1px);
-      box-shadow: 2px -2px 0 0 var(--ink);
+      transform: translateY(0);
+      box-shadow: none;
     }
     .btn-sm {
       padding: 8px 14px;
@@ -339,16 +249,20 @@
       background: var(--ink);
       color: var(--paper);
       text-decoration: none;
-      transition: transform .18s ease, background-color .18s ease, box-shadow .18s ease;
+      border: 1px solid var(--ink);
+      transition: transform .18s ease, background-color .18s ease, box-shadow .18s ease, color .18s ease, border-color .18s ease;
     }
-    .nav-links .btn-sm {
+    .nav-links .btn-sm,
+    .nav-links .btn-sm:hover,
+    .nav-links .btn-sm:focus-visible {
       color: var(--paper);
     }
     .btn-sm:hover {
       transform: translateY(-1px);
-      background: color-mix(in srgb, var(--ink) 88%, var(--paper));
+      background: color-mix(in srgb, var(--ink) 78%, #000);
+      border-color: color-mix(in srgb, var(--ink) 78%, #000);
       color: var(--paper);
-      box-shadow: 0 6px 16px rgba(34, 34, 34, 0.22);
+      box-shadow: 0 4px 12px color-mix(in srgb, var(--ink) 22%, transparent);
     }
     .btn-row {
       display: flex;
@@ -1578,39 +1492,18 @@
       gap: var(--split-gap);
       align-items: stretch;
     }
-    .inbox-migrate {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      min-height: 0;
-    }
-    .migrate-copy {
-      background: var(--surface);
-      border: 1px solid var(--stroke);
-      border-radius: 14px;
-      padding: 14px 16px;
-    }
-    .migrate-copy h3 {
-      margin: 0 0 4px;
-      font-size: 15px;
-      font-weight: 600;
-    }
-    .migrate-copy p {
-      margin: 0;
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.45;
-    }
     .inbox-canvas {
       position: relative;
-      min-height: 320px;
+      min-height: 0;
       border-radius: 16px;
       border: 1px solid var(--stroke);
       background:
         radial-gradient(circle, var(--grid-dot) 1px, transparent 1px) 0 0 / 16px 16px,
         var(--surface-soft);
       overflow: hidden;
-      padding: 24px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
     }
     .daylog-ghost {
       position: absolute;
@@ -1698,18 +1591,20 @@
     }
     .inbox-row:last-child { border-bottom: none; }
     .tag {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 500;
-      padding: 3px 8px;
-      border-radius: 6px;
+      width: 8px;
+      height: 8px;
+      padding: 0;
+      border-radius: 999px;
       flex-shrink: 0;
+      align-self: start;
+      margin-top: 6px;
       grid-row: 1 / 3;
     }
-    .tag-month { color: var(--sky-ink); background: var(--sky-bg); }
-    .tag-past { color: var(--warm-ink); background: var(--warm-bg); }
-    .tag-hook { color: var(--lilac-ink); background: var(--lilac-bg); }
-    .tag-ext { color: var(--pear-ink); background: var(--pear-bg); }
+    .tag-month { background: var(--sky); }
+    .tag-past { background: var(--orange); }
+    .tag-idea { background: var(--lilac); }
+    .tag-hook { background: var(--lilac); }
+    .tag-ext { background: color-mix(in srgb, var(--pear-ink) 55%, var(--lime)); }
     .inbox-row .body {
       font-size: 14px;
       font-weight: 500;
@@ -1788,50 +1683,181 @@
     .hook-note {
       margin-top: 10px;
       display: flex;
-      align-items: flex-start;
-      gap: 10px;
+      flex-direction: column;
+      gap: 8px;
       padding: 10px 12px;
       border-radius: 12px;
       background: color-mix(in srgb, var(--lilac-bg) 70%, var(--surface));
       border: 1px solid color-mix(in srgb, var(--lilac-ink) 12%, var(--stroke));
     }
-    .hook-note .avatar {
-      width: 34px;
-      height: 34px;
+    .zap-flow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .zap-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 9px;
       border-radius: 999px;
       background: var(--surface);
       border: 1px solid var(--stroke);
-      display: grid;
-      place-items: center;
-      font-size: 18px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .zap-chip .mark {
+      font-size: 13px;
       line-height: 1;
+    }
+    .zap-arrow {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--lilac-ink);
+      font-weight: 600;
+    }
+    .zap-result {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+    .zap-result strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    /* —— Share & export —— */
+    .share-stage {
+      display: grid;
+      grid-template-columns: var(--split);
+      gap: var(--split-gap);
+      align-items: stretch;
+    }
+    .share-card {
+      background: var(--surface);
+      border: 1px solid var(--stroke);
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 0;
+    }
+    .share-card h3 {
+      margin: 0 0 4px;
+      font-size: 17px;
+      font-weight: 600;
+    }
+    .share-card > p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .share-viz {
+      border-radius: 12px;
+      border: 1px solid var(--stroke);
+      background: var(--surface-soft);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .publish-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: var(--surface);
+      border: 1px solid var(--stroke);
+    }
+    .publish-row .dot {
+      width: 8px;
+      height: 8px;
+      margin-top: 6px;
+      border-radius: 999px;
+      background: var(--sky);
       flex-shrink: 0;
     }
-    .hook-note .bubble {
-      min-width: 0;
-      flex: 1;
-    }
-    .hook-note .who {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--lilac-ink);
-      margin-bottom: 3px;
-    }
-    .hook-note .who .via {
+    .publish-row .body {
+      font-size: 13px;
       font-weight: 500;
+      color: var(--ink);
+      line-height: 1.35;
+    }
+    .publish-row .meta {
+      margin-top: 3px;
+      font-family: var(--font-mono);
+      font-size: 11px;
       color: var(--faint);
     }
-    .hook-note .msg {
-      font-size: 13px;
+    .publish-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--lime) 28%, var(--surface));
+      border: 1px solid color-mix(in srgb, var(--lime) 40%, var(--stroke));
+      font-family: var(--font-mono);
+      font-size: 12px;
       color: var(--ink);
-      line-height: 1.4;
-      font-weight: 500;
     }
-    .hook-note .heart {
-      color: #d46a8a;
+    .publish-link .pill {
+      margin-left: auto;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--pear-ink);
+      background: var(--pear-bg);
+      padding: 3px 7px;
+      border-radius: 999px;
+    }
+    .export-doc {
+      background: var(--surface);
+      border: 1px solid var(--stroke);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .export-doc .bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--stroke);
+      background: var(--surface-soft);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--faint);
+    }
+    .export-doc .bar .ext {
+      margin-left: auto;
+      color: var(--ink);
+      font-weight: 600;
+    }
+    .export-doc .body {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .export-doc .line {
+      height: 8px;
+      border-radius: 999px;
+      background: var(--stroke);
+    }
+    .export-doc .line.w40 { width: 40%; }
+    .export-doc .line.w55 { width: 55%; }
+    .export-doc .line.w70 { width: 70%; }
+    .export-doc .line.w85 { width: 85%; }
+    .export-doc .tagline {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted);
     }
 
     /* —— CLI —— */
@@ -2375,6 +2401,7 @@
     @media (max-width: 960px) {
       .split-2,
       .inbox-stage,
+      .share-stage,
       .deploy-layout,
       .cli-layout {
         grid-template-columns: 1fr;
@@ -2638,7 +2665,7 @@
       <span class="section-label">01 — Capture &amp; control</span>
       <h2>Like messenger saves — with migrations and ownership.</h2>
       <p class="section-lede">
-        Dump thoughts freely, then curate. Group into collections, find anything later — and export what you own.
+        Dump thoughts freely, then curate. Collect into collections, find anything later — and export what you own.
       </p>
       <div class="cards-3">
         <article class="card viz-card">
@@ -2715,10 +2742,10 @@
             </div>
           </div>
           <div class="viz-copy">
-            <span class="kicker">Group</span>
+            <span class="kicker">Collect</span>
             <h3>Collections as notebooks</h3>
-            <p>Colour, icon, archive — your rules. Pin the ones you live in and they stay one tap away.</p>
-            <a class="viz-more" href="/features/group">more →</a>
+            <p>Colour and icon — pin the ones you live in and they stay one tap away.</p>
+            <a class="viz-more" href="/features/collect">more →</a>
           </div>
         </article>
 
@@ -2813,62 +2840,63 @@
         Migrations bring last week's open tasks and parked ideas back for triage. Hooks and the browser extension add new candidates the same way. They propose. You decide.
       </p>
       <div class="inbox-stage">
-        <div class="inbox-migrate">
-          <div class="inbox-canvas" aria-hidden="true">
-            <div class="daylog-ghost">
-              <div class="stamp">daylog · untouched</div>
-              <div class="title">Today, Jul 28</div>
-              <div class="line w80"></div>
-              <div class="line w60"></div>
-              <div class="line" style="width:70%"></div>
-            </div>
-            <div class="inbox-panel">
-              <div class="inbox-head">
-                <div class="icon">
-                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                    <path d="M2 4.5h12v8.5a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4.5Z" stroke="#222222" stroke-width="1.4"/>
-                    <path d="M2 4.5 8 9l6-4.5" stroke="#222222" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M5 2.5h6" stroke="#222222" stroke-width="1.4" stroke-linecap="round"/>
-                  </svg>
-                </div>
-                <strong>Inbox</strong>
-                <span class="hint">· from the past</span>
-                <span class="badge">3</span>
-              </div>
-              <div class="inbox-row">
-                <span class="tag tag-month">month</span>
-                <span class="body">Call dentist — planned Jul 28</span>
-                <div class="actions">
-                  <span class="act-yes">Accept</span>
-                  <span class="act-no">Skip</span>
-                </div>
-              </div>
-              <div class="inbox-row">
-                <span class="tag tag-past">migrate</span>
-                <span class="body">Ship promo page — open since Jul 21</span>
-                <div class="actions">
-                  <span class="act-yes">Accept</span>
-                  <span class="act-no">Skip</span>
-                </div>
-              </div>
-              <div class="inbox-row">
-                <span class="tag tag-past">idea</span>
-                <span class="body">Rewrite onboarding — parked note</span>
-                <div class="actions">
-                  <span class="act-yes">Accept</span>
-                  <span class="act-no">Skip</span>
-                </div>
-              </div>
-            </div>
+        <div class="inbox-canvas" aria-hidden="true">
+          <div class="daylog-ghost">
+            <div class="stamp">daylog · untouched</div>
+            <div class="title">Today, Jul 28</div>
+            <div class="line w80"></div>
+            <div class="line w60"></div>
+            <div class="line" style="width:70%"></div>
           </div>
-          <div class="migrate-copy">
-            <h3>Filter what still matters</h3>
-            <p>
-              Monthly plans that land on today, unfinished tasks from yesterday, and ideas you parked weeks ago — all surface in the inbox first. Accept what belongs in the daylog. Skip the rest. Migration is triage, not auto-dump.
-            </p>
+          <div class="inbox-panel">
+            <div class="inbox-head">
+              <div class="icon">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M2 4.5h12v8.5a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V4.5Z" stroke="#222222" stroke-width="1.4"/>
+                  <path d="M2 4.5 8 9l6-4.5" stroke="#222222" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M5 2.5h6" stroke="#222222" stroke-width="1.4" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <strong>Inbox</strong>
+              <span class="hint">· from the past</span>
+              <span class="badge">3</span>
+            </div>
+            <div class="inbox-row">
+              <span class="tag tag-month" aria-hidden="true"></span>
+              <span class="body">Call dentist — planned Jul 28</span>
+              <div class="actions">
+                <span class="act-yes">Accept</span>
+                <span class="act-no">Skip</span>
+              </div>
+            </div>
+            <div class="inbox-row">
+              <span class="tag tag-past" aria-hidden="true"></span>
+              <span class="body">Ship promo page — open since Jul 21</span>
+              <div class="actions">
+                <span class="act-yes">Accept</span>
+                <span class="act-no">Skip</span>
+              </div>
+            </div>
+            <div class="inbox-row">
+              <span class="tag tag-idea" aria-hidden="true"></span>
+              <span class="body">Rewrite onboarding — parked note</span>
+              <div class="actions">
+                <span class="act-yes">Accept</span>
+                <span class="act-no">Skip</span>
+              </div>
+            </div>
           </div>
         </div>
         <div class="source-stack">
+          <div class="source-card">
+            <div class="source-ico" style="background:var(--warm-bg);color:var(--warm-ink)" aria-hidden="true">↻</div>
+            <div>
+              <h3>Filter what still matters</h3>
+              <p>
+                Monthly plans that land on today, unfinished tasks from yesterday, and ideas you parked weeks ago — all surface here first. Accept what belongs in the daylog. Skip the rest.
+              </p>
+            </div>
+          </div>
           <div class="source-card">
             <div class="source-ico" style="background:var(--lilac-bg);color:var(--lilac-ink)" aria-hidden="true">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -2882,10 +2910,15 @@
                 Inbound hooks take pushes from Zapier, bots, and other apps — and can go all the way to accepting email into bullets. Captures land in Pending. You decide what enters the day.
               </p>
               <div class="hook-note" aria-hidden="true">
-                <span class="avatar">⚡</span>
-                <div class="bubble">
-                  <div class="who">Zapier <span class="via">· via hook</span></div>
-                  <div class="msg">Starred Gmail → task: “Reply to lease renewal”</div>
+                <div class="zap-flow">
+                  <span class="zap-chip"><span class="mark">📦</span> DHL</span>
+                  <span class="zap-arrow">→</span>
+                  <span class="zap-chip"><span class="mark">⚡</span> Zapier</span>
+                  <span class="zap-arrow">→</span>
+                  <span class="zap-chip"><span class="mark">◉</span> Digibujo</span>
+                </div>
+                <div class="zap-result">
+                  Out for delivery → task <strong>“Be home 14:00–16:00”</strong> in Pending
                 </div>
               </div>
             </div>
@@ -2904,8 +2937,62 @@
       </div>
     </section>
 
+    <section class="panel wrap" data-panel="Share">
+      <span class="section-label">04 — Share &amp; export</span>
+      <h2>Publish a bullet. Take a collection with you.</h2>
+      <p class="section-lede">
+        Share individual bullets on the open web, or export a whole collection as a self-contained HTML file — readable anywhere, no Digibujo required.
+      </p>
+      <div class="share-stage">
+        <article class="share-card">
+          <div>
+            <h3>Publish to the web</h3>
+            <p>
+              Any bullet can get a short public link and a clean read-only page. No login to view. Unpublish whenever you change your mind.
+            </p>
+          </div>
+          <div class="share-viz" aria-hidden="true">
+            <div class="publish-row">
+              <span class="dot"></span>
+              <div>
+                <div class="body">Sunday loop — quiet roads north of the city</div>
+                <div class="meta">note · published</div>
+              </div>
+            </div>
+            <div class="publish-link">
+              <span>digibujo.app/p/k7m2xq</span>
+              <span class="pill">public</span>
+            </div>
+          </div>
+        </article>
+        <article class="share-card">
+          <div>
+            <h3>Export as HTML</h3>
+            <p>
+              Download a collection as a single HTML document — your bullets, formatting and all. Backup, print, or open offline in any browser.
+            </p>
+          </div>
+          <div class="share-viz" aria-hidden="true">
+            <div class="export-doc">
+              <div class="bar">
+                <span>Porto notes</span>
+                <span class="ext">.html</span>
+              </div>
+              <div class="body">
+                <div class="tagline">&lt;article&gt; · 24 bullets · Jul 2026</div>
+                <div class="line w85"></div>
+                <div class="line w70"></div>
+                <div class="line w55"></div>
+                <div class="line w40"></div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
     <section class="panel wrap" data-panel="CLI">
-      <span class="section-label">04 — CLI &amp; agents</span>
+      <span class="section-label">05 — CLI &amp; agents</span>
       <h2>Talk to your journal from the terminal — and from agents.</h2>
       <div class="cli-layout" style="margin-top:32px">
         <div class="cli-stage" aria-hidden="true">
@@ -3017,7 +3104,7 @@
     </section>
 
     <section class="panel wrap" id="self-host" data-panel="Self-host">
-      <span class="section-label">05 — Self-host &amp; stack</span>
+      <span class="section-label">06 — Self-host &amp; stack</span>
       <h2>One command to your own server.</h2>
       <p class="section-lede">
         Pure Rails underneath — no platform, no managed database, no build pipeline. A small VPS, a domain, and <code>kamal deploy</code>.
