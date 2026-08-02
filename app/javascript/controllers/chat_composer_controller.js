@@ -457,14 +457,17 @@ export default class extends Controller {
     const focused = this.element.contains(document.activeElement)
       || this.toolbarWrapTarget?.contains(document.activeElement)
 
-    // Overlay keyboard: layout stays tall, VV shrinks → bottom = inset.
+    // interactive-widget=resizes-visual: layout / 100dvh stay full, visual
+    // viewport shrinks under the keyboard → bottom inset lifts the dock without
+    // crushing the chat scroller. (resizes-content was leaving iOS stuck short
+    // after dismiss.)
     const overlayInset = Math.max(
       0,
       Math.round(window.innerHeight - viewport.height - viewport.offsetTop)
     )
 
-    // resizes-content: layout already shrank → overlayInset ~0; still treat as
-    // keyboard-open so bottom:0 sits on the keyboard and the tabbar is hidden.
+    // Fallback when a browser still resizes the layout viewport instead: VV
+    // inset stays ~0, but innerHeight drops while focused.
     if (!focused) this.restingLayoutHeight = window.innerHeight
     const resizeDelta = Math.max(
       0,

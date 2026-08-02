@@ -336,7 +336,7 @@
   }
 
   /* Match collapsed composer pill height: control + form padding + form border
-     + the field's transparent 1px border (see .composer--field). */
+     + the field's transparent 1px border (see .composer--text-form-wrap). */
   .monthlylog--create-bullet {
     --composer-control-size: var(--spacing-horizontal-triple);
     --composer-pill-radius: 1.5rem;

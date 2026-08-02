@@ -16,6 +16,27 @@
 }
 
 @layer components {
+  /* Tabbar geometry as tokens so the composer can clear it before JS measures.
+     Stack from the viewport floor: offset (CSS `bottom`) → safe-area / margin
+     → the pill itself (padding + icon + border). */
+  :root {
+    --tabbar-safe-area: max(
+      var(--spacing-vertical-half),
+      env(safe-area-inset-bottom, 0px)
+    );
+    --tabbar-size: calc(
+      var(--spacing-vertical)
+      + var(--spacing-horizontal-double)
+      + 2px
+    );
+    --tabbar-offset: var(--spacing-vertical-double);
+    --tabbar-clearance: calc(
+      var(--tabbar-offset)
+      + var(--tabbar-safe-area)
+      + var(--tabbar-size)
+    );
+  }
+
   body:has(.tabbar--navigation) {
     padding-bottom: var(--layout-scroll-padding);
     scroll-padding-bottom: var(--layout-scroll-padding);
@@ -23,7 +44,7 @@
 
   .tabbar--navigation {
     position: fixed;
-    bottom: var(--spacing-vertical-double);
+    bottom: var(--tabbar-offset);
     border-radius: 9999px;
     left: 50%;
     transform: translateX(-50%);
@@ -32,7 +53,7 @@
     align-items: stretch;
     gap: var(--spacing-horizontal-half);
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    margin-bottom: max(var(--spacing-vertical-half), env(safe-area-inset-bottom));
+    margin-bottom: var(--tabbar-safe-area);
     background-color: var(--color-bg-subtle);
     border: 1px solid var(--color-stroke-base);
     box-shadow: var(--shadow-subtle);

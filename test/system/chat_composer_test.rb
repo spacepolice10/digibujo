@@ -15,7 +15,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
   test 'shift f focuses the composer field' do
     visit daylog_path(date: Date.current.iso8601)
 
-    assert_selector '.composer--field.hotkey-hint[data-hotkey="Shift+F"]'
+    assert_selector '.composer--text-form-wrap.hotkey-hint[data-hotkey="Shift+F"]'
     assert_selector '.composer--record.hotkey-hint[data-hotkey="Shift+R"]'
 
     page.execute_script('document.activeElement?.blur()')
@@ -207,7 +207,7 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     assert_selector '.composer--actions .composer--toolbar-toggle'
     assert_no_selector '.composer--actions .composer--upload'
     assert_no_selector '#composer_toolbar > button[name=bold]', visible: true
-    assert_selector '#daylog_bullets_composer #composer_toolbar + .composer--field + .composer--chrome'
+    assert_selector '#daylog_bullets_composer #composer_toolbar + .composer--text-form-wrap + .composer--chrome'
 
     focus_composer
     editor = find('#daylog_bullets_composer lexxy-editor .lexxy-editor__content')

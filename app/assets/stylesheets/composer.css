@@ -48,18 +48,23 @@ lexxy-editor:not(.composer--editor) {
  * otherwise beat anything inside @layer components, including height/padding.
  * Without attr(rows lh) support the gem falls back to 8lh — force 1lh here.
  */
-.composer--field lexxy-editor.composer--editor {
+.composer--text-form-wrap lexxy-editor.composer--editor {
   /* Lexxy's default paragraph margin is 1rem — that alone makes a "one-line"
      chat field taller than the flanking icon buttons. */
   --lexxy-content-margin: 0;
   --lexxy-editor-rows: 1.25lh;
   --lexxy-editor-padding: 0;
   --lexxy-color-canvas: transparent;
+  /* Kill Lexxy's built-in toolbar band in the :not(:defined) reserve — the
+     composer toolbar is external. Match the mounted compact content height so
+     upgrade does not grow the pill (Lexxy defaults otherwise jump from 0). */
+  --lexxy-toolbar-height: 0px;
 
   display: block;
   width: 100%;
   height: auto;
-  min-height: 0;
+  min-height: var(--composer-control-size, 2lh);
+  min-block-size: var(--composer-control-size, 2lh);
   max-height: 40dvh;
   overflow-y: auto;
   border: none;
@@ -75,19 +80,19 @@ lexxy-editor:not(.composer--editor) {
  * when CSS :focus alone does not re-fire (e.g. refocus). Skip when expanded —
  * transform on the contenteditable skews the caret there.
  */
-.composer--field lexxy-editor.composer--editor .lexxy-editor__content:focus,
-.composer--field lexxy-editor.composer--editor .lexxy-editor__content.is-ios-focus-locking {
+.composer--text-form-wrap lexxy-editor.composer--editor .lexxy-editor__content:focus,
+.composer--text-form-wrap lexxy-editor.composer--editor .lexxy-editor__content.is-ios-focus-locking {
   animation: composer-ios-focus-lock 0.1s linear;
 }
 
-.composer--multiline .composer--field lexxy-editor.composer--editor .lexxy-editor__content:focus,
-.composer--multiline .composer--field lexxy-editor.composer--editor .lexxy-editor__content.is-ios-focus-locking {
+.composer--multiline .composer--text-form-wrap lexxy-editor.composer--editor .lexxy-editor__content:focus,
+.composer--multiline .composer--text-form-wrap lexxy-editor.composer--editor .lexxy-editor__content.is-ios-focus-locking {
   animation: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .composer--field lexxy-editor.composer--editor .lexxy-editor__content:focus,
-  .composer--field lexxy-editor.composer--editor .lexxy-editor__content.is-ios-focus-locking {
+  .composer--text-form-wrap lexxy-editor.composer--editor .lexxy-editor__content:focus,
+  .composer--text-form-wrap lexxy-editor.composer--editor .lexxy-editor__content.is-ios-focus-locking {
     animation: none;
   }
 }
@@ -102,19 +107,21 @@ lexxy-table-tools {
 
 /* Compact chat line: match icon control height so the caret sits level with
    type / upload / mic / submit. Multiline only relaxes line-height. */
-.composer--field lexxy-editor.composer--editor .lexxy-editor__content {
+.composer--text-form-wrap lexxy-editor.composer--editor .lexxy-editor__content {
   display: block;
   min-block-size: var(--composer-control-size, 2lh);
-  padding-block: 0;
+  /* Full shorthand — Lexxy sets `padding: var(--lexxy-editor-padding)`; a
+     padding-block-only override left inline 1ch until the variable settled. */
+  padding: 0;
   line-height: var(--composer-control-size, 2lh);
 }
 
-.composer--field lexxy-editor.composer--editor .lexxy-editor__content p {
+.composer--text-form-wrap lexxy-editor.composer--editor .lexxy-editor__content p {
   margin: 0;
   line-height: inherit;
 }
 
-.composer--multiline .composer--field lexxy-editor.composer--editor {
+.composer--multiline .composer--text-form-wrap lexxy-editor.composer--editor {
   --lexxy-editor-rows: 3lh;
   min-height: 3lh;
   /* Grow with content, but leave a clear top band so chrome stays on-screen
@@ -123,7 +130,7 @@ lexxy-table-tools {
     100dvh
     - env(safe-area-inset-top, 0px)
     - max(var(--composer-tabbar-inset, 0px), var(--composer-keyboard-inset, 0px))
-    - var(--composer-detach-gap, 0px)
+    - var(--composer-detach-spacing, 0px)
     - var(--composer-control-size)
     - var(--composer-toolbar-band, 0px)
     - (var(--spacing-vertical-half) * 2)
@@ -133,23 +140,23 @@ lexxy-table-tools {
   overflow-y: auto;
 }
 
-.composer--multiline .composer--field lexxy-editor.composer--editor .lexxy-editor__content {
+.composer--multiline .composer--text-form-wrap lexxy-editor.composer--editor .lexxy-editor__content {
   line-height: 1.25;
   min-block-size: 3lh;
 }
 
-.composer--multiline .composer--field lexxy-editor.composer--editor .lexxy-editor__content p {
+.composer--multiline .composer--text-form-wrap lexxy-editor.composer--editor .lexxy-editor__content p {
   line-height: inherit;
 }
 
 /* Prompt menus are position:absolute inside the editor — don't clip them. */
-.composer--field lexxy-editor.composer--editor:has(.lexxy-prompt-menu--visible) {
+.composer--text-form-wrap lexxy-editor.composer--editor:has(.lexxy-prompt-menu--visible) {
   overflow: visible;
 }
 
 /* Composer keeps a note-preset toolbar as an external #composer_toolbar ahead of
    the field (toolbar="composer_toolbar") — never nest a second one in the field. */
-.composer--field lexxy-toolbar {
+.composer--text-form-wrap lexxy-toolbar {
   display: none;
 }
 
@@ -358,8 +365,20 @@ lexxy-table-tools {
   .composer {
     --composer-keyboard-inset: 0px;
     --composer-tabbar-inset: 0px;
-/* Shared hit-target for type / toolbar / clear / mic / submit. */
+    /* Shared hit-target for type / toolbar / clear / mic / submit. */
     --composer-control-size: var(--spacing-horizontal-triple);
+    /* Compact pill before Lexxy mounts — control row + pill pad + form border
+       + the field's transparent 1px border (appears with the editor slot). */
+    --composer-pill-padding: 0.15rem;
+    --composer-resting-form-height: calc(
+      var(--composer-control-size)
+      + (2 * var(--composer-pill-padding))
+      + 4px
+    );
+    --composer-resting-height: calc(
+      var(--spacing-vertical)
+      + var(--composer-resting-form-height)
+    );
 
     position: fixed;
     inset-inline: 0;
@@ -369,9 +388,22 @@ lexxy-table-tools {
     padding: var(--spacing-vertical-half) var(--spacing-horizontal);
     margin-inline: auto;
     width: 100%;
+    min-height: var(--composer-resting-height);
+    box-sizing: border-box;
 
     @media (min-width: 800px) {
       width: 60%;
+    }
+  }
+
+  /* Mobile tabbar pages: rest on --tabbar-clearance (safe-area + pill + offset)
+     before Stimulus measures. Desktop has no tabbar variant — keep inset 0.
+     Extra half-space keeps the dock from kissing the tabbar. */
+  @media (max-width: 799px) {
+    body:has(.tabbar--navigation) .composer {
+      --composer-tabbar-inset: calc(
+        var(--tabbar-clearance) + var(--spacing-vertical)
+      );
     }
   }
 
@@ -388,8 +420,7 @@ lexxy-table-tools {
 
   .composer--form {
     --composer-pill-radius: 1.5rem;
-    --composer-pill-padding: 0.15rem;
-    --composer-detach-gap: var(--spacing-vertical-double);
+    --composer-detach-spacing: var(--spacing-vertical-double);
     /* Band the open toolbar row claims — the editor's max-height reserves it. */
     --composer-toolbar-band: 0px;
 
@@ -397,6 +428,7 @@ lexxy-table-tools {
     flex-direction: column;
     gap: var(--spacing-vertical-half);
     max-width: var(--breakpoint-laptop);
+    min-height: var(--composer-resting-form-height);
     margin-inline: auto;
     border: 1px solid var(--color-stroke-base);
     /* Finite pill radius (≈ half the single-line chrome), not 9999px: otherwise
@@ -445,10 +477,13 @@ lexxy-table-tools {
     order: 1;
   }
 
-  .composer--field {
+  .composer--text-form-wrap {
     order: 2;
     flex: 1 1 6rem;
     min-width: 0;
+    /* Reserve the editor slot before Lexxy upgrades the custom element. */
+    min-height: var(--composer-control-size);
+    box-sizing: border-box;
     border: 1px solid transparent;
     border-radius: var(--composer-pill-radius, 1.5rem);
     background: transparent;
@@ -471,7 +506,7 @@ lexxy-table-tools {
 
   .composer--toolbar-open .composer--form {
     --composer-toolbar-band: calc(
-      var(--composer-detach-gap) + var(--composer-control-size)
+      var(--composer-detach-spacing) + var(--composer-control-size)
     );
   }
 
@@ -481,6 +516,7 @@ lexxy-table-tools {
 
   /* Multiline: form shell dissolves; field floats above toolbar slot + chip strip. */
   .composer--multiline .composer--form {
+    min-height: 0;
     border: none;
     border-radius: 0;
     background: transparent;
@@ -489,7 +525,7 @@ lexxy-table-tools {
     gap: 0;
   }
 
-  .composer--multiline .composer--field {
+  .composer--multiline .composer--text-form-wrap {
     order: 1;
     flex: 1 1 100%;
     position: relative;
@@ -610,6 +646,24 @@ lexxy-table-tools {
     flex-shrink: 0;
   }
 
+  .composer--toolbar-toggle,
+  .composer--record {
+    border-radius: var(--radius-full);
+  }
+
+  /* Pop in when `hidden` is cleared (type switch / voice allowlist). */
+  .composer--toolbar-toggle:not([hidden]),
+  .composer--record:not([hidden]) {
+    animation: popout-opacity 0.2s ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .composer--toolbar-toggle:not([hidden]),
+    .composer--record:not([hidden]) {
+      animation: none;
+    }
+  }
+
   .composer--toolbar-toggle:hover,
   .composer--record:hover,
   .composer--cleanup-button:hover {
@@ -704,7 +758,7 @@ lexxy-table-tools {
 
   @media (prefers-reduced-motion: reduce) {
     .composer--form,
-    .composer--field {
+    .composer--text-form-wrap {
       transition: none;
     }
 

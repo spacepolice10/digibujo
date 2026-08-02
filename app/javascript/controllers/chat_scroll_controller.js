@@ -21,15 +21,23 @@ export default class extends Controller {
     // Deliberately not throttled: a dropped trailing call would leave us
     // believing the reader is still at the bottom after they scrolled away.
     this.boundSettlePinned = () => this.#settlePinned()
+    this.opening = true
 
     this.scrollerTarget.addEventListener("scroll", this.boundSettlePinned, { passive: true })
 
-    scrollToBottom(this.scrollerTarget)
-    this.#followSettlingLayout()
+    // Smooth open: long lists start at the top without JS, so an instant jump
+    // reads as a flash. ResizeObserver stays off until the animation settles —
+    // otherwise an instant scrollToBottom would cancel it mid-flight.
+    scrollToBottom(this.scrollerTarget, "smooth")
+    this.#followSettlingLayoutWhenOpen()
   }
 
   disconnect() {
     this.scrollerTarget.removeEventListener("scroll", this.boundSettlePinned)
+    if (this.boundOpenSettled) {
+      this.scrollerTarget.removeEventListener("scrollend", this.boundOpenSettled)
+    }
+    clearTimeout(this.openSettleTimer)
     this.sizeObserver?.disconnect()
     this.triggerObserver?.disconnect()
   }
@@ -88,6 +96,23 @@ export default class extends Controller {
     this.triggerObserver?.disconnect()
     this.triggerObserver = null
     if (this.hasTriggerTarget) this.triggerTarget.remove()
+  }
+
+  // Wait for the opening smooth scroll (or a timeout when scrollend never
+  // fires — short lists, or browsers without the event) before chasing layout.
+  #followSettlingLayoutWhenOpen() {
+    const start = () => {
+      if (!this.opening) return
+
+      this.opening = false
+      clearTimeout(this.openSettleTimer)
+      scrollToBottom(this.scrollerTarget)
+      this.#followSettlingLayout()
+    }
+
+    this.boundOpenSettled = start
+    this.scrollerTarget.addEventListener("scrollend", this.boundOpenSettled, { once: true })
+    this.openSettleTimer = setTimeout(start, 500)
   }
 
   // Web fonts, rich text and the editor all settle after the first paint and

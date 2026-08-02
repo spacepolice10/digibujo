@@ -133,7 +133,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select '#daylog_bullets_composer' do
       assert_select 'lexxy-editor[preset=note][toolbar=composer_toolbar]'
       # Toolbar precedes the editor so a Turbo body swap upgrades it first.
-      assert_select 'lexxy-toolbar#composer_toolbar[data-upload=both] + .composer--field + .composer--chrome'
+      assert_select 'lexxy-toolbar#composer_toolbar[data-upload=both] + .composer--text-form-wrap + .composer--chrome'
       assert_select '.composer--actions .composer--toolbar-toggle'
       assert_select '.composer--actions .composer--upload', false
       assert_select 'lexxy-prompt[trigger=?][name=project]', '#'
