@@ -60,8 +60,11 @@ export default class extends Controller {
     if (composerId) this.element.id = composerId
     if (variants) this.#applyVariants(variants)
 
-    const next = this.#storedType || this.#availableVariants[0]
-    if (next) this.#switchType(next)
+    const current = this.typeElementTarget.value
+    const next = this.#availableVariants.includes(current)
+      ? current
+      : (this.#storedType || this.#availableVariants[0])
+    if (next && next !== current) this.#switchType(next)
     this.refresh()
   }
 
@@ -74,8 +77,8 @@ export default class extends Controller {
     this.editorTarget.removeEventListener("lexxy:editor-initialized", this.boundOnEditorInitialized)
     this.resizeObserver?.disconnect()
     this.element.classList.remove("composer--keyboard-open")
-    this.element.style.removeProperty("--composer-keyboard-inset")
-    this.element.style.removeProperty("--composer-tabbar-inset")
+    this.element.style.removeProperty("--composer-keyboard-spacing")
+    this.element.style.removeProperty("--composer-tabbar-spacing")
   }
 
   selectType(event) {
@@ -480,13 +483,18 @@ export default class extends Controller {
   }
 
   // Fixed composer clears the floating tabbar while the keyboard is closed.
+  // Keep the same breathing room as the CSS fallback (clearance + one vertical
+  // step) — a raw measured clearance alone kisses the tabbar.
   #syncTabbarInset() {
     const tabbar = document.querySelector(".tabbar--navigation")
-    const inset = tabbar
+    const clearance = tabbar
       ? Math.max(0, Math.round(window.innerHeight - tabbar.getBoundingClientRect().top))
       : 0
 
-    this.element.style.setProperty("--composer-tabbar-inset", `${inset}px`)
+    this.element.style.setProperty(
+      "--composer-tabbar-spacing",
+      `${clearance}px`
+    )
   }
 
   #saveTypeInLS(type) {

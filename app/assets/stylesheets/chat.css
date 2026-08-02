@@ -30,7 +30,7 @@
     justify-content: flex-end;
     gap: var(--spacing-vertical);
     min-height: 100%;
-    padding-inline: var(--spacing-horizontal);
+    padding-inline: var(--spacing-horizontal-half);
   }
 
   .chat--compact-list-pinned > .bullet {

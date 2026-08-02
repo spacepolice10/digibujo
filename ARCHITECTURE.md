@@ -70,7 +70,7 @@ All bullet types are created via **`POST /bullets`** (`BulletsController`) — t
 
 **Edit:** [`GET/PATCH /bullets/:id/edit`](app/views/bullets/edit.html.erb) — body-only form ([`bullets/_edit_form`](app/views/bullets/_edit_form.html.erb)); no type picker. Back returns to the bullet show page.
 
-**Monthly spread:** parked page-level composer; each column has **Create bullet**, which docks the shared Lexxy node into that column (view-transition morph). `monthlylog-composer` sets Task/Event vs Note via `changeContext`; Esc parks again. The CTA stays in the dock (holds idle height) and is only visually replaced while composing. Mobile: composer mounts into the date dock immediately, full `100dvh` lock, no scroller `overscroll-behavior: contain` so horizontal section snaps chain; IntersectionObserver on docks moves the composer between columns.
+**Monthly spread:** parked page-level composer; each column has **Create bullet**, which docks the shared Lexxy node into that column (view-transition morph). `monthlylog-composer` sets Task/Event vs Note via `changeContext`; Esc parks again. The CTA stays in the dock (holds idle height) and is only visually replaced while composing. Mobile: compact centered Create-bullet chip; composer mounts into the date dock on connect; IntersectionObserver moves it between columns and expands it from the destination chip (view-transition); full `100dvh` lock, no scroller `overscroll-behavior: contain` so horizontal section snaps chain.
 
 **Future log (temporary):** same chat chrome as daylog — floating header, `chat--wrap` / `chat--scroller`, fixed composer — but only unplanned bullets (`future_bullets_unplanned_*` ids; Task/Note). Month-card UI is parked until a better design lands.
 

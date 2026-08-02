@@ -9,7 +9,7 @@
     <% days.each do |day| %>
       <% count = bullet_counts_by_date[day].to_i %>
       <%= link_to monthlylog_bullets_path(monthlylog, date: day.iso8601),
-            data: { turbo_frame: "monthlylog_date" },
+            data: { turbo_frame: "monthlylog_date", monthlylog_date: day.iso8601 },
             role: "listitem",
             class: [
               "monthlylog--date-cell-inline",

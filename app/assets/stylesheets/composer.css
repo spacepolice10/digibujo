@@ -129,7 +129,7 @@ lexxy-table-tools {
   max-height: calc(
     100dvh
     - env(safe-area-inset-top, 0px)
-    - max(var(--composer-tabbar-inset, 0px), var(--composer-keyboard-inset, 0px))
+    - max(var(--composer-tabbar-spacing, 0px), var(--composer-keyboard-spacing, 0px))
     - var(--composer-detach-spacing, 0px)
     - var(--composer-control-size)
     - var(--composer-toolbar-band, 0px)
@@ -363,8 +363,8 @@ lexxy-table-tools {
      Daylog uses the same dock: when the keyboard opens, bottom switches to
      the keyboard inset and covers the tabbar. */
   .composer {
-    --composer-keyboard-inset: 0px;
-    --composer-tabbar-inset: 0px;
+    --composer-keyboard-spacing: 0px;
+    --composer-tabbar-spacing: var(--spacing-vertical);
     /* Shared hit-target for type / toolbar / clear / mic / submit. */
     --composer-control-size: var(--spacing-horizontal-triple);
     /* Compact pill before Lexxy mounts — control row + pill pad + form border
@@ -382,10 +382,9 @@ lexxy-table-tools {
 
     position: fixed;
     inset-inline: 0;
-    bottom: var(--composer-tabbar-inset);
+    bottom: var(--composer-tabbar-spacing);
     z-index: var(--z-dropdown);
     margin: 0;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
     margin-inline: auto;
     width: 100%;
     min-height: var(--composer-resting-height);
@@ -401,15 +400,15 @@ lexxy-table-tools {
      Extra half-space keeps the dock from kissing the tabbar. */
   @media (max-width: 799px) {
     body:has(.tabbar--navigation) .composer {
-      --composer-tabbar-inset: calc(
-        var(--tabbar-clearance) + var(--spacing-vertical)
+      --composer-tabbar-spacing: calc(
+        var(--tabbar-clearance) + var(--spacing-vertical-half)
       );
     }
   }
 
   /* Keyboard open: sit on the keyboard; hide the tabbar so it cannot overlap. */
   .composer.composer--keyboard-open {
-    bottom: var(--composer-keyboard-inset);
+    bottom: var(--composer-keyboard-spacing);
     z-index: var(--z-toast);
   }
 
