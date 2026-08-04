@@ -94,7 +94,7 @@ class="chat--header"
           <span class="utilities--sr-only">Loading more bullets</span>
         </div>
       <% end %>
-
+<!-- <div class="chat--padder"></div> -->
       <% @bullets.each do |bullet| %>
         <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
       <% end %>

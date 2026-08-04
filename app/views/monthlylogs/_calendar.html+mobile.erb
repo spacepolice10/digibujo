@@ -2,15 +2,18 @@
 <% if days.any? %>
 
   <div
-    class="chat--header header--controls layout--padded monthlylog--inline-calendar"
+    class="chat--header header--controls"
     data-controller="calendar"
+    data-calendar-current-date-value="<%= date.to_s %>"
+    data-calendar-date-value="<%= date.iso8601 %>"
     role="list"
     aria-label="Days of the month"
   >
+  <div class="layout--flex layout--gapped layout--padded monthlylog--inline-calendar">
     <% days.each do |day| %>
       <% count = bullet_counts_by_date[day].to_i %>
       <%= link_to monthlylog_bullets_path(monthlylog, date: day.iso8601),
-            data: { turbo_frame: "monthlylog_bullets", calendar_date_value: day.iso8601, calendar_date_param: day.to_s, calendar_target: "cell", action: "click->calendar#navigateToDate" },
+            data: { turbo_frame: "monthlylog_bullets", calendar_date_param: day.to_s, calendar_target: "cell", action: "click->calendar#navigateToDate" },
             role: "listitem",
             aria: { selected: (day == date) },
             class: "button--secondary button--sm" do %>
@@ -19,6 +22,7 @@
         <%= tag.span class: "monthlylog--indicator", aria: { hidden: "true" } do %><% end %>
       <% end %>
     <% end %>
+  </div>
   </div>
 <% else %>
   <p class="monthlylog--by-date-placeholder">No period set for this spread.</p>
