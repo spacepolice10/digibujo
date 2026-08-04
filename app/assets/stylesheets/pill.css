@@ -1,31 +1,23 @@
 @layer components {
   .pill {
-    display: inline-flex !important;
-    justify-content: center;
+    display: inline-flex;
     align-items: center;
-    gap: var(--spacing-vertical-half);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    font-family: inherit;
-    white-space: nowrap;
-    flex-shrink: 0;
-    text-decoration: none;
-    cursor: default;
-    background: var(--color-bg-subtle);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-stroke-base);
+    background: var(--color-bg-base);
     color: var(--color-fg-subtle);
-    border-radius: var(--radius-subtle);
-  }
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-xs);
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+    width: fit-content;
+    height: fit-content;
 
-  .pill .icon {
-    width: var(--spacing-horizontal);
-    height: var(--spacing-horizontal);
-  }
-
-  .pill--label {
-    min-width: 0;
-  }
-
-  .lexxy-prompt-menu__item .icon {
-    width: var(--spacing-horizontal-double);
-    height: var(--spacing-horizontal-double);
+    &:hover {
+      color: var(--color-fg-base);
+      border-color: var(--color-stroke-strong);
+    }
   }
 }

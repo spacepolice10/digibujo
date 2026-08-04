@@ -143,4 +143,37 @@ class Monthlylogs::BulletsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :not_found
   end
+
+  test 'dated pane mounts chat-scroll on the merged scroller without a trigger' do
+    day = Date.current.beginning_of_month + 2.days
+    create_bullet!(@user,
+      bulletable: Task.new(body: 'Planned task'),
+      bucket_id: @monthlylog.bucket.id,
+      pops_on: day
+    )
+    container = "date_#{day.iso8601}_bullets_container"
+
+    get monthlylog_bullets_path(@monthlylog, date: day.iso8601)
+
+    assert_response :success
+    assert_select 'div[data-controller~="chat-scroll"]'
+    assert_select "div##{container}.chat--scroller[data-chat-scroll-target='scroller']"
+    assert_select 'div[data-chat-scroll-target=trigger]', count: 0
+  end
+
+  test 'unplanned pane mounts chat-scroll and renders a load-more trigger over one page' do
+    Bullet::Pageable::PAGE_SIZE.times do |i|
+      create_bullet!(@user,
+        bulletable: Task.new(body: "Spread task #{i}"),
+        bucket_id: @monthlylog.bucket.id
+      )
+    end
+    container = 'monthlylog_bullets_unplanned_container'
+
+    get monthlylog_bullets_path(@monthlylog)
+
+    assert_response :success
+    assert_select "div##{container}.chat--scroller[data-chat-scroll-target='scroller']"
+    assert_select '.chat--load-more-trigger[data-chat-scroll-target=trigger]', count: 1
+  end
 end

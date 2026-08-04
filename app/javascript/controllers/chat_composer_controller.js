@@ -397,10 +397,9 @@ export default class extends Controller {
   }
 
   #scrollToLatest() {
-    const scroller = document.querySelector('[id$="_scroller"]')
-    scrollToBottom(scroller)
-    // const rows = document.querySelector('[id^="bullets_container_"]')?.querySelectorAll('[id^="bullet_"]')
-    // rows?.[rows.length - 1]?.firstChild?.scrollIntoView({ block: "center", behavior: "smooth" })
+    const container = this.element.closest(".chat--scroller")
+    if (!container) return
+    scrollToBottom(container)
   }
 
   #observeEditorHeight() {
@@ -477,8 +476,13 @@ export default class extends Controller {
       Math.round((this.restingLayoutHeight ?? window.innerHeight) - window.innerHeight)
     )
     const keyboardOpen = overlayInset > 0 || (focused && resizeDelta > 50)
-
-    this.element.style.setProperty("--composer-keyboard-inset", `${overlayInset}px`)
+    const chatWindow = this.element.closest(".chat--window")
+    if (!chatWindow) return
+    if (keyboardOpen) {
+      chatWindow.style.setProperty("--chat-composer-clearance", `${0}px`)
+    } else {
+      chatWindow.style.removeProperty("--chat-composer-clearance")
+    }
     this.element.classList.toggle("composer--keyboard-open", keyboardOpen)
   }
 
@@ -486,15 +490,7 @@ export default class extends Controller {
   // Keep the same breathing room as the CSS fallback (clearance + one vertical
   // step) — a raw measured clearance alone kisses the tabbar.
   #syncTabbarInset() {
-    const tabbar = document.querySelector(".tabbar--navigation")
-    const clearance = tabbar
-      ? Math.max(0, Math.round(window.innerHeight - tabbar.getBoundingClientRect().top))
-      : 0
-
-    this.element.style.setProperty(
-      "--composer-tabbar-spacing",
-      `${clearance}px`
-    )
+    return
   }
 
   #saveTypeInLS(type) {

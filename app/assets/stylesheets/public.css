@@ -4,7 +4,7 @@
     overscroll-behavior: contain;
   }
 
-  .public-sidebar {
+  .public-side {
     position: sticky;
     top: 0;
     height: 100vh;
@@ -30,13 +30,13 @@
     height: 2rem;
   }
 
-  .public-app-name {
+  .public-application-name {
     font-size: var(--font-size-base-read);
     font-weight: var(--font-weight-strong);
     color: var(--color-fg-base);
   }
 
-  .public-cta {
+  .public-register {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-vertical);
@@ -47,14 +47,14 @@
     }
   }
 
-  .public-content {
+  .public-main {
     flex: 1;
     min-width: 0;
     max-width: 680px;
     padding: var(--spacing-horizontal-double);
   }
 
-  .public-content:has(.features--container) {
+  .public-main:has(.features--container) {
     max-width: 920px;
   }
 
@@ -64,7 +64,7 @@
       flex-direction: column;
     }
 
-    .public-sidebar {
+    .public-side {
       position: static;
       width: auto;
       height: auto;
@@ -75,18 +75,18 @@
       border-block-end: 1px solid var(--color-stroke-base);
     }
 
-    .public-cta {
+    .public-register {
       display: none;
     }
   }
 
-  .public--published-footer {
+  .public--footer {
     padding-top: var(--spacing-vertical-double);
     border-top: 1px solid var(--color-stroke-base);
     margin-top: var(--spacing-vertical-double);
   }
 
-  .public--published-date {
+  .public--date {
     color: var(--color-fg-subtle);
   }
 }

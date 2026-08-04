@@ -1,169 +1,26 @@
 @layer components {
-  .layout--header h2.project {
-    color: var(--model-color-3);
-  }
 
-  .layout--header h2.collection {
-    color: var(--model-color-4);
-  }
-
-  .bucket--list {
-    border-radius: var(--radius-strong);
-    padding-inline: var(--spacing-horizontal-half);
-  }
-
-  .bucket--description {
-    margin-block: 0 var(--spacing-vertical);
-    color: var(--color-fg-subtle);
-  }
-
-  .bucket--list .bullet--composer {
-    padding-inline: var(--spacing-horizontal-half);
-  }
-
-  .bucket--list-item-link {
+  .bucket--section-list-item {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
     gap: var(--spacing-horizontal-half);
-    padding: var(--spacing-vertical) var(--spacing-horizontal-half);
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
     flex: 1;
-    min-width: 0;
     text-decoration: none;
     color: inherit;
+    background: var(--color-bg-subtle);
+    border: 1px solid var(--color-stroke-base);
     border-radius: var(--radius-strong);
-    &:hover {
-      background-color: var(--color-stroke-base);
+    align-items: center;
+    height: fit-content;
+
+    & .bucket--section-list-item-icon {
+      width: var(--spacing-horizontal-triple);
+      height: var(--spacing-horizontal-triple);
     }
-  }
-  .bucket--list-item-name {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
-  }
 
-  .bucket--list-item-meta {
-    color: var(--color-fg-subtle);
-  }
-
-  .bucket--list-item-marker {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    width: var(--spacing-horizontal-double);
-    height: var(--spacing-horizontal-double);
-    border-radius: var(--radius-base);
-    border: 1px solid var(--color-stroke-base);
-    overflow: hidden;
-  }
-
-  .bucket--list-item-marker[data-bucket-colour] {
-    background: var(--entity-color-bg);
-    border-color: color-mix(
-      in oklch,
-      var(--entity-color) 40%,
-      var(--color-stroke-base)
-    );
-  }
-
-  .bucket--list-item-marker .icon {
-    width: var(--spacing-horizontal);
-    height: var(--spacing-horizontal);
-  }
-
-  .bucket--list-item-marker[data-bucket-colour] .icon {
-    color: var(--entity-color);
-  }
-
-  .bucket--child-dot-inner {
-    width: calc(var(--spacing-horizontal-double) / 3);
-    height: calc(var(--spacing-horizontal-double) / 3);
-    border-radius: var(--radius-full);
-    background: var(--color-stroke-base);
-  }
-
-  .bucket--list-item-child-link[data-bucket-colour] .bucket--child-dot-inner {
-    background: var(--entity-color);
-  }
-
-  .bucket--list-item-child-link:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 1px;
-  }
-
-  .bucket--footer {
-    position: sticky;
-    bottom: var(--radius-strong);
-  }
-
-  /* Collection show page */
-  .collection--page {
-    max-width: none;
-  }
-
-  .collection--actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-horizontal-half);
-    align-items: center;
-  }
-
-  .collection--actions .layout--rail-action,
-  .collection--actions form {
-    width: auto;
-  }
-
-  .collection--heading .layout--surface-name {
-    margin-left: var(--spacing-horizontal-half);
-    font-size: var(--font-size-huge);
-  }
-
-  .collection--heading .bucket--description {
-    margin: var(--spacing-vertical-half) 0 0;
-  }
-
-  .collection--create-bullet {
-    display: flex;
-    justify-content: flex-end;
-    margin-block-end: var(--spacing-vertical);
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-strong);
-    padding: var(--spacing-vertical-half);
-  }
-
-  .bucket--collect-preview {
-    margin-top: var(--spacing-vertical-double);
-    padding-top: var(--spacing-vertical-double);
-    border-top: 1px solid var(--color-stroke-base);
-  }
-
-  .bucket--collect-preview-heading {
-    margin-bottom: var(--spacing-vertical);
-    color: var(--color-fg-subtle);
-  }
-
-  .bucket--collect-preview-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-vertical-half);
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .bucket--collect-preview-item {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
-    min-width: 0;
-  }
-
-  .bucket--collect-preview-marker {
-    flex-shrink: 0;
-  }
-
-  .bucket--collect-preview-name {
-    min-width: 0;
+    &:hover {
+      background: var(--color-bg-base);
+      border-color: var(--color-stroke-base);
+    }
   }
 }

@@ -152,7 +152,7 @@ export default class extends Controller {
       this.itemTargets.length,
     )
     if (this.currentPosition >= 0) {
-      this.itemTargets[this.currentPosition].scrollIntoView({ behavior: "smooth", block: "start" })
+      this.itemTargets[this.currentPosition].scrollIntoView({ behavior: "instant", block: "start" })
     }
     this._updateItems()
   }

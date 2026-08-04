@@ -3,6 +3,10 @@
 class TrackersController < ApplicationController
   before_action :set_tracker, only: %i[show edit update destroy]
 
+  def index
+    @trackers = Current.user.trackers
+  end
+
   def new
     @tracker = Current.user.trackers.new(schedule: Tracker::DEFAULT_SCHEDULE.dup)
   end
@@ -52,7 +56,7 @@ class TrackersController < ApplicationController
       name: permitted[:name],
       schedule: {
         'days' => Array(permitted[:schedule_days]).reject(&:blank?).map(&:to_i).uniq.sort.presence ||
-          Tracker::DEFAULT_SCHEDULE['days']
+                  Tracker::DEFAULT_SCHEDULE['days']
       }
     }
     attrs[:colour] = permitted[:colour].presence if permitted.key?(:colour)

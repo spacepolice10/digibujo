@@ -9,13 +9,6 @@
     clip: rect(0, 0, 0, 0);
   }
 
-  .utilities--line-clamp-1 {
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 1;
-  }
-
   .utilities--contents {
     display: contents;
   }
@@ -28,6 +21,18 @@
   }
   .utilities--my-auto {
     margin-block: auto;
+  }
+
+  .utilities--stretch {
+    height: stretch;
+    width: stretch;
+  }
+
+  .utilities--overscroll-none {
+      overscroll-behavior: none;
+  }
+  .utilities--overscroll-auto {
+    overscroll-behavior: auto;
   }
 
 }

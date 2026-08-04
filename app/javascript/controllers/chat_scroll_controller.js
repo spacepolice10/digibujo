@@ -4,11 +4,12 @@ import { distanceFromBottom, keepScroll, pauseInertiaScroll, scrollToBottom } fr
 // Distance from the bottom edge that still counts as "reading the latest".
 const PINNED_THRESHOLD = 80
 
-// Generic chat list: owns its scrollport, opens at the newest bullet, pulls
-// older pages from the top, and follows new rows only while the reader is
-// already at the bottom. Scroller padding (CSS) clears the fixed composer dock.
+// Generic chat list: owns its merged scroller (scrollport + list in one),
+// opens at the newest bullet, pulls older pages from the top, and follows new
+// rows only while the reader is already at the bottom. Scroller padding (CSS)
+// clears the fixed composer dock.
 export default class extends Controller {
-  static targets = ["scroller", "list", "trigger"]
+  static targets = ["scroller", "trigger"]
   static values = { path: String, rootMargin: { type: String, default: "400px" } }
 
   initialize() {
@@ -28,7 +29,7 @@ export default class extends Controller {
     // Smooth open: long lists start at the top without JS, so an instant jump
     // reads as a flash. ResizeObserver stays off until the animation settles —
     // otherwise an instant scrollToBottom would cancel it mid-flight.
-    scrollToBottom(this.scrollerTarget, "smooth")
+    scrollToBottom(this.scrollerTarget)
     this.#followSettlingLayoutWhenOpen()
   }
 
@@ -52,7 +53,9 @@ export default class extends Controller {
   #observeTrigger(trigger) {
     this.triggerObserver?.disconnect()
     this.triggerObserver = new IntersectionObserver(
-      ([entry]) => entry.isIntersecting && this.#loadPrevPage(),
+      // The opening scroll must settle first: a trigger visible on a pinned
+      // short list would otherwise auto-fetch the whole rail mid-animation.
+      ([entry]) => entry.isIntersecting && !this.opening && this.#loadPrevPage(),
       { root: this.scrollerTarget, rootMargin: this.rootMarginValue }
     )
     this.triggerObserver.observe(trigger)
@@ -86,7 +89,15 @@ export default class extends Controller {
     this.prepending = true
 
     pauseInertiaScroll(this.scrollerTarget)
-    keepScroll(this.scrollerTarget, () => this.listTarget.insertAdjacentHTML("afterbegin", html))
+    keepScroll(this.scrollerTarget, () => {
+      // The trigger is the scroller's first child (it owns the pinning auto
+      // margin), so older rows slot in right after it.
+      if (this.hasTriggerTarget) {
+        this.triggerTarget.insertAdjacentHTML("afterend", html)
+      } else {
+        this.scrollerTarget.insertAdjacentHTML("afterbegin", html)
+      }
+    })
     this.#observeTrigger(this.triggerTarget)
 
     setTimeout(() => { this.prepending = false })
@@ -127,7 +138,7 @@ export default class extends Controller {
 
       scrollToBottom(this.scrollerTarget)
     })
-    this.sizeObserver.observe(this.listTarget)
+    this.sizeObserver.observe(this.scrollerTarget)
   }
 
   #settlePinned() {
@@ -135,6 +146,6 @@ export default class extends Controller {
   }
 
   get #oldestRailId() {
-    return this.listTarget.firstElementChild?.id?.split("_").pop()
+    return this.scrollerTarget.querySelector('[id^="bullet_"]')?.id?.split("_").pop()
   }
 }

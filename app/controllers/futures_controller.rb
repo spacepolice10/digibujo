@@ -5,7 +5,8 @@ class FuturesController < ApplicationController
     @future = find_future
     return unless @future
 
-    @bullets = @future.bullets.active.includes(:bulletable).where(pops_on: nil).order(created_at: :asc)
+    @bullets = @future.bullets.active.includes(:bulletable).where(pops_on: nil).chronologically.last_page
+    @more_bullets = @bullets.size == Bullet::Pageable::PAGE_SIZE
   end
 
   def new

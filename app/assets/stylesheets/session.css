@@ -293,7 +293,7 @@
     padding-inline: var(--spacing-horizontal);
   }
 
-  .session--footer-links {
+  .session--footer {
     display: flex;
     justify-content: center;
     align-items: center;

@@ -1,5 +1,12 @@
 @layer components {
 
+  .home--page {
+    @media (max-width: 799px) {
+      padding-bottom: var(--layout-scroll-padding);
+      overflow-y: auto;
+    }
+  }
+
 .home--greeting {
   margin-top: var(--spacing-vertical-quad);
   margin-bottom: var(--spacing-vertical)

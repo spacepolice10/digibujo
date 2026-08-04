@@ -124,6 +124,10 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select '[data-controller~=monthlylog-calendar-drop-optimistic]', count: 0
     assert_select '[data-controller~=monthlylog-inline-calendar]'
     assert_select '.monthlylog--divider', count: 0
+    assert_select '.chat--window.chat--window--embedded', count: 2
+    assert_select '.monthlylog--pane', count: 0
+    assert_select '.monthlylog--composer-dock', count: 0
+    assert_select '.monthlylog--composer-park turbo-frame.composer'
   end
 
   test 'empty current monthlylog shows provision placeholder' do

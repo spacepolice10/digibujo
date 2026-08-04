@@ -1,21 +1,5 @@
 @layer components {
-  .triage--header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--spacing-vertical-half);
-    padding-block: var(--spacing-vertical-quad);
-    text-align: center;
-  }
-
-  .triage--header-icon {
-    width: 5ch !important;
-    height: 5ch !important;
-  }
-
-  .triage--list {
-    min-height: 80dvh;
-  }
+ 
 
   .triage--chip {
     display: flex;
@@ -34,7 +18,6 @@
       background: var(--color-accent-bg);
     }
   }
-
 
   .triage--author {
     color: var(--color-fg-subtle);

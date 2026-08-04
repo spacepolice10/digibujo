@@ -267,7 +267,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match(/Line 1\b/, response.body)
     assert_select "##{container} .bullet", Bullet::Pageable::PAGE_SIZE
     assert_operator response.body.index('Line 2'), :<, response.body.index("Line #{total - 1}")
-    assert_select "##{container} > ##{ActionView::RecordIdentifier.dom_id(bullets[2])}:first-child"
+    assert_select "##{container} > .chat--load-more-trigger + ##{ActionView::RecordIdentifier.dom_id(bullets[2])}"
     assert_select '.chat--load-more-trigger'
   end
 
@@ -287,10 +287,10 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "[data-controller~='chat-scroll'][data-chat-scroll-path-value=?]", daylog_bullets_path do
-      assert_select "[data-chat-scroll-target='scroller'] ##{container}[data-chat-scroll-target='list']"
+      assert_select "##{container}.chat--scroller[data-chat-scroll-target='scroller']"
       assert_select '#daylog_bullets_composer', count: 0
     end
-    assert_select '.daylog--chat > #daylog_bullets_composer'
+    assert_select '.chat--window > #daylog_bullets_composer'
   end
 
   test 'daylog renders mixed bullet types on the same page' do

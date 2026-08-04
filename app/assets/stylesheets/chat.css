@@ -1,4 +1,70 @@
 @layer components {
+  /* Complete chat window: page column, levitating header, merged scroller and
+     docked composer. Assembled purely from chat--* classes so any page can
+     build the whole window without per-page chrome. */
+  .chat--window {
+    --chat-tabbar-clearance: var(--spacing-vertical-double);
+    --chat-composer-clearance: calc(
+      var(--spacing-vertical-triple) * 3
+    );
+    --chat-header-clearance: calc(
+      var(--spacing-vertical-double)
+      + var(--spacing-horizontal-double)
+      + var(--spacing-vertical-double)
+    );
+
+    position: relative;
+    z-index: 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    padding: 0;
+    gap: 0;
+    overflow: hidden;
+  }
+
+  @media (min-width: 800px) {
+    .chat--window {
+      max-width: var(--breakpoint-laptop);
+      margin-inline: auto;
+      height: calc(100dvh - 10ch);
+      max-height: calc(100dvh - 10ch);
+    }
+  }
+
+
+  html:has(.chat--window) body {
+    padding-bottom: 0 !important;
+    scroll-padding-bottom: 0 !important;
+  }
+
+  /* Desktop card chrome for the chat column. */
+  @media (pointer: fine) {
+    .chat--window > .chat--wrap {
+      border: 0.5px solid var(--color-stroke-base);
+      border-radius: var(--radius-strong);
+      box-shadow: var(--shadow-subtle);
+      background: var(--color-bg-subtle);
+    }
+  }
+
+  /* Levitating header slot — frosted chips float over the scroller. */
+  .chat--header {
+    position: absolute;
+    z-index: var(--z-dropdown);
+    top: max(var(--spacing-vertical), env(safe-area-inset-top, 0px));
+    inset-inline: var(--spacing-horizontal);
+    background: transparent;
+    overflow: visible;
+    pointer-events: none;
+    & > * {
+      pointer-events: auto;
+    }
+  }
+
   .chat--wrap {
     position: relative;
     display: flex;
@@ -8,6 +74,12 @@
     overflow: hidden;
   }
 
+  /* Merged scrollport + list (Campfire-style): the scroller owns scrolling and
+     packs short lists against the composer. Pinning uses auto margins instead
+     of justify-content: flex-end, so overflowing content always extends below
+     the start edge and stays reachable when scrolling. The older-trigger sits
+     at the top with an auto end margin; without one, the first row's auto
+     start margin pins the short list to the composer edge. */
   .chat--scroller {
     position: relative;
     z-index: 1;
@@ -15,32 +87,61 @@
     min-height: 0;
     overflow-y: auto;
     overflow-anchor: none;
-    overscroll-behavior: contain;
-    padding-top: var(--chat-header-clearance, 0px);
-    padding-bottom: calc(
-      var(--chat-composer-clearance, 0px) + var(--layout-scroll-padding)
-    ) !important;
-  }
-
-  /* Pin short lists to the composer edge without keeping an older-trigger in
-     view. The list is at least one scrollport tall; bullets pack to its end. */
-  .chat--compact-list-pinned {
+    overscroll-behavior-y: none;
+    overscroll-behavior-x: auto;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
     gap: var(--spacing-vertical);
-    min-height: 100%;
     padding-inline: var(--spacing-horizontal-half);
-  }
+    padding-top: var(--chat-header-clearance, 0px);
 
-  .chat--compact-list-pinned > .bullet {
-    margin-block: 0;
+    @media (max-width: 799px) {
+      padding-bottom: var(--chat-composer-clearance, 0px) !important;
+    }
+
+    @media (min-width: 800px) {
+      padding-bottom: var(--spacing-vertical);
+    }
+
+    > * {
+      margin-block: var(--spacing-vertical-half);
+      /* Children never shrink: flex-shrink would crush rows (their min-height
+         auto protection is off whenever the row has non-visible overflow,
+         e.g. the monthly log's line-clamped wrappers) and swallow the
+         overflow that the scroller is supposed to scroll. */
+      flex-shrink: 0;
+    }
+
+    > .bullet {
+      margin-block: 0;
+    }
+
+    > *:first-child:not(.chat--load-more-trigger) {
+      margin-block-start: auto;
+    }
   }
 
   .chat--load-more-trigger {
     display: flex;
     justify-content: center;
+    margin-block-end: auto;
     padding-block: var(--spacing-vertical);
     color: var(--color-fg-subtle);
+  }
+
+  /* In-flow dock pinned to the bottom of the chat column (mobile keeps the
+     fixed dock from composer.css). */
+  @media (min-width: 800px) {
+    .chat--window > .composer {
+      position: relative;
+      inset: auto;
+      bottom: auto;
+      flex: 0 0 auto;
+      width: 100%;
+      max-width: none;
+      padding-inline: var(--spacing-horizontal);
+      padding-block: var(--spacing-vertical-half);
+      margin-inline: auto;
+    }
   }
 }

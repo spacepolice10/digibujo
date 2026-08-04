@@ -116,6 +116,32 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'show renders the floating chat frame with frosted chips and actions dropdown' do
+    collection = create_collection!(@user, name: 'Inbox', colour: 'teal', icon: 'folder')
+    collection.update!(description: 'Things to sort')
+
+    get collection_path(collection)
+
+    assert_response :success
+    assert_select '.chat--window'
+    assert_select '.collection--chat-header'
+    assert_select '.collection--frost-chip.collection--frost-chip--title', text: /inbox/
+    assert_select '.collection--frost-chip.collection--frost-chip--description', text: /Things to sort/
+    assert_select 'button[popovertarget="collection_actions"]'
+    assert_select 'div#collection_actions.dropdown--element[data-controller=grid-navigation]'
+    assert_select 'a.dropdown-item[href=?]', edit_collection_path(collection)
+    assert_select "a.dropdown-item[href=?]", collection_export_path(collection)
+  end
+
+  test 'show omits description chip when absent' do
+    collection = create_collection!(@user, name: 'Inbox')
+
+    get collection_path(collection)
+
+    assert_response :success
+    assert_select '.collection--frost-chip--description', count: 0
+  end
+
   test 'show inserts date pills between days and skips duplicates within a day' do
     collection = create_collection!(@user, name: 'Inbox')
     bucket = collection.bucket

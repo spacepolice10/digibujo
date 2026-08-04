@@ -352,6 +352,20 @@ class ChatComposerSystemTest < ApplicationSystemTestCase
     assert_selector '#daylog_bullets_composer lexxy-editor[preset=note]'
   end
 
+  test 'composer writes the keyboard spacing variable the stylesheet reads' do
+    visit daylog_path(date: Date.current.iso8601)
+
+    # #syncKeyboardInset runs on connect and on window resize; it sets the inset
+    # unconditionally (0px without a real keyboard). Assert the *variable name*
+    # the stylesheet reads is the one written.
+    spacing = page.evaluate_script(<<~JS)
+      document.querySelector('#daylog_bullets_composer')
+        .style.getPropertyValue('--composer-keyboard-spacing')
+    JS
+
+    assert_equal '0px', spacing
+  end
+
   private
 
   def compose(text)

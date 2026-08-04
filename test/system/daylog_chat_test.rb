@@ -54,13 +54,12 @@ class DaylogChatSystemTest < ApplicationSystemTestCase
     visit daylog_path
 
     assert_selector "#{@list} .bullet", count: 2
-    list_id = @list.delete_prefix('#')
     gap = page.evaluate_script(<<~JS)
       (() => {
         const scroller = document.querySelector('.chat--scroller')
-        const list = document.getElementById(#{list_id.to_json})
         const pad = parseFloat(getComputedStyle(scroller).paddingBottom) || 0
-        return Math.abs((scroller.getBoundingClientRect().bottom - pad) - list.getBoundingClientRect().bottom)
+        const last = [...scroller.querySelectorAll('.bullet')].pop()
+        return Math.abs((scroller.getBoundingClientRect().bottom - pad) - last.getBoundingClientRect().bottom)
       })()
     JS
     assert_operator gap, :<=, 2, 'expected the short list to sit on the bottom of the scroller'

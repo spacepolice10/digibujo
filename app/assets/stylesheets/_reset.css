@@ -60,6 +60,18 @@
     list-style: none; /* scoped to role="list" so assistive tech still announces other lists */
   }
 
+  a {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
   /* Form controls — inherit typography */
   button, input, select, textarea {
     font: inherit;        /* browsers default form controls to system-ui; match page font */

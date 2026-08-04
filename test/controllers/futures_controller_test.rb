@@ -33,11 +33,27 @@ class FuturesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match 'Someday idea', response.body
     assert_no_match 'Month card event', response.body
-    assert_select '.future--chat'
+    assert_select '.chat--window'
     assert_select '.future--grid', count: 0
-    assert_select '#future_bullets_unplanned_container'
+    assert_select "#future_bullets_unplanned_container.chat--scroller[data-chat-scroll-target='scroller']"
+    assert_select '[data-controller~="chat-scroll"][data-chat-scroll-path-value=?]', future_bullets_path(future)
     assert_select 'turbo-frame#future_bullets_unplanned_composer.composer'
     assert_select '.bullets-form--create', count: 0
+  end
+
+  test 'current future renders a load-more trigger over one full page' do
+    future = ensure_future!(@user)
+    Bullet::Pageable::PAGE_SIZE.times do |i|
+      create_bullet!(@user,
+        bulletable: Task.new(body: "Goal #{i}"),
+        bucket_id: future.bucket.id
+      )
+    end
+
+    get current_future_path
+
+    assert_response :success
+    assert_select 'div#future_bullets_unplanned_container > .chat--load-more-trigger[data-chat-scroll-target=trigger]', count: 1
   end
 
   test 'show returns not found for another users future log' do

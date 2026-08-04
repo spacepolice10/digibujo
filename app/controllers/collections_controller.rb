@@ -53,11 +53,8 @@ class CollectionsController < ApplicationController
   end
 
   def show
-    @bullets = set_page_and_extract_portion_from(
-      @collection.bucket.bullets.active.chronologically,
-      per_page: [15, 30, 50, 100]
-    )
-    @previous_date = previous_page_date
+    @bullets = @collection.bucket.bullets.active.chronologically.last_page
+    @more_bullets = @bullets.size == Bullet::Pageable::PAGE_SIZE
   end
 
   def edit; end
@@ -82,16 +79,6 @@ class CollectionsController < ApplicationController
 
   def set_collection
     @collection = Current.user.collections.merge(Bucket.active).find(params[:id])
-  end
-
-  # Page 2+ starts mid-timeline; without the prior row's date the first divider
-  # would repeat the day that already closed page 1.
-  def previous_page_date
-    return if @page.first? || @page.records.empty?
-
-    first = @page.records.first
-    previous = @collection.bucket.bullets.active.older_than(first).chronologically.last
-    previous&.created_at&.in_time_zone&.to_date
   end
 
   def collection_params

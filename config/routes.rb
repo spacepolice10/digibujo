@@ -44,20 +44,20 @@ Rails.application.routes.draw do
   get 'triage/number', to: 'triage#number', as: :triage_number
 
   get 'monthlylog', to: 'monthlylogs#show', as: :current_monthlylog
-  get 'monthly_bucket', to: redirect('/monthlylog')
 
   get 'future', to: 'futures#show', as: :current_future
 
-  resources :futures, only: %i[show new create]
+  resources :futures, only: %i[show new create] do
+    scope module: :futures do
+      resources :bullets, only: :index
+    end
+  end
 
   resources :monthlylogs, only: %i[create show] do
     scope module: :monthlylogs do
       resources :bullets, only: :index
     end
   end
-
-  get 'future_buckets/:id', to: redirect('/futures/%{id}')
-  get 'monthly_buckets/:id', to: redirect('/monthlylogs/%{id}')
 
   # --- Tags ---
   scope 'projects', module: :projects, as: :projects do
@@ -88,6 +88,7 @@ Rails.application.routes.draw do
   resources :collections do
     scope module: :collections do
       resource :export
+      resources :bullets, only: :index
     end
   end
 
@@ -97,7 +98,7 @@ Rails.application.routes.draw do
   resources :buckets, only: :show
 
   # --- Trackers ---
-  resources :trackers, only: %i[new create show edit update destroy] do
+  resources :trackers do
     scope module: :trackers do
       resource :status
     end
