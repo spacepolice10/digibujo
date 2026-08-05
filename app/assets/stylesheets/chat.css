@@ -133,7 +133,7 @@
     content: "";
     display: block;
     flex-shrink: 0;
-    height: 100%;
+    min-height: 100%;
   }
 
   .chat--load-more-trigger {
@@ -148,9 +148,9 @@
      fixed dock from composer.css). */
   @media (min-width: 800px) {
     .chat--scroller > .composer {
-      position: relative;
+      position: sticky;
       inset: auto;
-      bottom: auto;
+      bottom: 0;
       flex: 0 0 auto;
       width: 100%;
       max-width: none;

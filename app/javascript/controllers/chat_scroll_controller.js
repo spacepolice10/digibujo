@@ -26,14 +26,16 @@ export default class extends Controller {
 
     this.scrollerTarget.addEventListener("scroll", this.boundSettlePinned, { passive: true })
 
-    // Smooth open: long lists start at the top without JS, so an instant jump
-    // reads as a flash. ResizeObserver stays off until the animation settles —
-    // otherwise an instant scrollToBottom would cancel it mid-flight.
-    scrollToBottom(this.scrollerTarget)
-    this.#followSettlingLayoutWhenOpen()
+    if (this.#scrollPositionRestorable()) {
+      this.#restoreScrollPosition()
+    } else {
+      scrollToBottom(this.scrollerTarget)
+      this.#followSettlingLayoutWhenOpen()
+    }
   }
 
   disconnect() {
+
     this.scrollerTarget.removeEventListener("scroll", this.boundSettlePinned)
     if (this.boundOpenSettled) {
       this.scrollerTarget.removeEventListener("scrollend", this.boundOpenSettled)
@@ -46,6 +48,23 @@ export default class extends Controller {
   triggerTargetConnected(trigger) {
     this.#observeTrigger(trigger)
   }
+
+
+  preserveScrollPosition() {
+    sessionStorage.setItem("scrollPosition", this.scrollerTarget.scrollTop)
+  }
+
+  #scrollPositionRestorable() {
+    const direction = document.querySelector("html").getAttribute("data-turbo-visit-direction")
+    const scrollPosition = sessionStorage.getItem("scrollPosition")
+    return direction == "back" && scrollPosition > 0
+  }
+
+  #restoreScrollPosition() {
+    const scrollPosition = sessionStorage.getItem("scrollPosition")
+    this.scrollerTarget.scrollTo({ top: scrollPosition })
+  }
+
 
   // IntersectionObserver only reports changes, so a trigger that stays on screen
   // after a prepend would go quiet. Re-observing asks for a fresh reading, and
