@@ -7,19 +7,24 @@ module Bullets
     before_action :prepare_bullets, only: %i[new create]
 
     def new
-      @asap = Date.current
-      @tomorrow = Date.current + 1.day
-      @next_monday = Date.current.next_occurring(:monday)
-      @next_weekends = Date.current.next_occurring(:saturday)
-      @daylog_bucket = Current.user.daylog.bucket
-      @daylog_buckets = {
-        asap: @daylog_bucket,
-        tomorrow: @daylog_bucket,
-        next_monday: @daylog_bucket,
-        next_weekends: @daylog_bucket
-      }
-      @future = Current.user.futures.covering(Date.current).take
-      @monthlylog = Current.user.monthlylogs.covering(Date.current).take
+      daylog_bucket = Current.user.daylog.bucket
+      monthlylog_bucket = Current.user.monthlylogs.covering(Date.current).take.bucket
+      future_bucket = Current.user.futures.covering(Date.current).take.bucket
+
+      @postpone_options = [
+        { id: :asap,          icon: 'arrow-up',        name: 'ASAP',
+          pops_on: Date.current,                           bucket_id: daylog_bucket.id },
+        { id: :tomorrow,      icon: 'arrow-right',     name: 'Tomorrow',
+          pops_on: Date.current + 1.day,                   bucket_id: monthlylog_bucket.id },
+        { id: :next_monday,   icon: 'calendar-repeat', name: 'Next week',
+          pops_on: Date.current.next_occurring(:monday),   bucket_id: monthlylog_bucket.id },
+        { id: :next_weekends, icon: 'calendar-repeat', name: 'Next weekend',
+          pops_on: Date.current.next_occurring(:saturday), bucket_id: monthlylog_bucket.id },
+        { id: :monthlylog,    icon: 'calendar',        name: 'This month',   pops_on: nil,
+          bucket_id: monthlylog_bucket.id },
+        { id: :future,        icon: 'calendar',        name: 'Sometime',     pops_on: nil, bucket_id: future_bucket.id }
+      ]
+      @manual_bucket = monthlylog_bucket
     end
 
     def create

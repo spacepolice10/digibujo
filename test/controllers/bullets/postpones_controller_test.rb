@@ -9,6 +9,7 @@ module Bullets
       sign_in_as @user
       @daylog = ensure_daylog!(@user)
       @future = ensure_future!(@user)
+      @monthlylog = create_monthlylog!(@user, name: 'monthly')
     end
 
     test 'new renders postpone picker for selected bullets' do
@@ -18,10 +19,10 @@ module Bullets
 
       assert_response :success
       assert_select 'turbo-frame#postpone_picker_dropdown_id'
-      assert_select 'turbo-frame#postpone_picker_dropdown_id button[data-grid-navigation-target=?]', 'item', count: 5
+      assert_select 'turbo-frame#postpone_picker_dropdown_id button[data-grid-navigation-target=?]', 'item', count: 6
       assert_select 'turbo-frame#postpone_picker_dropdown_id label[data-grid-navigation-target=?]', 'item', count: 1
       assert_select 'turbo-frame#postpone_picker_dropdown_id input[name="bullet_ids"][data-bulk-menu-target="idList"]',
-                    count: 6
+                    count: 7
       assert_select 'turbo-frame#postpone_picker_dropdown_id input[name=bucket_id]', minimum: 5
       assert_select 'turbo-frame#postpone_picker_dropdown_id input[type=date][name=pops_on]'
 
@@ -41,8 +42,8 @@ module Bullets
 
       assert_response :success
       assert_select 'turbo-frame#postpone_picker_dropdown_id .dropdown--header h2', text: 'Schedule'
-      assert_select 'turbo-frame#postpone_picker_dropdown_id button[data-grid-navigation-target=?]', 'item', count: 5
-      assert_select 'input[name="bullet_ids"][data-bulk-menu-target="idList"]', count: 6
+      assert_select 'turbo-frame#postpone_picker_dropdown_id button[data-grid-navigation-target=?]', 'item', count: 6
+      assert_select 'input[name="bullet_ids"][data-bulk-menu-target="idList"]', count: 7
     end
 
     test 'new without bullet_ids returns not found' do
@@ -96,9 +97,8 @@ module Bullets
     test 'create with pops_on one day ahead acts as postpone from bullet pop day' do
       anchor = 5.days.from_now.to_date
       card = create_bullet!(@user,
-        bulletable: Task.new(body: 'Defer me'),
-        pops_on: anchor
-      )
+                            bulletable: Task.new(body: 'Defer me'),
+                            pops_on: anchor)
 
       post postpone_path, params: {
         bullet_ids: card.id.to_s,
@@ -113,9 +113,8 @@ module Bullets
     test 'create with pops_on from daylog viewing day acts as postpone from that anchor' do
       view_day = Date.current
       card = create_bullet!(@user,
-        bulletable: Task.new(body: 'Triage'),
-        pops_on: 2.weeks.from_now.to_date
-      )
+                            bulletable: Task.new(body: 'Triage'),
+                            pops_on: 2.weeks.from_now.to_date)
 
       post postpone_path, params: {
         bullet_ids: card.id.to_s,
@@ -197,9 +196,8 @@ module Bullets
       monthlylog = create_monthlylog!(@user, name: 'june')
       day = Date.current.beginning_of_month + 2.days
       card = create_bullet!(@user,
-        bulletable: Task.new(body: 'Plan in spread'),
-        bucket_id: monthlylog.bucket.id
-      )
+                            bulletable: Task.new(body: 'Plan in spread'),
+                            bucket_id: monthlylog.bucket.id)
 
       post postpone_path,
            params: {
