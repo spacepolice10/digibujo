@@ -10,20 +10,12 @@
 
   .bullets-form--rail {
     position: sticky;
-    bottom: 0;
-    z-index: var(--z-dropdown);
+    bottom: var(--layout-scroll-padding);
     display: flex;
-    width: 100%;
+    width: 75%;
     align-items: center;
     justify-content: space-between;
-    background: var(--color-bg-subtle);
-    padding-block: var(--spacing-vertical-half);
-  }
-
-  .bullets-form--rail-actions {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
+    margin-bottom: calc(var(--layout-scroll-padding));
   }
 
   .bullets-form--body {

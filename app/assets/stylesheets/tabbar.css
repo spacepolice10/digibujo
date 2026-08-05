@@ -49,6 +49,7 @@
     left: 50%;
     transform: translateX(-50%);
     z-index: var(--z-dropdown);
+    opacity: 100%;
     display: flex;
     align-items: stretch;
     gap: var(--spacing-horizontal-half);
@@ -57,6 +58,7 @@
     background-color: var(--color-bg-subtle);
     border: 1px solid var(--color-stroke-base);
     box-shadow: var(--shadow-subtle);
+    transition: opacity 250ms;
   }
 
   .tabbar--item {

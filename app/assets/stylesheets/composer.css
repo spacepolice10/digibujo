@@ -381,7 +381,7 @@ lexxy-table-tools {
     );
     position: sticky;
     inset-inline: 0;
-    bottom: var(--composer-tabbar-clearance);
+    bottom: var(--composer-keyboard-spacing);
     z-index: var(--z-dropdown);
     margin: 0;
     margin-inline: auto;
@@ -398,7 +398,7 @@ lexxy-table-tools {
   }
 
   body:has(.composer--keyboard-open) .tabbar--navigation {
-    visibility: hidden;
+    bottom: -250px;
     pointer-events: none;
   }
 

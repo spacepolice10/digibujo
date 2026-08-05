@@ -83,7 +83,7 @@
     --breakpoint-pc: 1040px;
 
     /* spacing */
-    --spacing-vertical: 1ch;
+    --spacing-vertical: 1.5ch;
     --spacing-horizontal: 1rem;
     --spacing-vertical-half: calc(var(--spacing-vertical) / 2);
     --spacing-horizontal-half: calc(var(--spacing-horizontal) / 2);

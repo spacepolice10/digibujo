@@ -18,8 +18,7 @@ export default class extends Controller {
   connect() {
     this.typeBeforeVoice = null
     this.restingLayoutHeight = window.innerHeight
-    this.boundSyncKeyboardInset = () => this.#syncKeyboardInset()
-    this.boundSyncTabbarInset = () => this.#syncTabbarInset()
+    this.boundSyncKeyboardSpacing = () => this.#syncKeyboardSpacing()
     this.boundOnEditorInitialized = () => {
       this.#prepareToolbar()
       this.#syncPlaceholder()
@@ -29,10 +28,8 @@ export default class extends Controller {
       this.refresh()
     }
 
-    this.#visualViewport?.addEventListener("resize", this.boundSyncKeyboardInset)
-    this.#visualViewport?.addEventListener("scroll", this.boundSyncKeyboardInset)
-    window.addEventListener("resize", this.boundSyncTabbarInset)
-    window.addEventListener("resize", this.boundSyncKeyboardInset)
+    this.#visualViewport?.addEventListener("resize", this.boundSyncKeyboardSpacing)
+    this.#visualViewport?.addEventListener("scroll", this.boundSyncKeyboardSpacing)
     // lexxy:initialize fires straight off the element once the root is mounted.
     // lexxy:editor-initialized goes through Lexxy's adapter, which is a no-op in
     // a browser — never rely on it alone.
@@ -42,8 +39,7 @@ export default class extends Controller {
     this.#prepareToolbar()
     this.#observeEditorHeight()
     this.#switchType(this.#storedType || this.typeElementTarget.value)
-    this.#syncTabbarInset()
-    this.#syncKeyboardInset()
+    this.#syncKeyboardSpacing()
     this.refresh()
     this.#reinitializeWhenEditorUpgrades()
   }
@@ -69,10 +65,8 @@ export default class extends Controller {
   }
 
   disconnect() {
-    this.#visualViewport?.removeEventListener("resize", this.boundSyncKeyboardInset)
-    this.#visualViewport?.removeEventListener("scroll", this.boundSyncKeyboardInset)
-    window.removeEventListener("resize", this.boundSyncTabbarInset)
-    window.removeEventListener("resize", this.boundSyncKeyboardInset)
+    this.#visualViewport?.removeEventListener("resize", this.boundSyncKeyboardSpacing)
+    this.#visualViewport?.removeEventListener("scroll", this.boundSyncKeyboardSpacing)
     this.editorTarget.removeEventListener("lexxy:initialize", this.boundOnEditorInitialized)
     this.editorTarget.removeEventListener("lexxy:editor-initialized", this.boundOnEditorInitialized)
     this.resizeObserver?.disconnect()
@@ -98,7 +92,7 @@ export default class extends Controller {
       if (event.target.closest("lexxy-editor")) return
       if (event.target.closest("lexxy-toolbar, #composer_toolbar")) return
     }
-    this.editorTarget.focus()
+      this.editorTarget.focus({ preventScroll: false })
   }
 
   // Desktop send: Notes need Cmd/Ctrl+Enter (plain Enter inserts a newline);
@@ -452,7 +446,7 @@ export default class extends Controller {
     return Boolean(root.querySelector("table, action-text-attachment, ul, ol"))
   }
 
-  #syncKeyboardInset() {
+  #syncKeyboardSpacing() {
     const viewport = this.#visualViewport
     if (!viewport) return
 
@@ -467,7 +461,6 @@ export default class extends Controller {
       0,
       Math.round(window.innerHeight - viewport.height - viewport.offsetTop)
     )
-
     // Fallback when a browser still resizes the layout viewport instead: VV
     // inset stays ~0, but innerHeight drops while focused.
     if (!focused) this.restingLayoutHeight = window.innerHeight
@@ -476,21 +469,12 @@ export default class extends Controller {
       Math.round((this.restingLayoutHeight ?? window.innerHeight) - window.innerHeight)
     )
     const keyboardOpen = overlayInset > 0 || (focused && resizeDelta > 50)
-    const chatWindow = this.element.closest(".chat--window")
-    if (!chatWindow) return
     if (keyboardOpen) {
-      chatWindow.style.setProperty("--chat-composer-clearance", `${0}px`)
+      this.element.style.setProperty("--composer-keyboard-spacing", `${overlayInset}px`)
     } else {
-      chatWindow.style.removeProperty("--chat-composer-clearance")
+      this.element.style.removeProperty("--composer-keyboard-spacing", "0px")
     }
     this.element.classList.toggle("composer--keyboard-open", keyboardOpen)
-  }
-
-  // Fixed composer clears the floating tabbar while the keyboard is closed.
-  // Keep the same breathing room as the CSS fallback (clearance + one vertical
-  // step) — a raw measured clearance alone kisses the tabbar.
-  #syncTabbarInset() {
-    return
   }
 
   #saveTypeInLS(type) {

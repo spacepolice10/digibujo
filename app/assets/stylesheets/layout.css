@@ -56,8 +56,8 @@
     height: 100vh;
     width: 100%;
     @media (max-width: 799px) {
-      padding: var(--spacing-vertical) var(--spacing-horizontal);
       padding-bottom: var(--layout-scroll-padding);
+      padding: var(--spacing-vertical) var(--spacing-horizontal);
     }
   }
 
