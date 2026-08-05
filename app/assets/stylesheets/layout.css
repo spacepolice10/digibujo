@@ -38,7 +38,10 @@
     align-items: center;
     padding: var(--spacing-vertical) var(--spacing-horizontal);
     pointer-events: none;
-    background: linear-gradient(to top, var(--color-bg-base), transparent);
+
+    @media (max-width: 799px) {
+      background: linear-gradient(to top, var(--color-bg-base), transparent);
+    }
 
     @media (pointer: fine) {
       @media (max-width: 768px) {

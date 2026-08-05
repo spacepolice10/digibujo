@@ -15,7 +15,7 @@ class OnboardingController < ApplicationController
   end
 
   def create
-    @onboarding = Onboarding.new(user: Current.user)
+    @onboarding = Onboarding.new(user: Current.user, data_seed: params[:data_seed])
 
     if @onboarding.complete
       redirect_to stashed_authentication_path

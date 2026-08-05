@@ -104,11 +104,11 @@ export default class extends Controller {
   // editor; this path covers the focused field). Runs on capture so Lexical
   // never sees a sending Enter.
   keydown(event) {
+    event.stopPropagation()
     if (event.isComposing) return
     if (this.#handleSwitchToNextVariantKeydown(event)) return
     if (this.#handleToolbarKeydown(event)) return
     if (this.#handleRecordKeydown(event)) return
-
     if (this.#toolbarOpen) return
     if (this.#mobileDevice) return
     if (this.editorTarget.hasOpenPrompt) return

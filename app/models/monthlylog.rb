@@ -33,7 +33,7 @@ class Monthlylog < ApplicationRecord
       name: month.strftime('%B %Y'),
       icon: 'calendar'
     )
-    record.bucket.record_activity!(
+    record.reload.bucket.record_activity!(
       'created',
       metadata: { 'bucketable_type' => 'Monthlylog' }
     )

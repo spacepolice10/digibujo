@@ -98,23 +98,24 @@ class="chat--header"
       <% @bullets.each do |bullet| %>
         <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
       <% end %>
+      <% if @bullets.empty? %>
+      <p
+        id="no_bullets_container"
+        class="
+          typography--paragraph-sm typography--center layout--padded
+          layout--mx-auto
+        "
+      >
+        No bullets yet, check your monthly bucket, references or start a
+        braindumping session.
+      </p>
+    <% end %>
       <%= render "bullets/composer",
         bucket_id: @daylog.bucket.id,
         pops_on: @selected_date,
         variants: %w[Task Note Event Voice],
         composer_id: "daylog_bullets_composer" %>
-      <% if @bullets.empty? %>
-        <p
-          id="no_bullets_container"
-          class="
-            typography--paragraph-sm typography--center layout--padded
-            layout--mx-auto
-          "
-        >
-          No bullets yet, check your monthly bucket, references or start a
-          braindumping session.
-        </p>
-      <% end %>
+
     </div>
   </div>
 
