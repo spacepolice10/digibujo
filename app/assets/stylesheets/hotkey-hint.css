@@ -18,8 +18,7 @@
       align-items: center;
       min-width: 1.5rem;
       height: 1.5rem;
-      padding: 0 0.4rem;
-      font-size: var(--font-size-xs);
+      padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
       font-weight: var(--font-weight-bold);
       color: var(--color-fg-base);
       background: var(--color-bg-base);
@@ -29,6 +28,7 @@
     }
 
     .hotkey-hint--key {
+      font-family: var(--font-family-mono);
       font-size: var(--font-size-xs);
     }
 

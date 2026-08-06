@@ -7,6 +7,8 @@ export default class extends Controller {
 
   connect() {
     this.element.addEventListener("scroll", () => this.#sync(), { passive: true })
+    const index = window.location.hash.match(/#onboarding-(\d+)/)?.[1]
+    if (index) this.#scrollTo(Number(index))
     this.#sync()
   }
 
@@ -26,17 +28,13 @@ export default class extends Controller {
 
   #scrollTo(index) {
     const target = Math.max(0, Math.min(index, this.#last))
-    const behavior = matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"
-    this.element.scrollTo({ left: target * this.element.clientWidth, behavior })
+    this.element.scrollTo({ left: target * this.element.clientWidth, behavior: "instant" })
   }
 
   #sync() {
     const last = this.#index === this.#last
-    if (last) {
-      this.skipTarget.style.transform = "translateY(50vh)"
-    } else {
-      this.skipTarget.style.transform = "translateY(0)"
-    }
+
+    history.replaceState(null, "", `#onboarding-${this.#index}`)
     this.sectionTargets.forEach((section, i) => {
       section.toggleAttribute("data-active", i === this.#index)
     })

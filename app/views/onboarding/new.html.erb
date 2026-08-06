@@ -4,14 +4,47 @@
      data-controller="onboarding"
      data-action="keydown.arrow_right@document->onboarding#next keydown.arrow_left@document->onboarding#previous">
   <section class="onboarding-section session--welcome" data-onboarding-target="section">
-    <h1 class="session--name">Welcome to Digibujo</h1>
-    <p class="typography--paragraph-md typography--center typography--balanced">
-      You're signed in as <strong><%= @onboarding.user.email_address %></strong>.
-      <p>
-      Let's take a quick tour of the app, so you feel more comfortable with it.
-      </p>
-    </p>
-    <button type="button" class="button--primary" data-action="onboarding#next">Continue</button>
+    <div class="onboarding-demo layout--surface layout--padded" aria-hidden="true">
+      <p class="typography--paragraph-sm">Daylog, 7 december</p>
+      <div class="onboarding-demo-bullet onboarding-demo-bullet--existing">
+        <span class="onboarding-demo-marker"><%= icon_tag("text", style: "color: var(--model-color-4);") %></span>
+        <span class="onboarding-demo-text">Made 20 reps today 💪</span>
+        <span class="onboarding-demo-time">07:55</span>
+      </div>
+      <div class="onboarding-demo-bullet onboarding-demo-bullet--existing">
+        <span class="onboarding-demo-marker"><%= icon_tag("square", style: "color: var(--model-color-2);") %></span>
+        <span class="onboarding-demo-text">Buy groceries</span>
+        <span class="onboarding-demo-time">08:00</span>
+      </div>
+      <div class="onboarding-demo-bullet onboarding-demo-bullet--existing">
+        <span class="onboarding-demo-marker"><%= icon_tag("circle", style: "color: var(--model-color-5);") %></span>
+        <span class="onboarding-demo-text">Visit the dentist</span>
+        <span class="onboarding-demo-time">09:12</span>
+      </div>
+      <div class="onboarding-demo-bullet onboarding-demo-bullet--new">
+        <span class="onboarding-demo-marker"><%= icon_tag("text", style: "color: var(--model-color-4);") %></span>
+        <span class="onboarding-demo-text">Ideas for the weekend hike</span>
+        <span class="onboarding-demo-time">09:13</span>
+      </div>
+      <div class="onboarding-demo-composer">
+        <span class="onboarding-demo-marker"><%= icon_tag("text") %></span>
+        <span class="onboarding-demo-typing">Ideas for the weekend hike</span>
+      </div>
+    </div>
+    <div class="layout--container layout--container-md">
+      <h1 class="typography--h1 typography--center onboarding--heading">Welcome to Digibujo</h1>
+      <br>
+<ul class="onboarding--basics">
+      <li class="onboarding--basics-item typography--center typography--balanced">
+        <p>You're signed in as <strong class="pill pill--accent"><%= @onboarding.user.email_address %></strong></p>
+        <p>Let's take a quick tour of the app, so you feel more comfortable with it. Or skip it if you prefer learning on your own.</p>
+      </li>
+      <div class="layout--flex layout--justify-center layout--gapped">
+        <button type="button" class="button--secondary button--sm" data-action="onboarding#jumpToLast">Skip</button>
+        <button type="button" class="button--primary button--sm" data-action="onboarding#next">Start the quick tour</button>
+      </div>
+    </ul>
+</div>
 
 
     <% if @onboarding.errors.any? %>
@@ -26,86 +59,177 @@
   </section>
 
   <section class="onboarding-section" data-onboarding-target="section">
-    <div class="layout--container layout--container-md">
-    <h2 class="typography--h1 typography--center">Create bullets in Daylog</h2>
-    <br>
-    <ul class="onboarding--basics layout--list layout--surface layout--padded layout--list-grid">
-      <li>
-        <strong>Chat composer</strong>
-        <span>At the bottom of Daylog just start typing. Escape cancels, Enter sends.</span>
-      </li>
-      <div class="onboarding-demo layout--surface layout--padded" aria-hidden="true">
-        <div class="onboarding-demo-bullet onboarding-demo-bullet--existing">
-          <span class="onboarding-demo-marker"><%= icon_tag("square") %></span>
-          <span class="onboarding-demo-text">Buy groceries</span>
-          <span class="onboarding-demo-time">09:12</span>
-        </div>
-        <div class="onboarding-demo-bullet onboarding-demo-bullet--new">
-          <span class="onboarding-demo-marker"><%= icon_tag("text") %></span>
-          <span class="onboarding-demo-text">Ideas for the weekend hike</span>
-          <span class="onboarding-demo-time">09:13</span>
-        </div>
-        <div class="onboarding-demo-composer">
-          <span class="onboarding-demo-marker"><%= icon_tag("text") %></span>
-          <span class="onboarding-demo-typing">Ideas for the weekend hike</span>
-        </div>
-
+    <div class="onboarding-demo layout--surface layout--padded" aria-hidden="true">
+      <p class="typography--paragraph-sm">Daylog, 7 december</p>
+      <div class="onboarding-demo-bullet onboarding-demo-bullet--existing">
+        <span class="onboarding-demo-marker"><%= icon_tag("text", style: "color: var(--model-color-4);") %></span>
+        <span class="onboarding-demo-text">Made 20 reps today 💪</span>
+        <span class="onboarding-demo-time">07:55</span>
       </div>
-      <li>
-        <strong>Rapid logging</strong>
-        <span>Capture fast, organize later. This is the key principle of bullet journal.</span>
-        <span class="onboarding--hint">Even though bullet journal is about short notes, you can use the whole power of the text editor to write longer notes and save files.</span>
+      <div class="onboarding-demo-bullet onboarding-demo-bullet--existing">
+        <span class="onboarding-demo-marker"><%= icon_tag("square", style: "color: var(--model-color-2);") %></span>
+        <span class="onboarding-demo-text">Buy groceries</span>
+        <span class="onboarding-demo-time">08:00</span>
+      </div>
+      <div class="onboarding-demo-bullet onboarding-demo-bullet--existing">
+        <span class="onboarding-demo-marker"><%= icon_tag("circle", style: "color: var(--model-color-5);") %></span>
+        <span class="onboarding-demo-text">Visit the dentist</span>
+        <span class="onboarding-demo-time">09:12</span>
+      </div>
+      <div class="onboarding-demo-bullet onboarding-demo-bullet--new">
+        <span class="onboarding-demo-marker"><%= icon_tag("text", style: "color: var(--model-color-4);") %></span>
+        <span class="onboarding-demo-text">Ideas for the weekend hike</span>
+        <span class="onboarding-demo-time">09:13</span>
+      </div>
+      <div class="onboarding-demo-composer">
+        <span class="onboarding-demo-marker"><%= icon_tag("text") %></span>
+        <span class="onboarding-demo-typing">Ideas for the weekend hike</span>
+      </div>
+    </div>
+    <div class="layout--container layout--container-md">
+    <h2 class="typography--h1 typography--center onboarding--heading">Follow the rapid logging nature</h2>
+    <br>
+    <ul class="onboarding--basics">
+      <li class="onboarding--basics-item typography--center typography--balanced">
+        <p>Use chat composer at the bottom of Daylog page. Just start typing. <span class="hotkey-hint hotkey-hint--key">Escape</span> cancels, <span class="hotkey-hint hotkey-hint--key">Enter</span> sends.
+        Capture fast, organize later. This is the key principle of bullet journal.</p>
+      </li>
+
+      <li class="onboarding--basics-item typography--center typography--balanced">
+        <span class="typography--paragraph-sm onboarding--basics-tips">Even though bullet journal is about short notes, you can use the whole power of the text editor to write longer notes and save files.</span>
       </li>
       </ul>
-
     </div>
-    <button type="button" class="button--primary" data-action="onboarding#next">Next
-      <%= icon_tag("arrow-right", class: "button--icon") %>
-    </button>
+
   </section>
 
 
   <section class="onboarding-section" data-onboarding-target="section">
+    <div class="onboarding-demo layout--surface layout--padded" aria-hidden="true">
+      <p class="typography--paragraph-sm">Daylog, 7 december</p>
+      <div class="onboarding-demo-bullet onboarding-demo-bullet--existing">
+        <span class="onboarding-demo-marker"><%= icon_tag("text", style: "color: var(--model-color-4);") %></span>
+        <span class="onboarding-demo-text">Made 20 reps today 💪</span>
+        <span class="onboarding-demo-time">07:55</span>
+      </div>
+      <div class="onboarding-demo-bullet onboarding-demo-bullet--existing">
+        <span class="onboarding-demo-marker"><%= icon_tag("square", style: "color: var(--model-color-2);") %></span>
+        <span class="onboarding-demo-text">Buy groceries</span>
+        <span class="onboarding-demo-time">08:00</span>
+      </div>
+      <div class="onboarding-demo-bullet onboarding-demo-bullet--existing">
+        <span class="onboarding-demo-marker"><%= icon_tag("circle", style: "color: var(--model-color-5);") %></span>
+        <span class="onboarding-demo-text">Visit the dentist</span>
+        <span class="onboarding-demo-time">09:12</span>
+      </div>
+      <div class="onboarding-demo-bullet onboarding-demo-bullet--new">
+        <span class="onboarding-demo-marker"><%= icon_tag("text", style: "color: var(--model-color-4);") %></span>
+        <span class="onboarding-demo-text">Ideas for the weekend hike</span>
+        <span class="onboarding-demo-time">09:13</span>
+      </div>
+      <div class="onboarding-demo-composer">
+        <span class="onboarding-demo-marker"><%= icon_tag("text") %></span>
+        <span class="onboarding-demo-typing">Ideas for the weekend hike</span>
+      </div>
+    </div>
     <div class="layout--container layout--container-md">
-    <h2 class="typography--h1 typography--center">Monthlylog</h2>
+    <h2 class="typography--h1 typography--center onboarding--heading">Plan ahead with future logs</h2>
     <br>
-    <ul class="onboarding--basics layout--list layout--surface layout--padded layout--list-grid">
-      <li>
-        <strong>Optional monthly spread</strong>
-        <span>Bulelt journal allows to plan ahead using special monthly spread — separate bucket for your bullets.</span>
-        <span class="typography--paragraph-sm">Digibujo supports this too making it possible to make some drafts for a future use</span>
+    <ul class="onboarding--basics">
+      <li class="onboarding--basics-item typography--center typography--balanced">
+        <p>Bullet journal allows to plan ahead using special monthly spread — separate bucket for your bullets. Digibujo supports this too, making it possible to make some drafts for a future use</p>
       </li>
-      <li>
-        <strong>Migrate as needed</strong>
-        <span>When time comes you can migrate your bullets from the monthly spread to the daylog making them your priority.</span>
-        <span>Read more about this concept on the official Bullet Journal website.</span>
+      <li class="onboarding--basics-item typography--center typography--balanced">
+        <span class="typography--paragraph-sm onboarding--basics-tips">For even bigger goals, you can use future log. For the most ambitious ideas and life-changing projects.</span>
       </li>
     </ul>
     </div>
-    <button type="button" class="button--primary" data-action="onboarding#next">Next
-      <%= icon_tag("arrow-right", class: "button--icon") %>
-    </button>
   </section>
 
   <section class="onboarding-section" data-onboarding-target="section">
+    <div class="onboarding-demo layout--surface layout--padded" aria-hidden="true">
+      <p class="typography--paragraph-sm">Daylog, 7 december</p>
+      <div class="onboarding-demo-bullet onboarding-demo-bullet--existing">
+        <span class="onboarding-demo-marker"><%= icon_tag("text", style: "color: var(--model-color-4);") %></span>
+        <span class="onboarding-demo-text">Made 20 reps today 💪</span>
+        <span class="onboarding-demo-time">07:55</span>
+      </div>
+      <div class="onboarding-demo-bullet onboarding-demo-bullet--existing">
+        <span class="onboarding-demo-marker"><%= icon_tag("square", style: "color: var(--model-color-2);") %></span>
+        <span class="onboarding-demo-text">Buy groceries</span>
+        <span class="onboarding-demo-time">08:00</span>
+      </div>
+      <div class="onboarding-demo-bullet onboarding-demo-bullet--existing">
+        <span class="onboarding-demo-marker"><%= icon_tag("circle", style: "color: var(--model-color-5);") %></span>
+        <span class="onboarding-demo-text">Visit the dentist</span>
+        <span class="onboarding-demo-time">09:12</span>
+      </div>
+      <div class="onboarding-demo-bullet onboarding-demo-bullet--new">
+        <span class="onboarding-demo-marker"><%= icon_tag("text", style: "color: var(--model-color-4);") %></span>
+        <span class="onboarding-demo-text">Ideas for the weekend hike</span>
+        <span class="onboarding-demo-time">09:13</span>
+      </div>
+      <div class="onboarding-demo-composer">
+        <span class="onboarding-demo-marker"><%= icon_tag("text") %></span>
+        <span class="onboarding-demo-typing">Ideas for the weekend hike</span>
+      </div>
+    </div>
     <div class="layout--container layout--container-md">
-    <h2 class="typography--h1 typography--center">Bulk actions</h2>
+    <h2 class="typography--h1 typography--center onboarding--heading">Migrate as needed. By yourself</h2>
     <br>
-    <ul class="onboarding--basics layout--list layout--surface layout--padded layout--list-grid">
-      <li>
-        <strong>The single menu to handle all your bullets</strong>
-        <span>All the manipulations around your notes, tasks and events start from selecting one via circle on the left side of the bullet</span>
+    <ul class="onboarding--basics">
+      <li class="onboarding--basics-item typography--center typography--balanced">
+        <p>When time comes you can migrate your bullets from the future log to monthly spread and then to the daylog, making them your priority. Everything has its actual place to exist in</p>
       </li>
-      <li>
-        <strong>One bar, many intents</strong>
-        <span>Later (postpone), Save (collect), Pin, Archive, Complete — applied to everything selected.</span>
+      <li class="onboarding--basics-item typography--center typography--balanced">
+        <span class="typography--paragraph-sm onboarding--basics-tips">Moving bullets manually is an important part of the bullet journal methodology. Intention forcing things to be done, not staying stuck in the planning phase.</span>
       </li>
+    </ul>
+    </div>
+  </section>
+
+
+  <section class="onboarding-section" data-onboarding-target="section">
+    <div class="onboarding-demo layout--surface layout--padded" aria-hidden="true">
+      <p class="typography--paragraph-sm">Daylog, 7 december</p>
+      <div class="onboarding-demo-bullet onboarding-demo-bullet--existing">
+        <span class="onboarding-demo-marker"><%= icon_tag("text", style: "color: var(--model-color-4);") %></span>
+        <span class="onboarding-demo-text">Made 20 reps today 💪</span>
+        <span class="onboarding-demo-time">07:55</span>
+      </div>
+      <div class="onboarding-demo-bullet onboarding-demo-bullet--existing">
+        <span class="onboarding-demo-marker"><%= icon_tag("square", style: "color: var(--model-color-2);") %></span>
+        <span class="onboarding-demo-text">Buy groceries</span>
+        <span class="onboarding-demo-time">08:00</span>
+      </div>
+      <div class="onboarding-demo-bullet onboarding-demo-bullet--existing">
+        <span class="onboarding-demo-marker"><%= icon_tag("circle", style: "color: var(--model-color-5);") %></span>
+        <span class="onboarding-demo-text">Visit the dentist</span>
+        <span class="onboarding-demo-time">09:12</span>
+      </div>
+      <div class="onboarding-demo-bullet onboarding-demo-bullet--new">
+        <span class="onboarding-demo-marker"><%= icon_tag("text", style: "color: var(--model-color-4);") %></span>
+        <span class="onboarding-demo-text">Ideas for the weekend hike</span>
+        <span class="onboarding-demo-time">09:13</span>
+      </div>
+      <div class="onboarding-demo-composer">
+        <span class="onboarding-demo-marker"><%= icon_tag("text") %></span>
+        <span class="onboarding-demo-typing">Ideas for the weekend hike</span>
+      </div>
+    </div>
+    <div class="layout--container layout--container-md">
+    <h2 class="typography--h1 typography--center onboarding--heading">Single control. Bulk actions</h2>
+    <br>
+    <ul class="onboarding--basics">
+      <li class="onboarding--basics-item typography--center typography--balanced">
+        <p>All the manipulations around your notes, tasks and events start from selecting one via circle on the left side of the bullet</p>
+      </li>
+        <li class="onboarding--basics-item typography--center typography--balanced">
+          <span class="typography--paragraph-sm onboarding--basics-tips">Later (postpone), Save (collect), Pin, Archive, Complete or share things you've created — applied to everything selected.</span>
+        </li>
 
     </ul>
     </div>
-    <button type="button" class="button--primary" data-action="onboarding#next">Next
-      <%= icon_tag("arrow-right", class: "button--icon") %>
-    </button>
   </section>
 
   <section class="onboarding-section" data-onboarding-target="section">
@@ -160,14 +284,10 @@
     <ol class="onboarding-dots"
         data-onboarding-target="dots"
         data-action="click->onboarding#jumpToDot">
-      <% 5.times do |i| %>
+      <% 6.times do |i| %>
         <li data-index="<%= i %>"></li>
       <% end %>
     </ol>
     <br>
-    <div class="session--footer" data-onboarding-target="skip">
-      <button type="button" class="button--secondary button--sm" data-action="onboarding#jumpToLast">Skip</button>
-    </div>
-
   </footer>
 </div>

@@ -106,19 +106,21 @@
     --z-toast: 4;
 
     /* font families — JetBrains Mono everywhere for now */
-    --font-family-sans: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --font-family-sans: "Geologica", ui-sans-serif, system-ui, sans-serif;
     --font-family-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
+    --font-size-2xl: clamp(2.2rem, 4vw + 1rem, 3.4rem);
     /* font sizes — base splits by intent: 16px is the iOS no-zoom floor for
        anything you type into, 14px is the denser reading size. */
-    --font-size-xl: 1.5rem;
+    --font-size-xl: clamp(1rem, 1.5vw + 0.25rem, 2rem);
     /* 24px */
-    --font-size-base-type: 1rem;
+    --font-size-base-type: clamp(0.95rem, 1.8vw + 0.2rem, 1.2rem);
     /* 16px */
-    --font-size-base-read: 0.875rem;
+    --font-size-base-read: clamp(0.8rem, 1.1vw + 0.12rem, 1rem);
     /* 14px */
-    --font-size-xs: 0.75rem;
+    --font-size-xs: clamp(0.66rem, 0.5vw + 0.48rem, 0.78rem);
     /* 12px */
+    --font-size-2xs: clamp(0.56rem, 0.3vw + 0.38rem, 0.66rem);
 
     /* font weights */
     --font-weight-strong: 800;
