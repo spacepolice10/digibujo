@@ -334,10 +334,11 @@
     list-style: none;
     background: var(--color-bg-subtle);
     padding: var(--spacing-vertical-half) var(--spacing-horizontal);
-    padding-bottom: var(--spacing-horizontal-triple);
+    padding-bottom: calc(var(--spacing-horizontal-triple) + var(--spacing-vertical-triple));
     border-radius: var(--radius-strong) var(--radius-strong) 0 0;
     box-shadow: var(--shadow-subtle);
     @media (min-width: 768px) {
+      padding-bottom: var(--spacing-horizontal);
       padding-inline: var(--spacing-horizontal-double);
       border-radius: var(--radius-strong);
     }
@@ -445,11 +446,18 @@
     justify-content: end;
     align-items: center;
     box-sizing: border-box;
+    padding-inline: var(--spacing-horizontal);
     gap: var(--spacing-vertical-triple);
     @media (min-width: 768px) {
       justify-content: center;
     }
   }
+
+.last-section {
+  @media (max-width: 768px) {
+    padding-bottom: calc(var(--spacing-vertical-triple) + var(--spacing-vertical-triple));
+  }
+}
 
   .onboarding--heading {
     position: relative;

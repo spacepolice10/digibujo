@@ -10,7 +10,7 @@
     align-items: center;
     gap: var(--spacing-vertical-half);
     font-family: inherit;
-    font-size: var(--font-size-base-read);
+    font-size: var(--font-size-base-type);
     cursor: pointer;
     white-space: nowrap;
     flex-shrink: 0;
@@ -172,7 +172,7 @@
     display: inline-block;
     text-decoration: none;
     color: var(--color-fg-subtle);
-    font-size: var(--font-size-base-read);
+    font-size: var(--font-size-base-type);
     margin-block: var(--spacing-vertical);
 
     &:hover:not(:disabled) {
@@ -208,6 +208,7 @@
   .button--sm {
     height: var(--spacing-vertical-triple);
     width: fit-content;
+    font-size: var(--font-size-base-read);
   }
 
   .button--lg {

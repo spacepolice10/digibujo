@@ -36,7 +36,10 @@
       <br>
 <ul class="onboarding--basics">
       <li class="onboarding--basics-item typography--center typography--balanced">
-        <p>You're signed in as <strong class="pill pill--accent"><%= @onboarding.user.email_address %></strong></p>
+        <p>You're signed in as 
+          <strong class="pill pill--accent"><%= @onboarding.user.email_address %></strong>
+        </p>
+        <br>
         <p>Let's take a quick tour of the app, so you feel more comfortable with it. Or skip it if you prefer learning on your own.</p>
       </li>
       <div class="layout--flex layout--justify-center layout--gapped">
@@ -232,7 +235,7 @@
     </div>
   </section>
 
-  <section class="onboarding-section" data-onboarding-target="section">
+  <section class="onboarding-section last-section" data-onboarding-target="section">
     <div class="layout--container layout--container-md layout--padded">
     <h2 class="typography--h1 typography--center">Explore Digibujo</h2>
     <br>
@@ -267,7 +270,7 @@
     </nav>
 
     <br>
-    <nav class="session--footer layout--padded layout--surface layout--container layout--container-sm" aria-label="About">
+    <nav class="layout--flex layout--padded layout--gapped layout--surface layout--container layout--container-sm" aria-label="About">
       <%= link_to features_path, class: "session--footer-link" do %>
         <%= icon_tag("list", class: "session--footer-icon") %>
         Features
@@ -279,6 +282,7 @@
     </nav>
     </div>
   </section>
+  <br>
 
   <footer class="onboarding-footer">
     <ol class="onboarding-dots"
