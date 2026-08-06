@@ -3,7 +3,7 @@
   .bucket--section-list-item {
     display: flex;
     gap: var(--spacing-horizontal-half);
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     flex: 1;
     text-decoration: none;
     color: inherit;
@@ -14,8 +14,8 @@
     height: fit-content;
 
     & .bucket--section-list-item-icon {
-      width: var(--spacing-horizontal-triple);
-      height: var(--spacing-horizontal-triple);
+      width: var(--spacing-horizontal);
+      height: var(--spacing-horizontal);
     }
 
     &:hover {

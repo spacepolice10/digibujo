@@ -19,12 +19,13 @@
       min-width: 1.5rem;
       height: 1.5rem;
       padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-      font-weight: var(--font-weight-bold);
+      font-weight: var(--font-weight-strong);
       color: var(--color-fg-base);
       background: var(--color-bg-base);
       border: 1px solid var(--color-stroke-base);
       border-bottom-width: 2px;
       border-radius: var(--radius-base);
+      transform: translateY(-2.5px);
     }
 
     .hotkey-hint--key {

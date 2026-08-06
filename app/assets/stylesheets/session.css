@@ -598,7 +598,9 @@
   }
 
   .onboarding-demo-typing {
+    display: flex;
     flex: 0 0 auto;
+    justify-content: start !important;
     white-space: nowrap;
     overflow: hidden;
     width: 0;
@@ -642,6 +644,163 @@
 
     50% {
       border-right-color: currentColor;
+    }
+  }
+
+  /* ── Onboarding welcome (logo → bullet) ──────────── */
+
+  .onboarding-welcome {
+    position: relative;
+    box-sizing: border-box;
+    width: fit-content;
+    margin-inline: auto;
+  }
+
+  .onboarding-welcome-logo {
+    position: absolute;
+    left: calc(var(--spacing-horizontal));
+    top: calc(var(--spacing-vertical) + 130.5px);
+    width: 15px;
+    height: 15px;
+    border-radius: var(--radius-full);
+  }
+
+  .onboarding-section[data-active] .onboarding-welcome-logo {
+    animation: onboarding-welcome-logo 1.15s ease-in-out 0.05s both;
+  }
+
+  .onboarding-welcome-bullets {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .onboarding-welcome .onboarding-demo-bullet {
+    height: 20px;
+  }
+
+  .onboarding-welcome-slot {
+    width: 15px;
+  }
+
+  .onboarding-section[data-active] .onboarding-welcome .onboarding-demo-typing {
+    animation:
+      onboarding-welcome-type 1.2s steps(20, end) 1.3s both,
+      onboarding-caret 0.6s step-end 1.3s infinite;
+  }
+
+  .onboarding-welcome-bullets .onboarding-demo-bullet:nth-child(-n + 4) {
+    opacity: 0;
+  }
+
+  .onboarding-section[data-active] .onboarding-welcome-bullets .onboarding-demo-bullet:nth-child(1) {
+    animation: side-in 0.25s ease-out 0.35s forwards;
+  }
+
+  .onboarding-section[data-active] .onboarding-welcome-bullets .onboarding-demo-bullet:nth-child(2) {
+    animation: side-in 0.25s ease-out 0.5s forwards;
+  }
+
+  .onboarding-section[data-active] .onboarding-welcome-bullets .onboarding-demo-bullet:nth-child(3) {
+    animation: side-in 0.25s ease-out 0.65s forwards;
+  }
+
+  .onboarding-section[data-active] .onboarding-welcome-bullets .onboarding-demo-bullet:nth-child(4) {
+    animation: side-in 0.25s ease-out 0.8s forwards;
+  }
+
+  @keyframes onboarding-welcome-logo {
+    0% {
+      left: calc(50% - 36px);
+      top: calc(var(--spacing-vertical) - 84px);
+      width: 72px;
+      height: 72px;
+      opacity: 0;
+      transform: scale(0.85) rotate(0deg);
+    }
+
+    6% {
+      left: calc(50% - 36px);
+      top: calc(var(--spacing-vertical) - 84px);
+      width: 72px;
+      height: 72px;
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
+    }
+
+    48% {
+      left: calc(50% - 36px);
+      top: calc(var(--spacing-vertical) - 84px);
+      width: 72px;
+      height: 72px;
+      transform: scale(1) rotate(0deg);
+    }
+
+    55% {
+      left: calc(var(--spacing-horizontal) + 6px);
+      top: calc(var(--spacing-vertical) + 90px);
+      width: 42px;
+      height: 42px;
+      transform: rotate(-10deg);
+    }
+
+    63% {
+      left: calc(var(--spacing-horizontal) + 4px);
+      top: calc(var(--spacing-vertical) + 142.5px);
+      width: 15px;
+      height: 15px;
+      transform: rotate(8deg);
+    }
+
+    71% {
+      left: calc(var(--spacing-horizontal) - 3px);
+      top: calc(var(--spacing-vertical) + 118.5px);
+      width: 15px;
+      height: 15px;
+      transform: rotate(-4deg);
+    }
+
+    79% {
+      left: calc(var(--spacing-horizontal) + 1px);
+      top: calc(var(--spacing-vertical) + 138.5px);
+      width: 15px;
+      height: 15px;
+      transform: rotate(2deg);
+    }
+
+    90% {
+      left: calc(var(--spacing-horizontal) - 1px);
+      top: calc(var(--spacing-vertical) + 126.5px);
+      width: 15px;
+      height: 15px;
+      transform: rotate(-1deg);
+    }
+
+    100% {
+      left: calc(var(--spacing-horizontal));
+      top: calc(var(--spacing-vertical) + 130.5px);
+      width: 15px;
+      height: 15px;
+      transform: rotate(0deg);
+    }
+  }
+
+  @keyframes onboarding-welcome-type {
+    to {
+      width: 20ch;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .onboarding-welcome-logo,
+    .onboarding-welcome-bullets .onboarding-demo-bullet:nth-child(-n + 4) {
+      animation: none;
+      opacity: 1;
+    }
+
+    .onboarding-section[data-active] .onboarding-welcome .onboarding-demo-typing {
+      animation: none;
+      width: 100%;
     }
   }
 }

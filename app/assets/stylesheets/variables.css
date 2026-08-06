@@ -114,7 +114,7 @@
        anything you type into, 14px is the denser reading size. */
     --font-size-xl: clamp(1rem, 1.5vw + 0.25rem, 2rem);
     /* 24px */
-    --font-size-base-type: clamp(0.95rem, 1.8vw + 0.2rem, 1.2rem);
+    --font-size-base-type: clamp(0.95rem, 1vw + 0.2rem, 1rem);
     /* 16px */
     --font-size-base-read: clamp(0.8rem, 1.1vw + 0.12rem, 1rem);
     /* 14px */

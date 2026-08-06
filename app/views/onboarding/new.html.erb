@@ -4,31 +4,29 @@
      data-controller="onboarding"
      data-action="keydown.arrow_right@document->onboarding#next keydown.arrow_left@document->onboarding#previous">
   <section class="onboarding-section session--welcome" data-onboarding-target="section">
-    <div class="onboarding-demo layout--surface layout--padded" aria-hidden="true">
-      <p class="typography--paragraph-sm">Daylog, 7 december</p>
-      <div class="onboarding-demo-bullet onboarding-demo-bullet--existing">
-        <span class="onboarding-demo-marker"><%= icon_tag("text", style: "color: var(--model-color-4);") %></span>
-        <span class="onboarding-demo-text">Made 20 reps today 💪</span>
-        <span class="onboarding-demo-time">07:55</span>
-      </div>
-      <div class="onboarding-demo-bullet onboarding-demo-bullet--existing">
-        <span class="onboarding-demo-marker"><%= icon_tag("square", style: "color: var(--model-color-2);") %></span>
-        <span class="onboarding-demo-text">Buy groceries</span>
-        <span class="onboarding-demo-time">08:00</span>
-      </div>
-      <div class="onboarding-demo-bullet onboarding-demo-bullet--existing">
-        <span class="onboarding-demo-marker"><%= icon_tag("circle", style: "color: var(--model-color-5);") %></span>
-        <span class="onboarding-demo-text">Visit the dentist</span>
-        <span class="onboarding-demo-time">09:12</span>
-      </div>
-      <div class="onboarding-demo-bullet onboarding-demo-bullet--new">
-        <span class="onboarding-demo-marker"><%= icon_tag("text", style: "color: var(--model-color-4);") %></span>
-        <span class="onboarding-demo-text">Ideas for the weekend hike</span>
-        <span class="onboarding-demo-time">09:13</span>
-      </div>
-      <div class="onboarding-demo-composer">
-        <span class="onboarding-demo-marker"><%= icon_tag("text") %></span>
-        <span class="onboarding-demo-typing">Ideas for the weekend hike</span>
+    <div class="onboarding-welcome layout--surface layout--padded" aria-hidden="true">
+      <img src="/icon.svg" alt="" class="onboarding-welcome-logo">
+      <div class="onboarding-welcome-bullets">
+        <div class="onboarding-demo-bullet onboarding-welcome-reps">
+          <span class="onboarding-demo-marker"><%= icon_tag("text", style: "color: var(--model-color-4);") %></span>
+          <span class="onboarding-demo-text">Made 20 reps today 💪</span>
+        </div>
+        <div class="onboarding-demo-bullet onboarding-welcome-task">
+          <span class="onboarding-demo-marker"><%= icon_tag("square", style: "color: var(--model-color-2);") %></span>
+          <span class="onboarding-demo-text">Buy groceries</span>
+        </div>
+        <div class="onboarding-demo-bullet onboarding-welcome-dentist">
+          <span class="onboarding-demo-marker"><%= icon_tag("circle", style: "color: var(--model-color-5);") %></span>
+          <span class="onboarding-demo-text">Visit the dentist</span>
+        </div>
+        <div class="onboarding-demo-bullet onboarding-welcome-note">
+          <span class="onboarding-demo-marker"><%= icon_tag("text", style: "color: var(--model-color-4);") %></span>
+          <span class="onboarding-demo-text">Ideas for the weekend hike</span>
+        </div>
+        <div class="onboarding-demo-bullet onboarding-welcome-event">
+          <span class="onboarding-demo-marker onboarding-welcome-slot"></span>
+          <span class="onboarding-demo-typing">Time to try Digibujo</span>
+        </div>
       </div>
     </div>
     <div class="layout--container layout--container-md">
@@ -94,7 +92,7 @@
     <br>
     <ul class="onboarding--basics">
       <li class="onboarding--basics-item typography--center typography--balanced">
-        <p>Use chat composer at the bottom of Daylog page. Just start typing. <span class="hotkey-hint hotkey-hint--key">Escape</span> cancels, <span class="hotkey-hint hotkey-hint--key">Enter</span> sends.
+        <p>Use chat composer at the bottom of Daylog page. Just start typing. <span class="hotkey-hint hotkey-hint--key">⎋ Escape</span> cancels, <span class="hotkey-hint hotkey-hint--key">↵ Enter</span>  sends.
         Capture fast, organize later. This is the key principle of bullet journal.</p>
       </li>
 
