@@ -2,7 +2,7 @@
 
 <div class="layout--page layout--container layout--container-md">
 
-  <div class="layout--flex layout--gapped layout--justify-between layout--padded">
+  <div class="layout--flex layout--gapped layout--justify-between">
     <%= back_link_to daylog_path, class: "button--secondary button--sm" do %>
       <%= icon_tag("arrow-left") %>
 
@@ -17,10 +17,10 @@
     </div>
 
 
-  <div class="layout--surface">
 
 
-    <div class="layout--list layout--padded">
+
+    <div class="layout--list">
       <div data-bulk-menu-target="list">
         <%= render layout: "pagination/paginated_list",
               locals: {
@@ -39,5 +39,7 @@
         <% end %>
       </div>
     </div>
-  </div>
+    <div class="layout--flex layout--gapped layout--mx-auto">
+    <%= link_to "Daylog", daylog_path, class: "button--secondary button--sm" %>
+    </div>
 </div>

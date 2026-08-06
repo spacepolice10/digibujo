@@ -37,6 +37,7 @@ Rails.application.routes.draw do
       resources :bullets, only: [] do
         resource :accept, only: :create
         resource :discard, only: :create
+        resource :postpone, only: :create
       end
     end
   end

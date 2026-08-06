@@ -8,6 +8,11 @@ class DaylogsController < ApplicationController
 
     @bullets = @daylog.bullets.where(pops_on: @selected_date).active.last_page
     @more_bullets = @bullets.size == Bullet::Pageable::PAGE_SIZE
+
+    @pending = Pending.pending_of(Current.user)
+    monthlylog = Current.user.monthlylogs.covering(@selected_date).take
+    Rails.logger.info("Monthlylog: #{@monthlylog.inspect}")
+    @monthlylog_bullets = monthlylog.bullets.active.where(pops_on: @selected_date).includes(:bulletable)
   end
 
   def create

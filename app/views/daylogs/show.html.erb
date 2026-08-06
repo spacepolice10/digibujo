@@ -5,6 +5,8 @@ id="daylog_header_<%= @selected_date.iso8601 %>"
 class="chat--header"
 >
 <div class="layout--flex layout--gapped layout--justify-between">
+  <div>
+  <% if @bullets.any? %>
   <div class="header--controls">
     <%= link_to daylog_path(date: (@selected_date - 1.day).iso8601),
         data: {
@@ -51,6 +53,8 @@ class="chat--header"
         aria: { label: "Show next day", keyshortcuts: "Shift+ArrowRight" } do %>
       <%= icon_tag("arrow-right") %>
     <% end %>
+  </div>
+  <% end %>
   </div>
 
   <div class="header--controls">
@@ -100,16 +104,38 @@ class="chat--header"
         <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
       <% end %>
       <% if @bullets.empty? %>
-      <p
-        id="no_bullets_container"
+      <div id="no_bullets_container" style="position: sticky; bottom: var(--chat-composer-clearance);" class="layout--container layout--container-sm layout--grid layout--surface layout--padded layout--mx-auto">
+        <div class="layout--grid-item typography--bold typography--center typography--h2">
+          <%= @daylog.bucket.name %>
+        </div>
+        <div class="layout--grid-item typography--center typography--paragraph-sm">
+          <%= @selected_date.strftime("%a, %b %-d") %>
+        </div>
+        <p
         class="
-          typography--paragraph-sm typography--center layout--padded
-          layout--mx-auto
+        typography--paragraph-md typography--center layout--padded
+        layout--mx-auto
         "
-      >
-        No bullets yet, check your monthly bucket, references or start a
-        braindumping session.
+        >
+        No bullets yet. Start a
+        braindumping session. Or checkout the backlog.
       </p>
+
+<div class="layout--container layout--container-sm layout--grid layout--surface layout--padded layout--mx-auto">
+<% @monthlylog_bullets.each do |bullet| %>
+<div class="layout--flex layout--gapped">
+  <%= icon_tag("circle", style: "color: #{colour(bullet.colour)};")%>
+  <%= bullet.name %>
+</div>
+<br>
+
+<% end %>
+<div class="layout--flex layout--gapped layout--mx-auto">
+  <%= link_to "Triage", triage_path, class: "button--secondary button--sm" %>
+  </div>
+</div>
+
+    </div>
     <% end %>
       <%= render "bullets/composer",
         bucket_id: @daylog.bucket.id,
