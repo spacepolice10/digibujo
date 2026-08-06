@@ -182,7 +182,7 @@
 
   .form--picker {
     display: flex;
-    gap: var(--spacing-vertical);
+    gap: var(--spacing-vertical-half);
     flex-wrap: wrap;
   }
 
@@ -239,7 +239,7 @@
   .form--submit {
     width: fit-content;
     align-self: center;
-    margin-top: var(--spacing-vertical-double);
+    margin-top: var(--spacing-vertical);
     margin-bottom: var(--spacing-vertical-triple);
   }
 }

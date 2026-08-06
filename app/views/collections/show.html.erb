@@ -1,8 +1,8 @@
 <% content_for(:title) { @collection.name } %>
 
 <div class="chat--window collection--window">
-  <header class="chat--header layout--padded layout--flex layout--justify-between">
-
+  <header class="chat--header">
+    <div class="layout--padded layout--flex layout--justify-between">
       <div class="layout--flex layout--gapped">
         <%= back_link_to home_path, class: "button--tertiary button--sm" do %>
           <%= icon_tag("arrow-left") %>
@@ -13,12 +13,7 @@
         <span><%= @collection.name %></span>
         </div>
       </div>
-      <% if @collection.description.present? %>
-        <div class="layout--flex layout--gapped">
-          <%= icon_tag("info") %>
-          <%= @collection.description %>
-        </div>
-      <% end %>
+ 
 
       <div class="layout--flex layout--gapped">
         <%= render "buckets/pins_button", bucket: @collection.bucket %>
@@ -65,7 +60,14 @@
       </div>
     </div>
     </div>
+    </div>
+    <% if @collection.description.present? %>
+    <div class="layout--surface layout--padded layout--flex layout--gapped">
+      <%= @collection.description %>
+    </div>
+  <% end %>
   </header>
+
 
   <div
     class="chat--wrap"

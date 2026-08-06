@@ -34,15 +34,15 @@
       <br>
 <ul class="onboarding--basics">
       <li class="onboarding--basics-item typography--center typography--balanced">
-        <p>You're signed in as 
+        <p>You're signed in as
           <strong class="pill pill--accent"><%= @onboarding.user.email_address %></strong>
         </p>
         <br>
         <p>Let's take a quick tour of the app, so you feel more comfortable with it. Or skip it if you prefer learning on your own.</p>
       </li>
       <div class="layout--flex layout--justify-center layout--gapped">
-        <button type="button" class="button--secondary button--sm" data-action="onboarding#jumpToLast">Skip</button>
-        <button type="button" class="button--primary button--sm" data-action="onboarding#next">Start the quick tour</button>
+        <button type="button" class="button--secondary button--md typography--bold" data-action="onboarding#jumpToLast">Skip</button>
+        <button type="button" class="button--primary button--md typography--bold" data-action="onboarding#next">Start the quick tour</button>
       </div>
     </ul>
 </div>
@@ -263,7 +263,7 @@
       <br>
       <small class="typography--paragraph-sm"> If you wish, we can add sample data to your journal, so you understand how it works and structure your journal. Everything can be deleted later.</small>
       <br>
-      <%= form.button "Start my journal", class: "button--primary button--wide" %>
+      <%= form.button "Start my journal", class: "button--primary button--md layout--mx-auto typography--bold" %>
       <% end %>
     </nav>
 

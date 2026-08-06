@@ -48,6 +48,7 @@
     border-radius: 0;
     background: transparent;
     box-shadow: none;
+    font-family: var(--font-family-mono);
 
     .bullet--select-checkbox {
       display: none;
@@ -88,7 +89,8 @@
 
   .bullet--body {
     flex: 1 1 auto;
-    min-width: 0;
+    min-width: 5rem;
+    width: fit-content;
     box-sizing: border-box;
     padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     border: 1px solid transparent;
@@ -99,8 +101,8 @@
     @media (max-width: 1700px) {
       background: color-mix(
         in oklch,
-        var(--bullet-type-color, transparent) 6%,
-        var(--color-bg-subtle)
+        var(--bullet-type-color, transparent) 25%,
+        transparent
       );
     }
   }
@@ -108,6 +110,7 @@
   .bullet--time {
     display: block;
     padding-inline: var(--spacing-horizontal-half);
+    padding-top: var(--spacing-vertical-half);
     font-family: var(--font-family-mono);
     font-size: var(--font-size-xs);
     line-height: 1.2;
@@ -144,10 +147,10 @@
     justify-content: center;
     flex-shrink: 0;
     box-sizing: border-box;
-    width: calc(var(--spacing-vertical-triple));
-    height: calc(var(--spacing-vertical-triple));
-    min-width: calc(var(--spacing-vertical-triple));
-    min-height: calc(var(--spacing-vertical-triple));
+    width: calc(var(--spacing-vertical));
+    height: calc(var(--spacing-vertical));
+    min-width: calc(var(--spacing-vertical));
+    min-height: calc(var(--spacing-vertical));
     border: 1px solid var(--color-stroke-base);
     border-radius: var(--radius-full);
     background: var(--color-bg-subtle);
@@ -184,8 +187,8 @@
   }
 
   .bullet--metadata-icon {
-    width: calc(var(--spacing-vertical-double)) !important;
-    height: calc(var(--spacing-vertical-double)) !important;
+    width: calc(var(--spacing-vertical)) !important;
+    height: calc(var(--spacing-vertical)) !important;
 
     .icon {
       width: 100%;
@@ -247,7 +250,7 @@
         );
       background: color-mix(
         in oklch,
-        var(--bullet-type-color, var(--color-accent)) 14%,
+        var(--bullet-type-color) 35%,
         var(--color-bg-subtle)
       );
     }

@@ -54,7 +54,7 @@
     /* Pear */
     --model-color-3-bg: light-dark(oklch(0.92 0.07 133), oklch(0.34 0.10 133));
     --model-color-4: light-dark(oklch(0.905 0.184 99),
-        oklch(0.92 0.16 99));
+        oklch(0.62 0.16 99));
     /* Sunshine */
     --model-color-4-bg: light-dark(oklch(0.92 0.08 99), oklch(0.35 0.10 99));
     --model-color-5: light-dark(oklch(0.657 0.158 43),
@@ -83,7 +83,7 @@
     --breakpoint-pc: 1040px;
 
     /* spacing */
-    --spacing-vertical: 1.5ch;
+    --spacing-vertical: 1.25ch;
     --spacing-horizontal: 1rem;
     --spacing-vertical-half: calc(var(--spacing-vertical) / 2);
     --spacing-horizontal-half: calc(var(--spacing-horizontal) / 2);
@@ -103,7 +103,7 @@
     --z-dialog-backdrop: 1;
     --z-dialog: 2;
     --z-dropdown: 3;
-    --z-toast: 4;
+    --z-toasts: 4;
 
     /* font families — JetBrains Mono everywhere for now */
     --font-family-sans: "Geologica", ui-sans-serif, system-ui, sans-serif;
@@ -133,9 +133,9 @@
     --opacity-half: 0.5;
 
     /* radius */
-    --radius-subtle: 2px;
-    --radius-base: 6px;
-    --radius-strong: 12px;
+    --radius-subtle: 6px;
+    --radius-base: 10px;
+    --radius-strong: 14px;
     --radius-full: 9999px;
 
   

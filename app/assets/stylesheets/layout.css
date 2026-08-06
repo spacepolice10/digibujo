@@ -20,6 +20,7 @@
     display: flex;
     align-items: center;
     gap: var(--spacing-horizontal-half);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
     border: 1px solid color-mix(in srgb, var(--color-stroke-base) 70%, transparent);
     border-radius: var(--radius-full);
     background: color-mix(in srgb, var(--color-bg-subtle) 72%, transparent);
@@ -221,7 +222,7 @@
     display: flex;
     align-items: center;
     gap: var(--spacing-vertical-half);
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     border-bottom: 1px solid var(--color-stroke-base);
   }
 

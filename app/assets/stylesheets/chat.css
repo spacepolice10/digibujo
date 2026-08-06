@@ -5,7 +5,7 @@
   .chat--window {
     --chat-tabbar-clearance: var(--spacing-vertical-double);
     --chat-composer-clearance: calc(
-      var(--spacing-vertical-triple) * 2.25
+      var(--spacing-vertical-triple) * 2.5
     );
     --chat-header-clearance: calc(
       var(--spacing-vertical-double)

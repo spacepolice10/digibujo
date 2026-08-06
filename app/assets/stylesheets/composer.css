@@ -294,7 +294,8 @@ lexxy-table-tools {
   display: block;
   inline-size: 100%;
   block-size: auto;
-  max-block-size: 25rem;
+  height: 100%;
+  max-block-size: 20rem;
   object-fit: cover;
   background: var(--color-bg-subtle);
 }
@@ -366,7 +367,7 @@ lexxy-table-tools {
     --composer-keyboard-spacing: 0px;
     --composer-tabbar-clearance: 0px;
     /* Shared hit-target for type / toolbar / clear / mic / submit. */
-    --composer-control-size: var(--spacing-horizontal-triple);
+    --composer-control-size: var(--spacing-vertical-triple);
     /* Compact pill before Lexxy mounts — control row + pill pad + form border
        + the field's transparent 1px border (appears with the editor slot). */
     --composer-pill-padding: 0.15rem;

@@ -7,6 +7,9 @@ class MonthlylogsController < ApplicationController
 
     @days = @monthlylog.spread_days
     @date = selected_date
+    scoped = @monthlylog.bullets.active.where(pops_on: @date).includes(:bulletable)
+    @bullets = scoped.last_page
+    @more_bullets = @bullets.size == Bullet::Pageable::PAGE_SIZE
     @bullet_counts_by_date = bullet_counts_by_date
     @pictures_by_date = CalendarDate.pictures_by_date(Current.user, @days)
   end

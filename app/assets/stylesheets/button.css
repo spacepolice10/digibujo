@@ -27,8 +27,7 @@
   }
 
   :is(.button--primary, .button--secondary, .button--tertiary) {
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    border-radius: var(--radius-strong);
+    border-radius: var(--radius-base);
     width: fit-content;
   }
 
@@ -187,9 +186,12 @@
 
   /* ── Shape ────────────────────────────────────────── */
 
+.button--squared {
+  border-radius: var(--radius-base);
+}
+
   .button--circle {
     border-radius: var(--radius-full);
-    flex-shrink: 0;
   }
 
   /* ── Size ─────────────────────────────────────────── */
@@ -208,12 +210,20 @@
   .button--sm {
     height: var(--spacing-vertical-triple);
     width: fit-content;
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
     font-size: var(--font-size-base-read);
+  }
+  .button--md {
+    height: calc(var(--spacing-vertical-triple) + 0.75ch );
+    width: fit-content;
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    font-size: var(--font-size-base-type);
   }
 
   .button--lg {
-    height: var(--spacing-vertical-quad);
+    height: cacl(var(--spacing-vertical-triple) + 1.75ch);
     width: fit-content;
+    font-size: var(--font-size-xl);
   }
 
   .button--auto {

@@ -21,7 +21,7 @@
      → the pill itself (padding + icon + border). */
   :root {
     --tabbar-safe-area: max(
-      var(--spacing-vertical-half),
+      var(--spacing-vertical),
       env(safe-area-inset-bottom, 0px)
     );
     --tabbar-size: calc(
@@ -29,17 +29,12 @@
       + var(--spacing-horizontal-double)
       + 2px
     );
-    --tabbar-offset: var(--spacing-vertical-double);
+    --tabbar-offset: var(--spacing-vertical);
     --tabbar-clearance: calc(
       var(--tabbar-offset)
       + var(--tabbar-safe-area)
       + var(--tabbar-size)
     );
-  }
-
-  body:has(.tabbar--navigation) {
-    padding-bottom: var(--layout-scroll-padding);
-    scroll-padding-bottom: var(--layout-scroll-padding);
   }
 
   .tabbar--navigation {

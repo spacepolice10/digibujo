@@ -4,7 +4,7 @@
 }
 
 .typography--h2 {
-  font-size: var(--font-size-huge);
+  font-size: var(--font-size-xl);
   font-weight: var(--font-weight-strong);
 }
 .typography--paragraph-md {
