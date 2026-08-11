@@ -8,15 +8,14 @@
 
   :root {
     --background-grid-size: 1.25rem;
-    --background-grid-colour-light: oklch(0.64 0.014 260 / 0.22);
-    --background-grid-colour-dark: oklch(0.58 0.012 82 / 0.28);
-    --background-grid-colour: light-dark(var(--background-grid-colour-light), var(--background-grid-colour-dark));
+    --background-canvas-colour: light-dark(oklch(0.97 0.015 78), oklch(0.19 0.025 78));
+    --background-grid-colour: light-dark(oklch(0.64 0.018 78), oklch(0.58 0.012 82));
     --background-grid-pattern: radial-gradient(circle,
         var(--background-grid-colour) 1px,
         transparent 1px);
     --background-grid:
       var(--background-grid-pattern) 0 0 / var(--background-grid-size) var(--background-grid-size),
-      var(--color-bg-base);
+      var(--background-canvas-colour);
   }
 
   html {
@@ -30,9 +29,9 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    font-family: var(--font-family-sans);
+    font-family: var(--font-family-mono);
     line-height: 1.35;
-    color: var(--color-fg-base);
+    color: var(--color-invert-1);
   }
 
   /* Named container: body width is the centered page column. */
@@ -43,6 +42,9 @@
     max-width: 100%;
     container-type: inline-size;
     container-name: page-column;
+    @media (max-width: 799px) {
+      border-block: 0.5px solid var(--color-invert-2);
+    }
   }
 
   /* Typography */
@@ -78,10 +80,9 @@
 
   /* Focus — thin soft ring, offset outward; follows border-radius on controls */
   *:focus-visible {
-    outline: 1px solid color-mix(in oklch,
-        var(--color-stroke-base) 80%,
+    outline: 0.5px solid color-mix(in oklch,
+        var(--color-invert-2) 80%,
         transparent);
-    outline-offset: var(--spacing-vertical-half);
     box-shadow: none;
     transition: none;
   }
@@ -95,26 +96,26 @@
   /* Appearance. Theming colors — on html with the dot-grid background. */
 
   html[data-appearance="warm"] {
-    --color-bg-base: light-dark(oklch(0.97 0.015 78), oklch(0.19 0.025 78));
-    --color-bg-subtle: light-dark(oklch(0.99 0.01 78), oklch(0.24 0.018 78));
+    --color-1: light-dark(oklch(0.97 0.015 78), oklch(0.19 0.025 78));
+    --color-2: light-dark(oklch(0.99 0.01 78), oklch(0.24 0.018 78));
     --background-grid-colour: oklch(0.64 0.018 78 / 0.72);
   }
 
   html[data-appearance="cool"] {
-    --color-bg-base: light-dark(oklch(0.97 0.015 250), oklch(0.19 0.025 255));
-    --color-bg-subtle: light-dark(oklch(0.99 0.01 250), oklch(0.24 0.018 255));
+    --color-1: light-dark(oklch(0.97 0.015 250), oklch(0.19 0.025 255));
+    --color-2: light-dark(oklch(0.99 0.01 250), oklch(0.24 0.018 255));
     --background-grid-colour: oklch(0.64 0.018 250 / 0.72);
   }
 
   html[data-appearance="nature"] {
-    --color-bg-base: light-dark(oklch(0.97 0.015 145), oklch(0.19 0.025 145));
-    --color-bg-subtle: light-dark(oklch(0.99 0.01 145), oklch(0.24 0.018 145));
+    --color-1: light-dark(oklch(0.97 0.015 145), oklch(0.19 0.025 145));
+    --color-2: light-dark(oklch(0.99 0.01 145), oklch(0.24 0.018 145));
     --background-grid-colour: oklch(0.64 0.018 145 / 0.72);
   }
 
   html[data-appearance="cheese"] {
-    --color-bg-base: light-dark(oklch(0.97 0.02 85), oklch(0.19 0.03 85));
-    --color-bg-subtle: light-dark(oklch(0.99 0.014 85), oklch(0.24 0.022 85));
+    --color-1: light-dark(oklch(0.97 0.02 85), oklch(0.19 0.03 85));
+    --color-2: light-dark(oklch(0.99 0.014 85), oklch(0.24 0.022 85));
     --background-grid-colour: oklch(0.64 0.022 85 / 0.72);
   }
 

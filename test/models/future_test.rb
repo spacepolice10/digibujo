@@ -43,12 +43,12 @@ class FutureTest < ActiveSupport::TestCase
 
   test 'future bullets group by pops_on month and unplanned' do
     planned = create_bullet!(@user,
-      bulletable: Task.new(body: 'July goal'),
+      bulletable: Task.new, body: 'July goal',
       bucket: @future.bucket,
       pops_on: @future.period_from
     )
     unplanned = create_bullet!(@user,
-      bulletable: Task.new(body: 'Someday'),
+      bulletable: Task.new, body: 'Someday',
       bucket: @future.bucket,
       pops_on: nil
     )

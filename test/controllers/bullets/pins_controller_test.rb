@@ -7,7 +7,7 @@ module Bullets
     setup do
       @user = users(:one)
       sign_in_as @user
-      @bullet = create_bullet!(@user, bulletable: Task.new(body: 'Pin me'))
+      @bullet = create_bullet!(@user, bulletable: Task.new, body: 'Pin me')
     end
 
     test 'create pins bullet via turbo stream' do
@@ -22,7 +22,7 @@ module Bullets
     end
 
     test 'create pins multiple bullets' do
-      other = create_bullet!(@user, bulletable: Note.new(body: 'Too'))
+      other = create_bullet!(@user, bulletable: Note.new, body: 'Too')
 
       post pin_path, params: { bullet_ids: "#{@bullet.id},#{other.id}" }
 
@@ -32,7 +32,7 @@ module Bullets
     end
 
     test 'destroy unpins bullet via turbo stream' do
-      create_bullet!(@user, bulletable: Task.new(body: 'Still pinned'))
+      create_bullet!(@user, bulletable: Task.new, body: 'Still pinned')
       @bullet.pin!
 
       delete pin_path,
@@ -47,7 +47,8 @@ module Bullets
     test 'create turbo stream replaces monthly bucket bullet with unified row' do
       monthlylog = create_monthlylog!(@user, name: 'june')
       bullet = create_bullet!(@user,
-        bulletable: Task.create!(body: 'Spread task'),
+        bulletable: Task.create!,
+        body: 'Spread task',
         bucket_id: monthlylog.bucket.id
       )
 

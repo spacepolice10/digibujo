@@ -9,4 +9,8 @@ class ApplicationController < ActionController::Base
   stale_when_importmap_changes
 
   etag { Current.user&.id }
+
+  def current_user
+    Current.user
+  end
 end

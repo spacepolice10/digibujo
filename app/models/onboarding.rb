@@ -65,11 +65,11 @@ class Onboarding
   def seed_daylog!
     bucket = ensure_daylog!.bucket
     [
-      Task.new(body: 'Buy groceries and plan the week'),
-      Event.new(body: 'Standup with the team'),
-      Note.new(body: 'Ideas for the weekend hike')
-    ].each do |bulletable|
-      user.bullets.create!(bucket: bucket, bulletable: bulletable, pops_on: Date.current)
+      { bulletable: Task.new, body: 'Buy groceries and plan the week' },
+      { bulletable: Event.new, body: 'Standup with the team' },
+      { bulletable: Note.new, body: 'Ideas for the weekend hike' }
+    ].each do |attrs|
+      user.bullets.create!(bucket: bucket, pops_on: Date.current, **attrs)
     end
   end
 
@@ -80,9 +80,9 @@ class Onboarding
              .map { |date| [date, month.end_of_month].min }
              .uniq
     bullets = [
-      { bulletable: Event.new(body: 'Team offsite'), pops_on: dates[0] },
-      { bulletable: Task.new(body: 'Prepare monthly review'), pops_on: dates[1] },
-      { bulletable: Note.new(body: 'Monthly themes to explore'), pops_on: nil }
+      { bulletable: Event.new, body: 'Team offsite', pops_on: dates[0] },
+      { bulletable: Task.new, body: 'Prepare monthly review', pops_on: dates[1] },
+      { bulletable: Note.new, body: 'Monthly themes to explore', pops_on: nil }
     ]
     bullets.each do |attrs|
       user.bullets.create!(bucket: monthlylog.bucket, **attrs)
@@ -92,10 +92,10 @@ class Onboarding
   def seed_loose_notes!
     bucket = ensure_loose_notes!
     [
-      Note.new(body: 'Random thought worth keeping'),
-      Note.new(body: 'A link or idea to revisit')
-    ].each do |bulletable|
-      user.bullets.create!(bucket: bucket, bulletable: bulletable, pops_on: nil)
+      { bulletable: Note.new, body: 'Random thought worth keeping' },
+      { bulletable: Note.new, body: 'A link or idea to revisit' }
+    ].each do |attrs|
+      user.bullets.create!(bucket: bucket, pops_on: nil, **attrs)
     end
   end
 
@@ -103,11 +103,11 @@ class Onboarding
     collection = Collection.create!
     bucket = user.buckets.create!(bucketable: collection, name: COLLECTION_NAME)
     [
-      Task.new(body: 'Atomic Habits'),
-      Task.new(body: 'The Bullet Journal Method'),
-      Note.new(body: 'Book recommendations from Alex')
-    ].each do |bulletable|
-      user.bullets.create!(bucket: bucket, bulletable: bulletable, pops_on: nil)
+      { bulletable: Task.new, body: 'Atomic Habits' },
+      { bulletable: Task.new, body: 'The Bullet Journal Method' },
+      { bulletable: Note.new, body: 'Book recommendations from Alex' }
+    ].each do |attrs|
+      user.bullets.create!(bucket: bucket, pops_on: nil, **attrs)
     end
   end
 
@@ -120,10 +120,10 @@ class Onboarding
       colour: FUTURE_COLOUR
     )
     [
-      Task.new(body: 'Read 12 books this year'),
-      Note.new(body: 'Trip ideas for summer')
-    ].each do |bulletable|
-      user.bullets.create!(bucket: bucket, bulletable: bulletable, pops_on: nil)
+      { bulletable: Task.new, body: 'Read 12 books this year' },
+      { bulletable: Note.new, body: 'Trip ideas for summer' }
+    ].each do |attrs|
+      user.bullets.create!(bucket: bucket, pops_on: nil, **attrs)
     end
   end
 

@@ -1,22 +1,21 @@
 @layer components {
   .voice-recorder {
     display: flex;
-    flex-direction: column;
     gap: var(--spacing-vertical-half);
-  }
-
-  .voice-recorder--unsupported {
-    color: var(--color-fg-subtle);
-  }
-
-  .voice-recorder--controls {
-    display: flex;
     align-items: center;
-    gap: var(--spacing-horizontal-half);
-    flex: 0 0 auto;
     width: 100%;
     border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
-    padding: var(--spacing-horizontal-half);
+    border-radius: var(--radius-full);
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    background-color: var(--color-bg-base);
+    overflow: hidden;
+  }
+
+  .voice-recorder--waveform {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    height: 32px;
   }
 }

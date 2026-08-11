@@ -1,19 +1,35 @@
 @layer components {
-  .daylog--metadata-trackers {
-    display: flex;
-    align-items: center;
-    justify-items: center;
-    gap: var(--spacing-vertical);
-  }
 
-  .daylog--metadata-picture {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: var(--radius-strong);
-    &:hover {
-      cursor: pointer;
-      filter: brightness(0.8);
+  .daylog--container {
+    & .bullet {
+      padding-inline: var(--space-h);
     }
   }
+
+  .daylog--composer {
+    position: sticky;
+    bottom: 0;
+    padding: var(--space-v-half) var(--space-h-half);
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-subtle);
+    min-height: 6ch;
+    background: var(--color-1);
+    &:has(.composer[data-composer-multiline-value="true"]) {
+      border-radius: var(--radius-base);
+    }
+    & .lexxy-editor__content {
+        max-height: 50vh;
+        overflow: scroll
+    }
+  }
+
+  .daylog--triage-preview {
+    border-radius: var(--radius-base);
+    box-shadow: var(--shadow-subtle);
+    margin-bottom: var(--space-v);
+    & > p {
+      line-height: 2;
+    }
+  }
+
 }

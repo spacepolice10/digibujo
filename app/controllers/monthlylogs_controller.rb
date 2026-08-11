@@ -9,6 +9,10 @@ class MonthlylogsController < ApplicationController
     @date = selected_date
     @bullet_counts_by_date = bullet_counts_by_date
     @pictures_by_date = CalendarDate.pictures_by_date(Current.user, @days)
+    @planned_bullets = @monthlylog.bullets.active.scheduled.limited_by_column(:pops_on, number: 5).includes(:bulletable)
+    @days_with_bullets = @days.map { |day| [day, @planned_bullets.select { |bullet| bullet.pops_on == day }] }.to_h
+    @unplanned_bullets = @monthlylog.bullets.active.unscheduled.includes(:bulletable)
+    @days_to_show_in_inline_calendar = (@date..@date + 6.days).to_a
   end
 
   def create
@@ -27,10 +31,9 @@ class MonthlylogsController < ApplicationController
   end
 
   def selected_date
-    today = Date.current
-    return today if @days.include?(today)
+    return Date.current if @days.include?(Date.current)
 
-    @days.first || today
+    @days.first || Date.current
   end
 
   def bullet_counts_by_date

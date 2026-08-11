@@ -12,7 +12,7 @@ module Triage
       @bullet = create_bullet!(
         @user,
         bucket: @pending.bucket,
-        bulletable: Note.new(body: 'Throw away'),
+        bulletable: Note.new, body: 'Throw away',
         pops_on: nil
       )
     end

@@ -49,22 +49,21 @@
     background: transparent;
     box-shadow: none;
     font-family: var(--font-family-mono);
-    padding-inline: var(--spacing-horizontal);
-    .bullet--select-checkbox {
+
+
+    /* .bullet--select-checkbox {
       display: none;
-    }
+    } */
 
     @media (hover: hover) {
       &:hover .bullet--body {
-        border-color: color-mix(
-          in oklch,
-          var(--color-stroke-strong) 35%,
-          var(--color-stroke-base)
-        );
+        background: color-mix(in oklch,
+            var(--bullet-type-color) 10%,
+            transparent);
       }
 
       &:hover .bullet--marker {
-        border-color: var(--color-stroke-strong);
+        border-color: var(--color-stroke-subtle);
         box-shadow: var(--shadow-base);
         background: var(--color-bg-base);
         cursor: pointer;
@@ -81,6 +80,7 @@
   }
 
   .bullet--content {
+      --lexxy-color-ink: var(--color-stroke-strong);
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
@@ -92,18 +92,18 @@
     min-width: 5rem;
     width: fit-content;
     box-sizing: border-box;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
     border: 1px solid transparent;
-    border-radius: var(--radius-strong);
+    border-radius: var(--radius-subtle);
+    padding-inline: var(--spacing-horizontal-half);
     background: transparent;
     box-shadow: none;
 
-    @media (max-width: 1700px) {
-      background: color-mix(
-        in oklch,
-        var(--bullet-type-color, transparent) 25%,
-        transparent
-      );
+    @media (max-width: 768px) {
+      border-radius: var(--radius-strong);
+      padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+      background: color-mix(in oklch,
+          var(--bullet-type-color, transparent) 10%,
+          transparent);
     }
   }
 
@@ -126,9 +126,15 @@
     box-sizing: border-box;
     width: var(--spacing-horizontal-double);
     height: var(--spacing-horizontal-double);
-    border: 1px solid color-mix(in oklch, currentColor 28%, var(--color-stroke-base));
+    box-shadow: var(--shadow-subtle);
     border-radius: var(--radius-full);
-    background: color-mix(in oklch, currentColor 14%, var(--color-bg-subtle));
+
+    @media (min-width: 769px) {
+      width: var(--spacing-horizontal);
+      height: var(--spacing-horizontal);
+      margin-top: 2px;
+      background: color-mix(in oklch, var(--bullet-type-color) 14%, transparent);
+    }
   }
 
   .bullet--marker-type {
@@ -163,7 +169,7 @@
 
     @media (hover: hover) {
       &:hover {
-        border-color: var(--color-stroke-strong);
+        border-color: var(--color-stroke-subtle);
         background: var(--color-bg-base);
         color: var(--color-fg-base);
         box-shadow: var(--shadow-base);
@@ -198,10 +204,8 @@
 
   .bullet--migration-dropdown.dropdown--element[popover] {
     min-width: calc(var(--spacing-horizontal-double) * 8);
-    max-width: min(
-      calc(var(--spacing-horizontal-double) * 12),
-      calc(100vw - (2 * var(--spacing-horizontal)))
-    );
+    max-width: min(calc(var(--spacing-horizontal-double) * 12),
+        calc(100vw - (2 * var(--spacing-horizontal))));
   }
 
   .bullet--migration-text {
@@ -232,6 +236,7 @@
 
   .bullet[data-task-completed="true"] {
     opacity: 0.75;
+
     .bullet--body {
       text-decoration: line-through;
       color: var(--color-fg-subtle);
@@ -243,33 +248,26 @@
       border-color: var(--bullet-type-color, var(--color-stroke-strong));
       box-shadow:
         var(--shadow-base),
-        0 0 0 1px color-mix(
-          in oklch,
+        0 0 0 1px color-mix(in oklch,
           var(--bullet-type-color, var(--color-stroke-strong)) 45%,
-          transparent
-        );
-      background: color-mix(
-        in oklch,
-        var(--bullet-type-color) 35%,
-        var(--color-bg-subtle)
-      );
+          transparent);
+      background: color-mix(in oklch,
+          var(--bullet-type-color) 35%,
+          var(--color-bg-subtle));
     }
 
     .bullet--marker {
-      background: color-mix(
-        in oklch,
-        var(--bullet-type-color, var(--color-stroke-strong)) 18%,
-        var(--color-bg-base)
-      );
+      background: color-mix(in oklch,
+          var(--bullet-type-color, var(--color-stroke-strong)) 18%,
+          var(--color-bg-base));
       border-color: var(--bullet-type-color, var(--color-stroke-strong));
       box-shadow: var(--shadow-base);
     }
 
     .bullet--marker::before {
-      content: "●";
+      content: "";
       position: absolute;
       display: flex;
-      align-items: center;
       justify-content: center;
       inset: 0;
       border: 1px solid var(--bullet-type-color, var(--color-stroke-strong));
@@ -283,7 +281,7 @@
     }
   }
 
-  [data-bulk-menu-select-mode-value="true"] .bullet--select-checkbox {
+  .bullet--select-checkbox {
     display: block;
     position: absolute;
     top: 0;

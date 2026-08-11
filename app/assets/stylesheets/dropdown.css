@@ -1,339 +1,69 @@
-/*
- * Dropdown shell + anchor-backed popover menus.
- *
- * Markup patterns:
- *   <details class="dropdown"> … <div class="dropdown-body">
- *   <div class="dropdown--dock"> … <* class="dropdown dropdown--element …" popover>
- *     .dropdown--element-body > [.dropdown--header] + content
- *   <div class="dropdown-menu dropdown-menu--anchor …" popover>
- * Trigger: anchor-name on .dropdown--dock. Panel: position-anchor (component CSS).
- */
 
 @layer components {
-  /* ── <details> dropdown ─────────────────────────── */
-
-  .dropdown {
-    position: relative;
-  }
-
-  .dropdown > summary {
-    list-style: none;
-
-    &::-webkit-details-marker {
-      display: none;
-    }
-  }
-
-  .dropdown-body {
-    position: absolute;
-    top: 100%;
-    left: 0;
+  .dropdown[popover] {
+    position: fixed;
+    inset: unset;
     z-index: var(--z-dropdown);
-    min-width: calc(var(--spacing-horizontal-double) * 5);
-    padding: var(--spacing-vertical);
-    background: var(--color-bg-base);
-    /* 1px hairline — no stroke-width token in the design system */
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-base);
-    box-shadow: var(--shadow-base);
-  }
 
-  .dropdown:not([open]) > .dropdown-body {
-    display: none;
-  }
+    box-sizing: border-box;
+    width: max-content;
+    min-width: calc(var(--space-h-4) * 4);
 
-  .dropdown[open] > .dropdown-body {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-vertical-half);
-  }
+    max-width: min(
+      calc(var(--space-h-4) * 10),
+      calc(100dvw - (var(--space-h-4) * 2))
+    );
 
-  .dropdown-body .button--tertiary {
-    width: 100%;
-  }
+    max-height: min(
+      calc(var(--space-h-4) * 10),
+      calc(100dvh - (var(--space-h-4) * 2))
+    );
 
-  /* ── Compact anchored menus ─────────────────────── */
+    margin: var(--space-v-half) var(--space-h-half);
+    padding: var(--space-h-half);
 
-  .dropdown-menu {
-    padding: var(--spacing-vertical-half);
-    /* 1px hairline — no stroke-width token in the design system */
-    border: 1px solid var(--color-stroke-base);
+    overflow: auto;
+
+    background: var(--color-1);
+    border: 1px solid var(--color-invert-2);
     border-radius: var(--radius-strong);
-    background: var(--color-bg-subtle);
-    box-shadow:
-      var(--shadow-base),
-      /* 1px hairline — no stroke-width token in the design system */
-      0 0 0 1px color-mix(in oklch, var(--color-bg-base) 35%, transparent);
-    overflow: hidden;
-  }
+    box-shadow: var(--shadow-base);
 
-  .dropdown-menu[popover] {
+    /* Anchor positioning */
+    position-area: block-end span-inline-end;
+
+    position-try-fallbacks:
+      flip-block,
+      flip-inline,
+      block-start span-inline-end,
+      block-end span-inline-start;
+
+    /* Animation */
     opacity: 0;
-    transform: translateY(calc(var(--spacing-vertical-half) * -1));
+    transform: translateY(calc(var(--space-v-half) * -1));
+
     transition:
       opacity 110ms ease,
       transform 110ms ease,
       display 110ms allow-discrete,
       overlay 110ms allow-discrete;
-  }
-
-  .dropdown-menu[popover]:popover-open {
-    opacity: 1;
-    transform: translateY(0);
-
-    @starting-style {
-      opacity: 0;
-      transform: translateY(calc(var(--spacing-vertical-half) * -1));
-    }
-  }
-
-  /* ── Anchor positioning ───────────────────────────── */
-
-  .dropdown-menu[popover].dropdown-menu--anchor {
-    position: fixed;
-    inset: unset;
-    box-sizing: border-box;
-    width: max-content;
-    min-width: calc(var(--spacing-horizontal-double) * 4);
-    max-width: min(
-      calc(var(--spacing-horizontal-double) * 11),
-      calc(100vw - (2 * var(--spacing-horizontal)))
-    );
-    max-height: min(
-      calc(var(--spacing-horizontal-double) * 8),
-      calc(100dvh - (2 * var(--spacing-horizontal)))
-    );
-    margin-block-end: var(--spacing-vertical-half);
-    overflow-x: hidden;
-    overflow-y: auto;
-    position-try-fallbacks:
-      flip-block,
-      flip-inline,
-      block-start center,
-      center inline-start,
-      block-end center,
-      center inline-end;
 
     &:popover-open {
-      animation: popout 110ms ease-out;
-    }
-  }
+      opacity: 1;
+      transform: translateY(0);
 
-  /* ── Overlay popover panel (mood, create, pinned, …) ── */
-
-  .dropdown--dock {
-    display: flex;
-    position: relative;
-    width: fit-content;
-    flex-shrink: 0;
-  }
-
-  .dropdown--element[popover] {
-    position: fixed;
-    inset: unset;
-    box-sizing: border-box;
-    z-index: var(--z-dropdown);
-    /* Persist during exit fade — must not live only under :popover-open. */
-    flex-direction: column;
-    width: max-content;
-    min-width: calc(var(--spacing-horizontal-double) * 4);
-    max-width: min(
-      calc(var(--spacing-horizontal-double) * 10),
-      calc(100dvw - (2 * var(--spacing-horizontal)))
-    );
-    max-height: min(
-      calc(var(--spacing-horizontal-double) * 10),
-      calc(100dvh - (2 * var(--spacing-horizontal)))
-    );
-    overflow: auto;
-    background: transparent;
-    border: none;
-    border-radius: var(--radius-strong);
-    position-area: center;
-    margin: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-  }
-
-  .dropdown--element[popover]:popover-open {
-    display: flex;
-  }
-
-  /* Kept for existing markup; both overlay the trigger like the default. */
-  .dropdown--element-up,
-  .dropdown--element-bottom {
-    position-area: center;
-    margin: 0;
-  }
-
-  .dropdown--element-body {
-    background: var(--color-bg-base);
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-strong);
-    box-shadow: var(--shadow-base);
-    padding: var(--spacing-horizontal-half) var(--spacing-horizontal-half) var(--spacing-vertical-half);
-  }
-
-  /* Sticky title bar for titled overlay pickers (collect / postpone). */
-  .dropdown--header {
-    position: sticky;
-    top: 0;
-    z-index: var(--z-dialog-backdrop);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--spacing-horizontal);
-    padding: var(--spacing-horizontal-half);
-    background: var(--color-bg-base);
-    /* 1px hairline — no stroke-width token in the design system */
-    border-bottom: 1px solid var(--color-stroke-base);
-    box-shadow: var(--shadow-subtle), var(--shadow-base);
-    border-radius: var(--radius-strong) var(--radius-strong) 0 0;
-
-    & h2 {
-      margin: 0;
-      min-width: 0;
-      font-size: var(--font-size-base-type);
-      font-weight: var(--font-weight-strong);
-    }
-  }
-
-  /* List rows flush to panel edges; item padding owns the inset. */
-  .dropdown--element-body:has(.dropdown--menu) {
-    padding: 0;
-  }
-
-  .dropdown--element-body:has(> .dropdown--header) {
-    padding: 0;
-  }
-
-  .dropdown--menu {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .dropdown--menu-form {
-    display: block;
-    width: 100%;
-    margin: 0;
-  }
-
-  .dropdown-item {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-horizontal-half);
-    box-sizing: border-box;
-    width: 100%;
-    min-height: var(--spacing-horizontal-triple);
-    margin: 0;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-double);
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-    font: inherit;
-    font-size: var(--font-size-base-read);
-    line-height: inherit;
-    text-align: start;
-    text-decoration: none;
-    color: var(--color-fg-subtle);
-    cursor: pointer;
-    appearance: none;
-
-    @media (hover: hover) {
-      &:hover {
-        background: var(--color-bg-subtle);
-        color: var(--color-fg-base);
+      @starting-style {
+        opacity: 0;
+        transform: translateY(calc(var(--space-v-half) * -1));
       }
     }
-
-    /* Keyboard / pointer highlight — not the same as selected. */
-    &:focus-visible {
-      background: var(--color-bg-subtle);
-      color: var(--color-fg-base);
-      outline: none;
-    }
-
-    /* Persistent selection (mood, type radio, etc.). */
-    &[aria-selected="true"],
-    &[aria-checked="true"],
-    &.dropdown-item--current {
-      background: var(--color-accent-bg);
-      color: var(--color-fg-base);
-    }
-
-    &[aria-selected="true"]:focus-visible,
-    &[aria-checked="true"]:focus-visible,
-    &.dropdown-item--current:focus-visible {
-      background: var(--color-accent-bg);
-      box-shadow: inset 0 0 0 1px var(--color-accent);
-    }
   }
 
-  .dropdown--element-hide {
-    flex-shrink: 0;
-    box-sizing: border-box;
-    width: var(--spacing-horizontal-double) !important;
-    height: var(--spacing-horizontal-double) !important;
-    padding: 0 !important;
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-full);
-  }
-
-  /*
-   * Enter: popout keyframe (scale only while opening).
-   * Exit: opacity fade — reversing transform fights position-area.
-   */
-  .dropdown--element[popover].animations--side-in {
-    opacity: 0;
-    transition:
-      opacity 0.08s ease,
-      display 0.08s allow-discrete,
-      overlay 0.08s allow-discrete;
-  }
-
-  .dropdown--element[popover].animations--side-in:popover-open {
-    opacity: 1;
-    animation: popout 110ms ease-out;
-
-    @starting-style {
-      opacity: 0;
-    }
-  }
-
-  .dropdown-menu--anchor-inline-start {
+  .dropdown--anchor-inline-start {
     position-area: block-start span-inline-start;
   }
 
-  .dropdown-menu--anchor-inline-end {
+  .dropdown--anchor-inline-end {
     position-area: block-start span-inline-end;
-  }
-
-  /* ── Narrow viewport (--breakpoint-tablet is 600px; var() invalid in @media) ── */
-
-  @media (width < 600px) {
-    .dropdown-body {
-      box-sizing: border-box;
-      width: 90%;
-      min-width: unset;
-      left: 0;
-      right: 0;
-      margin-inline: auto;
-    }
-
-    .dropdown-menu[popover].dropdown-menu--anchor {
-      position-area: initial;
-      position-try-fallbacks: none;
-
-      top: calc(anchor(bottom) + var(--spacing-vertical-half));
-      left: var(--spacing-horizontal);
-      right: var(--spacing-horizontal);
-      bottom: auto;
-
-      width: auto;
-      min-width: unset;
-      max-width: none;
-
-      margin-inline: 0;
-      margin-block-end: 0;
-    }
   }
 }

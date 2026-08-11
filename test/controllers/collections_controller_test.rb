@@ -24,7 +24,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'new with bullet_ids renders full page form and preview' do
-    card = create_bullet!(@user, bulletable: Task.new(body: 'Preview me'))
+    card = create_bullet!(@user, bulletable: Task.new, body: 'Preview me')
 
     get new_collection_path, params: { bullet_ids: card.id.to_s, return_to: review_path }
 
@@ -36,8 +36,8 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'create with bullet_ids collects bullets and redirects' do
-    first = create_bullet!(@user, bulletable: Task.new(body: 'One'))
-    second = create_bullet!(@user, bulletable: Note.new(body: 'Two'))
+    first = create_bullet!(@user, bulletable: Task.new, body: 'One')
+    second = create_bullet!(@user, bulletable: Note.new, body: 'Two')
 
     assert_difference -> { Collection.count }, 1 do
       post collections_path,
@@ -56,7 +56,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'create with bullet_ids redirects back to return_to' do
-    card = create_bullet!(@user, bulletable: Task.new(body: 'Move me'))
+    card = create_bullet!(@user, bulletable: Task.new, body: 'Move me')
 
     post collections_path,
          params: {
@@ -70,7 +70,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'create with invalid collection and bullet_ids re-renders full page form' do
-    card = create_bullet!(@user, bulletable: Task.new(body: 'Hold'))
+    card = create_bullet!(@user, bulletable: Task.new, body: 'Hold')
     daylog_bucket_id = card.bucket_id
 
     assert_no_difference -> { Collection.count } do
@@ -91,7 +91,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
 
   test 'show renders collected migration hint when bullet was collected into the collection' do
     collection = create_collection!(@user, name: 'Inbox', colour: 'teal')
-    bullet = create_bullet!(@user, bulletable: Task.new(body: 'Collected in'), pops_on: Date.current)
+    bullet = create_bullet!(@user, bulletable: Task.new, body: 'Collected in', pops_on: Date.current)
     bullet.collect!(bucket_id: collection.bucket.id)
 
     get collection_path(collection)
@@ -146,13 +146,13 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     collection = create_collection!(@user, name: 'Inbox')
     bucket = collection.bucket
 
-    create_bullet!(@user, bucket: bucket, pops_on: nil, bulletable: Note.new(body: 'Older day'),
+    create_bullet!(@user, bucket: bucket, pops_on: nil, bulletable: Note.new, body: 'Older day',
                    created_at: 2.days.ago.change(hour: 10))
-    create_bullet!(@user, bucket: bucket, pops_on: nil, bulletable: Note.new(body: 'Yesterday a'),
+    create_bullet!(@user, bucket: bucket, pops_on: nil, bulletable: Note.new, body: 'Yesterday a',
                    created_at: 1.day.ago.change(hour: 9))
-    create_bullet!(@user, bucket: bucket, pops_on: nil, bulletable: Note.new(body: 'Yesterday b'),
+    create_bullet!(@user, bucket: bucket, pops_on: nil, bulletable: Note.new, body: 'Yesterday b',
                    created_at: 1.day.ago.change(hour: 18))
-    create_bullet!(@user, bucket: bucket, pops_on: nil, bulletable: Note.new(body: 'Today'),
+    create_bullet!(@user, bucket: bucket, pops_on: nil, bulletable: Note.new, body: 'Today',
                    created_at: Time.current.change(hour: 12))
 
     get collection_path(collection)
@@ -185,7 +185,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
 
   test 'destroy archives collection and hides it from active lists' do
     collection = create_collection!(@user, name: 'Old inbox')
-    card = create_bullet!(@user, bulletable: Task.new(body: 'Stay'), bucket_id: collection.bucket.id, pops_on: nil)
+    card = create_bullet!(@user, bulletable: Task.new, body: 'Stay', bucket_id: collection.bucket.id, pops_on: nil)
 
     assert_no_difference -> { Collection.count } do
       delete collection_path(collection)

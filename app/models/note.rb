@@ -7,12 +7,13 @@ class Note < ApplicationRecord
   def icon                     = :text
   def colour                   = 'gold'
 
-  def self.permitted_bullet_attributes = %i[id body]
+  def self.permitted_bullet_attributes = %i[id]
 
-  def excerpt
-    return 'Untitled' if body_as_text.strip.empty?
-    return body unless long?
+  def excerpt_for(body)
+    text = body.to_plain_text.to_s
+    return 'Untitled' if text.strip.empty?
+    return body unless text.length > Bullet::EXCERPT_LIMIT
 
-    body_as_text.lines.drop(1).join.truncate(EXCERPT_LIMIT)
+    text.lines.drop(1).join.truncate(Bullet::EXCERPT_LIMIT)
   end
 end

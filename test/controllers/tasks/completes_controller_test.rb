@@ -7,11 +7,11 @@ module Tasks
     setup do
       @user = users(:one)
       sign_in_as @user
-      @bullet = create_bullet!(@user, bulletable: Task.new(body: 'Finish me'))
+      @bullet = create_bullet!(@user, bulletable: Task.new, body: 'Finish me')
     end
 
     test 'bulk create completes selected tasks via turbo stream' do
-      second = create_bullet!(@user, bulletable: Task.new(body: 'Also finish'))
+      second = create_bullet!(@user, bulletable: Task.new, body: 'Also finish')
 
       post complete_path,
            params: { bullet_ids: "#{@bullet.id},#{second.id}" },
@@ -41,7 +41,7 @@ module Tasks
     test 'bulk complete replaces monthly bucket bullet with unified row' do
       monthlylog = create_monthlylog!(@user, name: 'june')
       bullet = create_bullet!(@user,
-        bulletable: Task.new(body: 'Spread task'),
+        bulletable: Task.new, body: 'Spread task',
         bucket_id: monthlylog.bucket.id
       )
 

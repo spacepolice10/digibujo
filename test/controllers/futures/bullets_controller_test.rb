@@ -11,12 +11,12 @@ class Futures::BulletsControllerTest < ActionDispatch::IntegrationTest
 
   test 'index lists unplanned bullets in chronological order' do
     older = create_bullet!(@user,
-      bulletable: Note.new(body: 'Someday note'),
+      bulletable: Note.new, body: 'Someday note',
       bucket_id: @future.bucket.id
     )
     older.update_columns(created_at: 2.days.ago)
     newer = create_bullet!(@user,
-      bulletable: Note.new(body: 'Newer someday note'),
+      bulletable: Note.new, body: 'Newer someday note',
       bucket_id: @future.bucket.id
     )
     newer.update_columns(created_at: 1.day.ago)
@@ -30,7 +30,7 @@ class Futures::BulletsControllerTest < ActionDispatch::IntegrationTest
   test 'index returns a full page of rows' do
     Bullet::Pageable::PAGE_SIZE.times do |i|
       create_bullet!(@user,
-        bulletable: Task.new(body: "Goal #{i}"),
+        bulletable: Task.new, body: "Goal #{i}",
         bucket_id: @future.bucket.id
       )
     end
@@ -43,12 +43,12 @@ class Futures::BulletsControllerTest < ActionDispatch::IntegrationTest
 
   test 'before returns an older page of bullets' do
     older = create_bullet!(@user,
-      bulletable: Task.new(body: 'Older goal'),
+      bulletable: Task.new, body: 'Older goal',
       bucket_id: @future.bucket.id
     )
     older.update_columns(created_at: 2.days.ago)
     newer = create_bullet!(@user,
-      bulletable: Task.new(body: 'Newer goal'),
+      bulletable: Task.new, body: 'Newer goal',
       bucket_id: @future.bucket.id
     )
     newer.update_columns(created_at: 1.day.ago)

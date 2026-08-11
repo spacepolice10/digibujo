@@ -10,21 +10,23 @@
   composer_variants_dropdown_id = "composer_variants_dropdown_#{composer_id}"
 %>
 
-<turbo-frame
+
+<div
   id="<%= composer_id %>"
   class="composer"
   data-bullet-type="<%= default_type.downcase %>"
-  data-controller="chat-composer voice-recorder"
+  data-controller="chat-composer keyboard-spacing voice-recorder"
   data-chat-composer-voice-value="<%= voice_enabled %>"
   data-voice-recorder-manage-submit-value="false"
   data-voice-recorder-shell-value="true"
   data-action="voice-recorder:change->chat-composer#refresh voice-recorder:denied->chat-composer#reinitializeComposer"
 >
   <%= form_with model: bullet,
-        class: "composer--form animations--popout",
+        class: "composer--form",
         multipart: true,
         data: {
           chat_composer_target: "form",
+          turbo_frame: composer_id,
           action: "turbo:submit-end->chat-composer#submitFinished turbo:submit-end->voice-recorder#clearOnSubmit",
         } do |fr| %>
     <%= fr.hidden_field :bucket_id, value: bucket_id, data: { chat_composer_target: "bucketId" } %>
@@ -47,11 +49,12 @@
           elements are already defined, so they upgrade in document order, and
           the editor's connectedCallback calls setEditor on this toolbar
           synchronously. Placement is CSS (order) — see composer.css. %>
-      <lexxy-toolbar id="composer_toolbar"
+      <lexxy-toolbar id="<%= composer_id %>_composer_toolbar"
                      class="composer--toolbar-wrap"
                      data-chat-composer-target="toolbarWrap"
                      data-upload="both"
                      data-attachments="true"
+                     data-turbo-temporary="true"
                      aria-hidden="true"
                      inert></lexxy-toolbar>
 
@@ -60,25 +63,23 @@
            data-hotkey="Shift+F"
            data-action="keydown.shift+f@document->hotkey#click click->chat-composer#refocus"
            aria-keyshortcuts="Shift+F">
-        <%= fr.fields_for :bulletable, Note.new do |bf| %>
-          <%= bf.rich_text_area :body,
-                preset: "note",
-                toolbar: "composer_toolbar",
-                rows: 1,
-                placeholder: default_config[:placeholder],
-                class: "lexxy-content composer--editor",
-                data: {
-                  chat_composer_target: "editor",
-                  action: "keydown->chat-composer#keydown:capture lexxy:change->chat-composer#refresh"
-                } do %>
-            <lexxy-prompt
-              trigger="#"
-              name="project"
-              src="<%= project_suggestions_path %>"
-              remote-filtering
-              supports-space-in-searches
-            ></lexxy-prompt>
-          <% end %>
+        <%= fr.rich_text_area :body,
+              preset: "note",
+              toolbar: "#{composer_id}_composer_toolbar",
+              rows: 1,
+              placeholder: default_config[:placeholder],
+              class: "lexxy-content composer--editor",
+              data: {
+                chat_composer_target: "editor",
+                action: "keydown->chat-composer#keydown:capture lexxy:change->chat-composer#refresh"
+              } do %>
+          <lexxy-prompt
+            trigger="#"
+            name="project"
+            src="<%= project_suggestions_path %>"
+            remote-filtering
+            supports-space-in-searches
+          ></lexxy-prompt>
         <% end %>
       </div>
 
@@ -88,7 +89,6 @@
             <button type="button"
                     class="button--secondary button--icon button--circle composer--type-button"
                     popovertarget="composer_variants_<%= composer_id %>"
-                    data-action="mousedown->chat-composer#preventBlur"
                     aria-haspopup="menu"
                     aria-label="Change bullet type"
                     aria-keyshortcuts="Shift+Tab">
@@ -157,7 +157,7 @@
                   data-chat-composer-target="toolbarButton"
                   aria-label="Show formatting toolbar"
                   aria-expanded="false"
-                  aria-controls="composer_toolbar"
+                  aria-controls="<%= composer_id %>_composer_toolbar"
                   aria-keyshortcuts="Control+Shift+E"
                   aria-pressed="false"
                   hidden>
@@ -180,8 +180,7 @@
           <button type="submit"
                   class="button--primary button--icon button--circle composer--submit"
                   data-chat-composer-target="submit"
-                  aria-label="Save bullet"
-                  disabled>
+                  aria-label="Save bullet">
             <%= icon_tag("arrow-up", class: "button--icon") %>
           </button>
         </div>
@@ -220,7 +219,7 @@
               aria-live="polite">0:00</span>
 
         <div data-voice-recorder-target="previewContainer" hidden>
-          <%= render "voices/playback", recording: nil, recording_duration: 0 %>
+          <%= render "voices/playback", recording_source: nil, recording_duration: 0 %>
         </div>
 
         <p class="utilities--sr-only"
@@ -241,4 +240,4 @@
       </div>
     </div>
   <% end %>
-</turbo-frame>
+</div>

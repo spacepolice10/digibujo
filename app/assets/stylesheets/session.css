@@ -333,8 +333,8 @@
     gap: var(--spacing-vertical-double);
     list-style: none;
     background: var(--color-bg-subtle);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
-    margin-bottom: calc(var(--spacing-horizontal-triple) + var(--spacing-vertical-triple));
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    margin-bottom: calc(var(--spacing-horizontal));
     border-radius: var(--radius-strong);
     box-shadow: var(--shadow-subtle);
     @media (min-width: 768px) {

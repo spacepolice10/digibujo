@@ -19,11 +19,11 @@ class FuturesControllerTest < ActionDispatch::IntegrationTest
   test 'current future shows unplanned chat list when covering future exists' do
     future = ensure_future!(@user)
     create_bullet!(@user,
-      bulletable: Note.new(body: 'Someday idea'),
+      bulletable: Note.new, body: 'Someday idea',
       bucket_id: future.bucket.id
     )
     create_bullet!(@user,
-      bulletable: Event.new(body: 'Month card event'),
+      bulletable: Event.new, body: 'Month card event',
       bucket_id: future.bucket.id,
       pops_on: future.period_from
     )
@@ -45,7 +45,7 @@ class FuturesControllerTest < ActionDispatch::IntegrationTest
     future = ensure_future!(@user)
     Bullet::Pageable::PAGE_SIZE.times do |i|
       create_bullet!(@user,
-        bulletable: Task.new(body: "Goal #{i}"),
+        bulletable: Task.new, body: "Goal #{i}",
         bucket_id: future.bucket.id
       )
     end
@@ -69,11 +69,11 @@ class FuturesControllerTest < ActionDispatch::IntegrationTest
     first = ensure_future!(@user, period_from: Date.new(2026, 1, 1))
     second = ensure_future!(@user, period_from: Date.new(2026, 7, 1))
     create_bullet!(@user,
-      bulletable: Task.new(body: 'First-half goal'),
+      bulletable: Task.new, body: 'First-half goal',
       bucket_id: first.bucket.id
     )
     create_bullet!(@user,
-      bulletable: Task.new(body: 'Second-half goal'),
+      bulletable: Task.new, body: 'Second-half goal',
       bucket_id: second.bucket.id
     )
 

@@ -14,7 +14,7 @@ class Monthlylogs::BulletsControllerTest < ActionDispatch::IntegrationTest
   test 'dated index lists planned bullets without create buttons' do
     day = Date.current.beginning_of_month + 2.days
     create_bullet!(@user,
-      bulletable: Task.new(body: 'Planned task'),
+      bulletable: Task.new, body: 'Planned task',
       bucket_id: @monthlylog.bucket.id,
       pops_on: day
     )
@@ -32,7 +32,7 @@ class Monthlylogs::BulletsControllerTest < ActionDispatch::IntegrationTest
 
   test 'unplanned index lists unplanned bullets without create buttons' do
     create_bullet!(@user,
-      bulletable: Note.new(body: 'Unplanned note'),
+      bulletable: Note.new, body: 'Unplanned note',
       bucket_id: @monthlylog.bucket.id
     )
     container = 'monthlylog_bullets_unplanned_container'
@@ -49,7 +49,7 @@ class Monthlylogs::BulletsControllerTest < ActionDispatch::IntegrationTest
 
   test 'unplanned bullets render as compact rows without metadata tags' do
     bullet = create_bullet!(@user,
-      bulletable: Task.new(body: 'Pinned spread task'),
+      bulletable: Task.new, body: 'Pinned spread task',
       bucket_id: @monthlylog.bucket.id
     )
     PinnedEntity.create!(user: @user, pinnable: bullet)
@@ -65,7 +65,7 @@ class Monthlylogs::BulletsControllerTest < ActionDispatch::IntegrationTest
 
   test 'mobile unplanned bullets render without drag' do
     create_bullet!(@user,
-      bulletable: Task.new(body: 'Mobile spread task'),
+      bulletable: Task.new, body: 'Mobile spread task',
       bucket_id: @monthlylog.bucket.id
     )
 
@@ -81,13 +81,13 @@ class Monthlylogs::BulletsControllerTest < ActionDispatch::IntegrationTest
   test 'before returns older page of dated bullets' do
     day = Date.current.beginning_of_month + 1.day
     older = create_bullet!(@user,
-      bulletable: Task.new(body: 'Older planned'),
+      bulletable: Task.new, body: 'Older planned',
       bucket_id: @monthlylog.bucket.id,
       pops_on: day
     )
     older.update_columns(created_at: 2.days.ago)
     newer = create_bullet!(@user,
-      bulletable: Task.new(body: 'Newer planned'),
+      bulletable: Task.new, body: 'Newer planned',
       bucket_id: @monthlylog.bucket.id,
       pops_on: day
     )
@@ -147,7 +147,7 @@ class Monthlylogs::BulletsControllerTest < ActionDispatch::IntegrationTest
   test 'dated pane mounts chat-scroll on the merged scroller without a trigger' do
     day = Date.current.beginning_of_month + 2.days
     create_bullet!(@user,
-      bulletable: Task.new(body: 'Planned task'),
+      bulletable: Task.new, body: 'Planned task',
       bucket_id: @monthlylog.bucket.id,
       pops_on: day
     )
@@ -164,7 +164,7 @@ class Monthlylogs::BulletsControllerTest < ActionDispatch::IntegrationTest
   test 'unplanned pane mounts chat-scroll and renders a load-more trigger over one page' do
     Bullet::Pageable::PAGE_SIZE.times do |i|
       create_bullet!(@user,
-        bulletable: Task.new(body: "Spread task #{i}"),
+        bulletable: Task.new, body: "Spread task #{i}",
         bucket_id: @monthlylog.bucket.id
       )
     end

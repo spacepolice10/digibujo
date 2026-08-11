@@ -13,9 +13,9 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show lists archived bullets in section' do
-    archived = create_bullet!(@user, bulletable: Task.new(body: 'Old task'))
+    archived = create_bullet!(@user, bulletable: Task.new, body: 'Old task')
     archived.archive!
-    create_bullet!(@user, bulletable: Task.new(body: 'Active task'))
+    create_bullet!(@user, bulletable: Task.new, body: 'Active task')
 
     get home_path
 
@@ -28,7 +28,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
   test 'show archived section links to index when more than five archived bullets' do
     6.times do |index|
-      bullet = create_bullet!(@user, bulletable: Task.new(body: "Archived #{index}"))
+      bullet = create_bullet!(@user, bulletable: Task.new, body: "Archived #{index}")
       bullet.archive!
     end
 
@@ -39,9 +39,9 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show lists published bullets in section' do
-    published = create_bullet!(@user, bulletable: Note.new(body: 'Public note'))
+    published = create_bullet!(@user, bulletable: Note.new, body: 'Public note')
     published.publish!
-    create_bullet!(@user, bulletable: Note.new(body: 'Private note'))
+    create_bullet!(@user, bulletable: Note.new, body: 'Private note')
 
     get home_path
 
@@ -54,7 +54,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
   test 'show published section links to index when more than eight published bullets' do
     9.times do |index|
-      bullet = create_bullet!(@user, bulletable: Note.new(body: "Published #{index}"))
+      bullet = create_bullet!(@user, bulletable: Note.new, body: "Published #{index}")
       bullet.publish!
     end
 
@@ -183,7 +183,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'activity rail renders recent activities in home frame' do
-    bullet = create_bullet!(@user, bulletable: Task.new(body: 'Rail visible'))
+    bullet = create_bullet!(@user, bulletable: Task.new, body: 'Rail visible')
     activity = bullet.record_activity!('updated')
 
     get home_activities_path, headers: { 'Turbo-Frame' => 'home_activities' }

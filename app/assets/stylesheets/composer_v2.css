@@ -1,0 +1,136 @@
+/* Override Lexxy editor styling */
+
+lexxy-editor {
+    --lexxy-editor-rows: 0lh;
+    min-block-size: var(--lexxy-editor-rows);
+
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    height: fit-content;
+    font-size: var(--font-size-base-type);
+
+    background: transparent;
+    border: transparent;
+    transition: min-block-size 0.2s ease-out;
+
+}
+
+.composer[data-composer-multiline-value="true"] lexxy-editor {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    width: 100%;
+}
+
+lexxy-toolbar {
+    background: transparent;
+    border: 0.5px solid var(--color-invert-2);
+    order: 2;
+    animation: fall-in 0.2s ease-out;
+    & .lexxy-editor__toolbar-button {
+        color: var(--color-invert-2);
+        background: transparent;
+        padding: var(--space-v-half);
+        &:hover {
+            color: var(--color-invert-2);
+            background: var(--color-2);
+        }
+        &[aria-pressed="true"] {
+            color: var(--color-invert-2)
+        }
+    }
+}
+
+/* Composer styling */
+@layer components {
+
+    .composer {
+        display: flex;
+        gap: var(--space-v-half);
+        align-items: center;
+        justify-content: space-between;
+        animation: fall-in 0.2s ease-out;
+
+        &[data-composer-multiline-value="true"] {
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+    }
+
+    .composer[data-composer-mode-value="editor"] #recorder {
+        display: none !important;
+    }
+
+    .composer[data-composer-mode-value="recorder"] #editor {
+        display: none !important;
+    }
+
+
+    .composer--control {
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        border: transparent;
+        border-radius: var(--radius-full);
+        background: transparent;
+        box-shadow: var(--shadow-subtle);
+        width: var(--space-h-2);
+        height: var(--space-h-2);
+
+        &:hover {
+            cursor: pointer;
+            background: var(--color-2);
+        }
+
+
+    }
+
+    .composer[data-composer-multiline-value="true"] .composer--control {
+        order: 1;
+    }
+
+    .composer--variant-picker {
+        border-radius: var(--radius-full);
+        box-shadow: var(--shadow-subtle);
+
+        selectedcontent>.composer--variant-picker-option-content {
+            display: none;
+        }
+
+        .composer--variant-picker-option-name {
+            font-weight: var(--font-weight-strong);
+        }
+    }
+
+    .composer[data-composer-multiline-value="true"] .composer--variant-picker {
+        order: 1;
+        margin-right: auto;
+    }
+
+
+    .composer--submit-button {
+        appearance: none;
+        background-color: var(--color-invert-2);
+        color: var(--color-2);
+        border: transparent;
+
+        &:hover {
+            background: var(--color-2);
+            color: var(--color-invert-2);
+        }
+    }
+
+    .composer:has([id*="_composer_toolbar_toggle"]:checked) {
+        & lexxy-toolbar {
+            display: inherit;
+        }
+    }
+
+    .composer:has([id*="_composer_toolbar_toggle"]:not(:checked)) {
+        & lexxy-toolbar {
+            display: none !important;
+        }
+    }
+}

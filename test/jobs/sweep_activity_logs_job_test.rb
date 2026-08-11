@@ -5,7 +5,7 @@ require 'test_helper'
 class SweepActivityLogsJobTest < ActiveJob::TestCase
   setup do
     @user = users(:one)
-    @bullet = create_bullet!(@user, bulletable: Task.new(body: 'Task'))
+    @bullet = create_bullet!(@user, bulletable: Task.new, body: 'Task')
   end
 
   test 'perform sweeps expired activities' do

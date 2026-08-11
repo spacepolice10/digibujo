@@ -55,7 +55,7 @@ class AccessCodesControllerTest < ActionDispatch::IntegrationTest
            params: {
              bullet: {
                bulletable_type: 'Note',
-               bulletable_attributes: { body: '<p>Access code note</p>' },
+               body: '<p>Access code note</p>',
                pops_on: Date.current.iso8601,
                bucket_id: daylog.id
              }

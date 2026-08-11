@@ -2,10 +2,11 @@
   .pill {
     display: inline-flex;
     align-items: center;
+    gap: var(--spacing-horizontal-half);
     padding: var(--spacing-vertical-half) var(--spacing-horizontal);
     border-radius: var(--radius-full);
     border: 1px solid var(--color-stroke-subtle);
-    background: var(--color-bg-base);
+    background: var(--color-bg-subtle);
     color: var(--color-fg-subtle);
     font-family: var(--font-family-mono);
     line-height: 1;
@@ -17,14 +18,15 @@
   .pill--notify {
     border: 1px solid var(--model-color-2);
     background: var(--model-color-2-bg);
+    color: var(--model-color-2);
   }
   .pill--accent {
     border: 1px solid var(--color-accent);
     background: var(--color-accent-bg);
   }
   .pill--warning {
-    border: 1px solid var(--color-warning);
-    background: var(--color-warning-bg);
+    border: 1px solid var(--color-fg-warn);
+    background: var(--color-bg-warn);
   }
   .pill--danger {
     border: 1px solid var(--color-danger);

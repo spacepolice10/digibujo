@@ -65,9 +65,5 @@
     <div class="bullet--body">
       <%= yield %>
     </div>
-    <time
-      class="bullet--time"
-      datetime="<%= bullet.created_at.iso8601 %>"
-    ><%= bullet.created_at.strftime("%H:%M") %></time>
   </div>
 </turbo-frame>

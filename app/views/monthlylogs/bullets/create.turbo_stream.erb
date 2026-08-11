@@ -1,0 +1,10 @@
+
+<% target = dom_id(@bullet.bucket, @bullet.pops_on) %>
+
+<%= turbo_stream.update "toasts" do %>
+<%= render "shared/toasts", type: "notify", messages: ["Bullet created in #{target}"] %>
+<% end %>
+
+<%= turbo_stream.append target do %>
+  <%= render "bullets/bullet", bullet: @bullet %>
+<% end %>

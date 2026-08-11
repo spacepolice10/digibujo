@@ -7,7 +7,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     @user = users(:one)
     sign_in_as @user
     @daylog = ensure_daylog!(@user)
-    @bullet = create_bullet!(@user, bulletable: Task.new(body: 'Original'))
+    @bullet = create_bullet!(@user, bulletable: Task.new, body: 'Original')
   end
 
   test 'update turbo stream replaces bullet only' do
@@ -15,7 +15,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
       patch bullet_path(@bullet),
             params: {
               bullet: {
-                bulletable_attributes: { id: @bullet.bulletable_id, body: 'Updated' }
+                body: 'Updated', bulletable_attributes: { id: @bullet.bulletable_id }
               }
             },
             as: :turbo_stream
@@ -33,7 +33,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
            params: {
              bullet: {
                bulletable_type: 'Task',
-               bulletable_attributes: { body: 'Fresh task' },
+               body: 'Fresh task',
                pops_on: Date.current.iso8601,
                bucket_id: @daylog.id
              }
@@ -50,7 +50,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
            params: {
              bullet: {
                bulletable_type: 'Task',
-               bulletable_attributes: { body: 'Stream task' },
+               body: 'Stream task',
                pops_on: Date.current.iso8601,
                bucket_id: @daylog.id
              }
@@ -71,7 +71,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
          params: {
            bullet: {
              bulletable_type: 'Task',
-             bulletable_attributes: { body: '<p>Chat task</p>' },
+             body: '<p>Chat task</p>',
              pops_on: Date.current.iso8601,
              bucket_id: @daylog.id
            }
@@ -87,7 +87,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
   test 'composer create on a collection appends without a date pill' do
     collection = create_collection!(@user, name: 'Inbox')
-    create_bullet!(@user, bucket: collection.bucket, pops_on: nil, bulletable: Note.new(body: 'Yesterday'),
+    create_bullet!(@user, bucket: collection.bucket, pops_on: nil, bulletable: Note.new, body: 'Yesterday',
                    created_at: 1.day.ago)
     container = ActionView::RecordIdentifier.dom_id(collection, :bullets_container)
     composer = ActionView::RecordIdentifier.dom_id(collection, :bullets_composer)
@@ -96,7 +96,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
          params: {
            bullet: {
              bulletable_type: 'Note',
-             bulletable_attributes: { body: '<p>Fresh today</p>' },
+             body: '<p>Fresh today</p>',
              bucket_id: collection.bucket.id
            }
          },
@@ -111,7 +111,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
   test 'composer create on a collection skips the date pill for the same day' do
     collection = create_collection!(@user, name: 'Inbox')
-    create_bullet!(@user, bucket: collection.bucket, pops_on: nil, bulletable: Note.new(body: 'Earlier today'),
+    create_bullet!(@user, bucket: collection.bucket, pops_on: nil, bulletable: Note.new, body: 'Earlier today',
                    created_at: 1.hour.ago)
     container = ActionView::RecordIdentifier.dom_id(collection, :bullets_container)
     composer = ActionView::RecordIdentifier.dom_id(collection, :bullets_composer)
@@ -120,7 +120,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
          params: {
            bullet: {
              bulletable_type: 'Note',
-             bulletable_attributes: { body: '<p>Later today</p>' },
+             body: '<p>Later today</p>',
              bucket_id: collection.bucket.id
            }
          },
@@ -138,7 +138,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
          params: {
            bullet: {
              bulletable_type: 'Voice',
-             bulletable_attributes: { body: 'No recording attached' },
+             body: 'No recording attached',
              bucket_id: @daylog.id
            }
          },
@@ -157,7 +157,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
            params: {
              bullet: {
                bulletable_type: 'Note',
-               bulletable_attributes: { body: body_html },
+               body: body_html,
                pops_on: Date.current.iso8601,
                bucket_id: @daylog.id
              }
@@ -176,7 +176,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
          params: {
            bullet: {
              bulletable_type: 'Task',
-             bulletable_attributes: { body: body_html },
+             body: body_html,
              pops_on: Date.current.iso8601,
              bucket_id: @daylog.id
            }
@@ -192,7 +192,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
            params: {
              bullet: {
                bulletable_type: 'Note',
-               bulletable_attributes: { body: '<h1>Long detail</h1>' },
+               body: '<h1>Long detail</h1>',
                pops_on: Date.current.iso8601,
                bucket_id: @daylog.id
              }
@@ -204,7 +204,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show renders note body' do
-    note = create_bullet!(@user, bulletable: Note.new(body: '<p>Expanded content</p>'))
+    note = create_bullet!(@user, bulletable: Note.new, body: '<p>Expanded content</p>')
 
     get bullet_path(note)
 
@@ -214,7 +214,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show renders unarchive for archived bullet' do
-    bullet = create_bullet!(@user, bulletable: Task.new(body: 'Archived task'))
+    bullet = create_bullet!(@user, bulletable: Task.new, body: 'Archived task')
     bullet.archive!
 
     get bullet_path(bullet)
@@ -227,7 +227,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'edit renders note body editor for note with saved content' do
-    note = create_bullet!(@user, bulletable: Note.new(body: '<p>Expanded content</p>'))
+    note = create_bullet!(@user, bulletable: Note.new, body: '<p>Expanded content</p>')
 
     get edit_bullet_path(note)
 
@@ -241,7 +241,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'edit task uses inline preset without type pill' do
-    task = create_bullet!(@user, bulletable: Task.new(body: '<p>Do it</p>'))
+    task = create_bullet!(@user, bulletable: Task.new, body: '<p>Do it</p>')
 
     get edit_bullet_path(task)
 
@@ -251,13 +251,13 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'update changes body but ignores bulletable_type change' do
-    task = create_bullet!(@user, bulletable: Task.new(body: '<p>Old</p>'))
+    task = create_bullet!(@user, bulletable: Task.new, body: '<p>Old</p>')
 
     patch bullet_path(task),
           params: {
             bullet: {
               bulletable_type: 'Note',
-              bulletable_attributes: { id: task.bulletable_id, body: '<p>New text</p>' }
+              body: '<p>New text</p>', bulletable_attributes: { id: task.bulletable_id }
             }
           }
 
@@ -268,7 +268,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'create requires bullet type' do
-    post bullets_path, params: { bullet: { bulletable_attributes: { body: 'No type' } } }
+    post bullets_path, params: { bullet: { body: 'No type' } }
 
     assert_response :bad_request
   end
@@ -279,7 +279,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
            params: {
              bullet: {
                bulletable_type: 'Task',
-               bulletable_attributes: { body: '' },
+               body: '',
                pops_on: Date.current.iso8601,
                bucket_id: @daylog.id
              }
@@ -296,7 +296,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
            params: {
              bullet: {
                bulletable_type: 'Voice',
-               bulletable_attributes: { body: '' },
+               body: '',
                pops_on: Date.current.iso8601,
                bucket_id: @daylog.id
              }
@@ -321,7 +321,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
            params: {
              bullet: {
                bulletable_type: 'Task',
-               bulletable_attributes: { body: 'Collection task' },
+               body: 'Collection task',
                bucket_id: collection.bucket.id
              }
            }
@@ -336,7 +336,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
            params: {
              bullet: {
                bulletable_type: 'Task',
-               bulletable_attributes: { body: 'Stale mood', mood: 'inspired' },
+               body: 'Stale mood', bulletable_attributes: { mood: 'inspired' },
                pops_on: Date.current.iso8601,
                bucket_id: @daylog.id
              }
@@ -351,7 +351,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     blob = create_blob!(filename: 'voice.webm', content_type: 'audio/webm')
     bullet = create_bullet!(@user,
       bulletable_type: 'Voice',
-      bulletable_attributes: { body: 'Voice caption', recording: blob.signed_id, duration_seconds: 5 }
+      body: 'Voice caption', bulletable_attributes: { recording: blob.signed_id, duration_seconds: 5 }
     )
 
     get edit_bullet_path(bullet)
@@ -360,7 +360,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'lexxy-editor[preset=inline]'
 
     patch bullet_path(bullet),
-          params: { bullet: { bulletable_attributes: { id: bullet.bulletable_id, body: '<p>Changed</p>' } } }
+          params: { bullet: { body: '<p>Changed</p>', bulletable_attributes: { id: bullet.bulletable_id } } }
 
     assert_redirected_to bullet_path(bullet)
     assert_equal 'Changed', bullet.reload.body_as_text
@@ -372,7 +372,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
            params: {
              bullet: {
                bulletable_type: 'Task',
-               bulletable_attributes: { body: '<p>API task</p>' },
+               body: '<p>API task</p>',
                pops_on: Date.current.iso8601,
                bucket_id: @daylog.id
              }
@@ -394,7 +394,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
          params: {
            bullet: {
              bulletable_type: 'Voice',
-             bulletable_attributes: { body: 'No recording' },
+             body: 'No recording',
              bucket_id: @daylog.id,
              pops_on: Date.current.iso8601
            }
@@ -409,7 +409,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     post bullets_path,
          params: {
            bullet: {
-             bulletable_attributes: { body: 'Nope' },
+             body: 'Nope',
              bucket_id: @daylog.id,
              pops_on: Date.current.iso8601
            }
@@ -434,7 +434,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
          params: {
            bullet: {
              bulletable_type: 'Note',
-             bulletable_attributes: { body: '<p>Bearer note</p>' },
+             body: '<p>Bearer note</p>',
              pops_on: Date.current.iso8601,
              bucket_id: ensure_daylog!(@user).id
            }
@@ -459,7 +459,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
            params: {
              bullet: {
                bulletable_type: 'Note',
-               bulletable_attributes: { body: '<p>Too late</p>' },
+               body: '<p>Too late</p>',
                pops_on: Date.current.iso8601,
                bucket_id: ensure_daylog!(@user).id
              }
@@ -481,7 +481,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
          params: {
            bullet: {
              bulletable_type: 'Task',
-             bulletable_attributes: { body: '<p>Month task</p>' },
+             body: '<p>Month task</p>',
              pops_on: day.iso8601,
              bucket_id: monthlylog.bucket.id
            }
@@ -503,7 +503,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
          params: {
            bullet: {
              bulletable_type: 'Note',
-             bulletable_attributes: { body: '<p>Month note</p>' },
+             body: '<p>Month note</p>',
              bucket_id: monthlylog.bucket.id
            }
          },
@@ -524,7 +524,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
          params: {
            bullet: {
              bulletable_type: 'Task',
-             bulletable_attributes: { body: '<p>Someday task</p>' },
+             body: '<p>Someday task</p>',
              bucket_id: future.bucket.id
            }
          },

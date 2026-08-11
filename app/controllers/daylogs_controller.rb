@@ -9,10 +9,19 @@ class DaylogsController < ApplicationController
     @bullets = @daylog.bullets.where(pops_on: @selected_date).active.last_page
     @more_bullets = @bullets.size == Bullet::Pageable::PAGE_SIZE
 
-    @pending = Pending.pending_of(Current.user)
-    monthlylog = Current.user.monthlylogs.covering(@selected_date).take
-    Rails.logger.info("Monthlylog: #{@monthlylog.inspect}")
-    @monthlylog_bullets = monthlylog.bullets.active.where(pops_on: @selected_date).includes(:bulletable)
+    @pending_bullets = current_user.bujo.current_pending.bullets.includes(:bulletable)
+    @monthlylog_bullets = current_user.bujo.current_monthlylog.bullets.where(pops_on: @selected_date).includes(:bulletable)
+    @bullets_to_triage = @monthlylog_bullets + @pending_bullets
+    @monthlylog_number = @monthlylog_bullets.count
+    @yesterdays_number = @daylog.bullets.where(pops_on: @selected_date - 1.day).count
+    @monthlylog_tasks_number = @monthlylog_bullets.count { |bullet| bullet.bulletable_type == 'Task' }
+    @monthlylog_note_number = @monthlylog_bullets.count { |bullet| bullet.bulletable_type == 'Note' }
+    @monthlylog_events_number = @monthlylog_bullets.count { |bullet| bullet.bulletable_type == 'Event' }
+    @task_number = @bullets_to_triage.count { |bullet| bullet.bulletable_type == 'Task' }
+    @note_number = @bullets_to_triage.count { |bullet| bullet.bulletable_type == 'Note' }
+    @events_number = @bullets_to_triage.count { |bullet| bullet.bulletable_type == 'Event' }
+
+    Rails.logger.info("Bullets: #{@bullets.inspect}")
   end
 
   def create

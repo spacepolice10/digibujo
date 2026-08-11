@@ -1,0 +1,15 @@
+<turbo-frame id="<%= dom_id(@monthlylog, params[:date]) %>">
+    <div class="monthlylog--planned-composer">
+        <%= link_to monthlylog_path(@monthlylog, date: params[:date]), class: "monthlylog--planned-composer-hide-button button--secondary button--icon button--circle" do %>
+            <%= icon_tag("x") %>
+        <% end %>
+        <%= render "bullets/composer_v2",
+        bullet: @bullet,
+        bucket_id: @monthlylog.bucket.id,
+        pops_on: params[:date],
+        allowed_bulletable_variants: ["Task", "Event"],
+        preset: "default",
+        autofocus: true,
+        composer_id: dom_id(@monthlylog, params[:date]) %>
+    </div>
+</turbo-frame>

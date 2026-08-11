@@ -1,0 +1,69 @@
+<div id="<%= composer_id %>" class="composer" data-controller="composer" data-composer-multiline-value="false" data-composer-mode-value="editor">
+    <%= form_with model: bullet,
+        multipart: true,
+        class: "utilities--contents",
+        data: {
+          composer_target: "form",
+          action: "turbo:submit-end->composer#restoreEditor"
+        } do |fr| %>
+        <%= fr.hidden_field :bucket_id, value: bucket_id %>
+        <%= fr.hidden_field :pops_on, value: pops_on %>
+        <%
+        variants = [
+            {name: "Note", icon: "text", color: "var(--model-color-3)", description: "An idea, something to remember, reflection note, files or markdown    ."},
+            {name: "Task", icon: "square", color: "var(--model-color-2)", description: "Something you need to do."},
+            {name: "Event", icon: "calendar", color: "var(--model-color-4)", description: "Something that will happen or already happened."},
+
+        ].filter { |variant| allowed_bulletable_variants.include?(variant[:name]) }
+        %>
+        <span id="editor" class="utilities--contents">
+        <select name="bullet[bulletable_type]" id="bullet_bulletable_type" class="composer--variant-picker" data-action="composer#changeType">
+            <button>
+                <selectedcontent>
+                    <%= icon_tag(variants.first[:icon], style: "color: #{variants.first[:color]}") %>
+                </selectedcontent>
+            </button>
+            <% variants.each do |variant| %>
+                <option value="<%= variant[:name] %>">
+                    <%= icon_tag(variant[:icon], style: "color: #{variant[:color]}") %>
+                    <div class="composer--variant-picker-option-content">
+                        <p class="composer--variant-picker-option-name">
+                        <%= variant[:name] %>
+                        </p>
+                        <p class="composer--variant-picker-option-description">
+                        <%= variant[:description] %>
+                        </p>
+                    </div>
+                </option>
+            <% end %>
+        </select>
+        <%= fr.rich_text_area :body,
+            preset: preset,
+            autofocus: autofocus,
+            placeholder: "What's up?",
+            class: "multiline",
+            data: { action: "keydown->composer#submitByKeyboard:capture", composer_target: "editor" }
+        %>
+        <%= tag.label for: "#{composer_id}_composer_toolbar_toggle", class: "composer--control", data: { composer_target: "toolbarToggle", action: "change->composer#toggleToolbar" } do %>
+            <%= icon_tag("plus") %>
+            <%= tag.input type: "checkbox", id: "#{composer_id}_composer_toolbar_toggle", class: "utilities--sr-only" %>
+        <% end %>
+        <% if allowed_bulletable_variants.include?("Voice") %>
+        <button type="button" data-action="composer#toggleMode" data-composer-mode-param="recorder" class="composer--control">
+            <%= icon_tag("microphone") %>
+        </button>
+        <% end %>
+        </span>
+        <span id="recorder" class="utilities--contents">
+            <%= render "bullets/recorder" %>
+            <button type="button" data-action="composer#toggleMode" data-composer-mode-param="editor" class="composer--control">
+                <%= icon_tag("text") %>
+            </button>
+        </span>
+
+            <%= fr.button class: "composer--control composer--submit-button" do %>
+                <%= icon_tag("arrow-up") %>
+            <% end %>
+
+    <% end %>
+</div>

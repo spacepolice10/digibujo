@@ -4,10 +4,6 @@ import { Extension } from "lexxy"
 // note composers. Never reparent an external toolbar (toolbar="id") into the
 // editor — moving a connected <lexxy-toolbar> runs dispose() and kills commands.
 export class TrimToolbarExtension extends Extension {
-  get enabled() {
-    return this.editorElement.preset == "note"
-  }
-
   initializeToolbar(toolbar) {
     toolbar.querySelector('button[name="underline"]')?.remove()
     toolbar.querySelector('button[name="quote"]')?.remove()
@@ -21,7 +17,7 @@ export class TrimToolbarExtension extends Extension {
     })
     toolbar.querySelectorAll(".lexxy-editor__toolbar-separator").forEach((el) => el.remove())
 
-    if (toolbar.parentElement === this.editorElement) {
+    if (toolbar.parentElement == this.editorElement) {
       this.editorElement.append(toolbar)
     }
   }

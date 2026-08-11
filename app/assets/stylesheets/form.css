@@ -59,13 +59,8 @@
   /* ── Select ───────────────────────────────────────── */
 
   select {
-    appearance: none;
+    appearance: base-select;
     cursor: pointer;
-    padding-right: var(--spacing-horizontal);
-    background-image: var(--icon-chevron-down);
-    background-repeat: no-repeat;
-    background-position: right var(--spacing-horizontal-half) center;
-    background-size: var(--spacing-horizontal-double);
   }
 
   /* ── Input — active/filled variant ───────────────── */

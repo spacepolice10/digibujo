@@ -12,7 +12,7 @@ module Reviews
 
     test 'show lists scheduled bullets for the week starting today' do
       week_start = @today + 2.days
-      create_bullet!(@user, bulletable: Event.new(body: 'Team standup'), pops_on: week_start)
+      create_bullet!(@user, bulletable: Event.new, body: 'Team standup', pops_on: week_start)
 
       get review_scheduled_path(from: (@today - 1.day).iso8601, to: (@today - 1.day).iso8601)
 
@@ -23,8 +23,8 @@ module Reviews
     end
 
     test 'show only includes active bullets' do
-      create_bullet!(@user, bulletable: Task.new(body: 'Active bullet'), pops_on: @today)
-      archived = create_bullet!(@user, bulletable: Task.new(body: 'Archived'), pops_on: @today)
+      create_bullet!(@user, bulletable: Task.new, body: 'Active bullet', pops_on: @today)
+      archived = create_bullet!(@user, bulletable: Task.new, body: 'Archived', pops_on: @today)
       archived.archive!
 
       get review_scheduled_path(from: @today.iso8601, to: @today.iso8601)
@@ -35,7 +35,7 @@ module Reviews
     end
 
     test 'show defaults to the next seven days from today' do
-      create_bullet!(@user, bulletable: Task.new(body: 'Recent'), pops_on: @today)
+      create_bullet!(@user, bulletable: Task.new, body: 'Recent', pops_on: @today)
 
       get review_scheduled_path
 

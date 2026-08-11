@@ -139,7 +139,7 @@ class BucketTest < ActiveSupport::TestCase
   end
 
   test 'archived bullet is not searchable' do
-    bullet = create_bullet!(@user, bulletable: Task.new(body: 'Hide me'), pops_on: Date.current)
+    bullet = create_bullet!(@user, bulletable: Task.new, body: 'Hide me', pops_on: Date.current)
     bullet.archive!
 
     assert_not bullet.searchable?

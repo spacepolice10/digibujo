@@ -48,7 +48,7 @@ class Search::GlobalRequestTest < ActiveSupport::TestCase
 
   test "returns a flat ranked list across entity types" do
     create_project!(@user, name: "alpha project")
-    create_bullet!(@user, bulletable: Task.new(body: "alpha task"))
+    create_bullet!(@user, bulletable: Task.new, body: "alpha task")
 
     entries = Search::GlobalRequest.call(user: @user, query: "alpha")
 

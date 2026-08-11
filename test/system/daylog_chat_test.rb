@@ -109,7 +109,7 @@ class DaylogChatSystemTest < ApplicationSystemTestCase
 
   test 'switching dates loads the other day and remounts the composer' do
     yesterday = Date.current - 1.day
-    create_bullet!(@user, bulletable: Note.new(body: 'Yesterday line'), pops_on: yesterday)
+    create_bullet!(@user, bulletable: Note.new, body: 'Yesterday line', pops_on: yesterday)
 
     visit daylog_path(date: Date.current.iso8601)
     assert_selector '#daylog_bullets_composer lexxy-editor .lexxy-editor__content'
@@ -164,7 +164,7 @@ class DaylogChatSystemTest < ApplicationSystemTestCase
 
   def create_lines(count)
     Array.new(count) do |index|
-      create_bullet!(@user, bulletable: Note.new(body: "Line #{index}"), created_at: (count - index).minutes.ago)
+      create_bullet!(@user, bulletable: Note.new, body: "Line #{index}", created_at: (count - index).minutes.ago)
     end
   end
 

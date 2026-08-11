@@ -137,7 +137,7 @@
       <% if @bullet.bulletable_type == "Voice" && @bullet.bulletable.recording.attached? %>
         <%= @bullet.body %>
         <%= render "voices/playback",
-              recording: @bullet.voice.recording,
+              recording_source: url_for(@bullet.voice.recording),
               recording_duration: @bullet.voice.duration_seconds %>
       <% else %>
       <div class="layout--surface layout--padded">

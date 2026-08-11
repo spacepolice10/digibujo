@@ -1,0 +1,60 @@
+@layer components {
+    select {
+
+        &,
+        &::picker(select) {
+            appearance: base-select;
+        }
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: var(--space-h-2);
+        height: var(--space-h-2);
+
+        &::picker(select) {
+            position: absolute;
+            background: var(--color-1);
+            border-radius: var(--radius-base);
+            box-shadow: var(--shadow-subtle);
+            height: fit-content;
+            max-width: 350px;
+        }
+
+        &::picker-icon {
+            display: none !important;
+        }
+
+        option::checkmark {
+            display: none !important;
+        }
+
+        option {
+            display: flex;
+            align-items: center;
+            gap: var(--space-h-half);
+            box-sizing: border-box;
+            width: 100%;
+            margin: 0;
+            padding: var(--space-v-half) var(--space-h-half);
+            border: 0;
+            border-radius: 0;
+            background: transparent;
+            box-shadow: var(--shadow-subtle);
+            font: inherit;
+            font-size: var(--font-size-base-read);
+            line-height: inherit;
+            text-align: start;
+            text-decoration: none;
+            color: var(--color-invert-2);
+            cursor: pointer;
+            appearance: none;
+
+            @media (hover: hover) {
+                &:hover {
+                    background: var(--color-2);
+                    color: var(--color-invert-2);
+                }
+            }
+        }
+    }
+}

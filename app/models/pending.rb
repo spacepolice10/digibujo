@@ -4,6 +4,7 @@ class Pending < ApplicationRecord
   include Bucketable
   belongs_to :user
   validates :user_id, uniqueness: true
+
   def self.pending_of(user)
     provision!(user).bullets.active
   end

@@ -21,15 +21,15 @@
      → the pill itself (padding + icon + border). */
   :root {
     --tabbar-safe-area: max(
-      var(--spacing-vertical),
+      var(--space-v),
       env(safe-area-inset-bottom, 0px)
     );
     --tabbar-size: calc(
-      var(--spacing-vertical)
-      + var(--spacing-horizontal-double)
+      var(--space-v)
+      + var(--space-h-4)
       + 2px
     );
-    --tabbar-offset: var(--spacing-vertical);
+    --tabbar-offset: var(--space-v);
     --tabbar-clearance: calc(
       var(--tabbar-offset)
       + var(--tabbar-safe-area)
@@ -47,11 +47,10 @@
     opacity: 100%;
     display: flex;
     align-items: stretch;
-    gap: var(--spacing-horizontal-half);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    gap: var(--space-h-half);
+    padding: var(--space-v-half) var(--space-h-half);
     margin-bottom: var(--tabbar-safe-area);
-    background-color: var(--color-bg-subtle);
-    border: 1px solid var(--color-stroke-base);
+    background-color: var(--color-1);
     box-shadow: var(--shadow-subtle);
     transition: opacity 250ms;
   }
@@ -65,15 +64,15 @@
     height: 100%;
     width: 100%;
     flex-shrink: 0;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
+    padding: 0 var(--space-h);
     border-radius: 9999px;
-    color: var(--color-fg-subtle);
+    color: var(--color-invert-2);
     text-decoration: none;
 
     & .icon,
     & .tabbar--item-icon {
-      width: var(--spacing-horizontal-double);
-      height: var(--spacing-horizontal-double);
+      width: var(--space-h-2);
+      height: var(--space-h-2);
       flex-shrink: 0;
     }
 
@@ -84,11 +83,11 @@
     &:nth-child(4) > :is(.icon, .tabbar--mark) { view-transition-name: tabbar-icon-4; }
 
     &:focus-visible {
-      color: var(--color-fg-base);
+      color: var(--color-invert-2);
     }
 
     &.tabbar--item-active {
-      color: var(--color-fg-base);
+      color: var(--color-invert-2);
 
       &::before {
         view-transition-name: tabbar-item;
@@ -97,8 +96,8 @@
         inset: 0;
         z-index: -1;
         border-radius: 9999px;
-        background: color-mix(in oklch, var(--color-accent) 42%, var(--color-accent-bg));
-        border: 1px solid color-mix(in oklch, var(--color-accent) 50%, var(--color-accent));
+        background: color-mix(in oklch, var(--color-accent-1) 42%, var(--color-accent-1-subtle));
+        border: 1px solid color-mix(in oklch, var(--color-accent-1) 50%, var(--color-accent-1));
         box-shadow: var(--shadow-base);
       }
     }
@@ -111,16 +110,16 @@
 
   .tabbar--mark-ring {
     fill: none;
-    stroke: currentColor;
+    stroke: var(--color-invert-2);
     stroke-width: 2.25;
   }
 
   .tabbar--mark-accent {
-    fill: var(--color-accent);
+    fill: var(--color-accent-1);
   }
 
   .tabbar--mark-date {
-    fill: var(--color-accent);
+    fill: var(--color-accent-1);
     font-family: var(--font-family-mono);
     font-weight: var(--font-weight-medium);
   }

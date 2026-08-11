@@ -2,15 +2,11 @@
 
 class TriageController < ApplicationController
   def show
-    @pending = Pending.provision!(Current.user)
-    inbox = Pending.pending_of(Current.user)
-    monthlylog = Current.user.monthlylogs.covering(Date.current).take
-    inbox = inbox.or(monthlylog.bullets.active.where(pops_on: Date.current)) if monthlylog
-
-    @bullets = set_page_and_extract_portion_from(
-      inbox,
-      per_page: [15, 30, 50, 100]
-    )
+    @pending_bullets = current_user.bujo.current_pending.bullets.includes(:bulletable)
+    @monthlylog_bullets = current_user.bujo.current_monthlylog.bullets.where(pops_on: Date.current).includes(:bulletable)
+    @yesterdays_bullets = current_user.bujo.current_daylog.bullets.where(pops_on: Date.current - 1.day).includes(:bulletable)
+    @bullets_to_triage = @pending_bullets + @monthlylog_bullets + @yesterdays_bullets
+    @bullets = @bullets_to_triage
   end
 
   def number

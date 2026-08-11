@@ -23,7 +23,7 @@ class CleanSoftDeletedRecordsJobTest < ActiveJob::TestCase
   test "destroys bullets with expired archived collection buckets" do
     collection = create_collection!(@user, name: "Stale with bullets")
     bucket = collection.bucket
-    bullet = create_bullet!(@user, bulletable: Task.new(body: "Goes away"), bucket: bucket)
+    bullet = create_bullet!(@user, bulletable: Task.new, body: "Goes away", bucket: bucket)
     bucket.archive!
     bucket.archive.update!(created_at: (Archivable::RETENTION_DAYS + 1).days.ago)
 

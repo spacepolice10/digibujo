@@ -7,7 +7,7 @@ module Bullets
     setup do
       @user = users(:one)
       sign_in_as @user
-      @bullet = create_bullet!(@user, bulletable: Note.new(body: 'Publish me'))
+      @bullet = create_bullet!(@user, bulletable: Note.new, body: 'Publish me')
     end
 
     test 'create publishes bullet and redirects to its public page' do
@@ -29,7 +29,7 @@ module Bullets
     end
 
     test 'create publishes multiple bullets' do
-      other = create_bullet!(@user, bulletable: Note.new(body: 'Too'))
+      other = create_bullet!(@user, bulletable: Note.new, body: 'Too')
 
       post publish_path, params: { bullet_ids: "#{@bullet.id},#{other.id}" }
 

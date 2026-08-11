@@ -1,76 +1,93 @@
 @layer components {
 
-.monthlylog--calendar {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: repeat(6, 1fr);
-  gap: var(--spacing-vertical);
-  background-color: var(--color-bg-base);
-  padding: var(--spacing-vertical);
+    .monthlylog--container {
+        background: var(--color-bg-subtle);
+        border: 1px solid var(--color-stroke-base);
+    }
 
-  & .monthlylog--calendar-weekday-name {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    grid-column: span 1;
-    grid-row: span 1;
-    font-size: var(--font-size-xs);
-    text-align: center;
-    padding: var(--spacing-vertical-half);
-    & > * {
-      width: 100%;
-      height: 100%;
+    .monthlylog--section {
+        overflow-y: auto;
+        height: 90vh;
+        overscroll-behavior-y: none;
+        &.divided--vertical {
+            border-right: 1px solid var(--color-stroke-base);
+        }
+        & .monthlylog--section-header {
+            border-bottom: 1px solid var(--color-stroke-base);
+            & > p {
+                margin-top: var(--spacing-vertical-half);
+            }
+        }
+        & .monthlylog--section-content {
+            padding: var(--spacing-vertical) var(--spacing-horizontal);
+        }
+        @media (max-width: 769px) {
+            overscroll-behavior-x: auto;
+            border-radius: 0 0 var(--radius-strong) var(--radius-strong);
+        }
     }
-  }
 
-  & .monthlylog--calendar-date-cell {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    grid-column: span 1;
-    grid-row: span 1;
-    font-size: var(--font-size-xs);
-    text-align: center;
-    padding: var(--spacing-vertical-half);
-    border: 1px solid var(--color-stroke-base);
-    border-radius: var(--radius-full);
-    transition: all 0.08s ease-in-out;
-    & > * {
-      width: 100%;
-      height: 100%;
-      text-decoration: none;
-      color: var(--color-text-base);
+    .monthlylog--planned-composer {
+        position: relative;
+        background: var(--color-bg-base);
+        padding: var(--spacing-vertical);
+        border-radius: var(--radius-base);
+        border: 1px solid var(--color-stroke-base);
+        & .monthlylog--planned-composer-hide-button {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+        }
     }
-    &[aria-selected="true"] {
-      background-color: var(--color-accent);
-      color: var(--color-stroke-base);
-      border-color: var(--color-accent-bg);
-      border-radius: var(--radius-strong);
-    }
-    &:hover {
-      background-color: var(--color-bg-subtle);
-      color: var(--color-fg-base);
-      border-color: var(--color-stroke-subtle);
-      border-radius: var(--radius-strong);
-    }
-  }
-}
 
-.monthlylog--inline-calendar {
-  display: flex;
-align-items: center;
-overflow-x: auto;
-& [aria-selected="true"] {
-  background-color: var(--color-accent);
-  color: var(--color-stroke-base);
-  border-color: var(--color-accent-bg);
-  border-radius: var(--radius-strong);
-}
-& [aria-selected="false"] {
-  background-color: var(--color-bg-subtle);
-  color: var(--color-fg-base);
-  border-color: var(--color-stroke-subtle);
-  border-radius: var(--radius-strong);
-}
-}
+    .monthlylog--unplanned-composer {
+        position: sticky;
+        bottom: 0;
+        background: var(--color-bg-base);
+        padding: var(--spacing-vertical);
+    }
+
+    .monthlylog--date-category {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-vertical-half);
+        margin-top: var(--spacing-vertical-triple);
+        @media (max-width: 769px) {
+            padding: var(--spacing-vertical) var(--spacing-horizontal);
+            border-radius: var(--radius-base);
+            border: 1px solid var(--color-stroke-base);
+        }
+
+        & .monthlylog--date-category-name {
+            --highlight-colour: var(--model-color-4);
+            display: flex;
+            position: relative;
+            align-items: center;
+            gap: var(--spacing-horizontal);
+            margin-bottom: var(--spacing-vertical-half);
+            transition: transform 0.08s;
+            &:after {
+                content: "";
+                display: block;
+                position: absolute;
+                top: 50%;
+                width: 25%;
+                height: 50%;
+                background: var(--highlight-colour);
+                margin-bottom: var(--spacing-vertical-half);
+                opacity: 0.1;
+                z-index: 1;
+                transform: skew(-10deg);
+            }
+            &:hover {
+                transform: translateX(var(--spacing-horizontal-half));
+
+            }
+        }
+    }
+    .monthlylog--unplanned-category {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-vertical-half);
+    }
 }

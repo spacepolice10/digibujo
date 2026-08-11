@@ -12,11 +12,10 @@
     </div>
   <% end %>
 
-  <%= fr.fields_for :bulletable, bulletable do |bf| %>
+<%= fr.fields_for :bulletable, bulletable do |bf| %>
     <%= bf.hidden_field :id %>
     <% if bullet.bulletable_type == "Note" %>
-      <%= bf.rich_text_area :body,
-            value: bulletable.body,
+      <%= fr.rich_text_area :body,
             preset: "note",
             autofocus: true do %>
         <lexxy-prompt
@@ -28,10 +27,7 @@
         ></lexxy-prompt>
       <% end %>
     <% else %>
-      <%= bf.rich_text_area :body,
-            value: bulletable.body,
-            preset: "inline",
-            autofocus: true %>
+      <%= fr.rich_text_area :body, preset: "inline", autofocus: true %>
       <% if bullet.bulletable_type == "Event" %>
         <%= bf.hidden_field :starts_date, value: bulletable.starts_date %>
         <%= bf.hidden_field :ends_date, value: bulletable.ends_date %>

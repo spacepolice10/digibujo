@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = [
-    "recordButton", "stopButton", "discardButton", "remaining", "status",
+    "recordButton", "stopButton", "discardButton", "playButton", "remaining", "status",
     "preview", "previewContainer", "file", "duration",
     "unsupported", "waveform"
   ]
@@ -28,9 +28,7 @@ export default class extends Controller {
     this.previewLink = null
     this.doneRecording = false
 
-    this.supported = typeof MediaRecorder != "undefined" &&
-      typeof navigator.mediaDevices?.getUserMedia == "function" &&
-      this.#preferredMimeType() != null
+    this.supported = this.#isSupported()
 
     if (!this.supported) {
       this.unsupportedTarget.hidden = false
@@ -50,11 +48,7 @@ export default class extends Controller {
   // Request mic, start MediaRecorder + countdown, show waveform.
   async record(event) {
     event.preventDefault()
-    if (!this.supported) return
-
-    if (this.hasStopButtonTarget) this.stopButtonTarget.hidden = false
-    this.discardButtonTarget.hidden = this.shellValue
-    this.previewContainerTarget.hidden = true
+    if (!this.#isSupported()) return
 
     try {
       this.stream = await navigator.mediaDevices.getUserMedia({ audio: true })
@@ -79,11 +73,11 @@ export default class extends Controller {
     })
 
     this.mediaRecorder.addEventListener("stop", () => this.#finalizeRecording())
-
     this.mediaRecorder.start(250)
     this.recordButtonTarget.hidden = true
     this.updateStatus("Recording…")
     this.#createWaveform()
+    this.stopButtonTarget.hidden = false
 
     this.timerInterval = window.setInterval(() => {
       this.elapsedSeconds += 1
@@ -104,9 +98,33 @@ export default class extends Controller {
     this.cleanupStream()
   }
 
+  togglePlay(event) {
+    event?.preventDefault()
+    if (!this.hasPreviewTarget) return
+    if (this.previewTarget.paused) {
+      this.previewTarget.play()
+      this.playButtonTarget.hidden = true
+      this.playButtonTarget.setAttribute("aria-label", "Play")
+      this.playButtonTarget.setAttribute("aria-pressed", "true")
+      this.playButtonTarget.querySelector(".playing").hidden = false
+      this.playButtonTarget.querySelector(".paused").hidden = true
+    } else {
+      this.previewTarget.pause()
+      this.playButtonTarget.hidden = false
+      this.playButtonTarget.setAttribute("aria-label", "Pause")
+      this.playButtonTarget.setAttribute("aria-pressed", "false")
+      this.playButtonTarget.querySelector(".playing").hidden = true
+      this.playButtonTarget.querySelector(".paused").hidden = false
+    }
+  }
+
   // Throw away the current take and return to idle UI.
   discard(event) {
     event.preventDefault()
+    this.stopButtonTarget.hidden = true
+    this.playButtonTarget.hidden = true
+    this.recordButtonTarget.hidden = false
+    this.discardButtonTarget.hidden = true
     this.reset()
   }
 
@@ -127,6 +145,12 @@ export default class extends Controller {
     }
 
     this.#stopWaveform()
+    this.#waveformItems().forEach((item) => {
+      item.classList.remove("is-filled")
+      item.setAttribute("height", "2")
+      item.setAttribute("y", "15")
+    })
+
     this.cleanupStream()
     this.cleanupTimers()
   }
@@ -191,16 +215,19 @@ export default class extends Controller {
     this.doneRecording = false
     this.cleanupRecording()
     this.revokePreviewLink()
-    this.#resetPreviewPlayer()
     this.#stopWaveform()
     this.previewContainerTarget.hidden = true
     this.recordButtonTarget.hidden = false
-    this.discardButtonTarget.hidden = true
-    if (this.hasStopButtonTarget) this.stopButtonTarget.hidden = this.shellValue
     this.recordButtonTarget.disabled = !this.supported
     this.updateStatus("")
     this.updateRemaining()
     this.updateSubmitStatus()
+  }
+
+  #isSupported() {
+    return typeof MediaRecorder != "undefined" &&
+      typeof navigator.mediaDevices?.getUserMedia == "function" &&
+      this.#preferredMimeType() != null
   }
 
   // Build File from chunks, set duration, wire preview playback.
@@ -226,7 +253,9 @@ export default class extends Controller {
     this.previewTarget.load()
     this.#syncPreviewDuration(duration)
     this.previewContainerTarget.hidden = false
-    if (this.hasStopButtonTarget) this.stopButtonTarget.hidden = this.shellValue
+    this.stopButtonTarget.hidden = true
+    this.playButtonTarget.hidden = false
+    this.recordButtonTarget.hidden = true
     this.discardButtonTarget.hidden = false
 
     this.#appendRecording(file)
@@ -243,35 +272,10 @@ export default class extends Controller {
     this.updateSubmitStatus()
   }
 
-  // Find the voice-player root inside the preview container.
-  #previewPlayer() {
-    return this.previewContainerTarget.querySelector(".voice--playback")
-  }
-
   // Sync preview player duration value + slider aria after a take.
   #syncPreviewDuration(duration) {
-    const player = this.#previewPlayer()
-    if (!player) return
-
-    player.dataset.voicePlayerDurationValue = duration
-
-    const progress = player.querySelector('[role="slider"]')
-    if (progress) progress.setAttribute("aria-valuemax", duration)
-
-    const label = player.querySelector('[data-voice-player-target="duration"]')
-    if (label) {
-      const minutes = Math.floor(duration / 60)
-      const seconds = duration % 60
-      label.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`
-    }
-  }
-
-  // Pause/clear preview <audio> and zero its duration UI.
-  #resetPreviewPlayer() {
-    this.previewTarget?.pause()
-    this.previewTarget?.removeAttribute("src")
-    this.previewTarget?.load()
-    this.#syncPreviewDuration(0)
+    this.previewTarget.dataset.voicePlayerDurationValue = duration
+    this.previewTarget.setAttribute("aria-valuemax", duration)
   }
 
   // Pick webm or mp4 for MediaRecorder, or null if unsupported.
@@ -362,13 +366,5 @@ export default class extends Controller {
     this.audioContext = null
     this.analyser = null
 
-    if (!this.hasWaveformTarget) return
-
-    this.#waveformItems().forEach((item) => {
-      item.classList.remove("is-filled")
-      item.setAttribute("height", "2")
-      item.setAttribute("y", "15")
-    })
-    this.waveformTarget.hidden = true
   }
 }

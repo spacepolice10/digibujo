@@ -10,5 +10,5 @@ class Event < ApplicationRecord
   def icon         = :circle
   def colour       = 'magenta'
 
-  def self.permitted_bullet_attributes = %i[id body starts_date ends_date]
+  def self.permitted_bullet_attributes = %i[id starts_date ends_date]
 end

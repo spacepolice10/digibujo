@@ -9,8 +9,8 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'index shows activities newest first' do
-    a = create_bullet!(@user, bulletable: Task.new(body: 'One'))
-    b = create_bullet!(@user, bulletable: Note.new(body: 'Two'))
+    a = create_bullet!(@user, bulletable: Task.new, body: 'One')
+    b = create_bullet!(@user, bulletable: Note.new, body: 'Two')
     a.record_activity!('updated')
     b.archive!
 
@@ -34,7 +34,7 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show renders rescheduled activity with daylog links' do
-    bullet = create_bullet!(@user, bulletable: Task.new(body: 'Buy milk'), pops_on: Date.current)
+    bullet = create_bullet!(@user, bulletable: Task.new, body: 'Buy milk', pops_on: Date.current)
     bullet.postpone!(bucket: ensure_daylog!(@user), pops_on: Date.current + 2.days)
     activity = Activity.order(:created_at).last
 
@@ -50,7 +50,7 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
 
   test 'show renders collected activity with bucket link' do
     collection = create_collection!(@user, name: 'Reading list')
-    bullet = create_bullet!(@user, bulletable: Task.new(body: 'Read chapter'))
+    bullet = create_bullet!(@user, bulletable: Task.new, body: 'Read chapter')
     bullet.collect!(bucket_id: collection.bucket.id)
     activity = Activity.order(:created_at).last
 
@@ -64,7 +64,7 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
 
   test 'show returns not found for another users activity' do
     other = users(:two)
-    bullet = create_bullet!(other, bulletable: Task.new(body: 'Private'))
+    bullet = create_bullet!(other, bulletable: Task.new, body: 'Private')
     activity = bullet.record_activity!('updated')
 
     get activity_path(activity)
@@ -85,7 +85,7 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'index feed links subject to model' do
-    bullet = create_bullet!(@user, bulletable: Task.new(body: 'Linked'))
+    bullet = create_bullet!(@user, bulletable: Task.new, body: 'Linked')
     bullet.record_activity!('updated')
 
     get activities_path

@@ -11,7 +11,7 @@ class Task < ApplicationRecord
   def colour         = 'cobalt'
   def data_attributes = { task_completed: completed? }
 
-  def self.permitted_bullet_attributes = %i[id body completed author_name]
+  def self.permitted_bullet_attributes = %i[id completed]
 
   def complete!
     update!(completed: true, completed_at: Time.current)

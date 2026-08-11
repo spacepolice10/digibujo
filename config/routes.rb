@@ -56,7 +56,7 @@ Rails.application.routes.draw do
 
   resources :monthlylogs, only: %i[create show] do
     scope module: :monthlylogs do
-      resources :bullets, only: :index
+      resources :bullets
     end
   end
 

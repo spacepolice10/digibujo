@@ -12,7 +12,7 @@ module Triage
       @bullet = create_bullet!(
         @user,
         bucket: @pending.bucket,
-        bulletable: Note.new(body: 'Capture me'),
+        bulletable: Note.new, body: 'Capture me',
         pops_on: nil
       )
     end
@@ -35,7 +35,7 @@ module Triage
       bullet = create_bullet!(
         @user,
         bucket: monthlylog.bucket,
-        bulletable: Task.new(body: 'From monthly'),
+        bulletable: Task.new, body: 'From monthly',
         pops_on: Date.current
       )
 
@@ -48,7 +48,7 @@ module Triage
     end
 
     test 'create is a no-op when bullet is already in the daylog' do
-      daylog_bullet = create_bullet!(@user, bulletable: Note.new(body: 'Already today'))
+      daylog_bullet = create_bullet!(@user, bulletable: Note.new, body: 'Already today')
 
       post triage_bullet_accept_path(daylog_bullet), as: :turbo_stream
 

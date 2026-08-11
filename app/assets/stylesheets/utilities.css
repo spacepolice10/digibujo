@@ -34,33 +34,4 @@
   .utilities--overscroll-auto {
     overscroll-behavior: auto;
   }
-
-  .utilities--highlight {
-    position: relative;
-    &:before {
-      content: "";
-      display: block;
-      position: absolute;
-      top: 25%;
-      left: 0;
-      width: 100%;
-      height: 50%;
-      background: var(--model-color-4);
-      opacity: var(--opacity-half);
-      z-index: -1;
-      transform: skew(-10deg);
-    }
-  }
-  .utilities--underline {
-    position: relative;
-    &:before {
-      content: "";
-      display: block;
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      height: 1px;
-      background: var(--color-stroke-base);
-    }
-  }
 }

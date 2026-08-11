@@ -12,18 +12,11 @@ Lexxy.configure({
   global: {
     extensions: [TrimToolbarExtension],
   },
-  inline: {
-    attachments: true,
+  simple: {
+    attachments: false,
     toolbar: false,
-    multiLine: true,
-    richText: true,
-    markdown: true,
-  },
-  note: {
-    attachments: true,
-    toolbar: { upload: "file" },
-    multiLine: true,
-    richText: true,
+    multiLine: false,
+    richText: false,
     markdown: true,
   },
 });

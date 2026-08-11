@@ -53,14 +53,14 @@ class AttachmentsControllerTest < ActionDispatch::IntegrationTest
   private
 
   def attach_note_blob!(user, filename:)
-    bullet = create_bullet!(user, bulletable: Note.new(body: '<p>note</p>'))
+    bullet = create_bullet!(user, bulletable: Note.new, body: '<p>note</p>')
     blob = ActiveStorage::Blob.create_and_upload!(
       io: StringIO.new(mini_png),
       filename: filename,
       content_type: 'image/png'
     )
     content = ActionText::Content.new('<p>note</p>').append_attachables(blob)
-    bullet.bulletable.update!(body: content)
+    bullet.update!(body: content)
     blob
   end
 

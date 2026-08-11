@@ -1,0 +1,21 @@
+.footer {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    pointer-events: none;
+
+    @media (pointer: fine) {
+        @media (max-width: 768px) {
+            display: none;
+        }
+    }
+
+    &>* {
+        pointer-events: auto;
+    }
+}

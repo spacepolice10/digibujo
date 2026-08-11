@@ -21,7 +21,7 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
   test 'monthly bucket shows spread shell when current exists' do
     monthlylog = create_monthlylog!(@user, name: 'june')
     create_bullet!(@user,
-                   bulletable: Task.new(body: 'Unplanned task'),
+                   bulletable: Task.new, body: 'Unplanned task',
                    bucket_id: monthlylog.bucket.id)
 
     get current_monthlylog_path
@@ -47,7 +47,7 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     monthlylog = create_monthlylog!(@user, name: 'june')
     day = Date.current.beginning_of_month + 2.days
     create_bullet!(@user,
-                   bulletable: Event.new(body: 'Dentist'),
+                   bulletable: Event.new, body: 'Dentist',
                    bucket_id: monthlylog.bucket.id,
                    pops_on: day)
 
@@ -65,7 +65,7 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     monthlylog = create_monthlylog!(@user, name: 'june')
     day = Date.current.beginning_of_month + 2.days
     create_bullet!(@user,
-                   bulletable: Task.new(body: 'Planned task'),
+                   bulletable: Task.new, body: 'Planned task',
                    bucket_id: monthlylog.bucket.id,
                    pops_on: day)
 
@@ -96,11 +96,11 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     monthlylog = create_monthlylog!(@user, name: 'june')
     day = Date.current.beginning_of_month
     create_bullet!(@user,
-                   bulletable: Task.new(body: 'Planned mobile task'),
+                   bulletable: Task.new, body: 'Planned mobile task',
                    bucket_id: monthlylog.bucket.id,
                    pops_on: day)
     create_bullet!(@user,
-                   bulletable: Note.new(body: 'Unplanned mobile note'),
+                   bulletable: Note.new, body: 'Unplanned mobile note',
                    bucket_id: monthlylog.bucket.id)
 
     get monthlylog_path(monthlylog), headers: { 'User-Agent' => MOBILE_UA }
@@ -196,10 +196,10 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
       period_to: Date.new(2026, 7, 31)
     )
     create_bullet!(@user,
-                   bulletable: Task.new(body: 'June-only task'),
+                   bulletable: Task.new, body: 'June-only task',
                    bucket_id: june.bucket.id)
     create_bullet!(@user,
-                   bulletable: Task.new(body: 'July-only task'),
+                   bulletable: Task.new, body: 'July-only task',
                    bucket_id: july.bucket.id)
 
     get monthlylog_path(june)

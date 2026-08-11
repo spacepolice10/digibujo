@@ -1,35 +1,32 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = [ "audio", "playButton", "playIcon", "stopIcon", "progress", "duration" ]
+  static targets = [ "source", "playButton", "playIcon", "stopIcon", "isPlaying", "progress", "duration" ]
   static values = { duration: Number }
 
   connect() {
-    this.playing = false
+    this.isPlayingValue = false
     this.boundTimeUpdate = this.#timeUpdate.bind(this)
-    this.boundEnded = this.#ended.bind(this)
-    this.boundOnOtherPlay = this.#onOtherPlay.bind(this)
+    this.boundFinished = this.#finished.bind(this)
 
-    this.audioTarget.addEventListener("timeupdate", this.boundTimeUpdate)
-    this.audioTarget.addEventListener("ended", this.boundEnded)
-    this.audioTarget.addEventListener("loadedmetadata", this.boundTimeUpdate)
-    document.addEventListener("voice-player:play", this.boundOnOtherPlay)
+    this.sourceTarget.addEventListener("timeupdate", this.boundTimeUpdate)
+    this.sourceTarget.addEventListener("ended", this.boundFinished)
+    this.sourceTarget.addEventListener("loadedmetadata", this.boundTimeUpdate)
 
     this.#timeUpdate()
     this.#updatePlayStatus()
   }
 
   disconnect() {
-    this.audioTarget.removeEventListener("timeupdate", this.boundTimeUpdate)
-    this.audioTarget.removeEventListener("ended", this.boundEnded)
-    this.audioTarget.removeEventListener("loadedmetadata", this.boundTimeUpdate)
-    document.removeEventListener("voice-player:play", this.boundOnOtherPlay)
+    this.sourceTarget.removeEventListener("timeupdate", this.boundTimeUpdate)
+    this.sourceTarget.removeEventListener("ended", this.boundFinished)
+    this.sourceTarget.removeEventListener("loadedmetadata", this.boundTimeUpdate)
     this.#stop()
   }
 
   toggle(event) {
     event.preventDefault()
-    if (this.audioTarget.paused) this.#play()
+    if (this.sourceTarget.paused) this.#play()
     else this.#stop()
   }
 
@@ -38,8 +35,8 @@ export default class extends Controller {
     if (duration <= 0) return
 
     const rect = this.progressTarget.getBoundingClientRect()
-    const ratio = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width))
-    this.audioTarget.currentTime = ratio * duration
+    const progress = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width))
+    this.sourceTarget.currentTime = progress * duration
     this.#timeUpdate()
   }
 
@@ -51,49 +48,44 @@ export default class extends Controller {
     if (duration <= 0) return
 
     const step = event.key == "ArrowRight" ? 1 : -1
-    this.audioTarget.currentTime = Math.max(0, Math.min(duration, this.audioTarget.currentTime + step))
+    this.sourceTarget.currentTime = Math.max(0, Math.min(duration, this.sourceTarget.currentTime + step))
     this.#timeUpdate()
   }
 
   #play() {
-    document.dispatchEvent(new CustomEvent("voice-player:play", { detail: { controller: this } }))
-    this.audioTarget.play()
-    this.playing = true
+    this.sourceTarget.play()
+    this.isPlayingValue = true
     this.#updatePlayStatus()
   }
 
   #stop() {
-    this.audioTarget.pause()
-    this.playing = false
+    this.sourceTarget.pause()
+    this.isPlayingValue = false
     this.#updatePlayStatus()
-  }
-
-  #onOtherPlay(event) {
-    if (event.detail.controller != this && !this.audioTarget.paused) this.#stop()
   }
 
   #duration() {
     if (this.durationValue > 0) return this.durationValue
-    const { duration } = this.audioTarget
+    const { duration } = this.sourceTarget
     if (duration && isFinite(duration)) return duration
     return 0
   }
 
-  #formatTime(totalSeconds) {
-    const seconds = Math.max(0, Math.floor(totalSeconds))
-    const minutes = Math.floor(seconds / 60)
-    return `${minutes}:${(seconds % 60).toString().padStart(2, "0")}`
+  #formatTime(seconds) {
+    const _seconds = Math.max(0, Math.floor(seconds))
+    const minutes = Math.floor(_seconds / 60)
+    return `${minutes}:${(_seconds % 60).toString().padStart(2, "0")}`
   }
 
   #timeUpdate() {
     const duration = this.#duration()
-    const current = this.audioTarget.currentTime || 0
+    const current = this.sourceTarget.currentTime || 0
     const ratio = duration > 0 ? current / duration : 0
 
     this.progressTarget.setAttribute("aria-valuenow", Math.floor(current))
     if (this.hasDurationTarget) {
       const remaining = duration > 0 ? Math.max(0, duration - current) : duration
-      this.durationTarget.textContent = this.#formatTime(this.playing ? remaining : duration)
+      this.durationTarget.textContent = this.#formatTime(this.isPlayingValue ? remaining : duration)
     }
 
     const bars = this.progressTarget.querySelectorAll(".voice--wave-bar")
@@ -101,18 +93,16 @@ export default class extends Controller {
     bars.forEach((bar, index) => bar.classList.toggle("is-played", index < filled))
   }
 
-  #ended() {
+  #finished() {
     this.#stop()
-    this.audioTarget.currentTime = 0
+    this.sourceTarget.currentTime = 0
     this.#timeUpdate()
   }
 
   #updatePlayStatus() {
-    if (!this.hasPlayIconTarget || !this.hasStopIconTarget) return
-
-    this.playIconTarget.hidden = this.playing
-    this.stopIconTarget.hidden = !this.playing
-    this.playButtonTarget.setAttribute("aria-label", this.playing ? "Stop" : "Play")
+    this.playIconTarget.hidden = this.isPlayingValue
+    this.stopIconTarget.hidden = !this.isPlayingValue
+    this.playButtonTarget.setAttribute("aria-label", this.isPlayingValue ? "Stop" : "Play")
     this.#timeUpdate()
   }
 }

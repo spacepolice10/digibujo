@@ -2,11 +2,11 @@
   .header--menu .dropdown-body {
     position: fixed;
     inset: unset;
-    top: var(--spacing-vertical-half);
+    top: var(--space-v-half);
     left: 50%;
     translate: -50% 0;
     margin: 0;
-    padding: var(--spacing-vertical-double);
+    padding: var(--space-v-4);
     border-radius: var(--radius-strong);
     box-shadow: 0 8px 32px oklch(0% 0 0 / 0.12), var(--shadow-base);
     z-index: 1000;
@@ -14,9 +14,9 @@
 
   .menu--wrap {
     flex-direction: column;
-    gap: var(--spacing-vertical-double);
+    gap: var(--space-v-4);
     width: 100%;
-    min-width: var(--breakpoint-mobile);
+    min-width: 360px;
     max-width: 30rem;
     overflow: hidden;
   }
@@ -29,7 +29,7 @@
   .menu--page>nav.menu--navigation {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--spacing-horizontal);
+    gap: var(--space-h);
     flex-shrink: 0;
   }
 
@@ -39,32 +39,32 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: var(--spacing-vertical);
+    gap: var(--space-v);
     min-width: 0;
-    padding: var(--spacing-vertical);
-    border: 1px solid var(--color-stroke-base);
+    padding: var(--space-v);
+    border: 1px solid var(--color-invert-2);
     border-radius: var(--radius-strong);
-    background: var(--color-bg-subtle);
-    color: var(--color-fg-subtle);
+    background: var(--color-2);
+    color: var(--color-invert-2);
     text-decoration: none;
     text-align: center;
 
     @media (hover: hover) {
       &:hover {
-        background: var(--color-bg-subtle);
-        border-color: var(--color-stroke-strong);
-        color: var(--color-fg-base);
+        background: var(--color-2);
+        border-color: var(--color-invert-4);
+        color: var(--color-invert-4);
       }
     }
 
     &:focus-visible {
-      border-color: var(--color-stroke-strong);
-      color: var(--color-fg-base);
+      border-color: var(--color-invert-4);
+      color: var(--color-invert-4);
     }
 
     .icon {
-      width: var(--spacing-horizontal);
-      height: var(--spacing-horizontal);
+      width: var(--space-h);
+      height: var(--space-h);
       flex-shrink: 0;
     }
   }
@@ -80,7 +80,7 @@
   .menu--page>nav:not(.menu--navigation) {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-vertical-half);
+    gap: var(--space-v-half);
     flex-shrink: 0;
   }
 
@@ -110,12 +110,12 @@
   }
 
   .menu--create-bucket-button {
-    width: calc(var(--spacing-horizontal-double) + var(--spacing-horizontal-half));
-    height: calc(var(--spacing-horizontal-double) + var(--spacing-horizontal-half));
+    width: calc(var(--space-h-4) + var(--space-h-half));
+    height: calc(var(--space-h-4) + var(--space-h-half));
 
     .icon {
-      width: var(--spacing-horizontal-double);
-      height: var(--spacing-horizontal-double);
+      width: var(--space-h-4);
+      height: var(--space-h-4);
     }
   }
 
@@ -134,7 +134,7 @@
   .menu--scroll {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-vertical);
+    gap: var(--space-v);
     flex: 1;
     min-height: 0;
   }
@@ -150,9 +150,9 @@
   .menu--create-bucket-body {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-vertical-half);
+    gap: var(--space-v-half);
     width: 100%;
-    padding-top: var(--spacing-horizontal-double);
+    padding-top: var(--space-h-4);
   }
 
   .menu--create-bucket-links {
@@ -164,21 +164,21 @@
     width: 100%;
     justify-content: flex-start;
     & > .icon {
-      width: var(--spacing-horizontal-double);
-      height: var(--spacing-horizontal-double);
+      width: var(--space-h-4);
+      height: var(--space-h-4);
     }
   }
 
   .menu--page-mobile-header-actions {
     display: flex;
     align-items: center;
-    gap: var(--spacing-horizontal-half);
+    gap: var(--space-h-half);
     flex-shrink: 0;
   }
 
   .menu--account-button {
-    width: calc(var(--spacing-horizontal-double) + var(--spacing-horizontal-half));
-    height: calc(var(--spacing-horizontal-double) + var(--spacing-horizontal-half));
+    width: calc(var(--space-h-4) + var(--space-h-half));
+    height: calc(var(--space-h-4) + var(--space-h-half));
     padding: 0;
     font-size: var(--font-size-base-read);
     font-weight: var(--font-weight-strong);
@@ -192,8 +192,8 @@
 
   .account--dock {
     position: fixed;
-    bottom: var(--spacing-vertical);
-    left: var(--spacing-horizontal);
+    bottom: var(--space-v);
+    left: var(--space-h);
     z-index: var(--z-dropdown);
     pointer-events: auto;
   }

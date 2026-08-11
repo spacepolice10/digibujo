@@ -13,7 +13,7 @@ module Bullets
     end
 
     test 'new renders postpone picker for selected bullets' do
-      card = create_bullet!(@user, bulletable: Task.new(body: 'Schedule me'))
+      card = create_bullet!(@user, bulletable: Task.new, body: 'Schedule me')
 
       get new_postpone_path, params: { bullet_ids: card.id.to_s }
 
@@ -34,7 +34,7 @@ module Bullets
     end
 
     test 'new renders picker content inside turbo frame request' do
-      card = create_bullet!(@user, bulletable: Task.new(body: 'Schedule me'))
+      card = create_bullet!(@user, bulletable: Task.new, body: 'Schedule me')
 
       get new_postpone_path,
           params: { bullet_ids: card.id.to_s },
@@ -53,7 +53,7 @@ module Bullets
     end
 
     test 'create redirects to daylog and sets pop day' do
-      card = create_bullet!(@user, bulletable: Task.new(body: 'Plan me'))
+      card = create_bullet!(@user, bulletable: Task.new, body: 'Plan me')
       target = 3.days.from_now.to_date
 
       post postpone_path, params: {
@@ -68,7 +68,7 @@ module Bullets
     end
 
     test 'create sometime parks on future unplanned' do
-      card = create_bullet!(@user, bulletable: Task.new(body: 'Someday'))
+      card = create_bullet!(@user, bulletable: Task.new, body: 'Someday')
 
       post postpone_path, params: {
         bullet_ids: card.id.to_s,
@@ -83,7 +83,7 @@ module Bullets
     end
 
     test 'create requires bucket_id' do
-      card = create_bullet!(@user, bulletable: Task.new(body: 'Needs destination'))
+      card = create_bullet!(@user, bulletable: Task.new, body: 'Needs destination')
       target = 1.week.from_now.to_date
 
       post postpone_path,
@@ -97,7 +97,7 @@ module Bullets
     test 'create with pops_on one day ahead acts as postpone from bullet pop day' do
       anchor = 5.days.from_now.to_date
       card = create_bullet!(@user,
-                            bulletable: Task.new(body: 'Defer me'),
+                            bulletable: Task.new, body: 'Defer me',
                             pops_on: anchor)
 
       post postpone_path, params: {
@@ -113,7 +113,7 @@ module Bullets
     test 'create with pops_on from daylog viewing day acts as postpone from that anchor' do
       view_day = Date.current
       card = create_bullet!(@user,
-                            bulletable: Task.new(body: 'Triage'),
+                            bulletable: Task.new, body: 'Triage',
                             pops_on: 2.weeks.from_now.to_date)
 
       post postpone_path, params: {
@@ -128,7 +128,7 @@ module Bullets
 
     test 'create with pops_on one week ahead' do
       view_day = Date.current
-      card = create_bullet!(@user, bulletable: Event.new(body: 'Later'), pops_on: Date.current)
+      card = create_bullet!(@user, bulletable: Event.new, body: 'Later', pops_on: Date.current)
 
       post postpone_path, params: {
         bullet_ids: card.id.to_s,
@@ -142,8 +142,8 @@ module Bullets
 
     test 'create postpones multiple bullets to same day' do
       target = 4.days.from_now.to_date
-      first = create_bullet!(@user, bulletable: Task.new(body: 'A'))
-      second = create_bullet!(@user, bulletable: Note.new(body: 'B'))
+      first = create_bullet!(@user, bulletable: Task.new, body: 'A')
+      second = create_bullet!(@user, bulletable: Note.new, body: 'B')
 
       post postpone_path, params: {
         bullet_ids: "#{first.id},#{second.id}",
@@ -157,7 +157,7 @@ module Bullets
     end
 
     test 'create turbo stream removes postponed bullets and shows scheduled notice' do
-      card = create_bullet!(@user, bulletable: Task.new(body: 'Plan me'))
+      card = create_bullet!(@user, bulletable: Task.new, body: 'Plan me')
       target = 3.days.from_now.to_date
 
       post postpone_path,
@@ -176,7 +176,7 @@ module Bullets
     end
 
     test 'create returns unprocessable entity for invalid pops_on' do
-      card = create_bullet!(@user, bulletable: Task.new(body: 'Bad date'))
+      card = create_bullet!(@user, bulletable: Task.new, body: 'Bad date')
       original_pops_on = card.pops_on
 
       post postpone_path,
@@ -196,7 +196,7 @@ module Bullets
       monthlylog = create_monthlylog!(@user, name: 'june')
       day = Date.current.beginning_of_month + 2.days
       card = create_bullet!(@user,
-                            bulletable: Task.new(body: 'Plan in spread'),
+                            bulletable: Task.new, body: 'Plan in spread',
                             bucket_id: monthlylog.bucket.id)
 
       post postpone_path,

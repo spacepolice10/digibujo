@@ -27,8 +27,8 @@ class MoveBulletableBodiesToActionTextTest < ActiveSupport::TestCase
     assert_not_includes Event.column_names, 'body'
     assert_not_includes Voice.column_names, 'body'
 
-    assert_equal "Buy milk\n\nand bread", task.reload.body_as_text.strip
-    assert_equal 'Dentist', event.reload.body_as_text.strip
+    assert_equal "Buy milk\n\nand bread", rich_text_body(task).to_plain_text.strip
+    assert_equal 'Dentist', rich_text_body(event).to_plain_text.strip
   end
 
   test 'escapes markup from plain bodies' do
@@ -37,7 +37,7 @@ class MoveBulletableBodiesToActionTextTest < ActiveSupport::TestCase
 
     run_migration
 
-    assert_equal '<script>alert(1)</script>', task.reload.body_as_text.strip
+    assert_equal '<script>alert(1)</script>', rich_text_body(task).to_plain_text.strip
   end
 
   test 'skips blank bodies' do
@@ -50,16 +50,25 @@ class MoveBulletableBodiesToActionTextTest < ActiveSupport::TestCase
   end
 
   test 'keeps rich text that already exists' do
-    task = Task.create!(body: '<p>already rich</p>')
+    task = Task.create!
+    ActionText::RichText.create!(record_type: 'Task', record_id: task.id, name: 'body', body: '<p>already rich</p>')
     write_plain_body(task, 'stale plain copy')
 
     run_migration
 
     assert_equal 1, ActionText::RichText.where(name: 'body', record_type: 'Task', record_id: task.id).count
-    assert_equal 'already rich', task.reload.body_as_text.strip
+    assert_equal 'already rich', rich_text_body(task).to_plain_text.strip
   end
 
   private
+
+  def rich_text_body(record)
+    rich_text_for(record.class.name, record.id).body
+  end
+
+  def rich_text_for(type, record_id)
+    ActionText::RichText.find_by!(name: 'body', record_type: type, record_id: record_id)
+  end
 
   def run_migration
     ActiveRecord::Migration.suppress_messages { MoveBulletableBodiesToActionText.new.up }

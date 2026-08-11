@@ -9,9 +9,9 @@ class PublishedControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'index lists published bullets for current user' do
-    published = create_bullet!(@user, bulletable: Note.new(body: 'Public note'))
+    published = create_bullet!(@user, bulletable: Note.new, body: 'Public note')
     published.publish!
-    create_bullet!(@user, bulletable: Task.new(body: 'Private task'))
+    create_bullet!(@user, bulletable: Task.new, body: 'Private task')
 
     get published_index_path
 
@@ -21,7 +21,7 @@ class PublishedControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show renders published bullet without authentication' do
-    bullet = create_bullet!(@user, bulletable: Note.new(body: 'Shared content'))
+    bullet = create_bullet!(@user, bulletable: Note.new, body: 'Shared content')
     bullet.publish!
 
     sign_out
@@ -39,7 +39,7 @@ class PublishedControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show returns not found after unpublish' do
-    bullet = create_bullet!(@user, bulletable: Note.new(body: 'Was public'))
+    bullet = create_bullet!(@user, bulletable: Note.new, body: 'Was public')
     bullet.publish!
     code = bullet.public_code
     bullet.unpublish!

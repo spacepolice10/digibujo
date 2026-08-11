@@ -37,7 +37,7 @@ class PendingTest < ActiveSupport::TestCase
     user = users(:one)
     pending = Pending.provision!(user)
 
-    capture = create_bullet!(user, bucket: pending.bucket, bulletable: Note.new(body: 'Capture'), pops_on: nil)
+    capture = create_bullet!(user, bucket: pending.bucket, bulletable: Note.new, body: 'Capture', pops_on: nil)
 
     assert_includes Pending.pending_of(user), capture
   end
@@ -46,7 +46,7 @@ class PendingTest < ActiveSupport::TestCase
     user = users(:one)
     pending = Pending.provision!(user)
 
-    bullet = create_bullet!(user, bucket: pending.bucket, bulletable: Note.new(body: 'Archived me'), pops_on: nil)
+    bullet = create_bullet!(user, bucket: pending.bucket, bulletable: Note.new, body: 'Archived me', pops_on: nil)
     bullet.archive!
 
     assert_empty Pending.pending_of(user)
@@ -56,8 +56,8 @@ class PendingTest < ActiveSupport::TestCase
     user = users(:one)
     pending = Pending.provision!(user)
 
-    create_bullet!(user, bucket: pending.bucket, bulletable: Note.new(body: 'First'), pops_on: nil)
-    create_bullet!(user, bucket: pending.bucket, bulletable: Note.new(body: 'Second'), pops_on: nil)
+    create_bullet!(user, bucket: pending.bucket, bulletable: Note.new, body: 'First', pops_on: nil)
+    create_bullet!(user, bucket: pending.bucket, bulletable: Note.new, body: 'Second', pops_on: nil)
 
     assert_equal 2, Pending.pending_number_of(user)
   end

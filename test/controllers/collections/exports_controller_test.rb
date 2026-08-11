@@ -9,12 +9,12 @@ module Collections
       sign_in_as @user
       @collection = create_collection!(@user, name: 'Reading List')
       @first = create_bullet!(@user,
-        bulletable: Task.new(body: 'First bullet'),
+        bulletable: Task.new, body: 'First bullet',
         bucket: @collection.bucket,
         pops_on: nil
       )
       @second = create_bullet!(@user,
-        bulletable: Note.new(body: 'Second bullet'),
+        bulletable: Note.new, body: 'Second bullet',
         bucket: @collection.bucket,
         pops_on: nil
       )

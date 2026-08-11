@@ -11,7 +11,7 @@ class BucketsControllerTest < ActionDispatch::IntegrationTest
   test 'show redirects to bucketable' do
     collection = create_collection!(@user, name: 'bucket list')
     create_bullet!(@user,
-      bulletable: Task.new(body: 'In bucket'),
+      bulletable: Task.new, body: 'In bucket',
       bucket: collection.bucket,
       pops_on: nil
     )

@@ -35,4 +35,8 @@ class User < ApplicationRecord
   def name
     email_address.split('@').first
   end
+
+  def bujo
+    @bujo ||= Bujo.new(self)
+  end
 end

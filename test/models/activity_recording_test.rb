@@ -8,7 +8,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
   end
 
   test 'complete records completed activity and leaves inbox' do
-    bullet = create_bullet!(@user, bulletable: Task.new(body: 'Task'), pops_on: Date.current)
+    bullet = create_bullet!(@user, bulletable: Task.new, body: 'Task', pops_on: Date.current)
     task = bullet.bulletable
 
     assert_difference -> { Activity.count }, 1 do
@@ -24,7 +24,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
   end
 
   test 'uncomplete records uncompleted' do
-    bullet = create_bullet!(@user, bulletable: Task.new(body: 'Task'))
+    bullet = create_bullet!(@user, bulletable: Task.new, body: 'Task')
     task = bullet.bulletable
     task.complete!
 
@@ -36,7 +36,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
   end
 
   test 'archive records archived activity on Archive subject' do
-    bullet = create_bullet!(@user, bulletable: Note.new(body: 'Note'), pops_on: Date.current)
+    bullet = create_bullet!(@user, bulletable: Note.new, body: 'Note', pops_on: Date.current)
 
     assert_difference -> { Activity.count }, 1 do
       bullet.archive!
@@ -51,7 +51,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
   end
 
   test 'unarchive records unarchived activity' do
-    bullet = create_bullet!(@user, bulletable: Note.new(body: 'Note'))
+    bullet = create_bullet!(@user, bulletable: Note.new, body: 'Note')
     bullet.archive!
 
     assert_difference -> { Activity.count }, 1 do
@@ -65,7 +65,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
 
   test 'collect records collected with migration metadata' do
     collection = create_collection!(@user, name: 'Inbox')
-    bullet = create_bullet!(@user, bulletable: Task.new(body: 'Move'))
+    bullet = create_bullet!(@user, bulletable: Task.new, body: 'Move')
 
     assert_difference -> { Activity.count }, 1 do
       bullet.collect!(bucket_id: collection.bucket.id)
@@ -78,7 +78,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
   end
 
   test 'postpone records rescheduled when moving to another day with migration metadata' do
-    bullet = create_bullet!(@user, bulletable: Event.new(body: 'Event'), pops_on: Date.current)
+    bullet = create_bullet!(@user, bulletable: Event.new, body: 'Event', pops_on: Date.current)
     daylog = ensure_daylog!(@user)
 
     assert_difference -> { Activity.count }, 1 do
@@ -91,7 +91,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
   end
 
   test 'postpone records rescheduled' do
-    bullet = create_bullet!(@user, bulletable: Task.new(body: 'Later'))
+    bullet = create_bullet!(@user, bulletable: Task.new, body: 'Later')
     daylog = ensure_daylog!(@user)
 
     assert_difference -> { Activity.count }, 1 do

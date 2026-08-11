@@ -40,7 +40,8 @@ class Hook < ApplicationRecord
       pops_on: nil,
       author_name: author_name.to_s.strip.presence,
       bulletable_type: type,
-      bulletable: type.constantize.new(body: body)
+      body: body,
+      bulletable: type.constantize.new
     )
   end
 

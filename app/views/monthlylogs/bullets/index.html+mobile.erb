@@ -16,7 +16,7 @@
     >
       <div
         id="<%= "date_#{@date&.iso8601}_bullets_container" %>"
-        class="chat--scroller"
+        class="chat--scroller animations--popout-opacity"
         data-chat-scroll-target="scroller"
         data-bulk-menu-target="list"
         data-monthlylog-date-list
@@ -30,14 +30,15 @@
             <span class="utilities--sr-only">Loading more bullets</span>
           </div>
         <% end %>
+
         <% @bullets.each do |bullet| %>
           <%= render "monthlylogs/bullets/bullet", bullet: bullet %>
         <% end %>
-        <%= render "bullets/composer",
-          bucket_id: @monthlylog.bucket.id,
-          pops_on: @date&.iso8601,
-          variants: %w[Task Event],
-          composer_id: date_composer_id %>
+          <%= render "bullets/composer",
+            bucket_id: @monthlylog.bucket.id,
+            pops_on: @date&.iso8601,
+            variants: %w[Task Event],
+            composer_id: date_composer_id %>
       </div>
     </div>
   </turbo-frame>

@@ -3,6 +3,7 @@
      docked composer. Assembled purely from chat--* classes so any page can
      build the whole window without per-page chrome. */
   .chat--window {
+    --chat-padder-height: 0px;
     --chat-tabbar-clearance: var(--spacing-vertical-double);
     --chat-composer-clearance: calc(
       var(--spacing-vertical-triple) * 2.5
@@ -20,37 +21,15 @@
     width: 100%;
     height: 100dvh;
     max-height: 100dvh;
-    margin: 0;
-    padding: 0;
     gap: 0;
     overflow: hidden;
   }
-
-  @media (min-width: 800px) {
-    .chat--window {
-      max-width: var(--breakpoint-laptop);
-      margin-inline: auto;
-      height: calc(100dvh - 10ch);
-      max-height: calc(100dvh - 10ch);
-    }
-  }
-
 
   html:has(.chat--window) body {
     overflow-y: hidden !important;
     height: 100dvh !important;
     padding-bottom: 0 !important;
     scroll-padding-bottom: 0 !important;
-  }
-
-  /* Desktop card chrome for the chat column. */
-  @media (pointer: fine) {
-    .chat--window > .chat--wrap {
-      border: 0.5px solid var(--color-stroke-base);
-      border-radius: var(--radius-strong);
-      box-shadow: var(--shadow-subtle);
-      background: var(--color-bg-subtle);
-    }
   }
 
   /* Levitating header slot — frosted chips float over the scroller. */
@@ -73,13 +52,17 @@
     flex-direction: column;
     flex: 1 1 0;
     min-height: 0;
+    height: 100%;
     overflow: hidden;
   }
 
   .chat--padder {
-    @media (pointer: coarse) {
-      height: calc(100% + 1px);
-    }
+    height: var(--chat-padder-height);
+    transition: height 400ms ease-out;
+  }
+
+  html:has(.chat--padder) {
+    overscroll-behavior-y: none;
   }
 
   /* Merged scrollport + list (Campfire-style): the scroller owns scrolling and
@@ -99,17 +82,19 @@
     overscroll-behavior-x: auto;
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-vertical);
     padding-inline: var(--spacing-horizontal-half);
     padding-top: var(--chat-header-clearance, 0px);
+    padding-bottom: var(--spacing-vertical-triple );
+    
     &:has(.composer--keyboard-open) {
-      padding-bottom: 0 !important;
+      padding-bottom: var(--spacing-vertical) !important;
     }
-    @media (max-width: 799px) {
+    @media (max-width: 768px) {
+      gap: var(--spacing-vertical);
       padding-bottom: var(--chat-composer-clearance, 0px) !important;
     }
 
-    @media (min-width: 800px) {
+    @media (min-width: 769px) {
       padding-bottom: var(--spacing-vertical);
     }
 
@@ -136,8 +121,7 @@
     display: block;
     flex-shrink: 0;
     @media (pointer: coarse) {
-      min-height: 100%;
-      height: 100%;
+
     }
   }
 

@@ -11,7 +11,7 @@ class TriageControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show lists pending bullets' do
-    bullet = create_bullet!(@user, bucket: @pending.bucket, bulletable: Note.new(body: 'From extension'), pops_on: nil)
+    bullet = create_bullet!(@user, bucket: @pending.bucket, bulletable: Note.new, body: 'From extension', pops_on: nil)
 
     get triage_path
 
@@ -25,19 +25,19 @@ class TriageControllerTest < ActionDispatch::IntegrationTest
     create_bullet!(
       @user,
       bucket: monthlylog.bucket,
-      bulletable: Task.new(body: 'Monthly today'),
+      bulletable: Task.new, body: 'Monthly today',
       pops_on: Date.current
     )
     create_bullet!(
       @user,
       bucket: monthlylog.bucket,
-      bulletable: Task.new(body: 'Monthly tomorrow'),
+      bulletable: Task.new, body: 'Monthly tomorrow',
       pops_on: Date.current + 1.day
     )
     create_bullet!(
       @user,
       bucket: monthlylog.bucket,
-      bulletable: Note.new(body: 'Monthly unplanned'),
+      bulletable: Note.new, body: 'Monthly unplanned',
       pops_on: nil
     )
 
@@ -50,8 +50,8 @@ class TriageControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show excludes archived bullets' do
-    create_bullet!(@user, bucket: @pending.bucket, bulletable: Note.new(body: 'Inbox me'), pops_on: nil)
-    archived = create_bullet!(@user, bucket: @pending.bucket, bulletable: Note.new(body: 'Archived me'), pops_on: nil)
+    create_bullet!(@user, bucket: @pending.bucket, bulletable: Note.new, body: 'Inbox me', pops_on: nil)
+    archived = create_bullet!(@user, bucket: @pending.bucket, bulletable: Note.new, body: 'Archived me', pops_on: nil)
     archived.archive!
 
     get triage_path

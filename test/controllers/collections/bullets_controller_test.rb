@@ -12,7 +12,7 @@ module Collections
     end
 
     def create_collected(body, created_at:)
-      create_bullet!(@user, bucket: @bucket, pops_on: nil, bulletable: Note.new(body: body),
+      create_bullet!(@user, bucket: @bucket, pops_on: nil, bulletable: Note.new, body: body,
                             created_at: created_at)
     end
 
@@ -30,7 +30,7 @@ module Collections
 
     test 'before scopes to the collection bucket' do
       create_bullet!(@user,
-                     bulletable: Note.new(body: 'Other bucket'), pops_on: nil, created_at: 2.days.ago)
+                     bulletable: Note.new, body: 'Other bucket', pops_on: nil, created_at: 2.days.ago)
       cursor = create_collected('Cursor', created_at: 1.day.ago)
 
       get collection_bullets_path(@collection, params: { before: cursor.id })

@@ -70,9 +70,9 @@ class BulletsController < ApplicationController
     attributes = allowed_bulletable_entity.permitted_bullet_attributes
 
     if @bullet&.persisted?
-      params.require(:bullet).permit(bulletable_attributes: attributes)
+      params.require(:bullet).permit(:body, bulletable_attributes: attributes)
     else
-      params.require(:bullet).permit(%i[pops_on bulletable_type bucket_id], bulletable_attributes: attributes)
+      params.require(:bullet).permit(%i[pops_on bulletable_type bucket_id body], bulletable_attributes: attributes)
     end
   end
 

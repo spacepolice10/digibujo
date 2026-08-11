@@ -13,7 +13,7 @@ class VoiceTest < ActiveSupport::TestCase
   end
 
   test 'requires recording and duration within cap' do
-    voice = Voice.new(body: 'Caption', duration_seconds: 5)
+    voice = Voice.new(duration_seconds: 5)
     voice.recording.attach(@blob)
 
     assert voice.valid?
@@ -53,7 +53,7 @@ class VoiceTest < ActiveSupport::TestCase
       filename: 'voice.webm',
       content_type: 'audio/webm;codecs=opus'
     )
-    voice = Voice.new(body: 'Caption', duration_seconds: 5)
+    voice = Voice.new(duration_seconds: 5)
     voice.recording.attach(blob)
 
     assert voice.valid?
@@ -64,11 +64,7 @@ class VoiceTest < ActiveSupport::TestCase
       bucket: ensure_daylog!(@user),
       pops_on: Date.current,
       bulletable_type: 'Voice',
-      bulletable_attributes: {
-        body: 'Morning memo',
-        recording: @blob.signed_id,
-        duration_seconds: 12
-      }
+      body: 'Morning memo', bulletable_attributes: { recording: @blob.signed_id, duration_seconds: 12 }
     )
 
     assert_difference -> { Voice.count }, 1 do

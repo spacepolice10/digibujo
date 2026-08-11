@@ -39,7 +39,7 @@ class Bullet::PageableTest < ActiveSupport::TestCase
   test 'page_before breaks created_at ties on id' do
     timestamp = 2.hours.ago
     bullets = Array.new(3) do |index|
-      create_bullet!(@user, bulletable: Note.new(body: "Tied #{index}"), created_at: timestamp)
+      create_bullet!(@user, bulletable: Note.new, body: "Tied #{index}", created_at: timestamp)
     end
 
     page = @user.bullets.page_before(bullets.last)
@@ -51,7 +51,7 @@ class Bullet::PageableTest < ActiveSupport::TestCase
 
   def create_bullets(count)
     Array.new(count) do |index|
-      create_bullet!(@user, bulletable: Note.new(body: "Line #{index}"), created_at: (count - index).minutes.ago)
+      create_bullet!(@user, bulletable: Note.new, body: "Line #{index}", created_at: (count - index).minutes.ago)
     end
   end
 end

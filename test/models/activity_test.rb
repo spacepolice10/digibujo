@@ -5,7 +5,7 @@ require 'test_helper'
 class ActivityTest < ActiveSupport::TestCase
   setup do
     @user = users(:one)
-    @bullet = create_bullet!(@user, bulletable: Task.new(body: 'Task'))
+    @bullet = create_bullet!(@user, bulletable: Task.new, body: 'Task')
   end
 
   test 'sweep job deletes activities older than retention' do
