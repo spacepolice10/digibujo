@@ -74,38 +74,6 @@
         }
     }
 
-    .monthlylog--planned-composer {
-        background: var(--color-2);
-        border-radius: var(--radius-base);
-        border: var(--border-subtle);
-        overflow: hidden;
-
-        & > .composer {
-            padding: var(--space-v) var(--space-h);
-        }
-
-        @container layout (width < 600px) {
-            & > .composer {
-                flex-wrap: wrap;
-                padding-inline: var(--space-h-half);
-            }
-
-            & > .composer lexxy-editor {
-                order: -1;
-                flex-basis: 100%;
-                width: 100%;
-            }
-        }
-    }
-
-    .monthlylog--planned-composer-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: var(--space-h);
-        padding: var(--space-v-half) var(--space-h-half);
-    }
-
     .monthlylog--unplanned-composer {
         position: sticky;
         inset-block-end: 0;
@@ -124,38 +92,6 @@
             [data-composer-editor-target~="editor"]:focus-within
         ) {
             inset-block-end: var(--space-v);
-        }
-    }
-
-    .monthlylog--bullets-composer {
-        width: 98%;
-        margin-block-end: var(--space-v-half);
-        margin-inline: auto;
-        border: var(--border-subtle);
-        border-radius: var(--radius-full);
-        box-shadow: var(--shadow-subtle);
-
-        &:has(.composer[data-composer-editor-multiline-value="true"]) {
-            border-radius: var(--radius-base);
-        }
-
-        & .lexxy-editor__content {
-            max-height: 50vh;
-            overflow-y: auto;
-        }
-
-        @container layout (width < 600px) {
-            margin-block-end: var(--tabbar-clearance);
-            transition: margin-block-end 250ms ease-out;
-        }
-    }
-
-    @container layout (width < 600px) {
-        .monthlylog--bullets-composer:has(
-            [data-composer-editor-target~="editor"]:focus-within
-        ) {
-            margin-block-end: var(--space-v);
-            transition: none;
         }
     }
 
@@ -208,14 +144,9 @@
         }
     }
 
-    .monthlylog--bullets-back:hover {
-        transform: translateX(calc(var(--space-h-half) * -1));
-    }
-
     .monthlylog--date-bullets {
         display: flex;
         flex-direction: column;
-        gap: var(--space-v);
     }
 
     .monthlylog--unplanned-category {

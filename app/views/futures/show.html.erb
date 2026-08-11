@@ -18,7 +18,7 @@
     </header>
 
     <div
-      id="future_bullets_unplanned_container"
+      id="<%= dom_id(@future.bucket, nil) %>"
       class="chat--scroller"
       data-chat-scroll-path-value="<%= future_bullets_path(@future) %>"
       data-bulk-menu-target="list"

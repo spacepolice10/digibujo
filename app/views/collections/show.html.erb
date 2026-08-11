@@ -70,7 +70,7 @@
 
 
   <div
-    id="<%= dom_id(@collection, :bullets_container) %>"
+    id="<%= dom_id(@collection.bucket, nil) %>"
     class="chat--scroller"
     data-controller="chat-scroll"
     data-chat-scroll-path-value="<%= collection_bullets_path(@collection) %>"

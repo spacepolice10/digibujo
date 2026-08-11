@@ -17,7 +17,6 @@
           <% date = day.to_date %>
           <% current_day = date == Date.current %>
           <div
-            id="<%= dom_id(@monthlylog.bucket, date) %>"
             class="<%= class_names("monthlylog--date-category", "monthlylog--date-category-no-bullets": bullets.empty?) %>"
             data-controller="pops-drop monthlylog-calendar-drop-optimistic"
             data-pops-drop-pops-url-value="<%= postpone_path %>"
@@ -42,7 +41,7 @@
             <% end %>
 
             <div
-              id="<%= dom_id(@monthlylog.bucket, "#{date}_bullets") %>"
+              id="<%= dom_id(@monthlylog.bucket, date) %>"
               class="monthlylog--date-bullets"
               data-monthlylog-drop-list
             >
@@ -51,8 +50,15 @@
               <% end %>
             </div>
 
-            <turbo-frame id="<%= dom_id(@monthlylog, date) %>">
-              <%= link_to new_monthlylog_bullet_path(@monthlylog, date: date),
+            <% composer_id = dom_id(@monthlylog.bucket, "composer_#{date}")
+               composer_frame_id = "#{composer_id}_frame" %>
+            <turbo-frame id="<%= composer_frame_id %>">
+              <%= link_to new_composer_path(
+                    composer_id: composer_id,
+                    bucket_id: @monthlylog.bucket.id,
+                    pops_on: date.iso8601,
+                    return_to: monthlylog_path(@monthlylog, date: date.iso8601)
+                  ),
                     class: "button",
                     data: { intent: "secondary", radius: "full", size: "lg", content: "text" } do %>
                 <%= icon_tag("plus") %>
@@ -78,7 +84,6 @@
       </div>
 
       <div
-        id="<%= dom_id(@monthlylog.bucket, nil) %>"
         class="monthlylog--section-content monthlylog--unplanned-category"
         data-controller="pops-drop monthlylog-calendar-drop-optimistic"
         data-pops-drop-pops-url-value="<%= postpone_path %>"
@@ -91,7 +96,7 @@
         data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop"
       >
         <div
-          id="<%= dom_id(@monthlylog.bucket, :unplanned_bullets) %>"
+          id="<%= dom_id(@monthlylog.bucket, nil) %>"
           class="monthlylog--date-bullets"
           data-monthlylog-drop-list
         >

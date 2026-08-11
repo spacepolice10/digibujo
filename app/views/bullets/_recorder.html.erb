@@ -11,17 +11,17 @@
         id: "#{composer_id}_duration_seconds",
         data: { composer_recorder_target: "duration" } %>
 
-<button type="button" class="button voice-recorder--button" data-intent="secondary" data-size="sm" data-radius="full" data-content="icon" data-composer-recorder-target="playButton" data-action="composer-recorder#togglePlay" aria-label="Play recording" aria-pressed="false" hidden>
+<button type="button" class="button voice-recorder--button" data-intent="secondary" data-size="xs" data-radius="full" data-content="icon" data-composer-recorder-target="playButton" data-action="composer-recorder#togglePlay" aria-label="Play recording" aria-pressed="false" hidden>
     <%= icon_tag("play", class: "paused") %>
     <%= icon_tag("pause", class: "playing", hidden: true) %>
 </button>
-<button type="button" class="button voice-recorder--button" data-intent="secondary" data-status="negative" data-size="sm" data-radius="full" data-content="icon" data-composer-recorder-target="recordButton" data-action="composer-recorder#record" aria-label="Start recording">
+<button type="button" class="button voice-recorder--button" data-intent="secondary" data-status="negative" data-size="xs" data-radius="full" data-content="icon" data-composer-recorder-target="recordButton" data-action="composer-recorder#record" aria-label="Start recording">
         <%= icon_tag("circle") %>
 </button>
-<button type="button" class="button voice-recorder--button" data-intent="secondary" data-size="sm" data-radius="full" data-content="icon" data-composer-recorder-target="stopButton" data-action="composer-recorder#stop" aria-label="Stop recording" hidden>
+<button type="button" class="button voice-recorder--button" data-intent="secondary" data-size="xs" data-radius="full" data-content="icon" data-composer-recorder-target="stopButton" data-action="composer-recorder#stop" aria-label="Stop recording" hidden>
     <%= icon_tag("stop") %>
 </button>
-<button type="button" class="button voice-recorder--button" data-intent="secondary" data-status="negative" data-size="sm" data-radius="full" data-content="icon" data-composer-recorder-target="discardButton" data-action="composer-recorder#discard" aria-label="Discard recording" hidden>
+<button type="button" class="button voice-recorder--button" data-intent="secondary" data-status="negative" data-size="xs" data-radius="full" data-content="icon" data-composer-recorder-target="discardButton" data-action="composer-recorder#discard" aria-label="Discard recording" hidden>
     <%= icon_tag("trash") %>
 </button>
     <div data-composer-recorder-target="waveform"

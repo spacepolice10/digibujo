@@ -21,16 +21,26 @@
   .button[data-radius="base"] { border-radius: var(--radius-base); }
   .button[data-radius="full"] { border-radius: var(--radius-full); }
 
-  /* size — 2 sizes */
-  .button[data-size="sm"] {
+  /* size — 4 sizes */
+  .button[data-size="xs"] {
     height: var(--space-v-3);
     padding: 0 var(--space-h-2);
     font-size: var(--font-size-xs);
+  }
+  .button[data-size="sm"] {
+    height: calc(var(--space-v-3) + var(--space-v-half));
+    padding: 0 var(--space-h-2);
+    font-size: var(--font-size-base-read);
   }
   .button[data-size="lg"] {
     height: calc(var(--space-v-3) + 1ch);
     padding: 0 var(--space-h-3);
     font-size: var(--font-size-base-read);
+  }
+  .button[data-size="xl"] {
+    height: var(--space-v-4);
+    padding: 0 var(--space-h-3);
+    font-size: var(--font-size-base-type);
   }
 
   /* content — text vs icon-only */

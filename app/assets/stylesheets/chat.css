@@ -68,25 +68,18 @@
     overscroll-behavior-x: auto;
     display: flex;
     flex-direction: column;
+    gap: var(--space-v);
     padding-inline: var(--space-h-half);
     padding-top: var(--chat-header-clearance, 0px);
     padding-bottom: var(--space-v);
 
-    @container layout (width < 800px) {
-      gap: var(--space-v);
-    }
-
     > * {
-      margin-block: var(--space-v-half);
+      margin-block: 0;
       /* Children never shrink: flex-shrink would crush rows (their min-height
          auto protection is off whenever the row has non-visible overflow,
          e.g. the monthly log's line-clamped wrappers) and swallow the
          overflow that the scroller is supposed to scroll. */
       flex-shrink: 0;
-    }
-
-    > .bullet {
-      margin-block: 0;
     }
 
     > *:first-child:not(.chat--load-more-trigger) {

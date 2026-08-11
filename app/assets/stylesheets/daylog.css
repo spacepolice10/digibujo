@@ -6,20 +6,18 @@
     }
   }
 
-  .daylog--composer {
-    & .lexxy-editor__content {
-        max-height: 50vh;
-        overflow: scroll
+  .daylog--triage-preview {
+    pointer-events: auto;
+  }
+
+  .daylog--triage-summary {
+    & .pill {
+      margin-block: var(--space-v-half);
     }
   }
 
-  .daylog--triage-preview {
-    border-radius: var(--radius-base);
-    box-shadow: var(--shadow-subtle);
-    margin-bottom: var(--space-v);
-    & > p {
-      line-height: 2;
-    }
+  #daylog_triage_preview {
+    width: 100%;
   }
 
 }

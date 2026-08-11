@@ -9,7 +9,7 @@ class DaylogChatSystemTest < ApplicationSystemTestCase
     Onboarding.new(user: users(:one)).complete
     @user = users(:one).reload
     sign_in_as(@user)
-    @list = '#daylog_bullets_container'
+    @list = "##{ActionView::RecordIdentifier.dom_id(@daylog.bucket, Date.current)}"
   end
 
   test 'the daylog opens at the newest bullet with older ones left off screen' do

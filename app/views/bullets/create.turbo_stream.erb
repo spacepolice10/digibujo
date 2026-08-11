@@ -4,3 +4,11 @@
 <%= turbo_stream.append target do %>
   <%= render @bullet.to_partial_path, bullet: @bullet %>
 <% end %>
+
+<% if @bullet.bucket == Current.user.daylog&.bucket && @bullet.pops_on == Date.current %>
+  <%= turbo_stream.replace "daylog_triage_preview" do %>
+    <turbo-frame id="daylog_triage_preview">
+      <%= render "daylogs/triage/header", triage: Daylog::Triage.new(Current.user), selected_date: Date.current %>
+    </turbo-frame>
+  <% end %>
+<% end %>

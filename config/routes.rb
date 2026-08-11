@@ -24,6 +24,11 @@ Rails.application.routes.draw do
     scope module: :daylogs do
       resources :bullets, only: :index
       resource :metadata, only: :show
+      resource :triage, only: :show, controller: 'triage' do
+        scope module: :triage do
+          resource :accept, only: :create
+        end
+      end
     end
   end
 
@@ -31,18 +36,6 @@ Rails.application.routes.draw do
     resource :mood_entity, only: %i[create]
     resource :picture, only: %i[create destroy]
   end
-
-  resource :triage, only: :show, controller: 'triage' do
-    scope module: :triage do
-      resources :bullets, only: [] do
-        resource :accept, only: :create
-        resource :discard, only: :create
-        resource :postpone, only: :create
-      end
-    end
-  end
-
-  get 'triage/number', to: 'triage#number', as: :triage_number
 
   get 'monthlylog', to: 'monthlylogs#show', as: :current_monthlylog
 
@@ -56,7 +49,7 @@ Rails.application.routes.draw do
 
   resources :monthlylogs, only: %i[create show] do
     scope module: :monthlylogs do
-      resources :bullets
+      resources :bullets, only: :index
     end
   end
 
@@ -71,6 +64,7 @@ Rails.application.routes.draw do
 
   # --- Bullets ---
   scope 'bullets', module: :bullets do
+    resource :composer, only: :new
     resource :pin
     resource :postpone, only: %i[new create]
     resource :archive

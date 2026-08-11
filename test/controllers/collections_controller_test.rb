@@ -99,10 +99,11 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "turbo-frame##{dom_id(bullet)}" do
       assert_select '[data-action=?]', 'click->bulk-menu#select', count: 1
-      assert_select '.bullet--marker', count: 1
-      assert_select 'button.bullet--marker-migration[aria-label=?]', 'Collected', count: 1
+      assert_select '.bullet--marker[style*="--bullet-type-color: var(--model-color-2)"]', count: 1
+      assert_select 'label.bullet--marker-migration[aria-label=?]', 'Select bullet', count: 1
+      assert_select '[popover]', count: 0
     end
-    assert_match 'Moved into inbox.', response.body
+    assert_no_match 'Moved into inbox.', response.body
   end
 
   test 'show mounts the chat composer scoped to the collection bucket' do

@@ -1,0 +1,23 @@
+<turbo-frame id="<%= @frame_id %>">
+  <div class="composer--lazy-container">
+    <header class="composer--lazy-header">
+      <p class="typography--paragraph-sm typography--bold">New bullet</p>
+
+      <%= link_to @return_to,
+            class: "composer--lazy-close-button button",
+            data: { intent: "secondary", radius: "full", size: "xs", content: "icon" },
+            aria: { label: "Close composer" } do %>
+        <%= icon_tag("x") %>
+      <% end %>
+    </header>
+
+    <%= render "bullets/composer_v2",
+          bullet: Bullet.new,
+          bucket_id: @bucket.id,
+          pops_on: @pops_on&.iso8601,
+          allowed_bulletable_variants: @allowed_bulletable_variants,
+          preset: "default",
+          autofocus: true,
+          composer_id: @composer_id %>
+  </div>
+</turbo-frame>

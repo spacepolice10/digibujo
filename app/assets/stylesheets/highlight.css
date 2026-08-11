@@ -1,21 +1,31 @@
 @layer components {
-    
-    .highlight {
+  .highlight {
     --highlight-colour: currentColor;
+
     display: inline-block;
-      position: relative;
-      &:before {
-          content: "";
-          display: block;
-          position: absolute;
-          top: 25%;
-          width: 90%;
-          height: 50%;
-          background: var(--highlight-colour);
-          margin-bottom: var(--space-v-half);
-          opacity: var(--opacity-quarter); 
-          z-index: 0;
-          transform: skew(-10deg);
-        }
+    position: relative;
+
+    &[data-colour="violet"] { --highlight-colour: var(--model-color-1); }
+    &[data-colour="cobalt"] { --highlight-colour: var(--model-color-2); }
+    &[data-colour="teal"] { --highlight-colour: var(--model-color-3); }
+    &[data-colour="emerald"] { --highlight-colour: var(--model-color-4); }
+    &[data-colour="gold"] { --highlight-colour: var(--model-color-5); }
+    &[data-colour="vermillion"] { --highlight-colour: var(--model-color-6); }
+    &[data-colour="magenta"] { --highlight-colour: var(--model-color-7); }
+    &[data-colour="inks"] { --highlight-colour: var(--model-color-8); }
+
+    &:before {
+      content: "";
+      display: block;
+      position: absolute;
+      top: 25%;
+      width: 90%;
+      height: 50%;
+      background: var(--highlight-colour);
+      margin-bottom: var(--space-v-half);
+      opacity: var(--opacity-quarter);
+      z-index: 0;
+      transform: skew(-10deg);
     }
+  }
 }

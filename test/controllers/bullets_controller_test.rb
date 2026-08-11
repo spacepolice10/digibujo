@@ -60,12 +60,13 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :success
-    assert_match %(turbo-stream action="append" target="daylog_bullets_container"), response.body
+    target = dom_id(@daylog, Date.current)
+    assert_match %(turbo-stream action="append" target="#{target}"), response.body
     assert_match 'Stream task', response.body
   end
 
   test 'composer create appends the row and drops the empty state' do
-    container = 'daylog_bullets_container'
+    container = dom_id(@daylog, Date.current)
 
     post bullets_path,
          params: {
@@ -89,7 +90,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     collection = create_collection!(@user, name: 'Inbox')
     create_bullet!(@user, bucket: collection.bucket, pops_on: nil, bulletable: Note.new, body: 'Yesterday',
                    created_at: 1.day.ago)
-    container = ActionView::RecordIdentifier.dom_id(collection, :bullets_container)
+    container = ActionView::RecordIdentifier.dom_id(collection.bucket, nil)
     composer = ActionView::RecordIdentifier.dom_id(collection, :bullets_composer)
 
     post bullets_path,
@@ -475,7 +476,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     monthlylog = create_monthlylog!(@user, name: 'june')
     day = Date.current.beginning_of_month
     composer = "date_#{day.iso8601}_bullets_composer"
-    container = "date_#{day.iso8601}_bullets_container"
+    container = dom_id(monthlylog.bucket, day)
 
     post bullets_path,
          params: {
@@ -497,7 +498,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   test 'composer create appends into monthlylog unplanned container' do
     monthlylog = create_monthlylog!(@user, name: 'june')
     composer = 'monthlylog_bullets_unplanned_composer'
-    container = 'monthlylog_bullets_unplanned_container'
+    container = dom_id(monthlylog.bucket, nil)
 
     post bullets_path,
          params: {
@@ -518,7 +519,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   test 'composer create appends into future unplanned container' do
     future = ensure_future!(@user)
     composer = 'future_bullets_unplanned_composer'
-    container = 'future_bullets_unplanned_container'
+    container = dom_id(future.bucket, nil)
 
     post bullets_path,
          params: {

@@ -35,7 +35,7 @@ class FuturesControllerTest < ActionDispatch::IntegrationTest
     assert_no_match 'Month card event', response.body
     assert_select '.chat--window'
     assert_select '.future--grid', count: 0
-    assert_select "#future_bullets_unplanned_container.chat--scroller[data-controller~='chat-scroll']"
+    assert_select "##{dom_id(future.bucket, nil)}.chat--scroller[data-controller~='chat-scroll']"
     assert_select '[data-controller~="chat-scroll"][data-chat-scroll-path-value=?]', future_bullets_path(future)
     assert_select 'div#future_bullets_unplanned_composer.composer[data-controller~="composer"]'
     assert_select '.bullets-form--create', count: 0
@@ -53,7 +53,7 @@ class FuturesControllerTest < ActionDispatch::IntegrationTest
     get current_future_path
 
     assert_response :success
-    assert_select 'div#future_bullets_unplanned_container > .chat--load-more-trigger[data-chat-scroll-target=trigger]', count: 1
+    assert_select "div##{dom_id(future.bucket, nil)} > .chat--load-more-trigger[data-chat-scroll-target=trigger]", count: 1
   end
 
   test 'show returns not found for another users future log' do

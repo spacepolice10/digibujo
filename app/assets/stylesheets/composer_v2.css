@@ -52,6 +52,11 @@ lexxy-toolbar {
         border-radius: 0;
         box-shadow: none;
 
+        & .lexxy-editor__content {
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+
         @container layout (width < 600px) {
             width: 98%;
             margin-inline: auto;
@@ -211,5 +216,37 @@ lexxy-toolbar {
         & lexxy-toolbar {
             display: none !important;
         }
+    }
+
+    .composer--lazy-container {
+        background: var(--color-2);
+        border-radius: var(--radius-base);
+        border: var(--border-subtle);
+        overflow: hidden;
+
+        & > .composer {
+            padding: var(--space-v) var(--space-h);
+        }
+
+        @container layout (width < 600px) {
+            & > .composer {
+                flex-wrap: wrap;
+                padding-inline: var(--space-h-half);
+            }
+
+            & > .composer lexxy-editor {
+                order: -1;
+                flex-basis: 100%;
+                width: 100%;
+            }
+        }
+    }
+
+    .composer--lazy-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-h);
+        padding: var(--space-v-half) var(--space-h-half);
     }
 }

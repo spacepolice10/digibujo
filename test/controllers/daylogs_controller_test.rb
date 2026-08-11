@@ -87,26 +87,33 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select "button[popovertarget='pinned_list'][data-action*='keydown.shift+p@document->hotkey#click'][data-hotkey='P']"
   end
 
-  test 'daylog header renders triage chip with stimulus controller' do
+  test 'empty daylog renders expanded triage review' do
     get daylog_path
 
     assert_response :success
-    assert_select '#triage_chip.daylog--triage-chip' do
-      assert_select '[data-controller~="triage-chip"]'
-      assert_select '[data-triage-chip-number-url-value="/triage/number"]'
-      assert_select 'a#triage_chip_button[href=?]', triage_path
-      assert_select '#triage_chip_number.daylog--triage-number'
+    assert_select 'header.chat--header turbo-frame#daylog_triage_preview' do
+      assert_select '.daylog--triage-preview.layout--container[data-size="sm"][data-margin="horizontal"]' do
+        assert_select '> .layout--surface[data-elevation="2"][data-padding="true"]'
+        assert_select 'a.button[data-content="icon"][data-radius="full"][data-size="sm"]' \
+                      '[data-turbo-frame="daylog_triage_preview"][aria-label="Close triage review"]'
+      end
     end
-    assert_select '#triage_chip_button[hidden]'
+    assert_select "a[href=?][data-turbo-frame='_top']", daylog_triage_path, text: 'Review'
   end
 
-  test 'daylog header hides triage chip when empty' do
-    Pending.provision!(@user)
+  test 'daylog with bullets renders collapsed triage header' do
+    create_bullet!(@user, bulletable: Task.new, body: 'Already started', pops_on: Date.current)
 
     get daylog_path
 
     assert_response :success
-    assert_select '#triage_chip_button[hidden]'
+    assert_select 'header.chat--header turbo-frame#daylog_triage_preview .layout--flex[data-justify="center"]' do
+      assert_select 'a.button[data-intent="secondary"][data-radius="full"]' \
+                    '[data-turbo-frame="daylog_triage_preview"][aria-label="Open triage"]' do
+        assert_select "time[datetime=?]", Date.current.iso8601
+      end
+    end
+    assert_select '.daylog--triage-preview', count: 0
   end
 
   test 'daylog scopes bulk menu controls to the bullets list' do
@@ -251,7 +258,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     bullets = Array.new(total) do |index|
       create_bullet!(@user, bulletable: Note.new, body: "Line #{index}", created_at: (total - index).minutes.ago)
     end
-    container = 'daylog_bullets_container'
+    container = dom_id(@daylog.bucket, Date.current)
 
     get daylog_path
 
@@ -274,7 +281,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'daylog mounts the chat scroller pointed at the cursor endpoint' do
-    container = 'daylog_bullets_container'
+    container = dom_id(@daylog.bucket, Date.current)
 
     get daylog_path
 

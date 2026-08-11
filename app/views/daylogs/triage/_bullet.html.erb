@@ -1,0 +1,30 @@
+<%# locals: (bullet:) %>
+<div id="<%= dom_id(bullet, :triage) %>"
+     class="triage--bullet"
+     draggable="true"
+     data-controller="bullet-drag"
+     data-bullet-drag-id-value="<%= bullet.id %>"
+     data-action="dragstart->bullet-drag#dragstart dragend->bullet-drag#dragend">
+  <div class="utilities--line-clamp-1">
+    <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
+  </div>
+
+  <div class="triage--bullet-actions layout--flex" data-align="center">
+    <%= form_with url: daylog_triage_accept_path, method: :post, data: { turbo_stream: true } do %>
+      <%= hidden_field_tag :bullet_ids, bullet.id, data: { bulk_menu_target: "idList" } %>
+      <%= button_tag class: "button", data: { intent: "secondary", radius: "base", size: "sm" } do %>
+        <%= icon_tag("arrow-right") %>
+        Migrate
+      <% end %>
+    <% end %>
+
+    <%= form_with url: archive_path, method: :post, data: { turbo_stream: true } do %>
+      <%= hidden_field_tag :bullet_ids, bullet.id, data: { bulk_menu_target: "idList" } %>
+      <%= button_tag class: "button",
+            data: { intent: "secondary", status: "negative", radius: "base", size: "sm" } do %>
+        <%= icon_tag("archive") %>
+        Discard
+      <% end %>
+    <% end %>
+  </div>
+</div>

@@ -31,18 +31,26 @@ export default class extends Controller {
   connect() {
     this.beforeVisitHandler = () => this.#restore();
     this.submitEndHandler = (event) => this.#handleSubmitEnd(event);
+    this.menuResizeObserver = new ResizeObserver(() => this.#syncClearance());
     document.addEventListener("turbo:before-visit", this.beforeVisitHandler);
     document.addEventListener("turbo:submit-end", this.submitEndHandler);
+    if (this.hasMenuTarget) this.menuResizeObserver.observe(this.menuTarget);
     this.#syncSelectMode();
   }
 
   disconnect() {
     document.removeEventListener("turbo:before-visit", this.beforeVisitHandler);
     document.removeEventListener("turbo:submit-end", this.submitEndHandler);
+    this.menuResizeObserver?.disconnect();
+    this.element.style.removeProperty("--bulk-menu-clearance");
   }
 
   toggle(event) {
     const checkbox = event.currentTarget;
+    if (checkbox.closest("[data-bulk-menu-ignore]")) {
+      checkbox.checked = false;
+      return;
+    }
     const id = checkbox.value;
 
     if (checkbox.checked) {
@@ -55,6 +63,7 @@ export default class extends Controller {
 
   select(event) {
     if (event.defaultPrevented) return;
+    if (event.currentTarget.closest("[data-bulk-menu-ignore]")) return;
     if (event.target.closest(INTERACTIVE_SELECTOR)) return;
 
     event.currentTarget.querySelector("[data-bulk-menu-target='checkbox']")?.click();
@@ -69,6 +78,7 @@ export default class extends Controller {
 
     if (this.hasMenuTarget) {
       this.menuTarget.hidden = this.idListValue.length == 0;
+      this.#syncClearance();
     }
 
     if (this.hasAmountTarget) {
@@ -87,9 +97,29 @@ export default class extends Controller {
     this.#syncSelectMode();
   }
 
+  #syncClearance() {
+    if (!this.hasMenuTarget || this.menuTarget.hidden) {
+      this.element.style.removeProperty("--bulk-menu-clearance");
+      return;
+    }
+
+    const menuStyles = getComputedStyle(this.menuTarget);
+    const clearance =
+      this.menuTarget.offsetHeight * 0.75 +
+      Number.parseFloat(menuStyles.bottom);
+
+    this.element.style.setProperty("--bulk-menu-clearance", `${clearance}px`);
+  }
+
   checkboxTargetConnected(checkbox) {
     checkbox.checked = this.idListValue.includes(checkbox.value);
     this.#updateBulkActions();
+  }
+
+  checkboxTargetDisconnected(checkbox) {
+    if (!checkbox.checked) return;
+
+    this.idListValue = this.idListValue.filter((value) => value != checkbox.value);
   }
 
   idListTargetConnected(input) {

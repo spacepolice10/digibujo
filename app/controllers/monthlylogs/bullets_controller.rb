@@ -24,42 +24,10 @@ module Monthlylogs
       end
     end
 
-    def new
-      @bullet = Bullet.new
-    end
-
-    def create
-      @bullet = Bullet.new(bullet_params)
-      @bullet.save
-
-      respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to monthlylog_path(@monthlylog), notice: 'Bullet created' }
-      end
-    end
-
     private
 
     def set_monthlylog
       @monthlylog = Current.user.monthlylogs.find(params[:monthlylog_id])
-    end
-
-    def bullet_params
-      attributes = allowed_bulletable_entity.permitted_bullet_attributes
-
-      if @bullet&.persisted?
-        params.require(:bullet).permit(:body, bulletable_attributes: attributes)
-      else
-        params.require(:bullet).permit(%i[pops_on bulletable_type bucket_id body], bulletable_attributes: attributes)
-      end
-    end
-
-    def allowed_bulletable_entity
-      name = (@bullet&.bulletable_type || params.dig(:bullet, :bulletable_type)).to_s
-      allowed = name.presence_in(Bullet.bulletable_types)
-      raise ActionController::ParameterMissing, 'bulletable_type' unless allowed
-
-      allowed.constantize
     end
 
     def parsed_date(date)

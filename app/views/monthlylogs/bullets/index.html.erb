@@ -1,8 +1,8 @@
 <% date_composer_id = dom_id(@monthlylog.bucket, "composer_#{@date&.iso8601}")
    variants = @date.present? ? %w[Task Event] : %w[Task Note]
-   bullets_container_id = dom_id(@monthlylog.bucket, "#{@date || 'unplanned'}_bullets") %>
+   bullets_container_id = dom_id(@monthlylog.bucket, @date) %>
 
-<div class="chat--window layout--container" data-size="sm">
+<div class="chat--window layout--container" data-size="md">
   <turbo-frame
     id="monthlylog_bullets"
     class="chat--surface layout--surface"
@@ -12,22 +12,21 @@
     <header class="chat--header">
       <div class="layout--flex" data-justify="between" data-align="center">
         <%= back_link_to monthlylog_path(@monthlylog),
-              class: "monthlylog--date-link monthlylog--bullets-back",
-              style: "--highlight-colour: var(--model-color-4);",
-              data: { turbo_frame: "_top" },
+              class: "button",
+              data: { content: "text", turbo_frame: "_top" },
               aria: { label: "Monthly log" } do %>
           <%= icon_tag("arrow-left") %>
-          <span class="typography--bold">Monthly log</span>
+          <span>Monthly log</span>
         <% end %>
 
         <% if @date %>
           <%= link_to daylog_path(date: @date.iso8601),
-                class: "typography--paragraph-sm",
-                data: { turbo_frame: "_top" } do %>
+                class: "button typography--mono typography--paragraph-sm",
+                data: { content: "text", turbo_frame: "_top" } do %>
             <time datetime="<%= @date.iso8601 %>"><%= @date.strftime("%a, %b %-d") %></time>
           <% end %>
         <% else %>
-          <span class="typography--paragraph-sm">Unplanned</span>
+          <span class="typography--mono typography--paragraph-sm">Unplanned</span>
         <% end %>
       </div>
     </header>
@@ -59,7 +58,7 @@
       <% end %>
     </div>
 
-    <div class="chat--composer monthlylog--bullets-composer">
+    <div class="chat--composer composer--dock" data-controller="chat-composer">
       <%= render "bullets/composer_v2",
             bullet: Bullet.new,
             bucket_id: @monthlylog.bucket.id,
@@ -67,8 +66,7 @@
             allowed_bulletable_variants: variants,
             preset: "default",
             autofocus: false,
-            composer_id: date_composer_id,
-            form_url: monthlylog_bullets_path(@monthlylog) %>
+            composer_id: date_composer_id %>
     </div>
   </turbo-frame>
 </div>

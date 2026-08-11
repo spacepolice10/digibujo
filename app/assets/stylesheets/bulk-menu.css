@@ -43,8 +43,43 @@
     gap: var(--space-h-half);
   }
 
+  .bulk-menu--actions > form,
+  .bulk-menu--actions > [data-bulk-menu-target="conditionalAction"],
+  .bulk-menu--action-dock {
+    flex: 1 1 calc(var(--space-h-2) * 4);
+  }
+
+  .bulk-menu--actions .button:not(.bulk-menu--hide) {
+    width: 100%;
+    padding-inline: var(--space-h);
+  }
+
+  .bulk-menu--actions
+    > [data-bulk-menu-target="conditionalAction"]
+    > form {
+    width: 100%;
+  }
+
+  [data-controller~="bulk-menu"]:has(.bulk-menu:not([hidden]))
+    [data-bulk-menu-target~="list"] {
+    scroll-padding-block-end: var(--bulk-menu-clearance, var(--space-v-10));
+  }
+
+  [data-controller~="bulk-menu"]:has(.bulk-menu:not([hidden]))
+    [data-bulk-menu-target~="list"]::after {
+    display: block;
+    height: var(--bulk-menu-clearance, var(--space-v-10));
+    content: "";
+  }
+
   .bulk-menu--action-dock {
     position: relative;
+  }
+
+  @media (pointer: coarse) {
+    .bulk-menu--actions .button:not(.bulk-menu--hide) {
+      min-height: calc(var(--coarse-target) - var(--space-v-half));
+    }
   }
 
   .bulk-menu--hide {

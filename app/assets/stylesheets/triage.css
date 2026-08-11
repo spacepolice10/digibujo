@@ -1,66 +1,107 @@
 @layer components {
- 
-
-  .triage--chip {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-h-half);
-    height: var(--space-v-2);
-    width: var(--space-h-3);
-    border: none;
-    border-radius: var(--radius-strong);
-    background: var(--color-accent-1);
-    color: var(--color-invert-1);
-    text-decoration: none;
+  html:has(.triage--container),
+  body:has(.triage--container) {
+    height: 100dvh;
+    min-height: 0;
     overflow: hidden;
-    &:hover {
-      background: var(--color-accent-1-subtle);
+  }
+
+  .triage--container {
+    display: flex;
+    flex: 1 1 0;
+    min-height: 0;
+  }
+
+  .triage--surface {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: hidden;
+
+    @container layout (width < 600px) {
+      display: flex;
+      flex-direction: row;
+      overflow-x: auto;
+      overflow-y: hidden;
+      overscroll-behavior-inline: contain;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
     }
   }
 
-  .triage--author {
-    color: var(--color-invert-4);
-    margin: 0;
+  .triage--surface::-webkit-scrollbar {
+    display: none;
   }
 
-  .triage--actions {
+  .triage--section {
+    min-width: 0;
+    overflow-y: auto;
+    overscroll-behavior-y: none;
+
+    &.divided--vertical {
+      border-inline-end: var(--border-subtle);
+    }
+
+    &.pops-drop--over {
+      outline: var(--border-strong);
+      outline-offset: calc(var(--space-v-half) * -1);
+    }
+
+    @container layout (width < 600px) {
+      flex: 0 0 100%;
+      width: 100%;
+      min-width: 100%;
+      max-width: 100%;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+
+      &.divided--vertical {
+        border-inline-end: 0;
+      }
+    }
+  }
+
+  .triage--section-header {
+    padding: var(--layout-padding);
+    border-block-end: var(--border-subtle);
+
+    & > p {
+      margin-block-start: var(--space-v-half);
+    }
+  }
+
+  .triage--section-navigation {
+    margin-block-end: var(--space-v-2);
+  }
+
+  .triage--section-content {
+    padding: var(--space-v) var(--space-h);
+
+    @container layout (width < 600px) {
+      padding-block-end: calc(var(--tabbar-clearance) + var(--space-v-2));
+    }
+  }
+
+  .triage--bullets {
     display: flex;
-    align-items: center;
-    gap: var(--space-h-half);
-    margin-inline-start: calc(var(--space-v) + var(--space-h-half));
-  }
-
-  .triage--action-form {
-    display: inline-flex;
+    flex-direction: column;
+    gap: var(--space-v);
   }
 
   .triage--bullet {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    gap: var(--space-v-half);
-    background: var(--color-1);
-    border: 1px solid var(--color-invert-2);
-    border-radius: var(--radius-strong);
-    padding: var(--space-v-half);
-  }
+    min-width: 0;
 
-  .triage--action {
-    padding: 0 var(--space-h-half);
-    font-size: var(--font-size-xs);
-    color: var(--color-invert-4);
-    gap: 0.15rem;
-
-    .icon {
-      width: var(--space-v);
-      height: var(--space-v);
+    &:has([data-bulk-menu-target="checkbox"]:checked) {
+      & .triage--bullet-actions {
+        display: flex;
+      }
     }
   }
 
-  .triage--no-bullets {
-    text-align: center;
-    color: var(--color-invert-4);
-    padding: var(--space-v) var(--space-h);
+  .triage--bullet-actions {
+    display: none;
+    gap: var(--space-h-half);
+    padding: var(--space-v-half) var(--space-h) 0;
   }
+
 }
