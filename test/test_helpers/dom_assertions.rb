@@ -56,24 +56,6 @@ module DomAssertions
     assert_select tag, text: text, **options
   end
 
-  def assert_home_section(name, expanded: nil, count: nil)
-    selector = "details[data-home-section-expand-path-value=\"#{home_expand_section_path(name.downcase)}\"]"
-    selector += "[open]" if expanded == true
-    selector += ":not([open])" if expanded == false
-
-    options = count ? { count: count } : { minimum: 1 }
-    assert_select selector, **options
-  end
-
-  def assert_home_sections(total:, expanded:)
-    assert_select "details[data-home-section-expand-path-value]", count: total
-    assert_select "details[data-home-section-expand-path-value][open]", count: expanded
-  end
-
-  def assert_section_index_link(path, section_name, count: 1)
-    assert_link path, aria_label: "All #{section_name.downcase}", count: count
-  end
-
   def assert_nav_link(path, label:, count: nil)
     options = count.nil? ? {} : { count: count }
     assert_select "nav a[href=?][aria-label=?]", path, label, **options

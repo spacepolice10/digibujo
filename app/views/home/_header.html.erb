@@ -1,0 +1,16 @@
+<% if mobile_variant? %>
+  <header class="home--header">
+    <%= link_to "Digibujo", home_path, class: "home--wordmark", data: { turbo_frame: "_top" } %>
+
+    <div class="home--header-controls">
+      <%= render "home/account_button" %>
+
+      <%= link_to search_path,
+            class: "home--search-link",
+            data: { turbo_frame: "_top" } do %>
+        <%= icon_tag("search") %>
+        <span>Search</span>
+      <% end %>
+    </div>
+  </header>
+<% end %>

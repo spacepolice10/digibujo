@@ -1,0 +1,25 @@
+<section class="home--section" data-home-section="<%= key %>">
+  <header class="home--section-header">
+    <%= link_to path,
+          class: "home--section-title",
+          data: { turbo_frame: "_top" } do %>
+      <%= icon_tag(icon) %>
+      <h2><%= title %></h2>
+      <%= icon_tag("arrow-right", class: "home--section-arrow") %>
+    <% end %>
+
+  </header>
+
+  <div class="home--section-content">
+    <%= yield %>
+
+    <% if local_assigns[:create_path] %>
+      <%= link_to create_path,
+            class: "button home--add-button",
+            data: { turbo_frame: "_top", intent: "secondary", radius: "full", size: "lg", content: "text" } do %>
+        <%= icon_tag("plus") %>
+        <span><%= create_label %></span>
+      <% end %>
+    <% end %>
+  </div>
+</section>

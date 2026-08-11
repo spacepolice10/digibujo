@@ -39,7 +39,7 @@ Subsequent requests authenticate via, in order: signed `session_id` cookie (brow
 
 ## User Settings
 
-Per-user settings live in a dedicated `user_settings` table (one row per user), accessed via `User::Configurable` concern. `User` `has_one :settings, class_name: "User::Settings"`; the row is created automatically on user create. `User::Settings` exposes typed columns and a `SECTIONS` / `SECTION_COLUMNS` map (current sections: `logs`, `projects`, `collections`, `published` → `*_expanded` booleans). **`appearance`** (`default`, `warm`, `cool`, `nature`, `cheese`) drives the home background tint. Add new settings as real columns and extend the model; avoid JSON columns. Home section expand/collapse is updated via `POST /home/sections/:id/expand` and `POST /home/sections/:id/collapse` (`Home::SectionsController`), which guards unknown keys using `User::Settings::SECTION_COLUMNS`. Appearance is updated via `POST /home/appearance` (`Home::AppearancesController`). The concern also exposes `User#settings!` which lazy-creates the row on first access; use it from controllers so users created before the row existed (or created via raw SQL) still get a settings record.
+Per-user settings live in a dedicated `user_settings` table (one row per user), accessed via `User::Configurable` concern. `User` `has_one :settings, class_name: "User::Settings"`; the row is created automatically on user create. **`appearance`** (`default`, `warm`, `cool`, `nature`, `cheese`) drives the application background tint and is updated via `POST /home/appearance` (`Home::AppearancesController`). Add new settings as real columns and extend the model; avoid JSON columns. The concern also exposes `User#settings!` which lazy-creates the row on first access; use it from controllers so users created before the row existed (or created via raw SQL) still get a settings record. Legacy `*_expanded` columns remain in the table for compatibility but are no longer read by the application.
 
 ## Delegated Type Pattern (Bullets)
 
@@ -329,8 +329,6 @@ DELETE /daylog/picture                       → daylogs/pictures#destroy
 # Home & navigation
 GET    /home                                 → home#show
 GET    /home/activities                      → home/activities#index
-POST   /home/sections/:id/expand             → home/sections#expand
-POST   /home/sections/:id/collapse           → home/sections#collapse
 POST   /home/appearance                      → home/appearances#update
 GET    /menu                                 → menu#show
 GET    /search                               → searches#show (?q=)

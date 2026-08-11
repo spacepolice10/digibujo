@@ -100,13 +100,9 @@ Rails.application.routes.draw do
   end
 
   # --- Home & navigation ---
-  resource :home, controller: 'home' do
-    resources :activities, module: :home
-  end
+  resource :home, controller: 'home'
 
   scope module: :home do
-    post 'home/sections/:id/expand', to: 'sections#expand', as: :home_expand_section
-    post 'home/sections/:id/collapse', to: 'sections#collapse', as: :home_collapse_section
     post 'home/appearance', to: 'appearances#update', as: :home_appearance
   end
 
@@ -135,7 +131,7 @@ Rails.application.routes.draw do
   resources :archived
 
   # --- Attachments ---
-  resources :attachments, only: :show, param: :signed_id
+  resources :attachments, only: %i[index show], param: :signed_id
 
   # --- Publishing ---
   resources :published, param: :code

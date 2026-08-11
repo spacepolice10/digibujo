@@ -147,4 +147,13 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     assert_select "ul[role=listbox]", count: 1
     assert_page_text "recent mobile"
   end
+
+  test 'direct show renders a standalone search page' do
+    get search_path
+
+    assert_response :success
+    assert_select 'main.search--page'
+    assert_select 'form.search--form[action=?]', search_path
+    assert_select 'turbo-frame#menu_search'
+  end
 end

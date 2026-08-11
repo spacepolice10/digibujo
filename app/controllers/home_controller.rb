@@ -1,85 +1,41 @@
+# frozen_string_literal: true
+
+# Renders the signed-in user's navigation hub and compact previews.
 class HomeController < ApplicationController
+  PREVIEW_LIMIT = 3
+
   def show
-    @sections = sections.select(&:visible?)
-    @appearance = appearance
+    @pinned_entities = pinned_entities
+    @collections = collections
+    @attachments = attachments
+    @projects = projects
+    @trackers = trackers
+    @published_bullets = published_bullets
   end
 
   private
 
-  def sections
-    [
-      Section.new(
-        name: 'Logs',
-        records: logs_records,
-        show_path: nil,
-        expanded: section_expanded?(:logs)
-      ),
-      Section.new(
-        name: 'Projects',
-        records: project_records,
-        show_path: projects_path,
-        expanded: section_expanded?(:projects)
-      ),
-      Section.new(
-        name: 'Collections',
-        records: collection_records,
-        show_path: collections_path,
-        expanded: section_expanded?(:collections)
-      ),
-      Section.new(
-        name: 'Archived',
-        records: archived_records,
-        show_path: archived_index_path,
-        expanded: section_expanded?(:archived)
-      ),
-      Section.new(
-        name: 'Published',
-        records: published_records,
-        show_path: published_index_path,
-        expanded: section_expanded?(:published)
-      )
-    ]
+  def pinned_entities = Current.user.pinned_entities.order(created_at: :desc).limit(PREVIEW_LIMIT)
+
+  def collections
+    Current.user.collections
+           .merge(Bucket.active)
+           .order('collections.created_at DESC')
+           .limit(PREVIEW_LIMIT)
   end
 
-  def logs_records
-    Current.user.futures.order(period_from: :desc).limit(5).to_a +
-      Current.user.monthlylogs.order(period_from: :desc).limit(5).to_a
+  def attachments = User::Attachments.new(Current.user).attachments.limit(PREVIEW_LIMIT)
+  def projects = Current.user.projects.order(created_at: :desc).limit(PREVIEW_LIMIT)
+
+  def trackers
+    Current.user.trackers.order(created_at: :desc).limit(PREVIEW_LIMIT).with_completions
   end
 
-  def collection_records
-    Current.user.collections.merge(Bucket.active).order('buckets.name').limit(5)
-  end
-
-  def project_records
-    Current.user.projects.limit(5)
-  end
-
-  def archived_records
-    Archive.where(user_id: Current.user.id, archivable_type: 'Bullet')
-           .includes(archivable: :bulletable)
-           .order(created_at: :desc)
-           .limit(5)
-  end
-
-  def published_records
-    Current.user.published_entities
-           .includes(publishable: :bulletable)
-           .order(published_at: :desc)
-           .limit(5)
-  end
-
-  def appearance
-    Current.user.settings!.appearance
-  end
-
-  def section_expanded?(section_name)
-    column = User::Settings::SECTION_COLUMNS[section_name.to_s] || User::Settings::SECTION_COLUMNS[section_name]
-    Current.user.settings![column]
-  end
-
-  Section = Struct.new(:name, :records, :show_path, :expanded, keyword_init: true) do
-    def visible?
-      records.present?
-    end
+  def published_bullets
+    Current.user.bullets.published
+           .includes(:published_entity)
+           .preload(:bulletable)
+           .order(published_entities: { published_at: :desc })
+           .limit(PREVIEW_LIMIT)
   end
 end

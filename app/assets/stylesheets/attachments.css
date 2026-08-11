@@ -1,0 +1,18 @@
+@layer components {
+  .attachment--index-header { margin-bottom: var(--space-v-2); }
+  .attachment--index-list { display: grid; gap: var(--space-v-half); }
+
+  .attachment--index-item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-h);
+    padding: var(--space-v) var(--space-h);
+    color: var(--color-invert-2);
+    text-decoration: none;
+    border-radius: var(--radius-base);
+  }
+
+  .attachment--index-item:hover { background: var(--color-2); }
+  .attachment--index-item small { color: var(--color-invert-4); font-size: var(--font-size-xs); }
+}

@@ -1,0 +1,31 @@
+<% content_for(:title, "Attachments") %>
+
+<main class="layout--container" data-size="md" data-padding="true">
+  <div class="layout--surface" data-elevation="1" data-padding="true">
+    <header class="attachment--index-header">
+      <%= back_link_to home_path,
+            class: "button",
+            data: { intent: "secondary", radius: "full", size: "xs" } do %>
+        <%= icon_tag("arrow-left") %>
+        Back
+      <% end %>
+      <h1>Attachments</h1>
+    </header>
+
+    <% if @attachments.any? %>
+      <div class="attachment--index-list">
+        <% @attachments.each do |attachment| %>
+          <%= link_to attachment_path(attachment.blob.signed_id),
+                class: "attachment--index-item",
+                data: { turbo_frame: "_top" } do %>
+            <%= icon_tag(attachment.blob.image? ? "camera" : attachment.blob.audio? ? "microphone" : "paperclip") %>
+            <span class="utilities--line-clamp-1"><%= attachment.blob.filename %></span>
+            <small><%= number_to_human_size(attachment.blob.byte_size) %></small>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="home--empty">No attachments yet.</p>
+    <% end %>
+  </div>
+</main>

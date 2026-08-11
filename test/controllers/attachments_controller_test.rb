@@ -50,6 +50,21 @@ class AttachmentsControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  test 'index lists all owned upload types and excludes another users files' do
+    rich_text_blob = attach_note_blob!(@user, filename: 'inline.png')
+    picture_blob = attach_calendar_date_picture_blob!(@user, filename: 'picture.png')
+    voice_blob = attach_voice_blob!(@user, filename: 'memo.webm')
+    foreign_blob = attach_note_blob!(users(:two), filename: 'foreign.png')
+
+    get attachments_path
+
+    assert_response :success
+    assert_match rich_text_blob.filename.to_s, response.body
+    assert_match picture_blob.filename.to_s, response.body
+    assert_match voice_blob.filename.to_s, response.body
+    assert_no_match foreign_blob.filename.to_s, response.body
+  end
+
   private
 
   def attach_note_blob!(user, filename:)
@@ -74,6 +89,18 @@ class AttachmentsControllerTest < ActionDispatch::IntegrationTest
     picture = calendar_date.build_picture
     picture.picture.attach(blob)
     picture.save!
+    blob
+  end
+
+  def attach_voice_blob!(user, filename:)
+    blob = ActiveStorage::Blob.create_and_upload!(
+      io: StringIO.new('voice memo'),
+      filename: filename,
+      content_type: 'audio/webm'
+    )
+    voice = Voice.new(duration_seconds: 1)
+    voice.recording.attach(blob)
+    create_bullet!(user, bulletable: voice, body: 'Voice memo')
     blob
   end
 

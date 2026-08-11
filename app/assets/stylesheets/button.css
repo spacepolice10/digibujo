@@ -172,16 +172,16 @@
     transition: color 0.08s ease;
   }
   @media (hover: hover) {
-    .button[data-content="text"]:hover:not(:disabled) {
+    .button[data-content="text"][data-intent]:hover:not(:disabled) {
       background: transparent;
-      border-color: transparent;
+      border: 0;
       color: var(--color-accent-1);
     }
   }
-  .button[data-content="text"]:focus-visible,
-  .button[data-content="text"]:active:not(:disabled) {
+  .button[data-content="text"][data-intent]:focus-visible,
+  .button[data-content="text"][data-intent]:active:not(:disabled) {
     background: transparent;
-    border-color: transparent;
+    border: 0;
     color: var(--color-accent-1);
   }
 }

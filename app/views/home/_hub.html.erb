@@ -1,0 +1,103 @@
+<% content_for(:title, "Home") %>
+
+<main class="home--page layout--container" data-size="md" data-padding="true">
+  <%= render "home/header" %>
+
+  <div class="home--sections">
+    <%= render layout: "home/section", locals: { key: "pins", title: "Pins", path: pinned_index_path, icon: "pin" } do %>
+      <% if @pinned_entities.any? %>
+        <% @pinned_entities.each do |entity| %>
+          <%= render "home/preview_link",
+                path: polymorphic_path(entity.pinnable),
+                icon: entity.pinnable.icon,
+                colour: colour(entity.pinnable.colour),
+                name: entity.pinnable.name %>
+        <% end %>
+      <% else %>
+        <p class="home--empty">Nothing pinned yet.</p>
+      <% end %>
+    <% end %>
+
+    <%= render layout: "home/section", locals: { key: "logs", title: "Logs", path: current_monthlylog_navigation_path, icon: "calendar" } do %>
+      <%= render "home/preview_link", path: current_monthlylog_navigation_path, icon: "calendar", name: "Monthly log" %>
+      <%= render "home/preview_link", path: current_future_path, icon: "calendar-repeat", name: "Future log" %>
+    <% end %>
+
+    <section class="home--section" data-home-section="collections-attachments">
+      <header class="home--section-header">
+        <div class="home--section-title">
+          <%= icon_tag("folder") %>
+          <h2>Collections &amp; attachments</h2>
+        </div>
+      </header>
+
+      <div class="home--split-sections">
+        <div class="home--split-section">
+          <div class="home--subsection-header">
+            <%= link_to collections_path, class: "home--subsection-title", data: { turbo_frame: "_top" } do %>
+              Collections
+              <%= icon_tag("arrow-right") %>
+            <% end %>
+          </div>
+          <% @collections.each do |collection| %>
+            <%= render "home/preview_link", path: collection_path(collection), icon: collection.icon,
+                  colour: colour(collection.colour), name: collection.name %>
+          <% end %>
+          <% if @collections.empty? %><p class="home--empty">No collections yet.</p><% end %>
+          <%= link_to new_collection_path,
+                class: "button home--add-button",
+                data: { turbo_frame: "_top", intent: "secondary", radius: "full", size: "lg", content: "text" } do %>
+            <%= icon_tag("plus") %>
+            <span>Add collection</span>
+          <% end %>
+        </div>
+
+        <div class="home--split-section">
+          <div class="home--subsection-header">
+            <%= link_to attachments_path, class: "home--subsection-title", data: { turbo_frame: "_top" } do %>
+              Attachments
+              <%= icon_tag("arrow-right") %>
+            <% end %>
+          </div>
+          <% @attachments.each do |attachment| %>
+            <%= render "home/preview_link", path: attachment_path(attachment.blob.signed_id), icon: "paperclip",
+                  name: attachment.blob.filename.to_s %>
+          <% end %>
+          <% if @attachments.empty? %><p class="home--empty">No attachments yet.</p><% end %>
+        </div>
+      </div>
+    </section>
+
+    <%= render layout: "home/section", locals: { key: "projects", title: "Projects", path: projects_path, icon: "hash" } do %>
+      <% @projects.each do |project| %>
+        <%= render "home/preview_link", path: project_path(project), icon: project.icon,
+              colour: colour(project.colour), name: project.name %>
+      <% end %>
+      <% if @projects.empty? %><p class="home--empty">No projects yet.</p><% end %>
+    <% end %>
+
+    <%= render layout: "home/section", locals: { key: "trackers", title: "Trackers", path: trackers_path, icon: "target", create_path: new_tracker_path, create_label: "Add tracker" } do %>
+      <% @trackers.each do |tracker| %>
+        <%= render "home/preview_link", path: tracker_path(tracker), icon: tracker.icon,
+              colour: colour(tracker.colour), name: tracker.name %>
+      <% end %>
+      <% if @trackers.empty? %><p class="home--empty">No trackers yet.</p><% end %>
+    <% end %>
+
+    <%= render layout: "home/section", locals: { key: "recently-shared", title: "Recently shared", path: published_index_path, icon: "link" } do %>
+      <% @published_bullets.each do |bullet| %>
+        <%= render "home/preview_link", path: bullet_path(bullet), icon: bullet.marker_icon.to_s.dasherize,
+              colour: colour(bullet.colour), name: bullet.name %>
+      <% end %>
+      <% if @published_bullets.empty? %><p class="home--empty">Nothing shared yet.</p><% end %>
+    <% end %>
+
+    <%= link_to archived_index_path,
+          class: "home--archive-link",
+          data: { home_section: "archive", turbo_frame: "_top" } do %>
+      <%= icon_tag("archive") %>
+      <span>Archive</span>
+      <%= icon_tag("arrow-right") %>
+    <% end %>
+  </div>
+</main>
