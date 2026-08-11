@@ -7,6 +7,7 @@
   }
 
   .daylog--composer {
+    border: var(--border-subtle);
     border-radius: var(--radius-full);
     box-shadow: var(--shadow-subtle);
     &:has(.composer[data-composer-editor-multiline-value="true"]) {
@@ -20,15 +21,15 @@
     width: 98%;
     margin-inline: auto;
 
-    @media (max-width: 768px) {
+    body[data-platform="mobile"] & {
       margin-bottom: var(--tabbar-clearance);
       transition: margin-bottom 250ms ease-out;
     }
   }
 
-  @media (max-width: 768px) {
+  @container layout (width < 800px) {
     html.keyboard-open .daylog--composer {
-      margin-bottom: var(--spacing-vertical);
+      margin-bottom: var(--space-v);
       transition: none;
     }
   }

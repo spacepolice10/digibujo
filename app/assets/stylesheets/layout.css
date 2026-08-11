@@ -7,7 +7,8 @@
     container: layout / inline-size;
     width: 100%;
   }
-  .layout--container[data-size="xl"] { max-width: 1040px; margin-inline: auto; }
+  .layout--container[data-size="xl"] { max-width: 1280px; margin-inline: auto; }
+  .layout--container[data-size="lg"] { max-width: 1040px; margin-inline: auto; }
   .layout--container[data-size="md"] { max-width: 800px; margin-inline: auto; }
   .layout--container[data-size="sm"] { max-width: 600px; margin-inline: auto; }
   .layout--container[data-size="xs"] { max-width: 360px; margin-inline: auto; }
@@ -25,7 +26,7 @@
   .layout--flex[data-justify="start"]    { justify-content: start; }
   .layout--flex[data-justify="end"]      { justify-content: end; }
   .layout--flex[data-align="center"]     { align-items: center; }
-  .ayout--flex[data-align="stretch"]    { align-items: stretch; }
+  .layout--flex[data-align="stretch"]   { align-items: stretch; }
   .layout--flex[data-wrap="true"]        { flex-wrap: wrap; }
   .layout--flex[data-wrap="reverse"]     { flex-wrap: wrap-reverse; }
 
@@ -35,21 +36,22 @@
   }
   .layout--grid[data-cols="2"] {
     grid-template-columns: repeat(1, 1fr);
-    @container layout (min-width: 480px) { grid-template-columns: repeat(2, 1fr); }
+    @container layout (width >= 600px) { grid-template-columns: repeat(2, 1fr); }
   }
   .layout--grid[data-cols="3"] {
     grid-template-columns: repeat(1, 1fr);
-    @container layout (min-width: 480px) { grid-template-columns: repeat(2, 1fr); }
-    @container layout (min-width: 768px) { grid-template-columns: repeat(3, 1fr); }
+    @container layout (width >= 600px) { grid-template-columns: repeat(2, 1fr); }
+    @container layout (width >= 800px) { grid-template-columns: repeat(3, 1fr); }
   }
   .layout--grid[data-cols="4"] {
     grid-template-columns: repeat(1, 1fr);
-    @container layout (min-width: 480px) { grid-template-columns: repeat(2, 1fr); }
-    @container layout (min-width: 768px) { grid-template-columns: repeat(3, 1fr); }
-    @container layout (min-width: 1040px) { grid-template-columns: repeat(4, 1fr); }
+    @container layout (width >= 600px) { grid-template-columns: repeat(2, 1fr); }
+    @container layout (width >= 800px) { grid-template-columns: repeat(3, 1fr); }
+    @container layout (width >= 1040px) { grid-template-columns: repeat(4, 1fr); }
   }
 
   .layout--surface {
+    border: var(--border-subtle);
     box-shadow: var(--shadow-subtle);
     border-radius: var(--radius-strong);
     height: inherit;
@@ -58,12 +60,15 @@
   .layout--surface[data-elevation="1"] { 
     background: var(--color-1); 
     box-shadow: none; 
-    @container layout (max-width: 480px) { background: transparent; }
+    @container layout (width < 600px) {
+      background: transparent;
+      border-color: transparent;
+    }
   }
   .layout--surface[data-elevation="2"] { 
     background: var(--color-2); 
     box-shadow: var(--shadow-subtle); 
-    @container layout (max-width: 480px) { background: var(--color-1); }
+    @container layout (width < 600px) { background: var(--color-1); }
   }
   .layout--surface[data-elevation="3"] { background: var(--color-3); box-shadow: var(--shadow-base) }
   .layout--surface[data-elevation="4"] { background: var(--color-4); box-shadow: var(--shadow-strong); }

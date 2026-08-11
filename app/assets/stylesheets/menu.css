@@ -99,14 +99,14 @@
   .menu--page-mobile {
     flex: 1;
     min-height: 0;
-    gap: var(--spacing-vertical-double);
+    gap: var(--space-v-2);
   }
 
   .menu--page-mobile-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--spacing-horizontal);
+    gap: var(--space-h);
   }
 
   .menu--create-bucket-button {

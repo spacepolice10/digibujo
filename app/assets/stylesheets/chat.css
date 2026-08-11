@@ -4,9 +4,9 @@
      build the whole window without per-page chrome. */
   .chat--window {
     --chat-header-clearance: calc(
-      var(--spacing-vertical-double)
-      + var(--spacing-horizontal-double)
-      + var(--spacing-vertical-double)
+      var(--space-v-2)
+      + var(--space-h-2)
+      + var(--space-v-2)
     );
 
     position: relative;
@@ -20,8 +20,7 @@
     overflow: hidden;
   }
 
-  /* Surface stays inside the named layout container so its elevation can
-     respond to @container layout while still owning the chat flex rows. */
+  /* Surface responds to the page layout container while owning chat rows. */
   .chat--surface {
     position: relative;
     display: flex;
@@ -42,8 +41,8 @@
   .chat--header {
     position: absolute;
     z-index: var(--z-dropdown);
-    top: max(var(--spacing-vertical), env(safe-area-inset-top, 0px));
-    inset-inline: var(--spacing-horizontal);
+    top: max(var(--space-v), env(safe-area-inset-top, 0px));
+    inset-inline: var(--space-h);
     background: transparent;
     overflow: visible;
     pointer-events: none;
@@ -69,16 +68,16 @@
     overscroll-behavior-x: auto;
     display: flex;
     flex-direction: column;
-    padding-inline: var(--spacing-horizontal-half);
+    padding-inline: var(--space-h-half);
     padding-top: var(--chat-header-clearance, 0px);
-    padding-bottom: var(--spacing-vertical);
+    padding-bottom: var(--space-v);
 
-    @media (max-width: 768px) {
-      gap: var(--spacing-vertical);
+    @container layout (width < 800px) {
+      gap: var(--space-v);
     }
 
     > * {
-      margin-block: var(--spacing-vertical-half);
+      margin-block: var(--space-v-half);
       /* Children never shrink: flex-shrink would crush rows (their min-height
          auto protection is off whenever the row has non-visible overflow,
          e.g. the monthly log's line-clamped wrappers) and swallow the
@@ -99,15 +98,15 @@
     display: flex;
     justify-content: center;
     margin-block-end: auto;
-    padding-block: var(--spacing-vertical);
-    color: var(--color-fg-subtle);
+    padding-block: var(--space-v);
+    color: var(--color-invert-4);
   }
 
   .chat--composer {
     position: relative;
     z-index: 2;
     flex: 0 0 auto;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    padding: var(--space-v-half) var(--space-h-half);
     background: var(--color-1);
   }
 }

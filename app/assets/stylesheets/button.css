@@ -3,7 +3,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--space-h-1);
+    gap: var(--space-h-half);
     font-family: inherit;
     cursor: pointer;
     white-space: nowrap;
@@ -25,17 +25,23 @@
   .button[data-size="sm"] {
     height: var(--space-v-3);
     padding: 0 var(--space-h-2);
-    font-size: var(--font-size-body);
+    font-size: var(--font-size-xs);
   }
   .button[data-size="lg"] {
     height: calc(var(--space-v-3) + 1ch);
     padding: 0 var(--space-h-3);
-    font-size: var(--font-size-input);
+    font-size: var(--font-size-base-read);
   }
 
   /* content — text vs icon-only */
   .button[data-content="text"] { width: fit-content; }
   .button[data-content="icon"] { aspect-ratio: 1 / 1; padding: 0; }
+
+  @media (pointer: coarse) {
+    .button {
+      min-height: var(--coarse-target);
+    }
+  }
 
   /* intent — 2 types */
   .button[data-intent="primary"] {
@@ -53,6 +59,7 @@
   .button[data-intent="primary"]:active:not(:disabled) {
     background: var(--color-invert-3);
     border-color: var(--color-invert-3);
+    color: var(--color-1);
   }
 
   .button[data-intent="secondary"] {
@@ -93,6 +100,50 @@
     color: var(--color-invert-positive);
   }
   .button[data-status="positive"][data-intent="primary"] {
+    background: var(--color-positive);
+    border-color: var(--color-positive);
+    color: var(--color-invert-1);
+  }
+
+  /* Keep status colors through intent interaction states. */
+  .button[data-status="negative"][data-intent="secondary"]:focus-visible {
+    background: var(--color-negative);
+    border-color: var(--color-invert-negative);
+    color: var(--color-invert-negative);
+  }
+  .button[data-status="positive"][data-intent="secondary"]:focus-visible {
+    background: var(--color-positive);
+    border-color: var(--color-invert-positive);
+    color: var(--color-invert-positive);
+  }
+  @media (hover: hover) {
+    .button[data-status="negative"][data-intent="secondary"]:hover:not(:disabled) {
+      background: var(--color-negative);
+      border-color: var(--color-invert-negative);
+      color: var(--color-invert-negative);
+    }
+    .button[data-status="positive"][data-intent="secondary"]:hover:not(:disabled) {
+      background: var(--color-positive);
+      border-color: var(--color-invert-positive);
+      color: var(--color-invert-positive);
+    }
+    .button[data-status="negative"][data-intent="primary"]:hover:not(:disabled) {
+      background: var(--color-invert-negative);
+      border-color: var(--color-invert-negative);
+      color: var(--color-negative);
+    }
+    .button[data-status="positive"][data-intent="primary"]:hover:not(:disabled) {
+      background: var(--color-invert-positive);
+      border-color: var(--color-invert-positive);
+      color: var(--color-positive);
+    }
+  }
+  .button[data-status="negative"][data-intent]:active:not(:disabled) {
+    background: var(--color-negative);
+    border-color: var(--color-negative);
+    color: var(--color-invert-1);
+  }
+  .button[data-status="positive"][data-intent]:active:not(:disabled) {
     background: var(--color-positive);
     border-color: var(--color-positive);
     color: var(--color-invert-1);

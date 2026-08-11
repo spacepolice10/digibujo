@@ -2,7 +2,7 @@
   .bullets-form {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-vertical-half);
+    gap: var(--space-v-half);
     align-items: center;
     overflow: visible;
     width: 100%;
@@ -10,21 +10,22 @@
 
   .bullets-form--rail {
     position: sticky;
-    bottom: var(--layout-scroll-padding);
+    bottom: var(--tabbar-clearance);
     display: flex;
     width: 75%;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: calc(var(--layout-scroll-padding));
+    margin-bottom: calc(var(--tabbar-clearance));
+
   }
 
   .bullets-form--body {
     appearance: none;
     display: block;
     width: 100%;
-    margin: var(--spacing-vertical-half) 0;
+    margin: var(--space-v-half) 0;
     border: none;
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    padding: var(--space-v) var(--space-h);
     border-radius: var(--radius-base);
     outline: none !important;
   }

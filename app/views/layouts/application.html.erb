@@ -51,7 +51,11 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body data-controller="dialog timezone-cookie bulk-menu">
+  <body
+    class="layout--container"
+    data-platform="<%= request.variant.include?(:mobile) ? "mobile" : "desktop" %>"
+    data-controller="dialog timezone-cookie bulk-menu"
+  >
     <%= render "shared/toasts_host" %>
 
     <% unless request.variant.include?(:mobile) %>

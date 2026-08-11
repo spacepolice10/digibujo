@@ -3,8 +3,8 @@
   .pinned--entity-item {
     display: flex;
     align-items: center;
-    gap: var(--spacing-horizontal-half);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    gap: var(--space-h-half);
+    padding: var(--space-v-half) var(--space-h-half);
     border-radius: var(--radius-base);
     flex: 1;
     min-width: 0;
@@ -13,24 +13,24 @@
     height: fit-content;
 
     &:hover {
-      background-color: var(--color-bg-base);
+      background-color: var(--color-2);
     }
   }
 
   .pinned--no-entities {
     text-align: center;
-    color: var(--color-fg-subtle);
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    color: var(--color-invert-4);
+    padding: var(--space-v) var(--space-h);
   }
 
   .pinned--button-control {
-    width: calc(var(--spacing-horizontal-double) + var(--spacing-horizontal-half));
-    height: calc(var(--spacing-horizontal-double) + var(--spacing-horizontal-half));
+    width: calc(var(--space-h-2) + var(--space-h-half));
+    height: calc(var(--space-h-2) + var(--space-h-half));
     padding: 0;
 
     .icon {
-      width: var(--spacing-horizontal-double);
-      height: var(--spacing-horizontal-double);
+      width: var(--space-h-2);
+      height: var(--space-h-2);
     }
   }
 
@@ -41,7 +41,7 @@
       inset-block-start: auto;
       inset-block-end: 100%;
       translate: -50% 0;
-      margin-block-end: var(--spacing-vertical-half);
+      margin-block-end: var(--space-v-half);
     }
   }
 

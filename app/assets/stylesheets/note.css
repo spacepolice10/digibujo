@@ -2,7 +2,7 @@
   .bullet[data-bullet-type="note"] .bullet--body {
     position: relative;
     isolation: isolate;
-    color: var(--color-fg-base);
+    color: var(--color-invert-2);
     
     & .bullet--document {
       /* Body is the chat bubble; keep document chrome typographic only. */
@@ -15,18 +15,18 @@
     & .bullet--name {
       font-size: inherit;
       font-weight: var(--font-weight-strong);
-      margin-bottom: var(--spacing-vertical-half);
-      border-bottom: 1px solid var(--color-stroke-base);
-      padding-bottom: var(--spacing-vertical-half);
+      margin-bottom: var(--space-v-half);
+      border-bottom: 1px solid var(--color-invert-4);
+      padding-bottom: var(--space-v-half);
     }
 
     & .read-more {
       display: flex;
       align-items: center;
-      gap: var(--spacing-horizontal-half);
+      gap: var(--space-h-half);
       font-size: inherit;
-      color: var(--color-fg-subtle);
-      margin-block: var(--spacing-vertical-half);
+      color: var(--color-invert-4);
+      margin-block: var(--space-v-half);
       text-decoration: none !important;
     }
 

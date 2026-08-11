@@ -2,18 +2,18 @@
   .support--container {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-vertical);
+    gap: var(--space-v);
 
     h1 {
-      font-size: var(--font-size-huge);
-      font-weight: var(--font-weight-bold);
-      color: var(--color-fg-base);
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-strong);
+      color: var(--color-invert-2);
       line-height: 1.15;
       text-wrap: balance;
     }
 
     > p {
-      color: var(--color-fg-subtle);
+      color: var(--color-invert-4);
       font-size: var(--font-size-base-read);
       max-width: 50ch;
     }
@@ -21,21 +21,21 @@
     ul {
       display: flex;
       flex-direction: column;
-      gap: var(--spacing-vertical-half);
+      gap: var(--space-v-half);
       list-style: none;
       padding: 0;
       margin: 0;
     }
 
     a {
-      color: var(--color-fg-base);
+      color: var(--color-invert-2);
       text-decoration: underline;
-      text-decoration-color: var(--color-stroke-base);
+      text-decoration-color: var(--color-invert-4);
       text-underline-offset: 3px;
 
       @media (hover: hover) {
         &:hover {
-          text-decoration-color: var(--color-fg-base);
+          text-decoration-color: var(--color-invert-2);
         }
       }
     }

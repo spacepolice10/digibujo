@@ -1,23 +1,23 @@
 @layer components {
   .features--container {
     column-width: 18rem;
-    column-gap: var(--spacing-vertical-double);
-    padding-block-end: var(--spacing-vertical-double);
+    column-gap: var(--space-v-2);
+    padding-block-end: var(--space-v-2);
   }
 
   .features--card {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-vertical-half);
-    padding: var(--spacing-horizontal) var(--spacing-horizontal)
-      var(--spacing-horizontal-double);
-    border: 1px solid var(--color-stroke-base);
-    background: var(--color-bg-subtle);
+    gap: var(--space-v-half);
+    padding: var(--space-h) var(--space-h)
+      var(--space-h-2);
+    border: 1px solid var(--color-invert-4);
+    background: var(--color-1);
     border-radius: var(--radius-strong);
     break-inside: avoid;
-    margin-block-end: var(--spacing-vertical-double);
-    --features-card-color: var(--color-accent);
+    margin-block-end: var(--space-v-2);
+    --features-card-color: var(--color-accent-1);
 
     &[data-colour="1"] {
       --features-card-color: var(--model-color-1);
@@ -47,10 +47,10 @@
     h2 {
       display: flex;
       align-items: center;
-      gap: var(--spacing-horizontal-half);
+      gap: var(--space-h-half);
       font-size: var(--font-size-base-read);
-      font-weight: var(--font-weight-bold);
-      color: var(--color-fg-base);
+      font-weight: var(--font-weight-strong);
+      color: var(--color-invert-2);
 
       &::before {
         content: "";
@@ -63,7 +63,7 @@
     }
 
     > p {
-      color: var(--color-fg-subtle);
+      color: var(--color-invert-4);
     }
   }
 }

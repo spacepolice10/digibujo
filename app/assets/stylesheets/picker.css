@@ -28,6 +28,10 @@
       color: var(--color-invert-2);
       cursor: pointer;
       appearance: none;
+
+      @media (pointer: coarse) {
+        min-block-size: var(--coarse-target);
+      }
   
       @media (hover: hover) {
         &:hover {

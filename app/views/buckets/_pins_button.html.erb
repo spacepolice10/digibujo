@@ -6,7 +6,7 @@
           class: "button--secondary button--sm",
           form: { data: { turbo_stream: true } },
           aria: { label: "Unpin #{bucket.name}" } do %>
-      <%= icon_tag("unpin", style: "color: var(--color-text-base);", class: "button--icon") %>
+      <%= icon_tag("unpin", style: "color: var(--color-invert-2);") %>
     <% end %>
   <% else %>
     <%= button_to buckets_pin_path,
@@ -15,7 +15,7 @@
           class: "button--secondary button--sm",
           form: { data: { turbo_stream: true } },
           aria: { label: "Pin #{bucket.name}" } do %>
-      <%= icon_tag("pin", style: "color: var(--color-text-base);", class: "button--icon") %>
+      <%= icon_tag("pin", style: "color: var(--color-invert-2);") %>
     <% end %>
   <% end %>
 </turbo-frame>

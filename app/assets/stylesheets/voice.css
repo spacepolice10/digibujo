@@ -4,7 +4,7 @@
     flex-direction: column;
     align-items: stretch;
     width: 100%;
-    gap: var(--spacing-vertical-half);
+    gap: var(--space-v-half);
     white-space: normal;
   }
 
@@ -19,31 +19,31 @@
   .voice--playback {
     display: flex;
     align-items: center;
-    gap: var(--spacing-horizontal-half);
+    gap: var(--space-h-half);
     width: 100%;
-    min-height: var(--spacing-horizontal-triple);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    border: 1px solid var(--color-stroke-base);
+    min-height: var(--space-h-3);
+    padding: var(--space-v-half) var(--space-h-half);
+    border: 1px solid var(--color-invert-4);
     border-radius: var(--radius-base);
-    background: var(--color-bg-subtle);
+    background: var(--color-1);
     box-sizing: border-box;
   }
 
   .voice--playback-compact {
-    gap: var(--spacing-horizontal-half);
+    gap: var(--space-h-half);
   }
 
   .voice--playback .voice--play {
     display: grid;
     place-items: center;
     flex-shrink: 0;
-    width: var(--spacing-horizontal-double);
-    height: var(--spacing-horizontal-double);
+    width: var(--space-h-2);
+    height: var(--space-h-2);
     margin: 0;
     padding: 0;
     border: 0;
     background: none;
-    color: var(--bullet-type-color, var(--voice-color, var(--color-fg-base)));
+    color: var(--bullet-type-color, var(--voice-color, var(--color-invert-2)));
     cursor: pointer;
   }
 
@@ -52,8 +52,8 @@
   }
 
   .voice--playback .voice--play .icon-wrap {
-    width: var(--spacing-horizontal-double);
-    height: var(--spacing-horizontal-double);
+    width: var(--space-h-2);
+    height: var(--space-h-2);
   }
 
   .voice--wave {
@@ -74,8 +74,8 @@
     border-radius: 1px;
     background: color-mix(
       in oklch,
-      var(--bullet-type-color, var(--voice-color, var(--color-fg-base))) 70%,
-      var(--color-fg-base)
+      var(--bullet-type-color, var(--voice-color, var(--color-invert-2))) 70%,
+      var(--color-invert-2)
     );
     opacity: 0.35;
     pointer-events: none;
@@ -89,7 +89,7 @@
     flex-shrink: 0;
     font-family: var(--font-family-mono);
     font-size: var(--font-size-xs);
-    color: var(--color-fg-subtle);
+    color: var(--color-invert-4);
     font-variant-numeric: tabular-nums;
     line-height: 1;
   }
@@ -107,7 +107,7 @@
   }
 
   .voice--waveform-item {
-    fill: var(--model-color-6, var(--bullet-type-color, var(--color-fg-base)));
+    fill: var(--model-color-6, var(--bullet-type-color, var(--color-invert-2)));
     opacity: 0.25;
   }
 

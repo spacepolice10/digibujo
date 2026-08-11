@@ -5,11 +5,11 @@
     min-height: 0;
   }
 
-  @media (min-width: 800px) {
+  @container layout (width >= 800px) {
     .review--page {
       max-width: none !important;
       overflow: hidden;
-      padding-bottom: var(--spacing-vertical);
+      padding-bottom: var(--space-v);
       box-sizing: border-box;
     }
   }
@@ -22,8 +22,8 @@
     flex: 1;
     min-height: 0;
     height: 90dvh;
-    border: 1px solid var(--color-stroke-base);
-    background: var(--color-stroke-base);
+    border: 1px solid var(--color-invert-4);
+    background: var(--color-invert-4);
     border-radius: var(--radius-strong);
     overflow: auto;
   }
@@ -37,7 +37,7 @@
     min-height: 0;
     max-height: 90dvh;
     overflow: hidden;
-    background: var(--color-bg-subtle);
+    background: var(--color-1);
   }
 
   .review--workspace > turbo-frame > * {
@@ -50,7 +50,7 @@
     flex: 2 1 24rem;
     min-width: min(100%, 20rem);
     max-height: 90dvh;
-    background: var(--color-bg-subtle);
+    background: var(--color-1);
   }
 
   .review--collections,
@@ -67,21 +67,21 @@
   .review--calendar-body {
     display: flex;
     flex-direction: column;
-    padding-inline: var(--spacing-horizontal);
-    padding-bottom: var(--spacing-vertical);
+    padding-inline: var(--space-h);
+    padding-bottom: var(--space-v);
   }
 
   .review--date-band {
-    padding-block: calc(var(--spacing-vertical-half) / 2);
+    padding-block: calc(var(--space-v-half) / 2);
   }
 
   .review--date-rail {
     display: flex;
     align-items: flex-start;
-    gap: var(--spacing-horizontal-half);
+    gap: var(--space-h-half);
     min-width: 0;
-    padding-bottom: var(--spacing-vertical-half);
-    border-bottom: 0.5px solid var(--color-stroke-base);
+    padding-bottom: var(--space-v-half);
+    border-bottom: 0.5px solid var(--color-invert-4);
   }
 
   .review--date-number {
@@ -90,15 +90,15 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    width: var(--spacing-horizontal-double);
-    padding-left: var(--spacing-horizontal-half);
+    width: var(--space-h-2);
+    padding-left: var(--space-h-half);
     box-sizing: border-box;
-    color: var(--color-fg-subtle);
+    color: var(--color-invert-4);
     text-decoration: none;
 
     &:hover,
     &:focus-visible {
-      color: var(--color-fg-base);
+      color: var(--color-invert-2);
     }
   }
 
@@ -108,7 +108,7 @@
   }
 
   .review--date-weekday {
-    font-weight: var(--font-weight-base);
+    font-weight: 400;
     font-size: 0.75em;
     text-transform: uppercase;
   }
@@ -120,8 +120,8 @@
   }
 
   .review--to-review-body {
-    padding-inline: var(--spacing-horizontal);
-    padding-bottom: var(--spacing-vertical);
+    padding-inline: var(--space-h);
+    padding-bottom: var(--space-v);
   }
 
   .review--divider {
@@ -137,10 +137,10 @@
     justify-content: center;
     gap: 0;
     flex-shrink: 0;
-    min-height: calc(var(--spacing-horizontal-double) + var(--spacing-vertical));
-    margin-bottom: var(--spacing-vertical);
-    padding-block: var(--spacing-vertical);
-    padding-inline: var(--spacing-horizontal);
+    min-height: calc(var(--space-h-2) + var(--space-v));
+    margin-bottom: var(--space-v);
+    padding-block: var(--space-v);
+    padding-inline: var(--space-h);
     text-align: center;
   }
 
@@ -148,32 +148,32 @@
     margin: 0;
     font-size: var(--font-size-xs);
     font-weight: var(--font-weight-strong);
-    color: var(--color-fg-base);
+    color: var(--color-invert-2);
   }
 
   .review--side-description {
     margin: 0;
     font-size: var(--font-size-xs);
-    color: var(--color-fg-subtle);
+    color: var(--color-invert-4);
   }
 
   .review--collection-create {
     box-sizing: border-box;
     width: 100%;
-    margin-block-start: var(--spacing-vertical);
-    margin-block-end: var(--spacing-vertical-half);
+    margin-block-start: var(--space-v);
+    margin-block-end: var(--space-v-half);
     cursor: pointer;
 
     @media (hover: hover) {
       &:hover {
-        border-color: var(--color-stroke-strong);
+        border-color: var(--color-invert-2);
       }
     }
 
     &:focus-visible {
       outline: none;
-      border-color: var(--color-stroke-strong);
-      background: var(--color-bg-base);
+      border-color: var(--color-invert-2);
+      background: var(--color-2);
     }
   }
 
@@ -181,26 +181,26 @@
   .review--to-review-empty {
     margin: 0;
     font-size: var(--font-size-xs);
-    color: var(--color-fg-subtle);
+    color: var(--color-invert-4);
     text-align: center;
   }
 
   .review--collections-section {
-    padding-inline: var(--spacing-horizontal);
-    padding-bottom: var(--spacing-vertical);
+    padding-inline: var(--space-h);
+    padding-bottom: var(--space-v);
   }
 
   .review--collections-search {
     width: 100%;
     flex-shrink: 0;
-    margin-bottom: var(--spacing-vertical-half);
+    margin-bottom: var(--space-v-half);
   }
 
   .review--collections-list {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-vertical-half);
-    padding-block: var(--spacing-vertical-half);
+    gap: var(--space-v-half);
+    padding-block: var(--space-v-half);
     margin: 0;
     list-style: none;
   }
@@ -223,7 +223,7 @@
 
     @media (hover: hover) {
       &:hover {
-        border-color: var(--color-stroke-strong);
+        border-color: var(--color-invert-2);
       }
     }
   }
@@ -235,7 +235,7 @@
   .review--bullet {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-vertical-half);
+    gap: var(--space-v-half);
   }
 
   .review--bullet[draggable="true"] {
@@ -255,7 +255,7 @@
   }
 
   /* Fixed viewport like monthlylog — no document scroll; sections swipe horizontally. */
-  .review--page-mobile.layout--page {
+  .review--page-mobile {
     background: transparent;
     width: 100%;
     max-width: 100%;
@@ -263,10 +263,11 @@
     max-height: 100dvh;
     margin: 0;
     padding: 0;
-    padding-bottom: var(--layout-scroll-padding);
+    padding-bottom: var(--tabbar-clearance);
     box-sizing: border-box;
     gap: 0;
     overflow: hidden;
+
   }
 
   html:has(.review--page-mobile) body {
@@ -303,7 +304,7 @@
     overflow-y: hidden;
     display: flex;
     flex-direction: column;
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    padding: var(--space-v-half) var(--space-h-half);
   }
 
   .review--section > turbo-frame {
@@ -327,15 +328,15 @@
   .review--page-mobile .review--calendar {
     overflow-y: auto;
     overscroll-behavior: auto;
-    border: 1px solid var(--color-stroke-base);
-    background: var(--color-bg-subtle);
+    border: 1px solid var(--color-invert-4);
+    background: var(--color-1);
     border-radius: var(--radius-strong);
   }
 
   .review--page-mobile .review--collections-header,
   .review--page-mobile .review--to-review-header,
   .review--page-mobile .review--calendar-header {
-    margin-bottom: var(--spacing-vertical-half);
-    padding-block: var(--spacing-vertical-half);
+    margin-bottom: var(--space-v-half);
+    padding-block: var(--space-v-half);
   }
 }

@@ -38,10 +38,10 @@
   <div class="bullets-form--rail">
     <div class="bullets-form--rail-actions button--secondary button--sm">
       <%= back_link_to return_path,
-            class: "button--tertiary button--icon-subtle bullets-form--back",
+            class: "button--tertiary bullets-form--back",
             data: { turbo_frame: "_top", turbo_action: "advance" },
             aria: { label: "Back" } do %>
-        <%= icon_tag("arrow-left", style: "color: var(--color-text-base);", class: "button--icon") %>
+        <%= icon_tag("arrow-left", style: "color: var(--color-invert-2);") %>
       <% end %>
     </div>
 
@@ -49,7 +49,7 @@
       <%= fr.button type: "submit",
             class: "button--primary button--sm",
             aria: { label: "Save" } do %>
-        <%= icon_tag("arrow-up", style: "color: var(--color-text-base);", class: "button--icon") %>
+        <%= icon_tag("arrow-up", style: "color: var(--color-invert-2);") %>
         Save
       <% end %>
     </div>

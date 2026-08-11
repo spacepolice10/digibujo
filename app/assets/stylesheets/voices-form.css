@@ -1,12 +1,12 @@
 @layer components {
   .voice-recorder {
     display: flex;
-    gap: var(--spacing-vertical-half);
+    gap: var(--space-v-half);
     align-items: center;
     width: 100%;
     border: var(--border-subtle);
     border-radius: var(--radius-full);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    padding: var(--space-v-half) var(--space-h-half);
     background-color: var(--color-1);
     overflow: hidden;
   }

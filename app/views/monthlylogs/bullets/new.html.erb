@@ -1,6 +1,6 @@
 <turbo-frame id="<%= dom_id(@monthlylog, params[:date]) %>">
     <div class="monthlylog--planned-composer">
-        <%= link_to monthlylog_path(@monthlylog, date: params[:date]), class: "monthlylog--planned-composer-hide-button button--secondary button--icon button--circle" do %>
+        <%= link_to monthlylog_path(@monthlylog, date: params[:date]), class: "monthlylog--planned-composer-hide-button button--secondary  button--circle" do %>
             <%= icon_tag("x") %>
         <% end %>
         <%= render "bullets/composer_v2",

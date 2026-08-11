@@ -1,3 +1,4 @@
+@layer components {
 .footer {
     position: sticky;
     bottom: 0;
@@ -6,11 +7,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    padding: var(--space-v) var(--space-h);
     pointer-events: none;
 
     @media (pointer: fine) {
-        @media (max-width: 768px) {
+        @container layout (width < 800px) {
             display: none;
         }
     }
@@ -18,4 +19,5 @@
     &>* {
         pointer-events: auto;
     }
+}
 }

@@ -1,28 +1,28 @@
 @layer components {
   .chat--window.future--window {
     --chat-header-clearance: calc(
-      var(--spacing-vertical-double)
-      + var(--spacing-horizontal-double)
-      + var(--spacing-vertical-double)
+      var(--space-v-2)
+      + var(--space-h-2)
+      + var(--space-v-2)
     );
   }
 
   .future--chat-header {
-    height: var(--spacing-horizontal-double);
+    height: var(--space-h-2);
   }
 
   .future--header-controls {
     display: flex;
     align-items: center;
-    gap: var(--spacing-horizontal-half);
+    gap: var(--space-h-half);
     height: 100%;
-    border: 1px solid color-mix(in srgb, var(--color-stroke-base) 70%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-invert-4) 70%, transparent);
     border-radius: var(--radius-full);
-    background: color-mix(in srgb, var(--color-bg-subtle) 72%, transparent);
+    background: color-mix(in srgb, var(--color-1) 72%, transparent);
     backdrop-filter: blur(2px);
     box-shadow: var(--shadow-subtle);
     pointer-events: auto;
-    padding-inline: var(--spacing-horizontal-half);
+    padding-inline: var(--space-h-half);
   }
 
   /* New future form — period picker kept for create. */
@@ -30,8 +30,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--spacing-horizontal-half);
-    padding-block: var(--spacing-vertical-double);
+    gap: var(--space-h-half);
+    padding-block: var(--space-v-2);
   }
 
   .future--header-icon {
@@ -41,8 +41,8 @@
 
   .future--section-list-item {
     display: flex;
-    gap: var(--spacing-horizontal-half);
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    gap: var(--space-h-half);
+    padding: var(--space-v) var(--space-h);
     flex: 1;
     text-decoration: none;
     color: inherit;
@@ -50,8 +50,8 @@
     height: fit-content;
 
     &:hover {
-      background: var(--color-bg-subtle);
-      border-color: var(--color-stroke-base);
+      background: var(--color-1);
+      border-color: var(--color-invert-4);
     }
   }
 
@@ -61,7 +61,7 @@
     margin: 0;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--spacing-vertical);
+    gap: var(--space-v);
   }
 
   .future--period-picker > legend {
@@ -74,7 +74,7 @@
     clip: rect(0, 0, 0, 0);
   }
 
-  @container page-column (max-width: 600px) {
+  @container layout (width < 600px) {
     .future--period-picker {
       grid-template-columns: repeat(2, 1fr);
     }
@@ -103,32 +103,32 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: var(--spacing-vertical);
+    gap: var(--space-v);
     width: 100%;
-    padding: var(--spacing-vertical-quad) var(--spacing-horizontal);
+    padding: var(--space-v-4) var(--space-h);
     border-radius: var(--radius-strong);
-    border: 1px solid var(--color-stroke-base);
-    background: var(--color-bg-base);
-    min-height: calc(var(--spacing-horizontal-double) * 4);
+    border: 1px solid var(--color-invert-4);
+    background: var(--color-2);
+    min-height: calc(var(--space-h-2) * 4);
     white-space: nowrap;
   }
 
   .future--period-name {
-    font-size: var(--font-size-huge);
+    font-size: var(--font-size-2xl);
     font-weight: var(--font-weight-strong);
-    color: var(--color-fg-base);
+    color: var(--color-invert-2);
     line-height: 1;
   }
 
   .future--period-meta {
     font-size: var(--font-size-base-read);
-    color: var(--color-fg-subtle);
+    color: var(--color-invert-4);
     line-height: 1;
   }
 
   .future--period-checkbox:hover + .future--period-card,
   .future--period-checkbox:checked + .future--period-card {
-    border-color: var(--color-stroke-strong);
+    border-color: var(--color-invert-2);
     box-shadow: var(--shadow-base);
   }
 }

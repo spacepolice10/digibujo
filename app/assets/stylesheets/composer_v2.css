@@ -51,7 +51,7 @@ lexxy-toolbar {
         justify-content: space-between;
         min-block-size: calc(
             max(var(--space-h-2), var(--space-v-3))
-            + var(--spacing-vertical)
+            + var(--space-v)
             + 1px
         );
 
@@ -81,7 +81,7 @@ lexxy-toolbar {
         flex-shrink: 0;
         border: transparent;
         border-radius: var(--radius-full);
-        background: transparent;
+        background: var(--color-2);
         box-shadow: var(--shadow-subtle);
         width: var(--space-h-2);
         height: var(--space-h-2);
@@ -99,8 +99,22 @@ lexxy-toolbar {
     }
 
     .composer--variant-picker {
+        padding: 0;
+        border: 0;
         border-radius: var(--radius-full);
+        background: transparent;
+        color: inherit;
         box-shadow: var(--shadow-subtle);
+
+        > button {
+            display: grid;
+            place-items: center;
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            border: 0;
+            background: transparent;
+        }
 
         selectedcontent>.composer--variant-picker-option-content {
             display: none;
@@ -114,11 +128,27 @@ lexxy-toolbar {
     .composer--variant-picker-wrapper {
         width: var(--space-h-2);
         height: var(--space-h-2);
+        background: var(--color-2);
+        border-radius: var(--radius-full);
+        overflow: hidden;
+    }
+
+    .composer--variant-picker-wrapper > .composer--variant-picker {
+        width: 100%;
+        height: 100%;
     }
 
     .composer--variant-picker-fallback-trigger {
         border-radius: var(--radius-full);
         box-shadow: var(--shadow-subtle);
+    }
+
+    @media (pointer: coarse) {
+        .composer--control,
+        .composer--variant-picker-wrapper {
+            width: var(--coarse-target);
+            height: var(--coarse-target);
+        }
     }
 
     .composer[data-composer-editor-multiline-value="true"] .composer--variant-picker-wrapper {

@@ -2,20 +2,18 @@
   navigation: auto;
 }
 
-/* Desktop: no page crossfade — only named transitions (composer) animate. */
-@media (min-width: 800px) {
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation: none;
-    mix-blend-mode: normal;
-  }
-
-  ::view-transition-old(root) {
-    display: none;
-  }
+@layer components {
+/* Keep page navigation stable; only named component transitions animate. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }
 
-@layer components {
+::view-transition-old(root) {
+  display: none;
+}
+
   /* Tabbar geometry as tokens so the composer can clear it before JS measures.
      Stack from the viewport floor: offset (CSS `bottom`) → safe-area / margin
      → the pill itself (padding + icon + border). */
@@ -30,17 +28,19 @@
       + 2px
     );
     --tabbar-offset: var(--space-v);
+    --tabbar-clearance: 0px;
+  }
+
+  body[data-platform="mobile"] {
     --tabbar-clearance: calc(
-      var(--tabbar-offset)
-      + var(--tabbar-safe-area)
-      + var(--tabbar-size)
+      var(--tabbar-offset) + var(--tabbar-safe-area) + var(--tabbar-size)
     );
   }
 
   .tabbar--navigation {
     position: fixed;
     bottom: var(--tabbar-offset);
-    border-radius: 9999px;
+    border-radius: var(--radius-full);
     left: 50%;
     transform: translateX(-50%);
     z-index: var(--z-dropdown);
@@ -51,7 +51,8 @@
     padding: var(--space-v-half) var(--space-h-half);
     margin-bottom: var(--tabbar-safe-area);
     background-color: var(--color-1);
-    box-shadow: var(--shadow-subtle);
+    border: var(--border-subtle);
+    box-shadow: var(--shadow-base);
     transition: transform 250ms ease-out, opacity 180ms ease-out;
   }
 
@@ -74,7 +75,7 @@
     width: 100%;
     flex-shrink: 0;
     padding: 0 var(--space-h);
-    border-radius: 9999px;
+    border-radius: var(--radius-full);
     color: var(--color-invert-2);
     text-decoration: none;
 
@@ -104,7 +105,7 @@
         position: absolute;
         inset: 0;
         z-index: -1;
-        border-radius: 9999px;
+        border-radius: var(--radius-full);
         background: color-mix(in oklch, var(--color-accent-1) 42%, var(--color-accent-1-subtle));
         border: 1px solid color-mix(in oklch, var(--color-accent-1) 50%, var(--color-accent-1));
         box-shadow: var(--shadow-base);

@@ -3,11 +3,11 @@
 @layer components {
   #toasts.toasts {
     position: fixed;
-    top: calc(var(--spacing-horizontal) + env(safe-area-inset-top, 0px));
+    top: calc(var(--space-h) + env(safe-area-inset-top, 0px));
     left: 50%;
     transform: translateX(-50%);
     width: max-content;
-    max-width: calc(100vw - (2 * var(--spacing-horizontal)));
+    max-width: calc(100vw - (2 * var(--space-h)));
     z-index: var(--z-toasts);
     pointer-events: none;
   }
@@ -16,7 +16,7 @@
     pointer-events: auto;
     width: 100%;
     text-align: center;
-    padding: var(--spacing-vertical) var(--spacing-horizontal-double);
+    padding: var(--space-v) var(--space-h-2);
     border-radius: var(--radius-strong);
     animation:
       toasts--shaking 0.1s ease-in-out,
@@ -32,24 +32,24 @@
       padding: 0;
       display: flex;
       flex-direction: column;
-      gap: var(--spacing-vertical-half);
+      gap: var(--space-v-half);
     }
   }
 
   .toasts--errmsg {
-    background: var(--color-bg-negative);
+    background: var(--color-negative);
     /* 1px hairline — no stroke-width token in the design system */
-    border: 1px solid var(--color-stroke-negative);
+    border: 1px solid var(--color-invert-negative);
     box-shadow: var(--shadow-base);
-    color: var(--color-fg-negative);
+    color: var(--color-invert-negative);
   }
 
   .toasts--notify {
-    background: var(--color-bg-positive);
+    background: var(--color-positive);
     /* 1px hairline — no stroke-width token in the design system */
-    border: 1px solid var(--color-stroke-positive);
+    border: 1px solid var(--color-invert-positive);
     box-shadow: var(--shadow-base);
-    color: var(--color-fg-positive);
+    color: var(--color-invert-positive);
   }
 
   @keyframes toasts--shaking {

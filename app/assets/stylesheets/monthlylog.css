@@ -1,8 +1,8 @@
 @layer components {
 
     .monthlylog--container {
-        background: var(--color-bg-subtle);
-        border: 1px solid var(--color-stroke-base);
+        background: var(--color-1);
+        border: 1px solid var(--color-invert-4);
     }
 
     .monthlylog--section {
@@ -10,18 +10,18 @@
         height: 90vh;
         overscroll-behavior-y: none;
         &.divided--vertical {
-            border-right: 1px solid var(--color-stroke-base);
+            border-right: 1px solid var(--color-invert-4);
         }
         & .monthlylog--section-header {
-            border-bottom: 1px solid var(--color-stroke-base);
+            border-bottom: 1px solid var(--color-invert-4);
             & > p {
-                margin-top: var(--spacing-vertical-half);
+                margin-top: var(--space-v-half);
             }
         }
         & .monthlylog--section-content {
-            padding: var(--spacing-vertical) var(--spacing-horizontal);
+            padding: var(--space-v) var(--space-h);
         }
-        @media (max-width: 769px) {
+        @container layout (width < 800px) {
             overscroll-behavior-x: auto;
             border-radius: 0 0 var(--radius-strong) var(--radius-strong);
         }
@@ -29,10 +29,10 @@
 
     .monthlylog--planned-composer {
         position: relative;
-        background: var(--color-bg-base);
-        padding: var(--spacing-vertical);
+        background: var(--color-2);
+        padding: var(--space-v);
         border-radius: var(--radius-base);
-        border: 1px solid var(--color-stroke-base);
+        border: 1px solid var(--color-invert-4);
         & .monthlylog--planned-composer-hide-button {
             position: absolute;
             top: -8px;
@@ -43,19 +43,19 @@
     .monthlylog--unplanned-composer {
         position: sticky;
         bottom: 0;
-        background: var(--color-bg-base);
-        padding: var(--spacing-vertical);
+        background: var(--color-2);
+        padding: var(--space-v);
     }
 
     .monthlylog--date-category {
         display: flex;
         flex-direction: column;
-        gap: var(--spacing-vertical-half);
-        margin-top: var(--spacing-vertical-triple);
-        @media (max-width: 769px) {
-            padding: var(--spacing-vertical) var(--spacing-horizontal);
+        gap: var(--space-v-half);
+        margin-top: var(--space-v-3);
+        @container layout (width < 800px) {
+            padding: var(--space-v) var(--space-h);
             border-radius: var(--radius-base);
-            border: 1px solid var(--color-stroke-base);
+            border: 1px solid var(--color-invert-4);
         }
 
         & .monthlylog--date-category-name {
@@ -63,8 +63,8 @@
             display: flex;
             position: relative;
             align-items: center;
-            gap: var(--spacing-horizontal);
-            margin-bottom: var(--spacing-vertical-half);
+            gap: var(--space-h);
+            margin-bottom: var(--space-v-half);
             transition: transform 0.08s;
             &:after {
                 content: "";
@@ -74,13 +74,13 @@
                 width: 25%;
                 height: 50%;
                 background: var(--highlight-colour);
-                margin-bottom: var(--spacing-vertical-half);
+                margin-bottom: var(--space-v-half);
                 opacity: 0.1;
                 z-index: 1;
                 transform: skew(-10deg);
             }
             &:hover {
-                transform: translateX(var(--spacing-horizontal-half));
+                transform: translateX(var(--space-h-half));
 
             }
         }
@@ -88,6 +88,6 @@
     .monthlylog--unplanned-category {
         display: flex;
         flex-direction: column;
-        gap: var(--spacing-vertical-half);
+        gap: var(--space-v-half);
     }
 }

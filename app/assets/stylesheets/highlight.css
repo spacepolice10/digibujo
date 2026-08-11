@@ -12,7 +12,7 @@
           width: 90%;
           height: 50%;
           background: var(--highlight-colour);
-          margin-bottom: var(--spacing-vertical-half);
+          margin-bottom: var(--space-v-half);
           opacity: var(--opacity-quarter); 
           z-index: 0;
           transform: skew(-10deg);

@@ -1,7 +1,7 @@
 
-<main class="layout--page">
+<main>
 <p class="utilities--mx-auto typography--paragraph-sm">Press ⌘+K to open the menu</p>
-<div class="layout--container layout--container-lg layout--gapped layout--flex-grid-container" style="--grid-cols-number: 3;">
+<div class="layout--container layout--gapped layout--flex-grid-container" data-size="lg" style="--grid-cols-number: 3;">
   <aside class="home--side layout--grid-item">
     <%= render "home_actions" %>
     <%= render "appearance_picker", appearance: @appearance %>
@@ -26,7 +26,7 @@
       src="<%= home_activities_path %>"
       loading="lazy"
     >
-    <%= icon_tag("spinner", class: "animations--spin", style: "margin-top: var(--spacing-vertical-triple); layout--mx-auto;") %>
+    <%= icon_tag("spinner", class: "animations--spin", style: "margin-top: var(--space-v-3); layout--mx-auto;") %>
   </turbo-frame>
 </aside>
 </div>

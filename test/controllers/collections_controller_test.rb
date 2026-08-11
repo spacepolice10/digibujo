@@ -29,7 +29,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     get new_collection_path, params: { bullet_ids: card.id.to_s, return_to: review_path }
 
     assert_response :success
-    assert_select '.layout--page'
+    assert_select '.layout--container[data-size="md"]'
     assert_select 'input[name="bullet_ids"][value=?]', card.id.to_s
     assert_match 'Preview me', response.body
     assert_match '1 bullet will be added', response.body
@@ -84,7 +84,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :unprocessable_entity
     assert_equal daylog_bucket_id, card.reload.bucket_id
-    assert_select '.layout--page'
+    assert_select '.layout--container[data-size="md"]'
     assert_match 'Create and collect', response.body
     assert_match 'Hold', response.body
   end

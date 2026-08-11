@@ -1,3 +1,4 @@
+@layer utilities {
 .typography--h1 {
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-strong);
@@ -9,11 +10,11 @@
 }
 .typography--paragraph-md {
   font-size: var(--font-size-base-read);
-  color: var(--color-fg-base);
+  color: var(--color-invert-2);
 }
 .typography--paragraph-sm {
   font-size: var(--font-size-xs); 
-  color: var(--color-fg-subtle);
+  color: var(--color-invert-4);
 }
 .typography--center {
   text-align: center;
@@ -37,4 +38,5 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
 }

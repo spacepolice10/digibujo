@@ -6,7 +6,7 @@
           turbo_frame: "_top",
         },
         aria: { keyshortcuts: "1", label: "Activity" } do %>
-    <%= icon_tag("history", style: "color: var(--color-text-base);", class: "menu--navigation-icon") %>
+    <%= icon_tag("history", style: "color: var(--color-invert-2);", class: "menu--navigation-icon") %>
     <span class="menu--navigation-name">Activity</span>
   <% end %>
   <%= link_to review_path,
@@ -15,7 +15,7 @@
           turbo_frame: "_top",
         },
         aria: { keyshortcuts: "2", label: "Review" } do %>
-    <%= icon_tag("circle-check", style: "color: var(--color-text-base);", class: "menu--navigation-icon") %>
+    <%= icon_tag("circle-check", style: "color: var(--color-invert-2);", class: "menu--navigation-icon") %>
     <span class="menu--navigation-name">Review</span>
   <% end %>
   <%= link_to archived_index_path,
@@ -24,7 +24,7 @@
           turbo_frame: "_top",
         },
         aria: { keyshortcuts: "3", label: "Archived" } do %>
-    <%= icon_tag("archive", style: "color: var(--color-text-base);", class: "menu--navigation-icon") %>
+    <%= icon_tag("archive", style: "color: var(--color-invert-2);", class: "menu--navigation-icon") %>
     <span class="menu--navigation-name">Archived</span>
   <% end %>
   <%= link_to published_index_path,
@@ -33,7 +33,7 @@
           turbo_frame: "_top",
         },
         aria: { keyshortcuts: "4", label: "Published" } do %>
-    <%= icon_tag("link", style: "color: var(--color-text-base);", class: "menu--navigation-icon") %>
+    <%= icon_tag("link", style: "color: var(--color-invert-2);", class: "menu--navigation-icon") %>
     <span class="menu--navigation-name">Shared</span>
   <% end %>
 </nav>

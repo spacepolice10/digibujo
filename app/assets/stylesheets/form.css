@@ -1,47 +1,45 @@
 @layer components {
   .form {
-    max-width: var(--breakpoint-tablet);
+    max-width: 800px;
     margin-inline: auto;
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-vertical);
-    padding-bottom: var(--spacing-vertical-triple);
+    gap: var(--space-v);
+    padding-bottom: var(--space-v-3);
   }
 
   /* ── Label ────────────────────────────────────────── */
 
-  form label {
+  .form label {
     display: block;
     font-size: var(--font-size-base-read);
     font-weight: var(--font-weight-strong);
-    color: var(--color-fg-subtle);
+    color: var(--color-invert-4);
   }
 
-  form small {
+  .form small {
     display: flex;
   }
 
   /* ── Shared input base ────────────────────────────── */
 
-  input,
-  textarea,
-  select {
+  .form :is(input, textarea, select) {
     width: 100%;
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    padding: var(--space-v) var(--space-h);
     border-radius: var(--radius-base);
     font-family: inherit;
     font-size: var(--font-size-base-type);
     background: transparent;
-    border: 1px solid var(--color-stroke-base);
-    color: var(--color-fg-base);
+    border: 1px solid var(--color-invert-4);
+    color: var(--color-invert-2);
 
     &::placeholder {
-      color: var(--color-fg-subtle);
+      color: var(--color-invert-4);
       opacity: var(--opacity-half);
     }
 
     &:hover {
-      background: var(--color-bg-base);
+      background: var(--color-2);
     }
 
     &:disabled {
@@ -52,13 +50,13 @@
 
   /* ── Textarea ─────────────────────────────────────── */
 
-  textarea {
+  .form textarea {
     resize: none;
   }
 
   /* ── Select ───────────────────────────────────────── */
 
-  select {
+  .form select {
     appearance: base-select;
     cursor: pointer;
   }
@@ -84,8 +82,8 @@
   .form-textarea--danger,
   .form-select--danger,
   .form-item--danger {
-    color: var(--color-fg-negative);
-    border-color: var(--color-fg-negative);
+    color: var(--color-invert-negative);
+    border-color: var(--color-invert-negative);
   }
 
   /* ── Checkbox & Radio ─────────────────────────────── */
@@ -95,14 +93,14 @@
     overflow: hidden;
     display: inline-flex;
     align-items: center;
-    gap: var(--spacing-horizontal-half);
+    gap: var(--space-h-half);
     cursor: pointer;
-    color: var(--color-fg-subtle);
+    color: var(--color-invert-4);
     border: 1px solid transparent;
     border-radius: var(--radius-base);
     transition: border-color 0.18s ease, background 0.06s ease;
     &:hover {
-      background: var(--color-bg-base);
+      background: var(--color-2);
     }
 
     &:has(input:checked) {
@@ -126,8 +124,8 @@
     input[type="checkbox"],
     input[type="radio"] {
       position: absolute;
-      right: var(--spacing-horizontal-half);
-      top: var(--spacing-vertical-half);
+      right: var(--space-h-half);
+      top: var(--space-v-half);
       opacity: 0;
     }
 
@@ -138,7 +136,7 @@
         mask-image: none;
         -webkit-mask-image: none;
         border-radius: 50%;
-        background: var(--color-fg-base);
+        background: var(--color-invert-2);
       }
     }
   }
@@ -148,19 +146,19 @@
   .form-section {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-vertical);
+    gap: var(--space-v);
   }
 
   /* ── Form errors block ────────────────────────────── */
 
   .form--errors {
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    padding: var(--space-v) var(--space-h);
     border-radius: var(--radius-base);
-    background: var(--color-bg-negative);
-    border: 1px solid var(--color-stroke-negative);
-    color: var(--color-fg-negative);
+    background: var(--color-negative);
+    border: 1px solid var(--color-invert-negative);
+    color: var(--color-invert-negative);
     p {
-      margin: 0 0 var(--spacing-vertical-half);
+      margin: 0 0 var(--space-v-half);
     }
 
     ul {
@@ -169,7 +167,7 @@
       padding: 0;
       display: flex;
       flex-direction: column;
-      gap: var(--spacing-vertical-half);
+      gap: var(--space-v-half);
     }
   }
 
@@ -177,7 +175,7 @@
 
   .form--picker {
     display: flex;
-    gap: var(--spacing-vertical-half);
+    gap: var(--space-v-half);
     flex-wrap: wrap;
   }
 
@@ -196,36 +194,36 @@
   }
 
   .form--picker-option:has(input:checked) .form--picker-control {
-    background: var(--color-bg-subtle);
-    border-color: var(--color-stroke-base);
+    background: var(--color-1);
+    border-color: var(--color-invert-4);
 
   }
 
   /* ── Colour picker ────────────────────────────────── */
 
   .form--colour-swatch {
-    width: calc(var(--spacing-horizontal-double) + var(--spacing-horizontal-half));
-    height: calc(var(--spacing-horizontal-double) + var(--spacing-horizontal-half));
+    width: calc(var(--space-h-2) + var(--space-h-half));
+    height: calc(var(--space-h-2) + var(--space-h-half));
   }
 
   /* ── Icon icon picker ────────────────────────────── */
 
   .form--icon {
-    width: var(--spacing-horizontal-double);
-    height: var(--spacing-horizontal-double);
-    min-width: var(--spacing-horizontal-double);
-    min-height: var(--spacing-horizontal-double);
-    margin: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    color: var(--color-fg-base);
+    width: var(--space-h-2);
+    height: var(--space-h-2);
+    min-width: var(--space-h-2);
+    min-height: var(--space-h-2);
+    margin: var(--space-v-half) var(--space-h-half);
+    color: var(--color-invert-2);
   }
 
   /* ── Repeat schedule date picker ──────────────────── */
 
   .form--repeat-date-picker {
-    border: 1px solid var(--color-stroke-base);
+    border: 1px solid var(--color-invert-4);
     border-radius: var(--radius-base);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
-    gap: var(--spacing-horizontal);
+    padding: var(--space-v-half) var(--space-h-half);
+    gap: var(--space-h);
     width: fit-content;
   }
 
@@ -234,7 +232,7 @@
   .form--submit {
     width: fit-content;
     align-self: center;
-    margin-top: var(--spacing-vertical);
-    margin-bottom: var(--spacing-vertical-triple);
+    margin-top: var(--space-v);
+    margin-bottom: var(--space-v-3);
   }
 }

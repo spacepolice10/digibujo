@@ -1,25 +1,25 @@
 @layer components {
   .dialog {
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    padding: var(--space-v) var(--space-h);
     border: 0;
     border-radius: var(--radius-strong);
-    background: var(--color-bg-subtle);
+    background: var(--color-1);
     box-shadow:
       var(--shadow-base),
       /* 1px hairline — no stroke-width token in the design system */
-      0 0 0 1px color-mix(in oklch, var(--color-bg-base) 35%, transparent);
-    color: var(--color-fg-base);
+      0 0 0 1px color-mix(in oklch, var(--color-2) 35%, transparent);
+    color: var(--color-invert-2);
     margin: auto;
-    width: min(calc(100vw - (2 * var(--spacing-horizontal))),
-        calc(var(--spacing-horizontal-double) * 13));
-    max-width: calc(100vw - (2 * var(--spacing-horizontal)));
+    width: min(calc(100vw - (2 * var(--space-h))),
+        calc(var(--space-h-2) * 13));
+    max-width: calc(100vw - (2 * var(--space-h)));
     overflow: scroll;
     overscroll-behavior: none;
 
-    @media (max-width: 799px) {
+    @container layout (width < 800px) {
       margin:
-        max(var(--spacing-vertical), env(safe-area-inset-top, 0px)) auto
-        max(var(--spacing-vertical), env(safe-area-inset-bottom, 0px));
+        max(var(--space-v), env(safe-area-inset-top, 0px)) auto
+        max(var(--space-v), env(safe-area-inset-bottom, 0px));
       max-height: min(
         90dvh,
         100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)
@@ -68,7 +68,7 @@
 
   .dialog--lg {
     width: 90vw;
-    @media (min-width: 800px) {
+    @container layout (width >= 800px) {
       width: 75vw;
     }
   }
@@ -82,7 +82,7 @@
     display: flex;
     justify-content: flex-end;
     flex-shrink: 0;
-    margin-block-end: var(--spacing-vertical-half);
+    margin-block-end: var(--space-v-half);
   }
 
   .dialog--body {
@@ -92,7 +92,7 @@
   }
 
   .dialog--hide {
-    border: 1px solid var(--color-stroke-base);
+    border: 1px solid var(--color-invert-4);
     border-radius: var(--radius-full);
   }
 
@@ -100,8 +100,8 @@
   .dialog--footer {
     display: flex;
     align-items: center;
-    gap: calc(var(--spacing-horizontal-half) / 2);
-    padding-block: calc(var(--spacing-vertical-half))
+    gap: calc(var(--space-h-half) / 2);
+    padding-block: calc(var(--space-v-half))
   }
 
   .dialog--header>*,
@@ -124,13 +124,13 @@
     left: 50%;
     transform: translateX(-50%);
     margin: 0;
-    color: var(--color-fg-subtle);
+    color: var(--color-invert-4);
     text-align: center;
   }
 
   .dialog--footer {
     justify-content: center;
-    gap: var(--spacing-horizontal-half);
+    gap: var(--space-h-half);
     border-top: 0;
   }
 

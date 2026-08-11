@@ -1,3 +1,4 @@
+@layer utilities {
 @keyframes spin {
   to {
     rotate: 360deg;
@@ -86,4 +87,5 @@
 
 .animations--side-back:not([popover]) {
   animation: side-back 0.2s ease-out;
+}
 }

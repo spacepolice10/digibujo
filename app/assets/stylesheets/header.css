@@ -1,8 +1,9 @@
+@layer components {
 .header {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: var(--spacing-vertical) var(--spacing-horizontal);
+    padding: var(--space-v) var(--space-h);
 }
 
 .header--logo {
@@ -13,12 +14,13 @@
 .header--controls {
     display: flex;
     align-items: center;
-    gap: var(--spacing-horizontal-half);
-    padding: var(--spacing-vertical-half) var(--spacing-horizontal);
-    border: 1px solid color-mix(in srgb, var(--color-stroke-base) 70%, transparent);
+    gap: var(--space-h-half);
+    padding: var(--space-v-half) var(--space-h);
+    border: 1px solid color-mix(in srgb, var(--color-invert-4) 70%, transparent);
     border-radius: var(--radius-full);
-    background: color-mix(in srgb, var(--color-bg-subtle) 72%, transparent);
+    background: color-mix(in srgb, var(--color-1) 72%, transparent);
     backdrop-filter: blur(2px);
     box-shadow: var(--shadow-subtle);
     pointer-events: auto;
+}
 }

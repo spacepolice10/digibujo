@@ -1,14 +1,14 @@
 <% content_for(:title) { "New collection" } %>
 
 
-<div class="layout--page layout--container layout--container-md">
+<div class="layout--container" data-size="md">
   <% unless @bullets.present? %>
   <div class="layout--grid layout--gapped">
     <div class="button--secondary button--sm layout--mx-auto">
     <%= icon_tag("folder") %>
     <span>New collection</span>
     </div>
-    <p class="layout--mx-auto layout--container layout--container-sm typography--paragraph-sm layout--padded typography--balanced typography--center">Collections are like folders in a traditional notebook — group related tasks, notes, or events together and keep them organised for as long as you need</p>
+    <p class="layout--mx-auto layout--container typography--paragraph-sm layout--padded typography--balanced typography--center" data-size="sm">Collections are like folders in a traditional notebook — group related tasks, notes, or events together and keep them organised for as long as you need</p>
   </div>
   <% end %>
   <div class="layout--surface">

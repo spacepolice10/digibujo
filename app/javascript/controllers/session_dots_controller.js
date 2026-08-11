@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 // Auth-only interactive grid: canvas owns the dots (CSS grid is suppressed).
-// Nearby dots part from the pointer and tint toward --color-accent.
+// Nearby dots part from the pointer and tint toward --color-accent-1.
 export default class extends Controller {
   static targets = ["canvas"]
 
@@ -177,9 +177,9 @@ export default class extends Controller {
     const ctx = this.ctx
     const pointer = this.pointer
     const radius = this.radius
-    const bg = this.#cssColor("--color-bg-base")
+    const bg = this.#cssColor("--color-2")
     const base = this.#gridColour()
-    const accent = this.#cssColor("--color-accent")
+    const accent = this.#cssColor("--color-accent-1")
 
     ctx.globalAlpha = 1
     ctx.fillStyle = bg

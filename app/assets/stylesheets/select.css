@@ -32,7 +32,7 @@
         }
     }
 
-    select {
+    .select--trigger {
 
         &,
         &::picker(select) {

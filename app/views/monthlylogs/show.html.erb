@@ -1,10 +1,10 @@
 <% content_for(:title) { @monthlylog.name } %>
 
 <main
-  class="
-    monthlylog--container layout--container layout--container-xl
+  class="    monthlylog--container layout--container
     layout--snap-grid-container
   "
+  data-size="xl"
   style="--grid-cols-number: 2"
 >
   <section
@@ -22,7 +22,7 @@
           id="<%= dom_id(@monthlylog.bucket, day.to_date) %>"
           class="<%= class_names("monthlylog--date-category", "monthlylog--date-category-no-bullets": bullets.empty?) %>"
         >
-          <%= link_to new_monthlylog_bullet_path(@monthlylog, date: day.to_date), class: "monthlylog--date-category-name", style: "--highlight-colour: #{day.to_date == Date.current ? 'var(--color-accent)' : ' var(--model-color-4)'};" do %>
+          <%= link_to new_monthlylog_bullet_path(@monthlylog, date: day.to_date), class: "monthlylog--date-category-name", style: "--highlight-colour: #{day.to_date == Date.current ? 'var(--color-accent-1)' : ' var(--model-color-4)'};" do %>
             <span class="typography--bold button--text-only">
               <%= day.strftime('%-d %a') %>
             </span>

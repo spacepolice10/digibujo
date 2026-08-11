@@ -5,7 +5,7 @@
         <%= render "home/activities/activity", activity: activity %>
       <% end %>
     <% else %>
-      <p class="utilities--text-sm" style="color: var(--color-fg-subtle);">No recent activity</p>
+      <p class="utilities--text-sm" style="color: var(--color-invert-4);">No recent activity</p>
     <% end %>
   </div>
   <%= link_to activities_path, class: "typography--paragraph-sm", data: { turbo_frame: "_top" }, aria: { label: "Earlier activity" } do %>

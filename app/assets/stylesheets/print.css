@@ -1,3 +1,4 @@
+@layer utilities {
 @media print {
   * { box-shadow: none !important; }
 
@@ -50,4 +51,5 @@
     font-size: 0.8em;
     color: #666;
   }
+}
 }

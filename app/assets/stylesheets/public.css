@@ -11,9 +11,9 @@
     height: 100dvh;
     width: 280px;
     flex-shrink: 0;
-    padding: var(--spacing-horizontal-double);
-    border-inline-end: 1px solid var(--color-stroke-base);
-    background: var(--color-bg-subtle);
+    padding: var(--space-h-2);
+    border-inline-end: 1px solid var(--color-invert-4);
+    background: var(--color-1);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -22,7 +22,7 @@
   .public-branding {
     display: flex;
     align-items: center;
-    gap: var(--spacing-horizontal-half);
+    gap: var(--space-h-half);
   }
 
   .public-logo {
@@ -33,16 +33,16 @@
   .public-application-name {
     font-size: var(--font-size-base-read);
     font-weight: var(--font-weight-strong);
-    color: var(--color-fg-base);
+    color: var(--color-invert-2);
   }
 
   .public-register {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-vertical);
+    gap: var(--space-v);
 
     p {
-      color: var(--color-fg-subtle);
+      color: var(--color-invert-4);
       margin: 0;
     }
   }
@@ -51,7 +51,7 @@
     flex: 1;
     min-width: 0;
     max-width: 680px;
-    padding: var(--spacing-horizontal-double);
+    padding: var(--space-h-2);
   }
 
   .public-main:has(.features--container) {
@@ -59,7 +59,7 @@
   }
 
   /* Collapse sidebar on narrow viewports */
-  @media (max-width: 600px) {
+  @container layout (width < 600px) {
     .public-layout {
       flex-direction: column;
     }
@@ -70,9 +70,9 @@
       height: auto;
       flex-direction: row;
       align-items: center;
-      padding: var(--spacing-horizontal);
+      padding: var(--space-h);
       border-inline-end: none;
-      border-block-end: 1px solid var(--color-stroke-base);
+      border-block-end: 1px solid var(--color-invert-4);
     }
 
     .public-register {
@@ -81,12 +81,12 @@
   }
 
   .public--footer {
-    padding-top: var(--spacing-vertical-double);
-    border-top: 1px solid var(--color-stroke-base);
-    margin-top: var(--spacing-vertical-double);
+    padding-top: var(--space-v-2);
+    border-top: 1px solid var(--color-invert-4);
+    margin-top: var(--space-v-2);
   }
 
   .public--date {
-    color: var(--color-fg-subtle);
+    color: var(--color-invert-4);
   }
 }

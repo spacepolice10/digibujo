@@ -29,7 +29,7 @@
         </div>
       </div>
     </div>
-    <div class="layout--container layout--container-md">
+    <div class="layout--container" data-size="md">
       <h1 class="typography--h1 typography--center onboarding--heading">Welcome to Digibujo</h1>
       <br>
 <ul class="onboarding--basics">
@@ -87,7 +87,7 @@
         <span class="onboarding-demo-typing">Ideas for the weekend hike</span>
       </div>
     </div>
-    <div class="layout--container layout--container-md">
+    <div class="layout--container" data-size="md">
     <h2 class="typography--h1 typography--center onboarding--heading">Follow the rapid logging nature</h2>
     <br>
     <ul class="onboarding--basics">
@@ -133,7 +133,7 @@
         <span class="onboarding-demo-typing">Ideas for the weekend hike</span>
       </div>
     </div>
-    <div class="layout--container layout--container-md">
+    <div class="layout--container" data-size="md">
     <h2 class="typography--h1 typography--center onboarding--heading">Plan ahead with future logs</h2>
     <br>
     <ul class="onboarding--basics">
@@ -175,7 +175,7 @@
         <span class="onboarding-demo-typing">Ideas for the weekend hike</span>
       </div>
     </div>
-    <div class="layout--container layout--container-md">
+    <div class="layout--container" data-size="md">
     <h2 class="typography--h1 typography--center onboarding--heading">Migrate as needed. By yourself</h2>
     <br>
     <ul class="onboarding--basics">
@@ -218,7 +218,7 @@
         <span class="onboarding-demo-typing">Ideas for the weekend hike</span>
       </div>
     </div>
-    <div class="layout--container layout--container-md">
+    <div class="layout--container" data-size="md">
     <h2 class="typography--h1 typography--center onboarding--heading">Single control. Bulk actions</h2>
     <br>
     <ul class="onboarding--basics">
@@ -234,10 +234,10 @@
   </section>
 
   <section class="onboarding-section last-section" data-onboarding-target="section">
-    <div class="layout--container layout--container-md layout--padded">
+    <div class="layout--container layout--padded" data-size="md">
     <h2 class="typography--h1 typography--center">Explore Digibujo</h2>
     <br>
-    <nav class="layout--padded layout--surface layout--container layout--container-sm">
+    <nav class="layout--padded layout--surface layout--container" data-size="sm">
       <%= form_with url: onboarding_path, class: "onboarding-form", data: { onboarding_target: "form" } do |form| %>
       <div>
         <label class="onboarding-sample-checkbox" style="color: var(--model-color-4);">
@@ -268,7 +268,7 @@
     </nav>
 
     <br>
-    <nav class="layout--flex layout--padded layout--gapped layout--surface layout--container layout--container-sm" aria-label="About">
+    <nav class="layout--flex layout--padded layout--gapped layout--surface layout--container" data-size="sm" aria-label="About">
       <%= link_to features_path, class: "session--footer-link" do %>
         <%= icon_tag("list", class: "session--footer-icon") %>
         Features
