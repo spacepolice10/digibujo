@@ -19,6 +19,22 @@ class ComposerSystemTest < ApplicationSystemTestCase
     assert_equal 'Note', @user.bullets.reload.last.bulletable_type
   end
 
+  test 'shift tab cycles the bullet type while editing' do
+    editor_host = find('#daylog_bullets_composer lexxy-editor')
+    editor = editor_host.find('.lexxy-editor__content')
+    editor.click
+    editor.send_keys([:shift, :tab])
+
+    assert_selector '#daylog_bullets_composer select[name="bullet[bulletable_type]"] option[value="Task"]:checked'
+  end
+
+  test 'shift f focuses the composer from elsewhere on the page' do
+    assert_selector '#daylog_bullets_composer lexxy-editor.hotkey-hint[data-hotkey="F"]'
+    find('body').send_keys([:shift, 'f'])
+
+    assert_selector '#daylog_bullets_composer lexxy-editor .lexxy-editor__content:focus'
+  end
+
   test 'voice mode swaps successful controls and resets on exit' do
     find('#daylog_bullets_composer button[aria-label="Record voice memo"]').click
 

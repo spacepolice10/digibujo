@@ -1,5 +1,5 @@
 <%# locals: (bullet:, bucket_id:, pops_on:, allowed_bulletable_variants:, preset:, autofocus:, composer_id:, form_url: nil) %>
-<div id="<%= composer_id %>" class="composer" data-controller="composer composer-editor composer-recorder" data-action="composer-editor:submit->composer#submit composer:mode-change->composer-recorder#modeChanged composer:restore->composer-editor#restore" data-composer-editor-multiline-value="false" data-composer-mode-value="editor">
+<div id="<%= composer_id %>" class="composer" data-controller="composer composer-editor composer-recorder hotkey" data-action="keydown.shift+f@document->hotkey#focus composer-editor:submit->composer#submit composer:mode-change->composer-recorder#modeChanged composer:restore->composer-editor#restore" data-composer-editor-multiline-value="false" data-composer-mode-value="editor">
     <%= form_with model: bullet,
         url: form_url,
         multipart: true,
@@ -21,7 +21,7 @@
         %>
         <span class="composer--editor-mode utilities--contents">
         <span class="select--wrapper composer--variant-picker-wrapper" data-controller="select">
-        <select name="bullet[bulletable_type]" id="<%= composer_id %>_bulletable_type" class="select--trigger composer--variant-picker" data-select-target="trigger" data-action="select#sync composer-editor#changeType">
+        <select name="bullet[bulletable_type]" id="<%= composer_id %>_bulletable_type" class="select--trigger composer--variant-picker" data-select-target="trigger" data-composer-editor-target="typePicker" data-action="select#sync composer-editor#changeType">
             <button>
                 <selectedcontent>
                     <%= icon_tag(variants.first[:icon], style: "color: #{variants.first[:color]}") %>
@@ -53,8 +53,12 @@
             preset: preset,
             autofocus: autofocus,
             placeholder: "What's up?",
-            class: "multiline",
-            data: { action: "keydown->composer-editor#submitByKeyboard:capture", composer_editor_target: "editor" }
+            class: "multiline hotkey-hint",
+            data: {
+              action: "keydown.shift+tab->composer-editor#switchVariant:capture keydown->composer-editor#submitByKeyboard:capture",
+              composer_editor_target: "editor",
+              hotkey: "F"
+            }
         %>
         <%= tag.label for: "#{composer_id}_composer_toolbar_toggle", class: "composer--control", data: { composer_editor_target: "toolbarToggle", action: "change->composer-editor#toggleToolbar" } do %>
             <%= icon_tag("plus") %>

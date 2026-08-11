@@ -51,10 +51,6 @@
     font-family: var(--font-family-mono);
 
 
-    /* .bullet--select-checkbox {
-      display: none;
-    } */
-
     @media (hover: hover) {
       &:hover .bullet--body {
         background: color-mix(in oklch,
@@ -98,7 +94,7 @@
     background: transparent;
     box-shadow: none;
 
-    @container layout (width < 800px) {
+    @media (pointer: coarse) {
       border-radius: var(--radius-strong);
       padding: var(--space-v-half) var(--space-h-half);
       background: color-mix(in oklch,
@@ -129,55 +125,20 @@
     box-shadow: var(--shadow-subtle);
     border-radius: var(--radius-full);
 
-    @container layout (width >= 800px) {
-      width: var(--space-h);
-      height: var(--space-h);
-      margin-top: 2px;
-      background: color-mix(in oklch, var(--bullet-type-color) 14%, transparent);
+    width: var(--space-h);
+    height: var(--space-h);
+    margin-top: 2px;
+    background: color-mix(in oklch, var(--bullet-type-color) 14%, transparent);
+
+    @media (pointer: coarse) {
+      width: var(--space-h-2);
+      height: var(--space-h-2);
+      margin-top: 0;
+      background: transparent;
     }
   }
 
-  .bullet--marker-type {
-    width: var(--space-h) !important;
-    height: var(--space-h) !important;
-
-    .icon {
-      width: 100%;
-      height: 100%;
-    }
-  }
-
-  .bullet--metadata-marker {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    box-sizing: border-box;
-    width: calc(var(--space-v));
-    height: calc(var(--space-v));
-    min-width: calc(var(--space-v));
-    min-height: calc(var(--space-v));
-    border: 1px solid var(--color-invert-4);
-    border-radius: var(--radius-full);
-    background: var(--color-1);
-    color: var(--color-invert-4);
-    transition:
-      background 0.1s ease,
-      border-color 0.1s ease,
-      color 0.1s ease,
-      box-shadow 0.1s ease;
-
-    @media (hover: hover) {
-      &:hover {
-        border-color: var(--color-invert-4);
-        background: var(--color-2);
-        color: var(--color-invert-2);
-        box-shadow: var(--shadow-base);
-      }
-    }
-  }
-
-  .bullet--metadata-link {
+  .bullet--marker-action {
     appearance: none;
     display: flex;
     align-items: center;
@@ -192,14 +153,18 @@
     cursor: pointer;
   }
 
-  .bullet--metadata-icon {
-    width: calc(var(--space-v)) !important;
-    height: calc(var(--space-v)) !important;
+  .bullet--marker-icon {
+    width: var(--space-h) !important;
+    height: var(--space-h) !important;
 
     .icon {
       width: 100%;
       height: 100%;
     }
+  }
+
+  .bullet--marker-migration {
+    color: var(--color-invert-4);
   }
 
   .bullet--migration-dropdown.dropdown--element[popover] {
@@ -281,16 +246,34 @@
     }
   }
 
-  .bullet--select-checkbox {
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
+  .bullets-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-v-half);
+    align-items: center;
+    overflow: visible;
     width: 100%;
-    height: 100%;
-    opacity: 0;
-    cursor: pointer;
-    z-index: var(--z-dropdown);
+  }
+
+  .bullets-form--rail {
+    position: sticky;
+    bottom: var(--tabbar-clearance);
+    display: flex;
+    width: 75%;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--tabbar-clearance);
+  }
+
+  .bullets-form--body {
+    appearance: none;
+    display: block;
+    width: 100%;
+    margin: var(--space-v-half) 0;
+    border: none;
+    padding: var(--space-v) var(--space-h);
+    border-radius: var(--radius-base);
+    outline: none !important;
   }
 
 

@@ -106,7 +106,7 @@
     position: relative;
     z-index: 2;
     flex: 0 0 auto;
-    padding: var(--space-v-half) var(--space-h-half);
+    padding: var(--space-v-half) var(--space-v-half);
     background: var(--color-1);
   }
 }

@@ -97,7 +97,11 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     get collection_path(collection)
 
     assert_response :success
-    assert_select 'button.bullet--metadata-link[aria-label=?]', 'Collected', minimum: 1
+    assert_select "turbo-frame##{dom_id(bullet)}" do
+      assert_select '[data-action=?]', 'click->bulk-menu#select', count: 1
+      assert_select '.bullet--marker', count: 1
+      assert_select 'button.bullet--marker-migration[aria-label=?]', 'Collected', count: 1
+    end
     assert_match 'Moved into inbox.', response.body
   end
 

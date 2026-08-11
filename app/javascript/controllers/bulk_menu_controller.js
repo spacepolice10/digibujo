@@ -6,6 +6,9 @@ const ACTION_REQUIREMENTS = {
   requirePublishable: "publishable",
 };
 
+const INTERACTIVE_SELECTOR =
+  "a, button, input, select, textarea, label, [contenteditable], [role='button'], [popover]";
+
 export default class extends Controller {
   static targets = [
     "list",
@@ -48,6 +51,13 @@ export default class extends Controller {
     } else {
       this.idListValue = this.idListValue.filter((value) => value != id);
     }
+  }
+
+  select(event) {
+    if (event.defaultPrevented) return;
+    if (event.target.closest(INTERACTIVE_SELECTOR)) return;
+
+    event.currentTarget.querySelector("[data-bulk-menu-target='checkbox']")?.click();
   }
 
   idListValueChanged() {

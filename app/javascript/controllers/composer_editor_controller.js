@@ -5,7 +5,7 @@ export default class extends Controller {
     type: { type: String, default: "note" },
     multiline: { type: Boolean, default: false }
   }
-  static targets = ["editor", "toolbarToggle"]
+  static targets = ["editor", "typePicker", "toolbarToggle"]
 
   connect() {
     this.#observeEditorHeight()
@@ -24,6 +24,16 @@ export default class extends Controller {
       event.preventDefault()
       this.dispatch("submit")
     }
+  }
+
+  switchVariant(event) {
+    event.preventDefault()
+    event.stopPropagation()
+    event.stopImmediatePropagation()
+
+    const picker = this.typePickerTarget
+    picker.selectedIndex = (picker.selectedIndex + 1) % picker.options.length
+    picker.dispatchEvent(new Event("change", { bubbles: true }))
   }
 
   changeType(event) {

@@ -9,7 +9,6 @@ lexxy-editor {
     flex-grow: 1;
     height: fit-content;
     font-size: var(--font-size-base-type);
-
     background: transparent;
     border: transparent;
     transition: min-block-size 0.2s ease-out;

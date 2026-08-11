@@ -7,11 +7,14 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--space-v) var(--space-h);
     pointer-events: none;
-    border-top: var(--border-subtle);
+    
+    @media (pointer: coarse) {
+      border-top: var(--border-subtle);
+    }
 
     @media (pointer: fine) {
+        padding: var(--space-v) var(--space-h);
         @container layout (width < 800px) {
             display: none;
         }

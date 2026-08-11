@@ -8,6 +8,13 @@ export default class extends Controller {
     }
   }
 
+  focus(event) {
+    if (!this.#shouldIgnore(event)) {
+      event.preventDefault();
+      this.element.querySelector("[data-composer-editor-target='editor']")?.focus();
+    }
+  }
+
   #shouldIgnore(event) {
     return event.defaultPrevented ||
       event.target.closest("input, textarea, [contenteditable], lexxy-editor, .lexxy-editor__content");
