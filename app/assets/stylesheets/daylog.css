@@ -7,19 +7,29 @@
   }
 
   .daylog--composer {
-    position: sticky;
-    bottom: 0;
-    padding: var(--space-v-half) var(--space-h-half);
     border-radius: var(--radius-full);
     box-shadow: var(--shadow-subtle);
-    min-height: 6ch;
-    background: var(--color-1);
-    &:has(.composer[data-composer-multiline-value="true"]) {
+    &:has(.composer[data-composer-editor-multiline-value="true"]) {
       border-radius: var(--radius-base);
     }
     & .lexxy-editor__content {
         max-height: 50vh;
         overflow: scroll
+    }
+    margin-bottom: var(--space-v-half);
+    width: 98%;
+    margin-inline: auto;
+
+    @media (max-width: 768px) {
+      margin-bottom: var(--tabbar-clearance);
+      transition: margin-bottom 250ms ease-out;
+    }
+  }
+
+  @media (max-width: 768px) {
+    html.keyboard-open .daylog--composer {
+      margin-bottom: var(--spacing-vertical);
+      transition: none;
     }
   }
 

@@ -3,11 +3,6 @@
      docked composer. Assembled purely from chat--* classes so any page can
      build the whole window without per-page chrome. */
   .chat--window {
-    --chat-padder-height: 0px;
-    --chat-tabbar-clearance: var(--spacing-vertical-double);
-    --chat-composer-clearance: calc(
-      var(--spacing-vertical-triple) * 2.5
-    );
     --chat-header-clearance: calc(
       var(--spacing-vertical-double)
       + var(--spacing-horizontal-double)
@@ -25,7 +20,18 @@
     overflow: hidden;
   }
 
-  html:has(.chat--window) body {
+  /* Surface stays inside the named layout container so its elevation can
+     respond to @container layout while still owning the chat flex rows. */
+  .chat--surface {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  html:has(.chat--window:not(.chat--window--embedded)) body {
     overflow-y: hidden !important;
     height: 100dvh !important;
     padding-bottom: 0 !important;
@@ -46,25 +52,6 @@
     }
   }
 
-  .chat--wrap {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 0;
-    min-height: 0;
-    height: 100%;
-    overflow: hidden;
-  }
-
-  .chat--padder {
-    height: var(--chat-padder-height);
-    transition: height 400ms ease-out;
-  }
-
-  html:has(.chat--padder) {
-    overscroll-behavior-y: none;
-  }
-
   /* Merged scrollport + list (Campfire-style): the scroller owns scrolling and
      packs short lists against the composer. Pinning uses auto margins instead
      of justify-content: flex-end, so overflowing content always extends below
@@ -75,7 +62,7 @@
     position: relative;
     z-index: 1;
     flex: 1 1 0;
-    min-height: calc(100% + 1px);
+    min-height: 0;
     overflow-y: auto;
     overflow-anchor: none;
     overscroll-behavior-y: none;
@@ -84,18 +71,10 @@
     flex-direction: column;
     padding-inline: var(--spacing-horizontal-half);
     padding-top: var(--chat-header-clearance, 0px);
-    padding-bottom: var(--spacing-vertical-triple );
-    
-    &:has(.composer--keyboard-open) {
-      padding-bottom: var(--spacing-vertical) !important;
-    }
+    padding-bottom: var(--spacing-vertical);
+
     @media (max-width: 768px) {
       gap: var(--spacing-vertical);
-      padding-bottom: var(--chat-composer-clearance, 0px) !important;
-    }
-
-    @media (min-width: 769px) {
-      padding-bottom: var(--spacing-vertical);
     }
 
     > * {
@@ -116,15 +95,6 @@
     }
   }
 
-  .chat--scroller::before {
-    content: "";
-    display: block;
-    flex-shrink: 0;
-    @media (pointer: coarse) {
-
-    }
-  }
-
   .chat--load-more-trigger {
     display: flex;
     justify-content: center;
@@ -133,11 +103,11 @@
     color: var(--color-fg-subtle);
   }
 
-  .chat--composer-spacer {
-    @media (max-width: 799px) {
-      height: var(--chat-composer-clearance, 0px);
-      flex-shrink: 0;
-      transition: height 250ms ease-out;
-    }
+  .chat--composer {
+    position: relative;
+    z-index: 2;
+    flex: 0 0 auto;
+    padding: var(--spacing-vertical-half) var(--spacing-horizontal-half);
+    background: var(--color-1);
   }
 }

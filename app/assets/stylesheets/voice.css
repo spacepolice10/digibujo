@@ -114,4 +114,9 @@
   .voice--waveform-item.is-filled {
     opacity: 1;
   }
+
+  .voice--waveform-item.is-played {
+    fill: var(--color-invert-1);
+    opacity: var(--opacity-full);
+  }
 }

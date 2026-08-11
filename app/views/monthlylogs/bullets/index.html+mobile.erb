@@ -1,26 +1,19 @@
 <%
-  date_composer_id = "date_#{@date&.iso8601}_bullets_composer"
-  unplanned_composer_id = "monthlylog_bullets_unplanned_composer"
+  date_composer_id = dom_id(@monthlylog.bucket, "composer_#{@date&.iso8601}")
 %>
   <turbo-frame
     id="monthlylog_bullets"
-    class="utilities--contents"
+    class="chat--window chat--window--embedded"
     data-pops-on="<%= @date&.iso8601 %>"
   >
-
-
     <div
-      class="chat--wrap"
+      id="<%= "date_#{@date&.iso8601}_bullets_container" %>"
+      class="chat--scroller animations--popout-opacity"
       data-controller="chat-scroll"
       data-chat-scroll-path-value="<%= monthlylog_bullets_path(@monthlylog, date: @date&.iso8601) %>"
+      data-bulk-menu-target="list"
+      data-monthlylog-date-list
     >
-      <div
-        id="<%= "date_#{@date&.iso8601}_bullets_container" %>"
-        class="chat--scroller animations--popout-opacity"
-        data-chat-scroll-target="scroller"
-        data-bulk-menu-target="list"
-        data-monthlylog-date-list
-      >
         <% if @more_bullets %>
           <div
             class="chat--load-more-trigger"
@@ -34,11 +27,15 @@
         <% @bullets.each do |bullet| %>
           <%= render "monthlylogs/bullets/bullet", bullet: bullet %>
         <% end %>
-          <%= render "bullets/composer",
-            bucket_id: @monthlylog.bucket.id,
-            pops_on: @date&.iso8601,
-            variants: %w[Task Event],
-            composer_id: date_composer_id %>
-      </div>
+    </div>
+    <div class="chat--composer">
+      <%= render "bullets/composer_v2",
+        bullet: Bullet.new,
+        bucket_id: @monthlylog.bucket.id,
+        pops_on: @date&.iso8601,
+        allowed_bulletable_variants: ["Task", "Event"],
+        preset: "default",
+        autofocus: false,
+        composer_id: date_composer_id %>
     </div>
   </turbo-frame>

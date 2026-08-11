@@ -70,16 +70,12 @@
 
 
   <div
-    class="chat--wrap"
+    id="<%= dom_id(@collection, :bullets_container) %>"
+    class="chat--scroller"
     data-controller="chat-scroll"
     data-chat-scroll-path-value="<%= collection_bullets_path(@collection) %>"
+    data-bulk-menu-target="list"
   >
-    <div
-      id="<%= dom_id(@collection, :bullets_container) %>"
-      class="chat--scroller"
-      data-bulk-menu-target="list"
-      data-chat-scroll-target="scroller"
-    >
       <% if @more_bullets %>
         <div
           class="chat--load-more-trigger"
@@ -105,10 +101,16 @@
         <% end %>
         <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
       <% end %>
-    </div>
   </div>
 
-  <%= render "bullets/composer",
-        bucket_id: @collection.bucket.id,
-        composer_id: dom_id(@collection, :bullets_composer) %>
+  <div class="chat--composer">
+    <%= render "bullets/composer_v2",
+          bullet: Bullet.new,
+          bucket_id: @collection.bucket.id,
+          pops_on: nil,
+          allowed_bulletable_variants: ["Note", "Task", "Event", "Voice"],
+          preset: "default",
+          autofocus: false,
+          composer_id: dom_id(@collection, :bullets_composer) %>
+  </div>
 </div>

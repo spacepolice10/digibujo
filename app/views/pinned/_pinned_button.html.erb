@@ -1,7 +1,11 @@
 
 <button
   type="button"
-  class="button--secondary button--circle hotkey-hint pinned--button-control"
+  class="button hotkey-hint"
+  data-size="sm"
+  data-intent="primary"
+  data-content="icon"
+  data-radius="full"
   style="anchor-name: --pinned-dropdown;"
   popovertarget="pinned_list"
   data-controller="hotkey"
@@ -10,7 +14,7 @@
   aria-label="Pinned"
   aria-keyshortcuts="Shift+P"
 >
-  <i class="icon" style="--icon-mask: var(--icon-pin)" aria-hidden="true"></i>
+  <%= icon_tag("pin") %>
 </button>
 
 <turbo-frame

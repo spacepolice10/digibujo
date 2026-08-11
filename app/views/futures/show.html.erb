@@ -18,23 +18,18 @@
     </header>
 
     <div
-      class="chat--wrap"
-      data-controller="chat-scroll"
+      id="future_bullets_unplanned_container"
+      class="chat--scroller"
       data-chat-scroll-path-value="<%= future_bullets_path(@future) %>"
+      data-bulk-menu-target="list"
+      data-controller="chat-scroll pops-drop drop-postpone-optimistic"
+      data-pops-drop-pops-url-value="<%= postpone_path %>"
+      data-pops-drop-bucket-id-value="<%= @future.bucket.id %>"
+      data-pops-drop-requested-with-value="pops-drop"
+      data-pops-drop-optimistic-value="drop-postpone-optimistic"
+      data-drop-zone-value=""
+      data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop"
     >
-      <div
-        id="future_bullets_unplanned_container"
-        class="chat--scroller"
-        data-bulk-menu-target="list"
-        data-chat-scroll-target="scroller"
-        data-controller="pops-drop drop-postpone-optimistic"
-        data-pops-drop-pops-url-value="<%= postpone_path %>"
-        data-pops-drop-bucket-id-value="<%= @future.bucket.id %>"
-        data-pops-drop-requested-with-value="pops-drop"
-        data-pops-drop-optimistic-value="drop-postpone-optimistic"
-        data-drop-zone-value=""
-        data-action="dragover->pops-drop#dragover dragleave->pops-drop#dragleave drop->pops-drop#drop"
-      >
         <% if @more_bullets %>
           <div
             class="chat--load-more-trigger"
@@ -56,14 +51,18 @@
             Dump year goals, long-term thoughts, and potential projects here.
           </p>
         <% end %>
-      </div>
     </div>
 
-    <%= render "bullets/composer",
-          bucket_id: @future.bucket.id,
-          pops_on: nil,
-          variants: %w[Task Note],
-          composer_id: "future_bullets_unplanned_composer" %>
+    <div class="chat--composer">
+      <%= render "bullets/composer_v2",
+            bullet: Bullet.new,
+            bucket_id: @future.bucket.id,
+            pops_on: nil,
+            allowed_bulletable_variants: ["Task", "Note"],
+            preset: "default",
+            autofocus: false,
+            composer_id: "future_bullets_unplanned_composer" %>
+    </div>
   </div>
 <% else %>
   <% content_for(:title) { "Future log" } %>

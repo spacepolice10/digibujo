@@ -52,7 +52,16 @@
     margin-bottom: var(--tabbar-safe-area);
     background-color: var(--color-1);
     box-shadow: var(--shadow-subtle);
-    transition: opacity 250ms;
+    transition: transform 250ms ease-out, opacity 180ms ease-out;
+  }
+
+  html.keyboard-open .tabbar--navigation {
+    transform: translate(
+      -50%,
+      calc(100% + var(--tabbar-offset) + var(--tabbar-safe-area))
+    );
+    opacity: 0;
+    pointer-events: none;
   }
 
   .tabbar--item {

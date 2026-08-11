@@ -1,8 +1,5 @@
 @layer components {
   .chat--window.future--window {
-    --chat-composer-clearance: calc(
-      var(--spacing-vertical-triple) + var(--spacing-vertical-double)
-    );
     --chat-header-clearance: calc(
       var(--spacing-vertical-double)
       + var(--spacing-horizontal-double)

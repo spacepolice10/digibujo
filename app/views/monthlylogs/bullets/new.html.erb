@@ -10,6 +10,6 @@
         allowed_bulletable_variants: ["Task", "Event"],
         preset: "default",
         autofocus: true,
-        composer_id: dom_id(@monthlylog, params[:date]) %>
+        composer_id: dom_id(@monthlylog.bucket, "composer_#{params[:date]}") %>
     </div>
 </turbo-frame>

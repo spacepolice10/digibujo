@@ -16,7 +16,6 @@
     <div
       class="monthlylog--section-content"
       data-bulk-menu-target="list"
-      data-chat-scroll-target="scroller"
     >
       <% @days_with_bullets.each do |day, bullets| %>
         <div
@@ -80,7 +79,7 @@
           allowed_bulletable_variants: ["Note", "Task"],
           preset: "default",
           autofocus: false,
-          composer_id: dom_id(@monthlylog.bucket, nil) %>
+          composer_id: dom_id(@monthlylog.bucket, :composer) %>
     </div>
   </section>
 </main>

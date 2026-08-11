@@ -157,7 +157,7 @@ class Monthlylogs::BulletsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select 'div[data-controller~="chat-scroll"]'
-    assert_select "div##{container}.chat--scroller[data-chat-scroll-target='scroller']"
+    assert_select "div##{container}.chat--scroller[data-controller~='chat-scroll']"
     assert_select 'div[data-chat-scroll-target=trigger]', count: 0
   end
 
@@ -173,7 +173,7 @@ class Monthlylogs::BulletsControllerTest < ActionDispatch::IntegrationTest
     get monthlylog_bullets_path(@monthlylog)
 
     assert_response :success
-    assert_select "div##{container}.chat--scroller[data-chat-scroll-target='scroller']"
+    assert_select "div##{container}.chat--scroller[data-controller~='chat-scroll']"
     assert_select '.chat--load-more-trigger[data-chat-scroll-target=trigger]', count: 1
   end
 end

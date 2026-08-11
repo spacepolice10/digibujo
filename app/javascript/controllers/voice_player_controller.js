@@ -1,33 +1,22 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = [ "source", "playButton", "playIcon", "stopIcon", "isPlaying", "progress", "duration" ]
+  static targets = [ "source", "playButton", "playIcon", "stopIcon", "progress", "duration" ]
   static values = { duration: Number }
 
   connect() {
-    this.isPlayingValue = false
-    this.boundTimeUpdate = this.#timeUpdate.bind(this)
-    this.boundFinished = this.#finished.bind(this)
-
-    this.sourceTarget.addEventListener("timeupdate", this.boundTimeUpdate)
-    this.sourceTarget.addEventListener("ended", this.boundFinished)
-    this.sourceTarget.addEventListener("loadedmetadata", this.boundTimeUpdate)
-
-    this.#timeUpdate()
-    this.#updatePlayStatus()
+    this.updateProgress()
+    this.syncPlaybackStatus()
   }
 
   disconnect() {
-    this.sourceTarget.removeEventListener("timeupdate", this.boundTimeUpdate)
-    this.sourceTarget.removeEventListener("ended", this.boundFinished)
-    this.sourceTarget.removeEventListener("loadedmetadata", this.boundTimeUpdate)
-    this.#stop()
+    this.sourceTarget.pause()
   }
 
   toggle(event) {
     event.preventDefault()
     if (this.sourceTarget.paused) this.#play()
-    else this.#stop()
+    else this.sourceTarget.pause()
   }
 
   seek(event) {
@@ -35,9 +24,10 @@ export default class extends Controller {
     if (duration <= 0) return
 
     const rect = this.progressTarget.getBoundingClientRect()
+    if (rect.width <= 0) return
     const progress = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width))
     this.sourceTarget.currentTime = progress * duration
-    this.#timeUpdate()
+    this.updateProgress()
   }
 
   progressKeydown(event) {
@@ -49,19 +39,46 @@ export default class extends Controller {
 
     const step = event.key == "ArrowRight" ? 1 : -1
     this.sourceTarget.currentTime = Math.max(0, Math.min(duration, this.sourceTarget.currentTime + step))
-    this.#timeUpdate()
+    this.updateProgress()
   }
 
-  #play() {
-    this.sourceTarget.play()
-    this.isPlayingValue = true
-    this.#updatePlayStatus()
+  finish() {
+    this.sourceTarget.currentTime = 0
+    this.updateProgress()
+    this.syncPlaybackStatus()
   }
 
-  #stop() {
-    this.sourceTarget.pause()
-    this.isPlayingValue = false
-    this.#updatePlayStatus()
+  syncPlaybackStatus() {
+    const playing = !this.sourceTarget.paused && !this.sourceTarget.ended
+    this.playIconTarget.hidden = playing
+    this.stopIconTarget.hidden = !playing
+    this.playButtonTarget.setAttribute("aria-label", playing ? "Pause" : "Play")
+    this.playButtonTarget.setAttribute("aria-pressed", playing.toString())
+  }
+
+  updateProgress() {
+    const duration = this.#duration()
+    const current = this.sourceTarget.currentTime || 0
+    const ratio = duration > 0 ? Math.max(0, Math.min(1, current / duration)) : 0
+
+    this.progressTarget.setAttribute("aria-valuenow", Math.floor(current))
+    this.progressTarget.setAttribute("aria-valuetext", `${this.#formatTime(current)} of ${this.#formatTime(duration)}`)
+    if (this.hasDurationTarget) {
+      const remaining = duration > 0 ? Math.max(0, duration - current) : duration
+      this.durationTarget.textContent = this.#formatTime(remaining)
+    }
+
+    const bars = this.progressTarget.querySelectorAll(".voice--wave-bar")
+    const filled = Math.round(ratio * bars.length)
+    bars.forEach((bar, index) => bar.classList.toggle("is-played", index < filled))
+  }
+
+  async #play() {
+    try {
+      await this.sourceTarget.play()
+    } catch {
+      this.syncPlaybackStatus()
+    }
   }
 
   #duration() {
@@ -77,32 +94,4 @@ export default class extends Controller {
     return `${minutes}:${(_seconds % 60).toString().padStart(2, "0")}`
   }
 
-  #timeUpdate() {
-    const duration = this.#duration()
-    const current = this.sourceTarget.currentTime || 0
-    const ratio = duration > 0 ? current / duration : 0
-
-    this.progressTarget.setAttribute("aria-valuenow", Math.floor(current))
-    if (this.hasDurationTarget) {
-      const remaining = duration > 0 ? Math.max(0, duration - current) : duration
-      this.durationTarget.textContent = this.#formatTime(this.isPlayingValue ? remaining : duration)
-    }
-
-    const bars = this.progressTarget.querySelectorAll(".voice--wave-bar")
-    const filled = Math.round(ratio * bars.length)
-    bars.forEach((bar, index) => bar.classList.toggle("is-played", index < filled))
-  }
-
-  #finished() {
-    this.#stop()
-    this.sourceTarget.currentTime = 0
-    this.#timeUpdate()
-  }
-
-  #updatePlayStatus() {
-    this.playIconTarget.hidden = this.isPlayingValue
-    this.stopIconTarget.hidden = !this.isPlayingValue
-    this.playButtonTarget.setAttribute("aria-label", this.isPlayingValue ? "Stop" : "Play")
-    this.#timeUpdate()
-  }
 }

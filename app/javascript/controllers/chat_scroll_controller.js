@@ -4,12 +4,12 @@ import { distanceFromBottom, keepScroll, pauseInertiaScroll, scrollToBottom } fr
 // Distance from the bottom edge that still counts as "reading the latest".
 const PINNED_THRESHOLD = 80
 
-// Generic chat list: owns its merged scroller (scrollport + list in one),
+// Generic chat list mounted directly on its scroller (scrollport + list in one),
 // opens at the newest bullet, pulls older pages from the top, and follows new
-// rows only while the reader is already at the bottom. Scroller padding (CSS)
-// clears the fixed composer dock.
+// rows only while the reader is already at the bottom. The composer is a
+// sibling flex row, so this element owns all remaining space and scrolling.
 export default class extends Controller {
-  static targets = ["scroller", "trigger"]
+  static targets = ["trigger"]
   static values = { path: String, rootMargin: { type: String, default: "400px" } }
 
   initialize() {
@@ -24,21 +24,21 @@ export default class extends Controller {
     this.boundSettlePinned = () => this.#settlePinned()
     this.opening = true
 
-    this.scrollerTarget.addEventListener("scroll", this.boundSettlePinned, { passive: true })
+    this.element.addEventListener("scroll", this.boundSettlePinned, { passive: true })
 
     if (this.#scrollPositionRestorable()) {
       this.#restoreScrollPosition()
     } else {
-      scrollToBottom(this.scrollerTarget)
+      scrollToBottom(this.element)
       this.#followSettlingLayoutWhenOpen()
     }
   }
 
   disconnect() {
 
-    this.scrollerTarget.removeEventListener("scroll", this.boundSettlePinned)
+    this.element.removeEventListener("scroll", this.boundSettlePinned)
     if (this.boundOpenSettled) {
-      this.scrollerTarget.removeEventListener("scrollend", this.boundOpenSettled)
+      this.element.removeEventListener("scrollend", this.boundOpenSettled)
     }
     clearTimeout(this.openSettleTimer)
     this.sizeObserver?.disconnect()
@@ -51,7 +51,7 @@ export default class extends Controller {
 
 
   preserveScrollPosition() {
-    sessionStorage.setItem("scrollPosition", this.scrollerTarget.scrollTop)
+    sessionStorage.setItem("scrollPosition", this.element.scrollTop)
   }
 
   #scrollPositionRestorable() {
@@ -62,7 +62,7 @@ export default class extends Controller {
 
   #restoreScrollPosition() {
     const scrollPosition = sessionStorage.getItem("scrollPosition")
-    this.scrollerTarget.scrollTo({ top: scrollPosition })
+    this.element.scrollTo({ top: scrollPosition })
   }
 
 
@@ -75,7 +75,7 @@ export default class extends Controller {
       // The opening scroll must settle first: a trigger visible on a pinned
       // short list would otherwise auto-fetch the whole rail mid-animation.
       ([entry]) => entry.isIntersecting && !this.opening && this.#loadPrevPage(),
-      { root: this.scrollerTarget, rootMargin: this.rootMarginValue }
+      { root: this.element, rootMargin: this.rootMarginValue }
     )
     this.triggerObserver.observe(trigger)
   }
@@ -107,14 +107,14 @@ export default class extends Controller {
   #prepend(html) {
     this.prepending = true
 
-    pauseInertiaScroll(this.scrollerTarget)
-    keepScroll(this.scrollerTarget, () => {
+    pauseInertiaScroll(this.element)
+    keepScroll(this.element, () => {
       // The trigger is the scroller's first child (it owns the pinning auto
       // margin), so older rows slot in right after it.
       if (this.hasTriggerTarget) {
         this.triggerTarget.insertAdjacentHTML("afterend", html)
       } else {
-        this.scrollerTarget.insertAdjacentHTML("afterbegin", html)
+        this.element.insertAdjacentHTML("afterbegin", html)
       }
     })
     this.#observeTrigger(this.triggerTarget)
@@ -136,12 +136,12 @@ export default class extends Controller {
 
       this.opening = false
       clearTimeout(this.openSettleTimer)
-      scrollToBottom(this.scrollerTarget)
+      scrollToBottom(this.element)
       this.#followSettlingLayout()
     }
 
     this.boundOpenSettled = start
-    this.scrollerTarget.addEventListener("scrollend", this.boundOpenSettled, { once: true })
+    this.element.addEventListener("scrollend", this.boundOpenSettled, { once: true })
     this.openSettleTimer = setTimeout(start, 500)
   }
 
@@ -155,16 +155,16 @@ export default class extends Controller {
     this.sizeObserver = new ResizeObserver(() => {
       if (this.prepending || !this.pinned) return
 
-      scrollToBottom(this.scrollerTarget)
+      scrollToBottom(this.element)
     })
-    this.sizeObserver.observe(this.scrollerTarget)
+    this.sizeObserver.observe(this.element)
   }
 
   #settlePinned() {
-    this.pinned = distanceFromBottom(this.scrollerTarget) <= PINNED_THRESHOLD
+    this.pinned = distanceFromBottom(this.element) <= PINNED_THRESHOLD
   }
 
   get #oldestRailId() {
-    return this.scrollerTarget.querySelector('[id^="bullet_"]')?.id?.split("_").pop()
+    return this.element.querySelector('[id^="bullet_"]')?.id?.split("_").pop()
   }
 }

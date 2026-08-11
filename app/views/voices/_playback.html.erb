@@ -9,6 +9,7 @@
      data-voice-player-duration-value="<%= recording_duration.to_i %>">
   <audio class="utilities--sr-only"
          data-voice-player-target="source"
+         data-action="play->voice-player#syncPlaybackStatus pause->voice-player#syncPlaybackStatus ended->voice-player#finish timeupdate->voice-player#updateProgress loadedmetadata->voice-player#updateProgress"
          preload="metadata"
          <% if recording_source.present? %>src="<%= recording_source %>"<% end %>
          aria-hidden="true"></audio>
@@ -22,7 +23,7 @@
       <%= icon_tag("play") %>
     </span>
     <span data-voice-player-target="stopIcon" hidden>
-      <%= icon_tag("stop") %>
+      <%= icon_tag("pause") %>
     </span>
   </button>
 

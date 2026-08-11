@@ -52,6 +52,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     get daylog_path(date: selected_date.iso8601)
 
     assert_response :success
+    assert_select 'meta[name="viewport"][content*="interactive-widget=resizes-content"]', count: 1
     assert_match 'That day', response.body
     assert_no_match 'Today noise', response.body
   end
@@ -130,22 +131,14 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select 'dialog#daylog_composer', count: 0
-    assert_select '#daylog_bullets_composer' do
-      assert_select 'lexxy-editor[preset=note][toolbar=composer_toolbar]'
-      # Toolbar precedes the editor so a Turbo body swap upgrades it first.
-      assert_select 'lexxy-toolbar#composer_toolbar[data-upload=both] + .composer--text-form-wrap + .composer--chrome'
-      assert_select '.composer--actions .composer--toolbar-toggle'
-      assert_select '.composer--actions .composer--upload', false
-      assert_select 'lexxy-prompt[trigger=?][name=project]', '#'
+    assert_select '#daylog_composer[data-controller~="chat-composer"] > #daylog_bullets_composer[data-controller~="composer"]' do
+      assert_select 'lexxy-editor[preset=default]'
       assert_select "input[name='bullet[bucket_id]'][value=?]", bucket_id.to_s
       assert_select "input[name='bullet[pops_on]'][value=?]", selected_date.iso8601
-      assert_select "input[name='bullet[bulletable_type]'][value=?]", 'Note'
-      assert_select "input[name='list_id']", count: 0
-      assert_select 'button[data-composer-type=?]', 'Task'
-      assert_select 'button[data-composer-type=?]', 'Event'
-      assert_select '.composer--record'
-      assert_select '[data-voice-player-target=?]', 'playIcon'
-      assert_select '[data-voice-player-target=?]', 'stopIcon'
+      assert_select "select[name='bullet[bulletable_type]'] option[value=?]", 'Task'
+      assert_select "select[name='bullet[bulletable_type]'] option[value=?]", 'Event'
+      assert_select "input[name='bullet[bulletable_type]'][value=?][disabled]", 'Voice'
+      assert_select '[data-controller~="composer-recorder"]'
     end
     assert_no_match(/Add bullet/, response.body)
   end
@@ -158,7 +151,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select 'dialog#daylog_composer', count: 0
-    assert_select '#daylog_bullets_composer lexxy-editor[preset=note]'
+    assert_select '#daylog_bullets_composer lexxy-editor[preset=default]'
   end
 
   test 'daylog renders metadata popover frame' do
@@ -286,11 +279,10 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     get daylog_path
 
     assert_response :success
-    assert_select "[data-controller~='chat-scroll'][data-chat-scroll-path-value=?]", daylog_bullets_path do
-      assert_select "##{container}.chat--scroller[data-chat-scroll-target='scroller']"
+    assert_select "##{container}.chat--scroller[data-controller~='chat-scroll'][data-chat-scroll-path-value=?]", daylog_bullets_path do
       assert_select '#daylog_bullets_composer', count: 0
     end
-    assert_select '.chat--window > #daylog_bullets_composer'
+    assert_select '.chat--window > .chat--surface > .chat--composer > #daylog_bullets_composer'
   end
 
   test 'daylog renders mixed bullet types on the same page' do
