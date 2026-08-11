@@ -17,14 +17,15 @@
         ].filter { |variant| allowed_bulletable_variants.include?(variant[:name]) }
         %>
         <span id="editor" class="utilities--contents">
-        <select name="bullet[bulletable_type]" id="bullet_bulletable_type" class="composer--variant-picker" data-action="composer#changeType">
+        <span class="select--wrapper composer--variant-picker-wrapper" data-controller="select">
+        <select name="bullet[bulletable_type]" id="bullet_bulletable_type" class="select--trigger composer--variant-picker" data-select-target="trigger" data-action="select#sync composer#changeType">
             <button>
                 <selectedcontent>
                     <%= icon_tag(variants.first[:icon], style: "color: #{variants.first[:color]}") %>
                 </selectedcontent>
             </button>
             <% variants.each do |variant| %>
-                <option value="<%= variant[:name] %>">
+                <option value="<%= variant[:name] %>" class="picker--item" data-fallback-label="<%= variant[:name] %>">
                     <%= icon_tag(variant[:icon], style: "color: #{variant[:color]}") %>
                     <div class="composer--variant-picker-option-content">
                         <p class="composer--variant-picker-option-name">
@@ -37,6 +38,14 @@
                 </option>
             <% end %>
         </select>
+        <span class="select--fallback-trigger composer--variant-picker-fallback-trigger" aria-hidden="true">
+            <% variants.each_with_index do |variant, index| %>
+                <span class="select--fallback-trigger-content" data-select-target="fallbackTriggerContent" data-value="<%= variant[:name] %>" <%= "hidden" unless index.zero? %>>
+                    <%= icon_tag(variant[:icon], style: "color: #{variant[:color]}") %>
+                </span>
+            <% end %>
+        </span>
+        </span>
         <%= fr.rich_text_area :body,
             preset: preset,
             autofocus: autofocus,

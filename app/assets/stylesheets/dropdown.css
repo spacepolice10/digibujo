@@ -7,16 +7,16 @@
 
     box-sizing: border-box;
     width: max-content;
-    min-width: calc(var(--space-h-4) * 4);
+    min-width: min(var(--space-h-10), calc(100dvw - var(--space-h-2)));
 
     max-width: min(
-      calc(var(--space-h-4) * 10),
-      calc(100dvw - (var(--space-h-4) * 2))
+      calc(var(--space-h-10) * 2),
+      calc(100dvw - var(--space-h-2))
     );
 
     max-height: min(
-      calc(var(--space-h-4) * 10),
-      calc(100dvh - (var(--space-h-4) * 2))
+      calc(var(--space-h-10) * 2),
+      calc(100dvh - var(--space-h-2))
     );
 
     margin: var(--space-v-half) var(--space-h-half);
@@ -43,10 +43,10 @@
     transform: translateY(calc(var(--space-v-half) * -1));
 
     transition:
-      opacity 110ms ease,
-      transform 110ms ease,
-      display 110ms allow-discrete,
-      overlay 110ms allow-discrete;
+      opacity 80ms ease,
+      transform 80ms ease,
+      display 80ms allow-discrete,
+      overlay 80ms allow-discrete;
 
     &:popover-open {
       opacity: 1;

@@ -104,7 +104,17 @@ lexxy-toolbar {
         }
     }
 
-    .composer[data-composer-multiline-value="true"] .composer--variant-picker {
+    .composer--variant-picker-wrapper {
+        width: var(--space-h-2);
+        height: var(--space-h-2);
+    }
+
+    .composer--variant-picker-fallback-trigger {
+        border-radius: var(--radius-full);
+        box-shadow: var(--shadow-subtle);
+    }
+
+    .composer[data-composer-multiline-value="true"] .composer--variant-picker-wrapper {
         order: 1;
         margin-right: auto;
     }
