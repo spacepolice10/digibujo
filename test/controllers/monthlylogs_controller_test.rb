@@ -31,6 +31,7 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'turbo-frame#monthlylog_unplanned[src=?]', monthlylog_bullets_path(monthlylog)
     assert_select 'turbo-frame#monthlylog_date[src=?]',
                   monthlylog_bullets_path(monthlylog, date: Date.current.iso8601)
+    assert_select 'a[href=?]', monthlylog_path(monthlylog), minimum: 1
     assert_no_match 'Unplanned task', response.body
   end
 
@@ -76,7 +77,7 @@ class MonthlylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select '.monthlylog--date-cell', minimum: 28
     assert_select '.monthlylog--date-band', count: 0
     assert_select '[data-controller~=scroll]', count: 0
-    assert_select 'a.monthlylog--date-item[href=?]',
+    assert_select 'a.monthlylog--date-category-name[href=?][data-turbo-frame=_top]',
                   monthlylog_bullets_path(monthlylog, date: day.iso8601)
     assert_select 'turbo-frame#monthlylog_unplanned[src=?]', monthlylog_bullets_path(monthlylog)
     assert_select '.monthlylog--unplanned'

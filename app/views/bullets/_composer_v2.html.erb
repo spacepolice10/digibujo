@@ -1,5 +1,7 @@
+<%# locals: (bullet:, bucket_id:, pops_on:, allowed_bulletable_variants:, preset:, autofocus:, composer_id:, form_url: nil) %>
 <div id="<%= composer_id %>" class="composer" data-controller="composer composer-editor composer-recorder" data-action="composer-editor:submit->composer#submit composer:mode-change->composer-recorder#modeChanged composer:restore->composer-editor#restore" data-composer-editor-multiline-value="false" data-composer-mode-value="editor">
     <%= form_with model: bullet,
+        url: form_url,
         multipart: true,
         class: "utilities--contents",
         data: {

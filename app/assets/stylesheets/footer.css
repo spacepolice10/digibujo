@@ -9,6 +9,7 @@
     align-items: center;
     padding: var(--space-v) var(--space-h);
     pointer-events: none;
+    border-top: var(--border-subtle);
 
     @media (pointer: fine) {
         @container layout (width < 800px) {

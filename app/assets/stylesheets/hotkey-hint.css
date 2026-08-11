@@ -32,9 +32,7 @@
       font-size: var(--font-size-xs);
     }
 
-    .button--primary.hotkey-hint--always[data-hotkey]::after,
-    .button--secondary.hotkey-hint--always[data-hotkey]::after,
-    .button--tertiary.hotkey-hint--always[data-hotkey]::after {
+    .button.hotkey-hint--always[data-hotkey]::after {
       margin-inline-start: auto;
     }
 
@@ -46,7 +44,7 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       inset: -0.2em;
-      width:fit-content;
+      width: fit-content;
     }
 
     .hotkey-hint[data-hotkey]:not(.hotkey-hint--always) {
@@ -56,15 +54,14 @@
     .hotkey-hint[data-hotkey]:not(.hotkey-hint--always)::after {
       position: absolute;
       translate: 0 -75%;
-      z-index: 1;
+      z-index: var(--z-dropdown);
       box-sizing: border-box;
       padding: var(--space-v-half) var(--space-h-half);
       background: var(--color-invert-1);
-      color: var(--color-invert-1);
-      border: 1px solid var(--color-invert-2);
+      color: var(--color-1);
+      border: var(--border-strong);
       border-radius: var(--radius-base);
       box-shadow: var(--shadow-base);
-      font-weight: 400;
       opacity: 0;
       transform: translateY(var(--space-v-half));
       transition:

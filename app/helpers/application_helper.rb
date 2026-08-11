@@ -9,6 +9,13 @@ module ApplicationHelper
     request.variant.include?(:mobile)
   end
 
+  def current_monthlylog_navigation_path
+    monthlylog = Current.user.monthlylogs.covering(Date.current).first
+    return current_monthlylog_path unless monthlylog
+
+    monthlylog_path(monthlylog)
+  end
+
   def back_link_to(url = home_path, **options, &block)
     data = (options[:data] || {}).dup
     data[:controller] = [data[:controller], 'navigation'].compact_blank.join(' ')

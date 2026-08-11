@@ -44,6 +44,39 @@ lexxy-toolbar {
 
 /* Composer styling */
 @layer components {
+    .composer--dock {
+        width: 100%;
+        margin-inline: 0;
+        background: var(--color-1);
+        border: 0;
+        border-block-start: var(--border-subtle);
+        border-radius: 0;
+        box-shadow: none;
+
+        @container layout (width < 600px) {
+            width: 98%;
+            margin-inline: auto;
+            margin-block-end: calc(var(--tabbar-clearance) + var(--space-v));
+            border: var(--border-subtle);
+            border-radius: var(--radius-full);
+            box-shadow: var(--shadow-subtle);
+            transition: margin-block-end 250ms ease-out;
+
+            &:has(.composer[data-composer-editor-multiline-value="true"]) {
+                border-radius: var(--radius-base);
+            }
+        }
+    }
+
+    @container layout (width < 600px) {
+        .composer--dock:has(
+            [data-composer-editor-target~="editor"]:focus-within
+        ) {
+            margin-block-end: var(--space-v);
+            transition: none;
+        }
+    }
+
     .composer {
         display: flex;
         gap: var(--space-v-half);

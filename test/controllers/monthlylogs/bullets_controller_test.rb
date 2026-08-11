@@ -18,13 +18,13 @@ class Monthlylogs::BulletsControllerTest < ActionDispatch::IntegrationTest
       bucket_id: @monthlylog.bucket.id,
       pops_on: day
     )
-    container = "date_#{day.iso8601}_bullets_container"
+    container = dom_id(@monthlylog.bucket, "#{day}_bullets")
 
     get monthlylog_bullets_path(@monthlylog, date: day.iso8601)
 
     assert_response :success
     assert_match 'Planned task', response.body
-    assert_select 'turbo-frame#monthlylog_date'
+    assert_select 'turbo-frame#monthlylog_bullets'
     assert_select "##{container}"
     assert_select 'a.bullets-form--create-button--task', count: 0
     assert_select "a[href=?]", daylog_path(date: day.iso8601)
@@ -35,13 +35,13 @@ class Monthlylogs::BulletsControllerTest < ActionDispatch::IntegrationTest
       bulletable: Note.new, body: 'Unplanned note',
       bucket_id: @monthlylog.bucket.id
     )
-    container = 'monthlylog_bullets_unplanned_container'
+    container = dom_id(@monthlylog.bucket, :unplanned_bullets)
 
     get monthlylog_bullets_path(@monthlylog)
 
     assert_response :success
     assert_match 'Unplanned note', response.body
-    assert_select 'turbo-frame#monthlylog_unplanned'
+    assert_select 'turbo-frame#monthlylog_bullets'
     assert_select "##{container}"
     assert_select 'a.bullets-form--create-button--note', count: 0
     assert_select 'a.bullets-form--create-button--task', count: 0
@@ -63,7 +63,39 @@ class Monthlylogs::BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_select "turbo-frame##{dom_id(bullet)}.bullet .bullet--metadata", count: 0
   end
 
-  test 'mobile unplanned bullets render without drag' do
+  test 'create appends a dated bullet to the date bullets list' do
+    day = Date.current.beginning_of_month + 2.days
+    target = dom_id(@monthlylog.bucket, "#{day}_bullets")
+
+    post monthlylog_bullets_path(@monthlylog),
+         params: {
+           bullet: {
+             body: 'New planned task',
+             bucket_id: @monthlylog.bucket.id,
+             pops_on: day.iso8601,
+             bulletable_type: 'Task'
+           }
+         },
+         as: :turbo_stream
+
+    assert_response :success
+    assert_select "turbo-stream[action='append'][target=?]", target
+    assert_select "turbo-stream[action='append'][target=?] [data-controller~='bullet-drag']", target
+    assert_select "turbo-stream[action='update'][target='toasts']", text: /Bullet created/
+  end
+
+  test 'new dated composer submits through the monthlylog bullets endpoint' do
+    day = Date.current.beginning_of_month + 2.days
+
+    get new_monthlylog_bullet_path(@monthlylog, date: day.iso8601)
+
+    assert_response :success
+    assert_select "turbo-frame##{dom_id(@monthlylog, day.iso8601)}" do
+      assert_select "form[action=?]", monthlylog_bullets_path(@monthlylog)
+    end
+  end
+
+  test 'mobile uses the shared monthlylog bullets page' do
     create_bullet!(@user,
       bulletable: Task.new, body: 'Mobile spread task',
       bucket_id: @monthlylog.bucket.id
@@ -73,9 +105,9 @@ class Monthlylogs::BulletsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_match 'Mobile spread task', response.body
-    assert_select '.bullet[data-layout="spread"]', count: 0
-    assert_select 'turbo-frame.bullet[draggable="true"]', count: 0
-    assert_select '.bullet--marker', minimum: 1
+    assert_select '.chat--window.layout--container[data-size=sm]'
+    assert_select 'turbo-frame#monthlylog_bullets.chat--surface.layout--surface'
+    assert_select '[data-controller~=bullet-drag]', count: 1
   end
 
   test 'before returns older page of dated bullets' do
@@ -116,7 +148,7 @@ class Monthlylogs::BulletsControllerTest < ActionDispatch::IntegrationTest
 
   test 'dated index mounts bullets_container id without create buttons' do
     day = Date.current.beginning_of_month
-    container = "date_#{day.iso8601}_bullets_container"
+    container = dom_id(@monthlylog.bucket, "#{day}_bullets")
 
     get monthlylog_bullets_path(@monthlylog, date: day.iso8601)
 
@@ -127,7 +159,7 @@ class Monthlylogs::BulletsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'unplanned index mounts unplanned_bullets_container' do
-    container = 'monthlylog_bullets_unplanned_container'
+    container = dom_id(@monthlylog.bucket, :unplanned_bullets)
 
     get monthlylog_bullets_path(@monthlylog)
 
@@ -151,7 +183,7 @@ class Monthlylogs::BulletsControllerTest < ActionDispatch::IntegrationTest
       bucket_id: @monthlylog.bucket.id,
       pops_on: day
     )
-    container = "date_#{day.iso8601}_bullets_container"
+    container = dom_id(@monthlylog.bucket, "#{day}_bullets")
 
     get monthlylog_bullets_path(@monthlylog, date: day.iso8601)
 
@@ -168,7 +200,7 @@ class Monthlylogs::BulletsControllerTest < ActionDispatch::IntegrationTest
         bucket_id: @monthlylog.bucket.id
       )
     end
-    container = 'monthlylog_bullets_unplanned_container'
+    container = dom_id(@monthlylog.bucket, :unplanned_bullets)
 
     get monthlylog_bullets_path(@monthlylog)
 

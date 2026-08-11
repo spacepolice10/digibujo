@@ -1,6 +1,6 @@
 <div
   class="chat--window layout--container"
-  data-size="sm"
+  data-size="md"
 >
   <div class="chat--surface layout--surface" data-elevation="1">
     <header class="chat--header">
@@ -42,7 +42,7 @@
       <% end %>
 
     </div>
-    <div id="daylog_composer" class="chat--composer daylog--composer" data-controller="chat-composer">
+    <div id="daylog_composer" class="chat--composer composer--dock daylog--composer" data-controller="chat-composer">
       <%= render "bullets/composer_v2",
         bullet: Bullet.new,
         bucket_id: @daylog.bucket.id,

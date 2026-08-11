@@ -32,7 +32,9 @@ export default class extends Controller {
     const targetPopsOn = this.popsOnValue
     if (targetPopsOn == sourceZone) return
 
-    const frame = document.getElementById(`bullet_${bulletId}`)
+    const frame = document.querySelector(
+      `[data-bullet-drag-id-value="${CSS.escape(bulletId)}"]`
+    )
     if (!frame) return
 
     const revert = this.#optimisticMove(frame)

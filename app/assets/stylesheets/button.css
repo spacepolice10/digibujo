@@ -63,18 +63,18 @@
 
   .button[data-intent="secondary"] {
     background: var(--color-2);
-    border-color: var(--color-invert-2);
+    border: var(--border-subtle);
     color: var(--color-invert-2);
   }
   @media (hover: hover) {
     .button[data-intent="secondary"]:hover:not(:disabled) {
-      border-color: var(--color-invert-2);
+      border: var(--border-base);
       color: var(--color-invert-2);
     }
   }
   .button[data-intent="secondary"]:focus-visible,
   .button[data-intent="secondary"]:active:not(:disabled) {
-    border-color: var(--color-invert-1);
+    border: var(--border-base);
     color: var(--color-invert-1);
   }
   .button[data-intent="secondary"]:active:not(:disabled) {

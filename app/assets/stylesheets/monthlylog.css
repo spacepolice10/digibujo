@@ -64,20 +64,46 @@
             &.divided--vertical {
                 border-inline-end: 0;
             }
+
+            & .monthlylog--section-content {
+                padding-block-end: calc(
+                    var(--tabbar-clearance)
+                    + var(--space-v-2)
+                );
+            }
         }
     }
 
     .monthlylog--planned-composer {
-        position: relative;
         background: var(--color-2);
-        padding: var(--space-v);
         border-radius: var(--radius-base);
         border: var(--border-subtle);
-        & .monthlylog--planned-composer-hide-button {
-            position: absolute;
-            inset-block-start: calc(var(--space-h-half) * -1);
-            inset-inline-end: calc(var(--space-h-half) * -1);
+        overflow: hidden;
+
+        & > .composer {
+            padding: var(--space-v) var(--space-h);
         }
+
+        @container layout (width < 600px) {
+            & > .composer {
+                flex-wrap: wrap;
+                padding-inline: var(--space-h-half);
+            }
+
+            & > .composer lexxy-editor {
+                order: -1;
+                flex-basis: 100%;
+                width: 100%;
+            }
+        }
+    }
+
+    .monthlylog--planned-composer-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-h);
+        padding: var(--space-v-half) var(--space-h-half);
     }
 
     .monthlylog--unplanned-composer {
@@ -85,53 +111,124 @@
         inset-block-end: 0;
         flex-shrink: 0;
         margin-block-start: auto;
-        background: var(--color-2);
         padding: var(--space-v);
+
+        @container layout (width < 600px) {
+            inset-block-end: calc(var(--tabbar-clearance) + var(--space-v));
+            margin-block-end: 0;
+        }
+    }
+
+    @container layout (width < 600px) {
+        .monthlylog--unplanned-composer:has(
+            [data-composer-editor-target~="editor"]:focus-within
+        ) {
+            inset-block-end: var(--space-v);
+        }
+    }
+
+    .monthlylog--bullets-composer {
+        width: 98%;
+        margin-block-end: var(--space-v-half);
+        margin-inline: auto;
+        border: var(--border-subtle);
+        border-radius: var(--radius-full);
+        box-shadow: var(--shadow-subtle);
+
+        &:has(.composer[data-composer-editor-multiline-value="true"]) {
+            border-radius: var(--radius-base);
+        }
+
+        & .lexxy-editor__content {
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+
+        @container layout (width < 600px) {
+            margin-block-end: var(--tabbar-clearance);
+            transition: margin-block-end 250ms ease-out;
+        }
+    }
+
+    @container layout (width < 600px) {
+        .monthlylog--bullets-composer:has(
+            [data-composer-editor-target~="editor"]:focus-within
+        ) {
+            margin-block-end: var(--space-v);
+            transition: none;
+        }
     }
 
     .monthlylog--date-category {
         display: flex;
         flex-direction: column;
-        gap: var(--space-v-half);
+        gap: var(--space-v);
         margin-block-start: var(--space-v-3);
         @container layout (width < 800px) {
             padding: var(--space-v) var(--space-h);
             border-radius: var(--radius-base);
             border: var(--border-subtle);
         }
+        @container layout (width < 600px) {
+            background: var(--color-1);
+            box-shadow: var(--shadow-subtle);
+        }
 
-        & .monthlylog--date-category-name {
-            --highlight-colour: var(--model-color-4);
-            display: flex;
-            position: relative;
-            align-items: center;
-            gap: var(--space-h);
-            margin-block-end: var(--space-v-half);
-            transition: transform 0.08s;
-            &:after {
-                content: "";
-                display: block;
-                position: absolute;
-                inset-block-start: 50%;
-                width: 25%;
-                height: 50%;
-                background: var(--highlight-colour);
-                opacity: var(--opacity-quarter);
-                z-index: 1;
-                transform: skew(-10deg);
-            }
-            &[aria-current="date"]:after {
-                width: 35%;
-                opacity: var(--opacity-half);
-            }
-            &:hover {
-                transform: translateX(var(--space-h-half));
-            }
+    }
+
+    .monthlylog--date-link {
+        --highlight-colour: var(--model-color-4);
+        display: flex;
+        position: relative;
+        align-items: center;
+        gap: var(--space-h);
+        margin-block-end: var(--space-v-half);
+        transition: transform 0.08s;
+
+        &:after {
+            content: "";
+            display: block;
+            position: absolute;
+            inset-block-start: 50%;
+            width: 25%;
+            height: 50%;
+            background: var(--highlight-colour);
+            opacity: var(--opacity-quarter);
+            z-index: 1;
+            transform: skew(-10deg);
+        }
+
+        &[aria-current="date"]:after {
+            width: 35%;
+            opacity: var(--opacity-half);
+        }
+
+        &:hover {
+            transform: translateX(var(--space-h-half));
         }
     }
+
+    .monthlylog--bullets-back:hover {
+        transform: translateX(calc(var(--space-h-half) * -1));
+    }
+
+    .monthlylog--date-bullets {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-v);
+    }
+
     .monthlylog--unplanned-category {
         display: flex;
         flex-direction: column;
         gap: var(--space-v-half);
+
+        @container layout (width < 600px) {
+            padding-block-end: calc(
+                var(--tabbar-clearance)
+                + var(--coarse-target)
+                + var(--space-v-4)
+            );
+        }
     }
 }

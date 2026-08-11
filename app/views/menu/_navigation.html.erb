@@ -28,7 +28,7 @@
     <%= icon_tag("menu") %>
     <span class="menu--navigation-name">Daylog</span>
   <% end %>
-  <%= link_to monthlylog_path(Current.user.monthlylogs.covering(Date.current).first.id),
+  <%= link_to current_monthlylog_navigation_path,
         class: "menu--navigation-item hotkey-hint hotkey-hint--always",
         data: {
           turbo_frame: "_top",

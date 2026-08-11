@@ -20,14 +20,18 @@ export default class extends Controller {
 
     frame.remove()
 
+    const targetList = this.element.querySelector("[data-monthlylog-drop-list]")
     const datePanel = document.getElementById("monthlylog_date")
     const panelZone = datePanel?.dataset.popsOn ?? ""
-    const list = datePanel?.querySelector("[data-monthlylog-date-list]")
-    let appendedToPanel = false
+    const panelList = datePanel?.querySelector("[data-monthlylog-date-list]")
+    let appendedToTarget = false
 
-    if (list && panelZone && panelZone === targetZone) {
-      list.appendChild(frame)
-      appendedToPanel = true
+    if (targetList) {
+      targetList.appendChild(frame)
+      appendedToTarget = true
+    } else if (panelList && panelZone && panelZone === targetZone) {
+      panelList.appendChild(frame)
+      appendedToTarget = true
     }
 
     const previousCount = this.countValue
@@ -40,7 +44,7 @@ export default class extends Controller {
     }
 
     return () => {
-      if (appendedToPanel) {
+      if (appendedToTarget) {
         frame.remove()
       }
 
@@ -61,7 +65,7 @@ export default class extends Controller {
     if (!sourceZone) return null
 
     const sourceCell = document.querySelector(
-      `.monthlylog--date-cell[data-drop-zone-value="${CSS.escape(sourceZone)}"]`
+      `[data-controller~="monthlylog-calendar-drop-optimistic"][data-drop-zone-value="${CSS.escape(sourceZone)}"]`
     )
     if (!sourceCell) return null
 

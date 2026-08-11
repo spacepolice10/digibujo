@@ -76,7 +76,7 @@
     height: 100%;
     width: 100%;
     flex-shrink: 0;
-    padding: 0 var(--space-h);
+    padding: var(--space-v) var(--space-h);
     border-radius: var(--radius-full);
     color: var(--color-invert-2);
     text-decoration: none;

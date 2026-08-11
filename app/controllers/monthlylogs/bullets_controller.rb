@@ -7,7 +7,8 @@ module Monthlylogs
       @date = parsed_date(params[:date])
       return if performed?
 
-      scoped = @monthlylog.bullets.active.scheduled.includes(:bulletable)
+      scoped = @monthlylog.bullets.active.includes(:bulletable)
+      scoped = @date ? scoped.scheduled.where(pops_on: @date) : scoped.unscheduled
 
       if params[:before].present?
         cursor = scoped.find_by(id: params[:before])

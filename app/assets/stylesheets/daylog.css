@@ -7,31 +7,10 @@
   }
 
   .daylog--composer {
-    border: var(--border-subtle);
-    border-radius: var(--radius-full);
-    box-shadow: var(--shadow-subtle);
-    &:has(.composer[data-composer-editor-multiline-value="true"]) {
-      border-radius: var(--radius-base);
-    }
     & .lexxy-editor__content {
         max-height: 50vh;
         overflow: scroll
     }
-    margin-bottom: var(--space-v-half);
-    width: 98%;
-    margin-inline: auto;
-
-    body[data-platform="mobile"] & {
-      margin-bottom: var(--tabbar-clearance);
-      transition: margin-bottom 250ms ease-out;
-    }
-  }
-
-  body[data-platform="mobile"]:has(
-    .chat--composer [data-composer-editor-target~="editor"]:focus-within
-  ) .daylog--composer {
-    margin-bottom: var(--space-v);
-    transition: none;
   }
 
   .daylog--triage-preview {
