@@ -56,7 +56,9 @@
     transition: transform 250ms ease-out, opacity 180ms ease-out;
   }
 
-  html.keyboard-open .tabbar--navigation {
+  body[data-platform="mobile"]:has(
+    .chat--composer [data-composer-editor-target~="editor"]:focus-within
+  ) .tabbar--navigation {
     transform: translate(
       -50%,
       calc(100% + var(--tabbar-offset) + var(--tabbar-safe-area))

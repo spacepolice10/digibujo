@@ -1,9 +1,12 @@
 import { Controller } from "@hotwired/stimulus"
 
-// The browser keeps the composer above the keyboard by resizing the viewport.
-// This controller only reflects composer focus in the surrounding mobile UI.
+// CSS owns focus-driven geometry. This controller only keeps the visually
+// hidden mobile tabbar out of the accessibility and keyboard navigation trees.
 export default class extends Controller {
   connect() {
+    this.mobile = document.body.dataset.platform === "mobile"
+    if (!this.mobile) return
+
     this.tabbar = document.querySelector(".tabbar--navigation")
     this.editor = this.element.querySelector('[data-composer-editor-target~="editor"]')
     this.events = new AbortController()
@@ -18,6 +21,8 @@ export default class extends Controller {
   }
 
   disconnect() {
+    if (!this.mobile) return
+
     this.events?.abort()
     if (this.closeFrame != null) cancelAnimationFrame(this.closeFrame)
     this.#close()
@@ -26,7 +31,6 @@ export default class extends Controller {
   #open() {
     if (this.closeFrame != null) cancelAnimationFrame(this.closeFrame)
     this.closeFrame = null
-    document.documentElement.classList.add("keyboard-open")
     this.#hideTabbar(true)
   }
 
@@ -39,7 +43,6 @@ export default class extends Controller {
   }
 
   #close() {
-    document.documentElement.classList.remove("keyboard-open")
     this.#hideTabbar(false)
   }
 
