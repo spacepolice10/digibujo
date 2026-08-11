@@ -74,9 +74,12 @@ class AccessCodesControllerTest < ActionDispatch::IntegrationTest
     get access_codes_path
 
     assert_response :success
+    assert_select '.layout--container-header h1', text: 'Access codes'
+    assert_select 'a.button[data-content="text"][aria-label="Back to Account"]', text: /Account/
+    assert_select '#access_codes .layout--surface[data-elevation="2"]'
     assert_select 'form[action=?]', access_codes_path, count: 0
     assert_match access_code.code_prefix, response.body
-    assert_select 'button', text: /Revoke/
+    assert_select 'button.button[data-status="negative"]', text: /Revoke/
   end
 
   test 'html destroy revokes the access code' do

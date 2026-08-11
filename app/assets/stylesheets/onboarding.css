@@ -1,0 +1,174 @@
+@layer components {
+  .onboarding--basics {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-v-2);
+    margin-bottom: var(--space-h);
+    padding: var(--space-v) var(--space-h);
+    list-style: none;
+    background: var(--color-1);
+    border-radius: var(--radius-strong);
+    box-shadow: var(--shadow-subtle);
+
+    @container layout (width >= 800px) {
+      padding-bottom: var(--space-h);
+      padding-inline: var(--space-h-2);
+    }
+  }
+
+  .onboarding--basics li {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-v-half);
+    padding: var(--space-v-half) var(--space-h-half);
+    background: var(--color-1);
+    border-radius: var(--radius-strong);
+  }
+
+  .onboarding--basics strong {
+    color: var(--color-invert-2);
+    font-size: var(--font-size-base-type);
+    font-weight: var(--font-weight-strong);
+  }
+
+  .onboarding--basics p { color: var(--color-invert-4); font-size: var(--font-size-xl); }
+
+  .onboarding--basics-tips {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+
+    &::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      bottom: 0;
+      display: block;
+      width: 50%;
+      height: 10%;
+      background: var(--model-color-4);
+      opacity: var(--opacity-half);
+      transform: skew(-10deg);
+    }
+  }
+
+  .onboarding--external-link {
+    color: var(--color-invert-2);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+
+    @media (hover: hover) { &:hover { color: var(--color-invert-4); } }
+  }
+
+  .session-body:has(.onboarding-carousel) .session-layout { padding: 0; gap: 0; justify-content: flex-start; }
+  .session-body:has(.onboarding-carousel) .session-layout--header { display: none; }
+  .session-body:has(.onboarding-carousel) .session-layout--main { max-width: none; height: 100dvh; min-height: 100dvh; }
+
+  .onboarding-carousel {
+    display: flex;
+    width: 100%;
+    height: 100dvh;
+    max-width: none;
+    padding: 0 0 var(--space-v-3);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding: 0;
+    scrollbar-width: none;
+  }
+
+  .onboarding-carousel::-webkit-scrollbar { display: none; }
+
+  .onboarding-section {
+    display: flex;
+    flex: 0 0 100vw;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    width: 100vw;
+    padding-inline: var(--space-h);
+    gap: var(--space-v-3);
+    overflow: hidden;
+    overscroll-behavior-y: none;
+    overscroll-behavior-x: auto;
+    scroll-snap-align: start;
+  }
+
+  .last-section {
+    @container layout (width < 800px) { padding-bottom: calc(var(--space-v-3) + var(--space-v-3)); }
+  }
+
+  .onboarding--heading {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    padding-inline: var(--space-h);
+    font-weight: var(--font-weight-strong);
+
+    &::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      top: 25%;
+      display: block;
+      width: 90%;
+      height: 50%;
+      margin-bottom: var(--space-v-half);
+      background: var(--model-color-4);
+      opacity: var(--opacity-half);
+      transform: skew(-10deg);
+    }
+  }
+
+  .onboarding-footer {
+    position: absolute;
+    z-index: var(--z-dialog);
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-v-half);
+    padding: var(--space-v-half);
+  }
+
+  .onboarding-form { width: 100%; max-width: 800px; }
+
+  .onboarding-sample-checkbox {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-h-half);
+    padding: var(--space-v-half) var(--space-h-half);
+    background: var(--color-2);
+    border: var(--border-subtle);
+    border-radius: var(--radius-strong);
+
+    &:hover { background: var(--color-1); }
+    &:has(input:checked) { background: var(--color-accent-1-subtle); }
+  }
+
+  .onboarding-sample-checkbox:has(input:checked) .icon { --icon-mask: var(--icon-circle-check) !important; }
+
+  .onboarding-dots {
+    display: flex;
+    gap: var(--space-h-half);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .onboarding-dots li {
+    width: var(--space-h-half);
+    height: var(--space-h-half);
+    background: var(--color-invert-4);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: width 0.22s ease;
+  }
+
+  .onboarding-dots li[data-active] { width: var(--space-h); background: var(--color-accent-1); }
+}

@@ -25,9 +25,9 @@
     overflow: auto;
 
     background: var(--color-1);
-    border: 1px solid var(--color-invert-2);
+    border: var(--border-subtle);
     border-radius: var(--radius-strong);
-    box-shadow: var(--shadow-base);
+    box-shadow: var(--shadow-subtle);
 
     /* Anchor positioning */
     position-area: block-end span-inline-end;

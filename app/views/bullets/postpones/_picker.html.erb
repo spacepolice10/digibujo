@@ -21,7 +21,7 @@
         <%= hidden_field_tag :pops_on, option[:pops_on] %>
 
         <%= button_tag type: :submit,
-              class: "dropdown-item",
+              class: "dropdown-item picker--item",
               data: {
                 grid_navigation_target: "item",
                 action: "focus->grid-navigation#syncPosition"
@@ -35,7 +35,7 @@
     <div class="bulk-menu--picker-date">
       <label
         for="pops_on_date_picker"
-        class="dropdown-item"
+        class="dropdown-item picker--item"
         tabindex="-1"
         data-grid-navigation-target="item"
         data-action="focus->grid-navigation#syncPosition"

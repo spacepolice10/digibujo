@@ -153,6 +153,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select 'main.search--page'
+    assert_select '.layout--container-header h1', text: 'Search'
     assert_select 'form.search--form[action=?]', search_path
     assert_select 'turbo-frame#menu_search'
   end

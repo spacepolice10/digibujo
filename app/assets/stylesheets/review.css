@@ -18,12 +18,12 @@
     display: flex;
     flex-wrap: wrap;
     align-items: stretch;
-    gap: 1px;
+    gap: var(--space-v-half);
     flex: 1;
     min-height: 0;
     height: 90dvh;
-    border: 1px solid var(--color-invert-4);
-    background: var(--color-invert-4);
+    border: var(--border-subtle);
+    background: var(--color-2);
     border-radius: var(--radius-strong);
     overflow: auto;
   }
@@ -81,7 +81,7 @@
     gap: var(--space-h-half);
     min-width: 0;
     padding-bottom: var(--space-v-half);
-    border-bottom: 0.5px solid var(--color-invert-4);
+    border-bottom: var(--border-subtle);
   }
 
   .review--date-number {
@@ -104,12 +104,12 @@
 
   .review--date-day {
     font-weight: var(--font-weight-strong);
-    font-size: 0.85em;
+    font-size: var(--font-size-xs);
   }
 
   .review--date-weekday {
-    font-weight: 400;
-    font-size: 0.75em;
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-xs);
     text-transform: uppercase;
   }
 
@@ -166,13 +166,13 @@
 
     @media (hover: hover) {
       &:hover {
-        border-color: var(--color-invert-2);
+        border-color: var(--color-invert-4);
       }
     }
 
     &:focus-visible {
       outline: none;
-      border-color: var(--color-invert-2);
+      border-color: var(--color-invert-4);
       background: var(--color-2);
     }
   }
@@ -194,6 +194,8 @@
     width: 100%;
     flex-shrink: 0;
     margin-bottom: var(--space-v-half);
+    padding-bottom: 0;
+    gap: 0;
   }
 
   .review--collections-list {
@@ -217,13 +219,13 @@
     border-radius: var(--radius-strong);
   }
 
-  .review--collection-drop-target .collection--section-list-item {
+  .review--collection-drop-target .bucket--section-list-item {
     width: 100%;
     box-sizing: border-box;
 
     @media (hover: hover) {
       &:hover {
-        border-color: var(--color-invert-2);
+        border-color: var(--color-invert-4);
       }
     }
   }
@@ -249,8 +251,8 @@
 
   .pops-drop--over,
   .collect-drop--over {
-    outline: 2px dashed var(--model-color-4);
-    outline-offset: -2px;
+    outline: 1px dashed var(--color-accent-1);
+    outline-offset: -1px;
     border-radius: var(--radius-base);
   }
 
@@ -328,7 +330,7 @@
   .review--page-mobile .review--calendar {
     overflow-y: auto;
     overscroll-behavior: auto;
-    border: 1px solid var(--color-invert-4);
+    border: var(--border-subtle);
     background: var(--color-1);
     border-radius: var(--radius-strong);
   }

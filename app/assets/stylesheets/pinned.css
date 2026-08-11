@@ -1,19 +1,27 @@
 @layer components {
+  .pinned--list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-v-half);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
 
   .pinned--entity-item {
     display: flex;
     align-items: center;
     gap: var(--space-h-half);
-    padding: var(--space-v-half) var(--space-h-half);
-    border-radius: var(--radius-base);
+    padding-block: var(--space-v-half);
     flex: 1;
     min-width: 0;
     text-decoration: none;
-    color: inherit;
+    color: var(--color-invert-3);
     height: fit-content;
 
-    &:hover {
-      background-color: var(--color-2);
+    &:hover,
+    &:focus-visible {
+      color: var(--color-accent-1);
     }
   }
 

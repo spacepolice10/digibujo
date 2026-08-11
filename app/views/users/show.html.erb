@@ -1,44 +1,53 @@
-<% content_for(:title) { "Account" } %>
+<% content_for(:title, "Account") %>
 
-<main class="layout--container" data-size="sm">
-  <div class="layout--flex layout--justify-between layout--padded">
-    <div class="button--primary layout--mx-auto">
-      <%= Current.user.email_address.first.upcase %>
-    </div>
-
-  </div>
-
-
-      <div class="layout--grid layout--justify-between">
-        <div class="layout--flex layout--gapped layout--justify-between">
-      <%= back_link_to home_path, class: "button--secondary button--sm" do %>
+<main class="layout--container" data-size="sm" data-padding="true">
+  <div class="layout--surface layout--flex" data-elevation="1" data-padding="true" data-direction="column">
+    <header class="layout--container-header">
+      <%= back_link_to home_path,
+            class: "button",
+            data: { content: "text", turbo_frame: "_top" },
+            aria: { label: "Back to Home" } do %>
         <%= icon_tag("arrow-left") %>
+        <span>Home</span>
+      <% end %>
+      <h1>Account</h1>
+    </header>
 
-      Back
-    <% end %>
-    <p class="button--secondary button--sm"><%= Current.user.email_address %></p>
-        </div>
+    <section class="layout--flex" data-direction="column" data-align="center">
+      <span
+        class="button"
+        data-intent="primary"
+        data-radius="full"
+        data-size="xl"
+        data-content="icon"
+        aria-hidden="true"
+      ><%= Current.user.email_address.first.upcase %></span>
+      <p class="typography--paragraph-sm"><%= Current.user.email_address %></p>
+    </section>
 
-        <br>
-    <div class="layout--padded layout--flex layout--gapped layout--surface layout--flex-wrap">
-
-      <%= link_to access_codes_path, class: "button--secondary" do %>
+    <nav class="layout--flex" data-justify="center" data-wrap="true" aria-label="Account settings">
+      <%= link_to access_codes_path,
+            class: "button",
+            data: { intent: "secondary", radius: "full", size: "sm" } do %>
         <%= icon_tag("code") %>
-        Access codes
+        <span>Access codes</span>
       <% end %>
 
-      <%= link_to hooks_path, class: "button--secondary" do %>
+      <%= link_to hooks_path,
+            class: "button",
+            data: { intent: "secondary", radius: "full", size: "sm" } do %>
         <%= icon_tag("webhook") %>
-        Hooks
+        <span>Hooks</span>
       <% end %>
 
       <%= button_to authentication_path,
-              method: :delete,
-              class: "button--secondary",
-              form: { data: { turbo_confirm: "Sign out of Digibujo?" } } do %>
+            method: :delete,
+            class: "button",
+            data: { intent: "secondary", radius: "full", size: "sm", status: "negative" },
+            form: { data: { turbo_confirm: "Sign out of Digibujo?" } } do %>
         <%= icon_tag("sign-out") %>
-        Sign out
+        <span>Sign out</span>
       <% end %>
-    </div>
-    </div>
+    </nav>
+  </div>
 </main>

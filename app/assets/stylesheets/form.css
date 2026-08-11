@@ -4,7 +4,7 @@
     margin-inline: auto;
     display: flex;
     flex-direction: column;
-    gap: var(--space-v);
+    gap: var(--space-v-2);
     padding-bottom: var(--space-v-3);
   }
 
@@ -30,7 +30,7 @@
     font-family: inherit;
     font-size: var(--font-size-base-type);
     background: transparent;
-    border: 1px solid var(--color-invert-4);
+    border: var(--border-subtle);
     color: var(--color-invert-2);
 
     &::placeholder {
@@ -181,8 +181,12 @@
 
   .form--picker-option {
     position: relative;
+    display: inline-flex;
+    align-items: center;
     cursor: pointer;
     border: 1px solid transparent;
+    border-radius: var(--radius-base);
+    overflow: hidden;
   }
 
   .form--picker-option input {
@@ -193,15 +197,31 @@
     cursor: pointer;
   }
 
-  .form--picker-option:has(input:checked) .form--picker-control {
+  .form--picker-option:has(input:checked) {
     background: var(--color-1);
-    border-color: var(--color-invert-4);
+    border-color: currentColor;
 
+    &::after {
+      content: "";
+      position: absolute;
+      z-index: 1;
+      width: 50%;
+      height: 50%;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) skew(-12deg);
+      pointer-events: none;
+      background: currentColor;
+      opacity: var(--opacity-half);
+      animation: popout 0.2s ease-in-out;
+    }
   }
 
   /* ── Colour picker ────────────────────────────────── */
 
   .form--colour-swatch {
+    display: block;
+    flex: 0 0 calc(var(--space-h-2) + var(--space-h-half));
     width: calc(var(--space-h-2) + var(--space-h-half));
     height: calc(var(--space-h-2) + var(--space-h-half));
   }
@@ -214,7 +234,16 @@
     min-width: var(--space-h-2);
     min-height: var(--space-h-2);
     margin: var(--space-v-half) var(--space-h-half);
+    color: var(--color-invert-4);
+  }
+
+  .form--picker-option:has(input:checked) .form--icon {
     color: var(--color-invert-2);
+  }
+
+  .form .form--submit {
+    width: fit-content;
+    align-self: flex-end;
   }
 
   /* ── Repeat schedule date picker ──────────────────── */

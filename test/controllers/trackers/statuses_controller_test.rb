@@ -21,7 +21,8 @@ class Trackers::StatusesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert @tracker.statuses.joins(:calendar_date).exists?(calendar_dates: { date: @date })
     assert_select "turbo-stream[action=replace][target=#{dom_id(@tracker, "date_#{@date.iso8601}")}]", count: 1
-    assert_select 'turbo-stream[action=replace]', count: 1
+    assert_select "turbo-stream[action=replace][target=#{dom_id(@tracker, :statistics)}]", count: 1
+    assert_select 'turbo-stream[action=replace]', count: 2
   end
 
   test 'create is idempotent' do

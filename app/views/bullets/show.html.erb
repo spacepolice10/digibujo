@@ -47,7 +47,7 @@
             <nav class="dropdown--menu" aria-label="Actions">
               <% unless @bullet.bulletable_type == "Voice" %>
                 <%= link_to edit_bullet_path(@bullet),
-                      class: "dropdown-item",
+                      class: "dropdown-item picker--item",
                       data: {
                         turbo_frame: "_top",
                         grid_navigation_target: "item",
@@ -61,7 +61,7 @@
                 <%= button_to publish_path,
                       method: :delete,
                       params: { bullet_ids: @bullet.id },
-                      class: "dropdown-item",
+                      class: "dropdown-item picker--item",
                       form_class: "dropdown--menu-form",
                       data: {
                         grid_navigation_target: "item",
@@ -75,7 +75,7 @@
                 <%= button_to publish_path,
                       method: :post,
                       params: { bullet_ids: @bullet.id },
-                      class: "dropdown-item",
+                      class: "dropdown-item picker--item",
                       form_class: "dropdown--menu-form",
                       data: {
                         grid_navigation_target: "item",
@@ -91,7 +91,7 @@
                 <%= button_to archive_path,
                       method: :delete,
                       params: { bullet_ids: @bullet.id },
-                      class: "dropdown-item",
+                      class: "dropdown-item picker--item",
                       form_class: "dropdown--menu-form",
                       data: {
                         grid_navigation_target: "item",
@@ -105,7 +105,7 @@
                 <%= button_to archive_path,
                       method: :post,
                       params: { bullet_ids: @bullet.id },
-                      class: "dropdown-item",
+                      class: "dropdown-item picker--item",
                       form_class: "dropdown--menu-form",
                       form: { data: { turbo_confirm: "Are you sure?" } },
                       data: {

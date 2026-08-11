@@ -25,11 +25,8 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
     assert_select '.onboarding--heading', text: 'Welcome to Digibujo'
     assert_select '.onboarding-section', count: 6
     assert_select '.onboarding-dots li', count: 6
-    assert_select '.onboarding-demo', count: 4
-    assert_select '.onboarding-welcome', count: 1
-    assert_select '.onboarding-welcome-logo', count: 1
-    assert_select '.onboarding-welcome-bullets .onboarding-demo-bullet', count: 5
-    assert_select '.onboarding-welcome .onboarding-demo-typing', text: 'Time to try Digibujo'
+    assert_select '.onboarding-demo', count: 0
+    assert_select '.onboarding-welcome', count: 0
     assert_select 'button[data-action=?]', 'onboarding#next'
     assert_select 'button[data-action=?]', 'onboarding#jumpToLast'
     assert_select 'input[type=radio][name=?]', 'data_seed', count: 2

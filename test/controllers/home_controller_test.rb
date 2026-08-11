@@ -20,6 +20,8 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     assert_select 'button[popovertarget="header_menu"]', text: /Digibujo/
     assert_select 'a', text: 'Monthly log', count: 1
     assert_link current_future_path, text: 'Future log'
+    assert_select '[data-home-section="logs"] > .home--section-header a', count: 0
+    assert_select '[data-home-section="logs"] .home--section-arrow', count: 0
     assert_select '.home--sections a[href=?]', daylog_path, count: 0
     assert_link published_index_path, text: 'Recently shared'
     assert_link archived_index_path, text: 'Archive'

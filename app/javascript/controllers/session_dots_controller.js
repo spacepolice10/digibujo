@@ -177,7 +177,7 @@ export default class extends Controller {
     const ctx = this.ctx
     const pointer = this.pointer
     const radius = this.radius
-    const bg = this.#cssColor("--color-2")
+    const bg = this.#cssColor("--color-1")
     const base = this.#gridColour()
     const accent = this.#cssColor("--color-accent-1")
 
@@ -212,8 +212,7 @@ export default class extends Controller {
   }
 
   #gridColour() {
-    const dark = window.matchMedia("(prefers-color-scheme: dark)").matches
-    return this.#cssColor(dark ? "--background-grid-colour-dark" : "--background-grid-colour-light")
+    return this.#cssColor("--background-grid-colour")
   }
 
   // Resolve a custom property to a canvas-safe rgb()/rgba() via backgroundColor.

@@ -102,4 +102,24 @@
     padding: var(--space-v-half) var(--space-v-half);
     background: var(--color-1);
   }
+
+  .chat--resource-header .layout--container-header,
+  .collection--chat-header .layout--container-header {
+    padding: var(--space-v-half) var(--space-h);
+    background: var(--color-1);
+    border: var(--border-subtle);
+    border-radius: var(--radius-strong);
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .collection--frost-chip--description {
+    width: fit-content;
+    max-width: 100%;
+    margin: var(--space-v-half) auto 0;
+    box-shadow: var(--shadow-subtle);
+  }
+
+  .collection--window:has(.collection--frost-chip--description) {
+    --chat-header-clearance: var(--space-v-4);
+  }
 }

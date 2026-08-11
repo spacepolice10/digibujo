@@ -72,4 +72,23 @@
   .layout--surface[data-elevation="4"] { background: var(--color-4); }
   .layout--surface[data-padding="true"] { padding: var(--space-v) var(--space-h); }
   .layout--surface[data-margin="auto"] { margin-inline: auto; }
+
+  .layout--container-header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: var(--space-h);
+    min-height: var(--space-v-3);
+  }
+  .layout--container-header > .button { justify-self: start; }
+  .layout--container-header:not(:has(.layout--container-header-action))::after { content: ""; }
+  .layout--container-header > .layout--container-header-action { justify-self: end; }
+  .layout--container-header > :is(h1, h2) {
+    font-size: var(--font-size-base-type);
+    font-weight: var(--font-weight-strong);
+  }
+
+  @media (pointer: coarse) {
+    .layout--container-header { min-height: var(--coarse-target); }
+  }
 }

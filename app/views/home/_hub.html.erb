@@ -18,7 +18,7 @@
       <% end %>
     <% end %>
 
-    <%= render layout: "home/section", locals: { key: "logs", title: "Logs", path: current_monthlylog_navigation_path, icon: "calendar" } do %>
+    <%= render layout: "home/section", locals: { key: "logs", title: "Logs", path: nil, icon: "calendar" } do %>
       <%= render "home/preview_link", path: current_monthlylog_navigation_path, icon: "calendar", name: "Monthly log" %>
       <%= render "home/preview_link", path: current_future_path, icon: "calendar-repeat", name: "Future log" %>
     <% end %>
@@ -59,9 +59,10 @@
               <%= icon_tag("arrow-right") %>
             <% end %>
           </div>
-          <% @attachments.each do |attachment| %>
-            <%= render "home/preview_link", path: attachment_path(attachment.blob.signed_id), icon: "paperclip",
-                  name: attachment.blob.filename.to_s %>
+          <% if @attachments.any? %>
+            <div class="home--attachment-previews">
+              <%= render partial: "home/attachment_preview", collection: @attachments, as: :attachment %>
+            </div>
           <% end %>
           <% if @attachments.empty? %><p class="home--empty">No attachments yet.</p><% end %>
         </div>

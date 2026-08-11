@@ -19,12 +19,13 @@
           placeholder: "······",
           aria: { label: "6-character login code" } %>
 
-    <%= form.button type: "submit", class: "button--primary session--submit" do %>
+    <%= form.button type: "submit", class: "button session--submit",
+          data: { intent: "primary", radius: "full", size: "lg" } do %>
       Verify code
     <% end %>
   <% end %>
 
-  <div class="session--footer-links layout--flex layout--mx-auto">
+  <div class="session--footer-links layout--flex" data-justify="center">
     <%= link_to "Didn't receive it? Try again", new_authentication_path, class: "session--footer-link" %>
   </div>
 </div>

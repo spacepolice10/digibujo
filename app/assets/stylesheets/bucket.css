@@ -3,13 +3,13 @@
   .bucket--section-list-item {
     display: flex;
     gap: var(--space-h-half);
-    padding: var(--space-v-half) var(--space-h-half);
+    padding: var(--space-v) var(--space-h);
     flex: 1;
     text-decoration: none;
-    color: inherit;
-    background: var(--color-1);
-    border: 1px solid var(--color-invert-4);
-    border-radius: var(--radius-strong);
+    color: var(--color-invert-3);
+    background: transparent;
+    border: var(--border-subtle);
+    border-radius: var(--radius-base);
     align-items: center;
     height: fit-content;
 
@@ -18,9 +18,14 @@
       height: var(--space-h);
     }
 
-    &:hover {
+    &:is(a):hover,
+    &:is(a):focus-visible {
       background: var(--color-2);
-      border-color: var(--color-invert-4);
+      color: var(--color-accent-1);
     }
+  }
+
+  .collection--list {
+    gap: var(--space-v);
   }
 }

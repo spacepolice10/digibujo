@@ -78,13 +78,13 @@
   }
   @media (hover: hover) {
     .button[data-intent="secondary"]:hover:not(:disabled) {
-      border: var(--border-base);
+      border-color: var(--color-invert-4);
       color: var(--color-invert-2);
     }
   }
   .button[data-intent="secondary"]:focus-visible,
   .button[data-intent="secondary"]:active:not(:disabled) {
-    border: var(--border-base);
+    border-color: var(--color-invert-4);
     color: var(--color-invert-1);
   }
   .button[data-intent="secondary"]:active:not(:disabled) {
@@ -116,9 +116,9 @@
 
   /* Keep status colors through intent interaction states. */
   .button[data-status="negative"][data-intent="secondary"]:focus-visible {
-    background: var(--color-negative);
+    background: var(--color-invert-negative);
     border-color: var(--color-invert-negative);
-    color: var(--color-invert-negative);
+    color: var(--color-negative);
   }
   .button[data-status="positive"][data-intent="secondary"]:focus-visible {
     background: var(--color-positive);
@@ -127,9 +127,9 @@
   }
   @media (hover: hover) {
     .button[data-status="negative"][data-intent="secondary"]:hover:not(:disabled) {
-      background: var(--color-negative);
+      background: var(--color-invert-negative);
       border-color: var(--color-invert-negative);
-      color: var(--color-invert-negative);
+      color: var(--color-negative);
     }
     .button[data-status="positive"][data-intent="secondary"]:hover:not(:disabled) {
       background: var(--color-positive);
@@ -172,16 +172,23 @@
     transition: color 0.08s ease;
   }
   @media (hover: hover) {
+    .button[data-content="text"]:hover:not(:disabled) {
+      color: var(--color-accent-1);
+    }
+
     .button[data-content="text"][data-intent]:hover:not(:disabled) {
       background: transparent;
       border: 0;
-      color: var(--color-accent-1);
     }
   }
+  .button[data-content="text"]:focus-visible,
+  .button[data-content="text"]:active:not(:disabled) {
+    color: var(--color-accent-1);
+  }
+
   .button[data-content="text"][data-intent]:focus-visible,
   .button[data-content="text"][data-intent]:active:not(:disabled) {
     background: transparent;
     border: 0;
-    color: var(--color-accent-1);
   }
 }

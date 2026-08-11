@@ -1,11 +1,18 @@
 <section class="home--section" data-home-section="<%= key %>">
   <header class="home--section-header">
-    <%= link_to path,
-          class: "home--section-title",
-          data: { turbo_frame: "_top" } do %>
-      <%= icon_tag(icon) %>
-      <h2><%= title %></h2>
-      <%= icon_tag("arrow-right", class: "home--section-arrow") %>
+    <% if path.present? %>
+      <%= link_to path,
+            class: "home--section-title",
+            data: { turbo_frame: "_top" } do %>
+        <%= icon_tag(icon) %>
+        <h2><%= title %></h2>
+        <%= icon_tag("arrow-right", class: "home--section-arrow") %>
+      <% end %>
+    <% else %>
+      <div class="home--section-title">
+        <%= icon_tag(icon) %>
+        <h2><%= title %></h2>
+      </div>
     <% end %>
 
   </header>
