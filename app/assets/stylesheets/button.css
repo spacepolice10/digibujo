@@ -34,7 +34,6 @@
   }
 
   /* content — text vs icon-only */
-  .button[data-content="text"] { width: fit-content; }
   .button[data-content="icon"] { aspect-ratio: 1 / 1; padding: 0; }
 
   @media (pointer: coarse) {
@@ -147,5 +146,32 @@
     background: var(--color-positive);
     border-color: var(--color-positive);
     color: var(--color-invert-1);
+  }
+
+  /* Text-only content has no button chrome, regardless of intent or status. */
+  .button[data-content="text"] {
+    width: fit-content;
+    height: auto;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    color: var(--color-invert-2);
+    transition: color 0.08s ease;
+  }
+  @media (hover: hover) {
+    .button[data-content="text"]:hover:not(:disabled) {
+      background: transparent;
+      border-color: transparent;
+      color: var(--color-accent-1);
+    }
+  }
+  .button[data-content="text"]:focus-visible,
+  .button[data-content="text"]:active:not(:disabled) {
+    background: transparent;
+    border-color: transparent;
+    color: var(--color-accent-1);
   }
 }

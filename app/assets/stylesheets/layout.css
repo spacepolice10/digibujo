@@ -52,14 +52,13 @@
 
   .layout--surface {
     border: var(--border-subtle);
-    box-shadow: var(--shadow-subtle);
+    box-shadow: none;
     border-radius: var(--radius-strong);
     height: inherit;
     width: inherit;
   }
   .layout--surface[data-elevation="1"] { 
     background: var(--color-1); 
-    box-shadow: none; 
     @container layout (width < 600px) {
       background: transparent;
       border-color: transparent;
@@ -67,11 +66,10 @@
   }
   .layout--surface[data-elevation="2"] { 
     background: var(--color-2); 
-    box-shadow: var(--shadow-subtle); 
     @container layout (width < 600px) { background: var(--color-1); }
   }
-  .layout--surface[data-elevation="3"] { background: var(--color-3); box-shadow: var(--shadow-base) }
-  .layout--surface[data-elevation="4"] { background: var(--color-4); box-shadow: var(--shadow-strong); }
+  .layout--surface[data-elevation="3"] { background: var(--color-3); }
+  .layout--surface[data-elevation="4"] { background: var(--color-4); }
   .layout--surface[data-padding="true"] { padding: var(--space-v) var(--space-h); }
   .layout--surface[data-margin="auto"] { margin-inline: auto; }
 }

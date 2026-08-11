@@ -1,85 +1,87 @@
 <% content_for(:title) { @monthlylog.name } %>
 
 <main
-  class="    monthlylog--container layout--container
-    layout--snap-grid-container
-  "
+  class="monthlylog--container layout--container"
   data-size="xl"
-  style="--grid-cols-number: 2"
 >
-  <section
-    class="layout--grid-item monthlylog--section divided--vertical"
-    data-column="true"
-    style="--grid-column: span 1;"
-    aria-label="Planned by date"
-  >
-    <div
-      class="monthlylog--section-content"
-      data-bulk-menu-target="list"
+  <div class="monthlylog--surface layout--surface layout--grid" data-cols="2" data-elevation="1">
+    <section
+      class="monthlylog--section divided--vertical"
+      aria-label="Planned by date"
     >
-      <% @days_with_bullets.each do |day, bullets| %>
-        <div
-          id="<%= dom_id(@monthlylog.bucket, day.to_date) %>"
-          class="<%= class_names("monthlylog--date-category", "monthlylog--date-category-no-bullets": bullets.empty?) %>"
-        >
-          <%= link_to new_monthlylog_bullet_path(@monthlylog, date: day.to_date), class: "monthlylog--date-category-name", style: "--highlight-colour: #{day.to_date == Date.current ? 'var(--color-accent-1)' : ' var(--model-color-4)'};" do %>
-            <span class="typography--bold button--text-only">
-              <%= day.strftime('%-d %a') %>
-            </span>
+      <div
+        class="monthlylog--section-content"
+        data-bulk-menu-target="list"
+      >
+        <% @days_with_bullets.each do |day, bullets| %>
+          <% date = day.to_date %>
+          <% current_day = date == Date.current %>
+          <div
+            id="<%= dom_id(@monthlylog.bucket, date) %>"
+            class="<%= class_names("monthlylog--date-category", "monthlylog--date-category-no-bullets": bullets.empty?) %>"
+          >
+            <%= link_to new_monthlylog_bullet_path(@monthlylog, date: date),
+                  class: "monthlylog--date-category-name",
+                  style: "--highlight-colour: #{current_day ? 'var(--color-accent-1)' : 'var(--model-color-4)'};",
+                  aria: { current: current_day ? "date" : nil } do %>
+              <span class="typography--bold">
+                <%= day.strftime('%-d %a') %>
+              </span>
 
-            <%= icon_tag("arrow-right") %>
-          <% end %>
-
-          <% if bullets.any? %>
-            <% bullets.each do |bullet| %>
-              <%= render "monthlylogs/bullets/bullet", bullet: bullet %>
+              <%= icon_tag("arrow-right") %>
             <% end %>
-          <% end %>
 
-          <turbo-frame id="<%= dom_id(@monthlylog, day.to_date) %>">
-            <%= link_to new_monthlylog_bullet_path(@monthlylog, date: day.to_date), class: "button--tertiary button--sm button--text-only" do %>
-              <%= icon_tag("plus") %>
-              <span>Add bullet</span>
+            <% if bullets.any? %>
+              <% bullets.each do |bullet| %>
+                <%= render "monthlylogs/bullets/bullet", bullet: bullet %>
+              <% end %>
             <% end %>
-          </turbo-frame>
-        </div>
-      <% end %>
-    </div>
-  </section>
 
-  <section
-    class="layout--grid-item monthlylog--section"
-    data-column="true"
-    style="--grid-column: span 1;"
-    aria-label="Unplanned"
-  >
-    <div class="layout--padded monthlylog--section-header">
-      <h3>Unplanned</h3>
+            <turbo-frame id="<%= dom_id(@monthlylog, date) %>">
+              <%= link_to new_monthlylog_bullet_path(@monthlylog, date: date),
+                    class: "button",
+                    data: { intent: "secondary", radius: "full", size: "sm", content: "text" } do %>
+                <%= icon_tag("plus") %>
+                <span>Add bullet</span>
+              <% end %>
+            </turbo-frame>
+          </div>
+        <% end %>
+      </div>
+    </section>
 
-      <p>
-        Brain dump for the month — park ideas here until you assign them to a
-        day.
-      </p>
-    </div>
-
-    <div
-      id="<%= dom_id(@monthlylog.bucket, nil) %>"
-      class="monthlylog--section-content monthlylog--unplanned-category"
+    <section
+      class="monthlylog--section"
+      aria-label="Unplanned"
     >
-      <% @unplanned_bullets.each do |bullet| %>
-        <%= render "monthlylogs/bullets/bullet", bullet: bullet %>
-      <% end %>
-    </div>
+      <div class="monthlylog--section-header">
+        <h3>Unplanned</h3>
 
-    <div class="monthlylog--unplanned-composer">
-      <%= render "bullets/composer_v2",
-          bullet: Bullet.new,
-          bucket_id: @monthlylog.bucket.id,
-          pops_on: nil,
-          allowed_bulletable_variants: ["Note", "Task"],
-          preset: "default",
-          autofocus: false,
-          composer_id: dom_id(@monthlylog.bucket, :composer) %>
-    </div>
-  </section>
+        <p>
+          Brain dump for the month — park ideas here until you assign them to a
+          day.
+        </p>
+      </div>
+
+      <div
+        id="<%= dom_id(@monthlylog.bucket, nil) %>"
+        class="monthlylog--section-content monthlylog--unplanned-category"
+      >
+        <% @unplanned_bullets.each do |bullet| %>
+          <%= render "monthlylogs/bullets/bullet", bullet: bullet %>
+        <% end %>
+      </div>
+
+      <div class="monthlylog--unplanned-composer">
+        <%= render "bullets/composer_v2",
+            bullet: Bullet.new,
+            bucket_id: @monthlylog.bucket.id,
+            pops_on: nil,
+            allowed_bulletable_variants: ["Note", "Task"],
+            preset: "default",
+            autofocus: false,
+            composer_id: dom_id(@monthlylog.bucket, :composer) %>
+      </div>
+    </section>
+  </div>
 </main>
