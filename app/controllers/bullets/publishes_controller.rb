@@ -11,7 +11,6 @@ module Bullets
         @bullets.lock.find_each(&:publish!)
       end
       respond_to do |format|
-        format.turbo_stream
         format.html { redirect_to published_path(@bullets.first.reload.public_code) }
       end
     end
@@ -21,8 +20,7 @@ module Bullets
         @bullets.lock.find_each(&:unpublish!)
       end
       respond_to do |format|
-        format.turbo_stream
-        format.html { redirect_to @bullets.first }
+        format.html { redirect_to root_path }
       end
     end
   end

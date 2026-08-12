@@ -25,13 +25,12 @@
 
   <main class="layout--container" data-size="md" data-padding="true">
     <div class="layout--surface layout--flex" data-elevation="1" data-padding="true" data-direction="column">
-      <header class="layout--container-header">
+      <header class="layout--flex" data-align="center">
         <%= back_link_to home_path,
               class: "button",
-              data: { content: "text", turbo_frame: "_top" },
+              data: { intent: "secondary", radius: "full", content: "icon", size: "sm", turbo_frame: "_top" },
               aria: { label: "Back to Home" } do %>
           <%= icon_tag("arrow-left") %>
-          <span>Home</span>
         <% end %>
         <h1>Pins</h1>
       </header>

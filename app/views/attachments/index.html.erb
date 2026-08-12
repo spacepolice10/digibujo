@@ -12,12 +12,13 @@
       <h2>Attachments</h2>
       </div>
     </header>
+    <br>
     <% if @attachments.any? %>
       <div class="layout--flex" data-direction="column" data-padding="true">
         <% @attachments.each do |attachment| %>
           <%= link_to attachment_path(attachment.blob.signed_id),
                 class: "button",
-                data: { intent: "secondary", radius: "full", size: "sm", content: "icon", turbo_frame: "_top" },
+                data: { intent: "secondary", radius: "full", size: "sm", turbo_frame: "_top" },
                 aria: { label: "View #{attachment.blob.filename}" } do %>
             <%= icon_tag(attachment.blob.image? ? "camera" : attachment.blob.audio? ? "microphone" : "paperclip") %>
             <span><%= attachment.blob.filename %></span>

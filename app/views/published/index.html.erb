@@ -2,18 +2,19 @@
 
 <main class="layout--container" data-size="md" data-padding="true">
   <div class="layout--surface layout--flex" data-elevation="1" data-padding="true" data-direction="column">
-    <header class="layout--container-header">
-      <%= back_link_to home_path, class: "button", data: { content: "text", turbo_frame: "_top" } do %>
-        <%= icon_tag("arrow-left") %><span>Home</span>
+    <header class="layout--flex" data-align="center">
+      <%= back_link_to home_path, class: "button", data: { intent: "secondary", size: "sm", radius: "full", content: "icon", turbo_frame: "_top" } do %>
+        <%= icon_tag("arrow-left") %>
       <% end %>
-      <h1>Published</h1>
+      <h2>Published</h2>
     </header>
 
     <div class="layout--flex" data-direction="column">
       <% if @bullets.any? %>
         <%= render partial: "published/bullet", collection: @bullets, as: :bullet %>
       <% else %>
-        <p class="typography--paragraph-sm">Nothing published yet.</p>
+        <p class="typography--paragraph-sm">
+          Here you'll find all the bullets you've published with their corresponding public links. You can revoke access at any time.</p>
       <% end %>
     </div>
   </div>

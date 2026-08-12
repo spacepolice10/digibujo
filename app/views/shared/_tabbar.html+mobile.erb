@@ -1,6 +1,6 @@
 <nav class="tabbar--navigation">
   <%= link_to home_path, class: "tabbar--item #{'tabbar--item-active' if controller_name == 'home'}", aria: { label: "Menu" } do %>
-    <%= icon_tag("home", class: "tabbar--item-icon") %>
+    <%= icon_tag("search", class: "tabbar--item-icon") %>
   <% end %>
   <%= link_to daylog_path, class: "tabbar--item #{'tabbar--item-active' if controller_name == 'daylogs'}", aria: { label: "Daily log" } do %>
     <%= render "shared/tabbar_daylog_mark" %>

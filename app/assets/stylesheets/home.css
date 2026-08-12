@@ -6,7 +6,6 @@
 
   .home--wordmark {
     display: block;
-    margin-bottom: var(--space-v);
     color: var(--color-invert-2);
     font-family: var(--font-family-sans);
     font-size: var(--font-size-base-type);

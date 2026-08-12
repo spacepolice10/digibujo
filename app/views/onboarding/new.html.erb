@@ -5,12 +5,11 @@
      data-action="keydown.arrow_right@document->onboarding#next keydown.arrow_left@document->onboarding#previous">
   <section class="onboarding-section" data-onboarding-target="section">
     <div class="layout--container" data-size="md">
-      <h1 class="typography--h1 typography--center onboarding--heading">Welcome to Digibujo</h1>
+      <h1 class="typography--h1 typography--center typography--sans onboarding--heading">Welcome to Digibujo</h1>
       <br>
 <ul class="onboarding--basics">
       <li class="onboarding--basics-item typography--center typography--balanced">
-        <p>Let's take a quick tour of the app, so you feel more comfortable with it. Especially if you are new to the bullet journal methodology.</p>
-        <p>Or skip it if you prefer learning on your own. You can always come back to the tour later.</p>
+        <p>Let's take a quick tour of the app, so you feel more comfortable with it.</p>
       </li>
       <div class="layout--flex" data-justify="center" data-wrap="true">
         <button type="button" class="button typography--bold" data-intent="primary" data-radius="full" data-size="sm" data-action="onboarding#next">Swipe to start a quick tour
@@ -91,7 +90,7 @@
       <%= form_with url: onboarding_path, class: "onboarding-form", data: { onboarding_target: "form" } do |form| %>
       <div>
         <label class="onboarding-sample-checkbox" style="color: var(--model-color-2);">
-          <%= form.radio_button :data_seed, true, class: "utilities--sr-only", include_hidden: false %>
+          <%= form.radio_button :data_seed, true, class: "utilities--sr-only", include_hidden: false, checked: true %>
           <%= icon_tag("circle", class: "form--icon") %>
           <div>
           <strong>Add sample data</strong>
@@ -102,7 +101,7 @@
         </label>
         <br>
         <label class="onboarding-sample-checkbox" style="color: var(--model-color-2);">
-          <%= form.radio_button :data_seed, false, class: "utilities--sr-only", include_hidden: false, checked: true %>
+          <%= form.radio_button :data_seed, false, class: "utilities--sr-only", include_hidden: false %>
           <%= icon_tag("circle", class: "form--icon") %>
           <div>
             <strong>Start with an empty journal</strong>

@@ -8,6 +8,10 @@
     list-style: none;
   }
 
+  #pinned_list {
+    position-area: block-start span-inline-end;
+  }
+
   .pinned--entity-item {
     display: flex;
     align-items: center;

@@ -37,10 +37,10 @@ lexxy-toolbar {
         height: var(--space-h-2);
         &:hover {
             color: var(--color-invert-2);
-            background: var(--color-2);
         }
         &[aria-pressed="true"] {
-            color: var(--color-invert-2)
+            color: var(--color-invert-2);
+            background: var(--color-2);
         }
     }
 }

@@ -19,6 +19,12 @@
 .typography--center {
   text-align: center;
 }
+.typography--sans {
+  font-family: var(--font-family-sans);
+}
+.typography--mono {
+  font-family: var(--font-family-mono);
+}
 .typography--balanced {
   text-wrap: balance;
 }
