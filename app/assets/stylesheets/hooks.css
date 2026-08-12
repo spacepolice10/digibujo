@@ -1,12 +1,12 @@
 @layer components {
-  .hooks--created {
+  .hook--created {
     color: var(--color-invert-2);
-    background: var(--color-accent-1-subtle);
-    border-color: var(--color-accent-1);
+    background: var(--color-accent-2-subtle);
+    border-color: var(--color-accent-2);
   }
 
-  .hooks--created-url {
+  .hook--created-link {
     overflow-wrap: anywhere;
-    color: var(--color-accent-1);
+    color: var(--color-accent-2);
   }
 }

@@ -17,6 +17,7 @@
     height: 100%;
     max-height: 100dvh;
     gap: 0;
+    padding: 2.5px;
     overflow: hidden;
   }
 
@@ -28,6 +29,9 @@
     flex: 1 1 0;
     min-height: 0;
     overflow: hidden;
+    @media (pointer: coarse) {
+      background-color: transparent;
+    }
   }
 
   html:has(.chat--window:not(.chat--window--embedded)) body {
@@ -99,14 +103,13 @@
     position: relative;
     z-index: 2;
     flex: 0 0 auto;
-    padding: var(--space-v-half) var(--space-v-half);
+    padding: var(--space-v-half) var(--space-h-half);
     background: var(--color-1);
   }
 
   .chat--resource-header .layout--container-header,
   .collection--chat-header .layout--container-header {
     padding: var(--space-v-half) var(--space-h);
-    background: var(--color-1);
     border: var(--border-subtle);
     border-radius: var(--radius-strong);
     box-shadow: var(--shadow-subtle);

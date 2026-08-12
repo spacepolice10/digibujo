@@ -4,10 +4,8 @@ const ACTION_REQUIREMENTS = {
   requirePinnable: "pinnable",
   requireCompletable: "completable",
   requirePublishable: "publishable",
+  requireScheduled: "scheduled",
 };
-
-const INTERACTIVE_SELECTOR =
-  "a, button, input, select, textarea, label, [contenteditable], [role='button'], [popover]";
 
 export default class extends Controller {
   static targets = [
@@ -59,14 +57,6 @@ export default class extends Controller {
     } else {
       this.idListValue = this.idListValue.filter((value) => value != id);
     }
-  }
-
-  select(event) {
-    if (event.defaultPrevented) return;
-    if (event.currentTarget.closest("[data-bulk-menu-ignore]")) return;
-    if (event.target.closest(INTERACTIVE_SELECTOR)) return;
-
-    event.currentTarget.querySelector("[data-bulk-menu-target='checkbox']")?.click();
   }
 
   idListValueChanged() {
@@ -248,6 +238,7 @@ export default class extends Controller {
       pinnable: this.#uniformTrait(checked, "bulkPinnable"),
       completable: this.#uniformTrait(checked, "bulkCompletable"),
       publishable: this.#uniformTrait(checked, "bulkPublishable"),
+      scheduled: this.#uniformTrait(checked, "bulkScheduled"),
     };
   }
 

@@ -2,6 +2,7 @@
 
 lexxy-editor {
     --lexxy-editor-rows: 0lh;
+    --lexxy-editor-padding: var(--space-v-half) !important;
     min-block-size: var(--lexxy-editor-rows);
 
     display: flex;
@@ -24,13 +25,16 @@ lexxy-editor {
 
 lexxy-toolbar {
     background: transparent;
-    border: 0.5px solid var(--color-invert-2);
+    border: 0.5px solid var(--color-4);
+    border-radius: var(--radius-strong);
     order: 2;
     animation: fall-in 0.2s ease-out;
     & .lexxy-editor__toolbar-button {
         color: var(--color-invert-2);
         background: transparent;
         padding: var(--space-v-half);
+        width: var(--space-h-2);
+        height: var(--space-h-2);
         &:hover {
             color: var(--color-invert-2);
             background: var(--color-2);
@@ -209,6 +213,12 @@ lexxy-toolbar {
     .composer:has([id*="_composer_toolbar_toggle"]:checked) {
         & lexxy-toolbar {
             display: inherit;
+        }
+    }
+
+    .composer:not(:has([id*="_composer_toolbar_toggle"]:checked)) {
+        & lexxy-toolbar {
+            display: none !important;
         }
     }
 

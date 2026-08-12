@@ -177,7 +177,7 @@ export default class extends Controller {
     const ctx = this.ctx
     const pointer = this.pointer
     const radius = this.radius
-    const bg = this.#cssColor("--color-1")
+    const bg = this.#cssColor("--background-canvas-colour")
     const base = this.#gridColour()
     const accent = this.#cssColor("--color-accent-1")
 

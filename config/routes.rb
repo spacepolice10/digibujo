@@ -24,11 +24,7 @@ Rails.application.routes.draw do
     scope module: :daylogs do
       resources :bullets, only: :index
       resource :metadata, only: :show
-      resource :triage, only: :show, controller: 'triage' do
-        scope module: :triage do
-          resource :accept, only: :create
-        end
-      end
+      resource :triage, only: :show, controller: 'triage'
     end
   end
 

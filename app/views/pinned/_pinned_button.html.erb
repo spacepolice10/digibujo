@@ -6,7 +6,7 @@
   data-intent="primary"
   data-content="icon"
   data-radius="full"
-  style="anchor-name: --pinned-dropdown;"
+  style="position-anchor: <%= dom_id(current_user, :pinned_list) %>;"
   popovertarget="pinned_list"
   data-controller="hotkey"
   data-hotkey="P"
@@ -19,11 +19,11 @@
 
 <turbo-frame
   id="pinned_list"
-  class="dropdown pinned--dropdown"
+  class="dropdown dropdown--element dropdown--element-bottom"
   src="<%= pinned_index_path %>"
   loading="lazy"
   popover
-  style="position-anchor: --pinned-dropdown;"
+  style="position-anchor: <%= dom_id(current_user, :pinned_list) %>;"
   data-controller="grid-navigation"
   data-grid-navigation-columns-value="1"
   data-action="keydown->grid-navigation#navigate"

@@ -1,3 +1,1 @@
-
-@layer reset, variables, base, layout, components, utilities;
-
+/* Stylesheets are loaded through the :app collection. */

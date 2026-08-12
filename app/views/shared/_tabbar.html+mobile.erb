@@ -5,7 +5,7 @@
   <%= link_to daylog_path, class: "tabbar--item #{'tabbar--item-active' if controller_name == 'daylogs'}", aria: { label: "Daily log" } do %>
     <%= render "shared/tabbar_daylog_mark" %>
   <% end %>
-  <%= link_to pinned_index_path, class: "tabbar--item #{'tabbar--item-active' if controller_name == 'pinned'}", aria: { label: "Pinned" } do %>
-    <%= icon_tag("pin", class: "tabbar--item-icon") %>
+  <%= link_to activities_path, class: "tabbar--item #{'tabbar--item-active' if controller_name == 'activities'}", aria: { label: "Activity" } do %>
+    <%= icon_tag("history", class: "tabbar--item-icon") %>
   <% end %>
 </nav>

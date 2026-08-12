@@ -19,9 +19,16 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_page_text 'Archived'
     assert_page_text 'Updated'
-    assert_heading 'Activity', level: 2
-    assert_select 'h3', minimum: 1
-    assert_link home_path, text: /Back/
+    assert_heading 'Activity', level: 1
+    assert_select '[role="separator"] time[datetime]', minimum: 1
+    assert_select 'a', text: /Back/, count: 0
+  end
+
+  test 'mobile index marks activity tab as active' do
+    get activities_path, headers: { 'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)' }
+
+    assert_response :success
+    assert_select 'nav.tabbar--navigation a.tabbar--item-active[href=?][aria-label=?]', activities_path, 'Activity'
   end
 
   test 'index shows empty state when there is no activity' do

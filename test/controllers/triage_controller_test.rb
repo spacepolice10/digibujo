@@ -23,16 +23,16 @@ module Daylogs
       assert_select '.triage--section-navigation .button[data-content="text"][aria-label="Back to Daylog"]',
                     text: /Daylog/
       assert_select "##{ActionView::RecordIdentifier.dom_id(bullet, :triage)}[draggable='true']" do
-        assert_select '.triage--bullet-actions' do
-          assert_select 'form[action=?] button[data-intent="secondary"]' \
-                        '[data-size="sm"][data-radius="base"]', daylog_triage_accept_path, text: /Migrate/ do
-            assert_select '.icon', count: 1
+        assert_select '.triage--bullet-actions', count: 0
+        assert_select 'input[data-bulk-menu-target="checkbox"][data-bulk-scheduled="not-today"]', count: 1
+      end
+      assert_select '.bulk-menu[data-bulk-menu-target="menu"]' do
+        assert_select '[data-bulk-menu-target="conditionalAction"][data-require-scheduled="not-today"]' do
+          assert_select 'form[action=?]', postpone_path do
+            assert_select 'input[name="bucket_id"][value=?]', @user.daylog.bucket.id.to_s
+            assert_select 'input[name="pops_on"][value=?]', Date.current.iso8601
+            assert_select 'button', text: /Today/
           end
-          assert_select 'form[action=?] button[data-intent="secondary"][data-status="negative"]' \
-                        '[data-size="sm"][data-radius="base"]', archive_path, text: /Discard/ do
-            assert_select '.icon', count: 1
-          end
-          assert_select 'button', text: /Postpone/, count: 0
         end
       end
       assert_select '.triage--section[aria-label="Today"] [data-bulk-menu-target="amount"]', count: 0
@@ -41,7 +41,7 @@ module Daylogs
 
     test 'show lists pending and monthlylog today bullets' do
       monthlylog = create_monthlylog!(@user, name: 'This month')
-      create_bullet!(
+      today_bullet = create_bullet!(
         @user,
         bucket: monthlylog.bucket,
         bulletable: Task.new, body: 'Monthly today',
@@ -66,6 +66,9 @@ module Daylogs
       assert_match 'Monthly today', response.body
       assert_no_match 'Monthly tomorrow', response.body
       assert_no_match 'Monthly unplanned', response.body
+      assert_select "##{ActionView::RecordIdentifier.dom_id(today_bullet)}" do
+        assert_select 'input[data-bulk-scheduled="not-today"]', count: 1
+      end
     end
 
     test 'show lists a monthlylog bullet that was scheduled through migration' do

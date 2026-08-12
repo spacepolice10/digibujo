@@ -28,7 +28,7 @@ export default class extends Controller {
 
   #scrollTo(index) {
     const target = Math.max(0, Math.min(index, this.#last))
-    this.element.scrollTo({ left: target * this.element.clientWidth, behavior: "instant" })
+    this.element.scrollTo({ left: target * this.element.clientWidth, behavior: "smooth" })
   }
 
   #sync() {

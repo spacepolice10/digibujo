@@ -250,7 +250,7 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'header.header', count: 0
     assert_select 'nav.tabbar--navigation a[href=?]', home_path
     assert_select 'nav.tabbar--navigation a[href=?]', daylog_path
-    assert_select 'nav.tabbar--navigation a[href=?]', pinned_index_path
+    assert_select 'nav.tabbar--navigation a[href=?]', activities_path
   end
 
   test 'daylog opens on the newest page in chronological order' do

@@ -1,94 +1,163 @@
 @layer layout {
-  :root {
-    --layout-padding: var(--space-v-2) var(--space-h-2);
-  }
-
   .layout--container {
     container: layout / inline-size;
     width: 100%;
+    padding: 2.5px;
   }
-  .layout--container[data-size="xl"] { max-width: 1280px; margin-inline: auto; }
-  .layout--container[data-size="lg"] { max-width: 1040px; margin-inline: auto; }
-  .layout--container[data-size="md"] { max-width: 800px; margin-inline: auto; }
-  .layout--container[data-size="sm"] { max-width: 600px; margin-inline: auto; }
-  .layout--container[data-size="xs"] { max-width: 360px; margin-inline: auto; }
-  .layout--container[data-padding="true"] { padding: var(--layout-padding); }
-  .layout--container[data-margin="horizontal"] { margin-inline: auto; }
+
+  .layout--container[data-size="xl"] {
+    max-width: 1280px;
+    margin-inline: auto;
+  }
+
+  .layout--container[data-size="lg"] {
+    max-width: 1040px;
+    margin-inline: auto;
+  }
+
+  .layout--container[data-size="md"] {
+    max-width: 800px;
+    margin-inline: auto;
+  }
+
+  .layout--container[data-size="sm"] {
+    max-width: 600px;
+    margin-inline: auto;
+  }
+
+  .layout--container[data-size="xs"] {
+    max-width: 360px;
+    margin-inline: auto;
+  }
+
+  .layout--container[data-padding="true"] {
+    padding: var(--space-v) var(--space-h);
+  }
+
+  .layout--container[data-margin="horizontal"] {
+    margin-inline: auto;
+  }
 
   .layout--flex {
     display: flex;
     gap: var(--space-v);
   }
-  .layout--flex[data-direction="column"] { flex-direction: column; }
-  .layout--flex[data-direction="row"]    { flex-direction: row; }
-  .layout--flex[data-justify="center"]   { justify-content: center; }
-  .layout--flex[data-justify="between"]  { justify-content: space-between; }
-  .layout--flex[data-justify="start"]    { justify-content: start; }
-  .layout--flex[data-justify="end"]      { justify-content: end; }
-  .layout--flex[data-align="center"]     { align-items: center; }
-  .layout--flex[data-align="stretch"]   { align-items: stretch; }
-  .layout--flex[data-wrap="true"]        { flex-wrap: wrap; }
-  .layout--flex[data-wrap="reverse"]     { flex-wrap: wrap-reverse; }
+
+  .layout--flex[data-direction="column"] {
+    flex-direction: column;
+  }
+
+  .layout--flex[data-direction="row"] {
+    flex-direction: row;
+  }
+
+  .layout--flex[data-justify="center"] {
+    justify-content: center;
+  }
+
+  .layout--flex[data-justify="between"] {
+    justify-content: space-between;
+  }
+
+  .layout--flex[data-justify="start"] {
+    justify-content: start;
+  }
+
+  .layout--flex[data-justify="end"] {
+    justify-content: end;
+  }
+
+  .layout--flex[data-align="center"] {
+    align-items: center;
+  }
+
+  .layout--flex[data-align="stretch"] {
+    align-items: stretch;
+  }
+
+  .layout--flex[data-wrap="true"] {
+    flex-wrap: wrap;
+  }
+
+  .layout--flex[data-wrap="reverse"] {
+    flex-wrap: wrap-reverse;
+  }
 
   .layout--grid {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
   }
+
   .layout--grid[data-cols="2"] {
     grid-template-columns: repeat(1, 1fr);
-    @container layout (width >= 600px) { grid-template-columns: repeat(2, 1fr); }
+
+    @container layout (width >=600px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
+
   .layout--grid[data-cols="3"] {
     grid-template-columns: repeat(1, 1fr);
-    @container layout (width >= 600px) { grid-template-columns: repeat(2, 1fr); }
-    @container layout (width >= 800px) { grid-template-columns: repeat(3, 1fr); }
+
+    @container layout (width >=600px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @container layout (width >=800px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
+
   .layout--grid[data-cols="4"] {
     grid-template-columns: repeat(1, 1fr);
-    @container layout (width >= 600px) { grid-template-columns: repeat(2, 1fr); }
-    @container layout (width >= 800px) { grid-template-columns: repeat(3, 1fr); }
-    @container layout (width >= 1040px) { grid-template-columns: repeat(4, 1fr); }
+
+    @container layout (width >=600px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @container layout (width >=800px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    @container layout (width >=1040px) {
+      grid-template-columns: repeat(4, 1fr);
+    }
   }
 
   .layout--surface {
-    border: var(--border-subtle);
     box-shadow: none;
     border-radius: var(--radius-strong);
     height: inherit;
     width: inherit;
-  }
-  .layout--surface[data-elevation="1"] { 
-    background: var(--color-1); 
-    @container layout (width < 600px) {
-      background: transparent;
-      border-color: transparent;
-    }
-  }
-  .layout--surface[data-elevation="2"] { 
-    background: var(--color-2); 
-    @container layout (width < 600px) { background: var(--color-1); }
-  }
-  .layout--surface[data-elevation="3"] { background: var(--color-3); }
-  .layout--surface[data-elevation="4"] { background: var(--color-4); }
-  .layout--surface[data-padding="true"] { padding: var(--space-v) var(--space-h); }
-  .layout--surface[data-margin="auto"] { margin-inline: auto; }
-
-  .layout--container-header {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: var(--space-h);
-    min-height: var(--space-v-3);
-  }
-  .layout--container-header > .button { justify-self: start; }
-  .layout--container-header:not(:has(.layout--container-header-action))::after { content: ""; }
-  .layout--container-header > .layout--container-header-action { justify-self: end; }
-  .layout--container-header > :is(h1, h2) {
-    font-size: var(--font-size-base-type);
-    font-weight: var(--font-weight-strong);
+    background: transparent;
   }
 
-  @media (pointer: coarse) {
-    .layout--container-header { min-height: var(--coarse-target); }
+  .layout--surface[data-elevation="1"] {
+    background: var(--color-1);
+    border: var(--border-subtle);
   }
+
+  .layout--surface[data-elevation="2"] {
+    background: var(--color-2);
+    border: var(--border-subtle);
+  }
+
+  .layout--surface[data-elevation="3"] {
+    background: var(--color-3);
+    border: var(--border-subtle);
+  }
+
+  .layout--surface[data-elevation="4"] {
+    background: var(--color-4);
+    border: var(--border-subtle);
+  }
+
+  .layout--surface[data-padding="true"] {
+    padding: var(--space-v) var(--space-h);
+  }
+
+  .layout--surface[data-margin="auto"] {
+    margin-inline: auto;
+  }
+
 }

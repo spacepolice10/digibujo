@@ -2,20 +2,21 @@
 
 <main class="layout--container" data-size="md" data-padding="true">
   <div class="layout--surface layout--flex" data-elevation="1" data-padding="true" data-direction="column">
-    <header class="layout--container-header">
+    <header class="layout--flex" data-align="center" data-justify="between">
+      <div class="layout--flex" data-align="center">
       <%= back_link_to user_path,
             class: "button",
-            data: { content: "text", turbo_frame: "_top" },
+            data: { intent: "secondary", radius: "full", size: "sm", content: "icon", turbo_frame: "_top" },
             aria: { label: "Back to Account" } do %>
         <%= icon_tag("arrow-left") %>
-        <span>Account</span>
       <% end %>
-      <h1>Hooks</h1>
+      <h2>Hooks</h2>
+      </div>
       <%= link_to new_hook_path,
-            class: "button layout--container-header-action",
-            data: { intent: "primary", radius: "full", size: "xs" } do %>
+            class: "button",
+            data: { intent: "primary", radius: "full", size: "sm", content: "icon" },
+            aria: { label: "Create Hook" } do %>
         <%= icon_tag("plus") %>
-        <span>Create</span>
       <% end %>
     </header>
 
@@ -24,13 +25,13 @@
     </p>
 
     <% if @created_hook_code.present? %>
-      <section class="hooks--created layout--surface layout--flex" data-padding="true" data-direction="column" role="status">
+      <section class="hook--created layout--surface layout--flex" data-padding="true" data-direction="column" role="status">
         <div class="layout--flex" data-align="center">
           <span aria-hidden="true">⚡</span>
           <strong>Hook is ready</strong>
         </div>
         <p class="typography--paragraph-sm">Copy this URL now. You won’t see it again.</p>
-        <code class="hooks--created-url"><%= hook_intake_url(@created_hook_code) %></code>
+        <code class="hook--created-link"><%= hook_intake_url(@created_hook_code) %></code>
       </section>
     <% end %>
 

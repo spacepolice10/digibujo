@@ -49,7 +49,9 @@
     flex: 1 1 calc(var(--space-h-2) * 4);
   }
 
-  .bulk-menu--actions .button:not(.bulk-menu--hide) {
+  .bulk-menu--actions > form .button,
+  .bulk-menu--actions > [data-bulk-menu-target="conditionalAction"] > form .button,
+  .bulk-menu--action-dock > .button {
     width: 100%;
     padding-inline: var(--space-h);
   }
@@ -77,7 +79,9 @@
   }
 
   @media (pointer: coarse) {
-    .bulk-menu--actions .button:not(.bulk-menu--hide) {
+    .bulk-menu--actions > form .button,
+    .bulk-menu--actions > [data-bulk-menu-target="conditionalAction"] > form .button,
+    .bulk-menu--action-dock > .button {
       min-height: calc(var(--coarse-target) - var(--space-v-half));
     }
   }
@@ -144,7 +148,7 @@
     padding: 0;
   }
 
-  .bulk-menu--picker-list-item .collection--section-list-item {
+  .bulk-menu--picker-list-item .picker--item {
     box-sizing: border-box;
     width: 100%;
     margin: 0;
@@ -154,14 +158,13 @@
 
     @media (hover: hover) {
       &:hover {
-        border-color: var(--color-invert-2);
+        background: var(--color-2);
       }
     }
 
     &:focus-visible,
     &[aria-selected="true"] {
       outline: none;
-      border-color: var(--color-invert-2);
       background: var(--color-2);
     }
   }
@@ -182,11 +185,11 @@
     gap: var(--space-h-half);
     margin-inline: var(--space-h);
     padding-top: var(--space-v-half);
-    border-top: 1px solid var(--color-invert-4);
+    border-top: var(--border-subtle);
   }
 
   .bulk-menu--picker-date-form {
-    .form-input {
+    input {
       flex: 1 1 auto;
       min-width: calc(var(--space-h-2) * 7);
     }
@@ -200,10 +203,12 @@
   }
 
   .bulk-menu--collect-search {
+    max-width: none;
     margin-top: var(--space-v-half);
     padding: 0;
+    gap: 0;
 
-    .form-input {
+    input {
       width: 100%;
     }
   }

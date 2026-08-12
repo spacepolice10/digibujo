@@ -4,7 +4,8 @@ require 'test_helper'
 
 class HomeControllerTest < ActionDispatch::IntegrationTest
   MOBILE_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)'
-  SECTION_ORDER = %w[pins logs collections-attachments projects trackers recently-shared archive].freeze
+  SECTION_ORDER = %w[logs collections attachments projects trackers recently-shared archive].freeze
+  MOBILE_SECTION_ORDER = %w[pins logs collections attachments projects trackers recently-shared archive].freeze
 
   setup do
     @user = users(:one)
@@ -35,7 +36,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     assert_link new_collection_path, text: 'Add collection'
     assert_link new_tracker_path, text: 'Add tracker'
     assert_select '.home--section-header .home--add-button', count: 0
-    assert_select '.home--section-content .home--add-button, .home--split-section .home--add-button', count: 2
+    assert_select '.home--section-content .home--add-button', count: 2
   end
 
   test 'show limits previews to three records' do
@@ -51,12 +52,13 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     get home_path, headers: { 'User-Agent' => MOBILE_UA }
 
     assert_response :success
-    assert_equal SECTION_ORDER, rendered_section_order
+    assert_equal MOBILE_SECTION_ORDER, rendered_section_order
     assert_link search_path, text: 'Search'
     assert_link home_path, text: 'Digibujo'
     assert_select 'button[popovertarget="header_menu"]', count: 0
     assert_tabbar_link home_path, label: 'Menu'
     assert_tabbar_link daylog_path, label: 'Daily log'
+    assert_tabbar_link activities_path, label: 'Activity'
   end
 
   test 'show works without a settings row and retains the selected appearance' do

@@ -1,8 +1,7 @@
 @layer components {
   .home--page {
-    padding-bottom: var(--space-v-4);
-
-    body[data-platform="mobile"] & { padding-bottom: var(--tabbar-clearance); }
+    padding-block: var(--space-v-8);
+    @media (pointer: coarse) { padding-block-end: var(--tabbar-clearance); }
   }
 
   .home--wordmark {
@@ -63,7 +62,6 @@
   }
 
   .home--section-header,
-  .home--subsection-header,
   .attachment--index-header {
     display: flex;
     align-items: center;
@@ -72,7 +70,6 @@
   }
 
   .home--section-title,
-  .home--subsection-title,
   .home--archive-link {
     display: flex;
     align-items: center;
@@ -84,9 +81,7 @@
 
   .home--section-title { flex: 1; }
   a.home--section-title:hover,
-  a.home--section-title:focus-visible,
-  .home--subsection-title:hover,
-  .home--subsection-title:focus-visible { color: var(--color-accent-1); }
+  a.home--section-title:focus-visible { color: var(--color-accent-1); }
   .home--section-title h2,
   .attachment--index-header h1 {
     font-size: var(--font-size-base-type);
@@ -168,25 +163,6 @@
     font-size: var(--font-size-xs);
   }
 
-  .home--split-sections {
-    display: grid;
-    gap: var(--space-v-2);
-    margin-top: var(--space-v);
-
-    @container layout (width >= 600px) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  }
-
-  .home--split-section {
-    display: grid;
-    align-content: start;
-    gap: var(--space-v-half);
-    min-width: 0;
-    padding: var(--space-v);
-    background: var(--color-2);
-    border-radius: var(--radius-base);
-  }
-
-  .home--subsection-title { font-weight: var(--font-weight-medium); }
   .home--add-button { margin-top: var(--space-v-half); }
   .home--archive-link { font-weight: var(--font-weight-strong); }
   .home--archive-link .icon:last-child { margin-inline-start: auto; }

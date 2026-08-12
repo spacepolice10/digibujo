@@ -4,7 +4,7 @@
   class="monthlylog--container layout--container"
   data-size="xl"
 >
-  <div class="monthlylog--surface layout--surface layout--grid" data-cols="2" data-elevation="1">
+  <div class="monthlylog--surface layout--surface layout--grid" data-cols="2">
     <section
       class="monthlylog--section divided--vertical"
       aria-label="Planned by date"
@@ -57,6 +57,7 @@
                     composer_id: composer_id,
                     bucket_id: @monthlylog.bucket.id,
                     pops_on: date.iso8601,
+                    allowed_bulletable_variants: ["Task", "Event"],
                     return_to: monthlylog_path(@monthlylog, date: date.iso8601)
                   ),
                     class: "button",

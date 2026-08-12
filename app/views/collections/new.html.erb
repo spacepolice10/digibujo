@@ -2,12 +2,13 @@
 
 <main class="layout--container" data-size="md" data-padding="true">
   <div class="layout--surface layout--flex" data-elevation="1" data-padding="true" data-direction="column">
-    <header class="layout--container-header">
+    <header class="layout--flex" data-align="center">
       <%= back_link_to @return_to.presence || collections_path,
-            class: "button", data: { content: "text", turbo_frame: "_top" }, aria: { label: "Back" } do %>
-        <%= icon_tag("arrow-left") %><span>Collections</span>
+            class: "button", data: { turbo_frame: "_top", intent: "secondary", radius: "full", size: "sm", content: "icon" },
+            aria: { label: "Back to Collections" } do %>
+        <%= icon_tag("arrow-left") %>
       <% end %>
-      <h1>New collection</h1>
+      <h2>New collection</h2>
     </header>
 
     <% unless @bullets.present? %>

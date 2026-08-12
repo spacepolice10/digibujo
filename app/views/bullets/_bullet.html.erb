@@ -1,7 +1,6 @@
 <%# locals: (bullet:) %>
 <% bullet_colour = colour(bullet.colour) || "var(--#{bullet.bulletable_type.downcase}-color)" %>
 <turbo-frame id="<%= dom_id(bullet) %>" class="bullet" data-bullet-type="<%= bullet.bulletable_type.downcase %>" data-task-completed="<%= bullet.completed? ? "true" : "false" %>"
-  data-action="click->bulk-menu#select"
   data-bullet-data-attributes="<%= bullet.data_attributes.to_json %>">
 
   <input
@@ -12,6 +11,7 @@
     data-bulk-menu-target="checkbox"
     data-bulk-pinnable="<%= bullet.pinned? ? "pinned" : "unpinned" %>"
     data-bulk-publishable="<%= bullet.published? ? "published" : "unpublished" %>"
+    data-bulk-scheduled="<%= bullet.bucket&.bucketable_type == "Daylog" && bullet.pops_on == Date.current ? "today" : "not-today" %>"
     <% if bullet.completable? %>
       data-bulk-completable="<%= bullet.completed? ? "completed" : "incomplete" %>"
     <% end %>
@@ -21,11 +21,9 @@
 
   <div class="bullet--rail">
     <% migrated = bullet.collected_migration? || bullet.rescheduled_migration? %>
-    <label
-      class="bullet--marker bullet--marker-action<%= " bullet--marker-migration" if migrated %>"
+    <span
+      class="bullet--marker<%= " bullet--marker-migration" if migrated %>"
       style="--bullet-type-color: <%= bullet_colour %>"
-      for="<%= dom_id(bullet, :select_checkbox) %>"
-      aria-label="Select bullet"
     >
       <span aria-hidden="true" style="display: flex;">
         <% if migrated %>
@@ -35,8 +33,14 @@
         <% end %>
         <span class="bullet--marker-select-indicator" aria-hidden="true"></span>
       </span>
-    </label>
+    </span>
   </div>
+
+  <label
+    class="bullet--select-checkbox"
+    for="<%= dom_id(bullet, :select_checkbox) %>"
+    aria-label="Select bullet"
+  ></label>
 
   <div class="bullet--content">
     <div class="bullet--body">

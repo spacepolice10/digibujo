@@ -1,7 +1,7 @@
 <% content_for(:title) { "Daylog triage" } %>
 
 <main class="triage--container layout--container" data-size="xl">
-  <div class="triage--surface layout--surface layout--grid" data-cols="2" data-elevation="1" data-controller="bulk-menu">
+  <div class="triage--surface layout--surface layout--grid" data-cols="2" data-elevation="1">
     <section class="triage--section divided--vertical" aria-label="To review">
       <div class="triage--section-header">
         <div class="triage--section-navigation">
@@ -33,7 +33,7 @@
       class="triage--section"
       aria-label="Today"
       data-controller="pops-drop"
-      data-pops-drop-pops-url-value="<%= daylog_triage_accept_path %>"
+      data-pops-drop-pops-url-value="<%= postpone_path %>"
       data-pops-drop-bucket-id-value="<%= @daylog.bucket.id %>"
       data-pops-drop-pops-on-value="<%= @selected_date.iso8601 %>"
       data-drop-zone-value="<%= @selected_date.iso8601 %>"

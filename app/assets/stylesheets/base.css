@@ -9,7 +9,7 @@
   :root {
     --background-grid-size: 1.25rem;
     --background-canvas-colour: light-dark(oklch(0.97 0.015 78), oklch(0.19 0.025 78));
-    --background-grid-colour: light-dark(oklch(0.64 0.018 78), oklch(0.45 0.012 82 / 0.55));
+    --background-grid-colour: light-dark(oklch(0.88 0.018 78), oklch(0.45 0.012 82 / 0.55));
     --background-grid-pattern: radial-gradient(circle,
         var(--background-grid-colour) 1px,
         transparent 1px);

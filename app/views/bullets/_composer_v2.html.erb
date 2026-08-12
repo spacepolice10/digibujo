@@ -60,14 +60,16 @@
               hotkey: "F"
             }
         %>
-        <%= tag.label for: "#{composer_id}_composer_toolbar_toggle", class: "composer--control", data: { composer_editor_target: "toolbarToggle", action: "change->composer-editor#toggleToolbar" } do %>
-            <%= icon_tag("plus") %>
-            <%= tag.input type: "checkbox", id: "#{composer_id}_composer_toolbar_toggle", class: "utilities--sr-only" %>
+        <% if allowed_bulletable_variants.include?("Note") %>
+            <%= tag.label for: "#{composer_id}_composer_toolbar_toggle", class: "composer--control", data: { composer_editor_target: "toolbarToggle", action: "change->composer-editor#toggleToolbar" } do %>
+                <%= icon_tag("plus") %>
+                <%= tag.input type: "checkbox", id: "#{composer_id}_composer_toolbar_toggle", class: "utilities--sr-only" %>
+            <% end %>
         <% end %>
         <% if allowed_bulletable_variants.include?("Voice") %>
-        <button type="button" data-action="composer#toggleMode" data-composer-mode-param="recorder" class="composer--control" aria-label="Record voice memo">
-            <%= icon_tag("microphone") %>
-        </button>
+            <button type="button" data-action="composer#toggleMode" data-composer-mode-param="recorder" class="composer--control" aria-label="Record voice memo">
+                <%= icon_tag("microphone") %>
+            </button>
         <% end %>
         </span>
         <span class="composer--recorder-mode utilities--contents">

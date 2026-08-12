@@ -16,7 +16,8 @@ class PinnedControllerTest < ActionDispatch::IntegrationTest
     assert_select 'a.button[data-content="text"][aria-label="Back to Home"]', text: /Home/
     assert_select '.layout--surface[data-elevation="1"][data-padding="true"]'
     assert_select 'footer.footer', count: 1
-    assert_select 'nav.tabbar--navigation a.tabbar--item-active[href=?]', pinned_index_path
+    assert_select 'nav.tabbar--navigation a[href=?]', activities_path
+    assert_select 'nav.tabbar--navigation a.tabbar--item-active[href=?]', pinned_index_path, count: 0
   end
 
   test 'index renders flat list on desktop (direct visit)' do

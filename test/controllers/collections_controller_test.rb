@@ -98,9 +98,9 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "turbo-frame##{dom_id(bullet)}" do
-      assert_select '[data-action=?]', 'click->bulk-menu#select', count: 1
       assert_select '.bullet--marker[style*="--bullet-type-color: var(--model-color-2)"]', count: 1
-      assert_select 'label.bullet--marker-migration[aria-label=?]', 'Select bullet', count: 1
+      assert_select '.bullet--marker-migration', count: 1
+      assert_select 'label.bullet--select-checkbox[aria-label=?]', 'Select bullet', count: 1
       assert_select '[popover]', count: 0
     end
     assert_no_match 'Moved into inbox.', response.body

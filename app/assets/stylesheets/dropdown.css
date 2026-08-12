@@ -66,4 +66,33 @@
   .dropdown--anchor-inline-end {
     position-area: block-start span-inline-end;
   }
+
+  .dropdown--element-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-v-half);
+  }
+
+  .dropdown--header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-h);
+    padding: var(--space-v-half) var(--space-h-half);
+  }
+
+  .dropdown--header h2 {
+    font-size: var(--font-size-base-read);
+    font-weight: var(--font-weight-strong);
+  }
+
+  .dropdown--menu {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-v-half);
+  }
+
+  .dropdown--menu-form {
+    margin: 0;
+  }
 }

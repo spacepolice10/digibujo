@@ -42,9 +42,9 @@
     gap: var(--space-v);
     min-width: 0;
     padding: var(--space-v);
-    border: 1px solid var(--color-invert-2);
+    border: var(--border-subtle);
     border-radius: var(--radius-strong);
-    background: var(--color-2);
+    background: var(--color-1);
     color: var(--color-invert-2);
     text-decoration: none;
     text-align: center;

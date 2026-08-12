@@ -1,11 +1,9 @@
 @layer components {
   .form {
     max-width: 800px;
-    margin-inline: auto;
     display: flex;
     flex-direction: column;
     gap: var(--space-v-2);
-    padding-bottom: var(--space-v-3);
   }
 
   /* ── Label ────────────────────────────────────────── */
@@ -261,7 +259,6 @@
   .form--submit {
     width: fit-content;
     align-self: center;
-    margin-top: var(--space-v);
-    margin-bottom: var(--space-v-3);
+    margin-inline: auto;
   }
 }

@@ -9,15 +9,15 @@
       <br>
 <ul class="onboarding--basics">
       <li class="onboarding--basics-item typography--center typography--balanced">
-        <p>You're signed in as
-          <strong class="pill pill--accent"><%= @onboarding.user.email_address %></strong>
-        </p>
-        <br>
-        <p>Let's take a quick tour of the app, so you feel more comfortable with it. Or skip it if you prefer learning on your own.</p>
+        <p>Let's take a quick tour of the app, so you feel more comfortable with it. Especially if you are new to the bullet journal methodology.</p>
+        <p>Or skip it if you prefer learning on your own. You can always come back to the tour later.</p>
       </li>
       <div class="layout--flex" data-justify="center" data-wrap="true">
         <button type="button" class="button typography--bold" data-intent="secondary" data-radius="full" data-size="sm" data-action="onboarding#jumpToLast">Skip</button>
-        <button type="button" class="button typography--bold" data-intent="primary" data-radius="full" data-size="sm" data-action="onboarding#next">Start the quick tour</button>
+        <button type="button" class="button typography--bold" data-intent="primary" data-radius="full" data-size="sm" data-action="onboarding#next">Swipe to start a quick tour
+
+          <%= icon_tag("arrow-right") %>
+        </button>
       </div>
     </ul>
 </div>
@@ -107,7 +107,7 @@
     <nav class="layout--surface layout--container" data-size="sm" data-elevation="1" data-padding="true">
       <%= form_with url: onboarding_path, class: "onboarding-form", data: { onboarding_target: "form" } do |form| %>
       <div>
-        <label class="onboarding-sample-checkbox" style="color: var(--model-color-4);">
+        <label class="onboarding-sample-checkbox" style="color: var(--model-color-2);">
           <%= form.radio_button :data_seed, true, class: "utilities--sr-only", include_hidden: false %>
           <%= icon_tag("circle", class: "form--icon") %>
           <div>
@@ -118,7 +118,7 @@
 
         </label>
         <br>
-        <label class="onboarding-sample-checkbox" style="color: var(--model-color-4);">
+        <label class="onboarding-sample-checkbox" style="color: var(--model-color-2);">
           <%= form.radio_button :data_seed, false, class: "utilities--sr-only", include_hidden: false, checked: true %>
           <%= icon_tag("circle", class: "form--icon") %>
           <div>

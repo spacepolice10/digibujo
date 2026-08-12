@@ -62,7 +62,7 @@
   }
 
   .triage--section-header {
-    padding: var(--layout-padding);
+    padding: var(--space-v) var(--space-h);
     border-block-end: var(--border-subtle);
 
     & > p {
@@ -90,18 +90,6 @@
 
   .triage--bullet {
     min-width: 0;
-
-    &:has([data-bulk-menu-target="checkbox"]:checked) {
-      & .triage--bullet-actions {
-        display: flex;
-      }
-    }
-  }
-
-  .triage--bullet-actions {
-    display: none;
-    gap: var(--space-h-half);
-    padding: var(--space-v-half) var(--space-h) 0;
   }
 
 }
