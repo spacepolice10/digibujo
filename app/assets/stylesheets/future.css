@@ -1,30 +1,4 @@
 @layer components {
-  .chat--window.future--window {
-    --chat-header-clearance: calc(
-      var(--space-v-2)
-      + var(--space-h-2)
-      + var(--space-v-2)
-    );
-  }
-
-  .future--chat-header {
-    height: var(--space-h-2);
-  }
-
-  .future--header-controls {
-    display: flex;
-    align-items: center;
-    gap: var(--space-h-half);
-    height: 100%;
-    border: 1px solid color-mix(in srgb, var(--color-invert-4) 70%, transparent);
-    border-radius: var(--radius-full);
-    background: color-mix(in srgb, var(--color-1) 72%, transparent);
-    backdrop-filter: blur(2px);
-    box-shadow: var(--shadow-subtle);
-    pointer-events: auto;
-    padding-inline: var(--space-h-half);
-  }
-
   /* New future form — period picker kept for create. */
   .future--header {
     display: flex;
@@ -117,13 +91,11 @@
     font-size: var(--font-size-2xl);
     font-weight: var(--font-weight-strong);
     color: var(--color-invert-2);
-    line-height: 1;
   }
 
   .future--period-meta {
     font-size: var(--font-size-base-read);
     color: var(--color-invert-4);
-    line-height: 1;
   }
 
   .future--period-checkbox:hover + .future--period-card,

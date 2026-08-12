@@ -66,7 +66,7 @@
     padding: var(--space-v-half) var(--space-h);
     color: var(--color-invert-2);
     font-family: inherit;
-    font-size: var(--font-size-base-read);
+    font-size: var(--font-size-base-type);
     background: transparent;
     border: 0;
     border-radius: inherit;

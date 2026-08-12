@@ -31,7 +31,7 @@
     --tabbar-clearance: 0px;
   }
 
-  body[data-platform="mobile"] {
+  body[data-platform="mobile"]:has(.tabbar--navigation) {
     --tabbar-clearance: calc(
       var(--tabbar-offset) + var(--tabbar-safe-area) + var(--tabbar-size)
     );
@@ -57,7 +57,7 @@
   }
 
   body[data-platform="mobile"]:has(
-    .chat--composer [data-composer-editor-target~="editor"]:focus-within
+    .chat--composer [data-composer-editor-target~="editor"] .lexxy-editor__content:focus
   ) .tabbar--navigation {
     transform: translate(
       -50%,

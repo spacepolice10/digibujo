@@ -52,9 +52,10 @@ lexxy-toolbar {
         margin-inline: 0;
         background: var(--color-1);
         border: 0;
-        border-block-start: var(--border-subtle);
         border-radius: 0;
         box-shadow: none;
+        border-block-start: var(--border-subtle);
+        margin-block-start: var(--space-v-half);
 
         & .lexxy-editor__content {
             max-height: 50vh;
@@ -69,6 +70,7 @@ lexxy-toolbar {
             border-radius: var(--radius-full);
             box-shadow: var(--shadow-subtle);
             transition: margin-block-end 250ms ease-out;
+           
 
             &:has(.composer[data-composer-editor-multiline-value="true"]) {
                 border-radius: var(--radius-base);
@@ -78,7 +80,7 @@ lexxy-toolbar {
 
     @container layout (width < 600px) {
         .composer--dock:has(
-            [data-composer-editor-target~="editor"]:focus-within
+            [data-composer-editor-target~="editor"] .lexxy-editor__content:focus
         ) {
             margin-block-end: var(--space-v);
             transition: none;
@@ -145,6 +147,7 @@ lexxy-toolbar {
         border-radius: var(--radius-full);
         background: transparent;
         color: inherit;
+        font-size: var(--font-size-base-type);
         box-shadow: var(--shadow-subtle);
 
         > button {
@@ -228,35 +231,4 @@ lexxy-toolbar {
         }
     }
 
-    .composer--lazy-container {
-        background: var(--color-2);
-        border-radius: var(--radius-base);
-        border: var(--border-subtle);
-        overflow: hidden;
-
-        & > .composer {
-            padding: var(--space-v) var(--space-h);
-        }
-
-        @container layout (width < 600px) {
-            & > .composer {
-                flex-wrap: wrap;
-                padding-inline: var(--space-h-half);
-            }
-
-            & > .composer lexxy-editor {
-                order: -1;
-                flex-basis: 100%;
-                width: 100%;
-            }
-        }
-    }
-
-    .composer--lazy-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: var(--space-h);
-        padding: var(--space-v-half) var(--space-h-half);
-    }
 }

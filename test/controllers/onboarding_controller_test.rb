@@ -62,13 +62,14 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to root_path
     assert @user.reload.onboarded?
-    assert_operator @user.bullets.count, :>, 0
+    assert_equal 44, @user.bullets.count
     assert @user.buckets.exists?(bucketable_type: 'Daylog')
     assert @user.buckets.exists?(bucketable_type: 'Monthlylog')
     assert @user.buckets.exists?(bucketable_type: 'Pending')
     assert @user.buckets.exists?(bucketable_type: 'Future')
     assert @user.buckets.exists?(bucketable_type: 'Collection', name: 'loose notes')
     assert @user.buckets.exists?(bucketable_type: 'Collection', name: 'reading list')
+    assert_equal 6, @user.buckets.where(bucketable_type: 'Collection').count
     assert @user.bullets.where(bucket: @user.daylog.bucket).any?
   end
 end

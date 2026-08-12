@@ -7,6 +7,12 @@
 <% hint_anchor = "--hint-tracker-#{tracker.id}-date-#{date.iso8601}" %>
 <% date_label = date.strftime("%a, %b %-d") %>
 <% status = scheduled ? (completed ? "Done" : "Not done") : "Not scheduled" %>
+<% date_content = capture do %>
+  <time class="tracker--heatmap-date-label" datetime="<%= date.iso8601 %>">
+    <span class="tracker--heatmap-weekday"><%= date.strftime("%a") %></span>
+    <span class="tracker--heatmap-day"><%= date.day %></span>
+  </time>
+<% end %>
 
 <div id="<%= cell_id %>" class="utilities--contents tracker--heatmap-date">
   <% if scheduled %>
@@ -23,7 +29,7 @@
               aria-pressed="<%= completed %>"
               interestfor="<%= hint_id %>"
               style="anchor-name: <%= hint_anchor %>">
-        <%= icon_tag(tracker.icon_name, class: "tracker--heatmap-icon") %>
+        <%= date_content %>
       </button>
     <% end %>
   <% else %>
@@ -32,7 +38,7 @@
             aria-label="<%= tracker.name %> not scheduled on <%= date %>"
             interestfor="<%= hint_id %>"
             style="anchor-name: <%= hint_anchor %>">
-      <%= icon_tag(tracker.icon_name, class: "tracker--heatmap-icon") %>
+      <%= date_content %>
     </button>
   <% end %>
   <div id="<%= hint_id %>"

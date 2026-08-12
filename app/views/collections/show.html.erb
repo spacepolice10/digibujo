@@ -8,7 +8,7 @@
       <%= back_link_to collections_path, class: "button", data: { intent: "secondary", radius: "full", size: "sm", content: "icon", turbo_frame: "_top" } do %>
         <%= icon_tag("arrow-left") %>
       <% end %>
-      <h1 class="collection--frost-chip collection--frost-chip--title"><%= @collection.name %></h1>
+      <h1 class="typography--line-clamp-1"><%= @collection.name %></h1>
       </div>
 
       <div class="layout--container-header-action layout--flex" data-align="center">
@@ -62,7 +62,8 @@
       </div>
     </div>
     <% if @collection.description.present? %>
-      <div class="layout--surface collection--frost-chip collection--frost-chip--description" data-elevation="2" data-padding="true">
+    <br>
+      <div class="layout--surface" data-elevation="2" data-padding="true">
         <%= @collection.description %>
       </div>
     <% end %>

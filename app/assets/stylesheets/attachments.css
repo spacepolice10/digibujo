@@ -1,4 +1,23 @@
 @layer components {
+  lexxy-editor .attachment.attachment--preview,
+  .bullet--body .attachment.attachment--preview {
+    block-size: calc(var(--space-h-10) + var(--space-h-7) + var(--space-h-half)) !important;
+    display: grid !important;
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+
+  lexxy-editor .attachment.attachment--preview > :is(img, video, a),
+  .bullet--body .attachment.attachment--preview > :is(img, video, a) {
+    min-block-size: 0;
+  }
+
+  lexxy-editor .attachment.attachment--preview :is(img, video),
+  .bullet--body .attachment.attachment--preview :is(img, video) {
+    block-size: 100% !important;
+    inline-size: 100%;
+    object-fit: contain;
+  }
+
   .attachment--index-header { margin-bottom: var(--space-v-2); }
   .attachment--index-list { display: grid; gap: var(--space-v-half); }
 

@@ -50,26 +50,8 @@
     border: var(--border-base);
   }
 
-  .home--sections { display: grid; gap: var(--space-v-2); }
-
-  .home--section,
-  .home--archive-link {
-    padding: var(--space-v) var(--space-h);
-    background: var(--color-1);
-    border: var(--border-subtle);
-    border-radius: var(--radius-strong);
-    box-shadow: var(--shadow-subtle);
-  }
-
-  .home--section-header,
-  .attachment--index-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-h);
-  }
-
-  .home--section-title,
+  .home--section-link,
+  .home--section-label,
   .home--archive-link {
     display: flex;
     align-items: center;
@@ -79,21 +61,14 @@
     text-decoration: none;
   }
 
-  .home--section-title { flex: 1; }
-  a.home--section-title:hover,
-  a.home--section-title:focus-visible { color: var(--color-accent-1); }
-  .home--section-title h2,
-  .attachment--index-header h1 {
+  .home--section-link:hover,
+  .home--section-link:focus-visible { color: var(--color-accent-1); }
+  .home--section-link h2,
+  .home--section-label h2 {
     font-size: var(--font-size-base-type);
     font-weight: var(--font-weight-strong);
   }
-
-  .home--section-arrow { margin-inline-start: auto; color: var(--color-invert-4); }
-  .home--section-content {
-    display: grid;
-    gap: var(--space-v-half);
-    margin-top: var(--space-v);
-  }
+  .home--section-link .icon:last-child { margin-inline-start: auto; color: var(--color-invert-4); }
 
   .home--preview-link {
     display: flex;

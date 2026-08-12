@@ -91,7 +91,7 @@
 
     @container layout (width < 600px) {
         .monthlylog--unplanned-composer:has(
-            [data-composer-editor-target~="editor"]:focus-within
+            [data-composer-editor-target~="editor"] .lexxy-editor__content:focus
         ) {
             inset-block-end: var(--space-v);
         }
@@ -102,6 +102,10 @@
         flex-direction: column;
         gap: var(--space-v);
         margin-block-start: var(--space-v-3);
+        background: var(--color-2);
+        border-radius: var(--radius-base);
+        border: var(--border-subtle);
+        padding: var(--space-v) var(--space-h);
         @container layout (width < 800px) {
             padding: var(--space-v) var(--space-h);
             border-radius: var(--radius-base);
@@ -123,7 +127,9 @@
         margin-block-end: var(--space-v-half);
         transition: transform 0.08s;
 
-        &:after {
+        &[aria-current="date"]:after {
+            width: 35%;
+            opacity: var(--opacity-half);
             content: "";
             display: block;
             position: absolute;
@@ -136,19 +142,16 @@
             transform: skew(-10deg);
         }
 
-        &[aria-current="date"]:after {
-            width: 35%;
-            opacity: var(--opacity-half);
-        }
-
         &:hover {
             transform: translateX(var(--space-h-half));
         }
     }
 
+
     .monthlylog--date-bullets {
         display: flex;
         flex-direction: column;
+        gap: var(--space-v);
     }
 
     .monthlylog--unplanned-category {

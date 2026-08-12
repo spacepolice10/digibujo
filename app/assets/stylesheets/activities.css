@@ -63,15 +63,5 @@
     text-align: center;
   }
 
-  @media (pointer: coarse) {
-    .activity--page {
-      padding: 0 0 var(--tabbar-clearance);
-    }
 
-    .activity--surface {
-      min-height: 100dvh;
-      border: 0;
-      border-radius: 0;
-    }
-  }
 }

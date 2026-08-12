@@ -16,7 +16,6 @@
   .session--logo { view-transition-name: session-logo; }
   .session--page-auth {
     width: 100%;
-    max-width: 60%;
     margin-inline: auto;
     view-transition-name: session-auth;
   }

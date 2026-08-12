@@ -7,8 +7,6 @@ export default class extends Controller {
 
   connect() {
     this.element.addEventListener("scroll", () => this.#sync(), { passive: true })
-    const index = window.location.hash.match(/#onboarding-(\d+)/)?.[1]
-    if (index) this.#scrollTo(Number(index))
     this.#sync()
   }
 
@@ -34,7 +32,6 @@ export default class extends Controller {
   #sync() {
     const last = this.#index === this.#last
 
-    history.replaceState(null, "", `#onboarding-${this.#index}`)
     this.sectionTargets.forEach((section, i) => {
       section.toggleAttribute("data-active", i === this.#index)
     })

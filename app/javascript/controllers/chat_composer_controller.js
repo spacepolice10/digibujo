@@ -13,11 +13,11 @@ export default class extends Controller {
     const { signal } = this.events
 
     this.element.addEventListener("focusin", (event) => {
-      if (this.editor?.contains(event.target)) this.#open()
+      if (event.target === this.#editorContent) this.#open()
     }, { signal })
     this.element.addEventListener("focusout", () => this.#scheduleClose(), { signal })
 
-    if (this.editor?.contains(document.activeElement)) this.#open()
+    if (document.activeElement === this.#editorContent) this.#open()
   }
 
   disconnect() {
@@ -38,7 +38,7 @@ export default class extends Controller {
     if (this.closeFrame != null) cancelAnimationFrame(this.closeFrame)
     this.closeFrame = requestAnimationFrame(() => {
       this.closeFrame = null
-      if (!this.editor?.contains(document.activeElement)) this.#close()
+      if (document.activeElement !== this.#editorContent) this.#close()
     })
   }
 
@@ -50,5 +50,10 @@ export default class extends Controller {
     this.tabbar?.toggleAttribute("inert", hidden)
     if (hidden) this.tabbar?.setAttribute("aria-hidden", "true")
     else this.tabbar?.removeAttribute("aria-hidden")
+  }
+
+  get #editorContent() {
+    return this.editor?.editorContentElement ??
+      this.editor?.querySelector(".lexxy-editor__content")
   }
 }

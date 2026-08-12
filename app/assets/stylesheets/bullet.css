@@ -1,3 +1,8 @@
+.lexxy-content > p {
+  overflow-wrap: anywhere !important;
+}
+
+
 @layer components {
   :root {
     --task-color: var(--model-color-2);
@@ -111,7 +116,6 @@
     width: var(--space-h);
     height: var(--space-h);
     margin-top: 2px;
-    background: color-mix(in oklch, var(--bullet-type-color) 14%, transparent);
 
     @media (any-pointer: coarse) {
       width: var(--coarse-target);
@@ -232,35 +236,7 @@
     }
   }
 
-  .bullets-form {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-v-half);
-    align-items: center;
-    overflow: visible;
-    width: 100%;
-  }
 
-  .bullets-form--rail {
-    position: sticky;
-    bottom: var(--tabbar-clearance);
-    display: flex;
-    width: 75%;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: var(--tabbar-clearance);
-  }
-
-  .bullets-form--body {
-    appearance: none;
-    display: block;
-    width: 100%;
-    margin: var(--space-v-half) 0;
-    border: none;
-    padding: var(--space-v) var(--space-h);
-    border-radius: var(--radius-base);
-    outline: none !important;
-  }
 
 
 }

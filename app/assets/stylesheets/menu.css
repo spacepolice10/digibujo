@@ -16,8 +16,8 @@
     flex-direction: column;
     gap: var(--space-v-4);
     width: 100%;
-    min-width: 360px;
-    max-width: 30rem;
+    min-width: 40px;
+    max-width: 40rem;
     overflow: hidden;
   }
 
@@ -63,8 +63,8 @@
     }
 
     .icon {
-      width: var(--space-h);
-      height: var(--space-h);
+      width: var(--space-h-2);
+      height: var(--space-h-2);
       flex-shrink: 0;
     }
   }

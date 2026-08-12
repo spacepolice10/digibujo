@@ -1,0 +1,137 @@
+daylog:
+  - type: Event
+    body: Standup with the team
+  - type: Note
+    body: Ideas for the <em>weekend hike</em>
+  - type: Note
+    body: >-
+      <strong>Quick evening reset</strong><ul><li>Clear the desk</li><li>Choose tomorrow’s
+      priority</li><li>Write down one good thing</li></ul>
+  - type: Task
+    body: Click the date above to open triage and review unfinished bullets
+  - type: Task
+    body: Open your Monthly log
+  - type: Note
+    body: Move this bullet into a collection
+  - type: Task
+    body: Select a few bullets and move them to tomorrow
+  - type: Task
+    body: Archive this bullet
+  - type: Note
+    body: Click a marker to select a bullet and open the actions menu
+  - type: Task
+    body: <strong>Write your first bullet</strong>
+
+daylog_yesterday:
+  - type: Task
+    body: Save this useful idea in a collection
+  - type: Note
+    body: Archive this bullet if it is no longer relevant
+  - type: Task
+    body: Select a few yesterday bullets and move them to Today together
+  - type: Task
+    body: Drag this bullet to Today to keep working on it
+  - type: Note
+    body: <strong>Welcome to triage</strong> — decide what still deserves your attention
+
+monthlylog:
+  - type: Task
+    body: Move this monthly priority to Today during triage
+    onboarding_day: true
+  - type: Event
+    body: Dinner with friends
+    date_offset: 4
+  - type: Task
+    body: Prepare the monthly review
+    date_offset: 12
+  - type: Event
+    body: Team planning afternoon
+    date_offset: 20
+  - type: Task
+    body: Open your Future log
+  - type: Note
+    body: Save this idea in a collection
+  - type: Task
+    body: Select a few bullets and reschedule them together
+  - type: Task
+    body: Drag this bullet onto a day in the calendar
+  - type: Note
+    body: Give an unscheduled bullet a date
+  - type: Task
+    body: <strong>Create a bullet for something you want to do this month</strong>
+
+future:
+  - type: Task
+    body: Read 12 books this year
+  - type: Note
+    body: Plan a slow train trip through the mountains
+  - type: Task
+    body: Take an introductory pottery course
+  - type: Task
+    body: Choose a new camera before the next holiday
+  - type: Note
+    body: 'Someday idea: grow herbs on the balcony'
+  - type: Task
+    body: Select a few priorities and move them into this month
+  - type: Task
+    body: <strong>Add a goal for the next six months</strong>
+
+collections:
+  - name: Loose Notes
+    icon: memo
+    colour: violet
+    description: A home for thoughts that do not need a category yet.
+    bullets:
+      - type: Note
+        body: A quiet morning makes the whole day feel bigger.
+      - type: Note
+        body: Try a phone-free hour before bed
+  - name: Reading List
+    icon: books
+    colour: gold
+    description: Books, essays, and recommendations to return to.
+    bullets:
+      - type: Task
+        body: <em>The Bullet Journal Method</em> by Ryder Carroll
+      - type: Note
+        body: >-
+          Browse the essays at <a href="https://aeon.co/" target="_blank"
+          rel="noopener noreferrer">Aeon</a>
+  - name: Trip Ideas
+    icon: airplane
+    colour: teal
+    description: Places to explore and details worth remembering.
+    bullets:
+      - type: Note
+        body: Night train to a coastal town
+      - type: Task
+        body: Make a lightweight packing checklist
+  - name: Inspiration
+    icon: lightbulb
+    colour: magenta
+    description: Small sparks for creative days.
+    bullets:
+      - type: Note
+        body: '<strong>Colour study:</strong> photograph three unexpected combinations'
+      - type: Note
+        body: Sketch the same object in five minutes and in thirty seconds
+  - name: Recipes to Try
+    icon: cooking
+    colour: vermillion
+    description: Meals to cook, adapt, and share.
+    bullets:
+      - type: Task
+        body: Roasted tomato and white bean soup
+      - type: Note
+        body: >-
+          <strong>Weekend noodles</strong><ul><li>Fresh herbs</li><li>Chilli
+          crisp</li><li>Lime</li></ul>
+  - name: Personal Projects
+    icon: target
+    colour: cobalt
+    description: Experiments and meaningful work in progress.
+    bullets:
+      - type: Task
+        body: Publish a one-page personal website
+      - type: Note
+        body: Build a tiny shelf for the reading corner

@@ -9,6 +9,15 @@
       class="monthlylog--section divided--vertical"
       aria-label="Planned by date"
     >
+    <div class="monthlylog--section-header">
+      <%= back_link_to daylog_path,
+        class: "button",
+        data: { content: "text", turbo_frame: "_top" },
+        aria: { label: "Back to Daylog" } do %>
+    <%= icon_tag("arrow-left") %>
+    <span>Back</span>
+    <% end %>
+      </div>
       <div
         class="monthlylog--section-content"
         data-bulk-menu-target="list"

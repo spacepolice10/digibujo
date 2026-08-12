@@ -1,17 +1,24 @@
 # frozen_string_literal: true
 
+# Provisions the initial workspace and optional guided sample content for a new user.
 class Onboarding
   include ActiveModel::Validations, ActiveModel::Model
 
   FUTURE_NAME = 'Future Log'
   FUTURE_ICON = 'calendar'
   FUTURE_COLOUR = 'gold'
-  LOOSE_NOTES_NAME = 'Loose Notes'
   DAYLOG_NAME = 'Daylog'
   DAYLOG_ICON = 'calendar'
   PENDING_NAME = 'Pending'
   PENDING_ICON = 'memo'
-  COLLECTION_NAME = 'Reading list'
+
+  SAMPLE_DATA = YAML.safe_load_file(Rails.root.join('config/onboarding_sample_data.yml'), aliases: false)
+                    .deep_symbolize_keys.freeze
+  DAYLOG_BULLETS = SAMPLE_DATA.fetch(:daylog).freeze
+  DAYLOG_YESTERDAY_BULLETS = SAMPLE_DATA.fetch(:daylog_yesterday).freeze
+  MONTHLYLOG_BULLETS = SAMPLE_DATA.fetch(:monthlylog).freeze
+  FUTURE_BULLETS = SAMPLE_DATA.fetch(:future).freeze
+  COLLECTIONS = SAMPLE_DATA.fetch(:collections).freeze
 
   attr_accessor :user, :data_seed
 
@@ -20,13 +27,7 @@ class Onboarding
   def complete
     return false unless valid?
 
-    ActiveRecord::Base.transaction do
-      ensure_daylog!
-      ensure_monthlylog!
-      ensure_pending!
-      user.update!(onboarded: true)
-      seed_sample_data! if data_seed?
-    end
+    ActiveRecord::Base.transaction { provision! }
 
     true
   rescue ActiveRecord::RecordInvalid => e
@@ -39,6 +40,14 @@ class Onboarding
   end
 
   private
+
+  def provision!
+    ensure_daylog!
+    ensure_monthlylog!
+    ensure_pending!
+    user.update!(onboarded: true)
+    seed_sample_data! if data_seed?
+  end
 
   def ensure_daylog!
     Daylog.provision!(user)
@@ -55,83 +64,65 @@ class Onboarding
   def seed_sample_data!
     return if user.bullets.any?
 
-    seed_daylog!
+    create_bullets!(ensure_daylog!.bucket, DAYLOG_BULLETS, default_pops_on: Date.current)
+    create_bullets!(ensure_daylog!.bucket, DAYLOG_YESTERDAY_BULLETS, default_pops_on: Date.yesterday)
     seed_monthlylog!
-    seed_loose_notes!
-    seed_collection!
-    seed_future!
-  end
-
-  def seed_daylog!
-    bucket = ensure_daylog!.bucket
-    [
-      { bulletable: Task.new, body: 'Buy groceries and plan the week' },
-      { bulletable: Event.new, body: 'Standup with the team' },
-      { bulletable: Note.new, body: 'Ideas for the weekend hike' }
-    ].each do |attrs|
-      user.bullets.create!(bucket: bucket, pops_on: Date.current, **attrs)
-    end
+    seed_collections!
+    create_bullets!(ensure_future!.bucket, FUTURE_BULLETS)
   end
 
   def seed_monthlylog!
     monthlylog = ensure_monthlylog!
-    month = monthlylog.period_from
-    dates = [Date.current + 1.day, Date.current + 3.days]
-             .map { |date| [date, month.end_of_month].min }
-             .uniq
-    bullets = [
-      { bulletable: Event.new, body: 'Team offsite', pops_on: dates[0] },
-      { bulletable: Task.new, body: 'Prepare monthly review', pops_on: dates[1] },
-      { bulletable: Note.new, body: 'Monthly themes to explore', pops_on: nil }
-    ]
-    bullets.each do |attrs|
-      user.bullets.create!(bucket: monthlylog.bucket, **attrs)
+    bullets = MONTHLYLOG_BULLETS.map do |attributes|
+      next attributes.except(:onboarding_day).merge(pops_on: user.created_at.to_date) if attributes[:onboarding_day]
+
+      offset = attributes[:date_offset]
+      next attributes.except(:date_offset) unless offset
+
+      attributes.except(:date_offset).merge(pops_on: monthly_date(monthlylog, offset))
+    end
+    create_bullets!(monthlylog.bucket, bullets)
+  end
+
+  def seed_collections!
+    COLLECTIONS.each do |attributes|
+      collection = Collection.create!(description: attributes[:description])
+      bucket = user.buckets.create!(
+        bucketable: collection,
+        name: attributes[:name],
+        icon: attributes[:icon],
+        colour: attributes[:colour]
+      )
+      create_bullets!(bucket, attributes[:bullets])
     end
   end
 
-  def seed_loose_notes!
-    bucket = ensure_loose_notes!
-    [
-      { bulletable: Note.new, body: 'Random thought worth keeping' },
-      { bulletable: Note.new, body: 'A link or idea to revisit' }
-    ].each do |attrs|
-      user.bullets.create!(bucket: bucket, pops_on: nil, **attrs)
-    end
-  end
+  def ensure_future!
+    future = user.futures.find_or_create_by!(period_from: Date.current.beginning_of_month)
+    return future if future.bucket
 
-  def seed_collection!
-    collection = Collection.create!
-    bucket = user.buckets.create!(bucketable: collection, name: COLLECTION_NAME)
-    [
-      { bulletable: Task.new, body: 'Atomic Habits' },
-      { bulletable: Task.new, body: 'The Bullet Journal Method' },
-      { bulletable: Note.new, body: 'Book recommendations from Alex' }
-    ].each do |attrs|
-      user.bullets.create!(bucket: bucket, pops_on: nil, **attrs)
-    end
-  end
-
-  def seed_future!
-    future = user.futures.create!(period_from: Date.current.beginning_of_month)
-    bucket = user.buckets.create!(
+    user.buckets.create!(
       bucketable: future,
       name: FUTURE_NAME,
       icon: FUTURE_ICON,
       colour: FUTURE_COLOUR
     )
-    [
-      { bulletable: Task.new, body: 'Read 12 books this year' },
-      { bulletable: Note.new, body: 'Trip ideas for summer' }
-    ].each do |attrs|
-      user.bullets.create!(bucket: bucket, pops_on: nil, **attrs)
+    future.reload
+  end
+
+  def create_bullets!(bucket, definitions, default_pops_on: nil)
+    definitions.each do |definition|
+      attributes = definition.except(:type)
+      attributes[:pops_on] = default_pops_on unless attributes.key?(:pops_on)
+      user.bullets.create!(
+        bucket: bucket,
+        bulletable: definition.fetch(:type).constantize.new,
+        **attributes
+      )
     end
   end
 
-  def ensure_loose_notes!
-    existing = user.buckets.find_by(bucketable_type: 'Collection', name: LOOSE_NOTES_NAME.downcase)
-    return existing if existing.present?
-
-    collection = Collection.create!
-    user.buckets.create!(bucketable: collection, name: LOOSE_NOTES_NAME)
+  def monthly_date(monthlylog, offset)
+    [monthlylog.period_from + offset.days, monthlylog.period_to].min
   end
 end

@@ -2,13 +2,13 @@
 
 <main class="layout--container" data-size="md" data-padding="true">
   <div class="layout--surface layout--flex" data-elevation="1" data-padding="true" data-direction="column">
-    <header class="layout--container-header">
-      <%= back_link_to home_path, class: "button", data: { content: "text", turbo_frame: "_top" } do %>
-        <%= icon_tag("arrow-left") %><span>Home</span>
+    <header class="layout--flex" data-justify="between" data-align="center">
+      <%= back_link_to home_path, class: "button", data: { intent: "secondary", radius: "full", size: "sm", content: "icon" }, aria: { label: "Back to Home" } do %>
+        <%= icon_tag("arrow-left") %>
       <% end %>
       <h1>Trackers</h1>
-      <%= link_to new_tracker_path, class: "button layout--container-header-action", data: { intent: "primary", radius: "full", size: "xs" } do %>
-        <%= icon_tag("plus") %><span>Create</span>
+      <%= link_to new_tracker_path, class: "button", data: { intent: "primary", radius: "full", size: "sm", content: "icon" }, aria: { label: "Create Tracker" } do %>
+        <%= icon_tag("plus") %>
       <% end %>
     </header>
 
@@ -18,7 +18,7 @@
           <%= render partial: "trackers/tracker", collection: @trackers, as: :tracker %>
         </div>
       <% else %>
-        <p class="typography--paragraph-sm">No trackers yet.</p>
+        <p class="typography--paragraph-sm">You haven't created any trackers yet. Try creating one to track your progress on doing sport, quitting smoking, or anything else.</p>
       <% end %>
     </div>
   </div>

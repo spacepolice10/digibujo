@@ -8,7 +8,8 @@
   .layout--filter-group [interestfor],
   .monthlylog--date-artifacts [interestfor],
   .daylog--mood [interestfor],
-  .tracker--day-toggle-wrap [interestfor] {
+  .tracker--day-toggle-wrap [interestfor],
+  .tracker--heatmap [interestfor] {
     interest-delay: 0.2s;
   }
 
@@ -24,7 +25,7 @@
       calc(100vw - (2 * var(--space-h)))
     );
     background: var(--color-invert-1);
-    color: var(--color-invert-1);
+    color: var(--color-1);
     /* 1px hairline — no stroke-width token in the design system */
     border: 1px solid var(--color-invert-2);
     border-radius: var(--radius-base);

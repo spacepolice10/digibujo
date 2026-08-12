@@ -13,7 +13,7 @@ class FuturesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_match 'No future log yet', response.body
-    assert_select "a.button--primary[href=?]", new_future_path
+    assert_select "a.button[data-intent=primary][href=?]", new_future_path
   end
 
   test 'current future shows unplanned chat list when covering future exists' do

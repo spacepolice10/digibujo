@@ -13,7 +13,6 @@
         <p>Or skip it if you prefer learning on your own. You can always come back to the tour later.</p>
       </li>
       <div class="layout--flex" data-justify="center" data-wrap="true">
-        <button type="button" class="button typography--bold" data-intent="secondary" data-radius="full" data-size="sm" data-action="onboarding#jumpToLast">Skip</button>
         <button type="button" class="button typography--bold" data-intent="primary" data-radius="full" data-size="sm" data-action="onboarding#next">Swipe to start a quick tour
 
           <%= icon_tag("arrow-right") %>
@@ -84,22 +83,6 @@
   </section>
 
 
-  <section class="onboarding-section" data-onboarding-target="section">
-    <div class="layout--container" data-size="md">
-    <h2 class="typography--h1 typography--center onboarding--heading">Single control. Bulk actions</h2>
-    <br>
-    <ul class="onboarding--basics">
-      <li class="onboarding--basics-item typography--center typography--balanced">
-        <p>All the manipulations around your notes, tasks and events start from selecting one via circle on the left side of the bullet</p>
-      </li>
-        <li class="onboarding--basics-item typography--center typography--balanced">
-          <span class="typography--paragraph-sm onboarding--basics-tips">Later (postpone), Save (collect), Pin, Archive, Complete or share things you've created — applied to everything selected.</span>
-        </li>
-
-    </ul>
-    </div>
-  </section>
-
   <section class="onboarding-section last-section" data-onboarding-target="section">
     <div class="layout--container" data-size="md" data-padding="true">
     <h2 class="typography--h1 typography--center">Explore Digibujo</h2>
@@ -130,8 +113,10 @@
       <br>
       <p class="typography--paragraph-sm"> If you wish, we can add sample data to your journal, so you understand how it works and structure your journal. Everything can be deleted later.</p>
       <br>
-      <%= form.button "Start my journal", class: "button typography--bold",
-            data: { intent: "primary", radius: "full", size: "sm" } %>
+      <div class="layout--flex" data-justify="center">
+        <%= form.button "Start my journal", class: "button typography--bold",
+              data: { intent: "primary", radius: "full", size: "sm" } %>
+      </div>
       <% end %>
     </nav>
 
@@ -154,7 +139,7 @@
     <ol class="onboarding-dots"
         data-onboarding-target="dots"
         data-action="click->onboarding#jumpToDot">
-      <% 6.times do |i| %>
+      <% 5.times do |i| %>
         <li data-index="<%= i %>"></li>
       <% end %>
     </ol>

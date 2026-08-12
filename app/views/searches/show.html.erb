@@ -6,13 +6,13 @@
   <% content_for(:title, "Search") %>
 
   <main class="search--page layout--container" data-size="md" data-padding="true">
-    <header class="layout--container-header">
+    <header class="layout--flex" data-align="center">
       <%= back_link_to home_path,
             class: "button",
-            data: { content: "text", turbo_frame: "_top" },
+            data: { intent: "secondary", radius: "full", size: "sm", content: "icon", turbo_frame: "_top" },
             aria: { label: "Back to Home" } do %>
         <%= icon_tag("arrow-left") %>
-        <span>Home</span>
+
       <% end %>
       <h1>Search</h1>
     </header>

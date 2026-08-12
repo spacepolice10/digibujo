@@ -66,6 +66,7 @@
     z-index: 1;
     flex: 1 1 0;
     min-height: 0;
+    margin-bottom: -200px;
     overflow-y: auto;
     overflow-anchor: none;
     overscroll-behavior-y: none;
@@ -75,7 +76,7 @@
     gap: var(--space-v);
     padding-inline: var(--space-h-half);
     padding-top: var(--chat-header-clearance, 0px);
-    padding-bottom: var(--space-v);
+    padding-bottom: 200px;
 
     > * {
       margin-block: 0;

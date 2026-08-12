@@ -1,8 +1,11 @@
 <%# locals: (triage:, selected_date:) %>
 <div class="layout--flex" data-justify="center">
   <%= link_to daylog_triage_path(preview: :expanded),
-        class: "button typography--mono",
+        class: "button typography--mono hotkey-hint",
         data: {
+          controller: "hotkey",
+          hotkey: "T",
+          action: "keydown.shift+t@document->hotkey#click",
           intent: "secondary",
           radius: "full",
           size: "xs",

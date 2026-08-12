@@ -235,6 +235,16 @@
     color: var(--color-invert-4);
   }
 
+  .form--icon-picker-more-toggle {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .form--icon-picker-more-toggle:not(:checked) + .form--icon-picker .form--icon-picker-more-option {
+    display: none;
+  }
+
   .form--picker-option:has(input:checked) .form--icon {
     color: var(--color-invert-2);
   }

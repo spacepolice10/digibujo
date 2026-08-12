@@ -75,7 +75,7 @@
   /* Focus — thin soft ring, offset outward; follows border-radius on controls */
   *:focus-visible {
     outline: 0.5px solid color-mix(in oklch,
-        var(--color-invert-2) 80%,
+        var(--color-accent-2) 80%,
         transparent);
     box-shadow: none;
     transition: none;

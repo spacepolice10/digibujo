@@ -1,8 +1,8 @@
 import { Extension } from "lexxy"
 
 // Note-preset toolbar: drop controls Digibujo doesn't surface in the chat /
-// note composers. Never reparent an external toolbar (toolbar="id") into the
-// editor — moving a connected <lexxy-toolbar> runs dispose() and kills commands.
+// note composers. Keep the toolbar in place: moving a connected
+// <lexxy-toolbar> runs dispose() and kills its command handlers.
 export class TrimToolbarExtension extends Extension {
   initializeToolbar(toolbar) {
     toolbar.querySelector('button[name="underline"]')?.remove()
@@ -16,9 +16,5 @@ export class TrimToolbarExtension extends Extension {
       button.classList.remove("lexxy-editor__toolbar-group-end")
     })
     toolbar.querySelectorAll(".lexxy-editor__toolbar-separator").forEach((el) => el.remove())
-
-    if (toolbar.parentElement == this.editorElement) {
-      this.editorElement.append(toolbar)
-    }
   }
 }

@@ -2,13 +2,12 @@
 
 <main class="layout--container" data-size="md" data-padding="true">
   <div class="layout--surface layout--flex" data-elevation="1" data-padding="true" data-direction="column">
-    <header class="layout--container-header">
-      <%= back_link_to trackers_path, class: "button", data: { content: "text", turbo_frame: "_top" } do %>
-        <%= icon_tag("arrow-left") %><span>Trackers</span>
+    <header class="layout--flex" data-align="center">
+      <%= back_link_to trackers_path, class: "button", data: { intent: "secondary", radius: "full", size: "sm", content: "icon" }, aria: { label: "Back to Trackers" } do %>
+        <%= icon_tag("arrow-left") %>
       <% end %>
-      <h1>New tracker</h1>
+      <h2>New tracker</h2>
     </header>
-    <p class="typography--paragraph-sm typography--balanced">Trackers are repeating habits — mark them off each day on your daily log or monthly spread.</p>
     <%= render "trackers/form", tracker: @tracker, name_hint: "Give your tracker a name. Examples: Morning run, Meditate, Drink water." %>
   </div>
 </main>

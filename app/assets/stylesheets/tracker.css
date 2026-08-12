@@ -14,8 +14,8 @@
       overflow: hidden;
       font-size: var(--font-size-xs);
       font-weight: var(--font-weight-medium);
-      width: var(--space-v-3);
-      height: var(--space-v-3);
+      width: var(--space-h-3);
+      height: var(--space-h-3);
       & .tracker--heatmap-cell-button {
         display: grid;
         place-items: center;
@@ -48,9 +48,20 @@
       border-color: var(--color-accent-1);
     }
 
-    & .tracker--heatmap-icon {
-      width: var(--space-h);
-      height: var(--space-h);
+    & .tracker--heatmap-date-label {
+      display: grid;
+      place-items: center;
+    }
+
+    & .tracker--heatmap-weekday {
+      font-size: var(--font-size-2xs);
+      font-weight: var(--font-weight-medium);
+      text-transform: uppercase;
+    }
+
+    & .tracker--heatmap-day {
+      font-size: var(--font-size-base-type);
+      font-weight: var(--font-weight-strong);
     }
   }
 }

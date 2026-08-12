@@ -109,7 +109,9 @@ class DaylogsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select 'header.chat--header turbo-frame#daylog_triage_preview .layout--flex[data-justify="center"]' do
       assert_select 'a.button[data-intent="secondary"][data-radius="full"]' \
-                    '[data-turbo-frame="daylog_triage_preview"][aria-label="Open triage"]' do
+                    '[data-turbo-frame="daylog_triage_preview"][aria-label="Open triage"]' \
+                    '[data-controller~="hotkey"][data-hotkey="T"]' \
+                    '[data-action*="keydown.shift+t@document->hotkey#click"]' do
         assert_select "time[datetime=?]", Date.current.iso8601
       end
     end

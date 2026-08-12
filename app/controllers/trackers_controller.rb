@@ -16,7 +16,7 @@ class TrackersController < ApplicationController
     @tracker.start_date = Date.current
 
     if @tracker.save
-      redirect_to root_path, notice: 'Tracker created'
+      redirect_to trackers_path, notice: 'Tracker created'
     else
       render :new, status: :unprocessable_entity
     end

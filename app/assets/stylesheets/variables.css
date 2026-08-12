@@ -49,7 +49,7 @@
         --space-h-10: calc(var(--space-h) * 10);
 
         /* minimum interactive target for touch input */
-        --coarse-target: 2rem;
+        --coarse-target: 2.5rem;
 
         /* borders and elevation */
         --shadow-subtle: 0 0 0 1px light-dark(

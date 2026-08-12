@@ -35,8 +35,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_link new_collection_path, text: 'Add collection'
     assert_link new_tracker_path, text: 'Add tracker'
-    assert_select '.home--section-header .home--add-button', count: 0
-    assert_select '.home--section-content .home--add-button', count: 2
+    assert_select '[data-home-section] > .home--add-button', count: 2
   end
 
   test 'show limits previews to three records' do
@@ -45,7 +44,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     get home_path
 
     assert_response :success
-    assert_select '[data-home-section="projects"] .home--section-content > .home--preview-link', count: 3
+    assert_select '[data-home-section="projects"] > .home--preview-link', count: 3
   end
 
   test 'mobile show uses the same hub and keeps the tabbar' do

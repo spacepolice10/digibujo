@@ -6,6 +6,19 @@ class ApplicationHelperTest < ActionView::TestCase
   include ApplicationHelper
   include IconHelper
 
+  test 'current futures navigation links to the covering future' do
+    future = ensure_future!(users(:one))
+    Current.user = users(:one)
+
+    assert_equal future_path(future), current_futures_navigation_path
+  end
+
+  test 'current futures navigation falls back when no future covers today' do
+    Current.user = users(:two)
+
+    assert_equal current_future_path, current_futures_navigation_path
+  end
+
   test 'back_link_to renders fallback href and navigation data' do
     html = back_link_to(home_path, class: 'button--tertiary button--sm') do
       safe_join([icon_tag('arrow-left'), ' Back'])

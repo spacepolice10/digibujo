@@ -55,7 +55,7 @@
             placeholder: "What's up?",
             class: "multiline hotkey-hint",
             data: {
-              action: "keydown.shift+tab->composer-editor#switchVariant:capture keydown->composer-editor#submitByKeyboard:capture",
+              action: "keydown.shift+tab->composer-editor#switchVariant:capture keydown->composer-editor#submitByKeyboard:capture lexxy:change->composer#toggleRecorderButton",
               composer_editor_target: "editor",
               hotkey: "F"
             }
@@ -67,7 +67,7 @@
             <% end %>
         <% end %>
         <% if allowed_bulletable_variants.include?("Voice") %>
-            <button type="button" data-action="composer#toggleMode" data-composer-mode-param="recorder" class="composer--control" aria-label="Record voice memo">
+            <button type="button" data-action="composer#toggleMode" data-composer-mode-param="recorder" data-composer-target="recorderButton" class="composer--control" aria-label="Record voice memo">
                 <%= icon_tag("microphone") %>
             </button>
         <% end %>

@@ -31,6 +31,16 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     assert_select 'nav.tabbar--navigation a.tabbar--item-active[href=?][aria-label=?]', activities_path, 'Activity'
   end
 
+  test 'mobile show omits the tabbar' do
+    bullet = create_bullet!(@user, bulletable: Task.new, body: 'Buy milk')
+    activity = bullet.record_activity!('updated')
+
+    get activity_path(activity), headers: { 'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)' }
+
+    assert_response :success
+    assert_select 'nav.tabbar--navigation', count: 0
+  end
+
   test 'index shows empty state when there is no activity' do
     Activity.delete_all
 

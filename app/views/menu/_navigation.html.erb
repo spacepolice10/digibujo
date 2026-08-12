@@ -12,7 +12,7 @@
           action: "keydown.1@document->hotkey#click focus->grid-navigation#syncPosition"
         },
         aria: { keyshortcuts: "1", label: "Home" } do %>
-    <%= icon_tag("home") %>
+    <%= icon_tag("search") %>
     <span class="menu--navigation-name">Home</span>
   <% end %>
   <%= link_to daylog_path,
@@ -41,7 +41,7 @@
     <%= icon_tag("calendar") %>
     <span class="menu--navigation-name">Monthly</span>
   <% end %>
-  <%= link_to review_path,
+  <%= link_to current_futures_navigation_path,
         class: "menu--navigation-item hotkey-hint hotkey-hint--always",
         data: {
           turbo_frame: "_top",
@@ -50,8 +50,8 @@
           grid_navigation_target: "item",
           action: "keydown.4@document->hotkey#click focus->grid-navigation#syncPosition"
         },
-        aria: { keyshortcuts: "4", label: "Review" } do %>
+        aria: { keyshortcuts: "4", label: "Future" } do %>
     <%= icon_tag("circle-check") %>
-    <span class="menu--navigation-name">Review</span>
+    <span class="menu--navigation-name">Future</span>
   <% end %>
 </nav>

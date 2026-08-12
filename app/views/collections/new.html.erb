@@ -11,12 +11,6 @@
       <h2>New collection</h2>
     </header>
 
-    <% unless @bullets.present? %>
-      <p class="typography--paragraph-sm typography--balanced">
-        Collections are like folders in a traditional notebook — group related bullets and keep them organised for as long as you need.
-      </p>
-    <% end %>
-
     <div id="<%= dom_id(@collection) %>">
       <%= render "form", collection: @collection, bullet_ids: @bullet_ids, return_to: @return_to %>
 

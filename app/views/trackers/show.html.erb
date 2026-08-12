@@ -2,20 +2,20 @@
 
 <main class="layout--container" data-size="md" data-padding="true">
   <div class="layout--surface layout--flex" data-elevation="1" data-padding="true" data-direction="column">
-  <header class="layout--container-header">
-      <%= back_link_to trackers_path, class: "button", data: { content: "text", turbo_frame: "_top" } do %>
-        <%= icon_tag("arrow-left") %><span>Trackers</span>
+  <header class="layout--flex" data-justify="between" data-align="center">
+      <%= back_link_to trackers_path, class: "button", data: { intent: "secondary", radius: "full", size: "sm", content: "icon" }, aria: { label: "Back to Trackers" } do %>
+        <%= icon_tag("arrow-left") %>
       <% end %>
-      <h1><%= @tracker.name %></h1>
+      <h2><%= @tracker.name %></h2>
 
-    <div class="layout--container-header-action dropdown--dock">
+    <div class="dropdown--dock">
 
     <button
       type="button"
       class="button"
       data-intent="secondary"
       data-radius="full"
-      data-size="xs"
+      data-size="sm"
       data-content="icon"
       popovertarget="tracker_actions"
       aria-label="Tracker options"
