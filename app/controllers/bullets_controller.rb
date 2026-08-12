@@ -3,6 +3,14 @@
 class BulletsController < ApplicationController
   before_action :set_bullet, only: %i[show edit update destroy]
 
+  def index
+    bullets = Current.user.bullets
+                     .active
+                     .includes(:bulletable, :rich_text_body, bucket: :bucketable)
+                     .order(created_at: :desc, id: :desc)
+    @bullets = set_page_and_extract_portion_from(bullets, per_page: [30, 50, 100])
+  end
+
   def create
     @bullet = Current.user.bullets.new(bullet_params)
 

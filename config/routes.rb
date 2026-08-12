@@ -68,7 +68,7 @@ Rails.application.routes.draw do
     resource :publish
   end
 
-  resources :bullets, except: %i[index new]
+  resources :bullets, except: :new
 
   # --- Tasks ---
   scope 'tasks', module: :tasks do

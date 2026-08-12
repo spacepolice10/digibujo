@@ -10,6 +10,30 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     @bullet = create_bullet!(@user, bulletable: Task.new, body: 'Original')
   end
 
+  test 'index lists active bullets newest first' do
+    older = create_bullet!(@user, bulletable: Note.new, body: 'Older bullet', created_at: 2.days.ago)
+    newer = create_bullet!(@user, bulletable: Note.new, body: 'Newer bullet', created_at: 1.day.ago)
+    archived = create_bullet!(@user, bulletable: Note.new, body: 'Archived bullet')
+    archived.archive!
+
+    get bullets_path
+
+    assert_response :success
+    assert_select 'h1', text: 'Bullets'
+    assert_select '#bullets-timeline'
+    assert_operator response.body.index(newer.name), :<, response.body.index(older.name)
+    assert_no_match archived.name, response.body
+  end
+
+  test 'index does not list another user bullets' do
+    private_bullet = create_bullet!(users(:two), bulletable: Note.new, body: 'Private bullet')
+
+    get bullets_path
+
+    assert_response :success
+    assert_no_match private_bullet.name, response.body
+  end
+
   test 'update turbo stream replaces bullet only' do
     assert_no_difference -> { Activity.count } do
       patch bullet_path(@bullet),
