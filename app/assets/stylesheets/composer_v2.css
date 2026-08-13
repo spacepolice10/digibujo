@@ -13,7 +13,7 @@ lexxy-editor {
     background: transparent;
     border: transparent;
     transition: min-block-size 0.2s ease-out;
-
+    list-style-position: inside;
 }
 
 .composer[data-composer-editor-multiline-value="true"] lexxy-editor {
@@ -21,17 +21,30 @@ lexxy-editor {
     flex-direction: column;
     flex-shrink: 0;
     width: 100%;
+    & .lexxy-editor__content {
+        animation: popout 0.08s ease-out;
+        border: var(--border-subtle);
+        border-radius: var(--radius-base);
+        padding: var(--space-v);
+        margin-bottom: var(--space-v-half);
+        overflow: hidden;
+    }
+
 }
 
+
 lexxy-toolbar {
-    background: transparent;
+    position: absolute;
+    top: -50px;
+    background: var(--color-2);
     border: 0.5px solid var(--color-4);
     border-radius: var(--radius-strong);
     order: 2;
-    animation: fall-in 0.2s ease-out;
+    animation: popout 0.08s ease-out;
+    align-self: center;
     & .lexxy-editor__toolbar-button {
         color: var(--color-invert-2);
-        background: transparent;
+        background: var(--color-2);
         padding: var(--space-v-half);
         width: var(--space-h-2);
         height: var(--space-h-2);
@@ -124,7 +137,6 @@ lexxy-toolbar {
         flex-shrink: 0;
         border: transparent;
         border-radius: var(--radius-full);
-        background: var(--color-2);
         box-shadow: var(--shadow-subtle);
         width: var(--space-h-2);
         height: var(--space-h-2);

@@ -23,8 +23,7 @@
       env(safe-area-inset-bottom, 0px)
     );
     --tabbar-size: calc(
-      var(--space-v)
-      + var(--space-h-4)
+      var(--space-v-6)
       + 2px
     );
     --tabbar-offset: var(--space-v);

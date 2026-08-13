@@ -7,7 +7,6 @@
     type="checkbox"
     id="<%= dom_id(bullet, :select_checkbox) %>"
     value="<%= bullet.id %>"
-    
     data-bulk-menu-target="checkbox"
     data-bulk-pinnable="<%= bullet.pinned? ? "pinned" : "unpinned" %>"
     data-bulk-publishable="<%= bullet.published? ? "published" : "unpublished" %>"
@@ -21,9 +20,11 @@
 
   <div class="bullet--rail">
     <% migrated = bullet.collected_migration? || bullet.rescheduled_migration? %>
-    <span
+    <label
       class="bullet--marker<%= " bullet--marker-migration" if migrated %>"
       style="--bullet-type-color: <%= bullet_colour %>"
+      for="<%= dom_id(bullet, :select_checkbox) %>"
+      aria-label="Select bullet"
     >
       <span aria-hidden="true" style="display: flex;">
         <% if migrated %>
@@ -33,18 +34,18 @@
         <% end %>
         <span class="bullet--marker-select-indicator" aria-hidden="true"></span>
       </span>
-    </span>
+    </label>
   </div>
-
-  <label
-    class="bullet--select-checkbox"
-    for="<%= dom_id(bullet, :select_checkbox) %>"
-    aria-label="Select bullet"
-  ></label>
 
   <div class="bullet--content">
     <div class="bullet--body">
       <%= yield %>
+
     </div>
+    <label
+    class="bullet--select-checkbox"
+    for="<%= dom_id(bullet, :select_checkbox) %>"
+    aria-label="Select bullet"
+    ></label>
   </div>
 </turbo-frame>

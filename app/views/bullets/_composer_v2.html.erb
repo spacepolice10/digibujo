@@ -19,6 +19,7 @@
 
         ].filter { |variant| allowed_bulletable_variants.include?(variant[:name]) }
         %>
+
         <span class="composer--editor-mode utilities--contents">
         <span class="select--wrapper composer--variant-picker-wrapper" data-controller="select">
         <select name="bullet[bulletable_type]" id="<%= composer_id %>_bulletable_type" class="select--trigger composer--variant-picker" data-select-target="trigger" data-composer-editor-target="typePicker" data-action="select#sync composer-editor#changeType">
@@ -47,6 +48,7 @@
                     <%= icon_tag(variant[:icon], style: "color: #{variant[:color]}") %>
                 </span>
             <% end %>
+
         </span>
         </span>
         <%= fr.rich_text_area :body,

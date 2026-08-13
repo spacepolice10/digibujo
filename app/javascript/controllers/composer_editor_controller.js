@@ -45,10 +45,12 @@ export default class extends Controller {
   toggleToolbar(event) {
     event.preventDefault()
     if (event.target.checked) this.#growMultiline()
+      this.editorTarget.focus()
   }
 
   restore() {
     this.editorTarget.value = ""
+    if (this.#coarsePointer) return
     this.editorTarget.focus()
   }
 

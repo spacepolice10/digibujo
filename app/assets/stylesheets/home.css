@@ -35,12 +35,9 @@
     gap: var(--space-h-half);
     flex: 1;
     min-height: calc(var(--space-v-3) + var(--space-v-half));
-    padding: var(--space-v-half) var(--space-h);
     color: var(--color-invert-4);
     font-size: var(--font-size-base-read);
     text-decoration: none;
-    border: var(--border-subtle);
-    border-radius: var(--radius-base);
   }
 
   .home--search-link:hover,
@@ -77,6 +74,7 @@
     padding-block: var(--space-v-half);
     color: var(--color-invert-3);
     text-decoration: none;
+    font-size: var(--font-size-base-type);
   }
 
   .home--preview-link:hover,

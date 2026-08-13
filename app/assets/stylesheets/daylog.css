@@ -1,11 +1,5 @@
 @layer components {
 
-  .daylog--container {
-    & .bullet {
-      padding-inline: var(--space-h);
-    }
-  }
-
   .daylog--triage-preview {
     pointer-events: auto;
   }

@@ -1,7 +1,4 @@
 @layer components {
-  .activity--page {
-    padding: var(--space-v-2) var(--space-h);
-  }
 
   .activity--surface {
     min-height: calc(100dvh - var(--space-v-4));
@@ -56,12 +53,5 @@
   .activity--subject-name {
     font-weight: var(--font-weight-medium);
   }
-
-  .activity--empty {
-    padding: var(--space-v-3) var(--space-h);
-    color: var(--color-invert-4);
-    text-align: center;
-  }
-
 
 }

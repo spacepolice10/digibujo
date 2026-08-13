@@ -8,7 +8,7 @@
     <% if mobile_variant? %>
       <section class="layout--surface layout--flex" data-home-section="pins" data-elevation="1" data-padding="true" data-direction="column">
         <%= link_to pinned_index_path, class: "home--section-link", data: { turbo_frame: "_top" } do %>
-          <%= icon_tag("pin") %><h2>Pins</h2><%= icon_tag("arrow-right") %>
+<h2>Pins</h2><%= icon_tag("arrow-right") %>
         <% end %>
         <% @pinned_entities.each do |entity| %>
           <%= render "home/preview_link", path: polymorphic_path(entity.pinnable), icon: entity.pinnable.icon,
@@ -19,14 +19,14 @@
     <% end %>
 
     <section class="layout--surface layout--flex" data-home-section="logs" data-elevation="1" data-padding="true" data-direction="column">
-      <div class="home--section-label"><%= icon_tag("calendar") %><h2>Logs</h2></div>
+      <div class="home--section-label"><h2>Logs</h2></div>
       <%= render "home/preview_link", path: current_monthlylog_navigation_path, icon: "calendar", name: "Monthly log" %>
       <%= render "home/preview_link", path: current_future_path, icon: "calendar-repeat", name: "Future log" %>
     </section>
 
     <section class="layout--surface layout--flex" data-home-section="collections" data-elevation="1" data-padding="true" data-direction="column">
       <%= link_to collections_path, class: "home--section-link", data: { turbo_frame: "_top" } do %>
-        <%= icon_tag("folder") %><h2>Collections</h2><%= icon_tag("arrow-right") %>
+         <h2>Collections</h2><%= icon_tag("arrow-right") %>
       <% end %>
       <% @collections.each do |collection| %>
         <%= render "home/preview_link", path: collection_path(collection), icon: collection.icon,
@@ -41,7 +41,7 @@
 
     <section class="layout--surface layout--flex" data-home-section="attachments" data-elevation="1" data-padding="true" data-direction="column">
       <%= link_to attachments_path, class: "home--section-link", data: { turbo_frame: "_top" } do %>
-        <%= icon_tag("paperclip") %><h2>Attachments</h2><%= icon_tag("arrow-right") %>
+        <h2>Attachments</h2><%= icon_tag("arrow-right") %>
       <% end %>
       <% if @attachments.any? %>
         <div class="home--attachment-previews">
@@ -54,7 +54,7 @@
 
     <section class="layout--surface layout--flex" data-home-section="projects" data-elevation="1" data-padding="true" data-direction="column">
       <%= link_to projects_path, class: "home--section-link", data: { turbo_frame: "_top" } do %>
-        <%= icon_tag("hash") %><h2>Projects</h2><%= icon_tag("arrow-right") %>
+        <h2>Projects</h2><%= icon_tag("arrow-right") %>
       <% end %>
       <% @projects.each do |project| %>
         <%= render "home/preview_link", path: project_path(project), icon: project.icon,
@@ -65,7 +65,7 @@
 
     <section class="layout--surface layout--flex" data-home-section="trackers" data-elevation="1" data-padding="true" data-direction="column">
       <%= link_to trackers_path, class: "home--section-link", data: { turbo_frame: "_top" } do %>
-        <%= icon_tag("target") %><h2>Trackers</h2><%= icon_tag("arrow-right") %>
+        <h2>Trackers</h2><%= icon_tag("arrow-right") %>
       <% end %>
       <% @trackers.each do |tracker| %>
         <%= render "home/preview_link", path: tracker_path(tracker), icon: tracker.icon,
@@ -80,7 +80,7 @@
 
     <section class="layout--surface layout--flex" data-home-section="recently-shared" data-elevation="1" data-padding="true" data-direction="column">
       <%= link_to published_index_path, class: "home--section-link", data: { turbo_frame: "_top" } do %>
-        <%= icon_tag("link") %><h2>Recently shared</h2><%= icon_tag("arrow-right") %>
+        <h2>Recently shared</h2><%= icon_tag("arrow-right") %>
       <% end %>
       <% @published_bullets.each do |bullet| %>
         <%= render "home/preview_link", path: bullet_path(bullet), icon: bullet.marker_icon.to_s.dasherize,
@@ -89,9 +89,11 @@
       <% if @published_bullets.empty? %><p>Share your bullets with others to collaborate on projects.</p><% end %>
     </section>
 
+    <div class="layout--flex" data-justify="center">
     <%= link_to archived_index_path, class: "button",
-          data: { intent: "secondary", radius: "full", size: "lg", turbo_frame: "_top" } do %>
-      <%= icon_tag("archive") %><p>Archive</p>
-    <% end %>
+            data: { intent: "secondary", radius: "full", size: "lg", turbo_frame: "_top" } do %>
+        <%= icon_tag("archive") %> <p>Archive</p>
+      <% end %>
+    </div>
   </div>
 </main>

@@ -20,10 +20,14 @@
         background-color: var(--color-1);
         border: var(--border-subtle);
         @container layout (width < 600px) {
+            background-color: transparent;
+            border: none;
+            padding: 0;
+            border-radius: 0;
             display: flex;
+            gap: var(--space-h-2);
             flex-direction: row;
             overflow-x: auto;
-            overflow-y: hidden;
             overscroll-behavior-inline: contain;
             scroll-snap-type: x mandatory;
             scrollbar-width: none;
@@ -47,6 +51,10 @@
             border-inline-end: var(--border-subtle);
         }
         & .monthlylog--section-header {
+            position: sticky;
+            inset-block-start: 0;
+            background: var(--color-1);
+            z-index: 1;
             padding: var(--space-v) var(--space-h);
             border-block-end: var(--border-subtle);
             & > p {
@@ -63,6 +71,10 @@
             max-width: 100%;
             scroll-snap-align: start;
             scroll-snap-stop: always;
+            box-shadow: var(--shadow-subtle);
+            border-radius: var(--radius-base);
+            overflow: auto;
+            background: var(--color-1);
             &.divided--vertical {
                 border-inline-end: 0;
             }
@@ -101,15 +113,10 @@
         display: flex;
         flex-direction: column;
         gap: var(--space-v);
-        margin-block-start: var(--space-v-3);
-        background: var(--color-2);
-        border-radius: var(--radius-base);
-        border: var(--border-subtle);
-        padding: var(--space-v) var(--space-h);
+        margin-block-start: var(--space-v);
         @container layout (width < 800px) {
             padding: var(--space-v) var(--space-h);
-            border-radius: var(--radius-base);
-            border: var(--border-subtle);
+
         }
         @container layout (width < 600px) {
             background: var(--color-1);
