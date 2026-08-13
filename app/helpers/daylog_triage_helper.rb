@@ -11,7 +11,9 @@ module DaylogTriageHelper
     append_triage_clause(clauses, triage.pending_bullets, 'waiting in',
                          source: { emoji: '⚡', label: 'Pending', variant: 'pill--warning' })
 
-    return 'Nothing needs your attention right now.' if clauses.empty?
+    if clauses.empty?
+      return 'Nothing needs your attention right now. Just start your braindump session or deep dive into older notes to review'
+    end
 
     safe_join([safe_join(clauses, '. '), '.'])
   end

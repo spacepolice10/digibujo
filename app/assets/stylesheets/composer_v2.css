@@ -32,9 +32,7 @@ lexxy-editor {
     width: 100%;
     & .lexxy-editor__content {
         animation: popout 0.2s ease-out;
-        background: var(--color-1);
         border-radius: var(--radius-strong);
-        padding: var(--space-v);
     }
 
 }
