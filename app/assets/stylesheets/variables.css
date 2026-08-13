@@ -98,10 +98,10 @@
         --border-strong: 1px solid color-mix(in oklch, var(--color-invert-2) 45%, transparent);
 
         /* radius */
-        --radius-minimal: 2px;
-        --radius-subtle: 4px;
-        --radius-base: 8px;
-        --radius-strong: 12px;
+        --radius-minimal: 0px;
+        --radius-subtle: 6px;
+        --radius-base: 12px;
+        --radius-strong: 18px;
         --radius-full: 9999px;
 
 

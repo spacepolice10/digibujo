@@ -3,9 +3,7 @@
     position: relative;
     isolation: isolate;
     color: var(--color-invert-2);
-    background: color-mix(in oklch,
-    var(--note-color) 35%,
-    var(--color-1)) !important;
+
   }
 
     & .bullet--document {

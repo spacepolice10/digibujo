@@ -10,50 +10,58 @@ lexxy-editor {
     flex-grow: 1;
     height: fit-content;
     font-size: var(--font-size-base-type);
-    background: transparent;
+    background: var(--color-1);
     border: transparent;
     transition: min-block-size 0.2s ease-out;
     list-style-position: inside;
+
+    & table {
+        width: 100%;
+    }
+
+    & tr {
+        background: var(--color-2);
+    }
 }
 
 .composer[data-composer-editor-multiline-value="true"] lexxy-editor {
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
+    border: var(--border-subtle);
     width: 100%;
     & .lexxy-editor__content {
-        animation: popout 0.08s ease-out;
-        border: var(--border-subtle);
-        border-radius: var(--radius-base);
+        animation: popout 0.2s ease-out;
+        background: var(--color-1);
+        border-radius: var(--radius-strong);
         padding: var(--space-v);
-        margin-bottom: var(--space-v-half);
-        overflow: hidden;
     }
 
 }
 
 
 lexxy-toolbar {
-    position: absolute;
-    top: -50px;
-    background: var(--color-2);
-    border: 0.5px solid var(--color-4);
-    border-radius: var(--radius-strong);
+    background: transparent;
     order: 2;
     animation: popout 0.08s ease-out;
-    align-self: center;
+    border: transparent;
     & .lexxy-editor__toolbar-button {
         color: var(--color-invert-2);
-        background: var(--color-2);
+        background: transparent;
         padding: var(--space-v-half);
         width: var(--space-h-2);
         height: var(--space-h-2);
         &:hover {
-            color: var(--color-invert-2);
+            background: transparent;
+            color: var(--color-accent-1);
+        }
+        &:focus {
+            background: transparent;
+            color: var(--color-accent-1);
         }
         &[aria-pressed="true"] {
-            color: var(--color-invert-2);
-            background: var(--color-2);
+            color: var(--color-accent-1);
+            background: transparent;
         }
     }
 }
@@ -63,13 +71,11 @@ lexxy-toolbar {
     .composer--dock {
         width: 100%;
         margin-inline: 0;
-        background: var(--color-1);
         border: 0;
         border-radius: 0;
+        background: var(--color-1);
         box-shadow: none;
-        border-block-start: var(--border-subtle);
-        margin-block-start: var(--space-v-half);
-
+        
         & .lexxy-editor__content {
             max-height: 50vh;
             overflow-y: auto;
@@ -79,14 +85,14 @@ lexxy-toolbar {
             width: 98%;
             margin-inline: auto;
             margin-block-end: calc(var(--tabbar-clearance) + var(--space-v));
-            border: var(--border-subtle);
             border-radius: var(--radius-full);
-            box-shadow: var(--shadow-subtle);
+            margin-block-start: var(--space-v-half);
             transition: margin-block-end 250ms ease-out;
            
 
             &:has(.composer[data-composer-editor-multiline-value="true"]) {
-                border-radius: var(--radius-base);
+                border-radius: var(--radius-strong);
+                background: transparent;
             }
         }
     }
@@ -155,21 +161,25 @@ lexxy-toolbar {
 
     .composer--variant-picker {
         padding: 0;
-        border: 0;
-        border-radius: var(--radius-full);
         background: transparent;
         color: inherit;
         font-size: var(--font-size-base-type);
-        box-shadow: var(--shadow-subtle);
+        border: transparent;
+        cursor: pointer;
 
-        > button {
+        &:hover {
+            background: var(--color-2);
+        }
+
+        & > button {
             display: grid;
             place-items: center;
             width: 100%;
             height: 100%;
             padding: 0;
-            border: 0;
+            border: transparent;
             background: transparent;
+
         }
 
         selectedcontent>.composer--variant-picker-option-content {
@@ -184,7 +194,7 @@ lexxy-toolbar {
     .composer--variant-picker-wrapper {
         width: var(--space-h-2);
         height: var(--space-h-2);
-        background: var(--color-2);
+        background: var(--color-1);
         border-radius: var(--radius-full);
         overflow: hidden;
     }
@@ -227,19 +237,24 @@ lexxy-toolbar {
 
     .composer:has([id*="_composer_toolbar_toggle"]:checked) {
         & lexxy-toolbar {
-            display: inherit;
+            opacity: 1;
+            height: var(--space-v-3);
+            transition: opacity 0.08s ease-out, height 0.08s ease-out;
         }
     }
 
     .composer:not(:has([id*="_composer_toolbar_toggle"]:checked)) {
         & lexxy-toolbar {
-            display: none !important;
+            opacity: 0;
+            height: 0;
+            transition: opacity 0.08s ease-out, height 0.08s ease-out;
         }
     }
 
     .composer:has([id*="_composer_toolbar_toggle"]:not(:checked)) {
         & lexxy-toolbar {
-            display: none !important;
+            opacity: 0;
+            height: 0;
         }
     }
 

@@ -72,13 +72,17 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-v);
-    padding-inline: var(--space-h-half);
+    padding-inline: var(--space-h);
     padding-top: var(--chat-header-clearance, 0px);
-    border: var(--border-subtle);
-    border-radius: var(--radius-base);
     background: var(--color-1);
+    border-block-end: var(--border-subtle);
     padding-bottom: var(--space-v);
     scroll-padding-bottom: var(--space-v-10);
+    
+    @container layout (width < 600px) {
+      border-radius: var(--radius-base);
+      border: var(--border-subtle);
+    }
     > * {
       margin-block: 0;
       /* Children never shrink: flex-shrink would crush rows (their min-height
@@ -106,24 +110,5 @@
     z-index: 2;
     flex: 0 0 auto;
     padding: var(--space-v-half) var(--space-h-half);
-  }
-
-  .chat--resource-header .layout--container-header,
-  .collection--chat-header .layout--container-header {
-    padding: var(--space-v-half) var(--space-h);
-    border: var(--border-subtle);
-    border-radius: var(--radius-strong);
-    box-shadow: var(--shadow-subtle);
-  }
-
-  .collection--frost-chip--description {
-    width: fit-content;
-    max-width: 100%;
-    margin: var(--space-v-half) auto 0;
-    box-shadow: var(--shadow-subtle);
-  }
-
-  .collection--window:has(.collection--frost-chip--description) {
-    --chat-header-clearance: var(--space-v-4);
   }
 }

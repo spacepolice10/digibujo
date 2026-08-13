@@ -13,9 +13,9 @@
         <%= hidden_field_tag "bullet[bulletable_type]", "Voice", id: "#{composer_id}_voice_bulletable_type", disabled: true %>
         <%
         variants = [
-            {name: "Note", icon: "text", color: "var(--model-color-3)", description: "An idea, something to remember, reflection note, files or markdown    ."},
+            {name: "Note", icon: "text", color: "var(--model-color-4)", description: "An idea, something to remember, reflection note, files or markdown    ."},
             {name: "Task", icon: "square", color: "var(--model-color-2)", description: "Something you need to do."},
-            {name: "Event", icon: "calendar", color: "var(--model-color-4)", description: "Something that will happen or already happened."},
+            {name: "Event", icon: "calendar", color: "var(--model-color-5)", description: "Something that will happen or already happened."},
 
         ].filter { |variant| allowed_bulletable_variants.include?(variant[:name]) }
         %>

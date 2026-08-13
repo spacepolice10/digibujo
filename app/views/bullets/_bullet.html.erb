@@ -22,7 +22,6 @@
     <% migrated = bullet.collected_migration? || bullet.rescheduled_migration? %>
     <label
       class="bullet--marker<%= " bullet--marker-migration" if migrated %>"
-      style="--bullet-type-color: <%= bullet_colour %>"
       for="<%= dom_id(bullet, :select_checkbox) %>"
       aria-label="Select bullet"
     >
@@ -30,7 +29,7 @@
         <% if migrated %>
           <%= icon_tag(bullet.collected_migration? ? "arrow-left" : "arrow-right", class: "bullet--marker-icon") %>
         <% else %>
-          <%= icon_tag(bullet.marker_icon.to_s.dasherize, style: "color: #{bullet_colour};", class: "bullet--marker-icon") %>
+          <%= icon_tag(bullet.marker_icon.to_s.dasherize, class: "bullet--marker-icon") %>
         <% end %>
         <span class="bullet--marker-select-indicator" aria-hidden="true"></span>
       </span>

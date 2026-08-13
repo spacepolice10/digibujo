@@ -64,13 +64,14 @@
 
   [data-controller~="bulk-menu"]:has(.bulk-menu:not([hidden]))
     [data-bulk-menu-target~="list"] {
-    scroll-padding-block-end: var(--bulk-menu-clearance, var(--space-v-10));
+    scroll-padding-block-end: var(--bulk-menu-clearance, var(--space-v));
   }
 
   [data-controller~="bulk-menu"]:has(.bulk-menu:not([hidden]))
     [data-bulk-menu-target~="list"]::after {
+    transition: height 0.12s ease;
     display: block;
-    height: var(--bulk-menu-clearance, var(--space-v-10));
+    height: var(--bulk-menu-clearance, var(--space-v));
     content: "";
   }
 
