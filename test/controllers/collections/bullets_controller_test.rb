@@ -8,12 +8,10 @@ module Collections
       @user = users(:one)
       sign_in_as @user
       @collection = create_collection!(@user, name: 'Inbox')
-      @bucket = @collection.bucket
     end
 
     def create_collected(body, created_at:)
-      create_bullet!(@user, bucket: @bucket, pops_on: nil, bulletable: Note.new, body: body,
-                            created_at: created_at)
+      create_bullet!(@user, collection: @collection, body: body, created_at: created_at)
     end
 
     test 'before returns an older page of bare rows' do
@@ -28,15 +26,14 @@ module Collections
       assert_no_match 'collection--date-pill', response.body
     end
 
-    test 'before scopes to the collection bucket' do
-      create_bullet!(@user,
-                     bulletable: Note.new, body: 'Other bucket', pops_on: nil, created_at: 2.days.ago)
+    test 'before scopes to the collection' do
+      create_bullet!(@user, body: 'Other collection', created_at: 2.days.ago)
       cursor = create_collected('Cursor', created_at: 1.day.ago)
 
       get collection_bullets_path(@collection, params: { before: cursor.id })
 
       assert_response :success
-      assert_no_match 'Other bucket', response.body
+      assert_no_match 'Other collection', response.body
     end
 
     test 'before returns no content when nothing older exists' do

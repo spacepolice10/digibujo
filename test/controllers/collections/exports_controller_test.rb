@@ -9,14 +9,12 @@ module Collections
       sign_in_as @user
       @collection = create_collection!(@user, name: 'Reading List')
       @first = create_bullet!(@user,
-        bulletable: Task.new, body: 'First bullet',
-        bucket: @collection.bucket,
-        pops_on: nil
+        body: 'First bullet',
+        collection: @collection
       )
       @second = create_bullet!(@user,
-        bulletable: Note.new, body: 'Second bullet',
-        bucket: @collection.bucket,
-        pops_on: nil
+        body: 'Second bullet',
+        collection: @collection
       )
     end
 
@@ -40,8 +38,8 @@ module Collections
       assert_operator response.body.index('First bullet'), :<, response.body.index('Second bullet')
     end
 
-    test 'show marks completed tasks' do
-      @first.bulletable.complete!
+    test 'show marks completed bullets' do
+      @first.complete!
 
       get collection_export_path(@collection)
 
@@ -69,7 +67,7 @@ module Collections
     end
 
     test 'show returns not found for archived collection' do
-      @collection.bucket.archive!
+      @collection.archive!
 
       get collection_export_path(@collection)
 

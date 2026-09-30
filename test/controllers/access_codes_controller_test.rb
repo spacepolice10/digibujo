@@ -48,16 +48,14 @@ class AccessCodesControllerTest < ActionDispatch::IntegrationTest
     sign_out
     access_code = @user.access_codes.create!
     code = access_code.code
-    daylog = ensure_daylog!(@user)
 
     assert_difference -> { @user.bullets.count }, 1 do
       post bullets_path,
            params: {
              bullet: {
-               bulletable_type: 'Note',
+               bulletable_type: 'Text',
                body: '<p>Access code note</p>',
-               pops_on: Date.current.iso8601,
-               bucket_id: daylog.id
+               pops_on: Date.current.iso8601
              }
            },
            headers: { 'Authorization' => "Bearer #{code}" },

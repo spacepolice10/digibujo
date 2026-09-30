@@ -72,7 +72,7 @@ module ActivitiesHelper
     when Date
       formatted = target.strftime('%a, %b %-d')
       if linked
-        link_to(formatted, timeline_path, **link_attrs)
+        link_to(formatted, target > Date.current ? upcoming_path : timeline_path, **link_attrs)
       else
         activity_subject_text(formatted, colour_variable)
       end

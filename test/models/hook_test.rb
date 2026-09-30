@@ -5,7 +5,6 @@ require 'test_helper'
 class HookTest < ActiveSupport::TestCase
   setup do
     @user = users(:one)
-    Onboarding.new(user: @user).complete
   end
 
   test 'generate code on create' do
@@ -25,17 +24,26 @@ class HookTest < ActiveSupport::TestCase
     assert_nil Hook.authenticate(raw)
   end
 
-  test 'create_pending_bullet! writes into pending bucket' do
+  test 'create_bullet! writes onto the timeline' do
     hook = @user.hooks.create!(name: 'Zapier')
 
-    bullet = hook.create_pending_bullet!(
+    bullet = hook.create_bullet!(
       author_name: 'Zapier',
-      bulletable_type: 'Note',
+      bulletable_type: 'Text',
       body: 'From outside'
     )
 
-    assert_equal @user.pending.bucket, bullet.bucket
+    assert_nil bullet.collection
+    assert_equal Date.current, bullet.pops_on
     assert_equal 'Zapier', bullet.author_name
     assert_equal 'From outside', bullet.body_as_text
+  end
+
+  test 'create_bullet! rejects unsupported types' do
+    hook = @user.hooks.create!(name: 'Zapier')
+
+    assert_raises(ArgumentError) do
+      hook.create_bullet!(author_name: 'Zapier', bulletable_type: 'Memo', body: 'Nope')
+    end
   end
 end

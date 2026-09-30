@@ -9,8 +9,8 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'index shows activities newest first' do
-    a = create_bullet!(@user, bulletable: Task.new, body: 'One')
-    b = create_bullet!(@user, bulletable: Note.new, body: 'Two')
+    a = create_bullet!(@user, body: 'One')
+    b = create_bullet!(@user, body: 'Two')
     a.record_activity!('updated')
     b.archive!
 
@@ -32,7 +32,7 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'mobile show omits the tabbar' do
-    bullet = create_bullet!(@user, bulletable: Task.new, body: 'Buy milk')
+    bullet = create_bullet!(@user, body: 'Buy milk')
     activity = bullet.record_activity!('updated')
 
     get activity_path(activity), headers: { 'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0)' }
@@ -50,9 +50,9 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     assert_page_text 'No activity yet.'
   end
 
-  test 'show renders rescheduled activity with daylog links' do
-    bullet = create_bullet!(@user, bulletable: Task.new, body: 'Buy milk', pops_on: Date.current)
-    bullet.postpone!(bucket: ensure_daylog!(@user), pops_on: Date.current + 2.days)
+  test 'show renders rescheduled activity with timeline links' do
+    bullet = create_bullet!(@user, body: 'Buy milk', pops_on: Date.current)
+    bullet.postpone!(pops_on: Date.current + 2.days)
     activity = Activity.order(:created_at).last
 
     get activity_path(activity)
@@ -60,15 +60,15 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_page_text 'Buy milk'
     assert_page_text 'Moved'
-    assert_link daylog_path(date: Date.current.iso8601)
-    assert_link daylog_path(date: (Date.current + 2.days).iso8601)
+    assert_link timeline_path
+    assert_link upcoming_path
     assert_select '#activity-feed', count: 0
   end
 
-  test 'show renders collected activity with bucket link' do
+  test 'show renders collected activity with collection link' do
     collection = create_collection!(@user, name: 'Reading list')
-    bullet = create_bullet!(@user, bulletable: Task.new, body: 'Read chapter')
-    bullet.collect!(bucket_id: collection.bucket.id)
+    bullet = create_bullet!(@user, body: 'Read chapter')
+    bullet.collect!(collection_id: collection.id)
     activity = Activity.order(:created_at).last
 
     get activity_path(activity)
@@ -76,12 +76,12 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_page_text 'Read chapter'
     assert_page_text 'reading list'
-    assert_link bucket_path(collection.bucket)
+    assert_link collection_path(collection)
   end
 
   test 'show returns not found for another users activity' do
     other = users(:two)
-    bullet = create_bullet!(other, bulletable: Task.new, body: 'Private')
+    bullet = create_bullet!(other, body: 'Private')
     activity = bullet.record_activity!('updated')
 
     get activity_path(activity)
@@ -89,11 +89,11 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
-  test 'show renders bucket subject activity' do
+  test 'show renders collection subject activity' do
     collection = create_collection!(@user, name: 'Inbox')
-    collection.bucket.record_activity!('updated')
+    collection.record_activity!('updated')
 
-    get activity_path(collection.bucket.activities.last)
+    get activity_path(collection.activities.last)
 
     assert_response :success
     assert_page_text 'Updated'
@@ -102,7 +102,7 @@ class ActivitiesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'index feed links subject to model' do
-    bullet = create_bullet!(@user, bulletable: Task.new, body: 'Linked')
+    bullet = create_bullet!(@user, body: 'Linked')
     bullet.record_activity!('updated')
 
     get activities_path

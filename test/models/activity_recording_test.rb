@@ -7,36 +7,34 @@ class ActivityRecordingTest < ActiveSupport::TestCase
     @user = users(:one)
   end
 
-  test 'complete records completed activity and leaves inbox' do
-    bullet = create_bullet!(@user, bulletable: Task.new, body: 'Task', pops_on: Date.current)
-    task = bullet.bulletable
+  test 'complete records completed activity' do
+    bullet = create_bullet!(@user, body: 'Task', pops_on: Date.current)
 
     assert_difference -> { Activity.count }, 1 do
-      task.complete!
+      bullet.complete!
     end
 
     activity = Activity.order(:created_at).last
     assert_equal 'completed', activity.action
     assert_equal bullet, activity.subject
     assert_equal @user.id, activity.user_id
-    assert bullet.reload.migrated?
-    assert_equal({}, bullet.last_migration)
+    assert bullet.reload.done?
   end
 
   test 'uncomplete records uncompleted' do
-    bullet = create_bullet!(@user, bulletable: Task.new, body: 'Task')
-    task = bullet.bulletable
-    task.complete!
+    bullet = create_bullet!(@user, body: 'Task')
+    bullet.complete!
 
     assert_difference -> { Activity.count }, 1 do
-      task.uncomplete!
+      bullet.uncomplete!
     end
 
     assert_equal 'uncompleted', Activity.order(:created_at).last.action
+    assert_not bullet.reload.done?
   end
 
   test 'archive records archived activity on Archive subject' do
-    bullet = create_bullet!(@user, bulletable: Note.new, body: 'Note', pops_on: Date.current)
+    bullet = create_bullet!(@user, body: 'Note', pops_on: Date.current)
 
     assert_difference -> { Activity.count }, 1 do
       bullet.archive!
@@ -46,12 +44,10 @@ class ActivityRecordingTest < ActiveSupport::TestCase
     assert_equal 'archived', activity.action
     assert_equal 'Archive', activity.subject_type
     assert_equal bullet.archive, activity.subject
-    assert_equal 'Note', activity.metadata['name']
-    assert_not bullet.reload.migrated?
   end
 
   test 'unarchive records unarchived activity' do
-    bullet = create_bullet!(@user, bulletable: Note.new, body: 'Note')
+    bullet = create_bullet!(@user, body: 'Note')
     bullet.archive!
 
     assert_difference -> { Activity.count }, 1 do
@@ -63,41 +59,30 @@ class ActivityRecordingTest < ActiveSupport::TestCase
     assert_equal 'Archive', activity.subject_type
   end
 
-  test 'collect records collected with migration metadata' do
+  test 'collect records collected with the destination collection' do
     collection = create_collection!(@user, name: 'Inbox')
-    bullet = create_bullet!(@user, bulletable: Task.new, body: 'Move')
+    bullet = create_bullet!(@user, body: 'Move')
 
     assert_difference -> { Activity.count }, 1 do
-      bullet.collect!(bucket_id: collection.bucket.id)
+      bullet.collect!(collection_id: collection.id)
     end
 
     activity = Activity.order(:created_at).last
     assert_equal 'collected', activity.action
-    assert_equal 'collected', activity.metadata['action']
-    assert_equal collection.bucket.id, activity.metadata['bucket_id']
+    assert_equal collection.id, activity.metadata['collection_id']
+    assert_equal collection, activity.destination_collection
   end
 
-  test 'postpone records rescheduled when moving to another day with migration metadata' do
-    bullet = create_bullet!(@user, bulletable: Event.new, body: 'Event', pops_on: Date.current)
-    daylog = ensure_daylog!(@user)
+  test 'postpone records rescheduled with the old and new day' do
+    bullet = create_bullet!(@user, body: 'Later', pops_on: Date.current)
 
     assert_difference -> { Activity.count }, 1 do
-      bullet.postpone!(bucket: daylog, pops_on: Date.current + 1)
+      bullet.postpone!(pops_on: Date.current + 3)
     end
 
     activity = Activity.order(:created_at).last
     assert_equal 'rescheduled', activity.action
-    assert_equal 'rescheduled', activity.metadata['action']
-  end
-
-  test 'postpone records rescheduled' do
-    bullet = create_bullet!(@user, bulletable: Task.new, body: 'Later')
-    daylog = ensure_daylog!(@user)
-
-    assert_difference -> { Activity.count }, 1 do
-      bullet.postpone!(bucket: daylog, pops_on: Date.current + 3)
-    end
-
-    assert_equal 'rescheduled', Activity.order(:created_at).last.action
+    assert_equal Date.current, activity.from_date
+    assert_equal Date.current + 3, activity.to_date
   end
 end
