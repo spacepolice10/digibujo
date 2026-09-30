@@ -26,7 +26,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
   test 'new with bullet_ids renders full page form and preview' do
     card = create_bullet!(@user, bulletable: Task.new, body: 'Preview me')
 
-    get new_collection_path, params: { bullet_ids: card.id.to_s, return_to: review_path }
+    get new_collection_path, params: { bullet_ids: card.id.to_s, return_to: home_path }
 
     assert_response :success
     assert_select '.layout--container[data-size="md"]'
@@ -62,10 +62,10 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
          params: {
            collection: { name: 'Return path', colour: 'teal', icon: 'folder' },
            bullet_ids: card.id.to_s,
-           return_to: review_path
+           return_to: home_path
          }
 
-    assert_redirected_to review_path
+    assert_redirected_to home_path
     assert_equal Collection.last.bucket.id, card.reload.bucket_id
   end
 
@@ -78,7 +78,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
            params: {
              collection: { name: '', colour: 'teal', icon: 'folder' },
              bullet_ids: card.id.to_s,
-             return_to: review_path
+             return_to: home_path
            }
     end
 

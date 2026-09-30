@@ -44,12 +44,6 @@ class Bullet < ApplicationRecord
     unscoped.from(ranked, table_name).where('bullet_rank <= ?', number)
   }
 
-  scope :in_review, lambda { |range|
-    active
-      .joins(:bucket)
-      .where(buckets: { bucketable_type: 'Daylog' }, pops_on: range, migrated_at: nil)
-  }
-
   def to_partial_path
     bulletable.to_partial_path
   end

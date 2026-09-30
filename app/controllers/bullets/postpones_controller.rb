@@ -78,7 +78,7 @@ module Bullets
     end
 
     def postpone_drop_request?
-      request.headers['X-Requested-With'].in?(%w[pops-drop review-pops-drop])
+      request.headers['X-Requested-With'].in?(%w[pops-drop])
     end
   end
 end
