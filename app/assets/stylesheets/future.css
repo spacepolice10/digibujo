@@ -1,18 +1,4 @@
 @layer components {
-  /* New future form — period picker kept for create. */
-  .future--header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-h-half);
-    padding-block: var(--space-v-2);
-  }
-
-  .future--header-icon {
-    width: 5ch !important;
-    height: 5ch !important;
-  }
-
   .future--section-list-item {
     display: flex;
     gap: var(--space-h-half);

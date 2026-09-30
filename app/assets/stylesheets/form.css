@@ -1,30 +1,60 @@
 @layer components {
-  .form {
-    max-width: 800px;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-v-2);
-  }
 
   /* ── Label ────────────────────────────────────────── */
 
-  .form label {
-    display: block;
-    font-size: var(--font-size-base-read);
-    font-weight: var(--font-weight-strong);
-    color: var(--color-invert-4);
+  form {
+    & legend {
+      font-size: var(--font-size-base-read);
+      font-weight: var(--font-weight-strong);
+      color: var(--color-invert-4);
+      margin-bottom: var(--space-v-half);
+      height: auto;
+      width: 100%;
+    }
+
+    & small {
+      display: block;
+      font-size: var(--font-size-xs);
+      color: var(--color-invert-4);
+      margin-bottom: var(--space-v-half);
+    }
   }
 
-  .form small {
-    display: flex;
+  form>label {
+    display: block;
+    font-size: var(--font-size-base-read);
+    color: var(--color-invert-4);
+    margin-top: var(--space-v);
+    padding: var(--space-v-half) var(--space-h-half);
+
+  }
+
+  label {
+    position: relative;
+  }
+
+  fieldset {
+    margin-top: var(--space-v);
+    padding: var(--space-v-half) var(--space-h-half);
+  }
+
+  textarea {
+    field-sizing: content;
+  }
+
+  form > input[type="submit"] {
+    width: fit-content;
+    align-self: flex-end;
+    margin: auto;
+    margin-block: var(--space-v);
   }
 
   /* ── Shared input base ────────────────────────────── */
 
-  .form :is(input, textarea, select) {
+  form :is(input, textarea, select) {
     width: 100%;
     padding: var(--space-v) var(--space-h);
-    border-radius: var(--radius-base);
+    border-radius: var(--radius-subtle);
     font-family: inherit;
     font-size: var(--font-size-base-type);
     background: transparent;
@@ -48,61 +78,69 @@
 
   /* ── Textarea ─────────────────────────────────────── */
 
-  .form textarea {
+  textarea {
     resize: none;
   }
 
   /* ── Select ───────────────────────────────────────── */
 
-  .form select {
+  select {
     appearance: base-select;
     cursor: pointer;
   }
 
-  /* ── Input — active/filled variant ───────────────── */
-
-  .form-input--active,
-  .form-textarea--active,
-  .form-select--active,
-  .form-item--active {
-    color: var(--model-color-2);
-    border-color: var(--model-color-2);
-    background: var(--model-color-2-bg);
-
-    &:hover {
-      background: var(--model-color-2-bg);
-    }
-  }
-
   /* ── Input — danger variant ───────────────────────── */
-
-  .form-input--danger,
-  .form-textarea--danger,
-  .form-select--danger,
-  .form-item--danger {
+/* 
+  input:invalid,
+  textarea:invalid,
+  select:invalid,
+  select:invalid:focus-visible {
     color: var(--color-invert-negative);
     border-color: var(--color-invert-negative);
-  }
+  } */
 
   /* ── Checkbox & Radio ─────────────────────────────── */
 
-  .form-checkbox {
-    position: relative;
-    overflow: hidden;
+  [role="radiogroup"] {
+    display: flex;
+    gap: var(--space-v-half);
+    flex-wrap: wrap;
+  }
+
+  label:has(input[type="checkbox"]),
+  label:has(input[type="radio"]) {
     display: inline-flex;
     align-items: center;
     gap: var(--space-h-half);
     cursor: pointer;
+    width: clamp(var(--space-h-2), 2.5ch, var(--space-h-3));
+    height: clamp(var(--space-h-2), 2.5ch, var(--space-h-3));
+    overflow: hidden;
+  }
+
+  label:has(input[type="checkbox"]),
+  label:has(input[type="radio"]) {
+    input[type="checkbox"] {
+      position: absolute;
+      right: var(--space-h-half);
+      top: var(--space-v-half);
+      opacity: 0;
+    }
+
     color: var(--color-invert-4);
     border: 1px solid transparent;
-    border-radius: var(--radius-base);
-    transition: border-color 0.18s ease, background 0.06s ease;
+    border-radius: var(--radius-full);
+    background: var(--color-2);
+    transition: border-color 0.18s ease,
+    background 0.06s ease;
+
     &:hover {
       background: var(--color-2);
     }
 
     &:has(input:checked) {
       border: 1px solid currentColor;
+
       &::after {
         content: "";
         position: absolute;
@@ -119,32 +157,24 @@
       }
     }
 
-    input[type="checkbox"],
-    input[type="radio"] {
+    label>input[type="checkbox"],
+    label>input[type="radio"] {
       position: absolute;
       right: var(--space-h-half);
       top: var(--space-v-half);
       opacity: 0;
     }
 
-    input[type="radio"] {
-      border-radius: 50%;
+    label>input[type="radio"] {
+      border-radius: var(--radius-full);
 
       &:checked::after {
         mask-image: none;
         -webkit-mask-image: none;
-        border-radius: 50%;
+        border-radius: var(--radius-full);
         background: var(--color-invert-2);
       }
     }
-  }
-
-  /* ── Field group ──────────────────────────────────── */
-
-  .form-section {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-v);
   }
 
   /* ── Form errors block ────────────────────────────── */
@@ -155,6 +185,7 @@
     background: var(--color-negative);
     border: 1px solid var(--color-invert-negative);
     color: var(--color-invert-negative);
+
     p {
       margin: 0 0 var(--space-v-half);
     }
@@ -167,108 +198,5 @@
       flex-direction: column;
       gap: var(--space-v-half);
     }
-  }
-
-  /* ── Shared picker ────────────────────────────────── */
-
-  .form--picker {
-    display: flex;
-    gap: var(--space-v-half);
-    flex-wrap: wrap;
-  }
-
-  .form--picker-option {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    cursor: pointer;
-    border: 1px solid transparent;
-    border-radius: var(--radius-base);
-    overflow: hidden;
-  }
-
-  .form--picker-option input {
-    position: absolute;
-    inset: 0;
-    margin: 0;
-    opacity: 0;
-    cursor: pointer;
-  }
-
-  .form--picker-option:has(input:checked) {
-    background: var(--color-1);
-    border-color: currentColor;
-
-    &::after {
-      content: "";
-      position: absolute;
-      z-index: 1;
-      width: 50%;
-      height: 50%;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%) skew(-12deg);
-      pointer-events: none;
-      background: currentColor;
-      opacity: var(--opacity-half);
-      animation: popout 0.2s ease-in-out;
-    }
-  }
-
-  /* ── Colour picker ────────────────────────────────── */
-
-  .form--colour-swatch {
-    display: block;
-    flex: 0 0 calc(var(--space-h-2) + var(--space-h-half));
-    width: calc(var(--space-h-2) + var(--space-h-half));
-    height: calc(var(--space-h-2) + var(--space-h-half));
-  }
-
-  /* ── Icon icon picker ────────────────────────────── */
-
-  .form--icon {
-    width: var(--space-h-2);
-    height: var(--space-h-2);
-    min-width: var(--space-h-2);
-    min-height: var(--space-h-2);
-    margin: var(--space-v-half) var(--space-h-half);
-    color: var(--color-invert-4);
-  }
-
-  .form--icon-picker-more-toggle {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .form--icon-picker-more-toggle:not(:checked) + .form--icon-picker .form--icon-picker-more-option {
-    display: none;
-  }
-
-  .form--picker-option:has(input:checked) .form--icon {
-    color: var(--color-invert-2);
-  }
-
-  .form .form--submit {
-    width: fit-content;
-    align-self: flex-end;
-  }
-
-  /* ── Repeat schedule date picker ──────────────────── */
-
-  .form--repeat-date-picker {
-    border: 1px solid var(--color-invert-4);
-    border-radius: var(--radius-base);
-    padding: var(--space-v-half) var(--space-h-half);
-    gap: var(--space-h);
-    width: fit-content;
-  }
-
-  /* ── Submit button ────────────────────────────────── */
-
-  .form--submit {
-    width: fit-content;
-    align-self: center;
-    margin-inline: auto;
   }
 }

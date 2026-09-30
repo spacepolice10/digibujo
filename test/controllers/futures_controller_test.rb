@@ -53,7 +53,7 @@ class FuturesControllerTest < ActionDispatch::IntegrationTest
     get current_future_path
 
     assert_response :success
-    assert_select "div##{dom_id(future.bucket, nil)} > .chat--load-more-trigger[data-chat-scroll-target=trigger]", count: 1
+    assert_select "main##{dom_id(future.bucket, nil)} > .chat--load-more-trigger[data-chat-scroll-target=trigger]", count: 1
   end
 
   test 'show returns not found for another users future log' do

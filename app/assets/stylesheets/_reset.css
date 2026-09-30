@@ -8,6 +8,8 @@
  * In @layer reset so components always win.
  */
 
+@layer reset, variables, base, layout, components, utilities;
+
 @layer reset {
 
   /* Box model */

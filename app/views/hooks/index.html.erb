@@ -1,9 +1,9 @@
 <% content_for(:title, "Hooks") %>
 
-<main class="layout--container" data-size="md" data-padding="true">
-  <div class="layout--surface layout--flex" data-elevation="1" data-padding="true" data-direction="column">
-    <header class="layout--flex" data-align="center" data-justify="between">
-      <div class="layout--flex" data-align="center">
+<main data-size="md">
+  <article data-elevation="1">
+    <header>
+      <nav>
       <%= back_link_to user_path,
             class: "button",
             data: { intent: "secondary", radius: "full", size: "sm", content: "icon", turbo_frame: "_top" },
@@ -11,7 +11,7 @@
         <%= icon_tag("arrow-left") %>
       <% end %>
       <h2>Hooks</h2>
-      </div>
+      </nav>
       <%= link_to new_hook_path,
             class: "button",
             data: { intent: "primary", radius: "full", size: "sm", content: "icon" },
@@ -20,27 +20,29 @@
       <% end %>
     </header>
 
-    <p class="typography--paragraph-sm typography--balanced">
+    <main>
+    <p>
       Give an external app a URL. When it posts, Digibujo drops a Note or Task into Pending.
     </p>
 
     <% if @created_hook_code.present? %>
-      <section class="hook--created layout--surface layout--flex" data-padding="true" data-direction="column" role="status">
-        <div class="layout--flex" data-align="center">
+      <section class="hook--created" role="status">
+        <header>
           <span aria-hidden="true">⚡</span>
           <strong>Hook is ready</strong>
-        </div>
-        <p class="typography--paragraph-sm">Copy this URL now. You won’t see it again.</p>
+        </header>
+        <p>Copy this URL now. You won’t see it again.</p>
         <code class="hook--created-link"><%= hook_intake_url(@created_hook_code) %></code>
       </section>
     <% end %>
 
     <% if @hooks.any? %>
-      <div id="hooks" class="layout--flex" data-direction="column">
+      <section id="hooks" class="hook--list">
         <%= render partial: "hooks/hook", collection: @hooks, as: :hook %>
-      </div>
+      </section>
     <% else %>
-      <p id="hooks_empty" class="typography--paragraph-sm">No hooks yet.</p>
+      <p id="hooks_empty">No hooks yet.</p>
     <% end %>
-  </div>
+    </main>
+  </article>
 </main>

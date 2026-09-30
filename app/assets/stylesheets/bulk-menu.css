@@ -27,10 +27,6 @@
       translate: 0 var(--space-v);
     }
 
-    form {
-      display: inline-flex;
-    }
-
     @container layout (width >= 600px) {
       width: fit-content;
     }

@@ -1,4 +1,11 @@
 @layer components {
+  .session--status,
+  .session--footer-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-v);
+  }
   html.session-dots-active {
     background-image: none !important;
   }

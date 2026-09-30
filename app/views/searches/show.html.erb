@@ -5,8 +5,8 @@
 <% else %>
   <% content_for(:title, "Search") %>
 
-  <main class="search--page layout--container" data-size="md" data-padding="true">
-    <header class="layout--flex" data-align="center">
+  <main class="search--page" data-size="md">
+    <header><nav>
       <%= back_link_to home_path,
             class: "button",
             data: { intent: "secondary", radius: "full", size: "sm", content: "icon", turbo_frame: "_top" },
@@ -15,7 +15,7 @@
 
       <% end %>
       <h1>Search</h1>
-    </header>
+    </nav></header>
 
     <div
       class="search search--open search--standalone"

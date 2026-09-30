@@ -1,7 +1,7 @@
 <% content_for(:title) { "#{@collection.name} export (#{@bullets.size} #{"bullet".pluralize(@bullets.size)})" } %>
 
 <header class="export--header">
-  <div class="button--secondary button--sm">
+  <div class="button" data-intent="secondary" data-radius="base" data-size="sm">
     <%= icon_tag("folder") %>
     <%= @collection.name %> export
   </div>

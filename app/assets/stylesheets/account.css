@@ -1,0 +1,15 @@
+@layer components {
+  .account--identity {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-v);
+  }
+
+  .account--actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--space-v);
+  }
+}

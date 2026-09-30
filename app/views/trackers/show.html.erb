@@ -1,63 +1,49 @@
 <% content_for(:title) { @tracker.name } %>
 
-<main class="layout--container" data-size="md" data-padding="true">
-  <div class="layout--surface layout--flex" data-elevation="1" data-padding="true" data-direction="column">
-  <header class="layout--flex" data-justify="between" data-align="center">
-      <%= back_link_to trackers_path, class: "button", data: { intent: "secondary", radius: "full", size: "sm", content: "icon" }, aria: { label: "Back to Trackers" } do %>
-        <%= icon_tag("arrow-left") %>
+<main data-size="md">
+  <article data-elevation="1">
+    <header>
+      <nav>
+        <%= back_link_to trackers_path, class: "button", data: { intent: "secondary", radius: "full", size: "sm", content: "icon" }, aria: { label: "Back to Trackers" } do %>
+          <%= icon_tag("arrow-left") %>
+        <% end %>
+
+        <h1><%= @tracker.name %></h1>
+      </nav>
+
+      <%= link_to edit_tracker_path(@tracker), class: "button", data: { intent: "secondary", radius: "full", size: "xs" } do %>
+        <%= icon_tag("pencil") %> Edit
       <% end %>
-      <h2><%= @tracker.name %></h2>
-
-    <div class="dropdown--dock">
-
-    <button
-      type="button"
-      class="button"
-      data-intent="secondary"
-      data-radius="full"
-      data-size="sm"
-      data-content="icon"
-      popovertarget="tracker_actions"
-      aria-label="Tracker options"
-      aria-haspopup="menu"
-    >
-      <%= icon_tag("dots") %>
-    </button>
-
-    <div
-      id="tracker_actions"
-      class="dropdown dropdown--element dropdown--element-bottom animations--side-in"
-      style="position-anchor: tracker_actions"
-      popover
-      data-controller="grid-navigation"
-      data-grid-navigation-columns-value="1"
-      data-action="keydown->grid-navigation#navigate"
-    >
-      <div class="dropdown--element-body">
-        <nav class="dropdown--menu" aria-label="Tracker options">
+    </header>
 
 
-          <%= link_to edit_tracker_path(@tracker),
-                class: "dropdown-item picker--item",
-                data: { turbo_frame: "_top", grid_navigation_target: "item", action: "focus->grid-navigation#syncPosition" } do %>
-            <%= icon_tag("pencil") %>
-            Edit
-          <% end %>
-        </nav>
-      </div>
-    </div>
-  </div>
-</header>
-
-    <%= render "statistics", tracker: @tracker %>
-
-    <section class="layout--surface" data-elevation="2" data-padding="true" aria-label="Last 30 days">
-
+    <main>
+      <section>
+        <article data-elevation="1">
+          <header>
+            <h2>Current streak</h2>
+          </header>
+          <main><%= @tracker.statistics[:streak] %></main>
+        </article>
+        <article data-elevation="1">
+          <header>
+            <h2>Best streak</h2>
+          </header>
+          <main><%= @tracker.statistics[:best_streak] %></main>
+        </article>
+        <article data-elevation="1">
+          <header>
+            <h2>Total days</h2>
+          </header>
+          <main><%= @tracker.statistics[:total] %></main>
+        </article>
+      </section>
+      <br>
       <div class="tracker--heatmap">
         <% @heatmap_days.each do |day| %>
           <%= render "cell", tracker: @tracker, date: day %>
         <% end %>
       </div>
-    </section>
-  </div>
+    </main>
+  </article>
 </main>

@@ -1,14 +1,16 @@
 <% content_for(:title) { "New project" } %>
 
-<main class="layout--container" data-size="md" data-padding="true">
-  <div class="layout--surface layout--flex" data-elevation="1" data-padding="true" data-direction="column">
-    <header class="layout--container-header">
-      <%= back_link_to projects_path, class: "button", data: { content: "text", turbo_frame: "_top" } do %>
-        <%= icon_tag("arrow-left") %><span>Projects</span>
+<main data-size="md">
+  <article data-elevation="1">
+    <header><nav>
+      <%= back_link_to projects_path, class: "button", data: { intent: "secondary", radius: "full", size: "sm", content: "icon", turbo_frame: "_top" }, aria: { label: "Back to Projects" } do %>
+        <%= icon_tag("arrow-left") %>
       <% end %>
       <h1>New project</h1>
-    </header>
-    <p class="typography--paragraph-sm typography--balanced">Projects are like topic tags — mark bullets with a project and you can instantly see everything related to that goal in one place.</p>
+    </nav></header>
+    <main>
+    <p>Projects are like topic tags — mark bullets with a project and you can instantly see everything related to that goal in one place.</p>
     <%= render "projects/form", project: @project, url: projects_path, hint: "Projects work like topic tags — mark bullets with a project and you can instantly see everything related to that goal in one place.", name_hint: "Name the project you are working on. Examples: Website redesign, Book draft, Home renovation." %>
-  </div>
+    </main>
+  </article>
 </main>

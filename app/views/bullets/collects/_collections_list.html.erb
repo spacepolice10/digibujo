@@ -1,4 +1,15 @@
 <%# locals: (bullet_ids:, return_to:, collects_q:, collections:, collections_page:) %>
+<li class="bulk-menu--picker-list-item" role="option">
+  <%= link_to new_collection_path(bullet_ids: bullet_ids, return_to: return_to),
+        class: "picker--item",
+        data: {
+          turbo_frame: "_top",
+          combobox_target: "item"
+        } do %>
+    <%= icon_tag("plus") %>
+    <span class="utilities--line-clamp-1">New collection</span>
+  <% end %>
+</li>
 <%= render layout: "pagination/paginated_list",
       locals: {
         page: collections_page,
@@ -14,17 +25,6 @@
         }
       } do %>
   <ul class="bulk-menu--picker-list" role="listbox">
-    <li class="bulk-menu--picker-list-item" role="option">
-      <%= link_to new_collection_path(bullet_ids: bullet_ids, return_to: return_to),
-            class: "picker--item",
-            data: {
-              turbo_frame: "_top",
-              combobox_target: "item"
-            } do %>
-        <%= icon_tag("plus") %>
-        <span class="utilities--line-clamp-1">New collection</span>
-      <% end %>
-    </li>
     <%= render partial: "bullets/collects/collection",
           collection: collections,
           locals: { bullet_ids: bullet_ids } %>

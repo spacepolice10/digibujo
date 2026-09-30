@@ -75,6 +75,11 @@
     padding-block: calc(var(--space-v-half) / 2);
   }
 
+  .review--date-divider {
+    display: flex;
+    justify-content: center;
+  }
+
   .review--date-rail {
     display: flex;
     align-items: flex-start;

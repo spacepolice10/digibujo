@@ -10,20 +10,19 @@
     role="list"
     aria-label="Days of the month"
   >
-  <div class="layout--flex layout--gapped layout--padded monthlylog--inline-calendar">
+  <nav class="monthlylog--inline-calendar">
     <% days.each do |day| %>
       <% count = bullet_counts_by_date[day].to_i %>
       <%= link_to monthlylog_bullets_path(monthlylog, date: day.iso8601),
-            data: { turbo_frame: "monthlylog_bullets", calendar_date_param: day.to_s, calendar_target: "cell", action: "click->calendar#navigateToDate" },
             role: "listitem",
             aria: { selected: (day == date) },
-            class: "button--secondary button--sm" do %>
+            class: "button", data: { turbo_frame: "monthlylog_bullets", calendar_date_param: day.to_s, calendar_target: "cell", action: "click->calendar#navigateToDate", intent: "secondary", radius: "base", size: "sm" } do %>
         <span class="monthlylog--date-number"><%= day.day %></span>
         <span class="monthlylog--date-weekday"><%= day.strftime("%a") %></span>
         <%= tag.span class: "monthlylog--indicator", aria: { hidden: "true" } do %><% end %>
       <% end %>
     <% end %>
-  </div>
+  </nav>
   </div>
 <% else %>
   <p class="monthlylog--by-date-placeholder">No period set for this spread.</p>

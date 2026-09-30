@@ -15,7 +15,7 @@
     }
 
     @media (pointer: fine) {
-        padding: var(--space-v) var(--space-h);
+        padding: var(--space-v-half) var(--space-h-half);
         @container layout (width < 800px) {
             display: none;
         }

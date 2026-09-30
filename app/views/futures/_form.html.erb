@@ -12,9 +12,11 @@
   <% end %>
 
   
-  <div class="form-section">
-    <label>Starts</label>
-    <small>A future log is a six-month spread — pick the month it starts on.</small>
+  <section>
+    <header>
+      <h2>Starts</h2>
+      <p>A future log is a six-month spread — pick the month it starts on.</p>
+    </header>
     <%= field_set_tag "Starts", class: "future--period-picker" do %>
       <%= f.collection_radio_buttons :period_from, starts, :iso8601, ->(m) { m.strftime("%B %Y") },
             { checked: selected.iso8601, item_wrapper_tag: false } do |b| %>
@@ -28,7 +30,7 @@
         <% end %>
       <% end %>
     <% end %>
-  </div>
+  </section>
 
-  <%= f.submit "Create future log", class: "button--primary form--submit" %>
+  <%= f.submit "Create future log", class: "button", data: { intent: "primary", radius: "full", size: "sm" } %>
 <% end %>

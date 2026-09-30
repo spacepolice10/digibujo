@@ -1,7 +1,6 @@
-<%# locals: (triage:, selected_date:) %>
-<div class="layout--flex" data-justify="center">
+<article data-elevation="1">
   <%= link_to daylog_triage_path(preview: :expanded),
-        class: "button typography--mono hotkey-hint",
+        class: 'button typography--mono hotkey-hint',
         data: {
           controller: "hotkey",
           hotkey: "T",
@@ -20,4 +19,4 @@
     <% end %>
     <%= icon_tag("arrow-down") %>
   <% end %>
-</div>
+</article>

@@ -1,6 +1,6 @@
 <%# locals: (tracker:) %>
 <%= link_to tracker_path(tracker), id: dom_id(tracker), class: "bucket--section-list-item", data: { turbo_frame: "_top" } do %>
-  <span class="layout--flex" data-align="center">
+  <span class="tracker--identity">
     <%= icon_tag(tracker.icon, style: "color: #{colour(tracker.colour)};") %>
     <span class="typography--paragraph-md typography--bold utilities--line-clamp-1"><%= tracker.name %></span>
   </span>

@@ -1,9 +1,9 @@
 <%# locals: (date:, entity:) %>
 <% mood_id = "mood_entity_#{date.iso8601}" %>
-<div id="<%= mood_id %>-wrap" class="layout--flex layout--gapped layout--padded layout--surface">
+<div id="<%= mood_id %>-wrap" class="daylog--metadata-item">
     <%= render "calendar_dates/mood_entities/mood_entity", date: date, entity: entity %>
     <div>
-        <p class="typography--paragraph-lg">Mood</p>
-        <p id="mood_entity_name_<%= date.iso8601 %>" class="typography--paragraph-sm"><%= entity ? entity.mood.humanize : "Pick mood" %></p>
+        <h3>Mood</h3>
+        <p id="mood_entity_name_<%= date.iso8601 %>"><%= entity ? entity.mood.humanize : "Pick mood" %></p>
     </div>
  </div>

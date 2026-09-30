@@ -1,13 +1,15 @@
 <% content_for(:title, "Edit collection") %>
 
-<main class="layout--container" data-size="md" data-padding="true">
-  <div class="layout--surface layout--flex" data-elevation="1" data-padding="true" data-direction="column">
-    <header class="layout--container-header">
-      <%= back_link_to collection_path(@collection), class: "button", data: { content: "text", turbo_frame: "_top" }, aria: { label: "Back to collection" } do %>
-        <%= icon_tag("arrow-left") %><span>Collection</span>
+<main data-size="md">
+  <article data-elevation="1">
+    <header><nav>
+      <%= back_link_to collection_path(@collection), class: "button", data: { intent: "secondary", radius: "full", size: "sm", content: "icon", turbo_frame: "_top" }, aria: { label: "Back to collection" } do %>
+        <%= icon_tag("arrow-left") %>
       <% end %>
       <h1>Edit collection</h1>
-    </header>
+    </nav></header>
+    <main>
     <div id="<%= dom_id(@collection) %>"><%= render "form", collection: @collection %></div>
-  </div>
+    </main>
+  </article>
 </main>

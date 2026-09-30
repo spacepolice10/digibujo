@@ -1,2 +1,0 @@
-/* Cascade order must be declared before any stylesheet opens a named layer. */
-@layer reset, variables, base, layout, components, utilities;

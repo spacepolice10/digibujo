@@ -1,17 +1,17 @@
 <% content_for(:title) { "Monthly spread" } %>
 
-<div class="layout--container" data-size="md">
-  <div class="layout--surface layout--mx-auto">
-    <div class="layout--surface-header">
+<main data-size="md">
+  <article data-elevation="1">
+    <header>
       <h2>Monthly spread</h2>
-    </div>
-    <div class="layout--surface layout--padded layout--mx-auto">
-      <p class="typography--paragraph-sm typography--center">No monthly spread yet. Create one to plan the month ahead.</p>
-      <div class="layout--padded">
+    </header>
+    <main>
+      <p>No monthly spread yet. Create one to plan the month ahead.</p>
+    </main>
+    <footer>
         <%= button_to "Create monthly spread", monthlylogs_path,
               method: :post,
-              class: "button--primary layout--mx-auto" %>
-      </div>
-    </div>
-  </div>
-</div>
+              class: "button", data: { intent: "primary", radius: "full", size: "sm" } %>
+    </footer>
+  </article>
+</main>

@@ -23,23 +23,129 @@
     background-attachment: fixed;
   }
 
-  /* No font-size on html: rem stays anchored to the reader's browser default. */
-  html,
   body {
     display: flex;
     flex-direction: column;
-    width: 100%;
     font-family: var(--font-family-mono);
-    line-height: 1.35;
-    color: var(--color-invert-1);
-  }
-
-  body {
     font-size: var(--font-size-base-read);
     background: transparent;
     margin-inline: auto;
+    width: 100%;
     max-width: 100%;
+    line-height: 1.35;
+    color: var(--color-invert-1);
+    container: layout / inline-size;
+    max-width: 1280px;
+    margin-inline: auto;
     padding: 2.5px;
+
+    &main {
+      container: inline-size;
+      max-width: 1280px;
+      margin-inline: auto;
+      width: 100%;
+    }
+
+  }
+
+  body {
+   &>main {
+      container: inline-size;
+      margin-inline: auto;
+      width: 100%;
+      height: 100%;
+
+      &[data-size="sm"] {
+        max-width: 640px;
+      }
+
+      &[data-size="md"] {
+        max-width: 800px;
+      }
+
+      &[data-size="lg"] {
+        max-width: 1280px;
+      }
+    }
+    &>footer {
+      margin-inline: auto;
+      width: 100%;
+    }
+  }
+
+  section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-v);
+    height: 100%;
+  }
+
+  article {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-base);
+    align-items: center;
+
+    &>header,
+    main,
+    footer {
+      padding: var(--space-v) var(--space-v);
+    }
+
+    &>header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: var(--border-subtle);
+      width: 100%;
+
+      &>nav {
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        gap: var(--space-h);
+      }
+    }
+
+    >main {
+      flex: 1 1 0;
+      width: 100%;
+
+      &>ul>li {
+        margin-block: var(--space-v);
+        list-style: none;
+
+        @media (pointer: coarse) {
+          margin-block: var(--space-v);
+        }
+      }
+    }
+
+    &>footer {
+      display: flex;
+      justify-content: start;
+    }
+
+    &[data-elevation="1"] {
+      background: var(--color-1);
+      border: var(--border-subtle);
+    }
+
+    &[data-elevartion="2"] {
+      background: var(--color-2);
+      border: var(--border-subtle);
+    }
+  }
+
+  select[multiple] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-v-half);
+    border: none;
+
+    &::checkmark {
+      display: none;
+    }
   }
 
   /* Typography */
@@ -85,8 +191,15 @@
   /* Links */
   a:not([class]) {
     text-decoration-skip-ink: auto;
-    color: currentColor;
+    color: currentColor
   }
+
+  li {
+    list-style: none;
+  }
+
+  /* * + :is(h1, h2, h3, h4, h5, h6) { margin-top: 1em; }
+  * + :is(p, ul, ol, blockquote, table, article, aside, details) { margin-top: 0.5em; } */
 
   /* Appearance. Theming colors — on html with the dot-grid background. */
 

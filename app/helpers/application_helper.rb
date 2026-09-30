@@ -30,6 +30,7 @@ module ApplicationHelper
 
   def back_link_to(url = home_path, **options, &block)
     data = (options[:data] || {}).dup
+    data[:role] = 'button'
     data[:controller] = [data[:controller], 'navigation'].compact_blank.join(' ')
     data[:action] = [data[:action], 'click->navigation#back'].compact_blank.join(' ')
 

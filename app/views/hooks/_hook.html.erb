@@ -1,20 +1,18 @@
 <%# locals: (hook:) %>
 <article
   id="<%= dom_id(hook) %>"
-  class="layout--surface layout--flex"
+  class="hook--item"
   data-elevation="2"
-  data-padding="true"
-  data-justify="between"
-  data-align="center"
 >
-  <div class="layout--flex" data-direction="column">
+  <main>
     <div>
       <strong><%= hook.name %></strong>
       <code><%= hook.code_prefix %>…</code>
     </div>
-    <span class="typography--paragraph-sm"><%= l(hook.created_at.to_date, format: :long) %></span>
-  </div>
+    <small><%= l(hook.created_at.to_date, format: :long) %></small>
+  </main>
 
+  <footer>
   <%= button_to hook_path(hook),
         method: :delete,
         class: "button",
@@ -23,4 +21,5 @@
     <%= icon_tag("trash") %>
     <span>Revoke</span>
   <% end %>
+  </footer>
 </article>

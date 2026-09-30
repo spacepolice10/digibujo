@@ -1,25 +1,29 @@
 <% content_for(:title, "Collections") %>
 
-<main class="layout--container" data-size="md" data-padding="true">
-  <div class="layout--surface layout--flex" data-elevation="1" data-padding="true" data-direction="column">
-    <header class="layout--flex" data-justify="between" data-align="center">
-      <%= back_link_to home_path, class: "button", data: { intent: "secondary", radius: "full", size: "sm", content: "icon" }, aria: { label: "Back to Home" } do %>
-        <%= icon_tag("arrow-left") %>
-      <% end %>
-      <h1>Collections</h1>
-      <%= link_to new_collection_path, class: "button", data: { intent: "primary", radius: "full", size: "sm", content: "icon" } do %>
-        <%= icon_tag("plus") %>
+<main data-size="md">
+  <article data-elevation="1">
+    <header>
+      <nav>
+        <%= back_link_to home_path, class: "button", data: { intent: "secondary", radius: "full", size: "sm", content: "icon", turbo_frame: "_top" } do %>
+          <%= icon_tag("arrow-left") %>
+        <% end %>
+        <h1>Collections</h1>
+      </nav>
+      <%= link_to new_collection_path, class: "button", data: { intent: "primary", radius: "full", size: "xs" } do %>
+        <%= icon_tag("plus") %><span>New</span>
       <% end %>
     </header>
 
-    <div id="collections">
+    <main id="collections">
       <% if @collections.any? %>
-        <div class="layout--grid collection--list" data-cols="2">
-          <%= render partial: "collections/collection", collection: @collections, as: :collection %>
-        </div>
+        <section>
+            <% @collections.each do |collection| %>
+              <li><%= render collection %></li>
+            <% end %>
+        </section>
       <% else %>
         <p class="typography--paragraph-sm">No collections yet.</p>
       <% end %>
-    </div>
-  </div>
+    </main>
+  </article>
 </main>

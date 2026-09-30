@@ -1,4 +1,9 @@
 @layer components {
+  .public--body {
+    width: 100%;
+    max-width: 1280px;
+    margin-inline: auto;
+  }
   .public-layout {
     display: flex;
     overscroll-behavior: contain;

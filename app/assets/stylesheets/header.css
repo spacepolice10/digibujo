@@ -1,6 +1,8 @@
 @layer components {
 .header {
     display: flex;
+    flex-direction: column;
+    gap: var(--space-v);
     justify-content: center;
     align-items: center;
     padding: var(--space-v) var(--space-h);

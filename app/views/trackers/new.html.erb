@@ -1,13 +1,17 @@
 <% content_for(:title) { "New tracker" } %>
 
-<main class="layout--container" data-size="md" data-padding="true">
-  <div class="layout--surface layout--flex" data-elevation="1" data-padding="true" data-direction="column">
-    <header class="layout--flex" data-align="center">
-      <%= back_link_to trackers_path, class: "button", data: { intent: "secondary", radius: "full", size: "sm", content: "icon" }, aria: { label: "Back to Trackers" } do %>
-        <%= icon_tag("arrow-left") %>
-      <% end %>
-      <h2>New tracker</h2>
+<main data-size="md">
+  <article data-elevation="1">
+    <header>
+      <nav>
+        <%= back_link_to trackers_path, class: "button", data: { intent: "secondary", radius: "full", size: "sm", content: "icon" }, aria: { label: "Back to Trackers" } do %>
+          <%= icon_tag("arrow-left") %>
+        <% end %>
+        <h1>New tracker</h1>
+      </nav>
     </header>
-    <%= render "trackers/form", tracker: @tracker, name_hint: "Give your tracker a name. Examples: Morning run, Meditate, Drink water." %>
-  </div>
+    <main>
+      <%= render "trackers/form", tracker: @tracker, name_hint: "Give your tracker a name. Examples: Morning run, Meditate, Drink water." %>
+    </main>
+  </article>
 </main>

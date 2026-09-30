@@ -1,8 +1,8 @@
 <% content_for(:title, "New hook") %>
 
-<main class="layout--container" data-size="md" data-padding="true">
-  <div class="layout--surface layout--flex" data-elevation="1" data-padding="true" data-direction="column">
-    <header class="layout--flex" data-align="center">
+<main data-size="md">
+  <article data-elevation="1">
+    <header><nav>
     <%= back_link_to hooks_path,
           class: "button",
           data: { turbo_frame: "_top", intent: "secondary", radius: "full", size: "sm", content: "icon" },
@@ -10,31 +10,34 @@
       <%= icon_tag("arrow-left") %>
       <% end %>
       <h2>New hook</h2>
-    </header>
+    </nav></header>
 
-    <p class="typography--paragraph-sm typography--balanced">
+    <main>
+    <p>
       Give a name to the integration, then share the URL Digibujo gives you.
     </p>
 
 
     <%= form_with model: @hook, url: hooks_path, class: "form" do |form| %>
-      <div class="form-section">
-        <%= form.label :name %>
+      <label>
+        <legend>Name</legend>
         <%= form.text_field :name, required: true, placeholder: "Zapier, Gmail, etc." %>
         <% if @hook.errors[:name].any? %>
           <small class="form--errors"><%= @hook.errors.full_messages_for(:name).to_sentence %></small>
         <% end %>
-      </div>
+      </label>
 
       <%= form.submit "Create hook",
             class: "button form--submit",
             data: { intent: "primary", radius: "full", size: "sm" } %>
     <% end %>
-  </div>
+    </main>
+  </article>
   <br>
-  <section class="layout--surface layout--flex" data-elevation="2" data-padding="true" data-direction="column">
+  <article data-elevation="2">
+    <main>
     <h2>How to call it</h2>
-    <p class="typography--paragraph-sm">
+    <p>
       After create you’ll get a URL. External apps <strong>POST</strong> JSON to it.
       <code>bulletable_type</code> is <code>Note</code> or <code>Task</code>.
       <code>author_name</code> is optional.
@@ -46,5 +49,6 @@
         body: "Ship the release"
       )
     %><% end %>
-  </section>
+    </main>
+  </article>
 </main>

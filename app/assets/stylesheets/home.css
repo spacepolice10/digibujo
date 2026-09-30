@@ -1,6 +1,7 @@
 @layer components {
   .home--page {
     padding-block: var(--space-v-8);
+    padding-inline: var(--space-h);
     @media (pointer: coarse) { padding-block-end: var(--tabbar-clearance); }
   }
 

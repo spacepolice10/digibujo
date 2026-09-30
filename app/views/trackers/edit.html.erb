@@ -1,13 +1,15 @@
 <% content_for(:title) { "Edit #{@tracker.name}" } %>
 
-<main class="layout--container" data-size="md" data-padding="true">
-  <div class="layout--surface layout--flex" data-elevation="1" data-padding="true" data-direction="column">
-    <header class="layout--container-header">
-      <%= back_link_to tracker_path(@tracker), class: "button", data: { content: "text", turbo_frame: "_top" } do %>
-        <%= icon_tag("arrow-left") %><span>Tracker</span>
+<main data-size="md">
+  <article data-elevation="1">
+    <header>
+      <nav>
+      <%= back_link_to tracker_path(@tracker), class: 'button', data: { turbo_frame: "_top", intent: "secondary", radius: "full", size: "sm", content: "icon" } do %>
+        <%= icon_tag("arrow-left") %>
       <% end %>
       <h1>Edit tracker</h1>
+      </nav>
     </header>
-    <%= render "form", tracker: @tracker, name_hint: "Give your tracker a name. Examples: Morning run, Meditate, Drink water." %>
-  </div>
+    <%= render "form", tracker: @tracker, name_hint: "Morning run, Meditate, Drink water." %>
+  </article>
 </main>

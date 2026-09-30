@@ -4,8 +4,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 1.75ch;
-    height: 1.75ch;
+    width: 2ch;
+    height: 2ch;
     box-sizing: border-box;
     flex-shrink: 0;
   }

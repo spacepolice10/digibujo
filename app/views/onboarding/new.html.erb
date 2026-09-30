@@ -4,21 +4,21 @@
      data-controller="onboarding"
      data-action="keydown.arrow_right@document->onboarding#next keydown.arrow_left@document->onboarding#previous">
   <section class="onboarding-section" data-onboarding-target="section">
-    <div class="layout--container" data-size="md">
-      <h1 class="typography--h1 typography--center typography--sans onboarding--heading">Welcome to Digibujo</h1>
+    <main class="onboarding--content">
+      <h1 class="onboarding--heading">Welcome to Digibujo</h1>
       <br>
 <ul class="onboarding--basics">
-      <li class="onboarding--basics-item typography--center typography--balanced">
+      <li class="onboarding--basics-item">
         <p>Let's take a quick tour of the app, so you feel more comfortable with it.</p>
       </li>
-      <div class="layout--flex" data-justify="center" data-wrap="true">
+      <nav class="onboarding--actions">
         <button type="button" class="button typography--bold" data-intent="primary" data-radius="full" data-size="sm" data-action="onboarding#next">Swipe to start a quick tour
 
           <%= icon_tag("arrow-right") %>
         </button>
-      </div>
+      </nav>
     </ul>
-</div>
+</main>
 
 
     <% if @onboarding.errors.any? %>
@@ -33,60 +33,61 @@
   </section>
 
   <section class="onboarding-section" data-onboarding-target="section">
-    <div class="layout--container" data-size="md">
-    <h2 class="typography--h1 typography--center onboarding--heading">Follow the rapid logging nature</h2>
+    <main class="onboarding--content">
+    <h2 class="onboarding--heading">Follow the rapid logging nature</h2>
     <br>
     <ul class="onboarding--basics">
-      <li class="onboarding--basics-item typography--center typography--balanced">
+      <li class="onboarding--basics-item">
         <p>Use chat composer at the bottom of Daylog page. Just start typing. <span class="hotkey-hint hotkey-hint--key">⎋ Escape</span> cancels, <span class="hotkey-hint hotkey-hint--key">↵ Enter</span>  sends.
         Capture fast, organize later. This is the key principle of bullet journal.</p>
       </li>
 
-      <li class="onboarding--basics-item typography--center typography--balanced">
-        <span class="typography--paragraph-sm onboarding--basics-tips">Even though bullet journal is about short notes, you can use the whole power of the text editor to write longer notes and save files.</span>
+      <li class="onboarding--basics-item">
+        <span class="onboarding--basics-tips">Even though bullet journal is about short notes, you can use the whole power of the text editor to write longer notes and save files.</span>
       </li>
       </ul>
-    </div>
+    </main>
 
   </section>
 
 
   <section class="onboarding-section" data-onboarding-target="section">
-    <div class="layout--container" data-size="md">
-    <h2 class="typography--h1 typography--center onboarding--heading">Plan ahead with future logs</h2>
+    <main class="onboarding--content">
+    <h2 class="onboarding--heading">Plan ahead with future logs</h2>
     <br>
     <ul class="onboarding--basics">
-      <li class="onboarding--basics-item typography--center typography--balanced">
+      <li class="onboarding--basics-item">
         <p>Bullet journal allows to plan ahead using special monthly spread — separate bucket for your bullets. Digibujo supports this too, making it possible to make some drafts for a future use</p>
       </li>
-      <li class="onboarding--basics-item typography--center typography--balanced">
-        <span class="typography--paragraph-sm onboarding--basics-tips">For even bigger goals, you can use future log. For the most ambitious ideas and life-changing projects.</span>
+      <li class="onboarding--basics-item">
+        <span class="onboarding--basics-tips">For even bigger goals, you can use future log. For the most ambitious ideas and life-changing projects.</span>
       </li>
     </ul>
-    </div>
+    </main>
   </section>
 
   <section class="onboarding-section" data-onboarding-target="section">
-    <div class="layout--container" data-size="md">
-    <h2 class="typography--h1 typography--center onboarding--heading">Migrate as needed. By yourself</h2>
+    <main class="onboarding--content">
+    <h2 class="onboarding--heading">Migrate as needed. By yourself</h2>
     <br>
     <ul class="onboarding--basics">
-      <li class="onboarding--basics-item typography--center typography--balanced">
+      <li class="onboarding--basics-item">
         <p>When time comes you can migrate your bullets from the future log to monthly spread and then to the daylog, making them your priority. Everything has its actual place to exist in</p>
       </li>
-      <li class="onboarding--basics-item typography--center typography--balanced">
-        <span class="typography--paragraph-sm onboarding--basics-tips">Moving bullets manually is an important part of the bullet journal methodology. Intention forcing things to be done, not staying stuck in the planning phase.</span>
+      <li class="onboarding--basics-item">
+        <span class="onboarding--basics-tips">Moving bullets manually is an important part of the bullet journal methodology. Intention forcing things to be done, not staying stuck in the planning phase.</span>
       </li>
     </ul>
-    </div>
+    </main>
   </section>
 
 
   <section class="onboarding-section last-section" data-onboarding-target="section">
-    <div class="layout--container" data-size="md" data-padding="true">
-    <h2 class="typography--h1 typography--center">Explore Digibujo</h2>
+    <main class="onboarding--content">
+    <h2 class="onboarding--heading">Explore Digibujo</h2>
     <br>
-    <nav class="layout--surface layout--container" data-size="sm" data-elevation="1" data-padding="true">
+    <article class="onboarding--choice" data-elevation="1">
+      <main>
       <%= form_with url: onboarding_path, class: "onboarding-form", data: { onboarding_target: "form" } do |form| %>
       <div>
         <label class="onboarding-sample-checkbox" style="color: var(--model-color-2);">
@@ -95,7 +96,7 @@
           <div>
           <strong>Add sample data</strong>
 
-            <p class="typography--paragraph-sm"> We can add some notes, tasks and events to make it look more natural.</p>
+            <p> We can add some notes, tasks and events to make it look more natural.</p>
           </div>
 
         </label>
@@ -105,22 +106,23 @@
           <%= icon_tag("circle", class: "form--icon") %>
           <div>
             <strong>Start with an empty journal</strong>
-            <p class="typography--paragraph-sm"> If you prefer to start clean.</p>
+            <p> If you prefer to start clean.</p>
           </div>
         </label>
       </div>
       <br>
-      <p class="typography--paragraph-sm"> If you wish, we can add sample data to your journal, so you understand how it works and structure your journal. Everything can be deleted later.</p>
+      <p> If you wish, we can add sample data to your journal, so you understand how it works and structure your journal. Everything can be deleted later.</p>
       <br>
-      <div class="layout--flex" data-justify="center">
+      <div class="onboarding--actions">
         <%= form.button "Start my journal", class: "button typography--bold",
               data: { intent: "primary", radius: "full", size: "sm" } %>
       </div>
       <% end %>
-    </nav>
+      </main>
+    </article>
 
     <br>
-    <nav class="layout--flex layout--surface layout--container" data-size="sm" data-elevation="1" data-padding="true" data-justify="center" data-wrap="true" aria-label="About">
+    <nav class="onboarding--about" aria-label="About">
       <%= link_to features_path, class: "session--footer-link" do %>
         <%= icon_tag("list", class: "session--footer-icon") %>
         Features
@@ -130,7 +132,7 @@
         Support
       <% end %>
     </nav>
-    </div>
+    </main>
   </section>
   <br>
 

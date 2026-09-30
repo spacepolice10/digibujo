@@ -16,6 +16,36 @@
     }
   }
 
+  .onboarding--content {
+    width: 100%;
+    max-width: 800px;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .onboarding--actions,
+  .onboarding--about {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--space-v);
+  }
+
+  .onboarding--choice {
+    max-width: 640px;
+    margin-inline: auto;
+    text-align: start;
+  }
+
+  .onboarding--about {
+    max-width: 640px;
+    margin-inline: auto;
+    padding: var(--space-v) var(--space-h);
+    border: var(--border-subtle);
+    border-radius: var(--radius-base);
+    background: var(--color-1);
+  }
+
   .onboarding--basics li {
     display: flex;
     flex-direction: column;

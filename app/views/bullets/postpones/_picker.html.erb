@@ -1,7 +1,8 @@
 <%# locals: (bullet_ids: "", postpone_options: [], manual_bucket:) %>
-<div class="dropdown--element-body">
-  <div class="dropdown--header">
+<article>
+  <header>
     <h2>Schedule</h2>
+
     <button
       type="button"
       class="button dropdown--element-hide"
@@ -15,23 +16,27 @@
     >
       <%= icon_tag("x") %>
     </button>
-  </div>
+  </header>
 
-  <nav class="dropdown--menu" aria-label="Schedule">
+  <main aria-label="Schedule">
     <% postpone_options.each do |option| %>
-      <%= form_with url: postpone_path, method: :post, class: "dropdown--menu-form", data: { turbo_stream: true } do %>
+      <%= form_with url: postpone_path, method: :post, data: { turbo_stream: true } do %>
         <%= hidden_field_tag :bullet_ids, bullet_ids, data: { bulk_menu_target: "idList" } %>
         <%= hidden_field_tag :bucket_id, option[:bucket_id] %>
         <%= hidden_field_tag :pops_on, option[:pops_on] %>
 
         <%= button_tag type: :submit,
-              class: "dropdown-item picker--item",
+              class: "picker--item",
               data: {
                 grid_navigation_target: "item",
                 action: "focus->grid-navigation#syncPosition"
               } do %>
           <%= icon_tag(option[:icon]) %>
-          <%= option[:name] %><% if option[:pops_on] %> · <%= option[:pops_on].strftime("%a, %b %-d") %><% end %>
+          <%= option[:name] %>
+
+          <% if option[:pops_on] %>
+            · <%= option[:pops_on].strftime("%a, %b %-d") %>
+          <% end %>
         <% end %>
       <% end %>
     <% end %>
@@ -39,7 +44,7 @@
     <div class="bulk-menu--picker-date">
       <label
         for="pops_on_date_picker"
-        class="dropdown-item picker--item"
+        class="picker--item"
         tabindex="-1"
         data-grid-navigation-target="item"
         data-action="focus->grid-navigation#syncPosition"
@@ -65,5 +70,5 @@
         <% end %>
       <% end %>
     </div>
-  </nav>
-</div>
+  </main>
+</article>

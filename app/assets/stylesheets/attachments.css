@@ -21,6 +21,12 @@
   .attachment--index-header { margin-bottom: var(--space-v-2); }
   .attachment--index-list { display: grid; gap: var(--space-v-half); }
 
+  .attachment--list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-v-half);
+  }
+
   .attachment--index-item {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;

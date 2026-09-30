@@ -4,7 +4,11 @@
 <div id="<%= mood_id %>" class="dropdown--dock daylog--mood" style="anchor-name: --dropdown-<%= mood_id %>">
     <button
       type="button"
-      class="button--secondary button--circle button-sm"
+      class="button"
+      data-intent="secondary"
+      data-radius="full"
+      data-size="sm"
+      data-content="icon"
       popovertarget="dropdown-<%= mood_id %>"
       style="anchor-name: --dropdown-<%= mood_id %>"
       aria-label="<%= entity ? "Change mood" : "Pick mood" %>"

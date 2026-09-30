@@ -24,18 +24,17 @@ lexxy-editor {
     }
 }
 
-.composer[data-composer-editor-multiline-value="true"] lexxy-editor {
+/* .composer[data-composer-editor-multiline-value="true"] lexxy-editor {
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
-    border: var(--border-subtle);
     width: 100%;
     & .lexxy-editor__content {
         animation: popout 0.2s ease-out;
         border-radius: var(--radius-strong);
     }
 
-}
+} */
 
 
 lexxy-toolbar {
@@ -69,8 +68,7 @@ lexxy-toolbar {
     .composer--dock {
         width: 100%;
         margin-inline: 0;
-        border: 0;
-        border-radius: 0;
+
         background: var(--color-1);
         box-shadow: none;
         
@@ -80,16 +78,14 @@ lexxy-toolbar {
         }
 
         @container layout (width < 600px) {
-            width: 98%;
+            width: 100%;
             margin-inline: auto;
             margin-block-end: calc(var(--tabbar-clearance) + var(--space-v));
-            border-radius: var(--radius-full);
             margin-block-start: var(--space-v-half);
             transition: margin-block-end 250ms ease-out;
            
 
             &:has(.composer[data-composer-editor-multiline-value="true"]) {
-                border-radius: var(--radius-strong);
                 background: transparent;
             }
         }
@@ -153,9 +149,9 @@ lexxy-toolbar {
 
     }
 
-    .composer[data-composer-editor-multiline-value="true"] .composer--control {
+    /* .composer[data-composer-editor-multiline-value="true"] .composer--control {
         order: 1;
-    }
+    } */
 
     .composer--variant-picker {
         padding: 0;
@@ -216,8 +212,7 @@ lexxy-toolbar {
     }
 
     .composer[data-composer-editor-multiline-value="true"] .composer--variant-picker-wrapper {
-        order: 1;
-        margin-right: auto;
+        align-self: end;
     }
 
 

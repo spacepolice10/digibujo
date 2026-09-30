@@ -1,8 +1,8 @@
-<%# locals: (triage:, selected_date:) %>
-<div class="daylog--triage-preview layout--container" data-size="sm" data-margin="horizontal">
-  <section class="layout--surface layout--flex" data-direction="column" data-elevation="2" data-padding="true">
-    <div class="layout--flex" data-justify="between" data-align="center">
+
+  <article data-elevation="1">
+    <header>
       <h2>Good <%= time_period %>, <%= Current.user.name %></h2>
+
       <%= link_to daylog_triage_path(preview: :collapsed),
             class: "button",
             data: {
@@ -15,14 +15,15 @@
             aria: { label: "Close triage review" } do %>
         <%= icon_tag("x") %>
       <% end %>
-    </div>
+    </header>
 
-    <p class="daylog--triage-summary"><%= daylog_triage_summary(triage) %></p>
+    <main>
+      <p class="daylog--triage-summary"><%= daylog_triage_summary(triage) %></p>
+    </main>
 
-    <div class="layout--flex" data-justify="center">
+    <footer>
       <%= link_to "Review", daylog_triage_path,
             class: "button",
             data: { intent: "primary", radius: "full", size: "xs", turbo_frame: "_top" } %>
-    </div>
-  </section>
-</div>
+    </footer>
+  </article>

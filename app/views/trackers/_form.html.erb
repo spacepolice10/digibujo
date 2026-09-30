@@ -1,13 +1,12 @@
 <%# locals: (tracker:, url: nil, name_hint:) %>
-<%= form_with model: tracker, url: url, class: "form" do |f| %>
-  <div class="form-section">
-    <%= f.label :name %>
-    <small><%= name_hint %></small>
-    <%= f.text_field :name, required: true, autofocus: true %>
-  </div>
+<%= form_with model: tracker, url: url do |f| %>
+  <label>
+    <legend>Name</legend>
+    <%= f.text_field :name, required: true, autofocus: true, placeholder: "Morning run, Meditate, Drink water." %>
+  </label>
 
   <%= render "shared/form/colour_picker", form: f %>
   <%= render "shared/form/icon_picker", form: f %>
   <%= render "shared/form/schedule_days_picker", form: f %>
-  <%= f.submit class: "button form--submit", data: { intent: "primary", radius: "full", size: "sm" } %>
+  <%= f.submit tracker.new_record? ? "Create" : "Save", class: 'button', data: { intent: "primary", radius: "full", size: "sm" } %>
 <% end %>

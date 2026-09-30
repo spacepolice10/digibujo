@@ -1,4 +1,9 @@
 @layer utilities {
+  .pagination--list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-v);
+  }
   .utilities--sr-only {
     position: absolute;
     width: 1px;
@@ -33,5 +38,10 @@
   }
   .utilities--overscroll-auto {
     overscroll-behavior: auto;
+  }
+
+  .utilities--scrollable {
+    overflow: scroll;
+    height: 100dvh;
   }
 }

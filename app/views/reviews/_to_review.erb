@@ -26,7 +26,7 @@
         <% page.records.each do |bullet| %>
           <% date = bullet.pops_on %>
           <% if date.present? && previous_date != date %>
-          <div class="collection--date-divider layout--flex" data-justify="center" role="separator" aria-label="<%= date.strftime('%b %-d, %Y') %>">
+          <div class="collection--date-divider review--date-divider" role="separator" aria-label="<%= date.strftime('%b %-d, %Y') %>">
             <%= link_to daylog_path(date: date.iso8601),
                     class: "button",
                     data: { content: "text", turbo_frame: "_top" } do %>

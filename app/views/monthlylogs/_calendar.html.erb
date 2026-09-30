@@ -2,7 +2,7 @@
 
   <% padded = Array.new(days.first.wday, nil) + days %>
 
-  <div class="monthlylog--calendar layout--surface-sunken" data-controller="calendar">
+  <div class="monthlylog--calendar" data-controller="calendar" data-elevation="2">
     <% Date::DAYNAMES.each do |weekday| %>
       <div class="monthlylog--calendar-weekday-name">
         <%= weekday.first(3) %>

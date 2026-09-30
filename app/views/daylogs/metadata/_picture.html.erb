@@ -1,12 +1,13 @@
 <%# locals: (date:, picture:) %>
 <% picture_id = "daylog_picture_#{date.iso8601}" %>
-<div id="<%= picture_id %>-wrap" class="layout--flex layout--gapped layout--padded layout--surface">
+<div id="<%= picture_id %>-wrap" class="daylog--metadata-item">
   <% if picture&.picture&.attached? %>
     <div id="<%= picture_id %>" class="dropdown--dock">
       <button
         type="button"
         id="anchor-<%= picture_id %>"
-        class="button--tertiary "
+        class="button"
+        data-content="icon"
         aria-label="Picture menu"
         popovertarget="dropdown-<%= picture_id %>"
         style="anchor-name: --dropdown-<%= picture_id %>"
@@ -52,7 +53,7 @@
       multipart: true,
       data: { turbo_stream: true } do %>
       <%= hidden_field_tag :date, date.iso8601 %>
-      <label class="button--secondary button--circle button-sm" aria-label="Add photo">
+      <label class="button" data-intent="secondary" data-radius="full" data-size="sm" data-content="icon" aria-label="Add photo">
         <%= icon_tag("camera") %>
         <%= file_field_tag :picture,
           accept: CalendarDate::Picture::ALLOWED_CONTENT_TYPES.join(","),
@@ -64,8 +65,8 @@
   <% end %>
 
   <div>
-    <p class="typography--paragraph-lg">Photo of the day</p>
-    <p class="typography--paragraph-sm utilities--line-clamp-1">
+    <h3>Photo of the day</h3>
+    <p class="utilities--line-clamp-1">
       <% if picture&.picture&.attached? %>
         <%= picture.picture.filename %>
       <% else %>
