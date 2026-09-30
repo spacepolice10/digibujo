@@ -159,37 +159,6 @@
 
     <article data-elevation="1">
       <header>
-        <h2>Trackers</h2>
-
-        <%= link_to new_tracker_path, class: "button",
-          data: { turbo_frame: "_top", intent: "secondary", radius: "full", size: "xs", content: "icon" } do %>
-          <%= icon_tag("plus") %>
-        <% end %>
-      </header>
-
-      <main>
-        <section>
-          <% @trackers.each do |tracker| %>
-            <li>
-              <%= render tracker %>
-            </li>
-          <% end %>
-        </section>
-
-        <% if @trackers.empty? %>
-          <p>Create trackers to track your progress.</p>
-        <% end %>
-      </main>
-
-      <footer>
-        <%= link_to trackers_path, class: "button", data: { turbo_frame: "_top", intent: "secondary", radius: "full", size: "sm" } do %>
-          <p>Show all...</p>
-        <% end %>
-      </footer>
-    </article>
-
-    <article data-elevation="1">
-      <header>
         <h2>Recently shared</h2>
       </header>
 

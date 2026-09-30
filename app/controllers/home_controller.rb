@@ -9,7 +9,6 @@ class HomeController < ApplicationController
     @collections = collections
     @attachments = attachments
     @projects = projects
-    @trackers = trackers
     @published_bullets = published_bullets
   end
 
@@ -26,10 +25,6 @@ class HomeController < ApplicationController
 
   def attachments = User::Attachments.new(Current.user).attachments.limit(PREVIEW_LIMIT)
   def projects = Current.user.projects.order(created_at: :desc).limit(PREVIEW_LIMIT)
-
-  def trackers
-    Current.user.trackers.order(created_at: :desc).limit(PREVIEW_LIMIT).with_completions
-  end
 
   def published_bullets
     Current.user.bullets.published

@@ -88,13 +88,6 @@ Rails.application.routes.draw do
   end
   resources :buckets, only: :show
 
-  # --- Trackers ---
-  resources :trackers do
-    scope module: :trackers do
-      resource :status
-    end
-  end
-
   # --- Home & navigation ---
   resource :home, controller: 'home'
 

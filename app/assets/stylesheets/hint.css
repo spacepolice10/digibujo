@@ -7,9 +7,7 @@
   .bullet--metadata [interestfor],
   .layout--filter-group [interestfor],
   .monthlylog--date-artifacts [interestfor],
-  .daylog--mood [interestfor],
-  .tracker--day-toggle-wrap [interestfor],
-  .tracker--heatmap [interestfor] {
+  .daylog--mood [interestfor] {
     interest-delay: 0.2s;
   }
 

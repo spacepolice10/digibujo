@@ -19,10 +19,6 @@ module ActiveSupport
       user.projects.create!(name: name, colour: colour)
     end
 
-    def create_tracker!(user, name:, schedule: Tracker::DEFAULT_SCHEDULE.dup, colour: nil, icon: nil)
-      user.trackers.create!(name: name, schedule: schedule, colour: colour, icon: icon, start_date: Date.current)
-    end
-
     def create_collection!(user, name:, colour: nil, icon: nil)
       collection = Collection.create!
       user.buckets.create!(bucketable: collection, name: name, colour: colour, icon: icon)

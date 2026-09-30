@@ -4,8 +4,8 @@ require 'test_helper'
 
 class HomeControllerTest < ActionDispatch::IntegrationTest
   MOBILE_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)'
-  SECTION_ORDER = %w[logs collections attachments projects trackers recently-shared archive].freeze
-  MOBILE_SECTION_ORDER = %w[pins logs collections attachments projects trackers recently-shared archive].freeze
+  SECTION_ORDER = %w[logs collections attachments projects recently-shared archive].freeze
+  MOBILE_SECTION_ORDER = %w[pins logs collections attachments projects recently-shared archive].freeze
 
   setup do
     @user = users(:one)
@@ -34,8 +34,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_link new_collection_path, text: 'Add collection'
-    assert_link new_tracker_path, text: 'Add tracker'
-    assert_select '[data-home-section] > .home--add-button', count: 2
+    assert_select '[data-home-section] > .home--add-button', count: 1
   end
 
   test 'show limits previews to three records' do
