@@ -17,18 +17,18 @@ module Collections
     private
 
     def set_collection
-      @collection = Current.user.collections.merge(Bucket.active).find(params[:collection_id])
+      @collection = Current.user.collections.active.find(params[:collection_id])
     end
 
     def prepare_export_bullets
-      @bullets = @collection.bucket.bullets.active
-                            .includes(bucket: :bucketable)
+      @bullets = @collection.bullets.active
+                            .includes(:collection)
                             .preload(:bulletable)
                             .reorder(created_at: :asc)
     end
 
     def export_filename
-      slug = @collection.bucket.name.parameterize
+      slug = @collection.name.parameterize
       "digibujo-#{slug}-export-#{Date.current.iso8601}.html"
     end
   end

@@ -3,33 +3,18 @@
 module Postponable
   extend ActiveSupport::Concern
 
-  def postpone!(bucket:, pops_on: nil)
-    raise ArgumentError, 'bucket is required' if bucket.blank?
+  # Changes the day a bullet belongs to. Future days surface on the Upcoming screen.
+  def postpone!(pops_on:)
+    raise ArgumentError, 'pops_on is required' if pops_on.blank?
 
-    destination = bucket.is_a?(Bucket) ? bucket : user.buckets.active.find(bucket)
-    resolved_pops_on = resolve_pops_on(destination, pops_on)
+    target = pops_on.to_date
+    return if self.pops_on == target
 
-    return if bucket_id == destination.id && self.pops_on == resolved_pops_on
-
-    migrate_to!(bucket: destination, pops_on: resolved_pops_on, action: 'rescheduled')
-  end
-
-  private
-
-  def resolve_pops_on(bucket, pops_on)
-    case bucket.bucketable_type
-    when 'Daylog'
-      pops_on.presence || Date.current
-    when 'Monthlylog'
-      pops_on
-    when 'Future'
-      return nil if pops_on.blank?
-
-      pops_on.to_date.beginning_of_month
-    when 'Collection', 'Pending'
-      nil
-    else
-      pops_on
-    end
+    from = self.pops_on
+    update!(pops_on: target)
+    record_activity!(
+      'rescheduled',
+      metadata: { 'from_pops_on' => from&.iso8601, 'to_pops_on' => target.iso8601 }
+    )
   end
 end

@@ -2,8 +2,11 @@
   <%= link_to home_path, class: "tabbar--item #{'tabbar--item-active' if controller_name == 'home'}", aria: { label: "Menu" } do %>
     <%= icon_tag("search", class: "tabbar--item-icon") %>
   <% end %>
-  <%= link_to daylog_path, class: "tabbar--item #{'tabbar--item-active' if controller_name == 'daylogs'}", aria: { label: "Daily log" } do %>
+  <%= link_to timeline_path, class: "tabbar--item #{'tabbar--item-active' if controller_name == 'timelines'}", aria: { label: "Timeline" } do %>
     <%= render "shared/tabbar_daylog_mark" %>
+  <% end %>
+  <%= link_to upcoming_path, class: "tabbar--item #{'tabbar--item-active' if controller_name == 'upcoming'}", aria: { label: "Upcoming" } do %>
+    <%= icon_tag("calendar", class: "tabbar--item-icon") %>
   <% end %>
   <%= link_to activities_path, class: "tabbar--item #{'tabbar--item-active' if controller_name == 'activities'}", aria: { label: "Activity" } do %>
     <%= icon_tag("history", class: "tabbar--item-icon") %>

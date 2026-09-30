@@ -5,32 +5,29 @@
      hidden>
   <div class="bulk-menu--actions">
 
-    <% if Current.user&.daylog %>
-      <div data-bulk-menu-target="conditionalAction" data-require-scheduled="not-today" hidden>
-        <%= form_with url: postpone_path, method: :post, data: { turbo_stream: true } do %>
-          <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
-          <%= hidden_field_tag :bucket_id, Current.user.daylog.bucket.id %>
-          <%= hidden_field_tag :pops_on, Date.current.iso8601 %>
-          <%= button_tag type: :submit,
-                class: "button hotkey-hint hotkey-hint--always",
-                data: {
-                  intent: "secondary",
-                  radius: "base",
-                  size: "sm",
-                  controller: "hotkey",
-                  hotkey: "T",
-                  action: "keydown.t@document->hotkey#click"
-                },
-                aria: { keyshortcuts: "T" } do %>
-            <%= icon_tag("arrow-right") %>
-            Today
-          <% end %>
+    <div data-bulk-menu-target="conditionalAction" data-require-scheduled="not-today" hidden>
+      <%= form_with url: postpone_path, method: :post, data: { turbo_stream: true } do %>
+        <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
+        <%= hidden_field_tag :pops_on, Date.current.iso8601 %>
+        <%= button_tag type: :submit,
+              class: "button hotkey-hint hotkey-hint--always",
+              data: {
+                intent: "secondary",
+                radius: "base",
+                size: "sm",
+                controller: "hotkey",
+                hotkey: "T",
+                action: "keydown.t@document->hotkey#click"
+              },
+              aria: { keyshortcuts: "T" } do %>
+          <%= icon_tag("arrow-right") %>
+          Today
         <% end %>
-      </div>
-    <% end %>
+      <% end %>
+    </div>
 
     <div data-bulk-menu-target="conditionalAction" data-require-completable="incomplete" hidden>
-      <%= form_with url: complete_path, method: :post, data: { turbo_stream: true } do %>
+      <%= form_with url: completion_path, method: :post, data: { turbo_stream: true } do %>
         <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
         <%= button_tag type: :submit,
               class: "button hotkey-hint hotkey-hint--always",
@@ -50,7 +47,7 @@
     </div>
 
     <div data-bulk-menu-target="conditionalAction" data-require-completable="completed" hidden>
-      <%= form_with url: complete_path, method: :delete, data: { turbo_stream: true } do %>
+      <%= form_with url: completion_path, method: :delete, data: { turbo_stream: true } do %>
         <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
         <%= button_tag type: :submit,
               class: "button hotkey-hint hotkey-hint--always",
@@ -65,46 +62,6 @@
               aria: { keyshortcuts: "U" } do %>
           <%= icon_tag("square") %>
           Uncomplete
-        <% end %>
-      <% end %>
-    </div>
-
-    <div data-bulk-menu-target="conditionalAction" data-require-pinnable="unpinned" hidden>
-      <%= form_with url: pin_path, method: :post, data: { turbo_stream: true } do %>
-        <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
-        <%= button_tag type: :submit,
-              class: "button hotkey-hint hotkey-hint--always",
-              data: {
-                intent: "secondary",
-                radius: "base",
-                size: "sm",
-                controller: "hotkey",
-                hotkey: "P",
-                action: "keydown.p@document->hotkey#click"
-              },
-              aria: { keyshortcuts: "P" } do %>
-          <%= icon_tag("pin") %>
-          Pin
-        <% end %>
-      <% end %>
-    </div>
-
-    <div data-bulk-menu-target="conditionalAction" data-require-pinnable="pinned" hidden>
-      <%= form_with url: pin_path, method: :delete, data: { turbo_stream: true } do %>
-        <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
-        <%= button_tag type: :submit,
-              class: "button hotkey-hint hotkey-hint--always",
-              data: {
-                intent: "secondary",
-                radius: "base",
-                size: "sm",
-                controller: "hotkey",
-                hotkey: "P",
-                action: "keydown.p@document->hotkey#click"
-              },
-              aria: { keyshortcuts: "P" } do %>
-          <%= icon_tag("pin") %>
-          Unpin
         <% end %>
       <% end %>
     </div>

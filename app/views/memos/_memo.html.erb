@@ -1,0 +1,9 @@
+<%# locals: (bullet:) %>
+<%= render layout: "bullets/bullet", locals: { bullet: } do %>
+  <% if bullet.body_as_text.present? %>
+    <span class="voice--caption"><%= bullet.body_as_text %></span>
+  <% end %>
+  <%= render "memos/playback",
+        recording_source: url_for(bullet.memo.recording),
+        recording_duration: bullet.memo.duration_seconds %>
+<% end %>

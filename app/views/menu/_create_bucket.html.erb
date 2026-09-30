@@ -4,24 +4,6 @@
     Add collection
   <% end %>
 
-  <%= link_to new_future_path, class: "button menu--create-bucket-link", data: { content: "text", turbo_frame: "_top" } do %>
-    <i
-      class="icon"
-      style="--icon-mask: var(--icon-calendar)"
-      aria-hidden="true"
-    ></i>
-    Add future log
-  <% end %>
-
-  <%= link_to current_monthlylog_navigation_path, class: "button menu--create-bucket-link", data: { content: "text", turbo_frame: "_top" } do %>
-    <i
-      class="icon"
-      style="--icon-mask: var(--icon-calendar)"
-      aria-hidden="true"
-    ></i>
-    Monthly log
-  <% end %>
-
   <%= link_to new_project_path, class: "button menu--create-bucket-link", data: { content: "text", turbo_frame: "_top" } do %>
     <%= icon_tag("tag") %>
     New project

@@ -7,14 +7,9 @@ module Bulletable
     has_one :bullet, as: :bulletable, dependent: :destroy, inverse_of: :bulletable
   end
 
-  def temporal?        = false
-  def completable?     = false
-  def starts_date      = nil
-  def ends_date        = nil
-  def marker_icon      = :line_dashed
-  def completed?       = false
-  def icon             = nil
-  def colour           = nil
+  def marker_icon       = :square
+  def icon              = nil
+  def colour            = nil
   def excerpt_for(body) = body
 
   def data_attributes

@@ -1,0 +1,33 @@
+<% content_for(:title, "Upcoming") %>
+
+<main class="activity--page" data-size="md">
+  <article class="activity--surface" data-elevation="1">
+    <header class="activity--header"><nav>
+      <%= back_link_to timeline_path,
+            class: "button",
+            data: { intent: "secondary", radius: "full", size: "sm", content: "icon" },
+            aria: { label: "Back to Timeline" } do %>
+        <%= icon_tag("arrow-left") %>
+      <% end %>
+      <h1>Upcoming</h1>
+    </nav></header>
+
+    <% if @bullets_by_day.any? %>
+      <div class="activity--feed-list" data-bulk-menu-target="list">
+        <% @bullets_by_day.each do |date, bullets| %>
+          <div class="activity--date-divider" role="separator" aria-label="<%= date.strftime('%b %-d, %Y') %>">
+            <span class="activity--date-pill">
+              <time datetime="<%= date.iso8601 %>"><%= date.strftime("%A, %b %-d") %></time>
+            </span>
+          </div>
+
+          <% bullets.each do |bullet| %>
+            <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="activity--empty">Nothing scheduled yet.</p>
+    <% end %>
+  </article>
+</main>

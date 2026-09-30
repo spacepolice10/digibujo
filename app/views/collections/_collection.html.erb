@@ -1,5 +1,5 @@
 <%= link_to collection_path(collection), class: "bucket--section-list-item" do %>
-  <%= icon_tag(collection.bucket.icon, style: "color: #{colour(collection.bucket.colour)};", class: "bucket--section-list-item-icon") %>
+  <%= icon_tag(collection.icon, style: "color: #{colour(collection.colour)};", class: "bucket--section-list-item-icon") %>
   <span class="typography--line-clamp-1"><%= collection.name %>
     ·
     <%= collection.created_at.strftime("%b %d") %>

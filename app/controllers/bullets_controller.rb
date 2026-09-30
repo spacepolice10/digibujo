@@ -6,7 +6,7 @@ class BulletsController < ApplicationController
   def index
     bullets = Current.user.bullets
                      .active
-                     .includes(:bulletable, :rich_text_body, bucket: :bucketable)
+                     .includes(:bulletable, :rich_text_body, :collection)
                      .order(created_at: :desc, id: :desc)
     @bullets = set_page_and_extract_portion_from(bullets, per_page: [30, 50, 100])
   end
@@ -43,7 +43,7 @@ class BulletsController < ApplicationController
     @bullet.destroy
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_to daylog_path(date: (@bullet.pops_on || Date.current).iso8601) }
+      format.html { redirect_to timeline_path }
     end
   end
 
@@ -65,7 +65,7 @@ class BulletsController < ApplicationController
       format.json { render json: bullet_errors_by_attribute, status: :unprocessable_entity }
       format.turbo_stream { notify_failure }
       format.html do
-        redirect_to daylog_path, alert: bullet_errors.to_sentence, status: :see_other
+        redirect_to timeline_path, alert: bullet_errors.to_sentence, status: :see_other
       end
     end
   end
@@ -80,7 +80,7 @@ class BulletsController < ApplicationController
     if @bullet&.persisted?
       params.require(:bullet).permit(:body, bulletable_attributes: attributes)
     else
-      params.require(:bullet).permit(%i[pops_on bulletable_type bucket_id body], bulletable_attributes: attributes)
+      params.require(:bullet).permit(%i[pops_on bulletable_type collection_id body], bulletable_attributes: attributes)
     end
   end
 

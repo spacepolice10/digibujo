@@ -1,0 +1,28 @@
+@layer components {
+  .timeline--section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-v);
+  }
+
+  .timeline--section:not(:has(.bullet)) {
+    display: none;
+  }
+
+  .timeline--label {
+    align-self: center;
+    padding: var(--space-v-half) var(--space-h);
+    border-radius: var(--radius-full);
+    background: var(--color-2);
+    color: var(--color-invert-4);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-strong);
+  }
+
+  .timeline--composer {
+    border-radius: var(--radius-base);
+    border: var(--border-subtle);
+    padding: var(--space-v-half);
+    background: var(--color-1);
+  }
+}

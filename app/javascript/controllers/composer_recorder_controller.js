@@ -136,8 +136,8 @@ export default class extends Controller {
     const recording = event.detail.mode == "recorder"
     if (!recording) this.restore()
 
-    this.element.querySelector("select[name='bullet[bulletable_type]']").disabled = recording
-    this.element.querySelector("input[name='bullet[bulletable_type]'][value='Voice']").disabled = !recording
+    this.element.querySelector("input[name='bullet[bulletable_type]'][value='Text']").disabled = recording
+    this.element.querySelector("input[name='bullet[bulletable_type]'][value='Memo']").disabled = !recording
     this.element.querySelector("button[type='submit']").disabled = recording
   }
 

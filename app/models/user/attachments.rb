@@ -9,7 +9,7 @@ class User
 
     def attachments
       ActiveStorage::Attachment
-        .where(rich_text_condition.or(picture_condition).or(recording_condition))
+        .where(rich_text_condition.or(recording_condition))
         .includes(:blob)
         .order(created_at: :desc)
     end
@@ -34,26 +34,17 @@ class User
                                     .and(attachment_table[:record_id].in(rich_text_ids.arel))
     end
 
-    def picture_condition
-      attachment_table[:record_type].eq('CalendarDate::Picture')
-                                    .and(attachment_table[:record_id].in(picture_ids.arel))
-    end
-
     def recording_condition
-      attachment_table[:record_type].eq('Voice')
-                                    .and(attachment_table[:record_id].in(voice_ids.arel))
+      attachment_table[:record_type].eq('Memo')
+                                    .and(attachment_table[:record_id].in(memo_ids.arel))
     end
 
     def rich_text_ids
       ActionText::RichText.where(record_type: 'Bullet', record_id: user.bullets.select(:id)).select(:id)
     end
 
-    def picture_ids
-      CalendarDate::Picture.where(calendar_date_id: user.calendar_dates.select(:id)).select(:id)
-    end
-
-    def voice_ids
-      Voice.joins(:bullet).where(bullets: { user_id: user.id }).select(:id)
+    def memo_ids
+      Memo.joins(:bullet).where(bullets: { user_id: user.id }).select(:id)
     end
   end
 end

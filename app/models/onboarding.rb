@@ -1,23 +1,14 @@
 # frozen_string_literal: true
 
-# Provisions the initial workspace and optional guided sample content for a new user.
+# Marks a new user as onboarded and optionally seeds guided sample content.
 class Onboarding
   include ActiveModel::Validations, ActiveModel::Model
 
-  FUTURE_NAME = 'Future Log'
-  FUTURE_ICON = 'calendar'
-  FUTURE_COLOUR = 'gold'
-  DAYLOG_NAME = 'Daylog'
-  DAYLOG_ICON = 'calendar'
-  PENDING_NAME = 'Pending'
-  PENDING_ICON = 'memo'
-
   SAMPLE_DATA = YAML.safe_load_file(Rails.root.join('config/onboarding_sample_data.yml'), aliases: false)
                     .deep_symbolize_keys.freeze
-  DAYLOG_BULLETS = SAMPLE_DATA.fetch(:daylog).freeze
-  DAYLOG_YESTERDAY_BULLETS = SAMPLE_DATA.fetch(:daylog_yesterday).freeze
-  MONTHLYLOG_BULLETS = SAMPLE_DATA.fetch(:monthlylog).freeze
-  FUTURE_BULLETS = SAMPLE_DATA.fetch(:future).freeze
+  TIMELINE_BULLETS = SAMPLE_DATA.fetch(:timeline).freeze
+  TIMELINE_YESTERDAY_BULLETS = SAMPLE_DATA.fetch(:timeline_yesterday).freeze
+  UPCOMING_BULLETS = SAMPLE_DATA.fetch(:upcoming).freeze
   COLLECTIONS = SAMPLE_DATA.fetch(:collections).freeze
 
   attr_accessor :user, :data_seed
@@ -42,87 +33,40 @@ class Onboarding
   private
 
   def provision!
-    ensure_daylog!
-    ensure_monthlylog!
-    ensure_pending!
     user.update!(onboarded: true)
     seed_sample_data! if data_seed?
-  end
-
-  def ensure_daylog!
-    Daylog.provision!(user)
-  end
-
-  def ensure_monthlylog!
-    Monthlylog.provision!(user)
-  end
-
-  def ensure_pending!
-    Pending.provision!(user)
   end
 
   def seed_sample_data!
     return if user.bullets.any?
 
-    create_bullets!(ensure_daylog!.bucket, DAYLOG_BULLETS, default_pops_on: Date.current)
-    create_bullets!(ensure_daylog!.bucket, DAYLOG_YESTERDAY_BULLETS, default_pops_on: Date.yesterday)
-    seed_monthlylog!
+    create_bullets!(TIMELINE_BULLETS, pops_on: Date.current)
+    create_bullets!(TIMELINE_YESTERDAY_BULLETS, pops_on: Date.yesterday)
+    seed_upcoming!
     seed_collections!
-    create_bullets!(ensure_future!.bucket, FUTURE_BULLETS)
   end
 
-  def seed_monthlylog!
-    monthlylog = ensure_monthlylog!
-    bullets = MONTHLYLOG_BULLETS.map do |attributes|
-      next attributes.except(:onboarding_day).merge(pops_on: user.created_at.to_date) if attributes[:onboarding_day]
-
-      offset = attributes[:date_offset]
-      next attributes.except(:date_offset) unless offset
-
-      attributes.except(:date_offset).merge(pops_on: monthly_date(monthlylog, offset))
+  def seed_upcoming!
+    UPCOMING_BULLETS.each do |definition|
+      create_bullets!([definition.except(:days_ahead)], pops_on: Date.current + definition.fetch(:days_ahead).days)
     end
-    create_bullets!(monthlylog.bucket, bullets)
   end
 
   def seed_collections!
     COLLECTIONS.each do |attributes|
-      collection = Collection.create!(description: attributes[:description])
-      bucket = user.buckets.create!(
-        bucketable: collection,
-        name: attributes[:name],
-        icon: attributes[:icon],
-        colour: attributes[:colour]
-      )
-      create_bullets!(bucket, attributes[:bullets])
+      collection = user.collections.create!(attributes.slice(:name, :icon, :colour, :description))
+      create_bullets!(attributes[:bullets], collection: collection)
     end
   end
 
-  def ensure_future!
-    future = user.futures.find_or_create_by!(period_from: Date.current.beginning_of_month)
-    return future if future.bucket
-
-    user.buckets.create!(
-      bucketable: future,
-      name: FUTURE_NAME,
-      icon: FUTURE_ICON,
-      colour: FUTURE_COLOUR
-    )
-    future.reload
-  end
-
-  def create_bullets!(bucket, definitions, default_pops_on: nil)
+  def create_bullets!(definitions, pops_on: Date.current, collection: nil)
     definitions.each do |definition|
-      attributes = definition.except(:type)
-      attributes[:pops_on] = default_pops_on unless attributes.key?(:pops_on)
       user.bullets.create!(
-        bucket: bucket,
-        bulletable: definition.fetch(:type).constantize.new,
-        **attributes
+        collection: collection,
+        pops_on: pops_on,
+        bulletable: Text.new,
+        **definition.except(:type)
       )
     end
-  end
-
-  def monthly_date(monthlylog, offset)
-    [monthlylog.period_from + offset.days, monthlylog.period_to].min
   end
 end

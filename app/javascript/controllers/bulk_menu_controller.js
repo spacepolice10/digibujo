@@ -1,7 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
 
 const ACTION_REQUIREMENTS = {
-  requirePinnable: "pinnable",
   requireCompletable: "completable",
   requirePublishable: "publishable",
   requireScheduled: "scheduled",
@@ -235,7 +234,6 @@ export default class extends Controller {
     if (checked.length == 0) return null;
 
     return {
-      pinnable: this.#uniformTrait(checked, "bulkPinnable"),
       completable: this.#uniformTrait(checked, "bulkCompletable"),
       publishable: this.#uniformTrait(checked, "bulkPublishable"),
       scheduled: this.#uniformTrait(checked, "bulkScheduled"),

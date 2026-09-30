@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_08_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_30_000000) do
   create_table "access_codes", force: :cascade do |t|
     t.string "code_digest", null: false
     t.string "code_prefix", null: false
@@ -79,9 +79,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_08_000000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
-    t.index ["archivable_type", "archivable_id"], name: "index_archives_on_archivable"
     t.index ["archivable_type", "archivable_id"], name: "index_archives_on_archivable_type_and_archivable_id", unique: true
-    t.index ["archivable_type"], name: "index_archives_on_archivable_type"
     t.index ["user_id"], name: "index_archives_on_user_id"
   end
 
@@ -92,21 +90,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_08_000000) do
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["user_id"], name: "index_auth_codes_on_user_id"
-  end
-
-  create_table "buckets", force: :cascade do |t|
-    t.integer "bucketable_id", null: false
-    t.string "bucketable_type", null: false
-    t.string "colour"
-    t.datetime "created_at", null: false
-    t.string "icon"
-    t.string "name", null: false
-    t.boolean "pinned", default: false, null: false
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["bucketable_type", "bucketable_id"], name: "index_buckets_on_bucketable_type_and_bucketable_id", unique: true
-    t.index ["user_id", "pinned"], name: "index_buckets_on_user_id_and_pinned"
-    t.index ["user_id"], name: "index_buckets_on_user_id"
   end
 
   create_table "bullet_projects", force: :cascade do |t|
@@ -121,81 +104,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_08_000000) do
 
   create_table "bullets", force: :cascade do |t|
     t.string "author_name"
-    t.integer "bucket_id", null: false
     t.integer "bulletable_id", null: false
     t.string "bulletable_type", null: false
+    t.integer "collection_id"
     t.datetime "created_at", null: false
-    t.json "last_migration", default: {}, null: false
-    t.datetime "migrated_at"
-    t.date "pops_on"
+    t.datetime "done_at"
+    t.date "pops_on", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index ["bucket_id"], name: "index_bullets_on_bucket_id"
     t.index ["bulletable_type", "bulletable_id"], name: "index_bullets_on_bulletable"
-    t.index ["user_id", "migrated_at"], name: "index_bullets_on_user_id_and_migrated_at"
-    t.index ["user_id", "pops_on"], name: "index_bullets_on_user_id_and_pops_on"
+    t.index ["collection_id"], name: "index_bullets_on_collection_id"
+    t.index ["user_id", "collection_id", "pops_on"], name: "index_bullets_on_user_collection_pops_on"
     t.index ["user_id"], name: "index_bullets_on_user_id"
-    t.index ["user_id"], name: "index_bullets_on_user_id_and_pinned"
-  end
-
-  create_table "calendar_date_mood_entities", force: :cascade do |t|
-    t.integer "calendar_date_id", null: false
-    t.datetime "created_at", null: false
-    t.date "date"
-    t.integer "daylog_id"
-    t.integer "mood", null: false
-    t.datetime "updated_at", null: false
-    t.index ["calendar_date_id"], name: "index_calendar_date_mood_entities_on_calendar_date_id", unique: true
-    t.index ["daylog_id", "date"], name: "index_calendar_date_mood_entities_on_daylog_id_and_date", unique: true
-    t.index ["daylog_id"], name: "index_calendar_date_mood_entities_on_daylog_id"
-  end
-
-  create_table "calendar_date_pictures", force: :cascade do |t|
-    t.integer "calendar_date_id", null: false
-    t.datetime "created_at", null: false
-    t.date "date"
-    t.integer "daylog_id"
-    t.datetime "updated_at", null: false
-    t.index ["calendar_date_id"], name: "index_calendar_date_pictures_on_calendar_date_id", unique: true
-    t.index ["daylog_id", "date"], name: "index_calendar_date_pictures_on_daylog_id_and_date", unique: true
-    t.index ["daylog_id"], name: "index_calendar_date_pictures_on_daylog_id"
-  end
-
-  create_table "calendar_dates", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.date "date", null: false
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["user_id", "date"], name: "index_calendar_dates_on_user_id_and_date", unique: true
-    t.index ["user_id"], name: "index_calendar_dates_on_user_id"
   end
 
   create_table "collections", force: :cascade do |t|
+    t.string "colour"
     t.datetime "created_at", null: false
     t.text "description"
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "daylogs", force: :cascade do |t|
-    t.datetime "created_at", null: false
+    t.string "icon"
+    t.string "name", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index ["user_id"], name: "index_daylogs_on_user_id", unique: true
-  end
-
-  create_table "events", force: :cascade do |t|
-    t.date "ends_date"
-    t.date "starts_date"
-  end
-
-  create_table "futures", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.date "period_from", null: false
-    t.date "period_to", null: false
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["user_id", "period_from"], name: "index_futures_on_user_id_and_period_from", unique: true
-    t.index ["user_id"], name: "index_futures_on_user_id"
+    t.index ["user_id", "name"], name: "index_collections_on_user_id_and_name", unique: true
+    t.index ["user_id"], name: "index_collections_on_user_id"
   end
 
   create_table "hooks", force: :cascade do |t|
@@ -210,37 +142,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_08_000000) do
     t.index ["user_id"], name: "index_hooks_on_user_id"
   end
 
-  create_table "monthlylogs", force: :cascade do |t|
+  create_table "memos", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.date "period_from"
-    t.date "period_to"
+    t.integer "duration_seconds"
     t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["user_id", "period_from"], name: "index_monthlylogs_on_user_id_and_period_from", unique: true
-    t.index ["user_id"], name: "index_monthlylogs_on_user_id"
-  end
-
-  create_table "notes", force: :cascade do |t|
-  end
-
-  create_table "pendings", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["user_id"], name: "index_pendings_on_user_id", unique: true
-  end
-
-  create_table "pinned_entities", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.integer "pinnable_id", null: false
-    t.string "pinnable_type", null: false
-    t.integer "position", default: 0, null: false
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["pinnable_type", "pinnable_id"], name: "index_pinned_entities_on_pinnable"
-    t.index ["user_id", "pinnable_type", "pinnable_id"], name: "idx_pinned_entities_on_user_and_pinnable", unique: true
-    t.index ["user_id", "position"], name: "index_pinned_entities_on_user_id_and_position"
-    t.index ["user_id"], name: "index_pinned_entities_on_user_id"
   end
 
   create_table "projects", force: :cascade do |t|
@@ -249,7 +154,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_08_000000) do
     t.string "name", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
-    t.index ["user_id", "name"], name: "index_projects_on_user_id_and_kind_and_name", unique: true
     t.index ["user_id", "name"], name: "index_projects_on_user_id_and_name", unique: true
     t.index ["user_id"], name: "index_projects_on_user_id"
   end
@@ -303,44 +207,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_08_000000) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
-  create_table "tasks", force: :cascade do |t|
-    t.boolean "completed", default: false, null: false
-    t.datetime "completed_at"
-  end
-
-  create_table "tracker_statuses", force: :cascade do |t|
-    t.integer "calendar_date_id", null: false
-    t.datetime "completed_at", null: false
-    t.datetime "created_at", null: false
-    t.date "date"
-    t.integer "tracker_id", null: false
-    t.datetime "updated_at", null: false
-    t.index ["tracker_id", "calendar_date_id"], name: "index_tracker_statuses_on_tracker_and_calendar_date", unique: true
-    t.index ["tracker_id"], name: "index_tracker_statuses_on_tracker_id"
-  end
-
-  create_table "trackers", force: :cascade do |t|
-    t.string "colour"
-    t.datetime "created_at", null: false
-    t.string "icon"
-    t.string "name", null: false
-    t.json "schedule", default: {"days" => [0, 1, 2, 3, 4, 5, 6]}, null: false
-    t.date "start_date", null: false
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["user_id", "created_at"], name: "index_trackers_on_user_id_and_created_at"
-    t.index ["user_id"], name: "index_trackers_on_user_id"
+  create_table "texts", force: :cascade do |t|
   end
 
   create_table "user_settings", force: :cascade do |t|
     t.string "appearance", default: "default", null: false
-    t.boolean "archived_expanded", default: true, null: false
-    t.boolean "collections_expanded", default: true, null: false
     t.datetime "created_at", null: false
-    t.boolean "logs_expanded", default: true, null: false
-    t.boolean "projects_expanded", default: true, null: false
-    t.boolean "published_expanded", default: true, null: false
-    t.boolean "spreads_expanded", default: true, null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["user_id"], name: "index_user_settings_on_user_id", unique: true
@@ -354,42 +226,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_08_000000) do
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
-  create_table "voices", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.integer "duration_seconds"
-    t.datetime "updated_at", null: false
-  end
-
   add_foreign_key "access_codes", "users"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "activities", "users"
   add_foreign_key "archives", "users"
   add_foreign_key "auth_codes", "users"
-  add_foreign_key "buckets", "users"
   add_foreign_key "bullet_projects", "bullets"
   add_foreign_key "bullet_projects", "projects"
-  add_foreign_key "bullets", "buckets"
+  add_foreign_key "bullets", "collections"
   add_foreign_key "bullets", "users"
-  add_foreign_key "calendar_date_mood_entities", "calendar_dates"
-  add_foreign_key "calendar_date_mood_entities", "daylogs"
-  add_foreign_key "calendar_date_pictures", "calendar_dates"
-  add_foreign_key "calendar_date_pictures", "daylogs"
-  add_foreign_key "calendar_dates", "users"
-  add_foreign_key "daylogs", "users"
-  add_foreign_key "futures", "users"
+  add_foreign_key "collections", "users"
   add_foreign_key "hooks", "users"
-  add_foreign_key "monthlylogs", "users"
-  add_foreign_key "pendings", "users"
-  add_foreign_key "pinned_entities", "users"
   add_foreign_key "projects", "users"
   add_foreign_key "published_entities", "users"
   add_foreign_key "search_records", "users"
   add_foreign_key "search_selections", "users"
   add_foreign_key "sessions", "users"
-  add_foreign_key "tracker_statuses", "calendar_dates"
-  add_foreign_key "tracker_statuses", "trackers"
-  add_foreign_key "trackers", "users"
   add_foreign_key "user_settings", "users"
 
   # Virtual tables defined in this database.

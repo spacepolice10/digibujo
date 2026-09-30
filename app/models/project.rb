@@ -7,7 +7,7 @@ class Project < ApplicationRecord
   ICON = 'hash'
   CONTENT_TYPE = 'application/vnd.actiontext.mention.project'
 
-  include Colourable, Pinnable, Project::Searchable, ActionText::Attachable
+  include Colourable, Project::Searchable, ActionText::Attachable
 
   belongs_to :user
   has_many :bullet_projects, dependent: :destroy

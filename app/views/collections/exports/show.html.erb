@@ -12,19 +12,13 @@
 
 <div class="export--list">
   <% @bullets.each do |bullet| %>
-    <% task_completed = bullet.completed? %>
+    <% task_completed = bullet.done? %>
     <article class="export--bullet">
       <header class="export--bullet-header">
         <span class="export--bullet-type"><%= bullet.bulletable_type %></span>
         <time datetime="<%= bullet.created_at.iso8601 %>"><%= bullet.created_at.strftime("%-d %b %Y") %></time>
         <% if bullet.pops_on.present? %>
           <span>Pop: <%= bullet.pops_on.strftime("%-d %b %Y") %></span>
-        <% end %>
-        <% if bullet.bucket&.bucketable %>
-          <span class="export--tag"><%= bullet.bucket.name %></span>
-        <% end %>
-        <% if bullet.pinned? %>
-          <span class="export--tag">Pinned</span>
         <% end %>
         <% if bullet.archived? %>
           <span class="export--tag">Archived</span>

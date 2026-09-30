@@ -5,10 +5,8 @@
 
 @layer components {
   :root {
-    --task-color: var(--model-color-2);
-    --note-color: var(--model-color-4);
-    --event-color: var(--model-color-5);
-    --voice-color: var(--model-color-7);
+    --text-color: var(--model-color-2);
+    --memo-color: var(--model-color-7);
   }
 
   .bullet--published-link {
@@ -144,10 +142,6 @@
     }
   }
 
-  .bullet--marker-migration {
-    color: var(--bullet-type-color);
-  }
-
   .bullet--select-checkbox {
     position: absolute;
     inset: 0 auto auto 0;
@@ -171,27 +165,19 @@
     border-radius: 0;
   }
 
-  [data-bullet-type="task"] {
-    --bullet-type-color: var(--task-color);
+  [data-bullet-type="text"] {
+    --bullet-type-color: var(--text-color);
   }
 
-  [data-bullet-type="note"] {
-    --bullet-type-color: var(--note-color);
-  }
-
-  [data-bullet-type="event"] {
-    --bullet-type-color: var(--event-color);
-  }
-
-  [data-bullet-type="voice"] {
-    --bullet-type-color: var(--voice-color);
+  [data-bullet-type="memo"] {
+    --bullet-type-color: var(--memo-color);
   }
 
   [data-bullet-type] .bullet--marker {
     color: var(--bullet-type-color);
   }
 
-  .bullet[data-task-completed="true"] {
+  .bullet[data-bullet-done="true"] {
     opacity: 0.75;
 
     .bullet--body {

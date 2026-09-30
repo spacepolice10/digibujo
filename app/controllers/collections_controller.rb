@@ -6,27 +6,18 @@ class CollectionsController < ApplicationController
   before_action :prepare_collect_context, only: %i[new create]
 
   def index
-    @collections = Current.user.collections.merge(Bucket.active).order('buckets.name')
+    @collections = Current.user.collections.active.order(:name)
   end
 
   def new
-    @collection = Collection.new
+    @collection = Current.user.collections.build
   end
 
   def create
-    @collection = Collection.new(description: collection_params[:description])
-    @collection.build_bucket(
-      user: Current.user,
-      name: collection_params[:name],
-      colour: collection_params[:colour],
-      icon: collection_params[:icon]
-    )
+    @collection = Current.user.collections.build(collection_params)
 
     if @collection.save
-      @collection.bucket.record_activity!(
-        'created',
-        metadata: { 'bucketable_type' => @collection.bucket.bucketable_type }
-      )
+      @collection.record_activity!('created', metadata: { 'name' => @collection.name })
 
       if @bullet_ids.present?
         collect_bullets_into_collection!
@@ -37,8 +28,6 @@ class CollectionsController < ApplicationController
       else
         redirect_to collection_path(@collection), notice: 'Collection created'
       end
-    elsif @bullet_ids.present?
-      render :new, status: :unprocessable_entity
     else
       render :new, status: :unprocessable_entity
     end
@@ -53,17 +42,14 @@ class CollectionsController < ApplicationController
   end
 
   def show
-    @bullets = @collection.bucket.bullets.active.chronologically.last_page
+    @bullets = @collection.bullets.active.chronologically.last_page
     @more_bullets = @bullets.size == Bullet::Pageable::PAGE_SIZE
   end
 
   def edit; end
 
   def update
-    @collection.assign_attributes(description: collection_params[:description])
-    @collection.bucket.assign_attributes(collection_params.slice(:name, :colour, :icon))
-
-    if @collection.save
+    if @collection.update(collection_params)
       redirect_to collection_path(@collection), notice: 'Collection updated'
     else
       render :edit, status: :unprocessable_entity
@@ -71,14 +57,14 @@ class CollectionsController < ApplicationController
   end
 
   def destroy
-    @collection.bucket.archive!
+    @collection.archive!
     redirect_to home_path, notice: 'Collection archived'
   end
 
   private
 
   def set_collection
-    @collection = Current.user.collections.merge(Bucket.active).find(params[:id])
+    @collection = Current.user.collections.active.find(params[:id])
   end
 
   def collection_params
@@ -95,7 +81,7 @@ class CollectionsController < ApplicationController
 
   def collect_bullets_into_collection!
     Bullet.transaction do
-      @bullets.lock.find_each { |bullet| bullet.collect!(bucket_id: @collection.bucket.id) }
+      @bullets.lock.find_each { |bullet| bullet.collect!(collection_id: @collection.id) }
     end
     @bullets.each(&:reload)
   end

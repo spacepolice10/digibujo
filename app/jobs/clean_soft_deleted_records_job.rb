@@ -2,24 +2,19 @@
 
 class CleanSoftDeletedRecordsJob < ApplicationJob
   def perform
-    # TODO: Bullet.auto_archivable — grace window and completed archives_on not implemented yet
     Bullet.expired_archived.destroy_all
-    destroy_expired_archived_buckets
+    destroy_expired_archived_collections
   end
 
   private
 
-  def destroy_expired_archived_buckets
-    Bucket.expired_archived.find_each do |bucket|
-      bucket.record_activity!(
+  def destroy_expired_archived_collections
+    Collection.expired_archived.find_each do |collection|
+      collection.record_activity!(
         'destroyed',
-        metadata: {
-          'bucketable_type' => bucket.bucketable_type,
-          'name' => bucket.name,
-          'colour' => bucket.colour
-        }
+        metadata: { 'name' => collection.name, 'colour' => collection.colour }
       )
-      bucket.destroy!
+      collection.destroy!
     end
   end
 end

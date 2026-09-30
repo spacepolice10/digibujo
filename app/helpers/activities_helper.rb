@@ -28,21 +28,17 @@ module ActivitiesHelper
       safe_join(['Created ', subject])
     when 'updated'
       safe_join(['Updated ', subject])
-    when 'pinned'
-      safe_join(['Pinned ', subject])
-    when 'unpinned'
-      safe_join(['Unpinned ', subject])
     when 'completed'
       safe_join(['Completed ', subject])
     when 'uncompleted'
       safe_join(['Uncompleted ', subject])
     when 'collected'
-      bucket_name = activity.metadata['bucket_name'].presence ||
-                    activity.destination_bucket&.name ||
-                    'a collection'
+      collection_name = activity.metadata['collection_name'].presence ||
+                        activity.destination_collection&.name ||
+                        'a collection'
       safe_join([
                   'Moved ', subject, ' into ',
-                  activity_link(activity.destination_bucket, linked: linked, name: bucket_name)
+                  activity_link(activity.destination_collection, linked: linked, name: collection_name)
                 ])
     when 'rescheduled'
       rescheduled_sentence(activity, subject, linked: linked)
@@ -64,7 +60,7 @@ module ActivitiesHelper
     elsif to
       safe_join(['Scheduled ', subject, ' for ', to])
     else
-      safe_join(['Parked ', subject, ' for sometime'])
+      safe_join(['Rescheduled ', subject])
     end
   end
 
@@ -76,7 +72,7 @@ module ActivitiesHelper
     when Date
       formatted = target.strftime('%a, %b %-d')
       if linked
-        link_to(formatted, daylog_path(date: target.iso8601), **link_attrs)
+        link_to(formatted, timeline_path, **link_attrs)
       else
         activity_subject_text(formatted, colour_variable)
       end

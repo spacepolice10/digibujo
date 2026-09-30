@@ -1,4 +1,5 @@
-<% resolved_composer_id = local_assigns[:composer_id].presence || dom_id(bucket, pops_on) %>
+<%# locals: (bullet:, preset:, autofocus: false, collection: nil, pops_on: Date.current, composer_id: nil) %>
+<% resolved_composer_id = composer_id.presence || (collection ? dom_id(collection, :composer) : "timeline_composer") %>
 <div
   id="<%= resolved_composer_id %>"
   class="composer"
@@ -14,78 +15,18 @@
           composer_target: "form",
           action: "turbo:submit-end->composer#restore"
         } do |fr| %>
-    <%= fr.hidden_field :bucket_id, value: bucket.id %>
+    <% if collection %>
+      <%= fr.hidden_field :collection_id, value: collection.id %>
+    <% end %>
     <%= fr.hidden_field :pops_on, value: pops_on %>
-    <%= hidden_field_tag "bullet[bulletable_type]", "Voice", id: "#{dom_id(bucket, pops_on)}_voice_bulletable_type", disabled: true %>
-
-    <% variants = [
-            {name: "Note", icon: "text", color: "var(--model-color-4)", description: "An idea, something to remember, reflection note, files or markdown    ."},
-            {name: "Task", icon: "square", color: "var(--model-color-2)", description: "Something you need to do."},
-            {name: "Event", icon: "calendar", color: "var(--model-color-5)", description: "Something that will happen or already happened."},
-
-        ].filter { |variant| allowed_bulletable_variants.include?(variant[:name]) } %>
+    <%= hidden_field_tag "bullet[bulletable_type]", "Text", id: "#{resolved_composer_id}_text_bulletable_type" %>
+    <%= hidden_field_tag "bullet[bulletable_type]", "Memo", id: "#{resolved_composer_id}_memo_bulletable_type", disabled: true %>
 
     <span class="composer--editor-mode utilities--contents">
-      <% if allowed_bulletable_variants.include?("Note") %>
-        <%= tag.label for: "#{dom_id(bucket, pops_on)}_composer_toolbar_toggle", class: "composer--control", aria: { label: "Toggle formatting toolbar" }, data: { composer_editor_target: "toolbarToggle", action: "change->composer-editor#toggleToolbar" } do %>
-          <%= icon_tag("plus") %>
-          <%= tag.input type: "checkbox", id: "#{dom_id(bucket, pops_on)}_composer_toolbar_toggle", class: "utilities--sr-only" %>
-        <% end %>
+      <%= tag.label for: "#{resolved_composer_id}_composer_toolbar_toggle", class: "composer--control", aria: { label: "Toggle formatting toolbar" }, data: { composer_editor_target: "toolbarToggle", action: "change->composer-editor#toggleToolbar" } do %>
+        <%= icon_tag("plus") %>
+        <%= tag.input type: "checkbox", id: "#{resolved_composer_id}_composer_toolbar_toggle", class: "utilities--sr-only" %>
       <% end %>
-
-      <span
-        class="select--wrapper composer--variant-picker-wrapper"
-        data-controller="select"
-      >
-        <select
-          name="bullet[bulletable_type]"
-          id="<%= dom_id(bucket, pops_on) %>_bulletable_type"
-          class="select--trigger composer--variant-picker"
-          data-select-target="trigger"
-          data-composer-editor-target="typePicker"
-          data-action="select#sync composer-editor#changeType"
-        >
-          <button>
-            <selectedcontent>
-              <%= icon_tag(variants.first[:icon], style: "color: #{variants.first[:color]}") %>
-            </selectedcontent>
-          </button>
-
-          <% variants.each do |variant| %>
-            <option
-              value="<%= variant[:name] %>"
-              class="picker--item"
-              data-fallback-label="<%= variant[:name] %>"
-            >
-              <%= icon_tag(variant[:icon], style: "color: #{variant[:color]}") %>
-
-              <div class="composer--variant-picker-option-content">
-                <p class="composer--variant-picker-option-name">
-                  <%= variant[:name] %>
-                </p>
-
-                <p class="composer--variant-picker-option-description">
-                  <%= variant[:description] %>
-                </p>
-              </div>
-            </option>
-          <% end %>
-        </select>
-
-        <span
-          class="
-            select--fallback-trigger
-            composer--variant-picker-fallback-trigger
-          "
-          aria-hidden="true"
-        >
-          <% variants.each_with_index do |variant, index| %>
-            <%= tag.span class: "select--fallback-trigger-content", data: { select_target: "fallbackTriggerContent", value: variant[:name] } do %>
-              <%= icon_tag(variant[:icon], style: "color: #{variant[:color]}") %>
-            <% end %>
-          <% end %>
-        </span>
-      </span>
 
       <%= fr.rich_text_area :body,
             preset: preset,
@@ -93,7 +34,7 @@
             placeholder: "What's up?",
             class: "multiline hotkey-hint",
             data: {
-              action: "keydown.shift+tab->composer-editor#switchVariant:capture keydown->composer-editor#submitByKeyboard:capture lexxy:change->composer#toggleRecorderButton",
+              action: "keydown->composer-editor#submitByKeyboard:capture lexxy:change->composer#toggleRecorderButton",
               composer_editor_target: "editor",
               hotkey: "F"
             } do %>
@@ -102,22 +43,20 @@
         </lexxy-prompt>
       <% end %>
 
-      <% if allowed_bulletable_variants.include?("Voice") %>
-        <button
-          type="button"
-          data-action="composer#toggleMode"
-          data-composer-mode-param="recorder"
-          data-composer-target="recorderButton"
-          class="composer--control"
-          aria-label="Record voice memo"
-        >
-          <%= icon_tag("microphone") %>
-        </button>
-      <% end %>
+      <button
+        type="button"
+        data-action="composer#toggleMode"
+        data-composer-mode-param="recorder"
+        data-composer-target="recorderButton"
+        class="composer--control"
+        aria-label="Record voice memo"
+      >
+        <%= icon_tag("microphone") %>
+      </button>
     </span>
 
     <span class="composer--recorder-mode utilities--contents">
-      <%= render "bullets/recorder", composer_id: dom_id(bucket, pops_on) %>
+      <%= render "bullets/recorder", composer_id: resolved_composer_id %>
 
       <button
         type="button"

@@ -2,10 +2,9 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static values = {
-    type: { type: String, default: "note" },
     multiline: { type: Boolean, default: false }
   }
-  static targets = ["editor", "typePicker", "toolbarToggle"]
+  static targets = ["editor", "toolbarToggle"]
 
   connect() {
     this.#observeEditorHeight()
@@ -24,22 +23,6 @@ export default class extends Controller {
       event.preventDefault()
       this.dispatch("submit")
     }
-  }
-
-  switchVariant(event) {
-    event.preventDefault()
-    event.stopPropagation()
-    event.stopImmediatePropagation()
-
-    const picker = this.typePickerTarget
-    picker.selectedIndex = (picker.selectedIndex + 1) % picker.options.length
-    picker.dispatchEvent(new Event("change", { bubbles: true }))
-  }
-
-  changeType(event) {
-    event.preventDefault()
-    this.typeValue = event.target.value
-    this.toolbarToggleTarget.hidden = event.target.value != "Note"
   }
 
   toggleToolbar(event) {

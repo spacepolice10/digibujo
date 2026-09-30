@@ -1,5 +1,5 @@
 @layer components {
-  .bullet[data-bullet-type="voice"] .bullet--body {
+  .bullet[data-bullet-type="memo"] .bullet--body {
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -43,7 +43,7 @@
     padding: 0;
     border: 0;
     background: none;
-    color: var(--bullet-type-color, var(--voice-color, var(--color-invert-2)));
+    color: var(--bullet-type-color, var(--memo-color, var(--color-invert-2)));
     cursor: pointer;
   }
 
@@ -74,7 +74,7 @@
     border-radius: 1px;
     background: color-mix(
       in oklch,
-      var(--bullet-type-color, var(--voice-color, var(--color-invert-2))) 70%,
+      var(--bullet-type-color, var(--memo-color, var(--color-invert-2))) 70%,
       var(--color-invert-2)
     );
     opacity: 0.35;

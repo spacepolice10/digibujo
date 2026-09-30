@@ -5,11 +5,11 @@
         class: "dropdown--menu-form",
         data: { turbo_stream: true } do %>
     <%= hidden_field_tag :bullet_ids, bullet_ids, data: { bulk_menu_target: "idList" } %>
-    <%= hidden_field_tag :bucket_id, collection.bucket.id %>
+    <%= hidden_field_tag :collection_id, collection.id %>
     <button type="submit"
             class="picker--item"
             data-combobox-target="item">
-      <%= icon_tag(collection.bucket.icon, style: "color: #{colour(collection.bucket.colour)};") %>
+      <%= icon_tag(collection.icon, style: "color: #{colour(collection.colour)};") %>
       <span class="utilities--line-clamp-1"><%= collection.name %></span>
       <span aria-hidden="true">·</span>
       <span class="typography--paragraph-sm utilities--line-clamp-1">

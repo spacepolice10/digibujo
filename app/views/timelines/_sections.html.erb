@@ -1,0 +1,9 @@
+<%# locals: (bullets:, timeline:, ensure_today: false) %>
+<% timeline_sections(bullets, timeline, ensure_today:).each do |section, section_bullets| %>
+  <section id="timeline_section_<%= section.key %>" class="timeline--section">
+    <h2 class="timeline--label"><%= section.label %></h2>
+    <% section_bullets.each do |bullet| %>
+      <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
+    <% end %>
+  </section>
+<% end %>

@@ -10,7 +10,7 @@ module Bullets
     def new
       @collects_q = params[:q].to_s.strip.presence
       @collections, @collections_page = collectables_page(
-        Current.user.collections.merge(Bucket.active.matching_name(params[:q])).order('buckets.name')
+        Current.user.collections.active.matching_name(params[:q]).order(:name)
       )
 
       respond_to do |format|
@@ -20,23 +20,23 @@ module Bullets
     end
 
     def create
-      bucket_id = params.require(:bucket_id)
+      collection_id = params.require(:collection_id)
       Bullet.transaction do
-        @bullets.lock.find_each { |bullet| bullet.collect!(bucket_id: bucket_id) }
+        @bullets.lock.find_each { |bullet| bullet.collect!(collection_id: collection_id) }
       end
       @bullets.each(&:reload)
-      @bucket = Bucket.find(bucket_id)
+      @collection = Current.user.collections.find(collection_id)
 
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_back fallback_location: daylog_path }
+        format.html { redirect_back fallback_location: timeline_path }
       end
     rescue ActiveRecord::RecordInvalid => e
       @failed_bullet = e.record
       respond_to do |format|
         format.turbo_stream { render :create, status: :unprocessable_entity }
         format.html do
-          redirect_back fallback_location: daylog_path,
+          redirect_back fallback_location: timeline_path,
                         alert: e.record.errors.full_messages.to_sentence
         end
       end

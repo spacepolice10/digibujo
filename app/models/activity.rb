@@ -4,7 +4,7 @@ class Activity < ApplicationRecord
   ACTIONS = %w[
     updated collected rescheduled completed uncompleted
     project_mentioned project_unmentioned
-    pinned unpinned created destroyed archived unarchived
+    created destroyed archived unarchived
   ].freeze
 
   belongs_to :user
@@ -35,9 +35,9 @@ class Activity < ApplicationRecord
     metadata['to_pops_on'].to_date
   end
 
-  def destination_bucket
+  def destination_collection
     return unless action == 'collected'
 
-    user.buckets.find_by(id: metadata['bucket_id'])
+    user.collections.find_by(id: metadata['collection_id'])
   end
 end

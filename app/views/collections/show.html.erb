@@ -12,8 +12,6 @@
       </nav>
 
       <nav>
-        <%= render "buckets/pins_button", bucket: @collection.bucket %>
-
         <div class="dropdown--dock">
           <button
             type="button"
@@ -57,7 +55,7 @@
     </header>
 
     <main
-      id="<%= dom_id(@collection.bucket, nil) %>"
+      id="<%= dom_id(@collection) %>"
       class="chat--scroller"
       data-controller="chat-scroll"
       data-chat-scroll-path-value="<%= collection_bullets_path(@collection) %>"
@@ -82,11 +80,9 @@
             role="separator"
             aria-label="<%= date.strftime('%b %-d, %Y') %>"
           >
-            <%= link_to daylog_path(date: date.iso8601),
-                  class: "button collection--date-pill",
-                  data: { content: "text", turbo_frame: "_top" } do %>
+            <span class="button collection--date-pill" data-content="text">
               <time datetime="<%= date.iso8601 %>"><%= date.strftime('%b %-d, %Y') %></time>
-            <% end %>
+            </span>
           </div>
           <% previous_date = date %>
         <% end %>
@@ -104,9 +100,7 @@
   >
     <%= render "bullets/composer_v2",
       bullet: Bullet.new,
-      bucket: @collection.bucket,
-      pops_on: nil,
-      allowed_bulletable_variants: ["Note", "Task", "Event", "Voice"],
+      collection: @collection,
       preset: "default",
       autofocus: false,
       composer_id: dom_id(@collection, :bullets_composer) %>

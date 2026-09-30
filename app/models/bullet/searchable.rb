@@ -13,13 +13,10 @@ module Bullet::Searchable
   end
 
   def search_body
-    bucket_names = [bucket&.name].compact
-    mention_names = projects.map(&:name)
-
     [
       searchable_body,
-      *bucket_names,
-      *mention_names
+      collection&.name,
+      *projects.map(&:name)
     ].compact.join(' ')
   end
 

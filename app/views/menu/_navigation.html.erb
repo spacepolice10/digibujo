@@ -1,6 +1,6 @@
 <nav class="menu--navigation"
      data-controller="grid-navigation"
-     data-grid-navigation-columns-value="4"
+     data-grid-navigation-columns-value="3"
      data-action="keydown->grid-navigation#navigate">
   <%= link_to home_path,
         class: "menu--navigation-item hotkey-hint hotkey-hint--always",
@@ -15,7 +15,7 @@
     <%= icon_tag("search") %>
     <span class="menu--navigation-name">Home</span>
   <% end %>
-  <%= link_to daylog_path,
+  <%= link_to timeline_path,
         class: "menu--navigation-item hotkey-hint hotkey-hint--always",
         data: {
           turbo_frame: "_top",
@@ -24,11 +24,11 @@
           grid_navigation_target: "item",
           action: "keydown.2@document->hotkey#click keydown.ctrl+d@document->hotkey#click keydown.meta+d@document->hotkey#click focus->grid-navigation#syncPosition"
         },
-        aria: { keyshortcuts: "2", label: "Daylog" } do %>
+        aria: { keyshortcuts: "2", label: "Timeline" } do %>
     <%= icon_tag("menu") %>
-    <span class="menu--navigation-name">Daylog</span>
+    <span class="menu--navigation-name">Timeline</span>
   <% end %>
-  <%= link_to current_monthlylog_navigation_path,
+  <%= link_to upcoming_path,
         class: "menu--navigation-item hotkey-hint hotkey-hint--always",
         data: {
           turbo_frame: "_top",
@@ -37,21 +37,8 @@
           grid_navigation_target: "item",
           action: "keydown.3@document->hotkey#click focus->grid-navigation#syncPosition"
         },
-        aria: { keyshortcuts: "3", label: "Monthly" } do %>
+        aria: { keyshortcuts: "3", label: "Upcoming" } do %>
     <%= icon_tag("calendar") %>
-    <span class="menu--navigation-name">Monthly</span>
-  <% end %>
-  <%= link_to current_futures_navigation_path,
-        class: "menu--navigation-item hotkey-hint hotkey-hint--always",
-        data: {
-          turbo_frame: "_top",
-          controller: "hotkey",
-          hotkey: "4",
-          grid_navigation_target: "item",
-          action: "keydown.4@document->hotkey#click focus->grid-navigation#syncPosition"
-        },
-        aria: { keyshortcuts: "4", label: "Future" } do %>
-    <%= icon_tag("circle-check") %>
-    <span class="menu--navigation-name">Future</span>
+    <span class="menu--navigation-name">Upcoming</span>
   <% end %>
 </nav>

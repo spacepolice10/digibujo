@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Unauthenticated intake: external apps POST JSON to create a Pending bullet.
+# Unauthenticated intake: external apps POST JSON to create a timeline bullet.
 class HookIntakesController < ApplicationController
   allow_unauthenticated_access
   skip_forgery_protection
@@ -11,7 +11,7 @@ class HookIntakesController < ApplicationController
     hook = Hook.authenticate(params[:code])
     return head :not_found unless hook
 
-    @bullet = hook.create_pending_bullet!(
+    @bullet = hook.create_bullet!(
       author_name: intake_params[:author_name],
       bulletable_type: intake_params[:bulletable_type],
       body: intake_params[:body]

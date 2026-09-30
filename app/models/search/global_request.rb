@@ -7,8 +7,8 @@ class Search::GlobalRequest
   FUZZY_SCAN_LIMIT = 200
 
   SEARCHABLE_INCLUDES = {
-    'Bucket' => %i[bucketable bullets],
-    'Bullet' => [:projects, { bucket: :bucketable }]
+    'Collection' => [],
+    'Bullet' => %i[projects collection]
   }.freeze
 
   class << self

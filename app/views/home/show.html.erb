@@ -22,52 +22,26 @@
       </article>
     <% end %>
 
-    <% if mobile_variant? %>
-      <article data-elevation="1">
-        <header>
-          <h2>Pins</h2>
-        </header>
-
-        <main>
-          <% @pinned_entities.each do |entity| %>
-            <li>
-              <%= render "pinned/pinned_entity", pinned_entity: entity %>
-            </li>
-          <% end %>
-
-          <% if @pinned_entities.empty? %>
-            <p>Nothing pinned yet.</p>
-          <% end %>
-        </main>
-
-        <footer>
-          <%= link_to pinned_index_path, class: "button", data: { turbo_frame: "_top", intent: "secondary", radius: "base", size: "sm" } do %>
-            <p>Show all...</p>
-          <% end %>
-        </footer>
-      </article>
-    <% end %>
-
     <article data-elevation="1">
       <header>
-        <h2>Logs</h2>
+        <h2>Journal</h2>
       </header>
 
       <main>
         <section>
           <li>
-            <%= link_to current_monthlylog_navigation_path, class: "button", data: { turbo_frame: "_top", intent: "secondary", radius: "base", size: "sm" } do %>
-              <%= icon_tag("calendar") %>
+            <%= link_to timeline_path, class: "button", data: { turbo_frame: "_top", intent: "secondary", radius: "base", size: "sm" } do %>
+              <%= icon_tag("menu") %>
 
-              <p>Monthly log</p>
+              <p>Timeline</p>
             <% end %>
           </li>
 
           <li>
-            <%= link_to current_future_path, class: "button", data: { turbo_frame: "_top", intent: "secondary", radius: "base", size: "sm" } do %>
-              <%= icon_tag("calendar-repeat") %>
+            <%= link_to upcoming_path, class: "button", data: { turbo_frame: "_top", intent: "secondary", radius: "base", size: "sm" } do %>
+              <%= icon_tag("calendar") %>
 
-              <p>Future log</p>
+              <p>Upcoming</p>
             <% end %>
           </li>
         </section>
@@ -144,7 +118,7 @@
 
         <% if @projects.empty? %>
           <p>
-            Put a # in your note or task to create a thread to make a connection
+            Put a # in your bullet to create a thread to make a connection
             between bullets.
           </p>
         <% end %>

@@ -3,8 +3,15 @@
 module Collectable
   extend ActiveSupport::Concern
 
-  def collect!(bucket_id:)
-    destination = user.buckets.active.find(bucket_id)
-    migrate_to!(bucket: destination, pops_on: nil, action: 'collected')
+  # Moves the bullet off the timeline into a collection. There is no uncollect.
+  def collect!(collection_id:)
+    destination = user.collections.active.find(collection_id)
+    return if self.collection_id == destination.id
+
+    update!(collection: destination)
+    record_activity!(
+      'collected',
+      metadata: { 'collection_id' => destination.id, 'collection_name' => destination.name }
+    )
   end
 end

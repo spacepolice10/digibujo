@@ -13,25 +13,6 @@
       </nav>
 
       <nav>
-        <% if @bullet.pinned? %>
-          <%= button_to pin_path,
-                method: :delete,
-                params: { bullet_ids: @bullet.id },
-                class: "button", data: { intent: "secondary", radius: "full", size: "sm", content: "icon" },
-                aria: { label: "Unpin #{@bullet.name}" } do %>
-            <%= icon_tag("pin", style: "color: var(--color-invert-2);") %>
-          <% end %>
-
-        <% else %>
-          <%= button_to pin_path,
-                method: :post,
-                params: { bullet_ids: @bullet.id },
-                class: "button", data: { intent: "secondary", radius: "full", size: "sm", content: "icon" },
-                aria: { label: "Pin #{@bullet.name}" } do %>
-            <%= icon_tag("pin", style: "color: var(--color-invert-2);") %>
-          <% end %>
-        <% end %>
-
         <button type="button" class="button" data-intent="secondary" data-radius="full" data-size="sm" data-content="icon" aria-label="Actions" aria-haspopup="menu" popovertarget="<%= dom_id(@bullet, :actions) %>">
           <%= icon_tag("dots", style: "color: var(--color-invert-2);") %>
         </button>
@@ -44,7 +25,7 @@
              data-action="keydown->grid-navigation#navigate">
           <div class="dropdown--element-body">
             <nav class="dropdown--menu" aria-label="Actions">
-              <% unless @bullet.bulletable_type == "Voice" %>
+              <% unless @bullet.memo? %>
                 <%= link_to edit_bullet_path(@bullet),
                       class: "dropdown-item picker--item",
                       data: {
@@ -135,13 +116,13 @@
         <% end %>
       </div>
 
-      <% if @bullet.bulletable_type == "Voice" && @bullet.bulletable.recording.attached? %>
+      <% if @bullet.memo? && @bullet.memo.recording.attached? %>
         <div class="bullet--show-body">
           <%= @bullet.body %>
         </div>
-        <%= render "voices/playback",
-              recording_source: url_for(@bullet.voice.recording),
-              recording_duration: @bullet.voice.duration_seconds %>
+        <%= render "memos/playback",
+              recording_source: url_for(@bullet.memo.recording),
+              recording_duration: @bullet.memo.duration_seconds %>
       <% else %>
       <div class="bullet--show-body">
         <%= @bullet.body %>

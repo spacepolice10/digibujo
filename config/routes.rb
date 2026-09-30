@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   get 'manifest', to: 'rails/pwa#manifest', as: :pwa_manifest
   get 'service-worker', to: 'rails/pwa#service_worker', as: :pwa_service_worker
 
-  root 'daylogs#show'
+  root 'timelines#show'
 
   # --- Authentication ---
   resource :authentication, only: %i[new create destroy], controller: 'authentication' do
@@ -19,40 +19,15 @@ Rails.application.routes.draw do
   resource :features, only: :show, controller: 'features'
   resource :support, only: :show, controller: 'support'
 
-  # --- Logs ---
-  resource :daylog, only: %i[show create], controller: 'daylogs' do
-    scope module: :daylogs do
-      resources :bullets, only: :index
-      resource :metadata, only: :show
-      resource :triage, only: :show, controller: 'triage'
-    end
-  end
-
-  scope 'calendar_date', module: :calendar_dates, as: :calendar_date do
-    resource :mood_entity, only: %i[create]
-    resource :picture, only: %i[create destroy]
-  end
-
-  get 'monthlylog', to: 'monthlylogs#show', as: :current_monthlylog
-
-  get 'future', to: 'futures#show', as: :current_future
-
-  resources :futures, only: %i[show new create] do
-    scope module: :futures do
+  # --- Timeline ---
+  resource :timeline, only: :show do
+    scope module: :timelines do
       resources :bullets, only: :index
     end
   end
-
-  resources :monthlylogs, only: %i[create show] do
-    scope module: :monthlylogs do
-      resources :bullets, only: :index
-    end
-  end
+  resource :upcoming, only: :show, controller: 'upcoming'
 
   # --- Tags ---
-  scope 'projects', module: :projects, as: :projects do
-    resource :pin, only: %i[create destroy]
-  end
   scope module: :projects, path: 'projects', as: :project do
     resources :suggestions
   end
@@ -60,33 +35,22 @@ Rails.application.routes.draw do
 
   # --- Bullets ---
   scope 'bullets', module: :bullets do
-    resource :composer, only: :new
-    resource :pin
     resource :postpone, only: %i[new create]
     resource :archive
     resource :collect, only: %i[new create]
+    resource :completion, only: %i[create destroy]
     resource :publish
   end
 
   resources :bullets, except: :new
 
-  # --- Tasks ---
-  scope 'tasks', module: :tasks do
-    resource :complete
-  end
-
-  # --- Buckets & collections ---
+  # --- Collections ---
   resources :collections do
     scope module: :collections do
       resource :export
       resources :bullets, only: :index
     end
   end
-
-  scope 'buckets', module: :buckets, as: :buckets do
-    resource :pin
-  end
-  resources :buckets, only: :show
 
   # --- Home & navigation ---
   resource :home, controller: 'home'
@@ -108,9 +72,7 @@ Rails.application.routes.draw do
     end
   end
 
-  # --- Workspaces ---
   resources :activities
-  resources :pinned
   resources :archived
 
   # --- Attachments ---

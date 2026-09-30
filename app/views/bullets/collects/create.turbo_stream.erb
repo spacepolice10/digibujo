@@ -7,7 +7,7 @@
     <%= turbo_stream.remove_all bullet %>
   <% end %>
   <%= turbo_stream.update "toasts" do %>
-    <% message = @bullets.size == 1 ? "Bullet collected into #{@bucket.name}" : "#{@bullets.size} bullets collected into #{@bucket.name}" %>
+    <% message = @bullets.size == 1 ? "Bullet collected into #{@collection.name}" : "#{@bullets.size} bullets collected into #{@collection.name}" %>
     <%= render "shared/toasts", type: "notify", messages: [message] %>
   <% end %>
 <% end %>

@@ -5,7 +5,6 @@ class HomeController < ApplicationController
   PREVIEW_LIMIT = 3
 
   def show
-    @pinned_entities = pinned_entities
     @collections = collections
     @attachments = attachments
     @projects = projects
@@ -14,13 +13,8 @@ class HomeController < ApplicationController
 
   private
 
-  def pinned_entities = Current.user.pinned_entities.order(created_at: :desc).limit(PREVIEW_LIMIT)
-
   def collections
-    Current.user.collections
-           .merge(Bucket.active)
-           .order('collections.created_at DESC')
-           .limit(PREVIEW_LIMIT)
+    Current.user.collections.active.order(created_at: :desc).limit(PREVIEW_LIMIT)
   end
 
   def attachments = User::Attachments.new(Current.user).attachments.limit(PREVIEW_LIMIT)

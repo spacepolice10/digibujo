@@ -11,9 +11,7 @@ module Archivable
     scope :archived, -> { joins(:archive) }
     scope :active, -> { where.missing(:archive) }
     scope :expired_archived, lambda {
-      joins(:archive)
-        .where.not(id: PinnedEntity.where(pinnable_type: model.name).select(:pinnable_id))
-        .where(archives: { created_at: ...RETENTION_DAYS.days.ago })
+      joins(:archive).where(archives: { created_at: ...RETENTION_DAYS.days.ago })
     }
   end
 
