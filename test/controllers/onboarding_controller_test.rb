@@ -23,12 +23,11 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
     assert_select '#session-dots', count: 0
     assert_select 'canvas.session-dots', count: 0
     assert_select '.onboarding--heading', text: 'Welcome to Dotted'
-    assert_select '.onboarding-section', count: 6
-    assert_select '.onboarding-dots li', count: 6
+    assert_select '.onboarding-section', count: 5
+    assert_select '.onboarding-dots li', count: 5
     assert_select '.onboarding-demo', count: 0
     assert_select '.onboarding-welcome', count: 0
     assert_select 'button[data-action=?]', 'onboarding#next'
-    assert_select 'button[data-action=?]', 'onboarding#jumpToLast'
     assert_select 'input[type=radio][name=?]', 'data_seed', count: 2
     assert_select 'a[href=?]', features_path
     assert_select 'a[href=?]', support_path

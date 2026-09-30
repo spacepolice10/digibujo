@@ -69,7 +69,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "turbo-stream[action=?][target=?]", "update", "menu_search" do
-      assert_select "li[role=option]", maximum: Search::GlobalRequest::LIMIT
+      assert_select "a.search--item", maximum: Search::GlobalRequest::LIMIT
     end
   end
 
@@ -153,7 +153,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select 'main.search--page'
-    assert_select '.layout--container-header h1', text: 'Search'
+    assert_select 'main.search--page header h1', text: 'Search'
     assert_select 'form.search--form[action=?]', search_path
     assert_select 'turbo-frame#menu_search'
   end

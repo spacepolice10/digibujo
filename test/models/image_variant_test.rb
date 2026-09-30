@@ -4,7 +4,7 @@ require 'test_helper'
 
 class ImageVariantTest < ActiveSupport::TestCase
   test 'exposes named transformations for display sizes' do
-    assert_equal({ resize_to_limit: [ 64, 64 ] }, ImageVariant[:thumb])
+    assert_equal({ resize_to_limit: [ 128, 128 ] }, ImageVariant[:thumb])
     assert_equal({ resize_to_limit: [ 800, 800 ] }, ImageVariant[:preview])
     assert_equal({ resize_to_limit: [ 1600, 1600 ] }, ImageVariant[:display])
     assert_equal({ resize_to_fill: [ 1200, 200 ] }, ImageVariant[:header])

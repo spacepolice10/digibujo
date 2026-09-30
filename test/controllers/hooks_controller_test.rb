@@ -51,10 +51,10 @@ class HooksControllerTest < ActionDispatch::IntegrationTest
     get hooks_path
 
     assert_response :success
-    assert_select '.layout--container-header h1', text: 'Hooks'
-    assert_select 'a.button[data-content="text"][aria-label="Back to Account"]', text: /Account/
+    assert_select 'main[data-size="md"] header h2', text: 'Hooks'
+    assert_select 'a.button[data-content="icon"][aria-label="Back to Account"]'
     assert_select 'form[action=?]', hooks_path, count: 0
-    assert_select 'a.button.layout--container-header-action[href=?]', new_hook_path, text: /Create/
+    assert_select 'header a.button[href=?][aria-label="Create Hook"]', new_hook_path
     assert_match hook.name, response.body
     assert_match hook.code_prefix, response.body
     assert_select 'button.button[data-status="negative"]', text: /Revoke/
@@ -64,8 +64,8 @@ class HooksControllerTest < ActionDispatch::IntegrationTest
     get new_hook_path
 
     assert_response :success
-    assert_select '.layout--container-header h1', text: 'New hook'
-    assert_select 'a.button[data-content="text"][aria-label="Back to Hooks"]', text: /Hooks/
+    assert_select 'main[data-size="md"] header h2', text: 'New hook'
+    assert_select 'a.button[data-content="icon"][aria-label="Back to Hooks"]'
     assert_select 'form[action=?]', hooks_path
     assert_select 'input[type="submit"][data-intent="primary"]'
     assert_match 'bulletable_type', response.body
@@ -82,16 +82,16 @@ class HooksControllerTest < ActionDispatch::IntegrationTest
     assert_match(/Copy this URL now/, response.body)
     assert_match(%r{/hooks/hk_}, response.body)
     assert_match 'Zapier', response.body
-    assert_select 'section.hooks--created[role="status"]' do
+    assert_select 'section.hook--created[role="status"]' do
       assert_select 'strong', text: 'Hook is ready'
       assert_select '[aria-hidden="true"]', text: '⚡'
-      assert_select 'code.hooks--created-url'
+      assert_select 'code.hook--created-link'
     end
 
     get hooks_path
 
     assert_no_match(/Copy this URL now/, response.body)
-    assert_select 'section.hooks--created', count: 0
+    assert_select 'section.hook--created', count: 0
   end
 
   test 'html destroy revokes the hook' do

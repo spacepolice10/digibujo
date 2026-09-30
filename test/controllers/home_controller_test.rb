@@ -4,8 +4,7 @@ require 'test_helper'
 
 class HomeControllerTest < ActionDispatch::IntegrationTest
   MOBILE_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)'
-  SECTION_ORDER = %w[logs collections attachments projects recently-shared archive].freeze
-  MOBILE_SECTION_ORDER = %w[pins logs collections attachments projects recently-shared archive].freeze
+  SECTION_ORDER = ['Journal', 'Collections', 'Attachments', 'Projects', 'Recently shared'].freeze
 
   setup do
     @user = users(:one)
@@ -19,43 +18,47 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     assert_equal SECTION_ORDER, rendered_section_order
     assert_link user_path, aria_label: 'Account'
     assert_select 'button[popovertarget="header_menu"]', text: /Dotted/
-    assert_select 'a', text: 'Monthly log', count: 1
-    assert_link current_future_path, text: 'Future log'
-    assert_select '[data-home-section="logs"] > .home--section-header a', count: 0
-    assert_select '[data-home-section="logs"] .home--section-arrow', count: 0
-    assert_select '.home--sections a[href=?]', daylog_path, count: 0
-    assert_link published_index_path, text: 'Recently shared'
+    assert_link timeline_path, text: 'Timeline'
+    assert_link upcoming_path, text: 'Upcoming'
+    assert_link collections_path, text: 'Show all...'
+    assert_link projects_path, text: 'Show all...'
+    assert_link published_index_path, text: 'Show all...'
     assert_link archived_index_path, text: 'Archive'
     assert_select 'details', count: 0
   end
 
-  test 'show renders empty sections and only the requested create links' do
+  test 'show renders empty sections and the collection create link' do
     get home_path
 
     assert_response :success
-    assert_link new_collection_path, text: 'Add collection'
-    assert_select '[data-home-section] > .home--add-button', count: 1
+    assert_link new_collection_path
+    assert_page_text 'Collections are like folders'
+    assert_page_text 'Put a # in your bullet'
+    assert_page_text 'Share your bullets with others'
   end
 
-  test 'show limits previews to three records' do
+  test 'show limits previews to the most recent records' do
     4.times { |index| create_project!(@user, name: "project #{index}") }
 
     get home_path
 
     assert_response :success
-    assert_select '[data-home-section="projects"] > .home--preview-link', count: 3
+    assert_select 'article', text: /Projects/ do
+      assert_select 'main li', count: HomeController::PREVIEW_LIMIT
+    end
   end
 
   test 'mobile show uses the same hub and keeps the tabbar' do
     get home_path, headers: { 'User-Agent' => MOBILE_UA }
 
     assert_response :success
-    assert_equal MOBILE_SECTION_ORDER, rendered_section_order
+    assert_equal SECTION_ORDER, rendered_section_order
     assert_link search_path, text: 'Search'
     assert_link home_path, text: 'Dotted'
     assert_select 'button[popovertarget="header_menu"]', count: 0
     assert_tabbar_link home_path, label: 'Menu'
-    assert_tabbar_link daylog_path, label: 'Daily log'
+    assert_tabbar_link timeline_path, label: 'Timeline'
+    assert_tabbar_link upcoming_path, label: 'Upcoming'
     assert_tabbar_link activities_path, label: 'Activity'
   end
 
@@ -75,6 +78,6 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   private
 
   def rendered_section_order
-    css_select('[data-home-section]').map { |node| node['data-home-section'] }
+    css_select('main.home--page article > header h2').map { |node| node.text.strip }
   end
 end

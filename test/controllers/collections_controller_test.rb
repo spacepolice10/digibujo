@@ -28,7 +28,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     get new_collection_path, params: { bullet_ids: card.id.to_s, return_to: home_path }
 
     assert_response :success
-    assert_select '.layout--container[data-size="md"]'
+    assert_select 'main[data-size="sm"]'
     assert_select 'input[name="bullet_ids"][value=?]', card.id.to_s
     assert_match 'Preview me', response.body
     assert_match '1 bullet will be added', response.body
@@ -80,7 +80,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :unprocessable_entity
     assert_nil card.reload.collection_id
-    assert_select '.layout--container[data-size="md"]'
+    assert_select 'main[data-size="sm"]'
     assert_match 'Create and collect', response.body
     assert_match 'Hold', response.body
   end
@@ -115,30 +115,18 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'show renders the floating chat frame with frosted chips and actions dropdown' do
+  test 'show renders the chat frame with title and actions dropdown' do
     collection = create_collection!(@user, name: 'Inbox', colour: 'teal', icon: 'folder')
-    collection.update!(description: 'Things to sort')
 
     get collection_path(collection)
 
     assert_response :success
     assert_select '.chat--window'
-    assert_select '.collection--chat-header'
-    assert_select '.collection--frost-chip.collection--frost-chip--title', text: /inbox/
-    assert_select '.collection--frost-chip.collection--frost-chip--description', text: /Things to sort/
+    assert_select '.chat--header h1', text: /inbox/
     assert_select 'button[popovertarget="collection_actions"]'
-    assert_select 'div#collection_actions.dropdown--element[data-controller=grid-navigation]'
+    assert_select 'div#collection_actions[role=menu][data-controller=grid-navigation]'
     assert_select 'a.dropdown-item[href=?]', edit_collection_path(collection)
     assert_select "a.dropdown-item[href=?]", collection_export_path(collection)
-  end
-
-  test 'show omits description chip when absent' do
-    collection = create_collection!(@user, name: 'Inbox')
-
-    get collection_path(collection)
-
-    assert_response :success
-    assert_select '.collection--frost-chip--description', count: 0
   end
 
   test 'show inserts date pills between days and skips duplicates within a day' do
