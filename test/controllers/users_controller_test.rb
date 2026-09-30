@@ -18,7 +18,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_select 'a.button[data-content="text"][aria-label="Back to Home"]', text: /Home/
     assert_select 'a[href=?]', access_codes_path, text: /Access codes/
     assert_select 'a[href=?]', hooks_path, text: /Hooks/
-    assert_select 'form[action=?][data-turbo-confirm=?]', authentication_path, 'Sign out of Digibujo?'
+    assert_select 'form[action=?][data-turbo-confirm=?]', authentication_path, 'Sign out of Dotted?'
     assert_select 'button.button[data-status="negative"]', text: /Sign out/
   end
 

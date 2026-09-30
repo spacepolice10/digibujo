@@ -1,6 +1,6 @@
 import { Extension } from "lexxy"
 
-// Note-preset toolbar: drop controls Digibujo doesn't surface in the chat /
+// Note-preset toolbar: drop controls Dotted doesn't surface in the chat /
 // note composers. Keep the toolbar in place: moving a connected
 // <lexxy-toolbar> runs dispose() and kills its command handlers.
 export class TrimToolbarExtension extends Extension {

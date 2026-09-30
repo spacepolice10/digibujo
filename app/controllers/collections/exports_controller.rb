@@ -29,7 +29,7 @@ module Collections
 
     def export_filename
       slug = @collection.name.parameterize
-      "digibujo-#{slug}-export-#{Date.current.iso8601}.html"
+      "dotted-#{slug}-export-#{Date.current.iso8601}.html"
     end
   end
 end

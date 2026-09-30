@@ -18,7 +18,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_equal SECTION_ORDER, rendered_section_order
     assert_link user_path, aria_label: 'Account'
-    assert_select 'button[popovertarget="header_menu"]', text: /Digibujo/
+    assert_select 'button[popovertarget="header_menu"]', text: /Dotted/
     assert_select 'a', text: 'Monthly log', count: 1
     assert_link current_future_path, text: 'Future log'
     assert_select '[data-home-section="logs"] > .home--section-header a', count: 0
@@ -52,7 +52,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_equal MOBILE_SECTION_ORDER, rendered_section_order
     assert_link search_path, text: 'Search'
-    assert_link home_path, text: 'Digibujo'
+    assert_link home_path, text: 'Dotted'
     assert_select 'button[popovertarget="header_menu"]', count: 0
     assert_tabbar_link home_path, label: 'Menu'
     assert_tabbar_link daylog_path, label: 'Daily log'

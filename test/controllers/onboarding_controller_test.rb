@@ -22,7 +22,7 @@ class OnboardingControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select '#session-dots', count: 0
     assert_select 'canvas.session-dots', count: 0
-    assert_select '.onboarding--heading', text: 'Welcome to Digibujo'
+    assert_select '.onboarding--heading', text: 'Welcome to Dotted'
     assert_select '.onboarding-section', count: 6
     assert_select '.onboarding-dots li', count: 6
     assert_select '.onboarding-demo', count: 0

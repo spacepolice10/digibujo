@@ -1,12 +1,12 @@
 # Architecture
 
-Application architecture and implementation conventions for Digibujo — a digital Bullet Journal built on Rails 8, Hotwire, and SQLite.
+Application architecture and implementation conventions for Dotted — a digital Bullet Journal built on Rails 8, Hotwire, and SQLite. One infinite timeline, collections, and a quiet Upcoming screen.
 
 Framework-agnostic references live in [`docs/`](docs/). Agent workflow rules live in [`AGENTS.md`](AGENTS.md).
 
 ## Authentication
 
-Custom session-based auth built with an `Authentication` concern (not Devise). **Passwordless:** users continue with email + one-time code (`AuthCode`). `AuthenticationController#create` finds or creates the `User`, sends a code, and stores `session[:login_email]`; `Authentications::ConfirmationsController#create` calls `AuthCode.consume!` and always starts a session, then redirects to `onboarding#new` unless `user.onboarded?`, otherwise to the app. `OnboardingController` (authenticated) still exists: `Onboarding#complete` provisions `Loose Notes`, the single `Daylog`, and the single `Pending`, then sets `users.onboarded`. Monthlylog / Future remain opt-in. Logout via `DELETE /authentication`. Persisted sessions live in the `sessions` table; the signed httponly cookie holds `session_id`. `Current.user` / `Current.session` via `ActiveSupport::CurrentAttributes`. Controllers opt out of auth with `allow_unauthenticated_access`. The continue-with-email form links to **`GET /features`** (`FeaturesController#show`) and **`GET /support`** (`SupportController#show`), both unauthenticated with `layout: public`. Rate limiting is applied to authentication create, confirmation create, and onboarding create. Auth forms use a `form-submit` Stimulus controller for submit loading state.
+Custom session-based auth built with an `Authentication` concern (not Devise). **Passwordless:** users continue with email + one-time code (`AuthCode`). `AuthenticationController#create` finds or creates the `User`, sends a code, and stores `session[:login_email]`; `Authentications::ConfirmationsController#create` calls `AuthCode.consume!` and always starts a session, then redirects to `onboarding#new` unless `user.onboarded?`, otherwise to the app. `OnboardingController` (authenticated) sets `users.onboarded` through `Onboarding#complete` and, when asked, seeds sample bullets and collections. Logout via `DELETE /authentication`. Persisted sessions live in the `sessions` table; the signed httponly cookie holds `session_id`. `Current.user` / `Current.session` via `ActiveSupport::CurrentAttributes`. Controllers opt out of auth with `allow_unauthenticated_access`. The continue-with-email form links to **`GET /features`** (`FeaturesController#show`) and **`GET /support`** (`SupportController#show`), both unauthenticated with `layout: public`. Rate limiting is applied to authentication create, confirmation create, and onboarding create. Auth forms use a `form-submit` Stimulus controller for submit loading state.
 
 ### JSON API (CLI / integrations)
 
@@ -30,238 +30,141 @@ Subsequent requests authenticate via, in order: signed `session_id` cookie (brow
 - Index returns `id`, `code_prefix`, `description`, `created_at` (never digest/plaintext `code`)
 - Managing access codes requires a session or an existing access code.
 
-**Daylog bullets:** `GET /daylog/bullets.json?before=<id>` — cursor paging; **200** array, **204** exhausted/unknown, **304** when `If-None-Match` matches ETag. **Create:** `POST /bullets.json` → **201** + `Location` + bullet body; validation → **422**. Bullet JSON: `id`, `bulletable_type`, `pops_on`, `bucket_id`, `pinned`, `archived`, `migrated_at`, `body`, `body_html`, type-specific fields, timestamps, `url`.
+**Timeline bullets:** `GET /timeline/bullets.json?before=<id>` — cursor paging; **200** array, **204** exhausted/unknown, **304** when `If-None-Match` matches ETag. **Create:** `POST /bullets.json` → **201** + `Location` + bullet body; validation → **422**. Bullet JSON: `id`, `bulletable_type`, `pops_on`, `collection_id`, `done`, `archived`, `author_name`, `body`, `body_html`, `duration_seconds` (memos), timestamps, `url`.
 
-**Hooks** (inbound intake for external apps → Pending inbox):
+**Hooks** (inbound intake for external apps → timeline):
 
 - Manage (session or access code): HTML **Account → Hooks** — index lists hooks + Create; **`GET /hooks/new`** form (payload docs); create shows intake URL once via flash on index. JSON `GET/POST /hooks.json`, `DELETE /hooks/:id.json`. Create body: `{ "hook": { "name" } }` → **201** with `code` once (`hk_…`) and `url` (`POST /hooks/:code`).
-- Intake (unauthenticated): `POST /hooks/:code` with `{ "author_name", "bulletable_type", "body" }` → creates a bullet in that user's **Pending** bucket (`pops_on` nil). Allowed types: `Note`, `Task`. **201** + bullet JSON; unknown/inactive code → **404**; bad type/validation → **422**. The intake `code` is hashed at rest (same pattern as access codes) but only authorizes Pending create — not full API access.
+- Intake (unauthenticated): `POST /hooks/:code` with `{ "author_name", "bulletable_type", "body" }` → creates a `Text` bullet on that user's timeline (today, no collection). The only allowed type is `Text`. **201** + bullet JSON; unknown/inactive code → **404**; bad type/validation → **422**. The intake `code` is hashed at rest (same pattern as access codes) but only authorizes bullet create — not full API access.
 
 ## User Settings
 
 Per-user settings live in a dedicated `user_settings` table (one row per user), accessed via `User::Configurable` concern. `User` `has_one :settings, class_name: "User::Settings"`; the row is created automatically on user create. **`appearance`** (`default`, `warm`, `cool`, `nature`, `cheese`) drives the application background tint and is updated via `POST /home/appearance` (`Home::AppearancesController`). Add new settings as real columns and extend the model; avoid JSON columns. The concern also exposes `User#settings!` which lazy-creates the row on first access; use it from controllers so users created before the row existed (or created via raw SQL) still get a settings record. Legacy `*_expanded` columns remain in the table for compatibility but are no longer read by the application.
 
+## Timeline
+
+Dotted is one long **timeline** plus **collections**. Everything a user writes is a `Bullet`; where it shows is decided by two columns:
+
+- **`pops_on`** (`date`, never null, defaults to today) — the day a bullet belongs to.
+- **`collection_id`** (nullable FK) — set once the bullet has been filed into a collection.
+
+`Timeline` (plain Ruby, `user.timeline`) is the single feed: `bullets` = the user's `active` bullets with no collection and `pops_on <= today`; `upcoming` = the same with `pops_on > today`. Nothing about sections is stored. `Timeline.section_for(date, today:)` derives a `Timeline::Section` (`key`, `label`) from the bullet's age in days:
+
+| Age (days) | Section |
+|------------|---------|
+| 0 (or future) | Today |
+| 1 | Yesterday |
+| 2–6 | One section per day (`Monday, Sep 28`) |
+| 7–13 | Last week |
+| 14–30 | Last month |
+| 31–90 | Last 3 months |
+| 91–365 | Last year |
+| older | One section per year |
+
+`TimelinesController#show` renders the newest page inside an inverted chat list (`chat--scroller`): oldest at the top, composer docked at the bottom. `TimelinesHelper#timeline_sections` groups the page into `<section id="timeline_section_<key>">` wrappers with a `timeline--label` heading; today's section is always rendered (and hidden by CSS while it holds no bullet) so the composer's turbo stream has a target. `Timelines::BulletsController#index` (`GET /timeline/bullets?before=<id>`) serves the older page in the same markup; a page may end mid-section, so `chat-scroll` merges the incoming last section into the on-screen one of the same id instead of duplicating its heading.
+
+**Upcoming** (`GET /upcoming`, `UpcomingController#show`) lists `timeline.upcoming` grouped by day. It is not linked as the default screen; bullets join the timeline automatically when their day arrives.
+
+**Postponing** only changes `pops_on` (`Postponable#postpone!`, records `rescheduled` with `from_pops_on` / `to_pops_on`). A bullet moved to a future day disappears from the timeline and appears on Upcoming. Collected bullets keep their `pops_on` but live in their collection.
+
 ## Delegated Type Pattern (Bullets)
 
-`Bullet` uses `delegated_type :bulletable` with `inverse_of: :bullet` for polymorphism. The `bullets` table holds `bulletable_type`/`bulletable_id`. Implemented bulletable types:
+`Bullet` uses `delegated_type :bulletable` with `inverse_of: :bullet`. The `bullets` table holds `bulletable_type`/`bulletable_id`. Two bulletable types exist:
 
-| Type    | Concerns     | Notes                              |
-|---------|--------------|------------------------------------|
-| `Task`  | `Bulletable` | Completable + temporal |
-| `Note`  | `Bulletable` | Long-form |
-| `Event` | `Bulletable` | Temporal; date range |
-| `Voice` | `Bulletable` | Audio memo; optional caption in body |
+| Type   | Concerns     | Notes                              |
+|--------|--------------|------------------------------------|
+| `Text` | `Bulletable` | The default; body only |
+| `Memo` | `Bulletable` | Voice recording (`has_one_attached :recording`, 1–60 s); optional caption in body |
 
-Each bulletable includes **`Bulletable`** (`has_one :bullet`, display defaults, `to_partial_path`, `permitted_bullet_attributes`). **`Bullet` owns the single rich-text `body`** (`has_rich_text :body`, Action Text/Lexxy — no plain `body` columns anywhere). **`Bullet#body_as_text`** is the `to_plain_text` form; **`#name`** is its first line, **`#long?`** compares it against `EXCERPT_LIMIT`, and **`#excerpt`** dispatches to `bulletable.excerpt_for(body)` — base returns the rich `body`, Note overrides with a truncated plain-text tail. Per-type rules (Voice recording validations, Task completion, Event dates) are **pure Ruby on each subtype**, read through the owning bullet. Create/update params carry `body` at the top level (`bullet[body]`); type-specific fields still nest under `bulletable_attributes` (Event dates, Voice recording).
+Each bulletable includes **`Bulletable`** (`has_one :bullet`, display defaults, `to_partial_path`, `permitted_bullet_attributes`). **`Bullet` owns the single rich-text `body`** (`has_rich_text :body`, Action Text/Lexxy — no plain `body` columns anywhere). **`Bullet#body_as_text`** is the `to_plain_text` form; **`#name`** is its first line, **`#long?`** compares it against `EXCERPT_LIMIT`, and **`#excerpt`** dispatches to `bulletable.excerpt_for(body)`. Create/update params carry `body` at the top level (`bullet[body]`); type-specific fields nest under `bulletable_attributes` (Memo recording and duration).
 
-**Create** uses the shared composer ([`bullets/_composer_v2`](app/views/bullets/_composer_v2.html.erb)). **Edit** uses a single body-only form ([`bullets/_edit_form`](app/views/bullets/_edit_form.html.erb)): Lexxy `note` for Notes, `inline` for Task/Event/Voice; type / bucket / `pops_on` are not accepted on update. Rendered rich text uses `.rich-text-content` alongside Lexxy's `.lexxy-content`. **Projects** sync from Action Text `#` attachables on **every** bulletable type. Each type declares permitted attributes via `permitted_bullet_attributes`.
+**Every bullet can be done.** `bullets.done_at` (`datetime`, nullable) is owned by the **`Completable`** concern: `complete!` / `uncomplete!` record `completed` / `uncompleted` activity and drop the bullet from search selections. `Bullet#marker_icon` is `:check` when done, otherwise the type's icon (`:square` for Text, `:microphone` for Memo). Rows expose `data-bullet-done`.
 
-**Bucket membership:** `Bullet` **requires** `belongs_to :bucket` (Daylog, Monthlylog, Future, Collection, or Pending). **`bucket_id` must belong to the same user** and must be supplied on create (composer hidden field). Homes are exclusive: the daylog page never unions monthly/future/pending bullets. **`Migratable#migrate_to!`** moves a bullet to a destination with an explicit BuJo `action` (`collected` or `rescheduled`) and a caller-resolved `pops_on`. **`Collectable#collect!`** and **`Postponable#postpone!`** own destination/`pops_on` rules and call that API. There is no uncollect — migration is one-way. **`Bullet#accept_from_pending!`** is the Pending → today Daylog shortcut (`rescheduled`).
+**Collections:** `Collectable#collect!(collection_id:)` files a bullet into one of the user's active collections (`collected` activity). There is no uncollect and no per-type conversion.
 
 ### Composer UX
 
-All bullet types are created via **`POST /bullets`** (`BulletsController`) — there are no nested create routes. (`GET /daylog/bullets` exists, but only serves older chat pages; see **Chat daylog**.)
+All bullets are created via **`POST /bullets`** (`BulletsController`) — there are no nested create routes.
 
-**Composer** ([`bullets/_composer_v2`](app/views/bullets/_composer_v2.html.erb), `composer` Stimulus): the shared Note/Task/Event/Voice form used by daylog, collection, monthlylog, and future surfaces. Callers pass the bullet, bucket/date context, allowed variants, Lexxy preset, autofocus, and a unique id. Text and voice modes share one submit control; switching modes resets recorder resources cleanly. Multiline and toolbar state live on the composer element and are styled by [`composer_v2.css`](app/assets/stylesheets/composer_v2.css).
+**Composer** ([`bullets/_composer_v2`](app/views/bullets/_composer_v2.html.erb), `composer` Stimulus): one form for the timeline and collection pages. Callers pass the bullet, Lexxy preset, autofocus, an optional `collection` and `pops_on`. Hidden fields carry `bulletable_type` (`Text` enabled, `Memo` disabled until recorder mode) and `collection_id`. Text and voice modes share one submit control; switching modes resets recorder resources cleanly. Multiline and toolbar state live on the composer element and are styled by [`composer_v2.css`](app/assets/stylesheets/composer_v2.css).
 
-**Composer voice mode:** the recorder partial owns MediaRecorder, microphone cleanup, live waveform, preview playback, and waveform seeking. It dispatches readiness to `composer`, which keeps submit disabled until a take exists. The editor is hidden while recording; a blank caption is filled in server-side by `Voice#apply_default_caption`.
+**Voice mode:** the recorder partial owns MediaRecorder, microphone cleanup, live waveform, preview playback, and waveform seeking. It dispatches readiness to `composer`, which keeps submit disabled until a take exists.
 
-**Inline create responses:** the form submits through Turbo and [`create.turbo_stream.erb`](app/views/bullets/create.turbo_stream.erb) appends the rendered bullet to `dom_id(bucket, pops_on)`, the same id used by every composer surface. Failures update the toast host with status 422; plain HTML create redirects to the bullet show.
+**Inline create responses:** [`create.turbo_stream.erb`](app/views/bullets/create.turbo_stream.erb) appends the rendered bullet to `timeline_section_today` (timeline bullets due today) or `dom_id(collection)`; a bullet created for another day renders nothing. Failures update the toast host with status 422; plain HTML create redirects to the bullet show.
 
-**Edit:** [`GET/PATCH /bullets/:id/edit`](app/views/bullets/edit.html.erb) — body-only form ([`bullets/_edit_form`](app/views/bullets/_edit_form.html.erb)); no type picker. Back returns to the bullet show page.
-
-**Lazy composer:** `GET /bullets/composer/new` renders the shared composer inside a neutral frame component. It accepts `composer_id`, `bucket_id`, `pops_on`, and a same-origin `return_to`, derives the frame id as `<composer_id>_frame`, and selects the allowed variants from the bucket context. Its close control loads `return_to` inside the frame (falling back to Home when the URL is unsafe or absent). The rendered form still creates through the sole `POST /bullets` endpoint.
-
-**Monthly spread:** dated and unplanned sections render the shared composer with their own bucket/date context. Dated sections load it lazily through the generic composer endpoint. The nested monthlylog bullets route is read-only.
-
-**Future log (temporary):** same chat chrome as daylog — floating header, `chat--wrap` / `chat--scroller`, fixed composer — but only unplanned bullets (`future_bullets_unplanned_*` ids; Task/Note). Month-card UI is parked until a better design lands.
+**Edit:** `GET/PATCH /bullets/:id/edit` is a body-only form; type, collection and `pops_on` are not accepted on update.
 
 ## Chat surfaces
 
-Shared list chrome lives in [`chat.css`](app/assets/stylesheets/chat.css): `chat--wrap`, `chat--scroller`, `chat--compact-list-pinned`, `chat--load-more-trigger`. Stimulus `chat-scroll` (was `daylog-scroll`) owns cursor paging. Daylog chrome (header / mood / photo) stays `daylog--*`.
+Shared list chrome lives in [`chat.css`](app/assets/stylesheets/chat.css): `chat--window`, `chat--surface`, `chat--scroller`, `chat--load-more-trigger`. The Stimulus `chat-scroll` controller owns cursor paging on both the timeline and collection pages. The composer is the final flex row of `.chat--window`; the scroller consumes the remaining height. Viewport meta uses `interactive-widget=resizes-content`, so Chromium/Android shrinks the layout viewport under the keyboard. WebKit/iOS ignores that directive, so `keyboard-spacing` mirrors `visualViewport.height` and `offsetTop` onto the chat window while a composer control is focused.
 
-**Daylog:** Messages column with the composer as the final flex row of `.chat--window`; the scroller consumes the remaining height. Viewport meta uses `interactive-widget=resizes-content`, so Chromium/Android shrinks the layout viewport and viewport units under the keyboard. WebKit/iOS ignores that directive, so `keyboard-spacing` mirrors `visualViewport.height` and `offsetTop` onto the whole chat window while a composer control is focused.
+**Cursor paging** (`Bullet::Pageable`): pages are keyed on the oldest row already on screen, never an offset, because the composer keeps appending to the same list. Collections read by creation time (`last_page` / `page_before`, ties broken on `id`). The timeline reads by day (`last_day_page` / `day_page_before`, ordering on `pops_on`, `created_at`, `id`). Both take `PAGE_SIZE` rows in reading order from the end via `last(n)` (reversed in SQL). The controllers answer **204** once nothing older is left, or for unknown or foreign cursors, and set `@more_bullets` when the first page came back full.
 
-**Future:** Same chat shell as daylog for now (floating name/pin island + scroller + composer), scoped to unplanned bullets only.
+**Scrolling** (`chat-scroll` + [`helpers/scroll_helpers`](app/javascript/helpers/scroll_helpers.js)): open at the bottom with a smooth `scrollTo` (ResizeObserver follow starts after `scrollend` / timeout so it cannot cancel the animation); an `IntersectionObserver` on `.chat--load-more-trigger` fetches the next older page and prepends it inside `keepScroll`, which restores the distance to the bottom edge so the row being read never moves. `pauseInertiaScroll` clamps overflow for a frame first, or iOS momentum would override the write. The observer is re-armed after each prepend, and the loop ends when the new rows push it out of range or the endpoint answers 204. New rows follow the reader only while they are already at the bottom — tracked on every scroll event, deliberately unthrottled.
 
-**Cursor paging** (`Bullet::Pageable`): `last_page` takes the newest `PAGE_SIZE` rows in reading order (`chronologically.last(n)` — reversed in SQL, no OFFSET), `page_before(bullet)` takes the batch just older than a cursor, breaking `created_at` ties on `id`. `DaylogsController#show` renders `last_page` and sets `@more_bullets` when it came back full; **`GET /daylog/bullets?before=<id>`** (`Daylogs::BulletsController#index`) renders bare rows for the page before the cursor and answers **204** once nothing older is left (also for unknown or foreign cursors). Offsets would drift here, because the composer keeps appending to the end of the same list.
-
-**Short-list pin (CSS):** `.chat--compact-list-pinned` is `min-height: 100%` with `justify-content: flex-end`, so a sparse list packs against the composer without putting `.chat--load-more-trigger` in view (which would auto-fetch every page). Once the list overflows the scrollport, free space is gone and the feed reads top-to-bottom as usual. Empty state lives inside the list so the pin still applies.
-
-**Scrolling** (`chat-scroll` + [`helpers/scroll_helpers`](app/javascript/helpers/scroll_helpers.js)): open at the bottom with a smooth `scrollTo` (ResizeObserver follow starts after `scrollend` / timeout so it cannot cancel the animation); an `IntersectionObserver` on `.chat--load-more-trigger` fetches the next older page and prepends it inside `keepScroll`, which restores the distance to the bottom edge so the row being read never moves. `pauseInertiaScroll` clamps overflow for a frame first, or iOS momentum would override the write. The observer is re-armed after each prepend (it only reports *changes*, so a trigger still on screen would otherwise go quiet), and the loop ends when the new rows push it out of range or the endpoint answers 204. New rows follow the reader only while they are already at the bottom — tracked on every scroll event, deliberately unthrottled, since a dropped trailing call would leave the list yanking itself down under someone reading history.
+**Short-list pin (CSS):** `.chat--scroller`'s first row gets an auto start margin, so a sparse list packs against the composer without putting `.chat--load-more-trigger` in view (which would auto-fetch every page).
 
 ## Bullet row rendering
 
-List views use **`<%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>`**, which resolves `Bullet#to_partial_path` → type row (`tasks/task`, `notes/note`, …) with local name forced to `:bullet`. Each type row wraps layout [`bullets/_bullet`](app/views/bullets/_bullet.html.erb) (turbo-frame, inline marker + migration metadata) and yields type-specific content. Completed tasks set `data-task-completed` and strike through `.bullet--body`. Migration markers open an anchored dropdown (same chrome as pinned/create) with the migration hint — they do not navigate to the activity show page.
-
-- **Wrappers:** `reviews/_bullet`, `monthlylogs/bullets/_bullet`, `futures/bullets/_bullet`, `pendings/_bullet` — surface shells around the type row render (pending adds the Today accept control).
-
-## Bullet Status
-
-`Bullet` has a `pinned` boolean column (`default: false, null: false`). Archive state is **not** a column — it lives in a separate polymorphic `Archive` entity (see **Archive entity** below). There is no `status` enum. `Pinnable` adds a `pinned` scope and `pin!` / `unpin!` helpers (used by bullets and buckets; no pin count limit). **`Archivable`** adds `archived` / `active` scopes backed by the `archives` join. Daylog and other list views use the **`active`** scope to hide archived bullets; pinned bullets remain visible and are distinguished by icons in the marker.
-
-`Bullet` tracks **`migrated_at`** (`datetime`, nullable) and **`last_migration`** (json, default `{}`). BuJo moves go through **`Migratable#mark_migration!`** with action `collected` or `rescheduled` (and matching Activity). **`Task#complete!`** only sets `migrated_at` (and clears `last_migration`) so the bullet leaves the review inbox — it is not a BuJo migration action. Archiving does **not** stamp `migrated_at`. `migrated?` is `migrated_at.present?`. Row markers use `collected_migration?` / `rescheduled_migration?` plus `migration_hint` in an anchored dropdown. Project tags do **not** stamp migration.
+List views use **`<%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>`**, which resolves `Bullet#to_partial_path` → the type row (`texts/text`, `memos/memo`) with local name forced to `:bullet`. Each type row wraps layout [`bullets/_bullet`](app/views/bullets/_bullet.html.erb) (turbo-frame, marker label, selection checkbox) and yields type-specific content. Done bullets set `data-bullet-done="true"` and strike through `.bullet--body`.
 
 ## Archive entity
 
-Archiving (`Bullet` or `Bucket`) is modelled as a row in **`archives`** (`archivable_type` / `archivable_id` polymorphic, `user_id`, timestamps), mirroring `PinnedEntity`. A unique index guarantees at most one `Archive` per subject. `Archive#created_at` replaces the old `archives_on` column; `Archive#user_id` records who archived.
+Archiving (`Bullet` or `Collection`) is modelled as a row in **`archives`** (`archivable_type` / `archivable_id` polymorphic, `user_id`, timestamps). A unique index guarantees at most one `Archive` per subject. `Archive#user_id` records who archived.
 
-**`Archivable`** (shared concern on Bullet and Bucket) provides `has_one :archive`, `archived` / `active` / `expired_archived` scopes, and `archive!` / `unarchive!` (create/destroy the join row only). Lifecycle side effects live on **`Archive`**:
+**`Archivable`** (shared concern on Bullet and Collection) provides `has_one :archive`, `archived` / `active` / `expired_archived` scopes, and `archive!` / `unarchive!` (create/destroy the join row only). Lifecycle side effects live on **`Archive`**:
 
 - `after_create` records Activity with **`subject: Archive`**, action `archived`, metadata snapshot (`name`)
 - `before_destroy` records `unarchived` the same way (skipped when the Archive is destroyed via `dependent:` on the archivable)
-- `after_create_commit` / `after_destroy_commit` call `archivable.reindex` so search stays in sync (archive is not an `update!` on the subject)
+- `after_create_commit` / `after_destroy_commit` call `archivable.reindex` so search stays in sync
 
-`Bullet::Searchable` and `Bucket::Searchable` both use `searchable? { !archived? }`. Review inbox scopes **`.active`** (and `migrated_at: nil`) so archived bullets leave review without a migration stamp. `archives_on` remains a shim (`archive&.created_at&.to_date`) for views and tests.
+`Bullet::Searchable` and `Collection::Searchable` both use `searchable? { !archived? }`.
 
 ## Activity
 
-`Activity` is a polymorphic audit log: **`subject`** (`Bullet`, `Bucket`, or `Archive`), **`action`** (string from a flat `Activity::ACTIONS` list), **`metadata`** (json), **`user_id`**. Recording goes through **`ActivityTrackable#record_activity!`** on subjects, except archive/unarchive which are written from `Archive` callbacks and pin/unpin from `PinnedEntity` callbacks. Actions: `updated`, `collected`, `rescheduled`, `completed`, `uncompleted`, `pinned`, `unpinned`, `project_mentioned` / `project_unmentioned`, `created`, `destroyed`, `archived`, `unarchived`. Bucket `created` is recorded from controllers (collections/monthlylogs); `destroyed` from `CleanSoftDeletedRecordsJob` before hard delete (snapshots `name` / `colour` / `bucketable_type`). Bucket activities are retained after hard delete so `destroyed` rows remain until swept. BuJo migrate intents (`postpone!` → `rescheduled`, `collect!` → `collected`) write bullet activities with migration payload in `metadata`. Complete records Activity `completed` and sets `migrated_at` only. Feed copy is built by **`ActivitiesHelper#activity_sentence`** (links via `polymorphic_path`). **`GET /activities`** lists the user's global feed (no subject filter). **`GET /activities/compact`** returns the latest six activities for the home rail.
+`Activity` is a polymorphic audit log: **`subject`** (`Bullet`, `Collection`, or `Archive`), **`action`** (string from the flat `Activity::ACTIONS` list), **`metadata`** (json), **`user_id`**. Recording goes through **`ActivityTrackable#record_activity!`** on subjects, except archive/unarchive which are written from `Archive` callbacks. Actions: `updated`, `collected`, `rescheduled`, `completed`, `uncompleted`, `project_mentioned` / `project_unmentioned`, `created`, `destroyed`, `archived`, `unarchived`. Collection `created` is recorded from the controller; `destroyed` from `CleanSoftDeletedRecordsJob` before hard delete (snapshots `name` / `colour`). `collect!` stores `collection_id` and `collection_name`; `postpone!` stores `from_pops_on` and `to_pops_on`. Feed copy is built by **`ActivitiesHelper#activity_sentence`** (links via `polymorphic_path`; dates link to the timeline, or Upcoming when in the future). **`GET /activities`** lists the user's global feed.
 
-## Tracker
+## Collections
 
-`Tracker` is a habit grid **on a Monthlylog** (`belongs_to :monthlylog`). One mark per calendar day via **`Tracker::Completion`**. Not a bullet — no archive or sweep. Identity uses **`Colourable`** / **`Iconable`**.
+`Collection` belongs to a user and holds bullets (`has_many :bullets, dependent: :destroy`). Identity (`name`, `colour`, `icon`, optional `description`) lives on the row; names are unique per user (normalized to lowercase). `Colourable`, `Iconable`, `Archivable`, `ActivityTrackable`. `GET /collections/:id` renders the chat surface for the collection (`Collections::BulletsController#index` pages older rows); `GET /collections/:id/export` downloads an HTML export.
 
-**Schedule** (`schedule` json): `{ "days" => […] }` with Ruby `wday` 0–6 (defaults to every day). Active range is the monthlylog period. No `stop!` lifecycle — delete the tracker or leave it for the month.
-
-**UI:** create from monthlylog show (`POST /monthlylogs/:id/trackers`). Tracker show page has the month heatmap. Toggle posts to `POST`/`DELETE /trackers/:id/completion`. (Per-day tracker toggles on the monthly calendar date panel are a follow-up.)
-
-## Mood tracker
-
-Optional day-level artifacts on **Daylog**: **`Daylog::MoodEntity`** (`daylog_mood_entities`: `date` + mood enum) and **`Daylog::Picture`** (`daylog_pictures`: `date` + Active Storage `picture`). Mark/clear via `POST`/`DELETE /daylog/mood_entity` and `POST`/`DELETE /daylog/picture` (`Daylog#pick_mood` / `#remove_mood` / `#remove_picture`); mobile daylog also fetches the card via `GET /daylog/picture`. Mood picker posts with `data-turbo-stream` and replaces `daylog_mood_entity_<iso-date>` in place (HTML fallback still redirects back). Monthly show preloads `CalendarDate` pictures for calendar cell thumbs and paints a single accent presence indicator from planned-bullet counts; mood/tracker chrome on the date panel is a follow-up. On the daylog page the day header levitates over the chat; mood and picture are separate header controls.
-
-**Day photo presentation** uses a single card shell on every viewport ([`daylogs/_photo_card`](app/views/daylogs/_photo_card.html.erb), id `daylog_photo_card_<iso-date>`), driven by one `daylog-photo` Stimulus controller wrapping the card + chat shell so the header control can toggle it:
-
-| Viewport | Collapsed look | How it opens |
-|----------|----------------|--------------|
-| Wide desktop (≥ `--breakpoint-pc`) | Card tucked behind the panel's right edge with a peeking sliver | Click the sliver (or the header arrow) |
-| Narrow desktop | Card parked fully past the right edge of the viewport | Header arrow (camera becomes ← once a photo exists) |
-| Mobile (`request.variant = :mobile`) | Card **not in the DOM** until shown | Header arrow fetches [`GET /daylog/picture`](app/controllers/daylogs/pictures_controller.rb) (`show`, layout-free fragment) into the shell, then flies it in; collapse unloads the fragment again |
-
-Expand and delete live on a frosted toolbar overlaid on the card itself (`daylog--photo-toolbar`), not in the day header. The header picture control is only: camera upload when empty, arrow toggle when a photo is attached. There is no photo-as-header-background.
-
-The `daylog-photo` controller toggles classes only: `is-expanded` runs `daylog-photo-fly-out`, `is-collapsing` runs `daylog-photo-fly-in` (removed on `animationend`). Both keyframes make the same trip — out to `--daylog-photo-out`, where the whole card is past the panel/viewport edge, **then** the `z-index` flip, then back to the resting spot — so the layer never changes while any part of the card overlaps the bullet list. Overshooting the viewport is fine: the card is `position: fixed`, so nothing reflows. Esc / outside click collapse (clicks on the card or the header picture control are ignored).
-
-**Display always uses resized Active Storage variants** (`ImageVariant` + named variants on `Daylog::Picture`; `represent_image_tag` for note attachments / the attachment show page) — never the original blob on screen. Picture create/destroy streams replace `daylog_picture_<iso-date>` and `daylog_photo_card_<iso-date>` (mobile streams keep the photo shell empty / lazy). Daylog chat has a desktop `show` and `show.html+mobile` that share `_chat`. Notes no longer carry mood.
-
-## Review
-
-**`GET /review`** (`ReviewsController#show`, `?from=YYYY-MM-DD&to=YYYY-MM-DD`, defaults to the last 7 days through yesterday — today's bullets stay out of review) lists bullets that still need triage for the period:
-
-```ruby
-Current.user.bullets.in_review(@review_from..@review_to)
-```
-
-(`Bullet.in_review` = daylog bucket + `pops_on` in range + `migrated_at: nil` + `.active`)
-
-- **Daylog home only** — monthly/future/collection bullets are excluded.
-- **`pops_on` must be set** — unplanned bullets (`pops_on` nil) are excluded.
-- **Already migrated** bullets are excluded (`migrated_at` set by pop, collect, or complete).
-- **Archived** bullets are excluded via the **`active`** scope.
-
-Leaving the inbox is done via collect, postpone, complete, or archive — there is no separate “mark reviewed” action.
-
-**Review UI (desktop, `show.html.erb`):** 3-column workspace in `review.css` (`height: 90dvh` like monthlylog spread; flex row with `flex-wrap`, sides `1fr` / center `2fr` so Collections and Schedule stay equal while To review is widest; columns wrap under each other when the window is too narrow; each column `overflow-y: auto`):
-
-| Column | Frame / route | Behaviour |
-|--------|-------------|-----------|
-| Collections (left) | Lazy `turbo-frame#review_collections_frame` → `GET /review/collections` | Paginated list + combobox search; `collection--section-list-item` rows; drop → collect via `collect-drop` |
-| To review (center) | Inline in `show` | Period/count as centered section description; `collection--date-divider` between `pops_on` groups; geared pagination; draggable bullets + bulk-menu |
-| Schedule (right) | Lazy `turbo-frame#review_scheduled_frame` → `GET /review/scheduled` | 7 days forward from today (`Date.current..Date.current+6`); `.active` bullets per day; drop → postpone via `pops-drop` with `X-Requested-With: review-pops-drop` (optimistic append to end of day zone) |
-
-Side partials: `reviews/_collections_side`, `reviews/_to_review`, `reviews/_calendar_side` / `_calendar_date`.
-
-**Mobile** (`show.html+mobile.erb`): same three sections in a horizontal CSS scroll-snap track (`.review--spread-sections`, like monthlylog). Starts on To review (`review-mobile-sections` → `scrollToReview`). Triage on touch via bulk-menu (Later / Save / Archive / Complete). Drop handlers POST with optimistic client updates (append to end of drop zone / remove on collect). Pops drop uses `X-Requested-With: review-pops-drop` / `pops-drop`; pops controller returns `head :no_content` for drop requests.
-
-## Logs (optional Future / Monthlylog, single Daylog + Pending)
-
-Logs are **independent** buckets — no FK ownership between Future, Monthlylog, and Daylog. Controllers resolve “current” records with inline queries (`futures.covering(date)`, `monthlylogs.covering(date)`, `user.daylog`).
-
-**Future** — optional six-month park (`period_from` month start; `period_to` auto end of month 6). `spread_months` still exists on the model for later month UI. Manual create: **`GET/POST /futures`**. **Show (temporary):** unplanned-only chat list (`pops_on` nil) with the shared chat composer (Task/Note) — month cards are hidden from the UI for now. Sometime → covering Future when one exists. No overlap checks between Futures.
-
-**Monthlylog** — optional one calendar month (`period_from` / auto `period_to`). `spread_days` lists each day. **`GET /monthlylog`** → covering current month, or an empty placeholder with **`POST /monthlylogs`** → `Monthlylog.provision!` (current month + bucket; idempotent). No month-picker form. **`show`** is a calendar + isolated `chat--wrap` panes (dated / unplanned) with a page-level chat composer (`changeContext` on focus). Lazy frames via **`GET /monthlylogs/:id/bullets`**. Mobile tabbar links to current monthlylog. Styles in `monthlylog.css` (`monthlylog--*`), shared list chrome in `chat.css`.
-
-**Daylog** — **one per user** (`has_one :daylog`), provisioned in `Onboarding#complete` alongside Loose Notes and Pending (via `Daylog.provision!`). Day slice is **`pops_on`**. **`GET /daylog`**: if missing (legacy / destroyed), `show` renders a create form (`POST /daylog` → `Daylog.provision!`); if present, lists that day’s bullets. Day-level mood/photo via **`Daylog::MoodEntity`** / **`Daylog::Picture`**. Call sites that need the daylog bucket read `user.daylog.bucket` (no lazy ensure). Create always requires an explicit `bucket_id`. Daylog name/icon constants live on `Onboarding` (`DAYLOG_NAME`, `DAYLOG_ICON`). Today's levitating chat header owns `turbo-frame#daylog_triage_preview`: it starts expanded only while the day is empty, collapses into the date/Triage header after the first bullet is created, and can be expanded again from that header. Expanded copy uses the `sm` layout width. `GET /daylog/triage?preview=expanded|collapsed` supplies the frame states; `GET /daylog/triage` without `preview` opens the migration workspace.
-
-**Pending** — **one per user** (`has_one :pending`), provisioned in `Onboarding#complete` (and lazily via `Pending.provision!`). Holding pen for external captures (`pops_on` always nil). **`GET /daylog/triage`** (`Daylogs::TriageController#show`) is a two-section Monthlylog-style spread: the left section combines active, unmigrated Pending bullets, current-Monthlylog bullets planned for today, and yesterday's unfinished Daylog bullets; the right section shows today. Rows move to today through drag/drop or checkbox bulk migration (`POST /daylog/triage/accept`). Turbo-stream responses update both sections in place. Pending-bucket bullets are excluded from Review. Name/icon: `Onboarding::PENDING_NAME` / `Onboarding::PENDING_ICON`.
+**Collection archive:** `DELETE /collections/:id` soft-archives by inserting an `Archive` row; archived collections are hidden from home and the collect picker (`collections.active`). Collect into an archived collection is rejected with a 404. Purge after retention is handled by `CleanSoftDeletedRecordsJob`.
 
 ## Organizing from the timeline
 
-Select bullets via the marker checkbox inlined in **`bullets/_bullet.html.erb`** (and monthly/future drag wrappers) — `bullet--marker` label over a screen-reader checkbox with `data-bulk-menu-target="checkbox"`. The sticky **`_bulk_menu`** (styled in `bulk-menu.css`, driven by `bulk-menu` Stimulus on the page wrapper) keeps selection in **`idListValue`** and syncs a comma-separated `bullet_ids` CSV into every `data-bulk-menu-target="idList"` hidden field.
+Select bullets via the marker checkbox in **`bullets/_bullet.html.erb`** — a `bullet--marker` label over a screen-reader checkbox with `data-bulk-menu-target="checkbox"`. The sticky **`_bulk_menu`** (styled in `bulk-menu.css`, driven by `bulk-menu` Stimulus) keeps selection in **`idListValue`** and syncs a comma-separated `bullet_ids` CSV into every `data-bulk-menu-target="idList"` hidden field. Actions apply to uniform selections through `data-bulk-*` traits on each checkbox: `data-bulk-completable` (`incomplete` / `completed`), `data-bulk-publishable`, and `data-bulk-scheduled` (`today` / `not-today`, so the **Today** action only shows for bullets that are not already on today's timeline).
 
-**Direct intents (no UI fetch):** **pin**, **archive** — `POST`/`DELETE` with `turbo_stream` from menu forms.
+**Direct intents (no UI fetch):** complete, archive, publish, and Today (a postpone to `Date.current`) — `POST`/`DELETE` with `turbo_stream` from menu forms.
 
-**UI fetch then intent:** **Later** (postpone) and **Save** (collect) — `openPopsPicker` / `openCollectsPicker` set frame `src` with `bullet_ids` from `idListValue`, then `showPopover()` (lazy turbo-frame + popover, like pinned footer); picker POST/search forms use `data-bulk-menu-target="idList"` (synced on `idListTargetConnected` and `idListValueChanged`). Collect picker search reloads via GET with `q`; **create collection** link passes `bullet_ids` and `return_to` to `new_collection_path`. Menu embeds search via `searches/form` + `searches/palette` + combobox (`GET /search`, turbo-stream for live input); menu shell is `GET /menu`. ⌘J opens menu, ⌘K opens menu and focuses search. Lexxy `#` / `@` suggestions use `filter`.
+**UI fetch then intent:** **Later** (postpone) and **Save** (collect) — `openPopsPicker` / `openCollectsPicker` set frame `src` with `bullet_ids`, then `showPopover()`; picker forms use `data-bulk-menu-target="idList"`. The schedule picker offers Today, Tomorrow, Next week, Next weekend, Next month, or a date input. The collect picker filters by `q`, and its **create collection** link passes `bullet_ids` and `return_to` to `new_collection_path`. Menu embeds search via `searches/form` + `searches/palette` + combobox (`GET /search`, turbo-stream for live input); menu shell is `GET /menu`. ⌘J opens the menu, ⌘K opens it and focuses search. Lexxy `#` suggestions use `filter`.
 
-**Postpone intent:** `POST /bullets/postpone` with required `bucket_id` and optional `pops_on`. Date options send Daylog + date; **This month** sends current Monthlylog when it exists (`pops_on` nil); **Sometime** sends covering Future when it exists (`pops_on` nil). Monthly/Future/review drops always pass an explicit `bucket_id`. **Collect intent:** `POST /bullets/collect` with `bucket_id` migrates into a collection (no uncollect). Pin/Unpin and complete/uncomplete hide based on selection state. Activity records `rescheduled`, `collected`, `completed`, `pinned`, and `unpinned` where applicable.
-
-`Collectable` / `Postponable` resolve destination and `pops_on`, then call **`Migratable#migrate_to!`** with an explicit action; they do not convert bullet type. Archive remains a separate soft-delete entity (not a bucket).
+**Postpone intent:** `POST /bullets/postpone` with `bullet_ids` and a required `pops_on`. **Collect intent:** `POST /bullets/collect` with `bullet_ids` and `collection_id` (no uncollect). **Completion:** `POST`/`DELETE /bullets/completion`. Postpone and collect responses remove the row; a postpone to today re-appends it to `timeline_section_today`.
 
 ## Sweep Rules
 
 `CleanSoftDeletedRecordsJob` runs daily and purges expired archived records:
 
-- **`Bullet.expired_archived.destroy_all`** — hard-deletes archived bullets after `Archivable::RETENTION_DAYS` (30 days); pinned bullets are excluded
-- **`Bucket.expired_archived.destroy_all`** — hard-deletes archived buckets after `Archivable::RETENTION_DAYS` (30 days); pinned buckets are excluded; bullets belonging to the bucket are destroyed with it
+- **`Bullet.expired_archived.destroy_all`** — hard-deletes archived bullets after `Archivable::RETENTION_DAYS` (30 days)
+- **`Collection.expired_archived`** — hard-deletes archived collections after the same window; their bullets are destroyed with them
 
 **`SweepActivityLogsJob`** runs daily and deletes activities older than `Activity::RETENTION_DAYS` (30 days).
 
-Bullet auto-archive (grace window, completed → archive row) is **not implemented yet** — the job no longer calls the missing `Bullet.auto_archivable` scope.
-
-Planned bullet recycling (not yet in code):
-
-- completed bullets remain recyclable through their archive row (set by future auto-archive logic)
-- bullets are auto-archived when due or still untriaged after a grace window
-- pinned bullets are excluded from auto-archive
-
-## Analog BuJo Alignment
-
-The architecture is intentionally closer to analog Bullet Journal behavior:
-
-- **Rapid logging** uses the chat composer on daylog / collection / monthlylog / future (Lexxy `note` editor + type picker); edit is a body-only form
-- **Daily focus** is explicit (`/daylog` and dated daylog paths show the daily log)
-- **Migration over rewrite** happens where needed by editing or changing bullet type
-- **Deferred decisions** are supported by moving `pops_on` forward (postpone) or tagging a project
-- **Separation of concerns** mirrors BuJo pages: today/timeline, archived, pinned
-
 ## Projects (tags)
 
-`Project` is a first-class model (`belongs_to :user`) with `name` and `colour`. Shared behaviour: `Colourable`, `Pinnable`, `ActionText::Attachable`. Mark is fixed (`#` → hash icon). Bullets link via `bullet_projects` (many-to-many). Surface: `GET /projects`. Lexxy `#` prompt (`lexxy-prompt` → `GET /projects/suggestions?filter=`) is mounted on the Note form and the chat composer. Pin/unpin uses `projects/pin` on the show page.
-
-Projects link via `bullet_projects` (many-to-many). Body attachable sync (`sync_projects_from_body!`) runs for **every bulletable type**, triggered by the Action Text `body` after_save hook. Explicit add/remove intents are deferred to a future API.
-
-## Buckets and memberships
-
-`Bucket` belongs to a user and uses `delegated_type :bucketable` (`Collection`, `Future`, `Monthlylog`, `Daylog`, `Pending`). Every bullet has exactly one `bucket_id` (required).
-
-| Type | Role | `pops_on` |
-|------|------|-----------|
-| Daylog | Daily rapid log (1 per user) | Required (day slice) |
-| Monthlylog | Optional monthly spread | Day cell or nil |
-| Future | Optional six-month park | nil = unplanned; month start in spread |
-| Collection | Topical park | Always nil |
-| Pending | External capture inbox (1 per user) | Always nil |
-
-Bucket **identity** (`name`, `colour`, `icon`, optional `description`) lives on `buckets`. Collection names are unique per user. Home hub: `GET /home` (also **`root`**).
-
-**Collection archive:** all bucket types are archivable (`Bucket#archive!` / `#unarchive!` via `Archivable`). `DELETE /collections/:id` soft-archives the bucket by inserting an `Archive` row; archived collections are hidden from home, review collect panel, and collect picker (`collections.merge(Bucket.active)`). Collect into an archived bucket is rejected (`Collectable` uses the `.active` scope, surfacing 404). Activity records `archived` / `unarchived` with subject `Archive`. Purge after retention is handled by `CleanSoftDeletedRecordsJob` (see Sweep Rules).
-
-## Pinned workspace
-
-Desktop footer has a single **Pinned** button (pin icon) in [`shared/_footer.html.erb`](app/views/shared/_footer.html.erb) ([`pinned/pinned_button`](app/views/pinned/_pinned_button.html.erb)). Clicking opens a lazy popover (`turbo-frame#pinned_list`) that loads a flat list of all pinned entities (Bullet, Bucket, Project) via [`pinned#index`](app/controllers/pinned_controller.rb) with `Turbo-Frame: pinned_list` (popover chrome + [`pinned/pinned_entity`](app/views/pinned/_pinned_entity.html.erb) rows live in that same template). Mobile uses the bottom tab bar via [`shared/_footer.html+mobile.erb`](app/views/shared/_footer.html+mobile.erb) and **`GET /pinned`** for the same flat list in full-page mode (with bulk menu for bullets). Pin/unpin Turbo Streams replace bullet rows (`render "bullets/bullet"`) and entity pin buttons only — the footer button is static.
+`Project` is a first-class model (`belongs_to :user`) with `name` and `colour`. Shared behaviour: `Colourable`, `ActionText::Attachable`. Mark is fixed (`#` → hash icon). Bullets link via `bullet_projects` (many-to-many). Surface: `GET /projects`. Lexxy `#` prompt (`lexxy-prompt` → `GET /projects/suggestions?filter=`) is mounted on the composer. Body attachable sync (`sync_projects_from_body!`) runs for every bulletable type, triggered by the Action Text `body` after_save hook.
 
 ## Publishing
 
-Bullets include **`Publishable`**: a `published_entities` row holds a public **`code`**. **`publish!`** / **`unpublish!`** create or destroy that row. **`GET /published`** (authenticated) lists the user's published bullets. **`GET /published/:code`** (unauthenticated, `layout: public`) shows a single published bullet via `PublishedEntity.find_by!(code:)`. Publish/unpublish bulk intent: `POST`/`DELETE /bullets/publish`.
+Bullets include **`Publishable`**: a `published_entities` row holds a public **`code`**. **`publish!`** / **`unpublish!`** create or destroy that row. **`GET /published`** (authenticated) lists the user's published bullets. **`GET /published/:code`** (unauthenticated, `layout: public`) shows a single published bullet. Publish/unpublish bulk intent: `POST`/`DELETE /bullets/publish`.
 
 ## Turbo Streams
 
-Mutating bullet actions (`create`, `update`, `destroy`, and bullet sub-resources) respond to `format.turbo_stream` for inline updates where applicable. HTML fallback redirects are provided. Bulk intents use the shared `_bulk_menu` forms; selection checkboxes live in the bullet row marker (screen-reader only, toggled via marker label).
+Mutating bullet actions (`create`, `update`, `destroy`, and bullet sub-resources) respond to `format.turbo_stream` for inline updates where applicable. HTML fallback redirects are provided. Bulk intents use the shared `_bulk_menu` forms.
 
 ## Routes
 
 ```
-root                                         → home#show
+root                                         → timelines#show
 
 # Auth
 resource :authentication                    → authentication#new/create/destroy
@@ -270,77 +173,57 @@ resource :onboarding                        → onboarding#new/create
 resource :features                          → features#show (unauthenticated, layout: public)
 resource :support                           → support#show (unauthenticated, layout: public)
 
-# Logs
-resource :daylog                            → daylogs#show/create
-GET    /monthlylog                      → monthlylogs#show (current)
-GET    /futures/:id                  → futures#show
-resources :monthlylogs                   → monthlylogs#create/show
-  GET  /monthlylogs/:monthlylog_id/bullets → monthlylogs/bullets#index
+# Timeline
+GET    /timeline                            → timelines#show
+GET    /timeline/bullets?before=:id         → timelines/bullets#index (older page, 204 when exhausted)
+GET    /upcoming                            → upcoming#show
 
-# Bullets CRUD (no index — daily log is /daylog; no Drive /new)
-GET    /bullets/:id                         → bullets#show
+# Bullets CRUD
+GET    /bullets                             → bullets#index
 POST   /bullets                             → bullets#create
+GET    /bullets/:id                         → bullets#show
 GET    /bullets/:id/edit                    → bullets#edit
 PATCH  /bullets/:id                         → bullets#update
 DELETE /bullets/:id                         → bullets#destroy
 
-# Bullet bulk intents (collection; `bullet_ids` comma-separated)
-POST   /bullets/pin                         → bullets/pins#create
-DELETE /bullets/pin                         → bullets/pins#destroy
+# Bullet bulk intents (`bullet_ids` comma-separated)
 POST   /bullets/archive                     → bullets/archives#create
 DELETE /bullets/archive                     → bullets/archives#destroy
-POST   /bullets/collect                     → bullets/collects#create (`bucket_id`)
+POST   /bullets/collect                     → bullets/collects#create (`collection_id`)
 GET    /bullets/collect/new                 → bullets/collects#new
-POST   /bullets/postpone                    → bullets/postpones#create (`bucket_id`, optional `pops_on`)
+POST   /bullets/postpone                    → bullets/postpones#create (`pops_on`)
 GET    /bullets/postpone/new                → bullets/postpones#new
+POST   /bullets/completion                  → bullets/completions#create
+DELETE /bullets/completion                  → bullets/completions#destroy
 POST   /bullets/publish                     → bullets/publishes#create
 DELETE /bullets/publish                     → bullets/publishes#destroy
 
-# Tasks
-POST   /tasks/complete                      → tasks/completes#create
-DELETE /tasks/complete                      → tasks/completes#destroy
-
 # Collections
-resources :collections                       → CRUD (no nested bullets)
+resources :collections                       → CRUD
+GET    /collections/:id/bullets?before=:id   → collections/bullets#index
 GET    /collections/:id/export              → collections/exports#show
-
-# Buckets
-GET    /buckets/:id                         → buckets#show (footer popover bullet list)
-POST   /buckets/pin                         → buckets/pins#create
-DELETE /buckets/pin                         → buckets/pins#destroy
 
 # Tags
 GET    /projects/suggestions                 → projects/suggestions#index
-POST   /projects/pin                         → projects/pins#create
-DELETE /projects/pin                         → projects/pins#destroy
 resources :projects
-
-# Trackers (nested create under monthlylog; show/edit on tracker)
-POST   /monthlylogs/:monthlylog_id/trackers  → monthlylogs/trackers#create
-resources :trackers, only: %i[show edit update destroy]
-  nested: trackers/:tracker_id/completion     → trackers/completions#create/destroy
-GET    /daylog/bullets?before=:id            → daylogs/bullets#index (older chat page, 204 when exhausted)
-POST   /daylog/mood_entity                   → daylogs/mood_entities#create
-DELETE /daylog/mood_entity                   → daylogs/mood_entities#destroy
-GET    /daylog/picture                       → daylogs/pictures#show
-POST   /daylog/picture                       → daylogs/pictures#create
-DELETE /daylog/picture                       → daylogs/pictures#destroy
 
 # Home & navigation
 GET    /home                                 → home#show
-GET    /home/activities                      → home/activities#index
 POST   /home/appearance                      → home/appearances#update
 GET    /menu                                 → menu#show
 GET    /search                               → searches#show (?q=)
 POST   /search/selection                     → searches/selections#create
 
-# Workspaces
-GET    /review                               → reviews#show (?from= &to=YYYY-MM-DD)
-GET    /review/collections                   → reviews/collections#index (?from= &to= &q= &collections_page=)
-GET    /review/scheduled                     → reviews/scheduled#show (?from= &to=)
+# Account & integrations
+GET    /user                                 → users#show
+resources :access_codes                      → index/create/destroy
+resources :hooks                             → index/new/create/destroy
+POST   /hooks/:code                          → hook_intakes#create (unauthenticated)
+
+# Lists
 GET    /activities                           → activities#index
-resources :pinned, only: :index
 resources :archived, only: :index
+GET    /attachments                          → attachments#index
 GET    /published                            → published#index
 GET    /published/:code                      → published#show (public)
 
@@ -361,7 +244,7 @@ Propshaft (no Sprockets). JavaScript via Importmap (no Node build step). No CSS 
 ## Key Conventions
 
 - JavaScript: use `==` (not `===`) for equality checks
-- Ruby 3.4.8, Rails 8.1.2
+- Ruby 3.4, Rails 8.1
 - Minitest for testing with parallel execution and fixtures
 - RuboCop with `rubocop-rails-omakase` defaults
 - Kamal for deployment with Thruster for HTTP acceleration
@@ -382,19 +265,17 @@ Common blocks (use these class names in markup — not legacy `button-primary`-s
 |------------|----------------|-------|
 | `button.css` | **Variants:** `button--primary`, `button--secondary`, `button--tertiary`, `button--accent`, `button--link`, `button--danger` (with `button--secondary`). **Shape:** `button--circle`. **Size:** `button--icon` / `icon-strong` / `icon-subtle`, `button--sm`, `button--lg`. **Width:** `button--wide` | Shared chrome for links and `<button>`; hover/active in `button.css` |
 | `utilities.css` | `utilities--sr-only`, `utilities--line-clamp-1`, `utilities--text-sm`, `utilities--contents`, `utilities--handwriting` | Small cross-page helpers only; prefer component/layout classes when possible |
-| `layout.css` | `layout--page`, `layout--column`, `layout--header`, `layout--header-actions`, `layout--list`, `layout--list-item`, `layout--main`, `header`, `footer`, `footer--dock` | Page structure and app shell chrome (`shared/_header`, `shared/_footer`; daylog and bucket pages use `layout--page`) |
-| `bucket.css` | `bucket--list`, `bucket--list-item-link`, `bucket--list-item-marker`, … | Bucket list chrome and item styling (pair with `layout--list` / `layout--list-item`) |
+| `layout.css` | `layout--page`, `layout--column`, `layout--header`, `layout--header-actions`, `layout--list`, `layout--list-item`, `layout--main`, `header`, `footer`, `footer--dock` | Page structure and app shell chrome (`shared/_header`, `shared/_footer`) |
+| `bucket.css` | `bucket--section-list-item`, `bucket--list-item-marker`, … | List rows for collections, projects and previews (legacy block name; predates collections replacing buckets) |
 | `dialog.css` | `dialog`, `dialog--large`, `dialog--header`, `dialog--body`, `dialog--footer` | Native `<dialog>` chrome (shared pickers, etc.) |
 | `hotkey-hint.css` | `hotkey-hint`, `hotkey-hint--always` | Keyboard shortcut badges on buttons |
 | `bullets-form.css` | `bullets-form`, `bullets-form--rail`, … | Body-only edit form chrome |
-| `composer_v2.css` | `composer`, `composer--control`, `composer--variant-picker`, … | Shared text/voice composer |
-| `daylog.css` | `daylog--chat`, `daylog--shell`, `daylog--scroller`, `daylog--older-trigger`, `daylog--date-picker`, `daylog--mood`, `daylog--photo-card`, `daylog--photo-toolbar`, … | Chat shell and day-level artifacts on the daylog |
-| `triage.css` | `triage--container`, `triage--surface`, `triage--section`, `triage--section-header`, `triage--section-content`, `triage--bullets` | Daylog migration spread; follows the Monthlylog structure without depending on Monthlylog component classes |
+| `composer_v2.css` | `composer`, `composer--control`, `composer--submit-button`, … | Shared text/voice composer |
+| `timeline.css` | `timeline--section`, `timeline--label`, `timeline--composer` | Timeline sections and the docked composer |
 | `bullet.css` | `bullet`, `bullet--body`, `bullet--marker`, … | Shared bullet row chrome |
-| `task.css`, `note.css`, `event.css`, `voice.css` | Type-specific body/toolbar classes | Pair with `bullets/_bullet` + `{type}s/_{type}` |
-| `review.css` | `review--page`, `review--to-review`, `review--calendar`, … | Review workspace columns |
+| `note.css`, `voice.css` | Type-specific body/toolbar classes | Pair with `bullets/_bullet` + `texts/_text` / `memos/_memo` |
 
-Styles are declared in `@layer reset, variables, base, layout, components, utilities` in `application.css`. Import order: `reset` → `variables` → `fonts` → `base` → `layout` → `tabbar` → `utilities` → component stylesheets (`button`, `dialog`, `bullet`, `review`, …). The `utilities` layer wins over `components` despite being imported earlier. Tokens live in `variables.css` (`--color-*`, `--shadow-subtle` / `--shadow-base` / `--shadow-strong`, `--z-dialog-backdrop` → `--z-dropdown` → `--z-dialog` → `--z-toast`). Element defaults and keyboard focus rings live in `base.css`; `_reset.css` is browser normalization only.
+Styles are declared in `@layer reset, variables, base, layout, components, utilities` in `application.css`. Import order: `reset` → `variables` → `fonts` → `base` → `layout` → `tabbar` → `utilities` → component stylesheets (`button`, `dialog`, `bullet`, …). The `utilities` layer wins over `components` despite being imported earlier. Tokens live in `variables.css` (`--color-*`, `--shadow-subtle` / `--shadow-base` / `--shadow-strong`, `--z-dialog-backdrop` → `--z-dropdown` → `--z-dialog` → `--z-toast`). Element defaults and keyboard focus rings live in `base.css`; `_reset.css` is browser normalization only.
 
 **CSS: pick the closest existing variable — avoid adding new ones.** When a hardcoded CSS value (font-size, border-radius, font-weight, opacity, icon size, etc.) doesn't exactly match an existing variable, map it to the nearest one from `variables.css` rather than creating a new variable. The variable set is intentionally small and should stay that way. A 1–2px difference is acceptable — consistency across the system matters more than pixel-perfect fidelity to the original arbitrary value. Do not add `line-height` or `letter-spacing` declarations — the reset handles base values.
 

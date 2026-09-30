@@ -23,7 +23,7 @@ module Collections
 
       assert_response :success
       assert_includes response.media_type, 'text/html'
-      assert_match(/attachment; filename="digibujo-reading-list-export-\d{4}-\d{2}-\d{2}\.html"/,
+      assert_match(/attachment; filename="dotted-reading-list-export-\d{4}-\d{2}-\d{2}\.html"/,
                    response.headers['Content-Disposition'])
       assert_match '<!DOCTYPE html>', response.body
       assert_match 'First bullet', response.body

@@ -1,12 +1,12 @@
-# Digibujo
+# Dotted
 
-A digital Bullet Journal — keyboard-driven rapid logging, daily/monthly logs, collections, review workspace, and migration-aware bullets. Built with **Rails 8**, **Hotwire** (Turbo + Stimulus), **Lexxy** (Action Text), and **SQLite** (Solid Queue/Cache/Cable). No React, no Node build step.
+A digital Bullet Journal — keyboard-driven rapid logging into one infinite timeline, collections, and an Upcoming screen for what is scheduled ahead. Built with **Rails 8**, **Hotwire** (Turbo + Stimulus), **Lexxy** (Action Text), and **SQLite** (Solid Queue/Cache/Cable). No React, no Node build step.
 
 ## License
 
 Source-available under the **[O'Saasy License](LICENSE)** ([osaasy.dev](https://osaasy.dev)).
 
-You may use, modify, and distribute the code freely. The one restriction: you **cannot offer Digibujo (or a derivative) as a hosted SaaS** where the primary value is this app's functionality. Self-hosting for personal or team use is fine.
+You may use, modify, and distribute the code freely. The one restriction: you **cannot offer Dotted (or a derivative) as a hosted SaaS** where the primary value is this app's functionality. Self-hosting for personal or team use is fine.
 
 ## Setup
 
