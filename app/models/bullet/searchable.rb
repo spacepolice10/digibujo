@@ -15,8 +15,8 @@ module Bullet::Searchable
   def search_body
     [
       searchable_body,
-      collection&.name,
-      *projects.map(&:name)
+      filename,
+      *collections.map(&:name)
     ].compact.join(' ')
   end
 

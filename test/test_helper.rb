@@ -15,8 +15,8 @@ module ActiveSupport
     fixtures :all
 
     # Add more helper methods to be used by all tests here...
-    def create_project!(user, name:, colour: nil, **)
-      user.projects.create!(name: name, colour: colour)
+    def create_blob!(filename:, content_type: 'application/pdf')
+      ActiveStorage::Blob.create_and_upload!(io: StringIO.new('x'), filename: filename, content_type: content_type)
     end
 
     def create_collection!(user, name:, colour: nil, icon: nil)
@@ -24,6 +24,9 @@ module ActiveSupport
     end
 
     def create_bullet!(user, **attrs)
+      if (collection = attrs.delete(:collection))
+        attrs[:collection_id] = collection.id
+      end
       user.bullets.create!({ bulletable: Text.new }.merge(attrs))
     end
   end

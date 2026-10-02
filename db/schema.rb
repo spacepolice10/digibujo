@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_30_000000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_02_120000) do
   create_table "access_codes", force: :cascade do |t|
     t.string "code_digest", null: false
     t.string "code_prefix", null: false
@@ -83,6 +83,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_30_000000) do
     t.index ["user_id"], name: "index_archives_on_user_id"
   end
 
+  create_table "attachments", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "auth_codes", force: :cascade do |t|
     t.string "code_digest", null: false
     t.datetime "created_at", null: false
@@ -92,29 +97,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_30_000000) do
     t.index ["user_id"], name: "index_auth_codes_on_user_id"
   end
 
-  create_table "bullet_projects", force: :cascade do |t|
+  create_table "bullet_collections", force: :cascade do |t|
     t.integer "bullet_id", null: false
+    t.integer "collection_id", null: false
     t.datetime "created_at", null: false
-    t.integer "project_id", null: false
     t.datetime "updated_at", null: false
-    t.index ["bullet_id", "project_id"], name: "index_bullet_projects_on_bullet_id_and_project_id", unique: true
-    t.index ["bullet_id"], name: "index_bullet_projects_on_bullet_id"
-    t.index ["project_id"], name: "index_bullet_projects_on_project_id"
+    t.index ["bullet_id", "collection_id"], name: "index_bullet_collections_on_bullet_id_and_collection_id", unique: true
+    t.index ["bullet_id"], name: "index_bullet_collections_on_bullet_id"
+    t.index ["collection_id"], name: "index_bullet_collections_on_collection_id"
   end
 
   create_table "bullets", force: :cascade do |t|
     t.string "author_name"
     t.integer "bulletable_id", null: false
     t.string "bulletable_type", null: false
-    t.integer "collection_id"
     t.datetime "created_at", null: false
     t.datetime "done_at"
     t.date "pops_on", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
+    t.string "filename"
     t.index ["bulletable_type", "bulletable_id"], name: "index_bullets_on_bulletable"
-    t.index ["collection_id"], name: "index_bullets_on_collection_id"
-    t.index ["user_id", "collection_id", "pops_on"], name: "index_bullets_on_user_collection_pops_on"
     t.index ["user_id"], name: "index_bullets_on_user_id"
   end
 
@@ -140,22 +143,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_30_000000) do
     t.integer "user_id", null: false
     t.index ["code_digest"], name: "index_hooks_on_code_digest", unique: true
     t.index ["user_id"], name: "index_hooks_on_user_id"
-  end
-
-  create_table "memos", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.integer "duration_seconds"
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "projects", force: :cascade do |t|
-    t.string "colour"
-    t.datetime "created_at", null: false
-    t.string "name", null: false
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["user_id", "name"], name: "index_projects_on_user_id_and_name", unique: true
-    t.index ["user_id"], name: "index_projects_on_user_id"
   end
 
   create_table "published_entities", force: :cascade do |t|
@@ -232,13 +219,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_30_000000) do
   add_foreign_key "activities", "users"
   add_foreign_key "archives", "users"
   add_foreign_key "auth_codes", "users"
-  add_foreign_key "bullet_projects", "bullets"
-  add_foreign_key "bullet_projects", "projects"
-  add_foreign_key "bullets", "collections"
+  add_foreign_key "bullet_collections", "bullets"
+  add_foreign_key "bullet_collections", "collections"
   add_foreign_key "bullets", "users"
   add_foreign_key "collections", "users"
   add_foreign_key "hooks", "users"
-  add_foreign_key "projects", "users"
   add_foreign_key "published_entities", "users"
   add_foreign_key "search_records", "users"
   add_foreign_key "search_selections", "users"

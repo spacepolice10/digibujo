@@ -16,7 +16,7 @@ class BulletTest < ActiveSupport::TestCase
   test 'text is the default marker and done swaps it for a check' do
     bullet = create_bullet!(@user, body: 'Do it')
 
-    assert_equal :square, bullet.marker_icon
+    assert_equal :circle, bullet.marker_icon
     bullet.complete!
     assert_equal :check, bullet.marker_icon
   end
@@ -33,19 +33,43 @@ class BulletTest < ActiveSupport::TestCase
     assert_nil bullet.done_at
   end
 
-  test 'only text and memo bullets exist' do
-    assert_equal %w[Text Memo], Bullet.bulletable_types
+  test 'an attachment bullet is searchable by its filename' do
+    blob = create_blob!(filename: 'quarterly report.pdf')
+    bullet = create_bullet!(@user, bulletable: Attachment.new.tap { |a| a.file.attach(blob) })
+
+    assert_equal 'quarterly report.pdf', bullet.reload.filename
+    assert_includes bullet.search_body, 'quarterly report.pdf'
   end
 
-  test 'collect moves the bullet off the timeline' do
+  test 'only text and attachment bullets exist' do
+    assert_equal %w[Text Attachment], Bullet.bulletable_types
+  end
+
+  test 'name falls back to the bulletable default when the body is blank' do
+    assert_equal 'Untitled', create_bullet!(@user, body: '').name
+  end
+
+  test 'collect tags the bullet and leaves it on the timeline' do
     collection = create_collection!(@user, name: 'Ideas')
     bullet = create_bullet!(@user, body: 'File me')
 
     assert_includes @user.timeline.bullets, bullet
     bullet.collect!(collection_id: collection.id)
 
-    assert_equal collection, bullet.reload.collection
-    assert_not_includes @user.timeline.bullets, bullet
+    assert_includes bullet.reload.collections, collection
+    assert_includes @user.timeline.bullets, bullet
+  end
+
+  test 'collect can attach many collections to one bullet' do
+    first = create_collection!(@user, name: 'ideas')
+    second = create_collection!(@user, name: 'later')
+    bullet = create_bullet!(@user, body: 'Shared')
+
+    bullet.collect!(collection_id: first.id)
+    bullet.collect!(collection_id: second.id)
+    bullet.collect!(collection_id: first.id)
+
+    assert_equal [first.id, second.id].sort, bullet.reload.collection_ids.sort
   end
 
   test 'postponing into the future moves the bullet to upcoming' do

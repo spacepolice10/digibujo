@@ -10,8 +10,9 @@ lexxy-editor {
     flex-grow: 1;
     height: fit-content;
     font-size: var(--font-size-base-type);
-    background: var(--color-1);
     border: transparent;
+    border-radius: var(--radius-full);
+    padding-inline: var(--space-h);
     transition: min-block-size 0.2s ease-out;
     list-style-position: inside;
 
@@ -24,54 +25,15 @@ lexxy-editor {
     }
 }
 
-/* .composer[data-composer-editor-multiline-value="true"] lexxy-editor {
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-    width: 100%;
-    & .lexxy-editor__content {
-        animation: popout 0.2s ease-out;
-        border-radius: var(--radius-strong);
-    }
-
-} */
-
-
-lexxy-toolbar {
-    background: transparent;
-    order: 2;
-    animation: popout 0.08s ease-out;
-    border: transparent;
-    & .lexxy-editor__toolbar-button {
-        color: var(--color-invert-2);
-        background: transparent;
-        padding: var(--space-v-half);
-        width: var(--space-h-2);
-        height: var(--space-h-2);
-        &:hover {
-            background: transparent;
-            color: var(--color-accent-1);
-        }
-        &:focus {
-            background: transparent;
-            color: var(--color-accent-1);
-        }
-        &[aria-pressed="true"] {
-            color: var(--color-accent-1);
-            background: transparent;
-        }
-    }
-}
-
 /* Composer styling */
 @layer components {
     .composer--dock {
         width: 100%;
         margin-inline: 0;
-
-        background: var(--color-1);
         box-shadow: none;
-        
+        margin-block-end: var(--tabbar-clearance);
+        transition: margin-block-end 250ms ease-out;
+
         & .lexxy-editor__content {
             max-height: 50vh;
             overflow-y: auto;
@@ -82,17 +44,12 @@ lexxy-toolbar {
             margin-inline: auto;
             margin-block-end: calc(var(--tabbar-clearance) + var(--space-v));
             margin-block-start: var(--space-v-half);
-            transition: margin-block-end 250ms ease-out;
-           
 
-            &:has(.composer[data-composer-editor-multiline-value="true"]) {
-                background: transparent;
-            }
         }
     }
 
     @container layout (width < 600px) {
-        .composer--dock:has(
+        body[data-platform="mobile"] .composer--dock:has(
             [data-composer-editor-target~="editor"] .lexxy-editor__content:focus
         ) {
             margin-block-end: var(--space-v);
@@ -110,26 +67,35 @@ lexxy-toolbar {
             + var(--space-v)
             + 1px
         );
-
-        &[data-composer-editor-multiline-value="true"] {
-            flex-wrap: wrap;
-            justify-content: space-between;
-        }
-
     }
 
-    .composer[data-composer-mode-value="editor"] .composer--recorder-mode {
-        display: none !important;
-    }
-    .composer[data-composer-mode-value="recorder"] .composer--editor-mode {
-        display: none !important;
+    .composer--field { display: contents; }
+
+    .composer .voice-recorder { display: none; }
+    .composer .composer--submit-button { display: none; }
+
+    .composer:has(.voice-recorder:is(
+        [data-composer-recorder-state="recording"],
+        [data-composer-recorder-state="ready"],
+        [data-composer-recorder-state="playing"]
+    )) {
+        & .composer--field,
+        & .composer--mic { display: none; }
+        & .voice-recorder { display: flex; }
     }
 
-    .composer[data-composer-mode-value="editor"] .composer--editor-mode > *,
-    .composer[data-composer-mode-value="recorder"] .composer--recorder-mode > * {
-        animation: fall-in 0.2s ease-out;
+    .composer:is(
+        [data-composer-filled-value="true"],
+        :has(.voice-recorder:is(
+            [data-composer-recorder-state="ready"],
+            [data-composer-recorder-state="playing"]
+        ))
+    ) {
+        & .composer--submit-button { display: grid; }
+        & .composer--mic { display: none; }
     }
 
+    .composer[data-composer-filled-value="true"] .composer--attach { display: none; }
 
     .composer--control {
         display: grid;
@@ -138,7 +104,7 @@ lexxy-toolbar {
         border: transparent;
         border-radius: var(--radius-full);
         box-shadow: var(--shadow-subtle);
-        width: var(--space-h-2);
+        width: var(--space-h-3);
         height: var(--space-h-2);
 
         &:hover {
@@ -148,10 +114,6 @@ lexxy-toolbar {
 
 
     }
-
-    /* .composer[data-composer-editor-multiline-value="true"] .composer--control {
-        order: 1;
-    } */
 
     @media (pointer: coarse) {
         .composer--control {
@@ -172,28 +134,4 @@ lexxy-toolbar {
             color: var(--color-invert-2);
         }
     }
-
-    .composer:has([id*="_composer_toolbar_toggle"]:checked) {
-        & lexxy-toolbar {
-            opacity: 1;
-            height: var(--space-v-3);
-            transition: opacity 0.08s ease-out, height 0.08s ease-out;
-        }
-    }
-
-    .composer:not(:has([id*="_composer_toolbar_toggle"]:checked)) {
-        & lexxy-toolbar {
-            opacity: 0;
-            height: 0;
-            transition: opacity 0.08s ease-out, height 0.08s ease-out;
-        }
-    }
-
-    .composer:has([id*="_composer_toolbar_toggle"]:not(:checked)) {
-        & lexxy-toolbar {
-            opacity: 0;
-            height: 0;
-        }
-    }
-
 }
