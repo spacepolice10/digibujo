@@ -1,23 +1,20 @@
 <% content_for(:title) { @bullet.name } %>
 
-<% bullet_colour = colour(@bullet.colour) || "var(--#{@bullet.bulletable_type.downcase}-color)" %>
-
 <main data-size="md">
   <article data-elevation="1">
 
     <header>
       <nav>
-      <%= back_link_to home_path, class: "button", data: { intent: "secondary", radius: "full", size: "sm", content: "icon" } do %>
-        <%= icon_tag("arrow-left", style: "color: var(--color-invert-2);") %>
+      <%= back_link_to search_path, data: { intent: "secondary", radius: "full", size: "sm", content: "icon" } do %>
+        <%= icon("arrow-left", style: "color: var(--color-invert-2);") %>
         <% end %>
       </nav>
 
       <nav>
-        <button type="button" class="button" data-intent="secondary" data-radius="full" data-size="sm" data-content="icon" aria-label="Actions" aria-haspopup="menu" popovertarget="<%= dom_id(@bullet, :actions) %>">
-          <%= icon_tag("dots", style: "color: var(--color-invert-2);") %>
+        <button type="button" data-intent="secondary" data-radius="full" data-size="sm" data-content="icon" aria-label="Actions" aria-haspopup="menu" popovertarget="<%= dom_id(@bullet, :actions) %>">
+          <%= icon("dots", style: "color: var(--color-invert-2);") %>
         </button>
         <div id="<%= dom_id(@bullet, :actions) %>"
-             class="dropdown dropdown--element dropdown--element-bottom animations--side-in"
              style="position-anchor: <%= dom_id(@bullet, :actions) %>"
              popover
              data-controller="grid-navigation"
@@ -25,18 +22,6 @@
              data-action="keydown->grid-navigation#navigate">
           <div class="dropdown--element-body">
             <nav class="dropdown--menu" aria-label="Actions">
-              <% unless @bullet.memo? %>
-                <%= link_to edit_bullet_path(@bullet),
-                      class: "dropdown-item picker--item",
-                      data: {
-                        turbo_frame: "_top",
-                        grid_navigation_target: "item",
-                        action: "focus->grid-navigation#syncPosition"
-                      } do %>
-                  <%= icon_tag("pencil") %>
-                  Edit
-                <% end %>
-              <% end %>
               <% if @bullet.published? %>
                 <%= button_to publish_path,
                       method: :delete,
@@ -48,7 +33,7 @@
                         action: "focus->grid-navigation#syncPosition"
                       },
                       aria: { label: "Unpublish #{@bullet.name}" } do %>
-                  <%= icon_tag("link") %>
+                  <%= icon("link") %>
                   Unpublish
                 <% end %>
               <% else %>
@@ -62,7 +47,7 @@
                         action: "focus->grid-navigation#syncPosition"
                       },
                       aria: { label: "Publish #{@bullet.name}" } do %>
-                  <%= icon_tag("link") %>
+                  <%= icon("link") %>
                   Publish
                 <% end %>
               <% end %>
@@ -78,7 +63,7 @@
                         action: "focus->grid-navigation#syncPosition"
                       },
                       aria: { label: "Unarchive #{@bullet.name}" } do %>
-                  <%= icon_tag("archive") %>
+                  <%= icon("archive") %>
                   Unarchive
                 <% end %>
               <% else %>
@@ -93,7 +78,7 @@
                         action: "focus->grid-navigation#syncPosition"
                       },
                       aria: { label: "Archive #{@bullet.name}" } do %>
-                  <%= icon_tag("archive") %>
+                  <%= icon("archive") %>
                   Archive
                 <% end %>
               <% end %>
@@ -116,17 +101,22 @@
         <% end %>
       </div>
 
-      <% if @bullet.memo? && @bullet.memo.recording.attached? %>
+      <% if @bullet.file.attached? %>
+        <% file = @bullet.file %>
+        <% if file.variable? %>
+          <%= image_tag file.variant(:display), alt: file.filename.to_s, class: "attachment--image" %>
+        <% else %>
+          <%= link_to rails_blob_path(file, disposition: "attachment"), class: "attachment--file", data: { turbo: false } do %>
+            <%= icon("paperclip") %>
+            <span class="attachment--file-name"><%= file.filename %></span>
+            <small><%= number_to_human_size(file.byte_size) %></small>
+          <% end %>
+        <% end %>
+        <div><small class="bullet--filename"><%= @bullet.filename %></small></div>
+      <% else %>
         <div class="bullet--show-body">
           <%= @bullet.body %>
         </div>
-        <%= render "memos/playback",
-              recording_source: url_for(@bullet.memo.recording),
-              recording_duration: @bullet.memo.duration_seconds %>
-      <% else %>
-      <div class="bullet--show-body">
-        <%= @bullet.body %>
-      </div>
       <% end %>
     </main>
   </article>

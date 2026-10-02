@@ -13,14 +13,11 @@ class HookIntakesController < ApplicationController
 
     @bullet = hook.create_bullet!(
       author_name: intake_params[:author_name],
-      bulletable_type: intake_params[:bulletable_type],
       body: intake_params[:body]
     )
 
     response.set_header('Location', bullet_url(@bullet))
     render template: 'bullets/create', status: :created
-  rescue ArgumentError
-    render json: { bulletable_type: ['is invalid'] }, status: :unprocessable_entity
   rescue ActiveRecord::RecordInvalid => e
     render json: e.record.errors, status: :unprocessable_entity
   end
@@ -28,6 +25,6 @@ class HookIntakesController < ApplicationController
   private
 
   def intake_params
-    params.permit(:author_name, :bulletable_type, :body)
+    params.permit(:author_name, :body)
   end
 end

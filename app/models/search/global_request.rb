@@ -8,7 +8,7 @@ class Search::GlobalRequest
 
   SEARCHABLE_INCLUDES = {
     'Collection' => [],
-    'Bullet' => %i[projects collection]
+    'Bullet' => %i[collections rich_text_body published_entity]
   }.freeze
 
   class << self

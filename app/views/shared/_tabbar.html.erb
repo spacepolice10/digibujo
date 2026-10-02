@@ -1,14 +1,35 @@
-<nav class="tabbar--navigation">
-  <%= link_to home_path, class: "tabbar--item #{'tabbar--item-active' if controller_name == 'home'}", aria: { label: "Menu" } do %>
-    <%= icon_tag("search", class: "tabbar--item-icon") %>
+<nav class="tabbar--navigation" aria-label="Primary">
+  <%= link_to search_path,
+        class: "tabbar--item hotkey-hint #{'tabbar--item-active' if controller_name == 'searches'}",
+        aria: { label: "Search" },
+        data: {
+          controller: "hotkey",
+          hotkey: "1",
+          action: "keydown.1@document->hotkey#click"
+        } do %>
+    <%= icon("search", class: "tabbar--item-icon") %>
+    <span class="tabbar--item-label">Search</span>
   <% end %>
-  <%= link_to timeline_path, class: "tabbar--item #{'tabbar--item-active' if controller_name == 'timelines'}", aria: { label: "Timeline" } do %>
+  <%= link_to bullets_path,
+        class: "tabbar--item hotkey-hint #{'tabbar--item-active' if controller_name == 'bullets'}",
+        aria: { label: "Daylog" },
+        data: {
+          controller: "hotkey",
+          hotkey: "2",
+          action: "keydown.2@document->hotkey#click"
+        } do %>
     <%= render "shared/tabbar_timeline_mark" %>
+    <span class="tabbar--item-label">Daylog</span>
   <% end %>
-  <%= link_to upcoming_path, class: "tabbar--item #{'tabbar--item-active' if controller_name == 'upcoming'}", aria: { label: "Upcoming" } do %>
-    <%= icon_tag("calendar", class: "tabbar--item-icon") %>
-  <% end %>
-  <%= link_to activities_path, class: "tabbar--item #{'tabbar--item-active' if controller_name == 'activities'}", aria: { label: "Activity" } do %>
-    <%= icon_tag("history", class: "tabbar--item-icon") %>
+  <%= link_to user_path,
+        class: "tabbar--item hotkey-hint #{'tabbar--item-active' if controller_name == 'users'}",
+        aria: { label: "User" },
+        data: {
+          controller: "hotkey",
+          hotkey: "3",
+          action: "keydown.3@document->hotkey#click"
+        } do %>
+    <%= icon("face", class: "tabbar--item-icon") %>
+    <span class="tabbar--item-label">User</span>
   <% end %>
 </nav>

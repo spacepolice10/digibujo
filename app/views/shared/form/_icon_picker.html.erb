@@ -2,18 +2,14 @@
 
 <fieldset>
     <legend>Icon</legend>
-    <small>
-      Pick an icon to make this record easy to spot.
-    </small>
-
     <div role="radiogroup" aria-label="Icon picker">
-      <% Iconable::ICON_MAPPINGS.each do |icon| %>
+      <% Iconable::ICON_MAPPINGS.each do |name| %>
       <label>
-        <%= form.radio_button :icon, icon, class: "utilities--sr-only" %>
+        <%= form.radio_button :icon, name, class: "utilities--sr-only" %>
         <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
-        <%= icon_tag(icon) %>
+        <%= icon(name) %>
         </div>
-        <span class="utilities--sr-only"><%= icon.humanize %></span>
+        <span class="utilities--sr-only"><%= name.humanize %></span>
       </label>
       <% end %>
 

@@ -28,20 +28,20 @@ module Bullets
 
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_back fallback_location: timeline_path }
+        format.html { redirect_back fallback_location: bullets_path }
       end
     rescue ActionController::ParameterMissing, ArgumentError
       @failed_bullet = @bullets&.first
       respond_to do |format|
         format.turbo_stream { render :create, status: :unprocessable_entity }
-        format.html { redirect_back fallback_location: timeline_path, alert: 'Invalid date' }
+        format.html { redirect_back fallback_location: bullets_path, alert: 'Invalid date' }
       end
     rescue ActiveRecord::RecordInvalid => e
       @failed_bullet = e.record
       respond_to do |format|
         format.turbo_stream { render :create, status: :unprocessable_entity }
         format.html do
-          redirect_back fallback_location: timeline_path,
+          redirect_back fallback_location: bullets_path,
                         alert: e.record.errors.full_messages.to_sentence
         end
       end

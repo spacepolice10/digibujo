@@ -5,24 +5,22 @@
     <header>
       <nav>
       <%= back_link_to user_path,
-            class: "button",
             data: { intent: "secondary", radius: "full", size: "sm", content: "icon", turbo_frame: "_top" },
             aria: { label: "Back to Account" } do %>
-        <%= icon_tag("arrow-left") %>
+        <%= icon("arrow-left") %>
       <% end %>
       <h2>Hooks</h2>
       </nav>
       <%= link_to new_hook_path,
-            class: "button",
             data: { intent: "primary", radius: "full", size: "sm", content: "icon" },
             aria: { label: "Create Hook" } do %>
-        <%= icon_tag("plus") %>
+        <%= icon("plus") %>
       <% end %>
     </header>
 
     <main>
     <p>
-      Give an external app a URL. When it posts, Dotted drops a bullet into your timeline.
+      Give an external app a URL. When it posts, Dotted drops a bullet into your daylog.
     </p>
 
     <% if @created_hook_code.present? %>

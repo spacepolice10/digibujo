@@ -1,6 +1,6 @@
 module IconHelper
-  def icon_tag(icon, options = {})
-    icon_name = icon.presence || Iconable::DEFAULT_ICON
+  def icon(name, options = {})
+    icon_name = name.presence || Iconable::DEFAULT_ICON
     content_tag(
       :span,
       content_tag(:i, '', class: 'icon', style: "--icon-mask: var(--icon-#{icon_name});",

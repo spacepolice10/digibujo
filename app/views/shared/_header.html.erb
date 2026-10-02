@@ -1,31 +1,3 @@
 <header class="header">
-  <div class="header--menu">
-    <button
-      type="button"
-      class="button"
-      data-intent="secondary"
-      data-radius="full"
-      data-size="xs"
-      popovertarget="header_menu"
-      aria-haspopup="menu"
-    >
-      <%= image_tag "/icon.svg", class: "header--logo", alt: "Dotted" %>
-      Dotted <%= icon_tag("chevron-down") %>
-    </button>
-
-    <div
-      id="header_menu"
-      class="dropdown-body menu--wrap"
-      popover
-      data-controller="menu"
-      data-action="toggle->menu#toggleMenu keydown->menu#keydown turbo:before-visit@document->menu#hideMenu keydown.ctrl+k@document->menu#showMenu keydown.meta+k@document->menu#showMenu"
-    >
-      <%= render "menu/menu" %>
-    </div>
-  </div>
-
-  <p class="typography--mono typography--paragraph-sm">
-    Press <kbd class="hotkey-hint hotkey-hint--always">Cmd/Ctrl + K</kbd> to
-    open the search.
-  </p>
+  <%= image_tag "/icon.svg", class: "header--logo", alt: "Dotted" %>
 </header>

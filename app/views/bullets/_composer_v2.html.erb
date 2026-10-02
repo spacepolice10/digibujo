@@ -3,74 +3,51 @@
 <div
   id="<%= resolved_composer_id %>"
   class="composer"
-  data-controller="composer composer-editor composer-recorder hotkey"
-  data-action="keydown.shift+f@document->hotkey#focus composer-editor:submit->composer#submit composer:mode-change->composer-recorder#modeChanged composer:restore->composer-editor#restore"
-  data-composer-editor-multiline-value="false"
-  data-composer-mode-value="editor"
+  data-controller="composer composer-editor composer-attachment hotkey"
+  data-action="keydown.shift+f@document->hotkey#focus composer-editor:submit->composer#submit composer:restore->composer-editor#restore lock->composer#lock unlock->composer#unlock"
 >
   <%= form_with model: bullet,
         multipart: true,
         class: "utilities--contents",
         data: {
           composer_target: "form",
-          action: "turbo:submit-end->composer#restore"
+          action: "turbo:submit-end->composer#restore turbo:submit-end->composer-attachment#reset"
         } do |fr| %>
     <% if collection %>
       <%= fr.hidden_field :collection_id, value: collection.id %>
     <% end %>
     <%= fr.hidden_field :pops_on, value: pops_on %>
-    <%= hidden_field_tag "bullet[bulletable_type]", "Text", id: "#{resolved_composer_id}_text_bulletable_type" %>
-    <%= hidden_field_tag "bullet[bulletable_type]", "Memo", id: "#{resolved_composer_id}_memo_bulletable_type", disabled: true %>
+    <%= file_field_tag "bullet[file]",
+          id: "#{resolved_composer_id}_attachment_file",
+          hidden: true,
+          data: { composer_attachment_target: "file", action: "change->composer-attachment#attach" } %>
 
-    <span class="composer--editor-mode utilities--contents">
-      <%= tag.label for: "#{resolved_composer_id}_composer_toolbar_toggle", class: "composer--control", aria: { label: "Toggle formatting toolbar" }, data: { composer_editor_target: "toolbarToggle", action: "change->composer-editor#toggleToolbar" } do %>
-        <%= icon_tag("plus") %>
-        <%= tag.input type: "checkbox", id: "#{resolved_composer_id}_composer_toolbar_toggle", class: "utilities--sr-only" %>
-      <% end %>
+    <span class="composer--field">
+      <button
+        type="button"
+        data-action="composer-attachment#choose"
+        class="composer--control composer--attach"
+        aria-label="Attach file"
+      >
+        <%= icon("paperclip") %>
+      </button>
 
       <%= fr.rich_text_area :body,
             preset: preset,
             autofocus: autofocus,
             placeholder: "What's up?",
-            class: "multiline hotkey-hint",
+            class: "hotkey-hint",
             data: {
-              action: "keydown->composer-editor#submitByKeyboard:capture lexxy:change->composer#toggleRecorderButton",
+              action: "keydown->composer-editor#submitByKeyboard:capture lexxy:change->composer#sync",
               composer_editor_target: "editor",
               hotkey: "F"
-            } do %>
-        <lexxy-prompt trigger="#" name="project">
-          <%= render partial: "projects/prompt_item", collection: current_user.projects, as: :project %>
-        </lexxy-prompt>
-      <% end %>
-
-      <button
-        type="button"
-        data-action="composer#toggleMode"
-        data-composer-mode-param="recorder"
-        data-composer-target="recorderButton"
-        class="composer--control"
-        aria-label="Record voice memo"
-      >
-        <%= icon_tag("microphone") %>
-      </button>
+            } %>
     </span>
 
-    <span class="composer--recorder-mode utilities--contents">
-      <%= render "bullets/recorder", composer_id: resolved_composer_id %>
 
-      <button
-        type="button"
-        data-action="composer#toggleMode"
-        data-composer-mode-param="editor"
-        class="composer--control"
-        aria-label="Back to text composer"
-      >
-        <%= icon_tag("text") %>
-      </button>
-    </span>
 
     <%= fr.button class: "composer--control composer--submit-button", aria: { label: "Save bullet" } do %>
-      <%= icon_tag("arrow-up") %>
+      <%= icon("arrow-up") %>
     <% end %>
   <% end %>
 </div>

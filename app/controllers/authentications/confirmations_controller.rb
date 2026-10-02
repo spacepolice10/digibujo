@@ -30,7 +30,8 @@ module Authentications
 
       if user
         create_confirmed_session_of(user)
-        redirect_to(user.onboarded? ? stashed_authentication_path : new_onboarding_path)
+        user.update!(onboarded: true) unless user.onboarded?
+        redirect_to stashed_authentication_path
       else
         redirect_to new_authentication_confirmation_path, alert: 'Invalid or expired code.'
       end
@@ -45,6 +46,7 @@ module Authentications
 
       if user
         create_confirmed_session_of(user)
+        user.update!(onboarded: true) unless user.onboarded?
         @session_code = create_session_code(Current.session)
         @onboarded = user.onboarded?
         render :create

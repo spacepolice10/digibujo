@@ -9,7 +9,7 @@ class User
 
     def attachments
       ActiveStorage::Attachment
-        .where(rich_text_condition.or(recording_condition))
+        .where(rich_text_condition.or(file_condition))
         .includes(:blob)
         .order(created_at: :desc)
     end
@@ -34,17 +34,17 @@ class User
                                     .and(attachment_table[:record_id].in(rich_text_ids.arel))
     end
 
-    def recording_condition
-      attachment_table[:record_type].eq('Memo')
-                                    .and(attachment_table[:record_id].in(memo_ids.arel))
+    def file_condition
+      attachment_table[:record_type].eq('Bullet')
+                                    .and(attachment_table[:record_id].in(bullet_ids.arel))
     end
 
     def rich_text_ids
       ActionText::RichText.where(record_type: 'Bullet', record_id: user.bullets.select(:id)).select(:id)
     end
 
-    def memo_ids
-      Memo.joins(:bullet).where(bullets: { user_id: user.id }).select(:id)
+    def bullet_ids
+      user.bullets.select(:id)
     end
   end
 end

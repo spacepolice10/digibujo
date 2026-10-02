@@ -1,14 +1,19 @@
 # frozen_string_literal: true
 
 class BulletsController < ApplicationController
-  before_action :set_bullet, only: %i[show edit update destroy]
+  include FilterScoped
+
+  before_action :set_bullet, only: %i[show update destroy]
+  before_action :set_filter, only: :index
+  before_action :set_timeline, only: :index
 
   def index
-    bullets = Current.user.bullets
-                     .active
-                     .includes(:bulletable, :rich_text_body, :collection)
-                     .order(created_at: :desc, id: :desc)
-    @bullets = set_page_and_extract_portion_from(bullets, per_page: [30, 50, 100])
+    if params[:before].present?
+      load_older_page
+    else
+      @bullets = @timeline.last_page
+      @more_bullets = @bullets.size == Bullet::Pageable::PAGE_SIZE
+    end
   end
 
   def create
@@ -19,9 +24,11 @@ class BulletsController < ApplicationController
     else
       failed_create_response
     end
+  rescue ActiveSupport::MessageVerifier::InvalidSignature
+    @bullet = Current.user.bullets.new
+    @bullet.errors.add(:file, 'is invalid')
+    failed_create_response
   end
-
-  def edit; end
 
   def show; end
 
@@ -34,7 +41,7 @@ class BulletsController < ApplicationController
     else
       respond_to do |format|
         format.turbo_stream { notify_failure }
-        format.html { render :edit, status: :unprocessable_entity }
+        format.html { redirect_to bullet_path(@bullet), alert: bullet_errors.to_sentence, status: :see_other }
       end
     end
   end
@@ -43,11 +50,27 @@ class BulletsController < ApplicationController
     @bullet.destroy
     respond_to do |format|
       format.turbo_stream
-      format.html { redirect_to timeline_path }
+      format.html { redirect_to bullets_path }
     end
   end
 
   private
+
+  def load_older_page
+    cursor = @timeline.bullets.find_by(id: params[:before])
+    return head :no_content unless cursor
+
+    @bullets = @timeline.page_before(cursor)
+    return head :no_content if @bullets.empty?
+
+    respond_to do |format|
+      format.html do
+        render partial: 'sections', layout: false,
+               locals: { bullets: @bullets, timeline: @timeline, ensure_today: false }
+      end
+      format.json { render 'bullets/index', formats: :json, if: stale?(etag: @bullets) }
+    end
+  end
 
   def created_response
     respond_to do |format|
@@ -65,7 +88,7 @@ class BulletsController < ApplicationController
       format.json { render json: bullet_errors_by_attribute, status: :unprocessable_entity }
       format.turbo_stream { notify_failure }
       format.html do
-        redirect_to timeline_path, alert: bullet_errors.to_sentence, status: :see_other
+        redirect_to bullets_path, alert: bullet_errors.to_sentence, status: :see_other
       end
     end
   end
@@ -75,22 +98,11 @@ class BulletsController < ApplicationController
   end
 
   def bullet_params
-    attributes = allowed_bulletable_entity.permitted_bullet_attributes
-
     if @bullet&.persisted?
-      params.require(:bullet).permit(:body, bulletable_attributes: attributes)
+      params.require(:bullet).permit(:body, :file)
     else
-      params.require(:bullet).permit(%i[pops_on bulletable_type collection_id body], bulletable_attributes: attributes)
+      params.require(:bullet).permit(:pops_on, :collection_id, :body, :file)
     end
-  end
-
-  # Unknown / missing type is a bad request, not a soft redirect.
-  def allowed_bulletable_entity
-    name = (@bullet&.bulletable_type || params.dig(:bullet, :bulletable_type)).to_s
-    allowed = name.presence_in(Bullet.bulletable_types)
-    raise ActionController::ParameterMissing, 'bulletable_type' unless allowed
-
-    allowed.constantize
   end
 
   def notify_failure(messages = bullet_errors)
@@ -102,19 +114,12 @@ class BulletsController < ApplicationController
   end
 
   def bullet_errors
-    own = @bullet.errors.reject { |error| error.attribute == :bulletable }.map(&:full_message)
-    nested = Array(@bullet.bulletable&.errors&.full_messages)
-    (own + nested).uniq.presence || ['Bullet could not be saved']
+    @bullet.errors.map(&:full_message).uniq.presence || ['Bullet could not be saved']
   end
 
   def bullet_errors_by_attribute
     errors = {}
     @bullet.errors.each do |error|
-      next if error.attribute == :bulletable
-
-      (errors[error.attribute] ||= []) << error.message
-    end
-    @bullet.bulletable&.errors&.each do |error|
       (errors[error.attribute] ||= []) << error.message
     end
     errors.presence || { base: ['Bullet could not be saved'] }

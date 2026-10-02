@@ -9,10 +9,10 @@
     <button type="submit"
             class="picker--item"
             data-combobox-target="item">
-      <%= icon_tag(collection.icon, style: "color: #{colour(collection.colour)};") %>
+      <%= icon(collection.icon, style: "color: #{colour(collection.colour)};") %>
       <span class="utilities--line-clamp-1"><%= collection.name %></span>
       <span aria-hidden="true">·</span>
-      <span class="typography--paragraph-sm utilities--line-clamp-1">
+      <span class="utilities--line-clamp-1">
         <%= collection.bullets.count %>
         <%= "bullet".pluralize(collection.bullets.count) %>,
         <%= collection.created_at.strftime("%b %d") %>

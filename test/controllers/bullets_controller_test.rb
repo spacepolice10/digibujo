@@ -3,25 +3,14 @@
 require 'test_helper'
 
 class BulletsControllerTest < ActionDispatch::IntegrationTest
+  PIXEL_PNG = Base64.decode64(
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
+  ).freeze
+
   setup do
     @user = users(:one)
     sign_in_as @user
     @bullet = create_bullet!(@user, body: 'Original')
-  end
-
-  test 'index lists active bullets newest first' do
-    older = create_bullet!(@user, body: 'Older bullet', created_at: 2.days.ago)
-    newer = create_bullet!(@user, body: 'Newer bullet', created_at: 1.day.ago)
-    archived = create_bullet!(@user, body: 'Archived bullet')
-    archived.archive!
-
-    get bullets_path
-
-    assert_response :success
-    assert_select 'h1', text: 'Bullets'
-    assert_select '#bullets-timeline'
-    assert_operator response.body.index(newer.name), :<, response.body.index(older.name)
-    assert_no_match archived.name, response.body
   end
 
   test 'index does not list another user bullets' do
@@ -33,14 +22,16 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match private_bullet.name, response.body
   end
 
+  test 'index returns not found for unknown collection filter' do
+    get bullets_path(collection: 'missing')
+
+    assert_response :not_found
+  end
+
   test 'update turbo stream replaces bullet only' do
     assert_no_difference -> { Activity.count } do
       patch bullet_path(@bullet),
-            params: {
-              bullet: {
-                body: 'Updated', bulletable_attributes: { id: @bullet.bulletable_id }
-              }
-            },
+            params: { bullet: { body: 'Updated' } },
             as: :turbo_stream
     end
 
@@ -53,7 +44,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   test 'html create redirects to the bullet show' do
     assert_difference -> { @user.bullets.count }, 1 do
       post bullets_path,
-           params: { bullet: { bulletable_type: 'Text', body: 'Fresh text', pops_on: Date.current.iso8601 } }
+           params: { bullet: { body: 'Fresh text', pops_on: Date.current.iso8601 } }
     end
 
     bullet = @user.bullets.order(:created_at).last
@@ -61,17 +52,17 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'create defaults to today and stays on the timeline' do
-    post bullets_path, params: { bullet: { bulletable_type: 'Text', body: 'Someday' } }
+    post bullets_path, params: { bullet: { body: 'Someday' } }
 
     bullet = @user.bullets.order(:created_at).last
     assert_equal Date.current, bullet.pops_on
-    assert_nil bullet.collection_id
+    assert_empty bullet.collections
   end
 
   test 'turbo stream create appends the row to today section' do
     assert_difference -> { @user.bullets.count }, 1 do
       post bullets_path,
-           params: { bullet: { bulletable_type: 'Text', body: 'Stream text', pops_on: Date.current.iso8601 } },
+           params: { bullet: { body: 'Stream text', pops_on: Date.current.iso8601 } },
            headers: { 'Turbo-Frame' => 'timeline_composer' },
            as: :turbo_stream
     end
@@ -83,7 +74,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
   test 'turbo stream create for a future day does not touch the timeline' do
     post bullets_path,
-         params: { bullet: { bulletable_type: 'Text', body: 'Later', pops_on: 3.days.from_now.to_date.iso8601 } },
+         params: { bullet: { body: 'Later', pops_on: 3.days.from_now.to_date.iso8601 } },
          as: :turbo_stream
 
     assert_response :success
@@ -95,39 +86,18 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     composer = ActionView::RecordIdentifier.dom_id(collection, :bullets_composer)
 
     post bullets_path,
-         params: { bullet: { bulletable_type: 'Text', body: '<p>Fresh today</p>', collection_id: collection.id } },
+         params: { bullet: { body: '<p>Fresh today</p>', collection_id: collection.id } },
          headers: { 'Turbo-Frame' => composer },
          as: :turbo_stream
 
     assert_response :success
     assert_match %(turbo-stream action="append" target="#{dom_id(collection)}"), response.body
     assert_match 'Fresh today', response.body
-    assert_equal collection, @user.bullets.order(:created_at).last.collection
-  end
-
-  test 'composer create reports validation errors as a toast' do
-    post bullets_path,
-         params: { bullet: { bulletable_type: 'Memo', body: 'No recording attached' } },
-         as: :turbo_stream
-
-    assert_response :unprocessable_entity
-    assert_match %(turbo-stream action="update" target="toasts"), response.body
-    assert_match 'Recording', response.body
-  end
-
-  test 'create tags bullet from project attachment in body' do
-    project = create_project!(@user, name: 'Tagged')
-    body_html = ActionText::Content.new('').append_attachables(project).to_html
-
-    post bullets_path, params: { bullet: { bulletable_type: 'Text', body: body_html } }
-
-    bullet = @user.bullets.order(:created_at).last
-    assert_not_equal @bullet, bullet
-    assert_includes bullet.projects, project
+    assert_includes @user.bullets.order(:created_at).last.collections, collection
   end
 
   test 'create persists rich content in body' do
-    post bullets_path, params: { bullet: { bulletable_type: 'Text', body: '<h1>Long detail</h1>' } }
+    post bullets_path, params: { bullet: { body: '<h1>Long detail</h1>' } }
 
     bullet = @user.bullets.order(:created_at).last
     assert_match 'Long detail', bullet.body.to_plain_text
@@ -156,62 +126,27 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test 'edit renders the body editor with saved content' do
-    bullet = create_bullet!(@user, body: '<p>Expanded content</p>')
+  test 'edit path is removed' do
+    get "/bullets/#{@bullet.id}/edit"
 
-    get edit_bullet_path(bullet)
-
-    assert_response :success
-    assert_select 'lexxy-editor', count: 1
-    assert_match 'Expanded content', response.body
+    assert_response :not_found
   end
 
-  test 'update changes body but ignores bulletable_type change' do
+  test 'update changes body' do
     bullet = create_bullet!(@user, body: '<p>Old</p>')
 
-    patch bullet_path(bullet),
-          params: {
-            bullet: {
-              bulletable_type: 'Memo',
-              body: '<p>New text</p>', bulletable_attributes: { id: bullet.bulletable_id }
-            }
-          }
+    patch bullet_path(bullet), params: { bullet: { body: '<p>New text</p>' } }
 
     assert_redirected_to bullet_path(bullet)
-    bullet.reload
-    assert_equal 'Text', bullet.bulletable_type
-    assert_equal 'New text', bullet.body_as_text
+    assert_equal 'New text', bullet.reload.body_as_text
   end
 
-  test 'create requires bullet type' do
-    post bullets_path, params: { bullet: { body: 'No type' } }
-
-    assert_response :bad_request
-  end
-
-  test 'create rejects retired bullet types' do
-    %w[Task Note Event Voice].each do |type|
-      post bullets_path, params: { bullet: { bulletable_type: type, body: 'Old kind' } }
-
-      assert_response :bad_request
-    end
-  end
-
-  test 'create allows blank body (becomes untitled)' do
-    assert_difference -> { @user.bullets.count }, 1 do
-      post bullets_path, params: { bullet: { bulletable_type: 'Text', body: '' } }
-    end
-
-    bullet = @user.bullets.order(:created_at).last
-    assert_redirected_to bullet_path(bullet)
-  end
-
-  test 'create redirects with alert when invalid' do
+  test 'create redirects with alert when the bullet is empty' do
     assert_no_difference -> { @user.bullets.count } do
-      post bullets_path, params: { bullet: { bulletable_type: 'Memo', body: '' } }
+      post bullets_path, params: { bullet: { body: '' } }
     end
 
-    assert_redirected_to timeline_path
+    assert_redirected_to bullets_path
     assert flash[:alert].present?
   end
 
@@ -226,72 +161,114 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
     assert_difference -> { @user.bullets.count }, 1 do
       post bullets_path,
-           params: { bullet: { bulletable_type: 'Text', body: 'Collection text', collection_id: collection.id } }
+           params: { bullet: { body: 'Collection text', collection_id: collection.id } }
     end
 
     bullet = @user.bullets.order(:created_at).last
-    assert_equal collection, bullet.collection
+    assert_includes bullet.collections, collection
     assert_redirected_to bullet_path(bullet)
   end
 
-  test 'create ignores stale bulletable_attributes on text' do
-    post bullets_path,
-         params: { bullet: { bulletable_type: 'Text', body: 'Stale mood', bulletable_attributes: { mood: 'inspired' } } }
+  test 'create stores an uploaded file as a file bullet' do
+    file = Rack::Test::UploadedFile.new(StringIO.new(PIXEL_PNG), 'image/png', original_filename: 'pixel.png')
+
+    assert_difference -> { @user.bullets.count }, 1 do
+      post bullets_path, params: { bullet: { file: file } }
+    end
 
     bullet = @user.bullets.order(:created_at).last
-    assert_equal 'Text', bullet.bulletable_type
-    assert_not bullet.bulletable.respond_to?(:mood)
+    assert bullet.file.attached?
+    assert_equal 'pixel.png', bullet.file.filename.to_s
+    assert_empty bullet.body_as_text
+    assert_equal 'pixel.png', bullet.name
   end
 
-  test 'edit and update memo caption' do
-    blob = create_blob!(filename: 'voice.webm', content_type: 'audio/webm')
-    bullet = create_bullet!(@user,
-                            bulletable_type: 'Memo',
-                            bulletable: nil,
-                            body: 'Memo caption',
-                            bulletable_attributes: { recording: blob.signed_id, duration_seconds: 5 })
+  test 'create rejects a bullet without content' do
+    assert_no_difference -> { @user.bullets.count } do
+      post bullets_path, params: { bullet: { body: '' } }, as: :json
+    end
 
-    get edit_bullet_path(bullet)
+    assert_response :unprocessable_entity
+    assert response.parsed_body['base'].present?
+  end
+
+  test 'create renders the file row in the timeline stream' do
+    file = Rack::Test::UploadedFile.new(StringIO.new(PIXEL_PNG), 'image/png', original_filename: 'pixel.png')
+
+    post bullets_path,
+         params: { bullet: { file: file } },
+         as: :turbo_stream
 
     assert_response :success
-    assert_select 'lexxy-editor'
+    assert_match %(turbo-stream action="append" target="timeline_section_today"), response.body
+    assert_match 'attachment--image', response.body
+  end
 
-    patch bullet_path(bullet),
-          params: { bullet: { body: '<p>Changed</p>', bulletable_attributes: { id: bullet.bulletable_id } } }
+  test 'show renders a file bullet' do
+    bullet = create_file_bullet!(@user, filename: 'notes.txt')
 
-    assert_redirected_to bullet_path(bullet)
-    assert_equal 'Changed', bullet.reload.body_as_text
+    get bullet_path(bullet)
+
+    assert_response :success
+    assert_match 'notes.txt', response.body
+  end
+
+  test 'create json includes file details' do
+    file = Rack::Test::UploadedFile.new(StringIO.new(PIXEL_PNG), 'image/png', original_filename: 'pixel.png')
+
+    post bullets_path,
+         params: { bullet: { file: file } },
+         headers: { 'Accept' => 'application/json' }
+
+    assert_response :created
+    assert_equal 'pixel.png', response.parsed_body['filename']
+    assert_equal 'image/png', response.parsed_body['content_type']
   end
 
   test 'create json returns the bullet' do
     assert_difference -> { @user.bullets.count }, 1 do
       post bullets_path,
-           params: { bullet: { bulletable_type: 'Text', body: '<p>API text</p>', pops_on: Date.current.iso8601 } },
+           params: { bullet: { body: '<p>API text</p>', pops_on: Date.current.iso8601 } },
            as: :json
     end
 
     assert_response :created
     body = response.parsed_body
-    assert_equal 'Text', body['bulletable_type']
     assert_equal 'API text', body['body']
     assert_equal false, body['done']
     assert_equal bullet_url(Bullet.find(body['id'])), body['url']
     assert_equal bullet_url(Bullet.find(body['id'])), response.headers['Location']
   end
 
-  test 'create json returns validation errors' do
+  test 'create rejects a file and a body together' do
+    file = Rack::Test::UploadedFile.new(StringIO.new(PIXEL_PNG), 'image/png', original_filename: 'pixel.png')
+
+    assert_no_difference -> { @user.bullets.count } do
+      post bullets_path, params: { bullet: { body: 'Both', file: file } }
+    end
+
+    assert_redirected_to bullets_path
+    assert flash[:alert].present?
+  end
+
+  test 'create json rejects a non-upload file value' do
     post bullets_path,
-         params: { bullet: { bulletable_type: 'Memo', body: 'No recording' } },
+         params: { bullet: { body: 'Both', file: 'not-an-upload' } },
          as: :json
 
     assert_response :unprocessable_entity
-    assert response.parsed_body['recording'].present?
   end
 
-  test 'create json without bulletable type returns bad request' do
-    post bullets_path, params: { bullet: { body: 'Nope' } }, as: :json
+  test 'create json rejects an empty bullet' do
+    post bullets_path, params: { bullet: { body: '' } }, as: :json
 
-    assert_response :bad_request
+    assert_response :unprocessable_entity
+  end
+
+  test 'create json ignores a retired bulletable_type' do
+    post bullets_path, params: { bullet: { bulletable_type: 'Memo', body: 'Nope' } }, as: :json
+
+    assert_response :created
   end
 
   test 'bearer session code authenticates create json' do
@@ -306,7 +283,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     cookies.delete('session_id')
 
     post bullets_path,
-         params: { bullet: { bulletable_type: 'Text', body: '<p>Bearer text</p>' } },
+         params: { bullet: { body: '<p>Bearer text</p>' } },
          headers: { 'Authorization' => "Bearer #{session_code}" },
          as: :json
 
@@ -324,7 +301,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
     travel Authentication::SESSION_CODE_EXPIRY + 1.minute do
       post bullets_path,
-           params: { bullet: { bulletable_type: 'Text', body: '<p>Too late</p>' } },
+           params: { bullet: { body: '<p>Too late</p>' } },
            headers: { 'Authorization' => "Bearer #{session_code}" },
            as: :json
 
@@ -333,12 +310,4 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   end
 
   private
-
-  def create_blob!(filename:, content_type:, io: StringIO.new('file contents'))
-    ActiveStorage::Blob.create_and_upload!(
-      io: io,
-      filename: filename,
-      content_type: content_type
-    )
-  end
 end

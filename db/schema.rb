@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_02_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_02_130000) do
   create_table "access_codes", force: :cascade do |t|
     t.string "code_digest", null: false
     t.string "code_prefix", null: false
@@ -83,11 +83,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_02_120000) do
     t.index ["user_id"], name: "index_archives_on_user_id"
   end
 
-  create_table "attachments", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "auth_codes", force: :cascade do |t|
     t.string "code_digest", null: false
     t.datetime "created_at", null: false
@@ -109,15 +104,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_02_120000) do
 
   create_table "bullets", force: :cascade do |t|
     t.string "author_name"
-    t.integer "bulletable_id", null: false
-    t.string "bulletable_type", null: false
     t.datetime "created_at", null: false
     t.datetime "done_at"
     t.date "pops_on", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.string "filename"
-    t.index ["bulletable_type", "bulletable_id"], name: "index_bullets_on_bulletable"
     t.index ["user_id"], name: "index_bullets_on_user_id"
   end
 
@@ -192,9 +184,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_02_120000) do
     t.string "user_agent"
     t.integer "user_id", null: false
     t.index ["user_id"], name: "index_sessions_on_user_id"
-  end
-
-  create_table "texts", force: :cascade do |t|
   end
 
   create_table "user_settings", force: :cascade do |t|

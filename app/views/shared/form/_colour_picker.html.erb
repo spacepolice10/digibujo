@@ -1,8 +1,5 @@
 <fieldset>
   <legend>Colour</legend>
-  <small>
-    Pick a colour to make this record easy to spot.
-  </small>
   <div role="radiogroup" aria-label="Colour picker">
     <% Colourable::COLOUR_MAPPINGS.each_key do |name| %>
       <label style="color: <%= colour(name) %>;">

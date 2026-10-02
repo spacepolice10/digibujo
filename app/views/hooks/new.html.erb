@@ -1,54 +1,39 @@
 <% content_for(:title, "New hook") %>
 
-<main data-size="md">
-  <article data-elevation="1">
-    <header><nav>
-    <%= back_link_to hooks_path,
-          class: "button",
-          data: { turbo_frame: "_top", intent: "secondary", radius: "full", size: "sm", content: "icon" },
-          aria: { label: "Back to Hooks" } do %>
-      <%= icon_tag("arrow-left") %>
+<%= render "shared/back_tabbar", url: hooks_path, aria_label: "Back to Hooks" %>
+
+<main data-size="sm">
+  <h1>Hook</h1>
+
+  <div>
+    <div class="utilities--contents">
+      <p>
+        Give a name to the integration, then share the URL Dotted gives you.
+      </p>
+
+      <%= form_with model: @hook, url: hooks_path, html: { class: "form" } do |form| %>
+        <label>
+          <legend>Name</legend>
+          <%= form.text_field :name, required: true, placeholder: "Zapier, Gmail, etc." %>
+          <% if @hook.errors[:name].any? %>
+            <small class="form--errors"><%= @hook.errors.full_messages_for(:name).to_sentence %></small>
+          <% end %>
+        </label>
+
+        <%= form.button type: "submit", data: { intent: "primary", radius: "full", size: "sm" } do %>Create hook<% end %>
       <% end %>
-      <h2>New hook</h2>
-    </nav></header>
 
-    <main>
-    <p>
-      Give a name to the integration, then share the URL Dotted gives you.
-    </p>
-
-
-    <%= form_with model: @hook, url: hooks_path, class: "form" do |form| %>
-      <label>
-        <legend>Name</legend>
-        <%= form.text_field :name, required: true, placeholder: "Zapier, Gmail, etc." %>
-        <% if @hook.errors[:name].any? %>
-          <small class="form--errors"><%= @hook.errors.full_messages_for(:name).to_sentence %></small>
-        <% end %>
-      </label>
-
-      <%= form.submit "Create hook",
-            class: "button form--submit",
-            data: { intent: "primary", radius: "full", size: "sm" } %>
-    <% end %>
-    </main>
-  </article>
-  <br>
-  <article data-elevation="2">
-    <main>
-    <h2>How to call it</h2>
-    <p>
-      After create you’ll get a URL. External apps <strong>POST</strong> JSON to it.
-      <code>bulletable_type</code> is <code>Text</code>.
-      <code>author_name</code> is optional.
-    </p>
-    <%= tag.pre role: "doc-example" do %><%=
-      JSON.pretty_generate(
-        author_name: "Zapier",
-        bulletable_type: "Text",
-        body: "Ship the release"
-      )
-    %><% end %>
-    </main>
-  </article>
+      <h2>How to call it</h2>
+      <p>
+        After create you’ll get a URL. External apps <strong>POST</strong> JSON to it.
+        <code>author_name</code> is optional.
+      </p>
+      <%= tag.pre role: "doc-example" do %><%=
+        JSON.pretty_generate(
+          author_name: "Zapier",
+          body: "Ship the release"
+        )
+      %><% end %>
+    </div>
+  </div>
 </main>

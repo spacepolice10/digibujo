@@ -4,80 +4,131 @@ require 'test_helper'
 
 class HomeControllerTest < ActionDispatch::IntegrationTest
   MOBILE_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)'
-  SECTION_ORDER = ['Journal', 'Collections', 'Attachments', 'Projects', 'Recently shared'].freeze
 
   setup do
     @user = users(:one)
     sign_in_as @user
   end
 
-  test 'show renders the navigation hub in the intended order' do
-    get home_path
+  test 'show renders the shortcut list without the old cards' do
+    get search_path
 
     assert_response :success
-    assert_equal SECTION_ORDER, rendered_section_order
-    assert_link user_path, aria_label: 'Account'
-    assert_select 'button[popovertarget="header_menu"]', text: /Dotted/
-    assert_link timeline_path, text: 'Timeline'
-    assert_link upcoming_path, text: 'Upcoming'
-    assert_link collections_path, text: 'Show all...'
-    assert_link projects_path, text: 'Show all...'
-    assert_link published_index_path, text: 'Show all...'
-    assert_link archived_index_path, text: 'Archive'
+    assert_heading 'Search', level: 1
+    assert_select 'main article.search--navigation ul a', count: 2
+    assert_select 'main article.search--navigation ul a[href=?]', attachments_path, text: 'Attachments'
+    assert_select 'main article.search--navigation ul a[href=?]', archived_index_path, text: 'Archive'
+    assert_select 'main small', count: 0
+    assert_select '#index-dock', count: 0
+    assert_select 'input#index-query', count: 0
+    assert_select 'main header', count: 0
+    assert_select 'main h2', count: 0
+    assert_no_page_text 'Journal'
+    assert_no_page_text 'Recently shared'
     assert_select 'details', count: 0
   end
 
-  test 'show renders empty sections and the collection create link' do
-    get home_path
+  test 'desktop search shows the three item tabbar' do
+    get search_path
 
     assert_response :success
-    assert_link new_collection_path
-    assert_page_text 'Collections are like folders'
-    assert_page_text 'Put a # in your bullet'
-    assert_page_text 'Share your bullets with others'
+    assert_select 'header.header', count: 0
+    assert_select 'footer#footer', count: 0
+    assert_tabbar_link search_path, label: 'Search'
+    assert_tabbar_link bullets_path, label: 'Daylog'
+    assert_tabbar_link user_path, label: 'User'
+    assert_select 'nav.tabbar--navigation a.tabbar--item', count: 3
+    assert_select 'nav.tabbar--navigation a.tabbar--item-active[href=?]', search_path
+    assert_select 'nav.tabbar--navigation a[href=?][data-hotkey=?][data-controller~=hotkey]', search_path, '1'
+    assert_select 'nav.tabbar--navigation a[href=?][data-hotkey=?][data-controller~=hotkey]', bullets_path, '2'
+    assert_select 'nav.tabbar--navigation a[href=?][data-hotkey=?][data-controller~=hotkey]', user_path, '3'
   end
 
-  test 'show limits previews to the most recent records' do
-    4.times { |index| create_project!(@user, name: "project #{index}") }
-
-    get home_path
+  test 'desktop daylog shows the tabbar' do
+    get bullets_path
 
     assert_response :success
-    assert_select 'article', text: /Projects/ do
-      assert_select 'main li', count: HomeController::PREVIEW_LIMIT
+    assert_select 'nav.tabbar--navigation a.tabbar--item', count: 3
+    assert_select 'nav.tabbar--navigation a.tabbar--item-active[href=?]', bullets_path
+    assert_select '#header_palette', count: 0
+    assert_select 'header.header', count: 0
+  end
+
+  test 'header palette is gone' do
+    get search_path
+
+    assert_response :success
+    assert_select '#header_palette', count: 0
+  end
+
+  test 'show renders every collection as a tag' do
+    collection = create_collection!(@user, name: 'Reading', colour: 'teal')
+
+    get search_path
+
+    assert_response :success
+    assert_select 'ul[data-layout=grid] a[href=?]', new_collection_path, text: 'New'
+    assert_select 'ul[data-layout=grid] a[href=?]', bullets_path(collection: collection.name), text: 'reading' do
+      assert_select '.icon-wrap[style*=?]', 'color: var(--model-color-3)'
+      assert_select '.icon[style*=?]', '--icon-hash'
     end
   end
 
-  test 'mobile show uses the same hub and keeps the tabbar' do
-    get home_path, headers: { 'User-Agent' => MOBILE_UA }
+  test 'show renders a new tag without collections' do
+    get search_path
 
     assert_response :success
-    assert_equal SECTION_ORDER, rendered_section_order
-    assert_link search_path, text: 'Search'
-    assert_link home_path, text: 'Dotted'
-    assert_select 'button[popovertarget="header_menu"]', count: 0
-    assert_tabbar_link home_path, label: 'Menu'
-    assert_tabbar_link timeline_path, label: 'Timeline'
-    assert_tabbar_link upcoming_path, label: 'Upcoming'
-    assert_tabbar_link activities_path, label: 'Activity'
+    assert_select 'ul[data-layout=grid] a', count: 1
+    assert_select 'ul[data-layout=grid] a[href=?]', new_collection_path, text: 'New'
+  end
+
+  test 'show renders every collection, not a short recent list' do
+    5.times { |index| create_collection!(@user, name: "collection #{index}") }
+
+    get search_path
+
+    assert_response :success
+    assert_select 'ul[data-layout=grid] a', count: 6
+  end
+
+  test 'mobile show has no page header and a three item tabbar' do
+    get search_path, headers: { 'User-Agent' => MOBILE_UA }
+
+    assert_response :success
+    assert_heading 'Search', level: 1
+    assert_select 'main header', count: 0
+    assert_select 'header.header', count: 0
+    assert_select 'main article.search--navigation ul a[href=?]', bullets_path, count: 0
+    assert_tabbar_link search_path, label: 'Search'
+    assert_tabbar_link bullets_path, label: 'Daylog'
+    assert_tabbar_link user_path, label: 'User'
+    assert_select 'nav.tabbar--navigation a.tabbar--item', count: 3
+    assert_select 'nav.tabbar--navigation a.tabbar--item-active[href=?]', search_path
+  end
+
+  test 'show renders count badges when destinations have records' do
+    create_collection!(@user, name: 'Reading')
+    create_collection!(@user, name: 'Later')
+    create_bullet!(@user, body: 'Old note').archive!
+
+    get search_path
+
+    assert_response :success
+    assert_select 'ul[data-layout=grid] a', count: 3
+    assert_select 'a[href=?] small', archived_index_path, text: '1'
+    assert_select 'a[href=?] small', attachments_path, count: 0
   end
 
   test 'show works without a settings row and retains the selected appearance' do
     @user.create_settings! unless @user.settings
     @user.settings.update!(appearance: 'warm')
 
-    get home_path
+    get search_path
     assert_response :success
     assert_match 'data-appearance="warm"', response.body
 
     @user.settings.destroy!
-    get home_path
+    get search_path
     assert_response :success
-  end
-
-  private
-
-  def rendered_section_order
-    css_select('main.home--page article > header h2').map { |node| node.text.strip }
   end
 end

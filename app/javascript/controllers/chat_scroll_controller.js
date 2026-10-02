@@ -4,6 +4,9 @@ import { distanceFromBottom, keepScroll, pauseInertiaScroll, scrollToBottom } fr
 // Distance from the bottom edge that still counts as "reading the latest".
 const PINNED_THRESHOLD = 80
 
+// Upper bound for a follow-the-bottom animation when `scrollend` never fires.
+const GLIDE_TIMEOUT = 700
+
 // Generic chat list mounted directly on its scroller (scrollport + list in one),
 // opens at the newest bullet, pulls older pages from the top, and follows new
 // rows only while the reader is already at the bottom. The composer is a
@@ -16,18 +19,28 @@ export default class extends Controller {
     this.pinned = true
     this.loading = false
     this.prepending = false
+    this.followingCreate = false
   }
 
   connect() {
     // Deliberately not throttled: a dropped trailing call would leave us
     // believing the reader is still at the bottom after they scrolled away.
     this.boundSettlePinned = () => this.#settlePinned()
+    this.boundSubmitStart = (event) => this.#pinOnComposerSubmit(event)
+    this.boundSubmitEnd = (event) => this.#clearCreateFollow(event)
+    this.boundEndGlide = () => this.#endGlide()
     this.opening = true
 
     this.element.addEventListener("scroll", this.boundSettlePinned, { passive: true })
+    this.element.addEventListener("scrollend", this.boundEndGlide)
+    document.addEventListener("turbo:submit-start", this.boundSubmitStart)
+    document.addEventListener("turbo:submit-end", this.boundSubmitEnd)
+    this.#followCreatedBullets()
 
     if (this.#scrollPositionRestorable()) {
+      this.opening = false
       this.#restoreScrollPosition()
+      this.#settlePinned()
     } else {
       scrollToBottom(this.element)
       this.#followSettlingLayoutWhenOpen()
@@ -35,13 +48,17 @@ export default class extends Controller {
   }
 
   disconnect() {
-
     this.element.removeEventListener("scroll", this.boundSettlePinned)
+    this.element.removeEventListener("scrollend", this.boundEndGlide)
+    clearTimeout(this.glideTimer)
+    clearTimeout(this.followCreateTimer)
+    document.removeEventListener("turbo:submit-start", this.boundSubmitStart)
+    document.removeEventListener("turbo:submit-end", this.boundSubmitEnd)
     if (this.boundOpenSettled) {
       this.element.removeEventListener("scrollend", this.boundOpenSettled)
     }
     clearTimeout(this.openSettleTimer)
-    this.sizeObserver?.disconnect()
+    this.mutationObserver?.disconnect()
     this.triggerObserver?.disconnect()
   }
 
@@ -89,7 +106,10 @@ export default class extends Controller {
     this.loading = true
 
     try {
-      const response = await fetch(`${this.pathValue}?before=${encodeURIComponent(cursor)}`, {
+      const url = new URL(this.pathValue, window.location.origin)
+      url.searchParams.set("before", cursor)
+
+      const response = await fetch(url.toString(), {
         headers: { Accept: "text/html" }
       })
 
@@ -102,8 +122,8 @@ export default class extends Controller {
     }
   }
 
-  // The flag has to outlive the ResizeObserver pass this prepend triggers, and
-  // that pass runs after animation frame callbacks — hence the timeout.
+  // The flag has to outlive the mutation this prepend triggers, and that
+  // callback runs as a microtask — hence the timeout, which fires later.
   #prepend(html) {
     this.prepending = true
 
@@ -157,7 +177,6 @@ export default class extends Controller {
       this.opening = false
       clearTimeout(this.openSettleTimer)
       scrollToBottom(this.element)
-      this.#followSettlingLayout()
     }
 
     this.boundOpenSettled = start
@@ -165,22 +184,73 @@ export default class extends Controller {
     this.openSettleTimer = setTimeout(start, 500)
   }
 
-  // Web fonts, rich text and the editor all settle after the first paint and
-  // leave the list a few pixels taller than when we jumped to the bottom. It
-  // also catches the row the composer just created landing a beat after
-  // turbo:submit-end, when the composer's own #scrollToLatest already ran.
-  #followSettlingLayout() {
-    if (typeof ResizeObserver === "undefined") return
+  // Only a bullet the composer just created moves the list. Resizes, selection,
+  // and other markup inside the scroller leave the reader where they are.
+  #followCreatedBullets() {
+    this.mutationObserver = new MutationObserver((records) => {
+      if (!this.followingCreate || this.prepending || this.opening) return
 
-    this.sizeObserver = new ResizeObserver(() => {
-      if (this.prepending || !this.pinned) return
+      const addedBullet = records.some((record) =>
+        [...record.addedNodes].some((node) => this.#isBulletNode(node))
+      )
+      if (!addedBullet) return
 
-      scrollToBottom(this.element)
+      this.followingCreate = false
+      clearTimeout(this.followCreateTimer)
+      this.#glideToBottom()
     })
-    this.sizeObserver.observe(this.element)
+    this.mutationObserver.observe(this.element, { childList: true, subtree: true })
+  }
+
+  #isBulletNode(node) {
+    return node.nodeType === Node.ELEMENT_NODE &&
+      (node.matches(".bullet") || node.querySelector(".bullet"))
+  }
+
+  // Our own animated scroll fires scroll events from far above the bottom, which
+  // would unpin the list mid-flight. The flag mutes them until the glide ends
+  // (scrollend, or the timeout where that event is missing).
+  #glideToBottom() {
+    const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches
+    if (reduceMotion) return scrollToBottom(this.element)
+
+    this.gliding = true
+    clearTimeout(this.glideTimer)
+    this.glideTimer = setTimeout(() => this.#endGlide(), GLIDE_TIMEOUT)
+    scrollToBottom(this.element, "smooth")
+  }
+
+  #endGlide() {
+    if (!this.gliding) return
+
+    this.gliding = false
+    clearTimeout(this.glideTimer)
+    this.#settlePinned()
+  }
+
+  // The reader's own bullet always deserves to be seen, even if they had
+  // scrolled up before writing it. The scroll itself waits until that bullet
+  // is appended.
+  #pinOnComposerSubmit(event) {
+    if (!event.target.closest(".composer")) return
+
+    this.pinned = true
+    this.followingCreate = true
+    clearTimeout(this.followCreateTimer)
+    this.followCreateTimer = setTimeout(() => { this.followingCreate = false }, 10000)
+  }
+
+  #clearCreateFollow(event) {
+    if (event.detail.success) return
+    if (!event.target.closest(".composer")) return
+
+    this.followingCreate = false
+    clearTimeout(this.followCreateTimer)
   }
 
   #settlePinned() {
+    if (this.gliding) return
+
     this.pinned = distanceFromBottom(this.element) <= PINNED_THRESHOLD
   }
 

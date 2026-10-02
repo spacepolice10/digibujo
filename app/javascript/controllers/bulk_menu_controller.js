@@ -26,6 +26,7 @@ export default class extends Controller {
   };
 
   connect() {
+    this.mobileSheet = false;
     this.beforeVisitHandler = () => this.#restore();
     this.submitEndHandler = (event) => this.#handleSubmitEnd(event);
     this.menuResizeObserver = new ResizeObserver(() => this.#syncClearance());
@@ -39,7 +40,13 @@ export default class extends Controller {
     document.removeEventListener("turbo:before-visit", this.beforeVisitHandler);
     document.removeEventListener("turbo:submit-end", this.submitEndHandler);
     this.menuResizeObserver?.disconnect();
+    this.#cancelSheetClose();
     this.element.style.removeProperty("--bulk-menu-clearance");
+    this.element.style.removeProperty("--bulk-menu-band");
+    this.element.style.removeProperty("--bulk-menu-footprint");
+    this.element.style.removeProperty("--composer-rest");
+    this.element.style.removeProperty("--composer-gap");
+    this.#syncChrome(false);
   }
 
   toggle(event) {
@@ -66,7 +73,9 @@ export default class extends Controller {
     });
 
     if (this.hasMenuTarget) {
-      this.menuTarget.hidden = this.idListValue.length == 0;
+      if (this.element.dataset.platform != "mobile") {
+        this.menuTarget.hidden = this.idListValue.length == 0;
+      }
       this.#syncClearance();
     }
 
@@ -87,17 +96,141 @@ export default class extends Controller {
   }
 
   #syncClearance() {
+    const menuOpen = this.idListValue.length > 0;
+
+    if (this.element.dataset.platform == "mobile") {
+      this.#syncMobileSheet(menuOpen);
+      return;
+    }
+
     if (!this.hasMenuTarget || this.menuTarget.hidden) {
       this.element.style.removeProperty("--bulk-menu-clearance");
+      this.element.style.removeProperty("--bulk-menu-band");
       return;
     }
 
     const menuStyles = getComputedStyle(this.menuTarget);
-    const clearance =
-      this.menuTarget.offsetHeight * 0.75 +
-      Number.parseFloat(menuStyles.bottom);
-
+    const bottom = Number.parseFloat(menuStyles.bottom) || 0;
+    const clearance = this.menuTarget.offsetHeight * 0.75 + bottom;
     this.element.style.setProperty("--bulk-menu-clearance", `${clearance}px`);
+  }
+
+  // The sheet and the page share --bulk-menu-band. Footprint is set at once
+  // so the menu starts fully below the screen; band then eases up to it.
+  #syncMobileSheet(open) {
+    if (!this.hasMenuTarget) return;
+
+    if (open) {
+      this.#cancelSheetClose();
+      if (!this.mobileSheet) {
+        this.#measureComposerRest();
+        this.element.style.setProperty("--bulk-menu-band", "0px");
+        this.element.style.setProperty("--bulk-menu-footprint", "100dvh");
+      }
+      this.menuTarget.hidden = false;
+
+      const bottom =
+        Number.parseFloat(getComputedStyle(this.menuTarget).bottom) || 0;
+      const footprint = this.menuTarget.offsetHeight + bottom;
+      this.element.style.setProperty("--bulk-menu-footprint", `${footprint}px`);
+
+      if (!this.mobileSheet) {
+        this.element.offsetHeight;
+        this.mobileSheet = true;
+      }
+
+      this.element.style.setProperty("--bulk-menu-band", `${footprint}px`);
+      this.#syncChrome(true);
+      return;
+    }
+
+    if (!this.mobileSheet) {
+      this.menuTarget.hidden = true;
+      this.#syncChrome(false);
+      return;
+    }
+
+    this.mobileSheet = false;
+    this.element.style.setProperty("--bulk-menu-band", "0px");
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      this.#finishMobileSheet();
+      return;
+    }
+
+    this.sheetCloseHandler = (event) => {
+      if (event.propertyName != "--bulk-menu-band") return;
+      this.#cancelSheetClose();
+      if (this.mobileSheet) return;
+      this.#finishMobileSheet();
+    };
+    this.element.addEventListener("transitionend", this.sheetCloseHandler);
+    this.sheetCloseTimer = window.setTimeout(() => {
+      this.#cancelSheetClose();
+      if (this.mobileSheet) return;
+      this.#finishMobileSheet();
+    }, 400);
+  }
+
+  #cancelSheetClose() {
+    if (this.sheetCloseHandler) {
+      this.element.removeEventListener("transitionend", this.sheetCloseHandler);
+      this.sheetCloseHandler = null;
+    }
+    window.clearTimeout(this.sheetCloseTimer);
+  }
+
+  #measureComposerRest() {
+    const composer = document.querySelector(".chat--composer");
+    const gap = document.querySelector(".chat--window > br");
+    if (composer) {
+      this.element.style.setProperty(
+        "--composer-rest",
+        `${composer.getBoundingClientRect().height}px`
+      );
+    }
+    if (gap) {
+      this.element.style.setProperty(
+        "--composer-gap",
+        `${gap.getBoundingClientRect().height}px`
+      );
+    }
+  }
+
+  #finishMobileSheet() {
+    if (!this.hasMenuTarget) return;
+    this.menuTarget.hidden = true;
+    this.element.style.removeProperty("--bulk-menu-footprint");
+    this.element.style.removeProperty("--bulk-menu-band");
+    this.element.style.removeProperty("--composer-rest");
+    this.element.style.removeProperty("--composer-gap");
+    this.#syncChrome(false);
+  }
+
+  #syncChrome(menuOpen) {
+    if (this.element.dataset.platform != "mobile") return;
+
+    const tabbar = document.querySelector(".tabbar--navigation");
+    if (!tabbar) return;
+
+    const composer = document.querySelector(".chat--composer");
+
+    if (menuOpen) {
+      tabbar.toggleAttribute("inert", true);
+      tabbar.setAttribute("aria-hidden", "true");
+      composer?.toggleAttribute("inert", true);
+      return;
+    }
+
+    composer?.toggleAttribute("inert", false);
+
+    const composerFocused = document.querySelector(
+      ".chat--composer [data-composer-editor-target~='editor'] .lexxy-editor__content:focus"
+    );
+    if (composerFocused) return;
+
+    tabbar.toggleAttribute("inert", false);
+    tabbar.removeAttribute("aria-hidden");
   }
 
   checkboxTargetConnected(checkbox) {

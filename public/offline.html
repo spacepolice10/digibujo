@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="robots" content="noindex">
+    <title>Offline · Dotted</title>
+    <style>
+      :root { color-scheme: light dark; }
+      body {
+        display: grid;
+        place-items: center;
+        min-height: 100dvh;
+        margin: 0;
+        padding: 1.5rem;
+        box-sizing: border-box;
+        font-family: system-ui, sans-serif;
+        text-align: center;
+        background: #f5f5f5;
+        color: #2b2b30;
+      }
+      p { color: #6f6e69; }
+      button {
+        padding: 0.6rem 1.2rem;
+        border: 0;
+        border-radius: 0.5rem;
+        font: inherit;
+        background: #2b2b30;
+        color: #f5f5f5;
+      }
+      @media (prefers-color-scheme: dark) {
+        body { background: #141414; color: #e6e6e6; }
+        p { color: #a29f96; }
+        button { background: #e6e6e6; color: #141414; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>You're offline</h1>
+      <p>Dotted needs a connection to load your timeline.</p>
+      <button type="button" onclick="location.reload()">Try again</button>
+    </main>
+  </body>
+</html>

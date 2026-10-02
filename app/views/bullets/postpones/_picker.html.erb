@@ -5,7 +5,7 @@
 
     <button
       type="button"
-      class="button dropdown--element-hide"
+      class="dropdown--element-hide"
       data-intent="secondary"
       data-radius="full"
       data-size="xs"
@@ -14,7 +14,7 @@
       popovertargetaction="hide"
       aria-label="Close schedule"
     >
-      <%= icon_tag("x") %>
+      <%= icon("x") %>
     </button>
   </header>
 
@@ -30,7 +30,7 @@
                 grid_navigation_target: "item",
                 action: "focus->grid-navigation#syncPosition"
               } do %>
-          <%= icon_tag(option[:icon]) %>
+          <%= icon(option[:icon]) %>
           <%= option[:name] %>
 
           <% if option[:pops_on] %>
@@ -48,7 +48,7 @@
         data-grid-navigation-target="item"
         data-action="focus->grid-navigation#syncPosition"
       >
-        <%= icon_tag("calendar") %>
+        <%= icon("calendar") %>
         <span>Pick a date</span>
 
         <input
@@ -63,7 +63,7 @@
         <%= hidden_field_tag :bullet_ids, bullet_ids, data: { bulk_menu_target: "idList" } %>
         <%= date_field_tag :pops_on, Date.current %>
 
-        <%= button_tag type: :submit, class: "button", data: { intent: "primary", radius: "full", size: "xs" } do %>
+        <%= button_tag type: :submit, data: { intent: "primary", radius: "full", size: "xs" } do %>
           Confirm
         <% end %>
       <% end %>

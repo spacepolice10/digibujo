@@ -19,6 +19,13 @@ module ActiveSupport
       ActiveStorage::Blob.create_and_upload!(io: StringIO.new('x'), filename: filename, content_type: content_type)
     end
 
+    def create_file_bullet!(user, filename: 'pixel.png', content_type: 'image/png', io: StringIO.new('x'), **attrs)
+      user.bullets.new(attrs).tap do |bullet|
+        bullet.file.attach(io: io, filename: filename, content_type: content_type)
+        bullet.save!
+      end
+    end
+
     def create_collection!(user, name:, colour: nil, icon: nil)
       user.collections.create!(name: name, colour: colour, icon: icon)
     end
@@ -27,7 +34,7 @@ module ActiveSupport
       if (collection = attrs.delete(:collection))
         attrs[:collection_id] = collection.id
       end
-      user.bullets.create!({ bulletable: Text.new }.merge(attrs))
+      user.bullets.create!(attrs)
     end
   end
 end

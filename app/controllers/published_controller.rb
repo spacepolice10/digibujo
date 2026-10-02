@@ -8,7 +8,7 @@ class PublishedController < ApplicationController
   def index
     @bullets = Current.user.bullets.published
                       .includes(:published_entity)
-                      .preload(:bulletable)
+                      .preload(file_attachment: :blob)
                       .order(published_entities: { published_at: :desc })
   end
 

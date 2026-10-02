@@ -17,10 +17,9 @@
   <footer>
   <%= button_to access_code_path(access_code),
         method: :delete,
-        class: "button",
         data: { intent: "secondary", radius: "full", size: "xs", status: "negative" },
         form: { data: { turbo_confirm: "Revoke this access code? Anything using it will stop working." } } do %>
-    <%= icon_tag("trash") %>
+    <%= icon("trash") %>
     <span>Revoke</span>
   <% end %>
   </footer>

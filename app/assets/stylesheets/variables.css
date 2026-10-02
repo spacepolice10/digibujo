@@ -23,7 +23,7 @@
 
         /* spacing */
         --space-v: 1.25ch;
-        --space-h: 1rem;
+        --space-h: 1.25rem;
         --space-v-half: calc(var(--space-v) / 2);
         --space-h-half: calc(var(--space-h) / 2);
         --space-v-2: calc(var(--space-v) * 2);

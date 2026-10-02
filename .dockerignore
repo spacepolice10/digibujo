@@ -39,6 +39,22 @@
 # Ignore CI service files.
 /.github
 
+# Ignore every key file and any SQLite database, wherever it sits.
+/config/*.key
+**/*.sqlite3
+**/*.sqlite3-*
+
+# Ignore local tooling, scratch and agent files.
+/ignored
+/.cursor
+/.superpowers
+/.worktrees
+/.ruby-lsp
+/.herb.yml
+/docs/superpowers
+/opencode.json
+**/.DS_Store
+
 # Ignore Kamal files.
 /config/deploy*.yml
 /.kamal

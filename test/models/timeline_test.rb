@@ -24,8 +24,9 @@ class TimelineTest < ActiveSupport::TestCase
     assert_equal 'year-2025', section(366).key
   end
 
-  test 'a day from today onwards belongs to today' do
-    assert_equal 'today', Timeline.section_for(@today + 1, today: @today).key
+  test 'a future day gets its own section' do
+    section = Timeline.section_of(@today + 1, today: @today)
+    assert_equal (@today + 1).iso8601, section.key
   end
 
   test 'bullets are due, not upcoming, up to today' do
@@ -39,7 +40,7 @@ class TimelineTest < ActiveSupport::TestCase
 
     timeline = Timeline.new(user)
 
-    assert_equal [past, due, filed].reject { |bullet| bullet == filed }.sort_by(&:id), timeline.bullets.sort_by(&:id)
+    assert_equal [past, due, filed].sort_by(&:id), timeline.bullets.sort_by(&:id)
     assert_equal [later], timeline.upcoming.to_a
   end
 
@@ -55,6 +56,6 @@ class TimelineTest < ActiveSupport::TestCase
   private
 
   def section(age)
-    Timeline.section_for(@today - age, today: @today)
+    Timeline.section_of(@today - age, today: @today)
   end
 end

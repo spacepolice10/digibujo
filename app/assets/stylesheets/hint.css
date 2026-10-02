@@ -3,15 +3,12 @@
    * Hint popovers (popover="hint" + interestfor invokers).
    * Trigger carries anchor-name; panel carries matching position-anchor (inline).
    */
-
-  .bullet--metadata [interestfor],
-  .layout--filter-group [interestfor],
-  .monthlylog--date-artifacts [interestfor],
-  .daylog--mood [interestfor] {
+ 
+  [interestfor] {
     interest-delay: 0.2s;
   }
 
-  .hint[popover="hint"] {
+  [popover="hint"] {
     box-sizing: border-box;
     position: fixed;
     inset: unset;
@@ -53,42 +50,5 @@
       opacity: 0;
       transform: translateY(var(--space-v-half));
     }
-  }
-
-  .layout--filter-option {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    width: var(--space-h-2);
-    height: var(--space-h-2);
-    padding: 0;
-    border: none;
-    background: none;
-    border-radius: var(--radius-strong);
-    color: var(--color-invert-4);
-    text-decoration: none;
-    flex-shrink: 0;
-    font: inherit;
-    cursor: default;
-
-    @media (hover: hover) {
-      &:hover {
-        color: var(--color-invert-2);
-        background: var(--color-invert-4);
-      }
-    }
-  }
-
-  .layout--filter-option[aria-current="page"] {
-    color: var(--color-invert-2);
-    background: var(--color-accent-1-subtle);
-  }
-
-  .layout--filter-option[data-bullet-type] {
-    color: var(--bullet-type-color);
-  }
-
-  .layout--filter-option[aria-current="page"][data-bullet-type] {
-    color: var(--color-invert-2);
   }
 }

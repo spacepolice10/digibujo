@@ -1,36 +1,31 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static values = { mode: { type: String, default: "editor" } }
-  static targets = ["form", "recorderButton"]
+  static values = { filled: Boolean, locked: Boolean }
+  static targets = ["form"]
 
   submit(event) {
     event.preventDefault()
-    this.formTarget.requestSubmit()
+    if (this.filledValue) this.formTarget.requestSubmit()
   }
 
-  toggleMode(event) {
-    event.preventDefault()
-    const mode = event.params.mode
-    if (mode != this.modeValue) this.#changeMode(mode)
+  lock() {
+    this.lockedValue = true
+    this.filledValue = true
   }
 
-  toggleRecorderButton(event) {
-    if (!this.hasRecorderButtonTarget) return
+  unlock() {
+    this.lockedValue = false
+  }
 
-    this.recorderButtonTarget.hidden = !event.currentTarget.isBlank
+  sync(event) {
+    this.filledValue = !event.currentTarget.isBlank
   }
 
   restore(event) {
     if (!event.detail.success) return
 
-    this.#changeMode("editor")
-    if (this.hasRecorderButtonTarget) this.recorderButtonTarget.hidden = false
+    this.filledValue = false
     this.dispatch("restore")
-  }
-
-  #changeMode(mode) {
-    this.modeValue = mode
-    this.dispatch("mode-change", { detail: { mode } })
   }
 }

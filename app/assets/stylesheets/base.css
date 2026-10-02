@@ -2,14 +2,22 @@
  *
  * These are intentional design choices, not browser normalization.
  * Lives in @layer base so it sits between variables and utilities.
+ *
+ * Page chrome uses ordinary tags:
+ *   body > main     — page shell (padding, size, title)
+ *   article         — elevated card / surface (may hold ul directly)
+ *   ul[data-layout]  — column (default), flex, or grid
+ *   ul[data-divider] — row/outer borders when "true"
+ * Chat windows (.chat--window / .chat--scroller) opt out via chat.css
+ * (full-height flex fill, no page-shell padding).
  */
 
 @layer base {
 
   :root {
     --background-grid-size: 1.25rem;
-    --background-canvas-colour: light-dark(oklch(0.97 0.015 78), oklch(0.19 0.025 78));
-    --background-grid-colour: light-dark(oklch(0.88 0.018 78), oklch(0.45 0.012 82 / 0.55));
+    --background-canvas-colour: light-dark(oklch(0.97 0 0), oklch(0.19 0 0));
+    --background-grid-colour: light-dark(oklch(0.88 0 0), oklch(0.45 0 0 / 0.55));
     --background-grid-pattern: radial-gradient(circle,
         var(--background-grid-colour) 1px,
         transparent 1px);
@@ -28,32 +36,51 @@
     flex-direction: column;
     font-family: var(--font-family-mono);
     font-size: var(--font-size-base-read);
-    background: transparent;
-    margin-inline: auto;
     width: 100%;
-    max-width: 100%;
-    line-height: 1.35;
-    color: var(--color-invert-1);
-    container: layout / inline-size;
     max-width: 1280px;
+    min-height: 100dvh;
     margin-inline: auto;
     padding: 2.5px;
+    line-height: 1.5;
+    color: var(--color-invert-1);
+    container: layout / inline-size;
+    overscroll-behavior-y: none;
 
-    &main {
+    &>main {
       container: inline-size;
-      max-width: 1280px;
-      margin-inline: auto;
-      width: 100%;
-    }
-
-  }
-
-  body {
-   &>main {
-      container: inline-size;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: safe center;
+      gap: var(--space-v);
+      min-block-size: 0;
       margin-inline: auto;
       width: 100%;
       height: 100%;
+      padding-block: var(--space-v-4);
+      padding-inline: var(--space-h);
+      padding-block-end: calc(var(--tabbar-clearance) + var(--space-h-2) + var(--space-v-2));
+
+      &>h1 {
+        flex-shrink: 0;
+        font-family: var(--font-family-sans);
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-strong);
+        color: var(--color-invert-1);
+      }
+
+      /* Keep titles pinned & center the rest in the leftover space */
+      &:has(>h1) {
+        justify-content: flex-start;
+
+        &>h1+* {
+          margin-block-start: auto;
+        }
+
+        &>*:last-child {
+          margin-block-end: auto;
+        }
+      }
 
       &[data-size="sm"] {
         max-width: 640px;
@@ -67,6 +94,7 @@
         max-width: 1280px;
       }
     }
+
     &>footer {
       margin-inline: auto;
       width: 100%;
@@ -81,16 +109,8 @@
   }
 
   article {
-    display: flex;
-    flex-direction: column;
     border-radius: var(--radius-base);
-    align-items: center;
-
-    &>header,
-    main,
-    footer {
-      padding: var(--space-v) var(--space-v);
-    }
+    width: 100%;
 
     &>header {
       display: flex;
@@ -110,13 +130,53 @@
     >main {
       flex: 1 1 0;
       width: 100%;
+    }
 
-      &>ul>li {
-        margin-block: var(--space-v);
+    /* Lists sit on article or inside its main.
+       column (default / empty / "column") gets the stacked card chrome.
+       data-divider="true" adds the outer border and row separators. */
+    >ul,
+    >main>ul {
+      list-style: none;
+      width: 100%;
+
+      &>li {
         list-style: none;
+      }
 
-        @media (pointer: coarse) {
-          margin-block: var(--space-v);
+      &:where(:not([data-layout]), [data-layout=""], [data-layout="column"]) {
+        display: flex;
+        flex-direction: column;
+        background: var(--color-1);
+        border-radius: var(--radius-strong);
+        overflow: hidden;
+
+        &>li> :is(a, button, div) {
+          width: 100%;
+          padding: var(--space-v) var(--space-h);
+          background: none;
+          border: 0;
+          text-align: start;
+
+          p {
+            flex: 1;
+            min-width: 0;
+            overflow-wrap: anywhere;
+          }
+        }
+
+        &>li> :is(button, div) {
+          display: flex;
+          align-items: center;
+          gap: var(--space-h-half);
+        }
+      }
+
+      &[data-divider="true"] {
+        border: var(--border-subtle);
+
+        &>li+li {
+          border-top: var(--border-subtle);
         }
       }
     }
@@ -131,10 +191,45 @@
       border: var(--border-subtle);
     }
 
-    &[data-elevartion="2"] {
+    &[data-elevation="2"] {
       background: var(--color-2);
       border: var(--border-subtle);
     }
+  }
+
+  @media (hover: hover) {
+    article>ul:where(:not([data-layout]), [data-layout=""], [data-layout="column"]) :is(a, button):hover,
+    article>main>ul:where(:not([data-layout]), [data-layout=""], [data-layout="column"]) :is(a, button):hover {
+      background: var(--color-2);
+    }
+  }
+
+  article>ul:where(:not([data-layout]), [data-layout=""], [data-layout="column"]) :is(a, button):focus-visible,
+  article>main>ul:where(:not([data-layout]), [data-layout=""], [data-layout="column"]) :is(a, button):focus-visible {
+    background: var(--color-2);
+  }
+
+  /* Shared list layouts — work inside or outside article */
+  ul[data-layout="flex"] {
+    display: flex;
+    flex-flow: row wrap;
+    gap: var(--space-h-half);
+    list-style: none;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    overflow: visible;
+  }
+
+  ul[data-layout="grid"] {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-h-half);
+    list-style: none;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    overflow: visible;
   }
 
   select[multiple] {
@@ -188,18 +283,21 @@
     transition: none;
   }
 
-  /* Links */
+  /* Links — flex anatomy only; colour/size come from context or component classes */
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-h-half);
+  }
+
   a:not([class]) {
     text-decoration-skip-ink: auto;
-    color: currentColor
+    color: currentColor;
   }
 
   li {
     list-style: none;
   }
-
-  /* * + :is(h1, h2, h3, h4, h5, h6) { margin-top: 1em; }
-  * + :is(p, ul, ol, blockquote, table, article, aside, details) { margin-top: 0.5em; } */
 
   /* Appearance. Theming colors — on html with the dot-grid background. */
 
@@ -226,5 +324,6 @@
     --color-2: light-dark(oklch(0.99 0.014 85), oklch(0.24 0.022 85));
     --background-grid-colour: light-dark(oklch(0.64 0.022 85 / 0.72), oklch(0.45 0.014 85 / 0.55));
   }
+
 
 }

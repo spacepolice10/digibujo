@@ -24,7 +24,6 @@ module Searches
 
     def find_searchable!(type, id)
       case type
-      when 'Project' then Current.user.projects.find(id)
       when 'Collection' then Current.user.collections.find(id)
       when 'Bullet' then Current.user.bullets.find(id)
       else

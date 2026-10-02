@@ -1,3 +1,15 @@
+@property --bulk-menu-band {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+@property --bulk-menu-footprint {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
 @layer components {
   .bulk-menu {
     position: fixed;
@@ -20,6 +32,14 @@
     transition:
       opacity 0.12s ease,
       translate 0.12s ease;
+
+    /* Rises from below the screen by the same distance the page gives up,
+       so the two edges stay locked for the whole transition. */
+    body[data-platform="mobile"] & {
+      animation: none;
+      transition: none;
+      translate: 0 calc(var(--bulk-menu-footprint) - var(--bulk-menu-band));
+    }
 
     &[hidden] {
       opacity: 0;
@@ -71,6 +91,83 @@
     content: "";
   }
 
+  /* One length drives the whole gesture: the menu translate, the page
+     height, and the bottom chrome all read --bulk-menu-band. */
+  body[data-platform="mobile"] {
+    transition: --bulk-menu-band var(--tabbar-motion);
+  }
+
+  body[data-platform="mobile"] > main.chat--window {
+    height: calc(100% - var(--bulk-menu-band));
+    max-height: calc(100dvh - var(--bulk-menu-band));
+    min-height: 0;
+  }
+
+  body[data-platform="mobile"]:has(.bulk-menu:not([hidden])) {
+    --bulk-menu-progress: calc(
+      var(--bulk-menu-band) / max(var(--bulk-menu-footprint), 1px)
+    );
+    --tabbar-clearance: calc(
+      (var(--tabbar-offset) + var(--tabbar-safe-area) + var(--tabbar-size))
+      * (1 - var(--bulk-menu-progress))
+    );
+  }
+
+  body[data-platform="mobile"]:has(.bulk-menu:not([hidden])) > main:not(.chat--window) {
+    height: calc(100dvh - var(--bulk-menu-band));
+    max-height: calc(100dvh - var(--bulk-menu-band));
+    min-height: 0;
+    overflow: auto;
+  }
+
+  body[data-platform="mobile"]:has(.bulk-menu:not([hidden])) .chat--composer,
+  body[data-platform="mobile"]:has(.bulk-menu:not([hidden])) .chat--window > br {
+    min-height: 0;
+    overflow-y: hidden;
+  }
+
+  body[data-platform="mobile"]:has(.bulk-menu:not([hidden])) .chat--composer {
+    box-sizing: border-box;
+    height: calc(var(--composer-rest, 0px) * (1 - var(--bulk-menu-progress)));
+    padding-block: calc(var(--space-v-half) * (1 - var(--bulk-menu-progress)));
+    pointer-events: none;
+  }
+
+  body[data-platform="mobile"]:has(.bulk-menu:not([hidden])) .chat--window > br {
+    display: block;
+    height: calc(var(--composer-gap, 0px) * (1 - var(--bulk-menu-progress)));
+  }
+
+  body[data-platform="mobile"]:has(.bulk-menu:not([hidden])) .tabbar--navigation {
+    transform-origin: center bottom;
+    transform: translate(-50%, calc(var(--bulk-menu-band) * -1))
+      scaleY(calc(1 - var(--bulk-menu-progress)));
+    transition: none;
+    pointer-events: none;
+  }
+
+  body[data-platform="mobile"]:has(.bulk-menu:not([hidden]))
+    [data-bulk-menu-target~="list"] {
+    scroll-padding-block-end: 0;
+  }
+
+  body[data-platform="mobile"]:has(.bulk-menu:not([hidden]))
+    [data-bulk-menu-target~="list"]::after {
+    height: 0;
+    content: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    body[data-platform="mobile"],
+    body[data-platform="mobile"] > main,
+    body[data-platform="mobile"] .chat--composer,
+    body[data-platform="mobile"] .chat--window > br,
+    body[data-platform="mobile"] .bulk-menu {
+      transition: none;
+      animation: none;
+    }
+  }
+
   .bulk-menu--action-dock {
     position: relative;
   }
@@ -99,7 +196,7 @@
   }
 
   /* Pickers share dropdown--element chrome (mood / create / pinned). */
-  .bulk-menu--picker.dropdown--element[popover] {
+  [popover].bulk-menu--picker {
     position-anchor: --bulk-menu;
     position-area: block-start center;
     margin: 0;
@@ -119,7 +216,7 @@
     );
   }
 
-  .bulk-menu--picker--collects.dropdown--element[popover] {
+  [popover].bulk-menu--picker--collects {
     min-width: calc(var(--space-h-2) * 12);
     max-width: min(
       calc(var(--space-h-2) * 14),

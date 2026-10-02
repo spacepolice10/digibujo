@@ -52,3 +52,11 @@
 /db/migrate */
 
 /ignored/
+
+# SQLite databases and scratch copies must never be committed
+/*.sqlite3
+/*.sqlite3-*
+
+# Local Kamal deployment config (copy from the .example files)
+/config/deploy.yml
+/.kamal/secrets

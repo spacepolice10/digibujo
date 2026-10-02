@@ -3,7 +3,6 @@
 class Activity < ApplicationRecord
   ACTIONS = %w[
     updated collected rescheduled completed uncompleted
-    project_mentioned project_unmentioned
     created destroyed archived unarchived
   ].freeze
 

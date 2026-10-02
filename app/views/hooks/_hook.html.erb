@@ -15,10 +15,9 @@
   <footer>
   <%= button_to hook_path(hook),
         method: :delete,
-        class: "button",
         data: { intent: "secondary", radius: "full", size: "xs", status: "negative" },
         form: { data: { turbo_confirm: "Revoke this hook? External apps using it will stop working." } } do %>
-    <%= icon_tag("trash") %>
+    <%= icon("trash") %>
     <span>Revoke</span>
   <% end %>
   </footer>

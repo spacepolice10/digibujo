@@ -10,14 +10,14 @@ class CurrentTimezoneTest < ActionDispatch::IntegrationTest
 
   test 'includes the timezone cookie in the ETag' do
     cookies[:timezone] = 'America/New_York'
-    get timeline_path
+    get bullets_path
     etag = response.headers.fetch('ETag')
 
-    get timeline_path, headers: { 'If-None-Match' => etag }
+    get bullets_path, headers: { 'If-None-Match' => etag }
     assert_equal 304, response.status
 
     cookies[:timezone] = 'America/Los_Angeles'
-    get timeline_path, headers: { 'If-None-Match' => etag }
+    get bullets_path, headers: { 'If-None-Match' => etag }
     assert_response :success
     assert_not_equal etag, response.headers.fetch('ETag')
   end

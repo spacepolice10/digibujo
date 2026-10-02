@@ -1,53 +1,40 @@
 <% content_for(:title, "Account") %>
 
-<main data-size="sm">
-    <article data-elevation="1" aria-label="Account settings">
-      <header><nav>
-        <%= back_link_to home_path,
-              class: "button",
-              data: { intent: "secondary", radius: "full", size: "sm", content: "icon", turbo_frame: "_top" },
-              aria: { label: "Back to Home" } do %>
-          <%= icon_tag("arrow-left") %>
+<%= render "shared/tabbar" %>
+
+<main data-size="md">
+  <h1>Account</h1>
+
+  <article>
+    <ul data-layout="column" data-divider="true">
+      <li>
+        <div>
+          <%= icon("face") %>
+          <p><%= Current.user.email_address %></p>
+        </div>
+      </li>
+
+      <li>
+        <%= link_to access_codes_path, data: { turbo_frame: "_top" } do %>
+          <%= icon("code") %>
+          <p>Access codes</p>
         <% end %>
-        <h2>Account</h2>
-      </nav></header>
-      <main>
-      <section class="account--identity">
-        <span
-          class="button"
-          data-intent="primary"
-          data-radius="full"
-          data-size="xl"
-          data-content="icon"
-          aria-hidden="true"
-        ><%= Current.user.email_address.first.upcase %></span>
-        <p><%= Current.user.email_address %></p>
-      </section>
-      <br>
-      <nav class="account--actions">
-      <%= link_to access_codes_path,
-            class: "button",
-            data: { intent: "secondary", radius: "full", size: "sm" } do %>
-        <%= icon_tag("code") %>
-        <span>Access codes</span>
-      <% end %>
+      </li>
 
-      <%= link_to hooks_path,
-            class: "button",
-            data: { intent: "secondary", radius: "full", size: "sm" } do %>
-        <%= icon_tag("webhook") %>
-        <span>Hooks</span>
-      <% end %>
-
-      <%= button_to authentication_path,
-            method: :delete,
-            class: "button",
-            data: { intent: "secondary", radius: "full", size: "sm", status: "negative" },
-            form: { data: { turbo_confirm: "Sign out of Dotted?" } } do %>
-        <%= icon_tag("sign-out") %>
-        <span>Sign out</span>
-      <% end %>
-    </nav>
-    </main>
+      <li>
+        <%= link_to hooks_path, data: { turbo_frame: "_top" } do %>
+          <%= icon("webhook") %>
+          <p>Hooks</p>
+        <% end %>
+      </li>
+    </ul>
   </article>
+
+  <%= button_to authentication_path,
+        method: :delete,
+        data: { intent: "primary", radius: "base" },
+        form: { data: { turbo_confirm: "Sign out of Dotted?" } } do %>
+    <%= icon("sign-out") %>
+    Sign out
+  <% end %>
 </main>

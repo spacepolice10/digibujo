@@ -1,7 +1,7 @@
 <%# locals: (bullet:) %>
-<li class="bucket--section-list-item" data-bullet-type="<%= bullet.bulletable_type.downcase %>">
-  <span class="icon" aria-hidden="true">
-    <%= icon_tag(bullet.marker_icon, style: "color: #{colour(bullet.colour)};") %>
-  </span>
-  <span class="utilities--line-clamp-1"><%= bullet.name %></span>
+<li>
+  <div>
+    <%= icon(bullet.marker_icon) %>
+    <p><%= bullet.name %></p>
+  </div>
 </li>

@@ -17,6 +17,23 @@ class AttachmentsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'own.png', response.body
   end
 
+  test 'show renders a file owned by an attachment bullet' do
+    blob = attach_file_blob!(@user, filename: 'report.pdf')
+
+    get attachment_path(blob.signed_id)
+
+    assert_response :success
+    assert_match 'report.pdf', response.body
+  end
+
+  test 'show returns not found for another users attachment bullet file' do
+    blob = attach_file_blob!(users(:two), filename: 'foreign.pdf')
+
+    get attachment_path(blob.signed_id)
+
+    assert_response :not_found
+  end
+
   test 'show returns not found for another users rich text attachment' do
     other = users(:two)
     blob = attach_note_blob!(other, filename: 'foreign.png')
@@ -34,14 +51,16 @@ class AttachmentsControllerTest < ActionDispatch::IntegrationTest
 
   test 'index lists all owned upload types and excludes another users files' do
     rich_text_blob = attach_note_blob!(@user, filename: 'inline.png')
-    memo_blob = attach_memo_blob!(@user, filename: 'memo.webm')
+    file_blob = attach_file_blob!(@user, filename: 'report.pdf')
     foreign_blob = attach_note_blob!(users(:two), filename: 'foreign.png')
 
     get attachments_path
 
     assert_response :success
+    assert_select 'nav.tabbar--back a[href=?][aria-label=?]', search_path, 'Back', text: 'Back'
+    assert_select 'a[aria-label="Back to Home"]', count: 0
     assert_match rich_text_blob.filename.to_s, response.body
-    assert_match memo_blob.filename.to_s, response.body
+    assert_match file_blob.filename.to_s, response.body
     assert_no_match foreign_blob.filename.to_s, response.body
   end
 
@@ -59,16 +78,9 @@ class AttachmentsControllerTest < ActionDispatch::IntegrationTest
     blob
   end
 
-  def attach_memo_blob!(user, filename:)
-    blob = ActiveStorage::Blob.create_and_upload!(
-      io: StringIO.new('voice memo'),
-      filename: filename,
-      content_type: 'audio/webm'
-    )
-    memo = Memo.new(duration_seconds: 1)
-    memo.recording.attach(blob)
-    create_bullet!(user, bulletable: memo, body: 'Voice memo')
-    blob
+  def attach_file_blob!(user, filename:)
+    bullet = create_file_bullet!(user, filename: filename, content_type: 'application/pdf', io: StringIO.new('%PDF-1.4'))
+    bullet.file.blob
   end
 
   def mini_png

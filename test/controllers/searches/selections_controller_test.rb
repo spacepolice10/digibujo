@@ -8,20 +8,20 @@ module Searches
       @user = users(:one)
       @other_user = users(:two)
       sign_in_as @user
-      @project = create_project!(@user, name: "alpha")
+      @collection = create_collection!(@user, name: "alpha")
     end
 
     test "create records a selection and returns no content" do
       assert_difference -> { @user.search_selections.count }, 1 do
         post search_selection_path,
-             params: { searchable_type: "Project", searchable_id: @project.id, query: "alp" },
+             params: { searchable_type: "Collection", searchable_id: @collection.id, query: "alp" },
              as: :json
       end
 
       assert_response :no_content
 
       selection = @user.search_selections.sole
-      assert_equal @project, selection.searchable
+      assert_equal @collection, selection.searchable
       assert_equal "alp", selection.query
     end
 
@@ -35,10 +35,10 @@ module Searches
     end
 
     test "create rejects another users entity" do
-      other_project = create_project!(@other_user, name: "secret")
+      other_collection = create_collection!(@other_user, name: "secret")
 
       post search_selection_path,
-           params: { searchable_type: "Project", searchable_id: other_project.id },
+           params: { searchable_type: "Collection", searchable_id: other_collection.id },
            as: :json
 
       assert_response :not_found

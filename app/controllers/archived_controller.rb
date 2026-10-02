@@ -3,7 +3,7 @@
 class ArchivedController < ApplicationController
   def index
     @bullets = set_page_and_extract_portion_from(
-      Current.user.bullets.includes(:collection).archived.order(updated_at: :desc),
+      Current.user.bullets.includes(:collections).archived.order(updated_at: :desc),
       per_page: [15, 30, 50]
     )
     @amount_of_archived = Current.user.bullets.archived.count

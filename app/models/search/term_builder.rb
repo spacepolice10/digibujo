@@ -4,10 +4,14 @@ module Search::TermBuilder
   extend self
 
   def build(query)
-    terms = normalize(query)
-    return if terms.empty?
+    words = terms(query)
+    return if words.empty?
 
-    terms.map { |term| "\"#{escape(term)}\"*" }.join(' AND ')
+    words.map { |term| "\"#{term}\"*" }.join(' AND ')
+  end
+
+  def terms(query)
+    normalize(query).filter_map { |term| escape(term).presence }
   end
 
   def normalize(query)

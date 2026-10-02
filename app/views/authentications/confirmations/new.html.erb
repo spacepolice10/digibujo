@@ -1,32 +1,22 @@
 <% content_for(:title) { "Enter code" } %>
 
-<div class="session--page session--page-auth">
-  <div class="session--welcome">
-    <h1 class="session--name">Check your email</h1>
-    <p class="typography--paragraph-md typography--center typography--balanced">
-      We sent a 6-character code to <strong><%= @email %></strong>.
-    </p>
-  </div>
+<h1>Check your email</h1>
+<p>We sent a 6-character code to <strong><%= @email %></strong>.</p>
 
-  <%= form_with url: authentication_confirmation_path, class: "form session--form", data: { controller: "session-auto-submit" } do |form| %>
-    <%= form.text_field :code,
-          class: "session--code-input",
-          required: true,
-          autofocus: true,
-          autocomplete: "one-time-code",
-          inputmode: "text",
-          maxlength: 6,
-          placeholder: "······",
-          aria: { label: "6-character login code" },
-          data: { action: "input->session-auto-submit#submitIfCodeEntered" } %>
+<%= form_with url: authentication_confirmation_path, data: { controller: "auto-submit", auto_submit_length_value: 6 } do |form| %>
+  <%= form.text_field :code,
+        required: true,
+        autofocus: true,
+        autocomplete: "one-time-code",
+        inputmode: "text",
+        maxlength: 6,
+        placeholder: "······",
+        aria: { label: "6-character login code" },
+        data: { action: "input->auto-submit#submit" } %>
 
-    <%= form.button type: "submit", class: "button session--submit",
-          data: { intent: "primary", radius: "full", size: "lg", session_auto_submit_target: "submit" } do %>
-      Verify code
-    <% end %>
+  <%= form.button type: "submit", data: { intent: "primary", radius: "full", size: "lg" } do %>
+    Verify code
   <% end %>
+<% end %>
 
-  <div class="session--footer-links">
-    <%= link_to "Didn't receive it? Try again", new_authentication_path, class: "session--footer-link" %>
-  </div>
-</div>
+<%= link_to "Didn't receive it? Try again", new_authentication_path %>

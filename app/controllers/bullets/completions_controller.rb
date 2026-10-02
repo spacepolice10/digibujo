@@ -13,7 +13,7 @@ module Bullets
 
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_back fallback_location: timeline_path }
+        format.html { redirect_back fallback_location: bullets_path }
       end
     end
 
@@ -24,7 +24,7 @@ module Bullets
 
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_back fallback_location: timeline_path }
+        format.html { redirect_back fallback_location: bullets_path }
       end
     end
   end

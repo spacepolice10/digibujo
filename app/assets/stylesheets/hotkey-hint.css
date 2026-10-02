@@ -1,7 +1,7 @@
 @layer components {
   /*
    * Keyboard shortcut badges (::after on .hotkey-hint).
-   * --always: subtle in-flow badge (menu, bulk menu).
+   * --always: subtle in-flow badge (bulk menu).
    * Shift-held: popover chrome; absolutely positioned to avoid layout shift.
    */
 
@@ -34,17 +34,6 @@
 
     .button.hotkey-hint--always[data-hotkey]::after {
       margin-inline-start: auto;
-    }
-
-    .menu--navigation-item.hotkey-hint--always[data-hotkey]::after {
-      position: absolute;
-      margin-inline-start: 0;
-      max-width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      inset: -0.2em;
-      width: fit-content;
     }
 
     .hotkey-hint[data-hotkey]:not(.hotkey-hint--always) {

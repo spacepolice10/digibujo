@@ -12,14 +12,14 @@ module Bullets
       end
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_back fallback_location: timeline_path }
+        format.html { redirect_back fallback_location: bullets_path }
       end
     rescue ActiveRecord::RecordInvalid => e
       @failed_bullet = e.record
       respond_to do |format|
         format.turbo_stream { render :create, status: :unprocessable_entity }
         format.html do
-          redirect_back fallback_location: timeline_path,
+          redirect_back fallback_location: bullets_path,
                         alert: e.record.errors.full_messages.to_sentence
         end
       end
@@ -31,14 +31,14 @@ module Bullets
       end
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_back fallback_location: timeline_path }
+        format.html { redirect_back fallback_location: bullets_path }
       end
     rescue ActiveRecord::RecordInvalid => e
       @failed_bullet = e.record
       respond_to do |format|
         format.turbo_stream { render :destroy, status: :unprocessable_entity }
         format.html do
-          redirect_back fallback_location: timeline_path,
+          redirect_back fallback_location: bullets_path,
                         alert: e.record.errors.full_messages.to_sentence
         end
       end

@@ -3,13 +3,31 @@
   /* ── Label ────────────────────────────────────────── */
 
   form {
-    & legend {
-      font-size: var(--font-size-base-read);
+
+    &>fieldset,
+    &>label {
+      padding-block-end: var(--space-v-2);
+      padding-inline: var(--space-h-half);
+      border-bottom: var(--border-subtle);
+
+    }
+
+    &>fieldset>legend {
+      padding-block-start: var(--space-v);
+      padding-block-end: var(--space-v);
+      font-size: var(--font-size-xl);
       font-weight: var(--font-weight-strong);
-      color: var(--color-invert-4);
-      margin-bottom: var(--space-v-half);
-      height: auto;
-      width: 100%;
+      color: var(--color-invert-1);
+      margin-left: 2px;
+    }
+
+    &>label>p {
+      padding-block-start: var(--space-v);
+      padding-block-end: var(--space-v);
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-strong);
+      color: var(--color-invert-1);
+      margin-left: 2px;
     }
 
     & small {
@@ -20,42 +38,17 @@
     }
   }
 
-  form>label {
-    display: block;
-    font-size: var(--font-size-base-read);
-    color: var(--color-invert-4);
-    margin-top: var(--space-v);
-    padding: var(--space-v-half) var(--space-h-half);
-
-  }
-
-  label {
-    position: relative;
-  }
-
-  fieldset {
-    margin-top: var(--space-v);
-    padding: var(--space-v-half) var(--space-h-half);
-  }
-
   textarea {
     field-sizing: content;
-  }
-
-  form > input[type="submit"] {
-    width: fit-content;
-    align-self: flex-end;
-    margin: auto;
-    margin-block: var(--space-v);
   }
 
   /* ── Shared input base ────────────────────────────── */
 
   form :is(input, textarea, select) {
     width: 100%;
-    padding: var(--space-v) var(--space-h);
+    padding: var(--space-v) var(--space-h-half);
     border-radius: var(--radius-subtle);
-    font-family: inherit;
+    font-family: var(--font-family-mono);
     font-size: var(--font-size-base-type);
     background: transparent;
     border: var(--border-subtle);
@@ -64,6 +57,7 @@
     &::placeholder {
       color: var(--color-invert-4);
       opacity: var(--opacity-half);
+      font-size: var(--font-size-base-type);
     }
 
     &:hover {
@@ -89,16 +83,6 @@
     cursor: pointer;
   }
 
-  /* ── Input — danger variant ───────────────────────── */
-/* 
-  input:invalid,
-  textarea:invalid,
-  select:invalid,
-  select:invalid:focus-visible {
-    color: var(--color-invert-negative);
-    border-color: var(--color-invert-negative);
-  } */
-
   /* ── Checkbox & Radio ─────────────────────────────── */
 
   [role="radiogroup"] {
@@ -109,6 +93,7 @@
 
   label:has(input[type="checkbox"]),
   label:has(input[type="radio"]) {
+    position: relative;
     display: inline-flex;
     align-items: center;
     gap: var(--space-h-half);

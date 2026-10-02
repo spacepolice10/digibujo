@@ -29,21 +29,12 @@ class HookTest < ActiveSupport::TestCase
 
     bullet = hook.create_bullet!(
       author_name: 'Zapier',
-      bulletable_type: 'Text',
       body: 'From outside'
     )
 
-    assert_nil bullet.collection
+    assert_empty bullet.collections
     assert_equal Date.current, bullet.pops_on
     assert_equal 'Zapier', bullet.author_name
     assert_equal 'From outside', bullet.body_as_text
-  end
-
-  test 'create_bullet! rejects unsupported types' do
-    hook = @user.hooks.create!(name: 'Zapier')
-
-    assert_raises(ArgumentError) do
-      hook.create_bullet!(author_name: 'Zapier', bulletable_type: 'Memo', body: 'Nope')
-    end
   end
 end

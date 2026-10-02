@@ -7,19 +7,20 @@ class Timeline
 
   Section = Data.define(:key, :label)
 
-  def initialize(user, today: Date.current)
+  def initialize(user, filter: nil, today: Date.current)
     @user = user
-    @today = today
+    @today = today.to_date
+    @filter = filter || Bullet::Filter.from_params({}, user: user, today: @today)
   end
 
-  attr_reader :user, :today
+  attr_reader :user, :today, :filter
 
   def bullets
-    user.bullets.on_timeline.active.due(today)
+    filter.apply(user.bullets.active)
   end
 
   def upcoming
-    user.bullets.on_timeline.active.upcoming(today)
+    user.bullets.active.upcoming(today)
   end
 
   def last_page
@@ -30,15 +31,18 @@ class Timeline
     bullets.day_page_before(bullet)
   end
 
-  def section_for(date)
-    self.class.section_for(date, today: today)
+  def section_of(date)
+    self.class.section_of(date, today: today)
   end
 
-  def self.section_for(date, today: Date.current)
-    age = (today - date.to_date).to_i
+  def self.section_of(date, today: Date.current)
+    day = date.to_date
+    return Section.new(day.iso8601, day.strftime('%A, %b %-d')) if day > today.to_date
+
+    age = (today.to_date - day).to_i
 
     case age
-    when ..0 then Section.new('today', 'Today')
+    when 0 then Section.new('today', 'Today')
     when 1 then Section.new('yesterday', 'Yesterday')
     when 2...DAY_SPAN then Section.new(date.to_date.iso8601, date.to_date.strftime('%A, %b %-d'))
     when DAY_SPAN..13 then Section.new('last-week', 'Last week')

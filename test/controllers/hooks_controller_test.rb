@@ -52,23 +52,24 @@ class HooksControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select 'main[data-size="md"] header h2', text: 'Hooks'
-    assert_select 'a.button[data-content="icon"][aria-label="Back to Account"]'
+    assert_select 'a[data-content="icon"][aria-label="Back to Account"]'
     assert_select 'form[action=?]', hooks_path, count: 0
-    assert_select 'header a.button[href=?][aria-label="Create Hook"]', new_hook_path
+    assert_select 'header a[href=?][aria-label="Create Hook"]', new_hook_path
     assert_match hook.name, response.body
     assert_match hook.code_prefix, response.body
-    assert_select 'button.button[data-status="negative"]', text: /Revoke/
+    assert_select 'button[data-status="negative"]', text: /Revoke/
   end
 
   test 'html new renders the create form and docs' do
     get new_hook_path
 
     assert_response :success
-    assert_select 'main[data-size="md"] header h2', text: 'New hook'
-    assert_select 'a.button[data-content="icon"][aria-label="Back to Hooks"]'
+    assert_select 'main[data-size="sm"] > h1', text: 'Hook'
+    assert_select 'a[data-content="icon"][aria-label="Back to Hooks"]', count: 0
     assert_select 'form[action=?]', hooks_path
-    assert_select 'input[type="submit"][data-intent="primary"]'
-    assert_match 'bulletable_type', response.body
+    assert_select 'nav.tabbar--back a.tabbar--back-link[href=?][aria-label=?]', hooks_path, 'Back to Hooks', text: 'Back'
+    assert_select 'form.form button[type="submit"][data-intent="primary"]', text: 'Create hook'
+    assert_no_match 'bulletable_type', response.body
   end
 
   test 'html create shows the intake url once on index' do

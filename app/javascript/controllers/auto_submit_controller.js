@@ -1,22 +1,15 @@
 import { Controller } from "@hotwired/stimulus"
 
+// Submits the form it is attached to. Wire `submit` to any event, e.g.
+//   input->auto-submit#submit   change->auto-submit#submit
+// With `data-auto-submit-length-value="6"` the submit only fires once the
+// event target's value has at least that many characters (pasted input included).
 export default class extends Controller {
-  static targets = ["submit"]
+  static values = { length: Number }
 
-  submitIfCodeEntered(event) {
-    console.log("code entered", event.target.value)
-    if (event.target.value.length == 6) {
-      console.log("submitted")
-      this.submitTarget.click()
-    }
-  }
+  submit(event) {
+    if (this.lengthValue > 0 && event.target.value.length < this.lengthValue) return
 
-  submitIfCodePasted(event) {
-    console.log("code pasted", event.clipboardData.getData("text").length)
-    // if (event.clipboardData.getData("text").length == 6) {
-    //     console.log(this.element)
-    //   this.submitTarget.click()
-    //   console.log("submitted")
-    // }
+    this.element.requestSubmit()
   }
 }

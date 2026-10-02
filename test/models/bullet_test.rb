@@ -33,20 +33,61 @@ class BulletTest < ActiveSupport::TestCase
     assert_nil bullet.done_at
   end
 
+  test 'a file and a body together are invalid' do
+    bullet = @user.bullets.new(body: 'Both')
+    bullet.file.attach(create_blob!(filename: 'a.png', content_type: 'image/png'))
+
+    assert_not bullet.valid?
+  end
+
+  test 'neither a file nor text is invalid' do
+    assert_not @user.bullets.new.valid?
+  end
+
+  test 'a file within the size limit is accepted' do
+    bullet = @user.bullets.new
+    bullet.file.attach(create_blob!(filename: 'small.bin', content_type: 'application/octet-stream'))
+
+    assert bullet.valid?
+  end
+
+  test 'a file one byte over the limit is rejected' do
+    bullet = @user.bullets.new
+    bullet.file.attach(create_blob!(filename: 'big.bin', content_type: 'application/octet-stream'))
+    bullet.file.blob.update!(byte_size: Bullet::MAX_ATTACHMENT_BYTES + 1)
+
+    assert_not bullet.valid?
+    assert_includes bullet.errors[:file].join, 'too large'
+  end
+
+  test 'a bullet whose blob was purged keeps its filename and fails re-save readably' do
+    bullet = create_file_bullet!(@user)
+    bullet.file.purge
+    bullet.reload
+
+    assert_equal 'pixel.png', bullet.name
+    assert_not bullet.valid?
+  end
+
+  test 'a very long filename saves and truncates safely in the search index' do
+    bullet = create_file_bullet!(@user)
+    bullet.update!(filename: "#{'n' * 300}.png")
+
+    assert bullet.valid?
+    assert bullet.search_body.bytesize <= Search::Record::SEARCH_CONTENT_SIZE
+  end
+
   test 'an attachment bullet is searchable by its filename' do
-    blob = create_blob!(filename: 'quarterly report.pdf')
-    bullet = create_bullet!(@user, bulletable: Attachment.new.tap { |a| a.file.attach(blob) })
+    bullet = create_file_bullet!(@user, filename: 'quarterly report.pdf')
 
     assert_equal 'quarterly report.pdf', bullet.reload.filename
     assert_includes bullet.search_body, 'quarterly report.pdf'
   end
 
-  test 'only text and attachment bullets exist' do
-    assert_equal %w[Text Attachment], Bullet.bulletable_types
-  end
+  test 'name falls back to the filename when the body is blank' do
+    bullet = create_file_bullet!(@user)
 
-  test 'name falls back to the bulletable default when the body is blank' do
-    assert_equal 'Untitled', create_bullet!(@user, body: '').name
+    assert_equal 'pixel.png', bullet.name
   end
 
   test 'collect tags the bullet and leaves it on the timeline' do

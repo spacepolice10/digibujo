@@ -26,8 +26,8 @@
     <%= tag.meta name: "timezone", content: Time.zone.name %>
     <%= yield :head %>
     <%= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-    <%= tag.meta name: "theme-color", content: "#f6f5f2", media: "(prefers-color-scheme: light)" %>
-    <%= tag.meta name: "theme-color", content: "#151410", media: "(prefers-color-scheme: dark)" %>
+    <%= tag.meta name: "theme-color", content: "#f5f5f5", media: "(prefers-color-scheme: light)" %>
+    <%= tag.meta name: "theme-color", content: "#141414", media: "(prefers-color-scheme: dark)" %>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,7 +43,7 @@
 
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
@@ -57,16 +57,10 @@
   >
     <%= render "shared/toasts_host" %>
 
-    <% unless request.variant.include?(:mobile) %>
-      <%= render "shared/header" %>
-    <% end %>
-
     <%= yield %>
 
     <% if Current.user %>
       <%= render "bullets/bulk_menu" %>
     <% end %>
-
-    <%= render "shared/footer" %>
   </body>
 </html>

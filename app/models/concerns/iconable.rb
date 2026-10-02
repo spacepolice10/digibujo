@@ -5,9 +5,7 @@ module Iconable
 
   ICON_MAPPINGS = %w[
     folder briefcase house books lightbulb heart target memo art
-    cooking airplane muscle cart music camera money calendar
-    star plant coffee gamepad gift car moon paw movie laptop
-    school flower bike world bed puzzle rocket baby
+    cooking airplane muscle cart music
   ].freeze
 
   DEFAULT_ICON = 'folder'
@@ -19,6 +17,4 @@ module Iconable
   def icon_name
     icon.in?(ICON_MAPPINGS) ? icon : DEFAULT_ICON
   end
-
-
 end

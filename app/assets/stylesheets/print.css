@@ -11,7 +11,6 @@
   .tabbar--navigation,
   .fab,
   .header,
-  .footer,
   #pinned_list,
   #home_create,
   .bulk-menu,
@@ -38,7 +37,7 @@
     border: 1px solid #ddd;
   }
 
-  .bullet[data-bullet-type="text"] .bullet--content::before {
+  .bullet .bullet--content::before {
     transform: none;
   }
 

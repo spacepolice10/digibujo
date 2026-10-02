@@ -1,32 +1,48 @@
-<% if turbo_frame_request? %>
-  <turbo-frame id="menu_search" class="search--palette">
-    <%= render "searches/results", q: @q, entries: @entries, selections: @selections %>
-  </turbo-frame>
-<% else %>
-  <% content_for(:title, "Search") %>
+<% content_for(:title, "Search") %>
 
-  <main class="search--page" data-size="md">
-    <header><nav>
-      <%= back_link_to home_path,
-            class: "button",
-            data: { intent: "secondary", radius: "full", size: "sm", content: "icon", turbo_frame: "_top" },
-            aria: { label: "Back to Home" } do %>
-        <%= icon_tag("arrow-left") %>
+<%= render "shared/tabbar" %>
 
+<main data-size="md">
+  <h1>Search</h1>
+
+  <article id="search_navigation" class="search--navigation">
+    <ul data-layout="column" data-divider="true">
+      <li>
+        <%= link_to attachments_path, data: { turbo_frame: "_top" } do %>
+          <%= icon("paperclip") %>
+          <p>Attachments</p>
+          <% if @attachment_count.positive? %>
+            <small class="search--navigation-item-counter"><%= @attachment_count %></small>
+          <% end %>
+        <% end %>
+      </li>
+
+      <li>
+        <%= link_to archived_index_path, data: { turbo_frame: "_top" } do %>
+          <%= icon("archive") %>
+          <p>Archive</p>
+          <% if @archive_count.positive? %>
+            <small class="search--navigation-item-counter"><%= @archive_count %></small>
+          <% end %>
+        <% end %>
+      </li>
+    </ul>
+  </article>
+
+  <ul id="search_collections" data-layout="grid">
+    <li>
+      <%= link_to new_collection_path, class: "collection-chip", data: { turbo_frame: "_top" } do %>
+        <%= icon("plus") %>
+        <span>New</span>
       <% end %>
-      <h1>Search</h1>
-    </nav></header>
-
-    <div
-      class="search search--open search--standalone"
-      data-controller="combobox search"
-      data-combobox-path-value="<%= search_path %>"
-      data-search-selection-path-value="<%= search_selection_path %>"
-    >
-      <%= render "searches/form" %>
-      <turbo-frame id="menu_search" class="search--palette">
-        <%= render "searches/results", q: @q, entries: @entries, selections: @selections %>
-      </turbo-frame>
-    </div>
-  </main>
-<% end %>
+    </li>
+    <% @collections.each do |collection| %>
+      <li>
+        <%= link_to bullets_path(collection: collection.name), class: "collection-chip", data: { turbo_frame: "_top" } do %>
+          <%= icon("hash", style: ("color: #{colour(collection.colour)};" if collection.colour.present?)) %>
+          <span><%= collection.name %></span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</main>

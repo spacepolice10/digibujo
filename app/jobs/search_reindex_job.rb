@@ -1,13 +1,11 @@
 # frozen_string_literal: true
 
 class SearchReindexJob < ApplicationJob
-  SEARCHABLE_MODELS = [ Project, Collection, Bullet ].freeze
+  SEARCHABLE_MODELS = [Collection, Bullet].freeze
 
   def perform
     SEARCHABLE_MODELS.each do |model|
-      model.find_each do |record|
-        record.reindex
-      end
+      model.find_each(&:reindex)
     end
   end
 end

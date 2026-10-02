@@ -1,4 +1,5 @@
-<% target = @bullet.collection ? dom_id(@bullet.collection) : ("timeline_section_today" if @bullet.pops_on == Date.current) %>
+<% collection = @bullet.collections.first %>
+<% target = collection ? dom_id(collection) : ("timeline_section_today" if @bullet.pops_on == Date.current) %>
 
 <% if target %>
   <%= turbo_stream.append target do %>

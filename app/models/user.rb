@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Authenticated user and owner of all their bullets, collections, projects, and settings.
+# Authenticated user and owner of all their bullets, collections, and settings.
 class User < ApplicationRecord
   has_one :settings, class_name: 'User::Settings', dependent: :destroy
   after_create :create_settings
@@ -12,7 +12,6 @@ class User < ApplicationRecord
   has_many :bullets, dependent: :destroy
   has_many :activities, dependent: :destroy
   has_many :collections, dependent: :destroy
-  has_many :projects, dependent: :destroy
   has_many :published_entities, dependent: :destroy
   has_many :search_selections, class_name: 'Search::Selection', dependent: :destroy
   normalizes :email_address, with: ->(e) { e.strip.downcase }

@@ -1,5 +1,5 @@
 @layer components {
-  [role="menu"][popover] {
+  [popover]:not([popover="hint"]) {
     position: fixed;
     inset: unset;
     z-index: var(--z-dropdown);

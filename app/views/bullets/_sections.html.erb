@@ -1,0 +1,10 @@
+<%# locals: (bullets:, timeline:, ensure_today: nil) %>
+<% ensure_today = false if ensure_today.nil? %>
+<% timeline_sections(bullets, timeline, ensure_today:).each do |section, section_bullets| %>
+  <section id="timeline_section_<%= section.key %>" class="timeline--section">
+    <h2 class="pill"><%= section.label %></h2>
+    <% section_bullets.each do |bullet| %>
+      <%= render partial: "bullets/bullet", locals: { bullet: bullet } %>
+    <% end %>
+  </section>
+<% end %>

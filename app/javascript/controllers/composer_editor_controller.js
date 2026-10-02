@@ -1,71 +1,23 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static values = {
-    multiline: { type: Boolean, default: false }
-  }
-  static targets = ["editor", "toolbarToggle"]
-
-  connect() {
-    this.#observeEditorHeight()
-  }
-
-  disconnect() {
-    this.resizeObserver?.disconnect()
-  }
+  static targets = ["editor"]
 
   submitByKeyboard(event) {
     event.stopPropagation()
     event.stopImmediatePropagation()
     const metaReturn = event.key == "Enter" && (event.metaKey || event.ctrlKey)
     const justReturn = event.keyCode == 13 && !event.shiftKey && !event.isComposing
-    if (!this.#coarsePointer && (metaReturn || (justReturn && !this.#toolbarVisible))) {
+    if (!this.#coarsePointer && (metaReturn || justReturn)) {
       event.preventDefault()
       this.dispatch("submit")
     }
-  }
-
-  toggleToolbar(event) {
-    event.preventDefault()
-    if (event.target.checked) this.#growMultiline()
-      this.editorTarget.focus()
   }
 
   restore() {
     this.editorTarget.value = ""
     if (this.#coarsePointer) return
     this.editorTarget.focus()
-  }
-
-  #observeEditorHeight() {
-    if (typeof ResizeObserver === "undefined") return
-    this.resizeObserver = new ResizeObserver(() => this.#syncMultiline())
-    this.resizeObserver.observe(this.editorTarget.editorContentElement ?? this.editorTarget)
-  }
-
-  #syncMultiline() {
-    if (this.multilineValue) return
-    if (this.#withBlockedContent()) return this.#growMultiline()
-
-    const content = this.editorTarget.editorContentElement ?? this.editorTarget
-    const height = content.offsetHeight
-    if (!height) return
-    if (this.editorTarget.isBlank) this.singleLineHeight = height
-    if (this.singleLineHeight && height > this.singleLineHeight + 4) this.#growMultiline()
-  }
-
-  #growMultiline() {
-    this.multilineValue = true
-  }
-
-  #withBlockedContent() {
-    return Boolean(this.editorTarget.editorContentElement?.querySelector(
-      "figure.attachment, action-text-attachment, table, ul, ol"
-    ))
-  }
-
-  get #toolbarVisible() {
-    return this.toolbarToggleTarget.querySelector('input[type="checkbox"]')?.checked
   }
 
   get #coarsePointer() {

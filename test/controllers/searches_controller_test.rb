@@ -8,153 +8,66 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     sign_in_as @user
   end
 
-  test "show filters bullets by query in content" do
-    matching_card = create_bullet!(@user, body: "Buy milk today")
+  test "show renders the hub" do
+    get search_path
+
+    assert_response :success
+    assert_select "main > h1", text: "Search"
+    assert_select "ul[data-layout=grid]"
+    assert_select "input#index-query", count: 0
+    assert_select "turbo-frame#index_results", count: 0
+  end
+
+  test "show with a query still loads ranked entries for the backend" do
+    matching = create_bullet!(@user, body: "Buy milk today")
     create_bullet!(@user, body: "Call mom tonight")
 
     get search_path, params: { q: "milk" }
 
     assert_response :success
-    assert_select "turbo-frame#menu_search"
-    assert_match matching_card.name, response.body
-    assert_no_match "Call mom tonight", response.body
+    controller = @controller
+    assert_equal "milk", controller.instance_variable_get(:@q)
+    assert_includes controller.instance_variable_get(:@entries).map(&:id), matching.id
   end
 
-  test "show filters projects by name" do
-    create_project!(@user, name: "alpha")
-    create_project!(@user, name: "beta")
+  test "show caps query results at ten" do
+    12.times { |i| create_collection!(@user, name: "indexed collection #{i}") }
 
-    get search_path, params: { q: "alp" }
+    get search_path, params: { q: "indexed collection" }
 
     assert_response :success
-    assert_match "alpha", response.body
-    assert_no_match "beta", response.body
+    assert_equal 10, @controller.instance_variable_get(:@entries).size
   end
 
-  test "show filters collection buckets by name" do
-    create_collection!(@user, name: "reading list")
-    create_collection!(@user, name: "inbox")
-
-    get search_path, params: { q: "read" }
-
-    assert_response :success
-    assert_match "reading list", response.body
-    assert_no_match "inbox", response.body
-  end
-
-  test "show reports empty results when nothing matches" do
-    create_project!(@user, name: "alpha")
-
-    get search_path, params: { q: "zzz" }
-
-    assert_response :success
-    assert_match 'No results for "zzz"', response.body
-  end
-
-  test "show returns turbo stream update for menu search frame" do
-    create_bullet!(@user, body: "Buy milk today")
-
-    get search_path(format: :turbo_stream), params: { q: "milk" }
-
-    assert_response :success
-    assert_equal "text/vnd.turbo-stream.html", response.media_type
-    assert_match 'turbo-stream action="update" target="menu_search"', response.body
-    assert_match "Buy milk today", response.body
-  end
-
-  test "show caps flat results at the global limit" do
-    25.times { |i| create_project!(@user, name: "project #{i}") }
-
-    get search_path(format: :turbo_stream), params: { q: "project" }
-
-    assert_response :success
-    assert_select "turbo-stream[action=?][target=?]", "update", "menu_search" do
-      assert_select "a.search--item", maximum: Search::GlobalRequest::LIMIT
-    end
-  end
-
-  test "show bullet links to bullet show page" do
-    bullet = create_bullet!(@user, body: "Menu bullet")
-
-    get search_path(format: :turbo_stream), params: { q: "Menu" }
-
-    assert_response :success
-    assert_match bullet_path(bullet), response.body
-    assert_select "[data-combobox-target=?]", "item"
-  end
-
-  test "show finds bullets by link text from rich content as plain text" do
-    create_bullet!(@user, body: '<a href="https://example.com/docs">https://example.com/docs</a>')
-    create_bullet!(@user, body: "Unrelated content")
-
-    get search_path, params: { q: "example.com/docs" }
-
-    assert_response :success
-    assert_match "example.com/docs", response.body
-    assert_no_match "Unrelated content", response.body
-  end
-
-  test "show with blank query renders recent selections" do
-    project = create_project!(@user, name: "recent alpha")
+  test "show with blank query loads recent selections" do
+    collection = create_collection!(@user, name: "recent alpha")
     Search::Selection.record!(
       user: @user,
-      searchable_type: "Project",
-      searchable_id: project.id
+      searchable_type: "Collection",
+      searchable_id: collection.id
     )
 
     get search_path
 
     assert_response :success
-    assert_turbo_frame "menu_search"
-    assert_page_text "recent alpha"
+    selections = @controller.instance_variable_get(:@selections)
+    assert_equal 1, selections.size
+    assert_equal collection, selections.first.searchable
   end
 
-  test "show with blank query and no selections renders recents placeholder" do
-    get search_path
-
-    assert_response :success
-    assert_select "ul[role=listbox]", count: 0
-    assert_page_text "No recent searches."
-  end
-
-  test "show with query does not render recent selections" do
-    project = create_project!(@user, name: "recent beta")
-    Search::Selection.record!(
-      user: @user,
-      searchable_type: "Project",
-      searchable_id: project.id
-    )
-
-    get search_path, params: { q: "recent" }
-
-    assert_response :success
-    assert_select "ul[role=listbox]", count: 1
-    assert_page_text "recent beta"
-  end
-
-  test "show with blank query renders recent list on mobile" do
-    project = create_project!(@user, name: "recent mobile")
-    Search::Selection.record!(
-      user: @user,
-      searchable_type: "Project",
-      searchable_id: project.id
-    )
-
+  test "mobile search keeps the three item tabbar" do
     get search_path, headers: { "User-Agent" => "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)" }
 
     assert_response :success
-    assert_select "details summary", text: "Recent", count: 0
-    assert_select "ul[role=listbox]", count: 1
-    assert_page_text "recent mobile"
+    assert_select "nav.tabbar--back", count: 0
+    assert_select "nav.tabbar--navigation a.tabbar--item", count: 3
+    assert_select "nav.tabbar--navigation a.tabbar--item-active[href=?]", search_path
   end
 
-  test 'direct show renders a standalone search page' do
+  test "desktop search page shows the three item tabbar" do
     get search_path
 
-    assert_response :success
-    assert_select 'main.search--page'
-    assert_select 'main.search--page header h1', text: 'Search'
-    assert_select 'form.search--form[action=?]', search_path
-    assert_select 'turbo-frame#menu_search'
+    assert_select "nav.tabbar--navigation a.tabbar--item", count: 3
+    assert_select "nav.tabbar--navigation a.tabbar--item-active[href=?]", search_path
   end
 end

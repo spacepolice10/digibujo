@@ -15,7 +15,8 @@ module Bullets
       get new_postpone_path, params: { bullet_ids: card.id.to_s }
 
       assert_response :success
-      assert_select 'turbo-frame#postpone_picker_dropdown_id'
+      assert_select 'turbo-frame#postpone_picker_dropdown_id[popover]'
+      assert_select 'turbo-frame#postpone_picker_dropdown_id.dropdown', count: 0
       assert_select 'turbo-frame#postpone_picker_dropdown_id button[data-grid-navigation-target=?]', 'item', count: 5
       assert_select 'turbo-frame#postpone_picker_dropdown_id label[data-grid-navigation-target=?]', 'item', count: 1
       assert_select 'turbo-frame#postpone_picker_dropdown_id input[name="bullet_ids"][data-bulk-menu-target="idList"]',
@@ -53,7 +54,7 @@ module Bullets
 
       post postpone_path, params: { bullet_ids: card.id.to_s, pops_on: target.iso8601 }
 
-      assert_redirected_to timeline_path
+      assert_redirected_to bullets_path
       assert_equal target, card.reload.pops_on
     end
 
@@ -84,7 +85,7 @@ module Bullets
 
       post postpone_path, params: { bullet_ids: card.id.to_s, pops_on: target.iso8601 }
 
-      assert_equal collection, card.reload.collection
+      assert_includes card.reload.collections, collection
       assert_equal target, card.pops_on
     end
 
@@ -95,7 +96,7 @@ module Bullets
 
       post postpone_path, params: { bullet_ids: "#{first.id},#{second.id}", pops_on: target.iso8601 }
 
-      assert_redirected_to timeline_path
+      assert_redirected_to bullets_path
       assert_equal target, first.reload.pops_on
       assert_equal target, second.reload.pops_on
     end

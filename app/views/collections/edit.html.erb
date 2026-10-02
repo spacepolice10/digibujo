@@ -1,15 +1,15 @@
 <% content_for(:title, "Edit collection") %>
 
-<main data-size="md">
-  <article data-elevation="1">
-    <header><nav>
-      <%= back_link_to collection_path(@collection), class: "button", data: { intent: "secondary", radius: "full", size: "sm", content: "icon", turbo_frame: "_top" }, aria: { label: "Back to collection" } do %>
-        <%= icon_tag("arrow-left") %>
-      <% end %>
-      <h1>Edit collection</h1>
-    </nav></header>
-    <main>
-    <div id="<%= dom_id(@collection) %>"><%= render "form", collection: @collection %></div>
-    </main>
-  </article>
+<%= render "shared/back_tabbar",
+      url: bullets_path(collection: @collection.name),
+      aria_label: "Back to collection" %>
+
+<main data-size="sm">
+  <h1>Collection</h1>
+
+  <div>
+    <div id="<%= dom_id(@collection) %>" class="utilities--contents">
+      <%= render "form", collection: @collection %>
+    </div>
+  </div>
 </main>

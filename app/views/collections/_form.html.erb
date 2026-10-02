@@ -1,21 +1,31 @@
-<%= form_with model: collection do |f| %>
-  <% if bullet_ids.present? %>
-    <%= hidden_field_tag :bullet_ids, bullet_ids %>
-    <%= hidden_field_tag :return_to, return_to if return_to.present? %>
+<% ids = local_assigns[:bullet_ids] %>
+<% destination = local_assigns[:return_to] %>
+<% form_id = dom_id(collection, :form) %>
+<% submit = if ids.present?
+              "Create and collect"
+            elsif collection.persisted?
+              "Save"
+            else
+              "Create"
+            end %>
+
+<%= form_with model: collection, html: { id: form_id, class: "form" } do |f| %>
+  <% if ids.present? %>
+    <%= hidden_field_tag :bullet_ids, ids %>
+    <%= hidden_field_tag :return_to, destination if destination.present? %>
   <% end %>
 
+  <label>
+    <p>Name</p>
+    <%= f.text_field :name, required: true, autocomplete: "off", maxlength: 140, placeholder: "Reading list, groceries, etc." %>
+    <% if collection.errors[:name].any? %>
+      <small class="form--errors"><%= collection.errors.full_messages_for(:name).to_sentence %></small>
+    <% end %>
+  </label>
 
-    <label>
-      <legend>Name</legend>
-      <%= f.text_field :name, required: true, autocomplete: "off", maxlength: 140, placeholder: "Reading list, Travel plans, Work ideas." %>
-    </label>
-      <%= render "shared/form/colour_picker", form: f %>
-      <%= render "shared/form/icon_picker", form: f %>
-
-
-  <% if bullet_ids.present? %>
-    <%= f.submit "Create and collect", class: "button", data: { intent: "primary", radius: "full", size: "sm" } %>
-  <% else %>
-    <%= f.submit "Create", class: "button", data: { intent: "primary", radius: "full", size: "sm" } %>
-  <% end %>
+  <%= render "shared/form/colour_picker", form: f %>
+  <%= render "shared/form/icon_picker", form: f %>
+  <%= f.button type: "submit", data: { intent: "primary", radius: "full", size: "sm" } do %><%= submit %><% end %>
 <% end %>
+
+

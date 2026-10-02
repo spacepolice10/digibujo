@@ -3,16 +3,15 @@
 <main data-size="md">
   <article data-elevation="1">
     <header><nav>
-        <%= back_link_to home_path, class: "button", data: { intent: "secondary", radius: "full", size: "sm", content: "icon" } do %>
-          <%= icon_tag("arrow-left") %>
+        <%= back_link_to search_path, data: { intent: "secondary", radius: "full", size: "sm", content: "icon" } do %>
+          <%= icon("arrow-left") %>
         <% end %>
         <h2>Attachment</h2>
     </nav></header>
 
   <main class="attachment--show">
     <% if @blob.representable? %>
-      <%= represent_image_tag @blob,
-            variant: :display,
+      <%= image_tag @blob.representation(resize_to_limit: [1600, 1600]),
             alt: @blob.filename,
             class: "attachment--show-image" %>
     <% else %>

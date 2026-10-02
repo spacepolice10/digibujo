@@ -5,10 +5,9 @@
     <header>
       <nav>
       <%= back_link_to user_path,
-            class: "button",
             data: { intent: "secondary", radius: "full", size: "sm", content: "icon", turbo_frame: "_top" },
             aria: { label: "Back to Account" } do %>
-        <%= icon_tag("arrow-left") %>
+        <%= icon("arrow-left") %>
       <% end %>
       <h2>Access codes</h2>
       </nav>

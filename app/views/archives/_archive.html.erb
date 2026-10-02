@@ -1,10 +1,8 @@
 <%# locals: (archive:) %>
 <% bullet = archive.archivable %>
-<% bullet_colour = colour(bullet.colour) || "var(--#{bullet.bulletable_type.downcase}-color)" %>
 
   <%= link_to bullet_path(bullet), class: "bucket--section-list-item", data: { turbo_frame: "_top" } do %>
-    <%= icon_tag(bullet.marker_icon.to_s.dasherize,
-          style: "color: #{bullet_colour};",
+    <%= icon(bullet.marker_icon.to_s.dasherize,
           class: "bucket--section-list-item-icon") %>
-    <span class="utilities--line-clamp-1"><%= bullet.name %></span>
+    <span><%= bullet.name %></span>
   <% end %>

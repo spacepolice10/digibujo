@@ -10,8 +10,7 @@ module Colourable
     'emerald' => 'var(--model-color-4)',
     'gold' => 'var(--model-color-5)',
     'vermillion' => 'var(--model-color-6)',
-    'magenta' => 'var(--model-color-7)',
-    'inks' => 'var(--model-color-8)'
+    'magenta' => 'var(--model-color-7)'
   }.freeze
 
   included do

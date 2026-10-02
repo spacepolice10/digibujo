@@ -12,14 +12,20 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     get user_path
 
     assert_response :success
-    assert_select 'main[data-size="sm"]'
-    assert_select 'article[data-elevation="1"]'
-    assert_select 'header h2', text: 'Account'
-    assert_select 'a.button[data-content="icon"][aria-label="Back to Home"]'
+    assert_select 'main[data-size="md"] > h1', text: 'Account'
+    assert_select 'main article ul p', text: @user.email_address
     assert_select 'a[href=?]', access_codes_path, text: /Access codes/
     assert_select 'a[href=?]', hooks_path, text: /Hooks/
     assert_select 'form[action=?][data-turbo-confirm=?]', authentication_path, 'Sign out of Dotted?'
-    assert_select 'button.button[data-status="negative"]', text: /Sign out/
+    assert_select 'button', text: /Sign out/
+  end
+
+  test 'mobile account page keeps the user tab selected' do
+    get user_path, headers: { 'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)' }
+
+    assert_response :success
+    assert_tabbar_link user_path, label: 'User'
+    assert_select 'nav.tabbar--navigation a.tabbar--item-active[href=?]', user_path
   end
 
   test 'show requires authentication' do

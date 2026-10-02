@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   get 'manifest', to: 'rails/pwa#manifest', as: :pwa_manifest
   get 'service-worker', to: 'rails/pwa#service_worker', as: :pwa_service_worker
 
-  root 'timelines#show'
+  root 'bullets#index'
 
   # --- Authentication ---
   resource :authentication, only: %i[new create destroy], controller: 'authentication' do
@@ -15,23 +15,8 @@ Rails.application.routes.draw do
     end
   end
 
-  resource :onboarding, only: %i[new create], controller: 'onboarding'
   resource :features, only: :show, controller: 'features'
   resource :support, only: :show, controller: 'support'
-
-  # --- Timeline ---
-  resource :timeline, only: :show do
-    scope module: :timelines do
-      resources :bullets, only: :index
-    end
-  end
-  resource :upcoming, only: :show, controller: 'upcoming'
-
-  # --- Tags ---
-  scope module: :projects, path: 'projects', as: :project do
-    resources :suggestions
-  end
-  resources :projects
 
   # --- Bullets ---
   scope 'bullets', module: :bullets do
@@ -42,21 +27,22 @@ Rails.application.routes.draw do
     resource :publish
   end
 
-  resources :bullets, except: :new
-
-  # --- Collections ---
-  resources :collections do
-    scope module: :collections do
-      resource :export
-      resources :bullets, only: :index
+  resources :bullets, except: %i[new edit] do
+    collection do
+      get :export, to: 'bullets/exports#show'
     end
   end
 
-  # --- Home & navigation ---
-  resource :home, controller: 'home'
+  # --- Collections ---
+  resources :collections, except: %i[index show]
 
-  scope module: :home do
-    post 'home/appearance', to: 'appearances#update', as: :home_appearance
+  # --- Search & navigation ---
+  resource :search, only: :show, controller: 'searches' do
+    scope module: :searches do
+      resource :selection, only: :create
+      resource :appearance, only: :update
+      post "appearance", to: "appearances#update"
+    end
   end
 
   resource :user, only: :show
@@ -65,14 +51,6 @@ Rails.application.routes.draw do
   resources :hooks, only: %i[index new create destroy]
   post 'hooks/:code', to: 'hook_intakes#create', as: :hook_intake, constraints: { code: /hk_[A-Za-z0-9]+/ }
 
-  resource :menu, controller: 'menu'
-  resource :search do
-    scope module: :searches do
-      resource :selection, only: :create
-    end
-  end
-
-  resources :activities
   resources :archived
 
   # --- Attachments ---

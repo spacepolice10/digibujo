@@ -2,12 +2,8 @@
 
 class CollectionsController < ApplicationController
   include PrepareBullets
-  before_action :set_collection, only: %i[show edit update destroy]
+  before_action :set_collection, only: %i[edit update destroy]
   before_action :prepare_collect_context, only: %i[new create]
-
-  def index
-    @collections = Current.user.collections.active.order(:name)
-  end
 
   def new
     @collection = Current.user.collections.build
@@ -26,7 +22,7 @@ class CollectionsController < ApplicationController
           format.html { redirect_to collect_return_path, notice: 'Collection created' }
         end
       else
-        redirect_to collection_path(@collection), notice: 'Collection created'
+        redirect_to bullets_path(collection: @collection.name), notice: 'Collection created'
       end
     else
       render :new, status: :unprocessable_entity
@@ -36,21 +32,16 @@ class CollectionsController < ApplicationController
     respond_to do |format|
       format.turbo_stream { render 'bullets/collects/create', status: :unprocessable_entity }
       format.html do
-        redirect_back fallback_location: home_path, alert: e.record.errors.full_messages.to_sentence
+        redirect_back fallback_location: search_path, alert: e.record.errors.full_messages.to_sentence
       end
     end
-  end
-
-  def show
-    @bullets = @collection.bullets.active.chronologically.last_page
-    @more_bullets = @bullets.size == Bullet::Pageable::PAGE_SIZE
   end
 
   def edit; end
 
   def update
     if @collection.update(collection_params)
-      redirect_to collection_path(@collection), notice: 'Collection updated'
+      redirect_to bullets_path(collection: @collection.name), notice: 'Collection updated'
     else
       render :edit, status: :unprocessable_entity
     end
@@ -58,7 +49,7 @@ class CollectionsController < ApplicationController
 
   def destroy
     @collection.archive!
-    redirect_to home_path, notice: 'Collection archived'
+    redirect_to search_path, notice: 'Collection archived'
   end
 
   private
@@ -87,7 +78,7 @@ class CollectionsController < ApplicationController
   end
 
   def collect_return_path
-    @return_to.presence || collection_path(@collection)
+    @return_to.presence || bullets_path(collection: @collection.name)
   end
 
   def permitted_return_to(url)

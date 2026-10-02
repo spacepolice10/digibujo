@@ -40,12 +40,14 @@ module Authentications
       assert cookies[:session_id]
     end
 
-    test 'create with valid code for new user starts session and redirects to onboarding' do
+    test 'create with valid code marks the user onboarded and enters the app' do
+      assert_not @user.onboarded?
       code = request_login_code(@user.email_address)
       confirm_login_code(code)
 
-      assert_redirected_to new_onboarding_path
+      assert_redirected_to root_path
       assert cookies[:session_id]
+      assert @user.reload.onboarded?
     end
 
     test 'create with invalid code rejects' do

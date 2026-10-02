@@ -11,14 +11,14 @@ module Home
     end
 
     test 'update persists a known appearance' do
-      post home_appearance_path, params: { appearance: 'warm' }, as: :json
+      post search_appearance_path, params: { appearance: 'warm' }, as: :json
 
       assert_response :ok
       assert_equal 'warm', @user.reload.settings.appearance
     end
 
     test 'update rejects an unknown appearance' do
-      post home_appearance_path, params: { appearance: 'unknown' }, as: :json
+      post search_appearance_path, params: { appearance: 'unknown' }, as: :json
 
       assert_response :unprocessable_entity
       assert_equal 'default', @user.reload.settings.appearance
@@ -27,7 +27,7 @@ module Home
     test 'update creates the settings row when missing' do
       @user.settings.destroy!
 
-      post home_appearance_path, params: { appearance: 'cool' }, as: :json
+      post search_appearance_path, params: { appearance: 'cool' }, as: :json
 
       assert_response :ok
       assert_equal 'cool', @user.reload.settings.appearance

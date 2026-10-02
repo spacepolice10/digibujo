@@ -16,16 +16,17 @@ class CleanSoftDeletedRecordsJobTest < ActiveJob::TestCase
     end
   end
 
-  test "destroys bullets with expired archived collections" do
+  test "keeps bullets when an expired archived collection is destroyed" do
     collection = create_collection!(@user, name: "Stale with bullets")
-    bullet = create_bullet!(@user, body: "Goes away", collection: collection)
+    bullet = create_bullet!(@user, body: "Stays", collection: collection)
     expire!(collection)
 
-    assert_difference -> { Bullet.count }, -1 do
+    assert_difference -> { Collection.count }, -1 do
       CleanSoftDeletedRecordsJob.perform_now
     end
 
-    assert_not Bullet.exists?(bullet.id)
+    assert Bullet.exists?(bullet.id)
+    assert_empty bullet.reload.collections
   end
 
   test "destroys expired archived bullets" do

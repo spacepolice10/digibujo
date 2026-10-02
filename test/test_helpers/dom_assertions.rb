@@ -61,13 +61,8 @@ module DomAssertions
     assert_select "nav a[href=?][aria-label=?]", path, label, **options
   end
 
-  def assert_menu_nav_link(path, label:, count: nil)
-    options = count.nil? ? {} : { count: count }
-    assert_select "nav[data-controller=?] a[href=?][aria-label=?]", "grid-navigation", path, label, **options
-  end
-
   def assert_tabbar_link(path, label:)
-    assert_select "footer nav a[href=?][aria-label=?]", path, label
+    assert_select "nav.tabbar--navigation a[href=?][aria-label=?]", path, label
   end
 end
 

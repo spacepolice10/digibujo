@@ -9,18 +9,22 @@ module ApplicationHelper
     request.variant.include?(:mobile)
   end
 
-  def tabbar_visible?
-    action_name == 'show' && controller_name.in?(%w[home timelines upcoming]) ||
-      action_name == 'index' && controller_name == 'activities'
-  end
-
-  def back_link_to(url = home_path, **options, &block)
+  def back_link_to(url = search_path, **options, &block)
     data = (options[:data] || {}).dup
     data[:role] = 'button'
     data[:controller] = [data[:controller], 'navigation'].compact_blank.join(' ')
     data[:action] = [data[:action], 'click->navigation#back'].compact_blank.join(' ')
 
     link_to(url, options.merge(data: data), &block)
+  end
+
+  def highlight_search(html, query)
+    Search::Highlight.call(html, query)
+  end
+
+  def search_results_count(size)
+    label = size == Search::GlobalRequest::LIMIT ? "#{size}+" : size
+    "#{label} #{'result'.pluralize(size)}"
   end
 
   def time_period(time = Time.now)
@@ -30,29 +34,5 @@ module ApplicationHelper
     when 17...21 then 'evening'
     else 'night'
     end
-  end
-
-  # Serve a resized representation instead of the original blob.
-  # Width/height from analyzed metadata reserve layout space before the image loads.
-  def represent_image_tag(blob, variant: :display, **options)
-    image_tag blob.representation(ImageVariant[variant]),
-              **representation_dimension_options(blob, variant:).merge(options)
-  end
-
-  private
-
-  def representation_dimension_options(blob, variant:)
-    width = blob.metadata['width'].presence&.to_i
-    height = blob.metadata['height'].presence&.to_i
-    return {} unless width&.positive? && height&.positive?
-
-    if (limit = ImageVariant[variant][:resize_to_limit])
-      max_w, max_h = limit
-      scale = [max_w.to_f / width, max_h.to_f / height, 1.0].min
-      width = (width * scale).round
-      height = (height * scale).round
-    end
-
-    { width:, height: }
   end
 end

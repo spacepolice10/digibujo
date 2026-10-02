@@ -15,9 +15,8 @@ module Bullets
 
       post collect_path, params: { bullet_ids: card.id.to_s, collection_id: collection.id }
 
-      assert_redirected_to timeline_path
-      assert_equal collection.id, card.reload.collection_id
-      assert_empty card.projects
+      assert_redirected_to bullets_path
+      assert_includes card.reload.collection_ids, collection.id
     end
 
     test 'new renders collection picker for selected bullets' do
@@ -86,10 +85,10 @@ module Bullets
     test 'picker heading links to full page create collection with bullet context' do
       card = create_bullet!(@user, body: 'Move me')
 
-      get new_collect_path, params: { bullet_ids: card.id.to_s, return_to: timeline_path }
+      get new_collect_path, params: { bullet_ids: card.id.to_s, return_to: bullets_path }
 
       assert_select 'a[href=?][data-turbo-frame=?]',
-                    new_collection_path(bullet_ids: card.id.to_s, return_to: timeline_path),
+                    new_collection_path(bullet_ids: card.id.to_s, return_to: bullets_path),
                     '_top',
                     text: 'New collection'
     end
@@ -100,8 +99,8 @@ module Bullets
 
       post collect_path, params: { bullet_ids: card.id.to_s, collection_id: collection.id }
 
-      assert_redirected_to timeline_path
-      assert_equal collection.id, card.reload.collection_id
+      assert_redirected_to bullets_path
+      assert_includes card.reload.collection_ids, collection.id
     end
 
     test 'create collects multiple bullets into one collection' do
@@ -112,12 +111,12 @@ module Bullets
       post collect_path,
            params: { bullet_ids: "#{first.id},#{second.id}", collection_id: collection.id }
 
-      assert_redirected_to timeline_path
-      assert_equal collection.id, first.reload.collection_id
-      assert_equal collection.id, second.reload.collection_id
+      assert_redirected_to bullets_path
+      assert_includes first.reload.collection_ids, collection.id
+      assert_includes second.reload.collection_ids, collection.id
     end
 
-    test 'create turbo stream removes collected bullets' do
+    test 'create turbo stream keeps tagged bullets on the page' do
       collection = create_collection!(@user, name: 'Ideas')
       card = create_bullet!(@user, body: 'Collect me')
 
@@ -127,8 +126,8 @@ module Bullets
 
       assert_response :success
       card.reload
-      assert_equal collection.id, card.collection_id
-      assert_match %(turbo-stream action="remove" targets="#bullet_#{card.id}"), response.body
+      assert_includes card.collection_ids, collection.id
+      assert_no_match %(turbo-stream action="remove"), response.body
       assert_match %(turbo-stream action="update" target="toasts"), response.body
       assert_match "Bullet collected into #{collection.name}", response.body
     end
@@ -141,7 +140,7 @@ module Bullets
       post collect_path, params: { bullet_ids: card.id.to_s, collection_id: collection.id }
 
       assert_response :not_found
-      assert_nil card.reload.collection_id
+      assert_empty card.reload.collections
     end
   end
 end

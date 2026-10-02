@@ -1,47 +1,95 @@
-<% content_for(:title, "Bullets") %>
+<% content_for(:title, @filter.label) %>
+<% if @filter.empty? %>
+  <%= render "shared/tabbar" %>
+<% else %>
+  <%= render "shared/back_tabbar" %>
+<% end %>
 
-<main class="activity--page" data-size="md">
-  <article class="activity--surface" data-elevation="1">
-    <header class="activity--header"><nav>
-      <%= back_link_to home_path,
-            class: "button",
-            data: { intent: "secondary", radius: "full", size: "sm", content: "icon" },
-            aria: { label: "Back to Home" } do %>
-        <%= icon_tag("arrow-left") %>
-      <% end %>
-      <h1>Bullets</h1>
-    </nav></header>
+<main class="chat--window" data-size="md"<%= collection_tint_style(@filter.collection) if @filter.collection %>>
+  <% if @filter.collection %>
+    <header>
+      <nav>
+        <h1><%= @filter.collection.name %></h1>
+      </nav>
 
-    <% if @page.records.any? %>
-      <%= render layout: "pagination/paginated_list",
-            locals: {
-              page: @page,
-              container_id: "bullets-timeline",
-              pagination_link_path: ->(next_param) { bullets_path(page: next_param) }
-            } do %>
-        <div class="activity--feed-list" data-bulk-menu-target="list">
-          <% previous_date = nil %>
-          <% @page.records.each do |bullet| %>
-            <% date = bullet.created_at.in_time_zone.to_date %>
-            <% if previous_date != date %>
-              <div class="activity--date-divider"
-                   role="separator"
-                   aria-label="<%= date.strftime('%b %-d, %Y') %>">
-                <%= link_to timeline_path,
-                      class: "button activity--date-pill",
-                      data: { content: "text", turbo_frame: "_top" } do %>
-                  <time datetime="<%= date.iso8601 %>"><%= date.strftime("%b %-d, %Y") %></time>
-                <% end %>
-              </div>
-              <% previous_date = date %>
+      <div class="dropdown--dock">
+        <button
+          type="button"
+          data-intent="secondary"
+          data-radius="full"
+          data-size="xs"
+          data-content="icon"
+          popovertarget="collection_actions"
+          aria-label="Collection options"
+          aria-haspopup="menu"
+        >
+          <%= icon("dots") %>
+        </button>
+
+        <div
+          id="collection_actions"
+          role="menu"
+          style="position-anchor: collection_actions"
+          popover
+          data-controller="grid-navigation"
+          data-grid-navigation-columns-value="1"
+          data-action="keydown->grid-navigation#navigate"
+        >
+          <nav role="listbox" aria-label="Collection options">
+            <%= link_to export_bullets_path(@filter.to_params),
+                class: "dropdown-item picker--item",
+                data: { turbo: false, grid_navigation_target: "item", action: "focus->grid-navigation#syncPosition" } do %>
+              <%= icon("file") %> Export
             <% end %>
 
-            <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
-          <% end %>
+            <%= link_to edit_collection_path(@filter.collection),
+                class: "dropdown-item picker--item",
+                data: { turbo_frame: "_top", grid_navigation_target: "item", action: "focus->grid-navigation#syncPosition" } do %>
+              <%= icon("pencil") %> Edit
+            <% end %>
+          </nav>
         </div>
-      <% end %>
-    <% else %>
-      <p class="activity--empty">No bullets yet.</p>
+      </div>
+    </header>
+  <% end %>
+
+  <div
+    id="<%= @filter.collection ? dom_id(@filter.collection) : 'timeline' %>"
+    class="chat--scroller"
+    data-controller="chat-scroll"
+    data-chat-scroll-path-value="<%= bullets_path(@filter.to_params) %>"
+    data-bulk-menu-target="list"
+  >
+    <% if @more_bullets %>
+      <div class="chat--load-more-trigger" data-chat-scroll-target="trigger">
+        <%= icon("spinner", class: "icon icon--spin") %>
+        <span class="utilities--sr-only">Loading more bullets</span>
+      </div>
     <% end %>
-  </article>
+
+    <%= render "sections", bullets: @bullets, timeline: @timeline, ensure_today: @filter.includes_today? %>
+
+    <% if @filter.empty? %>
+      <%= link_to bullets_path(from: Date.current + 1), class: "pill timeline--upcoming-link", data: { turbo_frame: "_top" } do %>
+        <%= icon("calendar") %>
+        Upcoming
+      <% end %>
+    <% end %>
+  </div>
+
+  <br>
+
+  <div
+    id="<%= @filter.collection ? dom_id(@filter.collection, :composer) : 'timeline_composer_dock' %>"
+    class="chat--composer composer--dock<%= ' timeline--composer' unless @filter.collection %>"
+    data-controller="chat-composer"
+  >
+    <%= render "bullets/composer_v2",
+          bullet: Bullet.new,
+          collection: @filter.collection,
+          pops_on: @filter.composer_pops_on,
+          preset: "default",
+          autofocus: false,
+          composer_id: @filter.collection ? dom_id(@filter.collection, :bullets_composer) : nil %>
+  </div>
 </main>

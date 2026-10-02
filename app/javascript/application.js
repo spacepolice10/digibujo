@@ -5,12 +5,19 @@ import * as ActiveStorage from "@rails/activestorage";
 
 ActiveStorage.start();
 
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/service-worker.js").catch((error) => {
+      console.warn("Service worker registration failed:", error);
+    });
+  });
+}
+
 import * as Lexxy from "lexxy";
-import { TrimToolbarExtension } from "extensions/trim_toolbar";
 
 Lexxy.configure({
-  global: {
-    extensions: [TrimToolbarExtension],
+  default: {
+    toolbar: false,
   },
   simple: {
     attachments: false,

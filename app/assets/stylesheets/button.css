@@ -1,5 +1,5 @@
 @layer components {
-  .button, [role="button"] {
+  :is(button, a)[data-intent], [role="button"] {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -13,35 +13,35 @@
     border: 1px solid transparent;
     transition: background 0.08s ease, color 0.08s ease, border-color 0.08s ease;
   }
-  .button:disabled, [role="button"]:disabled {
+  :is(button, a)[data-intent]:disabled, [role="button"]:disabled {
     opacity: var(--opacity-half);
     cursor: not-allowed;
   }
 
   /* radius — 2 types */
-  .button[data-radius="base"], [role="button"][data-radius="base"] { border-radius: var(--radius-base); }
-  .button[data-radius="full"] { border-radius: var(--radius-full); }
+  :is(button, a)[data-intent][data-radius="base"], [role="button"][data-radius="base"] { border-radius: var(--radius-base); }
+  :is(button, a)[data-intent][data-radius="full"] { border-radius: var(--radius-full); }
 
   /* size — 4 sizes */
-  .button[data-size="xs"], [role="button"][data-size="xs"] {
+  :is(button, a)[data-intent][data-size="xs"], [role="button"][data-size="xs"] {
     height: var(--space-v-3);
     width: fit-content;
     padding: 0 var(--space-h-2);
     font-size: var(--font-size-xs);
   }
-  .button[data-size="sm"], [role="button"][data-size="sm"] {
+  :is(button, a)[data-intent][data-size="sm"], [role="button"][data-size="sm"] {
     height: calc(var(--space-v-3) + var(--space-v-half));
     width: fit-content;
     padding: 0 var(--space-h-2);
     font-size: var(--font-size-base-read);
   }
-  .button[data-size="lg"], [role="button"][data-size="lg"] {
+  :is(button, a)[data-intent][data-size="lg"], [role="button"][data-size="lg"] {
     height: calc(var(--space-v-3) + 1ch);
     width: fit-content;
     padding: 0 var(--space-h-3);
     font-size: var(--font-size-base-read);
   }
-  .button[data-size="xl"], [role="button"][data-size="xl"] {
+  :is(button, a)[data-intent][data-size="xl"], [role="button"][data-size="xl"] {
     height: var(--space-v-4);
     width: fit-content;
     padding: 0 var(--space-h-3);
@@ -49,122 +49,122 @@
   }
 
   /* content — text vs icon-only */
-  .button[data-content="icon"], [role="button"][data-content="icon"] { aspect-ratio: 1 / 1; padding: 0; }
+  :is(button, a)[data-intent][data-content="icon"], [role="button"][data-content="icon"] { aspect-ratio: 1 / 1; padding: 0; }
 
   @media (pointer: coarse) {
-    .button, [role="button"] {
+    :is(button, a)[data-intent], [role="button"] {
       min-height: var(--coarse-target);
     }
   }
 
   /* intent — 2 types */
-  .button[data-intent="primary"], [role="button"][data-intent="primary"] {
+  :is(button, a)[data-intent][data-intent="primary"], [role="button"][data-intent="primary"] {
     background: var(--color-invert-1);
     border-color: var(--color-invert-1);
     color: var(--color-1);
   }
   @media (hover: hover) {
-    .button[data-intent="primary"]:hover:not(:disabled), [role="button"][data-intent="primary"]:hover:not(:disabled) {
+    :is(button, a)[data-intent][data-intent="primary"]:hover:not(:disabled), [role="button"][data-intent="primary"]:hover:not(:disabled) {
       background: var(--color-1);
       border-color: var(--color-invert-2);
       color: var(--color-invert-2);
     }
   }
-  .button[data-intent="primary"]:active:not(:disabled), [role="button"][data-intent="primary"]:active:not(:disabled) {
+  :is(button, a)[data-intent][data-intent="primary"]:active:not(:disabled), [role="button"][data-intent="primary"]:active:not(:disabled) {
     background: var(--color-invert-3);
     border-color: var(--color-invert-3);
     color: var(--color-1);
   }
 
-  .button[data-intent="secondary"], [role="button"][data-intent="secondary"] {
+  :is(button, a)[data-intent][data-intent="secondary"], [role="button"][data-intent="secondary"] {
     background: var(--color-2);
     border: var(--border-subtle);
     color: var(--color-invert-2);
   }
   @media (hover: hover) {
-    .button[data-intent="secondary"]:hover:not(:disabled), [role="button"][data-intent="secondary"]:hover:not(:disabled) {
+    :is(button, a)[data-intent][data-intent="secondary"]:hover:not(:disabled), [role="button"][data-intent="secondary"]:hover:not(:disabled) {
       border-color: var(--color-invert-4);
       color: var(--color-invert-2);
     }
   }
-  .button[data-intent="secondary"]:focus-visible, [role="button"][data-intent="secondary"]:focus-visible, {
-  .button[data-intent="secondary"]:active:not(:disabled), [role="button"][data-intent="secondary"]:active:not(:disabled) {
+  :is(button, a)[data-intent][data-intent="secondary"]:focus-visible, [role="button"][data-intent="secondary"]:focus-visible,
+  :is(button, a)[data-intent][data-intent="secondary"]:active:not(:disabled), [role="button"][data-intent="secondary"]:active:not(:disabled) {
     border-color: var(--color-invert-4);
     color: var(--color-invert-1);
   }
-  .button[data-intent="secondary"]:active:not(:disabled), [role="button"][data-intent="secondary"]:active:not(:disabled) {
+  :is(button, a)[data-intent][data-intent="secondary"]:active:not(:disabled), [role="button"][data-intent="secondary"]:active:not(:disabled) {
     background: var(--color-3);
   }
 
   /* status — overrides intent color, 2 types, works on either intent */
-  .button[data-status="negative"], [role="button"][data-status="negative"] {
+  :is(button, a)[data-intent][data-status="negative"], [role="button"][data-status="negative"] {
     background: var(--color-negative);
     border-color: var(--color-invert-negative);
     color: var(--color-invert-negative);
   }
-  .button[data-status="negative"][data-intent="primary"], [role="button"][data-status="negative"][data-intent="primary"] {
+  :is(button, a)[data-intent][data-status="negative"][data-intent="primary"], [role="button"][data-status="negative"][data-intent="primary"] {
     background: var(--color-negative);
     border-color: var(--color-negative);
     color: var(--color-invert-1);
   }
 
-  .button[data-status="positive"], [role="button"][data-status="positive"] {
+  :is(button, a)[data-intent][data-status="positive"], [role="button"][data-status="positive"] {
     background: var(--color-positive);
     border-color: var(--color-invert-positive);
     color: var(--color-invert-positive);
   }
-  .button[data-status="positive"][data-intent="primary"], [role="button"][data-status="positive"][data-intent="primary"] {
+  :is(button, a)[data-intent][data-status="positive"][data-intent="primary"], [role="button"][data-status="positive"][data-intent="primary"] {
     background: var(--color-positive);
     border-color: var(--color-positive);
     color: var(--color-invert-1);
   }
 
   /* Keep status colors through intent interaction states. */
-  .button[data-status="negative"][data-intent="secondary"]:focus-visible, [role="button"][data-status="negative"][data-intent="secondary"]:focus-visible {
+  :is(button, a)[data-intent][data-status="negative"][data-intent="secondary"]:focus-visible, [role="button"][data-status="negative"][data-intent="secondary"]:focus-visible {
     background: var(--color-invert-negative);
     border-color: var(--color-invert-negative);
     color: var(--color-negative);
   }
-  .button[data-status="positive"][data-intent="secondary"]:focus-visible, [role="button"][data-status="positive"][data-intent="secondary"]:focus-visible {
+  :is(button, a)[data-intent][data-status="positive"][data-intent="secondary"]:focus-visible, [role="button"][data-status="positive"][data-intent="secondary"]:focus-visible {
     background: var(--color-positive);
     border-color: var(--color-invert-positive);
     color: var(--color-invert-positive);
   }
   @media (hover: hover) {
-    .button[data-status="negative"][data-intent="secondary"]:hover:not(:disabled) {
+    :is(button, a)[data-intent][data-status="negative"][data-intent="secondary"]:hover:not(:disabled) {
       background: var(--color-invert-negative);
       border-color: var(--color-invert-negative);
       color: var(--color-negative);
     }
-    .button[data-status="positive"][data-intent="secondary"]:hover:not(:disabled) {
+    :is(button, a)[data-intent][data-status="positive"][data-intent="secondary"]:hover:not(:disabled) {
       background: var(--color-positive);
       border-color: var(--color-invert-positive);
       color: var(--color-invert-positive);
     }
-    .button[data-status="negative"][data-intent="primary"]:hover:not(:disabled) {
+    :is(button, a)[data-intent][data-status="negative"][data-intent="primary"]:hover:not(:disabled) {
       background: var(--color-invert-negative);
       border-color: var(--color-invert-negative);
       color: var(--color-negative);
     }
-    .button[data-status="positive"][data-intent="primary"]:hover:not(:disabled) {
+    :is(button, a)[data-intent][data-status="positive"][data-intent="primary"]:hover:not(:disabled) {
       background: var(--color-invert-positive);
       border-color: var(--color-invert-positive);
       color: var(--color-positive);
     }
   }
-  .button[data-status="negative"][data-intent]:active:not(:disabled) {
+  :is(button, a)[data-intent][data-status="negative"][data-intent]:active:not(:disabled) {
     background: var(--color-negative);
     border-color: var(--color-negative);
     color: var(--color-invert-1);
   }
-  .button[data-status="positive"][data-intent]:active:not(:disabled) {
+  :is(button, a)[data-intent][data-status="positive"][data-intent]:active:not(:disabled) {
     background: var(--color-positive);
     border-color: var(--color-positive);
     color: var(--color-invert-1);
   }
 
   /* Text-only content has no button chrome, regardless of intent or status. */
-  .button[data-content="text"] {
+  :is(button, a)[data-intent][data-content="text"] {
     width: fit-content;
     height: auto;
     min-height: 0;
@@ -177,22 +177,22 @@
     transition: color 0.08s ease;
   }
   @media (hover: hover) {
-    .button[data-content="text"]:hover:not(:disabled) {
+    :is(button, a)[data-intent][data-content="text"]:hover:not(:disabled) {
       color: var(--color-accent-1);
     }
 
-    .button[data-content="text"][data-intent]:hover:not(:disabled) {
+    :is(button, a)[data-intent][data-content="text"][data-intent]:hover:not(:disabled) {
       background: transparent;
       border: 0;
     }
   }
-  .button[data-content="text"]:focus-visible,
-  .button[data-content="text"]:active:not(:disabled) {
+  :is(button, a)[data-intent][data-content="text"]:focus-visible,
+  :is(button, a)[data-intent][data-content="text"]:active:not(:disabled) {
     color: var(--color-accent-1);
   }
 
-  .button[data-content="text"][data-intent]:focus-visible,
-  .button[data-content="text"][data-intent]:active:not(:disabled) {
+  :is(button, a)[data-intent][data-content="text"][data-intent]:focus-visible,
+  :is(button, a)[data-intent][data-content="text"][data-intent]:active:not(:disabled) {
     background: transparent;
     border: 0;
   }

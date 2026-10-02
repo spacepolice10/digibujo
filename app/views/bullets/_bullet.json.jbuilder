@@ -1,16 +1,19 @@
 # frozen_string_literal: true
 
 json.id bullet.id
-json.bulletable_type bullet.bulletable_type
 json.pops_on bullet.pops_on
-json.collection_id bullet.collection_id
+json.collection_ids bullet.collection_ids
 json.done bullet.done?
 json.archived bullet.archived?
 json.author_name bullet.author_name
+json.filename bullet.filename
 json.body bullet.body_as_text
 json.body_html bullet.body.to_s
 json.created_at bullet.created_at
 json.updated_at bullet.updated_at
 json.url bullet_url(bullet)
 
-json.duration_seconds bullet.memo.duration_seconds if bullet.memo?
+if bullet.file.attached?
+  json.content_type bullet.file.content_type
+  json.byte_size bullet.file.byte_size
+end

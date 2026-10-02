@@ -19,16 +19,19 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'created', activity.action
     assert_equal 'Collection', activity.subject_type
     assert_equal 'Things to sort', Collection.last.description
-    assert_redirected_to collection_path(Collection.last)
+    assert_redirected_to bullets_path(collection: Collection.last.name)
   end
 
   test 'new with bullet_ids renders full page form and preview' do
     card = create_bullet!(@user, body: 'Preview me')
 
-    get new_collection_path, params: { bullet_ids: card.id.to_s, return_to: home_path }
+    get new_collection_path, params: { bullet_ids: card.id.to_s, return_to: search_path }
 
     assert_response :success
     assert_select 'main[data-size="sm"]'
+    assert_select 'main a[aria-label="Back to Search"]', count: 0
+    assert_select 'nav.tabbar--back a.tabbar--back-link[href=?][aria-label=?]', search_path, 'Back to Search', text: 'Back'
+    assert_select 'form.form button[type="submit"][data-intent="primary"]', text: 'Create and collect'
     assert_select 'input[name="bullet_ids"][value=?]', card.id.to_s
     assert_match 'Preview me', response.body
     assert_match '1 bullet will be added', response.body
@@ -47,9 +50,9 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     end
 
     collection = Collection.last
-    assert_redirected_to collection_path(collection)
-    assert_equal collection.id, first.reload.collection_id
-    assert_equal collection.id, second.reload.collection_id
+    assert_redirected_to bullets_path(collection: collection.name)
+    assert_includes first.reload.collection_ids, collection.id
+    assert_includes second.reload.collection_ids, collection.id
   end
 
   test 'create with bullet_ids redirects back to return_to' do
@@ -59,11 +62,11 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
          params: {
            collection: { name: 'Return path', colour: 'teal', icon: 'folder' },
            bullet_ids: card.id.to_s,
-           return_to: home_path
+           return_to: search_path
          }
 
-    assert_redirected_to home_path
-    assert_equal Collection.last.id, card.reload.collection_id
+    assert_redirected_to search_path
+    assert_includes card.reload.collection_ids, Collection.last.id
   end
 
   test 'create with invalid collection and bullet_ids re-renders full page form' do
@@ -74,23 +77,23 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
            params: {
              collection: { name: '', colour: 'teal', icon: 'folder' },
              bullet_ids: card.id.to_s,
-             return_to: home_path
+             return_to: search_path
            }
     end
 
     assert_response :unprocessable_entity
-    assert_nil card.reload.collection_id
+    assert_empty card.reload.collections
     assert_select 'main[data-size="sm"]'
     assert_match 'Create and collect', response.body
     assert_match 'Hold', response.body
   end
 
-  test 'show lists a bullet collected into the collection' do
+  test 'filtered daylog lists a bullet collected into the collection' do
     collection = create_collection!(@user, name: 'Inbox', colour: 'teal')
     bullet = create_bullet!(@user, body: 'Collected in', pops_on: Date.current)
     bullet.collect!(collection_id: collection.id)
 
-    get collection_path(collection)
+    get bullets_path(collection: collection.name)
 
     assert_response :success
     assert_select "turbo-frame##{dom_id(bullet)}" do
@@ -101,56 +104,51 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match 'Moved into inbox.', response.body
   end
 
-  test 'show mounts the chat composer scoped to the collection' do
+  test 'filtered daylog mounts the chat composer scoped to the collection' do
     collection = create_collection!(@user, name: 'Inbox')
 
-    get collection_path(collection)
+    get bullets_path(collection: collection.name)
 
     assert_response :success
     assert_select "##{ActionView::RecordIdentifier.dom_id(collection, :bullets_composer)}" do
       assert_select 'lexxy-editor[preset=default]'
       assert_select "input[name='bullet[collection_id]'][value=?]", collection.id.to_s
-      assert_select "input[name='bullet[bulletable_type]'][value=?]:not([disabled])", 'Text'
-      assert_select "input[name='bullet[bulletable_type]'][value=?][disabled]", 'Memo'
+      assert_select "input[name='bullet[file]'][type='file']"
+      assert_select "input[name='bullet[bulletable_type]']", count: 0
     end
   end
 
-  test 'show renders the chat frame with title and actions dropdown' do
+  test 'filtered daylog renders the chat frame with title and actions dropdown' do
     collection = create_collection!(@user, name: 'Inbox', colour: 'teal', icon: 'folder')
 
-    get collection_path(collection)
+    get bullets_path(collection: collection.name)
 
     assert_response :success
     assert_select '.chat--window'
-    assert_select '.chat--header h1', text: /inbox/
+    assert_select '.chat--window > .chat--scroller'
+    assert_select 'h1', text: /inbox/
+    assert_select '.chat--window[style*=?]', '--collection-bg: var(--model-color-3-bg)'
     assert_select 'button[popovertarget="collection_actions"]'
     assert_select 'div#collection_actions[role=menu][data-controller=grid-navigation]'
     assert_select 'a.dropdown-item[href=?]', edit_collection_path(collection)
-    assert_select "a.dropdown-item[href=?]", collection_export_path(collection)
+    assert_select 'a.dropdown-item[href=?]', export_bullets_path(collection: collection.name)
   end
 
-  test 'show inserts date pills between days and skips duplicates within a day' do
+  test 'filtered daylog groups tagged bullets into timeline sections' do
     collection = create_collection!(@user, name: 'Inbox')
 
-    create_bullet!(@user, collection: collection, body: 'Older day',
-                   created_at: 2.days.ago.change(hour: 10))
-    create_bullet!(@user, collection: collection, body: 'Yesterday a',
-                   created_at: 1.day.ago.change(hour: 9))
-    create_bullet!(@user, collection: collection, body: 'Yesterday b',
-                   created_at: 1.day.ago.change(hour: 18))
-    create_bullet!(@user, collection: collection, body: 'Today',
-                   created_at: Time.current.change(hour: 12))
+    create_bullet!(@user, collection: collection, body: 'Older day', pops_on: Date.current - 2)
+    create_bullet!(@user, collection: collection, body: 'Yesterday', pops_on: Date.current - 1)
+    create_bullet!(@user, body: 'Untagged', pops_on: Date.current - 1)
+    create_bullet!(@user, collection: collection, body: 'Today', pops_on: Date.current)
 
-    get collection_path(collection)
+    get bullets_path(collection: collection.name)
 
     assert_response :success
-    assert_select '.collection--date-pill', count: 3
-    assert_select '.collection--date-pill',
-                  text: (Date.current - 2.days).strftime('%b %-d, %Y'), count: 1
-    assert_select '.collection--date-pill',
-                  text: (Date.current - 1.day).strftime('%b %-d, %Y'), count: 1
-    assert_select '.collection--date-pill',
-                  text: Date.current.strftime('%b %-d, %Y'), count: 1
+    assert_match 'Older day', response.body
+    assert_match 'Yesterday', response.body
+    assert_match 'Today', response.body
+    assert_no_match 'Untagged', response.body
   end
 
   test 'update changes collection attributes and description' do
@@ -161,7 +159,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
       collection: { name: 'New name', colour: 'gold', icon: 'heart', description: 'Updated' }
     }
 
-    assert_redirected_to collection_path(collection)
+    assert_redirected_to bullets_path(collection: 'new name')
     collection.reload
     assert_equal 'new name', collection.name
     assert_equal 'Updated', collection.description
@@ -177,9 +175,9 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
       delete collection_path(collection)
     end
 
-    assert_redirected_to home_path
+    assert_redirected_to search_path
     assert collection.reload.archived?
-    assert_equal collection.id, card.reload.collection_id
+    assert_includes card.reload.collection_ids, collection.id
     assert_empty @user.collections.active.where(id: collection.id)
   end
 end

@@ -47,6 +47,8 @@ export default class extends Controller {
   }
 
   #hideTabbar(hidden) {
+    if (!hidden && document.querySelector(".bulk-menu:not([hidden])")) return
+
     this.tabbar?.toggleAttribute("inert", hidden)
     if (hidden) this.tabbar?.setAttribute("aria-hidden", "true")
     else this.tabbar?.removeAttribute("aria-hidden")
