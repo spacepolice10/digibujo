@@ -38,11 +38,4 @@ class UpcomingControllerTest < ActionDispatch::IntegrationTest
     assert_no_match 'Theirs', response.body
   end
 
-  test 'a future bullet offers the Today action in its checkbox traits' do
-    create_bullet!(@user, body: 'Soon', pops_on: Date.current + 2)
-
-    get bullets_path(from: Date.current + 1)
-
-    assert_select 'input[data-bulk-scheduled="not-today"]', count: 1
-  end
 end

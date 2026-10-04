@@ -28,6 +28,26 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  test 'bulk menu exposes the common action set without trait gating' do
+    create_bullet!(@user, body: 'Selectable')
+
+    get bullets_path
+
+    assert_response :success
+    assert_select '.bulk-menu--actions'
+    assert_select '.bulk-menu--actions [data-bulk-menu-target="conditionalAction"]', count: 0
+    assert_select '.bulk-menu--actions form', minimum: 5
+    assert_match 'Complete', response.body
+    assert_match 'Uncomplete', response.body
+    assert_match 'Publish', response.body
+    assert_match 'Unpublish', response.body
+    assert_match 'Archive', response.body
+    assert_select '.bulk-menu--actions button', text: 'Today', count: 0
+    assert_select 'input[data-bulk-completable]', count: 0
+    assert_select 'input[data-bulk-publishable]', count: 0
+    assert_select 'input[data-bulk-scheduled]', count: 0
+  end
+
   test 'update turbo stream replaces bullet only' do
     assert_no_difference -> { Activity.count } do
       patch bullet_path(@bullet),
@@ -59,39 +79,30 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_empty bullet.collections
   end
 
-  test 'turbo stream create appends the row to today section' do
+  test 'turbo stream create replaces the pending bullet' do
+    client_id = SecureRandom.uuid
+
     assert_difference -> { @user.bullets.count }, 1 do
       post bullets_path,
-           params: { bullet: { body: 'Stream text', pops_on: Date.current.iso8601 } },
-           headers: { 'Turbo-Frame' => 'timeline_composer' },
+           params: { bullet: { body: 'Stream text', pops_on: Date.current.iso8601, client_id: client_id } },
            as: :turbo_stream
     end
 
     assert_response :success
-    assert_match %(turbo-stream action="append" target="timeline_section_today"), response.body
+    assert_match %(turbo-stream action="replace" target="bullet_client_#{client_id}"), response.body
     assert_match 'Stream text', response.body
   end
 
-  test 'turbo stream create for a future day does not touch the timeline' do
-    post bullets_path,
-         params: { bullet: { body: 'Later', pops_on: 3.days.from_now.to_date.iso8601 } },
-         as: :turbo_stream
-
-    assert_response :success
-    assert_no_match 'timeline_section_today', response.body
-  end
-
-  test 'composer create on a collection appends into the collection list' do
+  test 'composer create on a collection replaces the pending bullet' do
     collection = create_collection!(@user, name: 'Inbox')
-    composer = ActionView::RecordIdentifier.dom_id(collection, :bullets_composer)
+    client_id = SecureRandom.uuid
 
     post bullets_path,
-         params: { bullet: { body: '<p>Fresh today</p>', collection_id: collection.id } },
-         headers: { 'Turbo-Frame' => composer },
+         params: { bullet: { body: '<p>Fresh today</p>', collection_id: collection.id, client_id: client_id } },
          as: :turbo_stream
 
     assert_response :success
-    assert_match %(turbo-stream action="append" target="#{dom_id(collection)}"), response.body
+    assert_match %(turbo-stream action="replace" target="bullet_client_#{client_id}"), response.body
     assert_match 'Fresh today', response.body
     assert_includes @user.bullets.order(:created_at).last.collections, collection
   end
@@ -192,16 +203,50 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert response.parsed_body['base'].present?
   end
 
-  test 'create renders the file row in the timeline stream' do
-    file = Rack::Test::UploadedFile.new(StringIO.new(PIXEL_PNG), 'image/png', original_filename: 'pixel.png')
+  test 'create with client_id replaces the pending file bullet' do
+    blob = create_blob!(filename: 'pixel.png', content_type: 'image/png')
+    client_id = SecureRandom.uuid
 
     post bullets_path,
-         params: { bullet: { file: file } },
+         params: { bullet: { file: blob.signed_id, client_id: client_id } },
          as: :turbo_stream
 
     assert_response :success
-    assert_match %(turbo-stream action="append" target="timeline_section_today"), response.body
+    assert_match %(turbo-stream action="replace" target="bullet_client_#{client_id}"), response.body
     assert_match 'attachment--image', response.body
+    assert_equal client_id, @user.bullets.order(:created_at).last.client_id
+  end
+
+  test 'create with the same client_id is idempotent' do
+    blob = create_blob!(filename: 'pixel.png', content_type: 'image/png')
+    client_id = SecureRandom.uuid
+
+    assert_difference -> { @user.bullets.count }, 1 do
+      post bullets_path,
+           params: { bullet: { file: blob.signed_id, client_id: client_id } },
+           as: :turbo_stream
+    end
+
+    assert_no_difference -> { @user.bullets.count } do
+      post bullets_path,
+           params: { bullet: { file: blob.signed_id, client_id: client_id } },
+           as: :turbo_stream
+    end
+
+    assert_response :success
+    assert_match %(turbo-stream action="replace" target="bullet_client_#{client_id}"), response.body
+  end
+
+  test 'create text with client_id replaces the pending bullet' do
+    client_id = SecureRandom.uuid
+
+    post bullets_path,
+         params: { bullet: { body: 'Optimistic note', client_id: client_id } },
+         as: :turbo_stream
+
+    assert_response :success
+    assert_match %(turbo-stream action="replace" target="bullet_client_#{client_id}"), response.body
+    assert_equal 'Optimistic note', @user.bullets.order(:created_at).last.body_as_text
   end
 
   test 'show renders a file bullet' do
@@ -273,7 +318,6 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
   test 'bearer session code authenticates create json' do
     sign_out
-    @user.update!(onboarded: true)
     auth = request_login_code_json(@user.email_address)
     confirm_login_code_json(
       code: auth[:code],
