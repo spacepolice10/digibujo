@@ -1,11 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
 
-const ACTION_REQUIREMENTS = {
-  requireCompletable: "completable",
-  requirePublishable: "publishable",
-  requireScheduled: "scheduled",
-};
-
 export default class extends Controller {
   static targets = [
     "list",
@@ -13,7 +7,6 @@ export default class extends Controller {
     "checkbox",
     "idList",
     "amount",
-    "conditionalAction",
     "popsDropdown",
     "collectsDropdown",
   ];
@@ -88,7 +81,6 @@ export default class extends Controller {
     }
 
     this.selectModeValue = this.idListValue.length > 0;
-    this.#updateBulkActions();
   }
 
   selectModeValueChanged() {
@@ -235,7 +227,6 @@ export default class extends Controller {
 
   checkboxTargetConnected(checkbox) {
     checkbox.checked = this.idListValue.includes(checkbox.value);
-    this.#updateBulkActions();
   }
 
   checkboxTargetDisconnected(checkbox) {
@@ -347,46 +338,6 @@ export default class extends Controller {
     this.idListValue = [];
     this.checkboxTargets.forEach((checkbox) => {
       checkbox.checked = false;
-    });
-  }
-
-  // =====================================================================
-  // Conditional bulk actions
-  // =====================================================================
-
-  #updateBulkActions() {
-    const traits = this.#selectionTraits();
-
-    this.conditionalActionTargets.forEach((action) => {
-      action.hidden = !this.#actionApplies(action, traits);
-    });
-  }
-
-  #selectionTraits() {
-    const checked = this.checkboxTargets.filter((checkbox) => checkbox.checked);
-    if (checked.length == 0) return null;
-
-    return {
-      completable: this.#uniformTrait(checked, "bulkCompletable"),
-      publishable: this.#uniformTrait(checked, "bulkPublishable"),
-      scheduled: this.#uniformTrait(checked, "bulkScheduled"),
-    };
-  }
-
-  #uniformTrait(checkboxes, datasetKey) {
-    const values = new Set(
-      checkboxes.map((checkbox) => checkbox.dataset[datasetKey])
-    );
-    return values.size == 1 ? [...values][0] : null;
-  }
-
-  #actionApplies(action, traits) {
-    if (!traits) return false;
-
-    return Object.entries(ACTION_REQUIREMENTS).every(([requirement, trait]) => {
-      const expected = action.dataset[requirement];
-      if (!expected) return true;
-      return traits[trait] == expected;
     });
   }
 
