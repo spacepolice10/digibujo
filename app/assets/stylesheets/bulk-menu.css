@@ -60,22 +60,14 @@
   }
 
   .bulk-menu--actions > form,
-  .bulk-menu--actions > [data-bulk-menu-target="conditionalAction"],
   .bulk-menu--action-dock {
     flex: 1 1 calc(var(--space-h-2) * 4);
   }
 
   .bulk-menu--actions > form .button,
-  .bulk-menu--actions > [data-bulk-menu-target="conditionalAction"] > form .button,
   .bulk-menu--action-dock > .button {
     width: 100%;
     padding-inline: var(--space-h);
-  }
-
-  .bulk-menu--actions
-    > [data-bulk-menu-target="conditionalAction"]
-    > form {
-    width: 100%;
   }
 
   [data-controller~="bulk-menu"]:has(.bulk-menu:not([hidden]))
@@ -174,7 +166,6 @@
 
   @media (pointer: coarse) {
     .bulk-menu--actions > form .button,
-    .bulk-menu--actions > [data-bulk-menu-target="conditionalAction"] > form .button,
     .bulk-menu--action-dock > .button {
       min-height: calc(var(--coarse-target) - var(--space-v-half));
     }
