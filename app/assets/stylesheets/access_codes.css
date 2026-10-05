@@ -1,0 +1,16 @@
+@layer components {
+  .access-code--list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-v-half);
+  }
+
+  .access-code--item {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .access-code--item > main {
+    min-width: 0;
+  }
+}

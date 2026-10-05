@@ -1,0 +1,39 @@
+<% content_for(:title, "New webhook") %>
+
+<%= render "shared/back_tabbar", url: webhooks_path, aria_label: "Back to Webhooks" %>
+
+<main data-size="sm">
+  <h1>Webhook</h1>
+      <p>
+        Give a name to the integration, then share the URL Dotted gives you.
+      </p>
+
+      <%= form_with model: @webhook, url: webhooks_path, html: { class: "form" } do |form| %>
+        <label>
+          <p>Name</p>
+          <%= form.text_field :name, required: true, placeholder: "Zapier, Gmail, etc." %>
+          <% if @webhook.errors[:name].any? %>
+            <small class="form--errors"><%= @webhook.errors.full_messages_for(:name).to_sentence %></small>
+          <% end %>
+        </label>
+
+        <%= form.button type: "submit", data: { intent: "primary", radius: "full", size: "sm" }, form: {class: "utilities--mx-auto"} do %>Create webhook<% end %>
+      <% end %>
+
+      <article data-elevation="1">
+      <header>
+        <h2>How to call it</h2>
+      </header>
+      <main>
+      <p>
+        After create you’ll get a URL. External apps <strong>POST</strong> JSON to it.
+        <code>author_name</code> is optional.
+      </p>
+      <%= tag.pre role: "doc-example" do %><%=
+        JSON.pretty_generate(
+          author_name: "Zapier",
+          body: "Ship the release"
+        )
+      %><% end %>
+      </article>  
+</main>

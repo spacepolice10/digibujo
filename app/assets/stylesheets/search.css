@@ -1,3 +1,56 @@
+/* Field chrome — unlayered, same as lexxy-editor overrides in composer.css */
+.search--textform {
+  --search-textform-padding: var(--space-v-half);
+  min-block-size: var(--space-h-2);
+
+  display: flex;
+  flex-grow: 1;
+  min-inline-size: 0;
+  width: auto;
+  height: fit-content;
+  appearance: none;
+  font: inherit;
+  font-family: inherit;
+  font-size: var(--font-size-base-type);
+  color: inherit;
+  background: var(--color-1);
+  border: 1px solid transparent;
+  border-radius: var(--radius-base);
+  box-sizing: border-box;
+  padding-inline: var(--space-h);
+  padding-block: calc((var(--space-h-2) - 1lh - 2px) / 2);
+  transition: min-block-size 0.2s ease-out;
+
+  &::-webkit-search-cancel-button,
+  &::-webkit-search-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  &::placeholder {
+    color: var(--color-invert-4);
+    opacity: var(--opacity-half);
+    font-size: var(--font-size-base-type);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-within,
+  &:focus-visible {
+    animation: search-focus-bounce 0.35s ease-out;
+    border-color: var(--model-color-2);
+  }
+}
+
+@keyframes search-focus-bounce {
+  0%   { scale: 1; }
+  40%  { scale: 1.012; }
+  70%  { scale: 0.980; }
+  100% { scale: 1; }
+}
+
 @layer components {
   .search--navigation-item-counter {
     display: inline-flex;
@@ -12,4 +65,143 @@
     background: var(--color-invert-1);
     border-radius: var(--radius-full);
   }
+
+  .search--dock {
+    width: 100%;
+    margin-inline: 0;
+    box-shadow: none;
+    margin-block-end: var(--tabbar-clearance);
+    padding: var(--space-v-half) var(--space-h-half);
+
+    @container layout (width < 600px) {
+      width: 100%;
+      margin-inline: auto;
+      margin-block-start: var(--space-v-half);
+    }
+  }
+
+  /* Title stays top; section (navigation or results) centers in the leftover space. */
+  .search--window .search--scroller {
+    padding-top: var(--space-v-4);
+    padding-inline: var(--space-h);
+
+    > *:first-child {
+      margin-block-start: 0;
+    }
+
+    > .search--section {
+      margin-block: auto;
+    }
+  }
+
+  .search--section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-v-4);
+  }
+
+  .search {
+    display: flex;
+    gap: var(--space-v-half);
+    align-items: center;
+    justify-content: space-between;
+    min-block-size: calc(
+      max(var(--space-h-2), var(--space-v-3))
+      + var(--space-v)
+      + 1px
+    );
+  }
+
+  .search--control {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    border: transparent;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-subtle);
+    width: var(--space-h-3);
+    height: var(--space-h-2);
+    appearance: none;
+    background: transparent;
+    color: inherit;
+    padding: 0;
+    transition:
+      width 0.22s cubic-bezier(0.34, 1.5, 0.64, 1),
+      margin-inline 0.22s cubic-bezier(0.34, 1.5, 0.64, 1),
+      opacity 0.2s ease-out,
+      scale 0.28s cubic-bezier(0.34, 2, 0.64, 1),
+      background 0.15s ease-out,
+      color 0.15s ease-out,
+      visibility 0s;
+
+    & .icon-wrap {
+      opacity: 1;
+      transition: opacity 0.2s ease-out 0.05s;
+    }
+
+    &:hover {
+      cursor: pointer;
+      background: var(--color-2);
+    }
+  }
+
+  .search:has(.search--textform:placeholder-shown) .search--cleanup {
+    width: 0;
+    opacity: 0;
+    scale: 0.5;
+    visibility: hidden;
+    pointer-events: none;
+    margin-inline-start: calc(var(--space-v-half) * -1);
+    transition:
+      width 0.18s cubic-bezier(0.22, 1, 0.36, 1),
+      margin-inline 0.18s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.15s ease-out,
+      scale 0.18s ease-out,
+      visibility 0s linear 0.18s;
+
+    & .icon-wrap {
+      opacity: 0;
+      transition: opacity 0.1s ease-out;
+    }
+  }
+
+  .search--cleanup {
+    appearance: none;
+    background-color: var(--color-invert-2);
+    color: var(--color-2);
+    border: transparent;
+
+    &:hover {
+      background: var(--color-2);
+      color: var(--color-invert-2);
+    }
+  }
+
+  .search--results {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-v);
+  }
+
+  .search--results-empty {
+    color: var(--color-invert-4);
+    padding-block: var(--space-v);
+  }
+
+  @media (pointer: coarse) {
+    .search--control {
+      width: var(--space-h-3);
+      height: var(--space-h-2);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .search--control,
+    .search--control .icon-wrap { transition: none !important; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .search--textform:focus-within,
+  .search--textform:focus-visible { animation: none; }
 }

@@ -1,0 +1,23 @@
+<%# locals: (webhook:) %>
+<article
+  id="<%= dom_id(webhook) %>"
+  data-elevation="2"
+>
+  <header class="utilities--padding-x-1 utilities--padding-y-1">
+      <strong><%= webhook.name %></strong>
+      <code><%= webhook.code_prefix %>…</code>
+
+  </header>
+  <footer class="utilities--padding-y-1 ">
+    <%= button_to webhook_path(webhook),
+      method: :delete,
+      class: "utilities--mx-auto",
+      data: { intent: "secondary", radius: "full", size: "xs", status: "negative" },
+      form: { data: { turbo_confirm: "Revoke this webhook? External apps using it will stop working." }, class: "utilities--contents" } do %>
+  <%= icon("trash") %>
+  Revoke
+<% end %>
+  </footer>
+
+
+</article>

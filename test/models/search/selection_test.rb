@@ -93,6 +93,20 @@ class Search::SelectionTest < ActiveSupport::TestCase
     assert_empty Search::Selection.in_menu(@user)
   end
 
+  test 'archive! removes bullet from recent selections' do
+    bullet = create_bullet!(@user, body: 'Park me')
+
+    Search::Selection.record!(
+      user: @user,
+      searchable_type: 'Bullet',
+      searchable_id: bullet.id
+    )
+
+    bullet.archive!
+
+    assert_empty Search::Selection.in_menu(@user)
+  end
+
   test 'in_menu returns selections with searchable loaded' do
     Search::Selection.record!(
       user: @user,

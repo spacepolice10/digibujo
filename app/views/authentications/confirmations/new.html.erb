@@ -1,10 +1,16 @@
 <% content_for(:title) { "Enter code" } %>
 
-<h1>Check your email</h1>
-<p>We sent a 6-character code to <strong><%= @email %></strong>.</p>
+<main data-size="sm">
+  <header>
+    <h1>Check your email</h1>
+  </header>
 
-<%= form_with url: authentication_confirmation_path, data: { controller: "auto-submit", auto_submit_length_value: 6 } do |form| %>
-  <%= form.text_field :code,
+
+  <%= form_with url: authentication_confirmation_path, data: { controller: "auto-submit", auto_submit_length_value: 6 } do |form| %>
+  <label>
+    <p>Code</p>
+    <small>We sent a 6-character code to <strong><%= @email %></strong>.</small>
+      <%= form.text_field :code,
         required: true,
         autofocus: true,
         autocomplete: "one-time-code",
@@ -13,10 +19,18 @@
         placeholder: "······",
         aria: { label: "6-character login code" },
         data: { action: "input->auto-submit#submit" } %>
+    </label>
 
-  <%= form.button type: "submit", data: { intent: "primary", radius: "full", size: "lg" } do %>
-    Verify code
+    <%= form.button type: "submit", data: { intent: "primary", radius: "full", size: "lg" } do %>
+      Verify code
+    <% end %>
   <% end %>
-<% end %>
 
-<%= link_to "Didn't receive it? Try again", new_authentication_path %>
+  <footer class="utilities--mx-auto">
+    <nav>
+      <%= link_to new_authentication_path, class: "pill" do %>
+        <%= icon "arrow-left" %> Try again
+      <% end %>
+    </nav>
+  </footer>
+</main>

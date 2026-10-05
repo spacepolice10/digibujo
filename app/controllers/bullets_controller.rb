@@ -17,6 +17,8 @@ class BulletsController < ApplicationController
   end
 
   def create
+    return created_response if find_existing_by_client_id
+
     @bullet = Current.user.bullets.new(bullet_params)
 
     if @bullet.save
@@ -24,6 +26,10 @@ class BulletsController < ApplicationController
     else
       failed_create_response
     end
+  rescue ActiveRecord::RecordNotUnique
+    raise unless find_existing_by_client_id
+
+    created_response
   rescue ActiveSupport::MessageVerifier::InvalidSignature
     @bullet = Current.user.bullets.new
     @bullet.errors.add(:file, 'is invalid')
@@ -57,7 +63,7 @@ class BulletsController < ApplicationController
   private
 
   def load_older_page
-    cursor = @timeline.bullets.find_by(id: params[:before])
+    cursor = @timeline.filtered.find_by(id: params[:before])
     return head :no_content unless cursor
 
     @bullets = @timeline.page_before(cursor)
@@ -66,10 +72,17 @@ class BulletsController < ApplicationController
     respond_to do |format|
       format.html do
         render partial: 'sections', layout: false,
-               locals: { bullets: @bullets, timeline: @timeline, ensure_today: false }
+               locals: { bullets: @bullets, timeline: @timeline }
       end
       format.json { render 'bullets/index', formats: :json, if: stale?(etag: @bullets) }
     end
+  end
+
+  def find_existing_by_client_id
+    client_id = params.dig(:bullet, :client_id).presence
+    return false unless client_id
+
+    @bullet = Current.user.bullets.find_by(client_id: client_id)
   end
 
   def created_response
@@ -101,7 +114,7 @@ class BulletsController < ApplicationController
     if @bullet&.persisted?
       params.require(:bullet).permit(:body, :file)
     else
-      params.require(:bullet).permit(:pops_on, :collection_id, :body, :file)
+      params.require(:bullet).permit(:pops_on, :collection_id, :body, :file, :client_id)
     end
   end
 

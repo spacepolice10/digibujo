@@ -1,0 +1,19 @@
+<%# locals: (entries:) %>
+<div class="search--results">
+  <% entries.each do |entry| %>
+    <% if entry.is_a?(Bullet) %>
+      <%= render partial: entry.to_partial_path, locals: { bullet: entry } %>
+    <% else %>
+      <%= link_to bullets_path(collection: entry.name),
+            class: "collection-chip",
+            data: { turbo_frame: "_top" } do %>
+        <%= icon("hash", style: ("color: #{colour(entry.colour)};" if entry.colour.present?)) %>
+        <span><%= entry.name %></span>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <% if entries.empty? %>
+    <p class="search--results-empty">No results</p>
+  <% end %>
+</div>

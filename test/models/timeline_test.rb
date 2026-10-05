@@ -4,15 +4,15 @@ require 'test_helper'
 
 class TimelineTest < ActiveSupport::TestCase
   setup do
-    @today = Date.new(2026, 9, 30)
+    travel_to Date.new(2026, 9, 30)
   end
 
   test 'sections split recent days and then widen' do
-    assert_equal 'today', section(0).key
+    assert_equal 'current_date', section(0).key
     assert_equal 'yesterday', section(1).key
-    assert_equal '2026-09-28', section(2).key
-    assert_equal 'Monday, Sep 28', section(2).label
-    assert_equal '2026-09-24', section(6).key
+    assert_equal 'this-week', section(2).key
+    assert_equal 'This week', section(2).label
+    assert_equal 'this-week', section(6).key
     assert_equal 'last-week', section(7).key
     assert_equal 'last-week', section(13).key
     assert_equal 'last-month', section(14).key
@@ -25,8 +25,8 @@ class TimelineTest < ActiveSupport::TestCase
   end
 
   test 'a future day gets its own section' do
-    section = Timeline.section_of(@today + 1, today: @today)
-    assert_equal (@today + 1).iso8601, section.key
+    section = Timeline.section_of(Date.current + 1)
+    assert_equal (Date.current + 1).iso8601, section.key
   end
 
   test 'bullets are due, not upcoming, up to today' do
@@ -40,8 +40,8 @@ class TimelineTest < ActiveSupport::TestCase
 
     timeline = Timeline.new(user)
 
-    assert_equal [past, due, filed].sort_by(&:id), timeline.bullets.sort_by(&:id)
-    assert_equal [later], timeline.upcoming.to_a
+    assert_equal [past, due, filed].sort_by(&:id), timeline.filtered.sort_by(&:id)
+    assert_not_includes timeline.filtered, later
   end
 
   test 'last_page and page_before walk back through the feed' do
@@ -56,6 +56,6 @@ class TimelineTest < ActiveSupport::TestCase
   private
 
   def section(age)
-    Timeline.section_of(@today - age, today: @today)
+    Timeline.section_of(Date.current - age)
   end
 end

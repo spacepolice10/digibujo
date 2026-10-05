@@ -32,5 +32,9 @@
             oklch(0.72 0.05 54));
     /* Inks (Liquorice + chroma) */
     --model-color-8-bg: light-dark(oklch(0.92 0.03 54), oklch(0.34 0.04 54));
+    --model-color-9: light-dark(oklch(0.82 0.12 160),
+            oklch(0.86 0.11 160));
+    /* Mint */
+    --model-color-9-bg: light-dark(oklch(0.94 0.05 160), oklch(0.34 0.08 160));
   }
 }

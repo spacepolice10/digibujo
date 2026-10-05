@@ -1,14 +1,31 @@
-<div class="bulk-menu"
+<article data-elevation="1" class="bulk-menu"
      data-bulk-menu-target="menu"
      data-action="keydown.esc@document->bulk-menu#escape"
      tabindex="0"
      hidden>
+  <header>
+    <h2>Bulk edit</h2>
+    <button type="button"
+            class="dropdown--element-hide"
+            data-intent="primary"
+            data-radius="full"
+            data-size="xs"
+            data-content="icon"
+            data-action="bulk-menu#clear"
+            aria-label="Clear selection">
+      <%= icon("x") %>
+    </button>
+  </header>
+
   <div class="bulk-menu--actions">
 
-    <%= form_with url: completion_path, method: :post, data: { turbo_stream: true } do %>
+    <%= form_with url: completion_path, method: :post,
+          class: "utilities--contents",
+          data: { turbo_stream: true, bulk_menu_target: "complete" },
+          html: { hidden: true } do %>
       <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
       <%= button_tag type: :submit,
-            class: "hotkey-hint hotkey-hint--always",
+            class: "hotkey-hint hotkey-hint--always bulk-menu--action-button",
             data: {
               intent: "secondary",
               radius: "base",
@@ -23,10 +40,12 @@
       <% end %>
     <% end %>
 
-    <%= form_with url: completion_path, method: :delete, data: { turbo_stream: true } do %>
+    <%= form_with url: completion_path, method: :delete,
+          data: { turbo_stream: true, bulk_menu_target: "uncomplete" },
+          html: { hidden: true } do %>
       <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
       <%= button_tag type: :submit,
-            class: "hotkey-hint hotkey-hint--always",
+            class: "hotkey-hint hotkey-hint--always bulk-menu--action-button",
             data: {
               intent: "secondary",
               radius: "base",
@@ -41,10 +60,13 @@
       <% end %>
     <% end %>
 
-    <%= form_with url: publish_path, method: :post, data: { turbo_stream: true } do %>
+    <%= form_with url: publish_path, method: :post,
+          class: "utilities--contents",
+          data: { turbo_stream: true, bulk_menu_target: "publish" },
+          html: { hidden: true } do %>
       <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
       <%= button_tag type: :submit,
-            class: "hotkey-hint hotkey-hint--always",
+            class: "hotkey-hint hotkey-hint--always bulk-menu--action-button",
             data: {
               intent: "secondary",
               radius: "base",
@@ -59,10 +81,13 @@
       <% end %>
     <% end %>
 
-    <%= form_with url: publish_path, method: :delete, data: { turbo_stream: true } do %>
+    <%= form_with url: publish_path, method: :delete,
+          class: "utilities--contents",
+          data: { turbo_stream: true, bulk_menu_target: "unpublish" },
+          html: { hidden: true } do %>
       <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
       <%= button_tag type: :submit,
-            class: "hotkey-hint hotkey-hint--always",
+            class: "hotkey-hint hotkey-hint--always bulk-menu--action-button",
             data: {
               intent: "secondary",
               radius: "base",
@@ -77,10 +102,12 @@
       <% end %>
     <% end %>
 
-    <%= form_with url: archive_path, method: :post, data: { turbo_stream: true } do %>
+    <%= form_with url: archive_path, method: :post,
+          class: "utilities--contents",
+          data: { turbo_stream: true } do %>
       <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
       <%= button_tag type: :submit,
-            class: "hotkey-hint hotkey-hint--always",
+            class: "hotkey-hint hotkey-hint--always bulk-menu--action-button",
             data: {
               intent: "secondary",
               radius: "base",
@@ -97,7 +124,7 @@
 
     <div class="dropdown--dock bulk-menu--action-dock" data-bulk-menu-target="popsDropdown">
       <button type="button"
-              class="hotkey-hint hotkey-hint--always"
+              class="hotkey-hint hotkey-hint--always bulk-menu--action-button"
               data-controller="hotkey"
               data-intent="secondary"
               data-radius="base"
@@ -120,7 +147,7 @@
 
     <div class="dropdown--dock bulk-menu--action-dock" data-bulk-menu-target="collectsDropdown">
       <button type="button"
-              class="hotkey-hint hotkey-hint--always"
+              class="hotkey-hint hotkey-hint--always bulk-menu--action-button"
               data-controller="hotkey"
               data-intent="secondary"
               data-radius="base"
@@ -137,18 +164,7 @@
                    popover
                    loading="lazy"></turbo-frame>
     </div>
-
-    <button type="button"
-            class="dropdown--element-hide bulk-menu--hide"
-            data-intent="primary"
-            data-radius="full"
-            data-size="xs"
-            data-content="icon"
-            data-action="bulk-menu#clear"
-            aria-label="Clear selection">
-      <%= icon("x") %>
-    </button>
   </div>
 
   <p class="bulk-menu--amount" data-bulk-menu-target="amount">0 selected</p>
-</div>
+</article>

@@ -15,9 +15,10 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_heading 'Search', level: 1
-    assert_select 'main article.search--navigation ul a', count: 2
+    assert_select 'main article.search--navigation ul a', count: 3
     assert_select 'main article.search--navigation ul a[href=?]', attachments_path, text: 'Attachments'
     assert_select 'main article.search--navigation ul a[href=?]', archived_index_path, text: 'Archive'
+    assert_select 'main article.search--navigation ul a[href=?]', bullets_path(from: Date.current + 1), text: 'Upcoming'
     assert_select 'main small', count: 0
     assert_select '#index-dock', count: 0
     assert_select 'input#index-query', count: 0
@@ -34,12 +35,12 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select 'header.header', count: 0
     assert_select 'footer#footer', count: 0
-    assert_tabbar_link search_path, label: 'Search'
+    assert_tabbar_link search_path, label: 'Search', active: true
     assert_tabbar_link bullets_path, label: 'Daylog'
     assert_tabbar_link user_path, label: 'User'
-    assert_select 'nav.tabbar--navigation a.tabbar--item', count: 3
-    assert_select 'nav.tabbar--navigation a.tabbar--item-active[href=?]', search_path
-    assert_select 'nav.tabbar--navigation a[href=?][data-hotkey=?][data-controller~=hotkey]', search_path, '1'
+    assert_select 'nav.tabbar--navigation a.tabbar--item', count: 2
+    assert_select 'nav.tabbar--navigation span.tabbar--item-active[aria-current=page]', count: 1
+    assert_select 'nav.tabbar--navigation a[href=?]', search_path, count: 0
     assert_select 'nav.tabbar--navigation a[href=?][data-hotkey=?][data-controller~=hotkey]', bullets_path, '2'
     assert_select 'nav.tabbar--navigation a[href=?][data-hotkey=?][data-controller~=hotkey]', user_path, '3'
   end
@@ -48,8 +49,9 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     get bullets_path
 
     assert_response :success
-    assert_select 'nav.tabbar--navigation a.tabbar--item', count: 3
-    assert_select 'nav.tabbar--navigation a.tabbar--item-active[href=?]', bullets_path
+    assert_select 'nav.tabbar--navigation a.tabbar--item', count: 2
+    assert_select 'nav.tabbar--navigation span.tabbar--item-active[aria-current=page]', text: 'Daylog'
+    assert_select 'nav.tabbar--navigation a[href=?]', bullets_path, count: 0
     assert_select '#header_palette', count: 0
     assert_select 'header.header', count: 0
   end
@@ -99,11 +101,11 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     assert_select 'main header', count: 0
     assert_select 'header.header', count: 0
     assert_select 'main article.search--navigation ul a[href=?]', bullets_path, count: 0
-    assert_tabbar_link search_path, label: 'Search'
+    assert_tabbar_link search_path, label: 'Search', active: true
     assert_tabbar_link bullets_path, label: 'Daylog'
     assert_tabbar_link user_path, label: 'User'
-    assert_select 'nav.tabbar--navigation a.tabbar--item', count: 3
-    assert_select 'nav.tabbar--navigation a.tabbar--item-active[href=?]', search_path
+    assert_select 'nav.tabbar--navigation a.tabbar--item', count: 2
+    assert_select 'nav.tabbar--navigation span.tabbar--item-active[aria-current=page]', count: 1
   end
 
   test 'show renders count badges when destinations have records' do

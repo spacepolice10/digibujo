@@ -1,18 +1,27 @@
 <% content_for(:title) { "Support — Dotted" } %>
 
-<div class="support--container">
-  <h1>Support</h1>
-  <p>
-    Questions, bugs, or feedback about Dotted — email the maintainer or open
-    an issue on GitHub.
-  </p>
+
+<article>
+  <main>
+    <p>
+      Questions, bugs, or feedback about Dotted — email the maintainer or open
+      an issue on GitHub.
+    </p>
+  </main>
 
   <ul>
     <li>
-      <%= mail_to "naysdemo@zohomail.com" %>
+      <%= mail_to "naysdemo@zohomail.com" do %>
+        <%= icon("mail") %> naysdemo@zohomail.com
+      <% end %>
     </li>
+
     <li>
-      <%= link_to "github.com/spacepolice10/digibujo", "https://github.com/spacepolice10/digibujo" %>
+      <%= link_to "https://github.com/spacepolice10/digibujo" do %>
+        <%= icon("github") %> github.com/spacepolice10/digibujo
+      <% end %>
     </li>
   </ul>
-</div>
+</article>
+
+<%= render "shared/back_tabbar" %>

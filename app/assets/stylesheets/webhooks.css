@@ -1,5 +1,5 @@
 @layer components {
-  .hook--created {
+  .webhook--created {
     display: flex;
     flex-direction: column;
     gap: var(--space-v-half);
@@ -11,31 +11,28 @@
     border-color: var(--color-accent-2);
   }
 
-  .hook--created > header,
-  .hook--list,
-  .access-code--list {
+  .webhook--created > header,
+  .webhook--list {
     display: flex;
     flex-direction: column;
     gap: var(--space-v-half);
   }
 
-  .hook--created > header {
+  .webhook--created > header {
     align-items: center;
     flex-direction: row;
   }
 
-  .hook--item,
-  .access-code--item {
+  .webhook--item {
     flex-direction: row;
     justify-content: space-between;
   }
 
-  .hook--item > main,
-  .access-code--item > main {
+  .webhook--item > main {
     min-width: 0;
   }
 
-  .hook--created-link {
+  .webhook--created-link {
     overflow-wrap: anywhere;
     color: var(--color-accent-2);
   }

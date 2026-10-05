@@ -15,7 +15,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     assert_select 'main[data-size="md"] > h1', text: 'Account'
     assert_select 'main article ul p', text: @user.email_address
     assert_select 'a[href=?]', access_codes_path, text: /Access codes/
-    assert_select 'a[href=?]', hooks_path, text: /Hooks/
+    assert_select 'a[href=?]', webhooks_path, text: /Webhooks/
     assert_select 'form[action=?][data-turbo-confirm=?]', authentication_path, 'Sign out of Dotted?'
     assert_select 'button', text: /Sign out/
   end
@@ -24,8 +24,9 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     get user_path, headers: { 'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)' }
 
     assert_response :success
-    assert_tabbar_link user_path, label: 'User'
-    assert_select 'nav.tabbar--navigation a.tabbar--item-active[href=?]', user_path
+    assert_tabbar_link user_path, label: 'User', active: true
+    assert_select 'nav.tabbar--navigation span.tabbar--item-active[aria-current=page]', text: 'User'
+    assert_select 'nav.tabbar--navigation a[href=?]', user_path, count: 0
   end
 
   test 'show requires authentication' do

@@ -1,16 +1,12 @@
 # frozen_string_literal: true
 
-# Wraps search hits in already-rendered HTML. Only text nodes are touched, so
-# tags, attributes, and embeds stay as they were.
 class Search::Highlight
-  CLASS_NAME = 'search--hit'
-
   class << self
     def call(html, query)
       words = Search::TermBuilder.terms(query)
       return html if words.empty?
 
-      pattern = pattern_for(words)
+      pattern = pattern_of(words)
       fragment = Loofah.html5_fragment(html.to_s)
       changed = false
 
@@ -28,7 +24,7 @@ class Search::Highlight
 
     private
 
-    def pattern_for(words)
+    def pattern_of(words)
       alternation = words.sort_by { |word| -word.length }.map { |word| Regexp.escape(word) }.join('|')
       /(?<![\p{L}\p{N}])(?:#{alternation})[\p{L}\p{N}]*/i
     end
@@ -38,10 +34,10 @@ class Search::Highlight
       pieces = +''
 
       text.scan(pattern) do
-        match = Regexp.last_match
-        pieces << ERB::Util.html_escape(text[cursor...match.begin(0)])
-        pieces << %(<mark class="#{CLASS_NAME}">#{ERB::Util.html_escape(match[0])}</mark>)
-        cursor = match.end(0)
+        last_matched_from_thread = Regexp.last_match
+        pieces << ERB::Util.html_escape(text[cursor...last_matched_from_thread.begin(0)])
+        pieces << %(<mark class="search--term">#{ERB::Util.html_escape(last_matched_from_thread[0])}</mark>)
+        cursor = last_matched_from_thread.end(0)
       end
 
       pieces << ERB::Util.html_escape(text[cursor..])

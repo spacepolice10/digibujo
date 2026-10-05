@@ -1,7 +1,7 @@
-<%# locals: (bullet_ids:, return_to:, collects_q:, collections:, collections_page:) %>
-<article>
+<%# locals: (bullet_ids:, return_to:, collects_q:, collections:) %>
+<article data-elevation="1">
   <header>
-    <h2>Save to collection</h2>
+    <h2>To collection</h2>
 
     <button
       type="button"
@@ -24,6 +24,7 @@
   >
     <%= form_with url: new_collect_path,
           method: :get,
+          class: "utilities--contents",
           data: { combobox_target: "searchForm" } do %>
       <%= hidden_field_tag :bullet_ids, bullet_ids, data: { bulk_menu_target: "idList" } %>
       <%= hidden_field_tag :return_to, return_to if return_to.present? %>
@@ -42,9 +43,7 @@
       <%= render "bullets/collects/collections_list",
             bullet_ids: bullet_ids,
             return_to: return_to,
-            collects_q: collects_q,
-            collections: collections,
-            collections_page: collections_page %>
+            collections: collections %>
     </main>
 
     <% if collections.empty? %>

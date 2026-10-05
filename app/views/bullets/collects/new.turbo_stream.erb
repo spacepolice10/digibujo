@@ -1,8 +1,6 @@
-<%= turbo_stream.replace "paginated-collects-collections" do %>
+<%= turbo_stream.replace "collects-collections-list" do %>
   <%= render "bullets/collects/collections_list",
         bullet_ids: params[:bullet_ids].to_s,
         return_to: @return_to,
-        collects_q: @collects_q,
-        collections: @collections,
-        collections_page: @collections_page %>
+        collections: @collections %>
 <% end %>

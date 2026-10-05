@@ -4,46 +4,44 @@ require 'test_helper'
 
 class Bullet::FilterTest < ActiveSupport::TestCase
   setup do
+    travel_to Date.new(2026, 9, 30)
     @user = users(:one)
-    @today = Date.new(2026, 9, 30)
   end
 
   test 'default filter is due through today' do
-    filter = Bullet::Filter.from_params({}, user: @user, today: @today)
+    filter = Bullet::Filter.from_params({}, user: @user)
 
     assert filter.empty?
-    assert_equal 'Daylog', filter.label
-    assert filter.includes_today?
+    assert_equal 'Daylog', filter.name
 
-    due = create_bullet!(@user, body: 'Due', pops_on: @today)
-    later = create_bullet!(@user, body: 'Later', pops_on: @today + 1)
+    due = create_bullet!(@user, body: 'Due', pops_on: Date.current)
+    later = create_bullet!(@user, body: 'Later', pops_on: Date.current + 1)
 
-    ids = filter.apply(@user.bullets.active).pluck(:id)
+    ids = filter.filtered(@user.bullets.active).pluck(:id)
     assert_includes ids, due.id
     assert_not_includes ids, later.id
   end
 
   test 'from filters upcoming bullets' do
-    filter = Bullet::Filter.from_params({ from: (@today + 1).iso8601 }, user: @user, today: @today)
+    filter = Bullet::Filter.from_params({ from: (Date.current + 1).iso8601 }, user: @user)
 
-    assert_equal 'Upcoming', filter.label
-    assert_not filter.includes_today?
+    assert_equal 'Upcoming', filter.name
 
-    due = create_bullet!(@user, body: 'Due', pops_on: @today)
-    later = create_bullet!(@user, body: 'Later', pops_on: @today + 1)
+    due = create_bullet!(@user, body: 'Due', pops_on: Date.current)
+    later = create_bullet!(@user, body: 'Later', pops_on: Date.current + 1)
 
-    ids = filter.apply(@user.bullets.active).pluck(:id)
+    ids = filter.filtered(@user.bullets.active).pluck(:id)
     assert_not_includes ids, due.id
     assert_includes ids, later.id
   end
 
   test 'collection filter tags bullets' do
     collection = create_collection!(@user, name: 'Loose notes')
-    tagged = create_bullet!(@user, body: 'Tagged', collection: collection, pops_on: @today)
-    plain = create_bullet!(@user, body: 'Plain', pops_on: @today)
+    tagged = create_bullet!(@user, body: 'Tagged', collection: collection, pops_on: Date.current)
+    plain = create_bullet!(@user, body: 'Plain', pops_on: Date.current)
 
-    filter = Bullet::Filter.from_params({ collection: 'loose notes' }, user: @user, today: @today)
-    ids = filter.apply(@user.bullets.active).pluck(:id)
+    filter = Bullet::Filter.from_params({ collection: 'loose notes' }, user: @user)
+    ids = filter.filtered(@user.bullets.active).pluck(:id)
 
     assert_equal collection, filter.collection
     assert_includes ids, tagged.id
@@ -52,13 +50,13 @@ class Bullet::FilterTest < ActiveSupport::TestCase
 
   test 'unknown collection raises' do
     assert_raises(Bullet::Filter::Error) do
-      Bullet::Filter.from_params({ collection: 'missing' }, user: @user, today: @today)
+      Bullet::Filter.from_params({ collection: 'missing' }, user: @user)
     end
   end
 
   test 'inverted date range raises' do
     assert_raises(Bullet::Filter::Error) do
-      Bullet::Filter.from_params({ from: '2026-10-02', to: '2026-09-01' }, user: @user, today: @today)
+      Bullet::Filter.from_params({ from: '2026-10-02', to: '2026-09-01' }, user: @user)
     end
   end
 end

@@ -1,5 +1,10 @@
-  <%= link_to bullet_path(bullet), class: "bucket--section-list-item", data: { turbo_frame: "_top" } do %>
-    <%= icon(bullet.marker_icon.to_s.dasherize,
-          class: "bucket--section-list-item-icon") %>
-    <span><%= bullet.name %></span>
-  <% end %>
+
+<%= render "bullets/bullet", bullet: bullet %>
+<p>Public link:</p>
+<input class="public--published-link"
+type="text"
+autocomplete="off"
+value="<%= published_url(bullet.public_code) %>"
+readonly
+onclick="this.select()"
+>

@@ -1,151 +1,94 @@
 <% content_for(:title) { "Features — Dotted" } %>
 
-<div class="features--container">
+<% features = [
+  {
+    title: "Rapid logging",
+    description: "A chat-style dock at the bottom of your timeline: type the thought, or attach a file. No nested “create inside X” maze."
+  },
+  {
+    title: "Two bullets, one flow",
+    description: "Text and attachments share one composer, and every bullet can be checked off when it is done."
+  },
+  {
+    title: "One infinite daylog",
+    description: "Everything you write lands in a single feed. Recent days are their own sections; older ones settle into Last week, Last month, and beyond."
+  },
+  {
+    title: "Upcoming",
+    description: "Schedule a bullet for a later day and it waits on the Upcoming screen, then joins your daylog when its day comes."
+  },
+  {
+    title: "Capture, then curate",
+    description: "Brain-dump first, organise later. The daylog and collections keep the noise navigable without slowing you down."
+  },
+  {
+    title: "Move, don’t rewrite",
+    description: "Later, Save, Archive, Complete — move bullets instead of rewriting them, all from one selection menu."
+  },
+  {
+    title: "Keyboard-first",
+    description: "Every common intent — compose, navigate, pop, collect, complete, archive — has a hotkey, with hints surfaced inline."
+  },
+  {
+    title: "Postpone without guilt",
+    description: "Push a bullet to tomorrow — or any day — and keep going. Decisions deferred, not lost."
+  },
+  {
+    title: "Collections as notebooks",
+    description: "Named, coloured, icon’d collections. Save bullets from the daylog, then export a collection as HTML when you want it out."
+  },
+  {
+    title: "Archive soft, purge later",
+    description: "Soft-hide what’s done, browse archives when you need them, and let retention clean expired items after about thirty days."
+  },
+  {
+    title: "Quick search",
+    description: "Press Cmd/Ctrl + K to find bullets and collections fast without leaving the keyboard."
+  },
+  {
+    title: "Publish what you want",
+    description: "Publish individual bullets to share them on the internet. Each one gets a short code and a clean public view — no login to read."
+  },
+  {
+    title: "Appearance that stays quiet",
+    description: "Home tint themes — default, warm, cool, nature, cheese. Atmosphere without a settings rabbit hole."
+  },
+  {
+    title: "Outlining",
+    description: "Like TaskPaper — but no special headers. Any bullet can outline others: just indent and the tree builds itself. Navigate it with the keyboard, fold the noise away, focus on one branch."
+  },
+  {
+    title: "CLI &amp; agent integration",
+    description: "Drive Dotted from a terminal or from an AI agent. The same bullets and collections — programmable from outside the browser."
+  },
+  {
+    title: "Hooks",
+    description: "Drop bullets onto your daylog from Zapier, agents, or your own scripts — one URL per integration."
+  },
+  {
+    title: "Self-host, open source",
+    description: "Ready for self-deployment with Kamal. Your data stays in your own SQLite databases — no Redis, no telemetry. Self-host freely under the O’Saasy license."
+  },
+  {
+    title: "Crafted with love",
+    description: "Built on Rails 8 and Hotwire, SQLite and Solid Queue under the hood, Kamal to ship it."
+  },
+] %>
 
+<main>
+  <section>
+    <% features.each do |feature| %>
+      <li>
+        <article data-elevation="1">
+          <header>
+            <h2><%= feature[:title] %></h2>
+          </header>
 
-  <article class="features--card" data-colour="1">
-    <h2>Rapid logging</h2>
-    <p>
-      A chat-style dock at the bottom of your timeline: type the thought, or
-      attach a file. No nested “create inside X” maze.
-    </p>
-  </article>
-
-  <article class="features--card" data-colour="2">
-    <h2>Two bullets, one flow</h2>
-    <p>
-      Text and attachments share one composer, and every bullet can be
-      checked off when it is done.
-    </p>
-  </article>
-
-  <article class="features--card" data-colour="3">
-    <h2>One infinite daylog</h2>
-    <p>
-      Everything you write lands in a single feed. Recent days are their own
-      sections; older ones settle into Last week, Last month, and beyond.
-    </p>
-  </article>
-
-  <article class="features--card" data-colour="4">
-    <h2>Upcoming</h2>
-    <p>
-      Schedule a bullet for a later day and it waits on the Upcoming screen,
-      then joins your daylog when its day comes.
-    </p>
-  </article>
-
-  <article class="features--card" data-colour="6">
-    <h2>Capture, then curate</h2>
-    <p>
-      Brain-dump first, organise later. The daylog and collections
-      keep the noise navigable without slowing you down.
-    </p>
-  </article>
-
-  <article class="features--card" data-colour="7">
-    <h2>Move, don’t rewrite</h2>
-    <p>
-      Later, Save, Archive, Complete — move bullets instead of rewriting them,
-      all from one selection menu.
-    </p>
-  </article>
-
-  <article class="features--card" data-colour="8">
-    <h2>Keyboard-first</h2>
-    <p>
-      Every common intent — compose, navigate, pop, collect, complete, archive —
-      has a hotkey, with hints surfaced inline.
-    </p>
-  </article>
-
-  <article class="features--card" data-colour="2">
-    <h2>Postpone without guilt</h2>
-    <p>
-      Push a bullet to tomorrow — or any day — and keep going. Decisions
-      deferred, not lost.
-    </p>
-  </article>
-
-  <article class="features--card" data-colour="3">
-    <h2>Collections as notebooks</h2>
-    <p>
-      Named, coloured, icon’d collections. Save bullets from the daylog,
-      then export a collection as HTML when you want it out.
-    </p>
-  </article>
-
-  <article class="features--card" data-colour="6">
-    <h2>Archive soft, purge later</h2>
-    <p>
-      Soft-hide what’s done, browse archives when you need them, and let
-      retention clean expired items after about thirty days.
-    </p>
-  </article>
-
-  <article class="features--card" data-colour="8">
-    <h2>Quick search</h2>
-    <p>
-      Press Cmd/Ctrl + K to find bullets and collections fast without
-      leaving the keyboard.
-    </p>
-  </article>
-
-  <article class="features--card" data-colour="1">
-    <h2>Publish what you want</h2>
-    <p>
-      Publish individual bullets to share them on the internet. Each one gets a
-      short code and a clean public view — no login to read.
-    </p>
-  </article>
-
-  <article class="features--card" data-colour="2">
-    <h2>Appearance that stays quiet</h2>
-    <p>
-      Home tint themes — default, warm, cool, nature, cheese. Atmosphere without
-      a settings rabbit hole.
-    </p>
-  </article>
-
-  <article class="features--card" data-colour="3">
-    <h2>Outlining</h2>
-    <p>
-      Like TaskPaper — but no special headers. Any bullet can outline others:
-      just indent and the tree builds itself. Navigate it with the keyboard,
-      fold the noise away, focus on one branch.
-    </p>
-  </article>
-
-  <article class="features--card" data-colour="4">
-    <h2>CLI &amp; agent integration</h2>
-    <p>
-      Drive Dotted from a terminal or from an AI agent. The same bullets
-      and collections — programmable from outside the browser.
-    </p>
-  </article>
-
-  <article class="features--card" data-colour="5">
-    <h2>Hooks</h2>
-    <p>
-      Drop bullets onto your daylog from Zapier, agents, or your own
-      scripts — one URL per integration.
-    </p>
-  </article>
-
-  <article class="features--card" data-colour="6">
-    <h2>Self-host, open source</h2>
-    <p>
-      Ready for self-deployment with Kamal. Your data stays in your own SQLite
-      databases — no Redis, no telemetry. Self-host freely under the O’Saasy
-      license.
-    </p>
-  </article>
-
-  <article class="features--card" data-colour="7">
-    <h2>Crafted with love</h2>
-    <p>
-      Built on Rails 8 and Hotwire, SQLite and Solid Queue under the hood,
-      Kamal to ship it.
-    </p>
-  </article>
-</div>
+          <main>
+            <p><%= feature[:description] %></p>
+          </main>
+        </article>
+      </li>
+    <% end %>
+  </section>
+</main>

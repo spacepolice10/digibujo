@@ -1,6 +1,7 @@
 <% ids = local_assigns[:bullet_ids] %>
 <% destination = local_assigns[:return_to] %>
 <% form_id = dom_id(collection, :form) %>
+
 <% submit = if ids.present?
               "Create and collect"
             elsif collection.persisted?
@@ -18,6 +19,7 @@
   <label>
     <p>Name</p>
     <%= f.text_field :name, required: true, autocomplete: "off", maxlength: 140, placeholder: "Reading list, groceries, etc." %>
+
     <% if collection.errors[:name].any? %>
       <small class="form--errors"><%= collection.errors.full_messages_for(:name).to_sentence %></small>
     <% end %>
@@ -25,7 +27,8 @@
 
   <%= render "shared/form/colour_picker", form: f %>
   <%= render "shared/form/icon_picker", form: f %>
-  <%= f.button type: "submit", data: { intent: "primary", radius: "full", size: "sm" } do %><%= submit %><% end %>
+
+  <%= f.button type: "submit", data: { intent: "primary", radius: "full", size: "sm" } do %>
+    <%= submit %>
+  <% end %>
 <% end %>
-
-

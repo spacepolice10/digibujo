@@ -114,7 +114,7 @@ module Bullets
       assert_match %(turbo-stream action="update" target="toasts"), response.body
       assert_match "Bullet scheduled for #{target.strftime('%B %-d')}", response.body
       assert_match %(turbo-stream action="remove" targets="#bullet_#{card.id}"), response.body
-      assert_no_match 'timeline_section_today', response.body
+      assert_no_match 'timeline_section_current_date', response.body
     end
 
     test 'create turbo stream brings a future bullet back onto today' do
@@ -125,7 +125,7 @@ module Bullets
            headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
 
       assert_response :success
-      assert_match %(turbo-stream action="append" target="timeline_section_today"), response.body
+      assert_match %(turbo-stream action="append" target="timeline_section_current_date"), response.body
     end
 
     test 'create returns unprocessable entity for invalid pops_on' do

@@ -19,15 +19,20 @@ module Archivable
     archive.present?
   end
 
-  def archives_on
-    archive&.created_at&.to_date
-  end
-
   def archive!
+    return if archived?
+
     create_archive!(user: user)
+    forget_search_selections! if respond_to?(:forget_search_selections!)
   end
 
   def unarchive!
-    archive&.destroy!
+    return unless archived?
+
+    archive.destroy!
+  end
+
+  def archives_on
+    archive&.created_at&.to_date
   end
 end

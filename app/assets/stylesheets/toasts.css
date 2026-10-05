@@ -17,7 +17,7 @@
     width: 100%;
     text-align: center;
     padding: var(--space-v) var(--space-h-2);
-    border-radius: var(--radius-strong);
+    border-radius: var(--radius-base);
     animation:
       toasts--shaking 0.1s ease-in-out,
       toasts--fade-away 0.1s ease-in-out 3s;

@@ -23,7 +23,7 @@ Lexxy.configure({
     attachments: false,
     toolbar: false,
     multiLine: false,
-    richText: false,
+    richText: true,
     markdown: true,
   },
 });

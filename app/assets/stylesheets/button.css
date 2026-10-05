@@ -1,4 +1,4 @@
-@layer components {
+@layer base {
   :is(button, a)[data-intent], [role="button"] {
     display: flex;
     align-items: center;

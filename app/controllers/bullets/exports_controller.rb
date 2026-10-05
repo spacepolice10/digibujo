@@ -8,7 +8,7 @@ module Bullets
     before_action :set_timeline
 
     def show
-      @bullets = @timeline.bullets.by_day.preload(file_attachment: :blob, rich_text_body: { embeds_attachments: :blob })
+      @bullets = @timeline.filtered.by_date.preload(:rich_text_body, file_attachment: :blob)
 
       download_export_html(
         template: 'bullets/exports/show',
@@ -19,7 +19,7 @@ module Bullets
     private
 
     def export_filename
-      slug = @filter.label.parameterize
+      slug = @filter.name.parameterize
       "dotted-#{slug}-export-#{Date.current.iso8601}.html"
     end
   end

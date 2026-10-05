@@ -7,11 +7,15 @@ module Searchable
     after_create_commit :create_in_search_index
     after_update_commit :update_in_search_index
     after_destroy_commit :remove_from_search_index
-    before_destroy :forget_search_selections!
   end
 
   def reindex
     update_in_search_index
+  end
+
+  def destroy
+    forget_search_selections!
+    super
   end
 
   def forget_search_selections!

@@ -58,16 +58,18 @@ module Bullets
       assert_no_match 'beta', response.body
     end
 
-    test 'new renders paginated collections list' do
+    test 'new renders collections list without pagination' do
       create_collection!(@user, name: 'Ideas')
       card = create_bullet!(@user, body: 'Move me')
 
       get new_collect_path, params: { bullet_ids: card.id.to_s }
 
-      assert_select '#paginated-collects-collections[data-controller="pagination"]'
+      assert_select '#collects-collections-list'
+      assert_select '#paginated-collects-collections', count: 0
+      assert_select '[data-controller="pagination"]', count: 0
     end
 
-    test 'new turbo stream replaces list containers for live search' do
+    test 'new turbo stream replaces list container for live search' do
       create_collection!(@user, name: 'alpha')
       create_collection!(@user, name: 'beta')
       card = create_bullet!(@user, body: 'Move me')
@@ -77,9 +79,32 @@ module Bullets
           headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
 
       assert_response :success
-      assert_match %(turbo-stream action="replace" target="paginated-collects-collections"), response.body
+      assert_match %(turbo-stream action="replace" target="collects-collections-list"), response.body
       assert_match 'alpha', response.body
       assert_no_match 'beta', response.body
+    end
+
+    test 'new returns at most 10 collections' do
+      11.times { |i| create_collection!(@user, name: format('Collection %02d', i)) }
+      card = create_bullet!(@user, body: 'Move me')
+
+      get new_collect_path, params: { bullet_ids: card.id.to_s }
+
+      assert_response :success
+      assert_select '#collects-collections-list button.picker--item', count: 10
+    end
+
+    test 'new collection rows omit bullet count and date' do
+      collection = create_collection!(@user, name: 'Ideas')
+      card = create_bullet!(@user, body: 'Counted')
+      card.collect!(collection_id: collection.id)
+
+      get new_collect_path, params: { bullet_ids: card.id.to_s }
+
+      assert_response :success
+      assert_match collection.name, response.body
+      assert_no_match(/\d+\s+bullets?/, response.body)
+      assert_no_match collection.created_at.strftime('%b %d'), response.body
     end
 
     test 'picker heading links to full page create collection with bullet context' do
@@ -90,6 +115,20 @@ module Bullets
       assert_select 'a[href=?][data-turbo-frame=?]',
                     new_collection_path(bullet_ids: card.id.to_s, return_to: bullets_path),
                     '_top',
+                    text: 'New collection'
+    end
+
+    test 'new ignores external return_to and falls back to referer' do
+      card = create_bullet!(@user, body: 'Move me')
+
+      get new_collect_path,
+          params: { bullet_ids: card.id.to_s, return_to: 'https://evil.example/phish' },
+          headers: { 'HTTP_REFERER' => search_path }
+
+      assert_response :success
+      assert_no_match 'evil.example', response.body
+      assert_select 'a[href=?]',
+                    new_collection_path(bullet_ids: card.id.to_s, return_to: search_path),
                     text: 'New collection'
     end
 

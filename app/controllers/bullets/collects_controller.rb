@@ -2,16 +2,18 @@
 
 module Bullets
   class CollectsController < ApplicationController
-    include PrepareBullets
+    include PrepareBullets, ReturnToPath
 
     before_action :prepare_bullets
-    before_action :set_return_to, only: :new
+    return_to_from :param, :referer, only: :new
 
     def new
       @collects_q = params[:q].to_s.strip.presence
-      @collections, @collections_page = collectables_page(
-        Current.user.collections.active.matching_name(params[:q]).order(:name)
-      )
+      @collections = Current.user.collections
+        .active
+        .matching_name(params[:q])
+        .order(:name)
+        .limit(10)
 
       respond_to do |format|
         format.html
@@ -32,37 +34,7 @@ module Bullets
         format.html { redirect_back fallback_location: bullets_path }
       end
     rescue ActiveRecord::RecordInvalid => e
-      @failed_bullet = e.record
-      respond_to do |format|
-        format.turbo_stream { render :create, status: :unprocessable_entity }
-        format.html do
-          redirect_back fallback_location: bullets_path,
-                        alert: e.record.errors.full_messages.to_sentence
-        end
-      end
-    end
-
-    private
-
-    def set_return_to
-      @return_to = permitted_return_to(params[:return_to]) || permitted_return_to(request.referer)
-    end
-
-    def collectables_page(scope)
-      page = GearedPagination::Recordset.new(scope, per_page: [8, 16, 24])
-                    .page(params[:collections_page])
-      [page.records, page]
-    end
-
-    def permitted_return_to(url)
-      return if url.blank?
-
-      uri = URI.parse(url.to_s)
-      return if uri.host.present? && uri.host != request.host
-
-      [uri.path, uri.query].compact.join('?').presence
-    rescue URI::InvalidURIError
-      nil
+      respond_with_failed_bullet(e)
     end
   end
 end

@@ -8,16 +8,13 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     sign_in_as @user
   end
 
-  test 'create records collection created activity' do
-    assert_difference -> { Activity.count }, 1 do
+  test 'create saves the collection and redirects to its daylog' do
+    assert_difference -> { Collection.count }, 1 do
       post collections_path, params: {
         collection: { name: 'Inbox', colour: 'teal', icon: 'folder', description: 'Things to sort' }
       }
     end
 
-    activity = Activity.order(:created_at).last
-    assert_equal 'created', activity.action
-    assert_equal 'Collection', activity.subject_type
     assert_equal 'Things to sort', Collection.last.description
     assert_redirected_to bullets_path(collection: Collection.last.name)
   end

@@ -1,21 +1,9 @@
-@property --bulk-menu-band {
-  syntax: "<length>";
-  inherits: true;
-  initial-value: 0px;
-}
-
-@property --bulk-menu-footprint {
-  syntax: "<length>";
-  inherits: true;
-  initial-value: 0px;
-}
-
 @layer components {
   .bulk-menu {
     position: fixed;
     inset-inline: 0;
     bottom: var(--space-v);
-    z-index: 20;
+    z-index: var(--z-toasts);
     anchor-name: --bulk-menu;
     display: flex;
     flex-direction: column;
@@ -24,163 +12,62 @@
     width: 90%;
     max-width: min(100%, calc(var(--space-h-2) * 20));
     margin-inline: auto;
-    padding: var(--space-v) var(--space-h-half);
     background: var(--color-1);
     border: var(--border-subtle);
-    border-radius: var(--radius-strong);
+    border-radius: var(--radius-base);
     box-shadow: var(--shadow-base);
-    transition:
-      opacity 0.12s ease,
-      translate 0.12s ease;
-
-    /* Rises from below the screen by the same distance the page gives up,
-       so the two edges stay locked for the whole transition. */
-    body[data-platform="mobile"] & {
-      animation: none;
-      transition: none;
-      translate: 0 calc(var(--bulk-menu-footprint) - var(--bulk-menu-band));
-    }
+    transition: opacity 0.12s ease;
 
     &[hidden] {
       opacity: 0;
       pointer-events: none;
-      translate: 0 var(--space-v);
     }
 
-    @container layout (width >= 600px) {
+    @container layout (width >=600px) {
       width: fit-content;
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+
+  .bulk-menu--header> :is(button, .button) {
+    flex: 0 0 auto;
+    width: fit-content;
   }
 
   .bulk-menu--actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
     gap: var(--space-h-half);
+    padding: var(--space-v-half) var(--space-h-half);
   }
 
-  .bulk-menu--actions > form,
-  .bulk-menu--action-dock {
-    flex: 1 1 calc(var(--space-h-2) * 4);
-  }
-
-  .bulk-menu--actions > form .button,
-  .bulk-menu--action-dock > .button {
-    width: 100%;
-    padding-inline: var(--space-h);
-  }
-
-  [data-controller~="bulk-menu"]:has(.bulk-menu:not([hidden]))
-    [data-bulk-menu-target~="list"] {
-    scroll-padding-block-end: var(--bulk-menu-clearance, var(--space-v));
-  }
-
-  [data-controller~="bulk-menu"]:has(.bulk-menu:not([hidden]))
-    [data-bulk-menu-target~="list"]::after {
-    transition: height 0.12s ease;
-    display: block;
-    height: var(--bulk-menu-clearance, var(--space-v));
-    content: "";
-  }
-
-  /* One length drives the whole gesture: the menu translate, the page
-     height, and the bottom chrome all read --bulk-menu-band. */
-  body[data-platform="mobile"] {
-    transition: --bulk-menu-band var(--tabbar-motion);
-  }
-
-  body[data-platform="mobile"] > main.chat--window {
-    height: calc(100% - var(--bulk-menu-band));
-    max-height: calc(100dvh - var(--bulk-menu-band));
-    min-height: 0;
-  }
-
-  body[data-platform="mobile"]:has(.bulk-menu:not([hidden])) {
-    --bulk-menu-progress: calc(
-      var(--bulk-menu-band) / max(var(--bulk-menu-footprint), 1px)
-    );
-    --tabbar-clearance: calc(
-      (var(--tabbar-offset) + var(--tabbar-safe-area) + var(--tabbar-size))
-      * (1 - var(--bulk-menu-progress))
-    );
-  }
-
-  body[data-platform="mobile"]:has(.bulk-menu:not([hidden])) > main:not(.chat--window) {
-    height: calc(100dvh - var(--bulk-menu-band));
-    max-height: calc(100dvh - var(--bulk-menu-band));
-    min-height: 0;
-    overflow: auto;
-  }
-
-  body[data-platform="mobile"]:has(.bulk-menu:not([hidden])) .chat--composer,
-  body[data-platform="mobile"]:has(.bulk-menu:not([hidden])) .chat--window > br {
-    min-height: 0;
-    overflow-y: hidden;
-  }
-
-  body[data-platform="mobile"]:has(.bulk-menu:not([hidden])) .chat--composer {
-    box-sizing: border-box;
-    height: calc(var(--composer-rest, 0px) * (1 - var(--bulk-menu-progress)));
-    padding-block: calc(var(--space-v-half) * (1 - var(--bulk-menu-progress)));
-    pointer-events: none;
-  }
-
-  body[data-platform="mobile"]:has(.bulk-menu:not([hidden])) .chat--window > br {
-    display: block;
-    height: calc(var(--composer-gap, 0px) * (1 - var(--bulk-menu-progress)));
-  }
-
-  body[data-platform="mobile"]:has(.bulk-menu:not([hidden])) .tabbar--navigation {
-    transform-origin: center bottom;
-    transform: translate(-50%, calc(var(--bulk-menu-band) * -1))
-      scaleY(calc(1 - var(--bulk-menu-progress)));
-    transition: none;
-    pointer-events: none;
-  }
-
-  body[data-platform="mobile"]:has(.bulk-menu:not([hidden]))
-    [data-bulk-menu-target~="list"] {
-    scroll-padding-block-end: 0;
-  }
-
-  body[data-platform="mobile"]:has(.bulk-menu:not([hidden]))
-    [data-bulk-menu-target~="list"]::after {
-    height: 0;
-    content: none;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    body[data-platform="mobile"],
-    body[data-platform="mobile"] > main,
-    body[data-platform="mobile"] .chat--composer,
-    body[data-platform="mobile"] .chat--window > br,
-    body[data-platform="mobile"] .bulk-menu {
-      transition: none;
-      animation: none;
-    }
-  }
 
   .bulk-menu--action-dock {
     position: relative;
   }
 
-  @media (pointer: coarse) {
-    .bulk-menu--actions > form .button,
-    .bulk-menu--action-dock > .button {
-      min-height: calc(var(--coarse-target) - var(--space-v-half));
-    }
-  }
+  .bulk-menu--action-button {
+    padding: var(--space-v-half) var(--space-h-half);
+    width: 100%;
+    height: var(--space-v-3);
+    min-height: var(--space-v-3);
+    padding-inline: var(--space-h);
+    gap: var(--space-h-half);
+    font-size: var(--font-size-xs);
 
-  .bulk-menu--hide {
-    position: absolute;
-    right: var(--space-v-half);
-    top: var(--space-v-half);
+    svg {
+      width: 1em;
+      height: 1em;
+    }
   }
 
   .bulk-menu--amount {
     width: 100%;
     margin: 0;
-    padding-top: var(--space-v-half);
     font-weight: 400;
     color: var(--color-invert-4);
     text-align: center;
@@ -197,22 +84,16 @@
       flip-inline,
       flip-block flip-inline;
     min-width: calc(var(--space-h-2) * 9);
-    max-width: min(
-      calc(var(--space-h-2) * 12),
-      calc(100dvw - (2 * var(--space-h)))
-    );
-    max-height: min(
-      calc(var(--space-h-2) * 14),
-      calc(100dvh - (2 * var(--space-h)))
-    );
+    max-width: min(calc(var(--space-h-2) * 12),
+        calc(100dvw - (2 * var(--space-h))));
+    max-height: min(calc(var(--space-h-2) * 14),
+        calc(100dvh - (2 * var(--space-h))));
   }
 
   [popover].bulk-menu--picker--collects {
     min-width: calc(var(--space-h-2) * 12);
-    max-width: min(
-      calc(var(--space-h-2) * 14),
-      calc(100dvw - (2 * var(--space-h)))
-    );
+    max-width: min(calc(var(--space-h-2) * 14),
+        calc(100dvw - (2 * var(--space-h))));
   }
 
   .bulk-menu--picker .dropdown--element-body {
@@ -263,7 +144,7 @@
     }
   }
 
-  .bulk-menu--picker-date:has(input:checked) > form {
+  .bulk-menu--picker-date:has(input:checked)>form {
     display: flex;
     flex-wrap: wrap;
     align-items: center;

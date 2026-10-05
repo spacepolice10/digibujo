@@ -8,12 +8,13 @@ class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
   has_many :auth_codes, dependent: :destroy
   has_many :access_codes, dependent: :destroy
-  has_many :hooks, dependent: :destroy
+  has_many :webhooks, dependent: :destroy
   has_many :bullets, dependent: :destroy
   has_many :activities, dependent: :destroy
   has_many :collections, dependent: :destroy
   has_many :published_entities, dependent: :destroy
   has_many :search_selections, class_name: 'Search::Selection', dependent: :destroy
+
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
   validates :email_address, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
@@ -24,9 +25,5 @@ class User < ApplicationRecord
 
   def name
     email_address.split('@').first
-  end
-
-  def timeline
-    Timeline.new(self)
   end
 end

@@ -13,6 +13,7 @@
     &[data-colour="vermillion"] { --highlight-colour: var(--model-color-6); }
     &[data-colour="magenta"] { --highlight-colour: var(--model-color-7); }
     &[data-colour="inks"] { --highlight-colour: var(--model-color-8); }
+    &[data-colour="mint"] { --highlight-colour: var(--model-color-9); }
 
     &:before {
       content: "";

@@ -7,8 +7,8 @@ export default class extends Controller {
     if (CSS.supports("appearance", "base-select")) return
 
     this.element.dataset.fallback = "true"
-    this.triggerTarget.querySelectorAll("option[data-fallback-label]").forEach((option) => {
-      option.textContent = option.dataset.fallbackLabel
+    this.triggerTarget.querySelectorAll("option[data-fallback-name]").forEach((option) => {
+      option.textContent = option.dataset.fallbackName
     })
     this.sync()
   }

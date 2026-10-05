@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 class CollectionsController < ApplicationController
-  include PrepareBullets
+  include PrepareBullets, ReturnToPath
+
   before_action :set_collection, only: %i[edit update destroy]
   before_action :prepare_collect_context, only: %i[new create]
+  return_to_from :param, only: %i[new create]
 
   def new
     @collection = Current.user.collections.build
@@ -13,8 +15,6 @@ class CollectionsController < ApplicationController
     @collection = Current.user.collections.build(collection_params)
 
     if @collection.save
-      @collection.record_activity!('created', metadata: { 'name' => @collection.name })
-
       if @bullet_ids.present?
         collect_bullets_into_collection!
         respond_to do |format|
@@ -64,10 +64,9 @@ class CollectionsController < ApplicationController
 
   def prepare_collect_context
     @bullet_ids = params[:bullet_ids].to_s.presence
-    @return_to = permitted_return_to(params[:return_to])
     return if @bullet_ids.blank?
 
-    @bullets = bullets_from_param(@bullet_ids)
+    @bullets = prepare_bullets_from(@bullet_ids)
   end
 
   def collect_bullets_into_collection!
@@ -79,16 +78,5 @@ class CollectionsController < ApplicationController
 
   def collect_return_path
     @return_to.presence || bullets_path(collection: @collection.name)
-  end
-
-  def permitted_return_to(url)
-    return if url.blank?
-
-    uri = URI.parse(url.to_s)
-    return if uri.host.present? && uri.host != request.host
-
-    [uri.path, uri.query].compact.join('?').presence
-  rescue URI::InvalidURIError
-    nil
   end
 end

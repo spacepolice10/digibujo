@@ -61,7 +61,7 @@
       padding-inline: var(--space-h);
       padding-block-end: calc(var(--tabbar-clearance) + var(--space-h-2) + var(--space-v-2));
 
-      &>h1 {
+      & h1 {
         flex-shrink: 0;
         font-family: var(--font-family-sans);
         font-size: var(--font-size-2xl);
@@ -70,10 +70,10 @@
       }
 
       /* Keep titles pinned & center the rest in the leftover space */
-      &:has(>h1) {
+      &:has(h1) {
         justify-content: flex-start;
 
-        &>h1+* {
+        &>:first-child+* {
           margin-block-start: auto;
         }
 
@@ -93,6 +93,13 @@
       &[data-size="lg"] {
         max-width: 1280px;
       }
+    }
+
+    & header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-v-half) var(--space-h-half);
     }
 
     &>footer {
@@ -118,6 +125,8 @@
       align-items: center;
       border-bottom: var(--border-subtle);
       width: 100%;
+      padding-inline: var(--space-h-half);
+      padding-block: var(--space-v-half);
 
       &>nav {
         display: flex;
@@ -130,6 +139,8 @@
     >main {
       flex: 1 1 0;
       width: 100%;
+      padding-inline: var(--space-h-half);
+      padding-block: var(--space-v-half);
     }
 
     /* Lists sit on article or inside its main.

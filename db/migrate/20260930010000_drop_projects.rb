@@ -4,10 +4,7 @@ class DropProjects < ActiveRecord::Migration[8.1]
   PROJECT_CONTENT_TYPE = 'application/vnd.actiontext.mention.project'
 
   def up
-    execute <<~SQL.squish
-      DELETE FROM search_records_fts
-      WHERE rowid IN (SELECT id FROM search_records WHERE searchable_type = 'Project')
-    SQL
+    # FTS stays in sync via search_records triggers (external-content FTS5).
     execute "DELETE FROM search_records WHERE searchable_type = 'Project'"
     execute "DELETE FROM search_selections WHERE searchable_type = 'Project'"
     execute <<~SQL.squish

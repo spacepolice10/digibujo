@@ -1,7 +1,0 @@
-
-<% publishable = published_entity.publishable %>
-
-  <%= link_to polymorphic_path(publishable), class: "bucket--section-list-item", data: { turbo_frame: "_top" } do %>
-    <%= icon(publishable.icon, style: "color: #{colour(publishable.colour)};", class: "bucket--section-list-item-icon") %>
-  <span class="utilities--line-clamp-1"><%= publishable.name %></span>
-<% end %>

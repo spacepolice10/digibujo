@@ -1,8 +1,14 @@
 <!DOCTYPE html>
+
 <html>
   <head>
     <title><%= content_for(:title) || "Dotted" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
+
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content"
+    >
+
     <meta name="application-name" content="Dotted">
 
     <link rel="icon" href="/icon.png" type="image/png">
@@ -11,21 +17,14 @@
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
   </head>
 
-  <body class="public--body">
-    <div class="public-layout">
-      <aside class="public-side">
-        <%= link_to root_path, class: "public-brand" do %>
-          <%= image_tag "/icon.svg", alt: "Dotted", class: "public-logo" %>
-          <span class="public-application-name">Dotted</span>
-        <% end %>
-        <div class="public-register">
-          <p>Capture ideas without friction.</p>
-          <%= link_to "Create your own", new_authentication_path, data: { intent: "primary", radius: "full", size: "sm" } %>
-        </div>
-      </aside>
-      <main class="public-main">
-        <%= yield %>
-      </main>
-    </div>
+  <body>
+    <main>
+      <header>
+        <h1><%= content_for(:title) || "Dotted" %></h1>
+      </header>
+
+      <%= yield %>
+
+    </main>
   </body>
 </html>

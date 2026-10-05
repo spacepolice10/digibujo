@@ -10,20 +10,28 @@ module Bullets
       Bullet.transaction do
         @bullets.lock.find_each(&:publish!)
       end
+      @bullets.each(&:reload)
+
       respond_to do |format|
         format.turbo_stream
-        format.html { redirect_to published_path(@bullets.first.reload.public_code) }
+        format.html { redirect_to published_path(@bullets.first.public_code) }
       end
+    rescue ActiveRecord::RecordInvalid => e
+      respond_with_failed_bullet(e)
     end
 
     def destroy
       Bullet.transaction do
         @bullets.lock.find_each(&:unpublish!)
       end
+      @bullets.each(&:reload)
+
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to root_path }
       end
+    rescue ActiveRecord::RecordInvalid => e
+      respond_with_failed_bullet(e)
     end
   end
 end

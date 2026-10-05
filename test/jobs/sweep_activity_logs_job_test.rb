@@ -9,7 +9,10 @@ class SweepActivityLogsJobTest < ActiveJob::TestCase
   end
 
   test 'perform sweeps expired activities' do
-    stale = @bullet.record_activity!('updated')
+    stale = @bullet.record_activity!(
+      'rescheduled',
+      metadata: { 'from_pops_on' => Date.current.iso8601, 'to_pops_on' => (Date.current + 1).iso8601 }
+    )
     stale.update_column(:created_at, (Activity::RETENTION_DAYS + 1).days.ago)
 
     assert_difference -> { Activity.count }, -1 do

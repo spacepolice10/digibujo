@@ -1,28 +1,19 @@
 <% content_for(:title, "Access codes") %>
 
-<main data-size="md">
-  <article data-elevation="1">
-    <header>
-      <nav>
-      <%= back_link_to user_path,
-            data: { intent: "secondary", radius: "full", size: "sm", content: "icon", turbo_frame: "_top" },
-            aria: { label: "Back to Account" } do %>
-        <%= icon("arrow-left") %>
-      <% end %>
-      <h2>Access codes</h2>
-      </nav>
-    </header>
+<%= render "shared/back_tabbar" %>
 
-    <main>
-    <p>
-      Long-lived codes for CLI and integrations. Create them via the API; revoke any code you no longer trust here.
-    </p>
+<main data-size="sm">
+  <h1>Access codes</h1>
 
-    <% if @access_codes.any? %>
-      <section id="access_codes" class="access-code--list">
-        <%= render partial: "access_codes/access_code", collection: @access_codes, as: :access_code %>
-      </section>
-      <% end %>
-    </main>
-  </article>
+  <p>
+    Long-lived codes for CLI and integrations. Create them via the API; revoke
+    any code you no longer trust here.
+  </p>
+
+
+  <% if @access_codes.any? %>
+    <section id="access_codes" class="access-code--list">
+      <%= render partial: "access_codes/access_code", collection: @access_codes, as: :access_code %>
+    </section>
+  <% end %>
 </main>

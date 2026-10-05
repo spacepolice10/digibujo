@@ -1,20 +1,17 @@
 # frozen_string_literal: true
 
 class CleanSoftDeletedRecordsJob < ApplicationJob
+  UNATTACHED_BLOB_RETENTION = 2.days
+
   def perform
     Bullet.expired_archived.destroy_all
-    destroy_expired_archived_collections
+    Collection.expired_archived.destroy_all
+    purge_unattached_blobs
   end
 
   private
 
-  def destroy_expired_archived_collections
-    Collection.expired_archived.find_each do |collection|
-      collection.record_activity!(
-        'destroyed',
-        metadata: { 'name' => collection.name, 'colour' => collection.colour }
-      )
-      collection.destroy!
-    end
+  def purge_unattached_blobs
+    ActiveStorage::Blob.unattached.where(created_at: ..UNATTACHED_BLOB_RETENTION.ago).find_each(&:purge_later)
   end
 end

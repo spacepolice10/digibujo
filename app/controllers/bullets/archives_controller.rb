@@ -10,38 +10,28 @@ module Bullets
       Bullet.transaction do
         @bullets.lock.find_each(&:archive!)
       end
+      @bullets.each(&:reload)
+
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_back fallback_location: bullets_path }
       end
     rescue ActiveRecord::RecordInvalid => e
-      @failed_bullet = e.record
-      respond_to do |format|
-        format.turbo_stream { render :create, status: :unprocessable_entity }
-        format.html do
-          redirect_back fallback_location: bullets_path,
-                        alert: e.record.errors.full_messages.to_sentence
-        end
-      end
+      respond_with_failed_bullet(e)
     end
 
     def destroy
       Bullet.transaction do
         @bullets.lock.find_each(&:unarchive!)
       end
+      @bullets.each(&:reload)
+
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_back fallback_location: bullets_path }
       end
     rescue ActiveRecord::RecordInvalid => e
-      @failed_bullet = e.record
-      respond_to do |format|
-        format.turbo_stream { render :destroy, status: :unprocessable_entity }
-        format.html do
-          redirect_back fallback_location: bullets_path,
-                        alert: e.record.errors.full_messages.to_sentence
-        end
-      end
+      respond_with_failed_bullet(e)
     end
   end
 end

@@ -10,8 +10,7 @@
     display: none;
   }
 
-  .timeline--section > .pill,
-  .timeline--upcoming-link { align-self: center; }
+  .timeline--section > .pill { align-self: center; }
 
 
 }

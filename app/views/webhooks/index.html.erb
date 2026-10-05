@@ -1,0 +1,39 @@
+<% content_for(:title, "Webhooks") %>
+
+<%= render "shared/back_tabbar" %>
+
+<main id="webhooks-wrap" data-size="sm">
+  <h1>Webhooks</h1>
+
+  <p>
+    Give an external app a URL. When it posts, Dotted drops a bullet into your
+    daylog.
+  </p>
+
+  <% if @created_webhook_code.present? %>
+    <section class="webhook--created" role="status">
+      <header>
+        <span aria-hidden="true">
+          <span role="img" aria-label="Lightning">⚡️</span>
+        </span>
+
+        <strong>Webhook is ready</strong>
+      </header>
+
+      <p>Copy this URL now. You won’t see it again.</p>
+      <code class="webhook--created-link"><%= webhook_intake_url(@created_webhook_code) %></code>
+    </section>
+  <% end %>
+
+  <% if @webhooks.any? %>
+    <section id="webhooks" class="webhook--list">
+      <%= render partial: "webhooks/webhook", collection: @webhooks, as: :webhook %>
+    </section>
+  <% end %>
+
+  <%= link_to new_webhook_path,
+      data: { intent: "primary", radius: "full", size: "lg" },
+      aria: { label: "Create Webhook" }, class: "utilities--mx-auto" do %>
+    <%= icon("plus") %> New webhook
+  <% end %>
+</main>

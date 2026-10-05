@@ -10,6 +10,7 @@ lexxy-editor {
     flex-grow: 1;
     height: fit-content;
     font-size: var(--font-size-base-type);
+    background: var(--color-1);
     border: 1px solid transparent;
     border-radius: var(--radius-base);
     box-sizing: border-box;
@@ -37,10 +38,21 @@ lexxy-editor {
 }
 
 @keyframes composer-focus-bounce {
-    0%   { scale: 1; }
-    40%  { scale: 1.012; }
-    70%  { scale: 0.997; }
-    100% { scale: 1; }
+    0% {
+        scale: 1;
+    }
+
+    40% {
+        scale: 1.012;
+    }
+
+    70% {
+        scale: 0.980;
+    }
+
+    100% {
+        scale: 1;
+    }
 }
 
 /* Composer styling */
@@ -66,19 +78,7 @@ lexxy-editor {
         }
     }
 
-    body[data-platform="mobile"]:not(:has(.bulk-menu:not([hidden]))) :is(
-        .composer--dock:has(
-            [data-composer-editor-target~="editor"] .lexxy-editor__content:focus
-        )
-    ) {
-        margin-block-end: var(--space-v);
-        transition: none;
-        animation: composer-dock-lower var(--tabbar-motion);
-    }
 
-    body[data-platform="desktop"] .composer--dock {
-        transition: none;
-    }
 
     /* The margin change is instant (layout only runs once); the dock glides
        from where it was via transform, in step with the tabbar sliding away. */
@@ -93,14 +93,8 @@ lexxy-editor {
         gap: var(--space-v-half);
         align-items: center;
         justify-content: space-between;
-        min-block-size: calc(
-            max(var(--space-h-2), var(--space-v-3))
-            + var(--space-v)
-            + 1px
-        );
+        min-block-size: calc(max(var(--space-h-2), var(--space-v-3)) + var(--space-v) + 1px);
     }
-
-    .composer--field { display: contents; }
 
     .composer--control {
         display: grid;
@@ -131,8 +125,8 @@ lexxy-editor {
         }
     }
 
-    .composer[data-composer-filled-value="true"] .composer--attach,
-    .composer:not([data-composer-filled-value="true"]) .composer--submit-button {
+    .composer:has(lexxy-editor:not(.lexxy-editor--empty)) .composer--attach,
+    .composer:has(lexxy-editor.lexxy-editor--empty) .composer--submit-button {
         width: 0;
         opacity: 0;
         scale: 0.5;
@@ -151,17 +145,12 @@ lexxy-editor {
         }
     }
 
-    .composer[data-composer-filled-value="true"] .composer--attach {
+    .composer:has(lexxy-editor:not(.lexxy-editor--empty)) .composer--attach {
         margin-inline-end: calc(var(--space-v-half) * -1);
     }
 
-    .composer:not([data-composer-filled-value="true"]) .composer--submit-button {
+    .composer:has(lexxy-editor.lexxy-editor--empty) .composer--submit-button {
         margin-inline-start: calc(var(--space-v-half) * -1);
-    }
-
-    .composer[data-composer-locked-value="true"] lexxy-editor {
-        opacity: 0.5;
-        pointer-events: none;
     }
 
     @media (pointer: coarse) {
@@ -185,13 +174,22 @@ lexxy-editor {
     }
 
     @media (prefers-reduced-motion: reduce) {
+
         .composer--control,
-        .composer--control .icon-wrap { transition: none !important; }
-        .composer--dock { animation: none !important; }
+        .composer--control .icon-wrap {
+            transition: none !important;
+        }
+
+        .composer--dock {
+            animation: none !important;
+        }
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
+
     lexxy-editor:focus-within,
-    .bullet:has(input:checked) .bullet--body { animation: none; }
+    .bullet:has(input:checked) .bullet--body {
+        animation: none;
+    }
 }

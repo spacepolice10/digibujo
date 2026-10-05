@@ -61,8 +61,13 @@ module DomAssertions
     assert_select "nav a[href=?][aria-label=?]", path, label, **options
   end
 
-  def assert_tabbar_link(path, label:)
-    assert_select "nav.tabbar--navigation a[href=?][aria-label=?]", path, label
+  def assert_tabbar_link(path, label:, active: false)
+    if active
+      assert_select "nav.tabbar--navigation span.tabbar--item-active[aria-label=?][aria-current=page]", label
+      assert_select "nav.tabbar--navigation a[href=?]", path, count: 0
+    else
+      assert_select "nav.tabbar--navigation a.tabbar--item[href=?][aria-label=?]", path, label
+    end
   end
 end
 

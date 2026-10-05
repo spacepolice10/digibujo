@@ -13,17 +13,6 @@ module Bullet::Searchable
   end
 
   def search_body
-    [
-      searchable_body,
-      filename,
-      *collections.map(&:name)
-    ].compact.join(' ')
-  end
-
-  private
-
-  def searchable_body
-    value = body
-    value.respond_to?(:to_plain_text) ? value.to_plain_text.to_s : value.to_s
+    [body_as_text, filename].compact.join(' ')
   end
 end

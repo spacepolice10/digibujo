@@ -1,9 +1,9 @@
-<% content_for(:title) { "#{@filter.label} export (#{@bullets.size} #{"bullet".pluralize(@bullets.size)})" } %>
+<% content_for(:title) { "#{@filter.name} export (#{@bullets.size} #{"bullet".pluralize(@bullets.size)})" } %>
 
 <header class="export--header">
   <div data-intent="secondary" data-radius="base" data-size="sm">
     <%= icon("folder") %>
-    <%= @filter.label %> export
+    <%= @filter.name %> export
   </div>
   <p class="export--meta">
     <%= @bullets.size %> <%= "bullet".pluralize(@bullets.size) %> · exported <%= Time.current.strftime("%-d %b %Y") %>

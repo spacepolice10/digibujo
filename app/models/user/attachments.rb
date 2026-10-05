@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class User
-  # Resolves Active Storage files through ownership chains rooted at a user.
+  # Resolves Active Storage files attached directly to the user's bullets.
   class Attachments
     def initialize(user)
       @user = user
@@ -9,7 +9,7 @@ class User
 
     def attachments
       ActiveStorage::Attachment
-        .where(rich_text_condition.or(file_condition))
+        .where(record_type: 'Bullet', name: 'file', record_id: user.bullets.select(:id))
         .includes(:blob)
         .order(created_at: :desc)
     end
@@ -26,25 +26,5 @@ class User
     private
 
     attr_reader :user
-
-    def attachment_table = ActiveStorage::Attachment.arel_table
-
-    def rich_text_condition
-      attachment_table[:record_type].eq('ActionText::RichText')
-                                    .and(attachment_table[:record_id].in(rich_text_ids.arel))
-    end
-
-    def file_condition
-      attachment_table[:record_type].eq('Bullet')
-                                    .and(attachment_table[:record_id].in(bullet_ids.arel))
-    end
-
-    def rich_text_ids
-      ActionText::RichText.where(record_type: 'Bullet', record_id: user.bullets.select(:id)).select(:id)
-    end
-
-    def bullet_ids
-      user.bullets.select(:id)
-    end
   end
 end

@@ -4,7 +4,6 @@ class CreateSchema < ActiveRecord::Migration[8.1]
   def change
     create_table :users do |t|
       t.string :email_address, null: false
-      t.boolean :onboarded, default: false, null: false
       t.timestamps
       t.index :email_address, unique: true
     end
@@ -38,7 +37,7 @@ class CreateSchema < ActiveRecord::Migration[8.1]
       t.index :code_digest, unique: true
     end
 
-    create_table :hooks do |t|
+    create_table :webhooks do |t|
       t.references :user, null: false, foreign_key: true
       t.string :name, null: false
       t.string :code_digest, null: false
@@ -134,8 +133,37 @@ class CreateSchema < ActiveRecord::Migration[8.1]
       t.index %i[user_id searchable_type searchable_id], unique: true, name: 'index_search_records_on_user_and_searchable'
     end
 
-    create_virtual_table :search_records_fts, :fts5,
-                         [' search_name', 'search_body', "tokenize='unicode61 remove_diacritics 2'", "prefix='2 3 4 5' "]
+    create_virtual_table :search_records_fts5, :fts5, [
+      'search_name',
+      'search_body',
+      "content='search_records'",
+      "content_rowid='id'",
+      "tokenize='unicode61 remove_diacritics 2'",
+      "prefix='2 3 4 5'"
+    ]
+
+    execute <<~SQL
+      CREATE TRIGGER search_records_ai AFTER INSERT ON search_records BEGIN
+        INSERT INTO search_records_fts5(rowid, search_name, search_body)
+        VALUES (new.id, new.search_name, new.search_body);
+      END;
+    SQL
+
+    execute <<~SQL
+      CREATE TRIGGER search_records_ad AFTER DELETE ON search_records BEGIN
+        INSERT INTO search_records_fts5(search_records_fts5, rowid, search_name, search_body)
+        VALUES ('delete', old.id, old.search_name, old.search_body);
+      END;
+    SQL
+
+    execute <<~SQL
+      CREATE TRIGGER search_records_au AFTER UPDATE ON search_records BEGIN
+        INSERT INTO search_records_fts5(search_records_fts5, rowid, search_name, search_body)
+        VALUES ('delete', old.id, old.search_name, old.search_body);
+        INSERT INTO search_records_fts5(rowid, search_name, search_body)
+        VALUES (new.id, new.search_name, new.search_body);
+      END;
+    SQL
 
     create_table :search_selections do |t|
       t.references :user, null: false, foreign_key: true

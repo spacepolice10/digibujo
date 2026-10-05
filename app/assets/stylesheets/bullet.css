@@ -14,24 +14,26 @@
     font: inherit;
   }
 
-  .bullet--show {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-v);
+  .bullet--pending {
+    opacity: var(--opacity-half);
+    pointer-events: none;
   }
 
-  .bullet--show-published-link,
-  .bullet--show-body {
-    width: 100%;
-    max-width: 640px;
+  .bullet--pending-failed {
+    opacity: var(--opacity-full);
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .bullet--pending-status {
+    color: var(--color-negative);
   }
 
   .bullet {
     display: inline-flex;
-    align-items: flex-start;
+    align-items: center;
     position: relative;
-    gap: 0;
+    gap: var(--space-v);
     width: 100%;
     box-sizing: border-box;
     padding: 0;
@@ -39,7 +41,11 @@
     border-radius: 0;
     background: transparent;
     box-shadow: none;
+    padding-inline: var(--space-h-half);
 
+    @media (any-pointer: coarse) {
+      gap: var(--space-v-half);
+    }
 
     @media (hover: hover) {
       &:hover .bullet--body {
@@ -91,16 +97,12 @@
     gap: var(--space-v-half);
     border: 1px solid transparent;
     border-radius: var(--radius-base);
-    padding-block: 0;
-    padding-inline: 0 var(--space-v-half);
+    padding: var(--space-v-half) var(--space-h-half);
     background: var(--color-1);
     box-shadow: var(--shadow-subtle);
     transition: box-shadow 0.08s ease, background 0.08s ease;
 
-    @media(pointer: fine) {
-      background: transparent;
-      box-shadow: none;
-    }
+
     & a {
       overflow-wrap: anywhere;
     }
@@ -149,9 +151,17 @@
   }
 
   @keyframes bullet-select-bounce {
-    0%   { transform: translateY(0); }
-    40%  { transform: translateY(-2px); }
-    100% { transform: translateY(0); }
+    0% {
+      transform: translateY(0);
+    }
+
+    40% {
+      transform: translateY(-2px);
+    }
+
+    100% {
+      transform: translateY(0);
+    }
   }
 
   .bullet:has(input:checked) {
@@ -174,6 +184,11 @@
       background: var(--model-color-2);
       pointer-events: none;
       z-index: var(--z-dropdown);
+
+      @media (any-pointer: coarse) {
+        width: 22%;
+        height: 22%;
+      }
     }
   }
 

@@ -44,4 +44,11 @@
     overflow: scroll;
     height: 100dvh;
   }
+
+  .utilities--padding-x-1 {
+    padding-inline: var(--space-h);
+  }
+  .utilities--padding-y-1 {
+    padding-block: var(--space-v);
+  }
 }

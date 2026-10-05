@@ -10,22 +10,28 @@ module Bullets
       Bullet.transaction do
         @bullets.lock.find_each(&:complete!)
       end
+      @bullets.each(&:reload)
 
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_back fallback_location: bullets_path }
       end
+    rescue ActiveRecord::RecordInvalid => e
+      respond_with_failed_bullet(e)
     end
 
     def destroy
       Bullet.transaction do
         @bullets.lock.find_each(&:uncomplete!)
       end
+      @bullets.each(&:reload)
 
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_back fallback_location: bullets_path }
       end
+    rescue ActiveRecord::RecordInvalid => e
+      respond_with_failed_bullet(e)
     end
   end
 end

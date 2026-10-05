@@ -46,22 +46,22 @@ class Bullet::PageableTest < ActiveSupport::TestCase
     assert_equal bullets.first(2).map(&:id), page.map(&:id)
   end
 
-  test 'last_day_page reads by day before creation time' do
+  test 'last_page reads by day before creation time' do
     late_today = create_bullet!(@user, body: 'Late today', pops_on: Date.current, created_at: 1.minute.ago)
     early_yesterday = create_bullet!(@user, body: 'Early yesterday', pops_on: Date.current - 1, created_at: 1.minute.ago)
     old_created_today = create_bullet!(@user, body: 'Moved to yesterday', pops_on: Date.current - 1, created_at: 2.hours.ago)
 
-    ids = @user.bullets.last_day_page.map(&:id)
+    ids = @user.bullets.last_page.map(&:id)
 
     assert_equal [old_created_today, early_yesterday, late_today].map(&:id), ids
   end
 
-  test 'day_page_before returns bullets from earlier days first' do
+  test 'page_before returns bullets from earlier days first' do
     older = create_bullet!(@user, body: 'Older', pops_on: Date.current - 3)
     newer = create_bullet!(@user, body: 'Newer', pops_on: Date.current - 1)
 
-    assert_equal [older.id], @user.bullets.day_page_before(newer).map(&:id)
-    assert_empty @user.bullets.day_page_before(older)
+    assert_equal [older.id], @user.bullets.page_before(newer).map(&:id)
+    assert_empty @user.bullets.page_before(older)
   end
 
   private

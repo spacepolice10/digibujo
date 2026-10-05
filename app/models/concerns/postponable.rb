@@ -3,7 +3,6 @@
 module Postponable
   extend ActiveSupport::Concern
 
-  # Changes the day a bullet belongs to. Future days surface on the Upcoming screen.
   def postpone!(pops_on:)
     raise ArgumentError, 'pops_on is required' if pops_on.blank?
 

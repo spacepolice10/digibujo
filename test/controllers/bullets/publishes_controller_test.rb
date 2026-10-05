@@ -50,5 +50,30 @@ module Bullets
       assert_match %(turbo-stream action="replace" targets="#bullet_#{@bullet.id}"), response.body
       assert_match 'Bullet unpublished', response.body
     end
+
+    test 'create returns unprocessable entity when publish! is invalid' do
+      Bullet.class_eval do
+        alias_method :__orig_publish!, :publish!
+        def publish!
+          errors.add(:base, 'cannot publish')
+          raise ActiveRecord::RecordInvalid, self
+        end
+      end
+
+      post publish_path,
+           params: { bullet_ids: @bullet.id.to_s },
+           headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
+
+      assert_response :unprocessable_entity
+      assert_equal 'text/vnd.turbo-stream.html', response.media_type
+      assert_match %(turbo-stream action="update" target="toasts"), response.body
+      assert_match 'cannot publish', response.body
+      assert_not @bullet.reload.published?
+    ensure
+      Bullet.class_eval do
+        alias_method :publish!, :__orig_publish!
+        remove_method :__orig_publish!
+      end
+    end
   end
 end

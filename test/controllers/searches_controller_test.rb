@@ -8,12 +8,18 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     sign_in_as @user
   end
 
-  test "show renders the hub" do
+  test "show renders search-navigation inside the section frame" do
     get search_path
 
     assert_response :success
-    assert_select "main > h1", text: "Search"
-    assert_select "ul[data-layout=grid]"
+    assert_select "main.search--window h1", text: "Search"
+    assert_select "turbo-frame#search_section.search--section"
+    assert_select "turbo-frame.search--section article.search--navigation"
+    assert_select "turbo-frame.search--section ul[data-layout=grid]"
+    assert_select "article.search--navigation a[href=?]", bullets_path(from: Date.current + 1), text: "Upcoming"
+    assert_select ".search--dock.chat--composer .search input.search--textform[name=q][type=search]"
+    assert_select ".search--dock .search button.search--cleanup[aria-label=?]", "Clear search"
+    assert_select "button.search--clear-button", count: 0
     assert_select "input#index-query", count: 0
     assert_select "turbo-frame#index_results", count: 0
   end
@@ -28,6 +34,8 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     controller = @controller
     assert_equal "milk", controller.instance_variable_get(:@q)
     assert_includes controller.instance_variable_get(:@entries).map(&:id), matching.id
+    assert_select "turbo-frame#search_section .search--results"
+    assert_select "turbo-frame#search_section article.search--navigation", count: 0
   end
 
   test "show caps query results at ten" do
@@ -55,19 +63,41 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     assert_equal collection, selections.first.searchable
   end
 
+  test "turbo frame with query returns results inside search_section" do
+    matching = create_bullet!(@user, body: "Buy milk today")
+
+    get search_path, params: { q: "milk" }, headers: { "Turbo-Frame" => "search_section" }
+
+    assert_response :success
+    assert_select "turbo-frame#search_section .search--results"
+    assert_select "turbo-frame#search_section ##{dom_id(matching)}"
+    assert_select "turbo-frame#search_section article.search--navigation", count: 0
+  end
+
+  test "turbo frame without query returns search-navigation" do
+    get search_path, headers: { "Turbo-Frame" => "search_section" }
+
+    assert_response :success
+    assert_select "turbo-frame#search_section article.search--navigation"
+    assert_select "turbo-frame#search_section ul#search_collections"
+    assert_select "turbo-frame#search_section .search--results", count: 0
+  end
+
   test "mobile search keeps the three item tabbar" do
     get search_path, headers: { "User-Agent" => "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)" }
 
     assert_response :success
     assert_select "nav.tabbar--back", count: 0
-    assert_select "nav.tabbar--navigation a.tabbar--item", count: 3
-    assert_select "nav.tabbar--navigation a.tabbar--item-active[href=?]", search_path
+    assert_select "nav.tabbar--navigation a.tabbar--item", count: 2
+    assert_select "nav.tabbar--navigation span.tabbar--item-active[aria-current=page]", text: "Search"
+    assert_select "nav.tabbar--navigation a[href=?]", search_path, count: 0
   end
 
   test "desktop search page shows the three item tabbar" do
     get search_path
 
-    assert_select "nav.tabbar--navigation a.tabbar--item", count: 3
-    assert_select "nav.tabbar--navigation a.tabbar--item-active[href=?]", search_path
+    assert_select "nav.tabbar--navigation a.tabbar--item", count: 2
+    assert_select "nav.tabbar--navigation span.tabbar--item-active[aria-current=page]", text: "Search"
+    assert_select "nav.tabbar--navigation a[href=?]", search_path, count: 0
   end
 end

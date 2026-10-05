@@ -1,16 +1,15 @@
-<% content_for(:title, @filter.label) %>
+<% content_for(:title, @filter.name) %>
+
 <% if @filter.empty? %>
   <%= render "shared/tabbar" %>
 <% else %>
   <%= render "shared/back_tabbar" %>
 <% end %>
 
-<main class="chat--window" data-size="md"<%= collection_tint_style(@filter.collection) if @filter.collection %>>
+<main class="chat--window" data-size="md">
   <% if @filter.collection %>
     <header>
-      <nav>
-        <h1><%= @filter.collection.name %></h1>
-      </nav>
+      <h1><%= @filter.collection.name %></h1>
 
       <div class="dropdown--dock">
         <button
@@ -37,14 +36,14 @@
         >
           <nav role="listbox" aria-label="Collection options">
             <%= link_to export_bullets_path(@filter.to_params),
-                class: "dropdown-item picker--item",
-                data: { turbo: false, grid_navigation_target: "item", action: "focus->grid-navigation#syncPosition" } do %>
+                  class: "dropdown-item picker--item",
+                  data: { turbo: false, grid_navigation_target: "item", action: "focus->grid-navigation#syncPosition" } do %>
               <%= icon("file") %> Export
             <% end %>
 
             <%= link_to edit_collection_path(@filter.collection),
-                class: "dropdown-item picker--item",
-                data: { turbo_frame: "_top", grid_navigation_target: "item", action: "focus->grid-navigation#syncPosition" } do %>
+                  class: "dropdown-item picker--item",
+                  data: { turbo_frame: "_top", grid_navigation_target: "item", action: "focus->grid-navigation#syncPosition" } do %>
               <%= icon("pencil") %> Edit
             <% end %>
           </nav>
@@ -67,29 +66,25 @@
       </div>
     <% end %>
 
-    <%= render "sections", bullets: @bullets, timeline: @timeline, ensure_today: @filter.includes_today? %>
-
-    <% if @filter.empty? %>
-      <%= link_to bullets_path(from: Date.current + 1), class: "pill timeline--upcoming-link", data: { turbo_frame: "_top" } do %>
-        <%= icon("calendar") %>
-        Upcoming
-      <% end %>
-    <% end %>
+    <%= render "sections", bullets: @bullets, timeline: @timeline, mount_today: @filter.empty? %>
   </div>
 
   <br>
 
-  <div
-    id="<%= @filter.collection ? dom_id(@filter.collection, :composer) : 'timeline_composer_dock' %>"
-    class="chat--composer composer--dock<%= ' timeline--composer' unless @filter.collection %>"
-    data-controller="chat-composer"
-  >
-    <%= render "bullets/composer_v2",
+  <% if @filter.empty? %>
+    <div
+      id="<%= @filter.collection ? dom_id(@filter.collection, :composer) : 'timeline_composer_dock' %>"
+      class="chat--composer composer--dock<%= ' timeline--composer' unless @filter.collection %>"
+    >
+      <%= render "bullets/composer",
           bullet: Bullet.new,
           collection: @filter.collection,
-          pops_on: @filter.composer_pops_on,
+          pops_on: Date.current,
           preset: "default",
           autofocus: false,
           composer_id: @filter.collection ? dom_id(@filter.collection, :bullets_composer) : nil %>
-  </div>
+    </div>
+  <% end %>
 </main>
+
+<%= render "bullets/bulk_menu" %>

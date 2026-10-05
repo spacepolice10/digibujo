@@ -1,8 +1,0 @@
-<%# locals: (archive:) %>
-<% bullet = archive.archivable %>
-
-  <%= link_to bullet_path(bullet), class: "bucket--section-list-item", data: { turbo_frame: "_top" } do %>
-    <%= icon(bullet.marker_icon.to_s.dasherize,
-          class: "bucket--section-list-item-icon") %>
-    <span><%= bullet.name %></span>
-  <% end %>

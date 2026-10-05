@@ -11,7 +11,7 @@ export default class extends Controller {
   focus(event) {
     if (!this.#shouldIgnore(event)) {
       event.preventDefault();
-      this.element.querySelector("[data-composer-editor-target='editor']")?.focus();
+      this.element.querySelector("[data-composer-target='editor']")?.focus();
     }
   }
 

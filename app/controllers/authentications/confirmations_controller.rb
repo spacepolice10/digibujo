@@ -2,10 +2,6 @@
 
 module Authentications
   class ConfirmationsController < ApplicationController
-    layout 'session'
-
-    before_action { @session_dots = true }
-
     allow_unauthenticated_access
     rate_limit to: 5, within: 3.minutes, only: :create, with: lambda {
       respond_to do |format|
@@ -30,7 +26,6 @@ module Authentications
 
       if user
         create_confirmed_session_of(user)
-        user.update!(onboarded: true) unless user.onboarded?
         redirect_to stashed_authentication_path
       else
         redirect_to new_authentication_confirmation_path, alert: 'Invalid or expired code.'
@@ -46,9 +41,7 @@ module Authentications
 
       if user
         create_confirmed_session_of(user)
-        user.update!(onboarded: true) unless user.onboarded?
         @session_code = create_session_code(Current.session)
-        @onboarded = user.onboarded?
         render :create
       else
         head :unauthorized

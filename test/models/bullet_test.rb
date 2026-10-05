@@ -44,6 +44,20 @@ class BulletTest < ActiveSupport::TestCase
     assert_not @user.bullets.new.valid?
   end
 
+  test 'blank client_id normalizes to nil' do
+    bullet = create_bullet!(@user, body: 'Note', client_id: '')
+
+    assert_nil bullet.client_id
+  end
+
+  test 'client_id must look like a uuid' do
+    bullet = @user.bullets.new(body: 'Note', client_id: 'not-a-uuid')
+
+    assert_not bullet.valid?
+    assert_includes bullet.errors[:client_id], 'is invalid'
+  end
+
+
   test 'a file within the size limit is accepted' do
     bullet = @user.bullets.new
     bullet.file.attach(create_blob!(filename: 'small.bin', content_type: 'application/octet-stream'))
@@ -54,7 +68,7 @@ class BulletTest < ActiveSupport::TestCase
   test 'a file one byte over the limit is rejected' do
     bullet = @user.bullets.new
     bullet.file.attach(create_blob!(filename: 'big.bin', content_type: 'application/octet-stream'))
-    bullet.file.blob.update!(byte_size: Bullet::MAX_ATTACHMENT_BYTES + 1)
+    bullet.file.blob.update!(byte_size: 5.megabytes + 1)
 
     assert_not bullet.valid?
     assert_includes bullet.errors[:file].join, 'too large'
@@ -94,11 +108,12 @@ class BulletTest < ActiveSupport::TestCase
     collection = create_collection!(@user, name: 'Ideas')
     bullet = create_bullet!(@user, body: 'File me')
 
-    assert_includes @user.timeline.bullets, bullet
+    timeline = Timeline.new(@user)
+    assert_includes timeline.filtered, bullet
     bullet.collect!(collection_id: collection.id)
 
     assert_includes bullet.reload.collections, collection
-    assert_includes @user.timeline.bullets, bullet
+    assert_includes timeline.filtered, bullet
   end
 
   test 'collect can attach many collections to one bullet' do
@@ -118,7 +133,7 @@ class BulletTest < ActiveSupport::TestCase
 
     bullet.postpone!(pops_on: Date.current + 2)
 
-    assert_not_includes @user.timeline.bullets, bullet
-    assert_includes @user.timeline.upcoming, bullet
+    assert_not_includes Timeline.new(@user).filtered, bullet
+    assert_includes @user.bullets.active.upcoming, bullet
   end
 end

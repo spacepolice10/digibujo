@@ -64,7 +64,7 @@ class Search::GlobalRequest
   end
 
   def rank(record)
-    ranking = record.attributes['fts_rank'].to_f
+    ranking = record.attributes['fts5_rank'].to_f
     name = record.search_name.to_s.downcase
     body = record.search_body.to_s.downcase
 

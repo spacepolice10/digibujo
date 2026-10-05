@@ -1,14 +1,20 @@
-@layer components {
+@layer base {
 
   /* ── Label ────────────────────────────────────────── */
 
   form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-v-half);
+    border: var(--border-subtle);
+    border-radius: var(--radius-base);
+    background: var(--color-1);
+    padding-bottom: var(--space-v);
 
     &>fieldset,
     &>label {
       padding-block-end: var(--space-v-2);
       padding-inline: var(--space-h-half);
-      border-bottom: var(--border-subtle);
 
     }
 
@@ -35,6 +41,9 @@
       font-size: var(--font-size-xs);
       color: var(--color-invert-4);
       margin-bottom: var(--space-v-half);
+    }
+    & button[type="submit"] {
+      margin-inline: auto;
     }
   }
 

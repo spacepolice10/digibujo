@@ -1,21 +1,12 @@
 <% content_for(:title) { "Published" } %>
 
 <main data-size="md">
-  <article data-elevation="1">
-    <header><nav>
-      <%= back_link_to search_path, data: { intent: "secondary", size: "sm", radius: "full", content: "icon", turbo_frame: "_top" } do %>
-        <%= icon("arrow-left") %>
-      <% end %>
-      <h2>Published</h2>
-    </nav></header>
+  <h1>Published</h1>
 
-    <main>
       <% if @bullets.any? %>
         <%= render partial: "published/bullet", collection: @bullets, as: :bullet %>
       <% else %>
         <p>
           Here you'll find all the bullets you've published with their corresponding public links. You can revoke access at any time.</p>
       <% end %>
-    </main>
-  </article>
 </main>

@@ -27,7 +27,14 @@ module PrepareBullets
     @bullets = prepare_bullets_from(params[:bullet_ids])
   end
 
-  def bullets_from_param(bullet_id_parameter)
-    prepare_bullets_from(bullet_id_parameter)
+  def respond_with_failed_bullet(error, template: action_name)
+    @failed_bullet = error.record
+    respond_to do |format|
+      format.turbo_stream { render template, status: :unprocessable_entity }
+      format.html do
+        redirect_back fallback_location: bullets_path,
+                      alert: error.record.errors.full_messages.to_sentence
+      end
+    end
   end
 end

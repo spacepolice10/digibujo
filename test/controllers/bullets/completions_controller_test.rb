@@ -57,5 +57,30 @@ module Bullets
       assert_response :success
       assert @bullet.reload.done?
     end
+
+    test 'create returns unprocessable entity when complete! is invalid' do
+      Bullet.class_eval do
+        alias_method :__orig_complete!, :complete!
+        def complete!
+          errors.add(:base, 'cannot complete')
+          raise ActiveRecord::RecordInvalid, self
+        end
+      end
+
+      post completion_path,
+           params: { bullet_ids: @bullet.id.to_s },
+           headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
+
+      assert_response :unprocessable_entity
+      assert_equal 'text/vnd.turbo-stream.html', response.media_type
+      assert_match %(turbo-stream action="update" target="toasts"), response.body
+      assert_match 'cannot complete', response.body
+      assert_not @bullet.reload.done?
+    ensure
+      Bullet.class_eval do
+        alias_method :complete!, :__orig_complete!
+        remove_method :__orig_complete!
+      end
+    end
   end
 end

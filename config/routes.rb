@@ -48,8 +48,8 @@ Rails.application.routes.draw do
   resource :user, only: :show
 
   resources :access_codes, only: %i[index create destroy]
-  resources :hooks, only: %i[index new create destroy]
-  post 'hooks/:code', to: 'hook_intakes#create', as: :hook_intake, constraints: { code: /hk_[A-Za-z0-9]+/ }
+  resources :webhooks, only: %i[index new create destroy]
+  post 'webhooks/:code', to: 'webhook_intakes#create', as: :webhook_intake, constraints: { code: /wh_[A-Za-z0-9]+/ }
 
   resources :archived
 

@@ -1,33 +1,56 @@
 <% content_for(:title) { "Dotted — Welcome" } %>
 
-<h1>Dotted</h1>
-<p>Enter your email and we'll send you a one-time code to sign in or create an account.</p>
+<main data-size="sm">
+  <header>
+    <h1>Sign in</h1>
+  </header>
 
-<%= form_with url: authentication_path do |form| %>
-  <% if @user&.errors&.any? %>
-    <div class="form--errors" role="alert">
-      <ul>
-        <% @user.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <%= form_with url: authentication_path, data: { controller: "valid-email" } do |form| %>
+    <% if @user&.errors&.any? %>
+      <div class="form--errors" role="alert">
+        <ul>
+          <% @user.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
 
-  <%= form.email_field :email_address,
+    <label>
+      <p>Email</p>
+      <small>We'll send you a one-time code to sign in or create an account.</small>
+
+      <%= form.email_field :email_address,
         required: true,
         autofocus: true,
         autocomplete: "username",
         placeholder: "you@example.com",
-        aria: { label: "Email" },
-        value: params[:email_address] %>
+        aria: { label: "Email address" },
+        value: params[:email_address],
+        data: {
+          valid_email_target: "input",
+          action: "input->valid-email#validate blur->valid-email#validate"
+        } %>
 
-  <%= form.button type: "submit", data: { intent: "primary", radius: "full", size: "lg" } do %>
-    Continue
+      <% if @user&.errors&.any? %>
+        <small class="form--errors"><%= @user.errors.full_messages.to_sentence %></small>
+      <% end %>
+    </label>
+
+    <%= form.button type: "submit", data: { intent: "primary", radius: "full", size: "lg" } do %>
+      Continue
+    <% end %>
   <% end %>
-<% end %>
 
-<nav aria-label="About">
-  <%= link_to "Features", features_path %>
-  <%= link_to "Support", support_path %>
-</nav>
+  <footer class="utilities--mx-auto">
+    <nav aria-label="About">
+      <%= link_to features_path, class: "pill" do %>
+        <%= icon "lightbulb" %> Features
+      <% end %>
+
+      <%= link_to support_path, class: "pill" do %>
+        <%= icon "mail" %> Support
+      <% end %>
+    </nav>
+  </footer>
+</main>

@@ -2,39 +2,39 @@
 
 <%= render "shared/tabbar" %>
 
-<main data-size="md">
-  <h1>Account</h1>
+<main data-size="sm">
+  <div>
+    <h1>Account</h1>
+    <p><%= current_user.email_address %></p>
+  </div>
+
 
   <article>
     <ul data-layout="column" data-divider="true">
       <li>
-        <div>
-          <%= icon("face") %>
-          <p><%= Current.user.email_address %></p>
-        </div>
-      </li>
-
-      <li>
         <%= link_to access_codes_path, data: { turbo_frame: "_top" } do %>
           <%= icon("code") %>
+
           <p>Access codes</p>
         <% end %>
       </li>
 
       <li>
-        <%= link_to hooks_path, data: { turbo_frame: "_top" } do %>
+        <%= link_to webhooks_path, data: { turbo_frame: "_top" } do %>
           <%= icon("webhook") %>
-          <p>Hooks</p>
+
+          <p>Webhooks</p>
         <% end %>
       </li>
     </ul>
   </article>
 
-  <%= button_to authentication_path,
+  <footer class="utilities--padding-y-1">
+    <%= button_to authentication_path,
         method: :delete,
-        data: { intent: "primary", radius: "base" },
-        form: { data: { turbo_confirm: "Sign out of Dotted?" } } do %>
-    <%= icon("sign-out") %>
-    Sign out
-  <% end %>
+        data: { intent: "secondary", radius: "full", size: "xs" },
+        form: { data: { turbo_confirm: "Sign out of Dotted?" }, class: 'utilities--contents' } do %>
+      <%= icon("sign-out") %> Sign out
+    <% end %>
+  </footer>
 </main>

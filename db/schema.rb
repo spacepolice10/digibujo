@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_02_130000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_03_135009) do
   create_table "access_codes", force: :cascade do |t|
     t.string "code_digest", null: false
     t.string "code_prefix", null: false
@@ -110,6 +110,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_02_130000) do
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.string "filename"
+    t.string "client_id"
+    t.index ["user_id", "client_id"], name: "index_bullets_on_user_id_and_client_id", unique: true
     t.index ["user_id"], name: "index_bullets_on_user_id"
   end
 
@@ -123,18 +125,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_02_130000) do
     t.integer "user_id", null: false
     t.index ["user_id", "name"], name: "index_collections_on_user_id_and_name", unique: true
     t.index ["user_id"], name: "index_collections_on_user_id"
-  end
-
-  create_table "hooks", force: :cascade do |t|
-    t.boolean "active", default: true, null: false
-    t.string "code_digest", null: false
-    t.string "code_prefix", null: false
-    t.datetime "created_at", null: false
-    t.string "name", null: false
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["code_digest"], name: "index_hooks_on_code_digest", unique: true
-    t.index ["user_id"], name: "index_hooks_on_user_id"
   end
 
   create_table "published_entities", force: :cascade do |t|
@@ -197,9 +187,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_02_130000) do
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email_address", null: false
-    t.boolean "onboarded", default: false, null: false
     t.datetime "updated_at", null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
+  end
+
+  create_table "webhooks", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.string "code_digest", null: false
+    t.string "code_prefix", null: false
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["code_digest"], name: "index_webhooks_on_code_digest", unique: true
+    t.index ["user_id"], name: "index_webhooks_on_user_id"
   end
 
   add_foreign_key "access_codes", "users"
@@ -212,14 +213,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_02_130000) do
   add_foreign_key "bullet_collections", "collections"
   add_foreign_key "bullets", "users"
   add_foreign_key "collections", "users"
-  add_foreign_key "hooks", "users"
   add_foreign_key "published_entities", "users"
   add_foreign_key "search_records", "users"
   add_foreign_key "search_selections", "users"
   add_foreign_key "sessions", "users"
   add_foreign_key "user_settings", "users"
+  add_foreign_key "webhooks", "users"
 
   # Virtual tables defined in this database.
   # Note that virtual tables may not work with other database engines. Be careful if changing database.
-  create_virtual_table "search_records_fts", "fts5", [" search_name", "search_body", "tokenize='unicode61 remove_diacritics 2'", "prefix='2 3 4 5' "]
+  create_virtual_table "search_records_fts5", "fts5", ["search_name", "search_body", "content='search_records'", "content_rowid='id'", "tokenize='unicode61 remove_diacritics 2'", "prefix='2 3 4 5'"]
 end

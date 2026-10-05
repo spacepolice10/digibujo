@@ -1,13 +1,14 @@
 <% content_for(:title) { @blob.filename.to_s } %>
 
+<%= render "shared/back_tabbar" %>
+
 <main data-size="md">
-  <article data-elevation="1">
-    <header><nav>
-        <%= back_link_to search_path, data: { intent: "secondary", radius: "full", size: "sm", content: "icon" } do %>
-          <%= icon("arrow-left") %>
-        <% end %>
-        <h2>Attachment</h2>
-    </nav></header>
+  <header>
+    <div>
+      <h1>Attachment</h1>
+      <p><%= @blob.filename %></p>
+    </div>
+  </header>
 
   <main class="attachment--show">
     <% if @blob.representable? %>
@@ -23,5 +24,4 @@
       </p>
     <% end %>
   </main>
-  </article>
 </main>

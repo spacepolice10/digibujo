@@ -4,8 +4,6 @@ class Bullet < ApplicationRecord
   include Completable, Collectable, Postponable, Archivable, Publishable, Bullet::Pageable,
           Bullet::Searchable, ActivityTrackable
 
-  MAX_ATTACHMENT_BYTES = 25.megabytes
-
   belongs_to :user
   has_many :bullet_collections, dependent: :destroy
   has_many :collections, through: :bullet_collections
@@ -20,16 +18,19 @@ class Bullet < ApplicationRecord
 
   before_save :capture_filename
 
-  validate :content_is_exactly_one_of_file_or_text
-  validate :file_must_fit
+  normalizes :client_id, with: ->(value) { value.presence }
+
+  validate :content_is_either_file_or_text
+  validate :file_must_be_smaller
   validates :author_name, length: { maximum: 100 }, allow_blank: true
+  # Uniqueness enforced by DB index + controller rescue (avoids race toast on :taken).
+  validates :client_id, format: { with: /\A[0-9a-f-]{36}\z/i }, allow_nil: true
 
   before_validation :default_pops_on
   after_create :assign_initial_collection
 
-  scope :active, -> { where.missing(:archive) }
-  scope :due, ->(today = Date.current) { where(pops_on: ..today) }
-  scope :upcoming, ->(today = Date.current) { where(pops_on: (today + 1.day)..) }
+  scope :current, -> { where(pops_on: ..Date.current) }
+  scope :upcoming, -> { where(pops_on: (Date.current + 1.day)..) }
   scope :tagged_with, lambda { |collection|
     joins(:bullet_collections).where(bullet_collections: { collection_id: collection.id }).distinct
   }
@@ -47,16 +48,17 @@ class Bullet < ApplicationRecord
     self.filename = file.filename.to_s if file.attached?
   end
 
-  def content_is_exactly_one_of_file_or_text
+  def content_is_either_file_or_text
     has_file = file.attached?
     has_text = body_as_text.present?
     errors.add(:base, 'Enter text or attach a file, not both') if has_file == has_text
   end
 
-  def file_must_fit
-    return unless file.attached? && file.blob.byte_size > MAX_ATTACHMENT_BYTES
+  def file_must_be_smaller
+    attachment_size = 5.megabytes
+    return unless file.attached? && file.blob.byte_size > attachment_size
 
-    errors.add(:file, "is too large (maximum is #{MAX_ATTACHMENT_BYTES / 1.megabyte} MB)")
+    errors.add(:file, "is too large (maximum is #{attachment_size / 1.megabyte} MB)")
   end
 
   def default_pops_on

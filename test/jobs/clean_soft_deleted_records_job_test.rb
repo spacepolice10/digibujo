@@ -38,21 +38,6 @@ class CleanSoftDeletedRecordsJobTest < ActiveJob::TestCase
     end
   end
 
-  test "records destroyed activity that survives the collection" do
-    collection = create_collection!(@user, name: "Stale")
-    collection_id = collection.id
-    collection_name = collection.name
-    expire!(collection)
-
-    assert_difference -> { Activity.where(action: "destroyed").count }, 1 do
-      CleanSoftDeletedRecordsJob.perform_now
-    end
-
-    activity = Activity.where(action: "destroyed", subject_type: "Collection", subject_id: collection_id).last
-    assert_equal collection_name, activity.metadata["name"]
-    assert_nil activity.subject
-  end
-
   test "keeps recently archived collections" do
     collection = create_collection!(@user, name: "Fresh archive")
     collection.archive!
@@ -62,6 +47,23 @@ class CleanSoftDeletedRecordsJobTest < ActiveJob::TestCase
     end
 
     assert collection.reload.archived?
+  end
+
+  test "purges old unattached blobs" do
+    blob = create_blob!(filename: "orphan.png", content_type: "image/png")
+    blob.update!(created_at: 3.days.ago)
+
+    assert_enqueued_with(job: ActiveStorage::PurgeJob) do
+      CleanSoftDeletedRecordsJob.perform_now
+    end
+  end
+
+  test "keeps recent unattached blobs" do
+    create_blob!(filename: "fresh.png", content_type: "image/png")
+
+    assert_no_enqueued_jobs(only: ActiveStorage::PurgeJob) do
+      CleanSoftDeletedRecordsJob.perform_now
+    end
   end
 
   private

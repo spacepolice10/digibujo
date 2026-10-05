@@ -18,6 +18,18 @@ class ComposerSystemTest < ApplicationSystemTestCase
     assert_equal 'Fresh note', @user.bullets.reload.last.body_as_text
   end
 
+  test 'optimistic pending templates include the marker circle' do
+    text_html = page.evaluate_script(
+      "document.querySelector('[data-composer-target=\"pendingTextTemplate\"]').innerHTML"
+    )
+    file_html = page.evaluate_script(
+      "document.querySelector('[data-composer-attachment-target=\"pendingFileTemplate\"]').innerHTML"
+    )
+
+    assert_includes text_html, 'bullet--marker'
+    assert_includes file_html, 'bullet--marker'
+  end
+
   test 'shift f focuses the composer from elsewhere on the page' do
     assert_selector '#timeline_composer lexxy-editor.hotkey-hint[data-hotkey="F"]'
     find('body').send_keys([:shift, 'f'])
@@ -52,6 +64,6 @@ class ComposerSystemTest < ApplicationSystemTestCase
 
   test 'chat composer docks over the full-height scroller' do
     assert_selector '.chat--window > .chat--scroller[data-controller~="chat-scroll"]'
-    assert_selector '.chat--window > #timeline_composer_dock[data-controller~="chat-composer"] > #timeline_composer'
+    assert_selector '.chat--window > #timeline_composer_dock > #timeline_composer'
   end
 end

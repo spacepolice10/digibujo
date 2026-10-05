@@ -12,8 +12,7 @@ module Authentications
 
       assert_response :success
       assert_select 'header.header', count: 0
-      assert_select '#session-dots canvas'
-      assert_select '.session-layout--main form[action=?]', authentication_confirmation_path
+      assert_select 'form[action=?]', authentication_confirmation_path
     end
 
     test 'new without login_email redirects to authentication' do
@@ -22,8 +21,7 @@ module Authentications
       assert_redirected_to new_authentication_path
     end
 
-    test 'create with valid code for onboarded user starts session' do
-      @user.update!(onboarded: true)
+    test 'create with valid code starts session' do
       code = request_login_code(@user.email_address)
       confirm_login_code(code)
 
@@ -31,23 +29,12 @@ module Authentications
       assert cookies[:session_id]
     end
 
-    test 'create with valid lowercase code for onboarded user starts session' do
-      @user.update!(onboarded: true)
+    test 'create with valid lowercase code starts session' do
       code = request_login_code(@user.email_address)
       confirm_login_code(code.downcase)
 
       assert_redirected_to root_path
       assert cookies[:session_id]
-    end
-
-    test 'create with valid code marks the user onboarded and enters the app' do
-      assert_not @user.onboarded?
-      code = request_login_code(@user.email_address)
-      confirm_login_code(code)
-
-      assert_redirected_to root_path
-      assert cookies[:session_id]
-      assert @user.reload.onboarded?
     end
 
     test 'create with invalid code rejects' do
@@ -79,7 +66,6 @@ module Authentications
     end
 
     test 'create json with valid code returns session code' do
-      @user.update!(onboarded: true)
       auth = request_login_code_json(@user.email_address)
 
       confirm_login_code_json(
@@ -90,7 +76,7 @@ module Authentications
       assert_response :success
       body = response.parsed_body
       assert body['session_code'].present?
-      assert_equal true, body['onboarded']
+      assert_not body.key?('onboarded')
       assert cookies[:session_id].present?
     end
 

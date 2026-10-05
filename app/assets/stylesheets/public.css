@@ -1,90 +1,4 @@
 @layer components {
-  .public--body {
-    width: 100%;
-    max-width: 1280px;
-    margin-inline: auto;
-  }
-  .public-layout {
-    display: flex;
-    overscroll-behavior: contain;
-  }
-
-  .public-side {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    height: 100dvh;
-    width: 280px;
-    flex-shrink: 0;
-    padding: var(--space-h-2);
-    border-inline-end: 1px solid var(--color-invert-4);
-    background: var(--color-1);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-
-  .public-branding {
-    display: flex;
-    align-items: center;
-    gap: var(--space-h-half);
-  }
-
-  .public-logo {
-    width: 2rem;
-    height: 2rem;
-  }
-
-  .public-application-name {
-    font-size: var(--font-size-base-read);
-    font-weight: var(--font-weight-strong);
-    color: var(--color-invert-2);
-  }
-
-  .public-register {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-v);
-
-    p {
-      color: var(--color-invert-4);
-      margin: 0;
-    }
-  }
-
-  .public-main {
-    flex: 1;
-    min-width: 0;
-    max-width: 680px;
-    padding: var(--space-h-2);
-  }
-
-  .public-main:has(.features--container) {
-    max-width: 920px;
-  }
-
-  /* Collapse sidebar on narrow viewports */
-  @container layout (width < 600px) {
-    .public-layout {
-      flex-direction: column;
-    }
-
-    .public-side {
-      position: static;
-      width: auto;
-      height: auto;
-      flex-direction: row;
-      align-items: center;
-      padding: var(--space-h);
-      border-inline-end: none;
-      border-block-end: 1px solid var(--color-invert-4);
-    }
-
-    .public-register {
-      display: none;
-    }
-  }
-
   .public--published-link {
     width: 100%;
     padding: var(--space-v-half) var(--space-h-half);
@@ -93,15 +7,5 @@
     background: var(--color-2);
     color: var(--color-invert-4);
     font: inherit;
-  }
-
-  .public--footer {
-    padding-top: var(--space-v-2);
-    border-top: 1px solid var(--color-invert-4);
-    margin-top: var(--space-v-2);
-  }
-
-  .public--date {
-    color: var(--color-invert-4);
   }
 }

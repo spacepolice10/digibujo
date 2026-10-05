@@ -21,11 +21,7 @@
     /* Anchor positioning */
     position-area: block-end span-inline-end;
 
-    position-try-fallbacks:
-      flip-block,
-      flip-inline,
-      block-start span-inline-end,
-      block-end span-inline-start;
+
 
     /* Animation */
     opacity: 0;

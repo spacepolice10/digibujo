@@ -1,26 +1,20 @@
 <%# locals: (access_code:) %>
-<article
-  id="<%= dom_id(access_code) %>"
-  class="access-code--item"
-  data-elevation="2"
->
-  <main>
-    <div>
-      <code><%= access_code.code_prefix %>…</code>
-      <% if access_code.description.present? %>
-        <span><%= access_code.description %></span>
-      <% end %>
-    </div>
-    <small><%= l(access_code.created_at.to_date, format: :long) %></small>
-  </main>
+<article id="<%= dom_id(access_code) %>" data-elevation="2">
+  <header class="utilities--padding-x-1 utilities--padding-y-1">
+    <code><%= access_code.code_prefix %>…</code>
 
-  <footer>
-  <%= button_to access_code_path(access_code),
+    <% if access_code.description.present? %>
+      <span><%= access_code.description %></span>
+    <% end %>
+  </header>
+
+  <footer class="utilities--padding-y-1">
+    <%= button_to access_code_path(access_code),
         method: :delete,
         data: { intent: "secondary", radius: "full", size: "xs", status: "negative" },
-        form: { data: { turbo_confirm: "Revoke this access code? Anything using it will stop working." } } do %>
-    <%= icon("trash") %>
-    <span>Revoke</span>
-  <% end %>
+        form: { data: { turbo_confirm: "Revoke this access code? Anything using it will stop working." }, class: "utilities--contents" } do %>
+      <%= icon("trash") %>
+      <span>Revoke</span>
+    <% end %>
   </footer>
 </article>

@@ -6,7 +6,7 @@ class Search::HighlightTest < ActiveSupport::TestCase
   test 'marks a prefix match and keeps the rest of the word' do
     html = Search::Highlight.call('<p>Buy <strong>milk</strong> today</p>', 'mil')
 
-    assert_includes html, '<strong><mark class="search--hit">milk</mark></strong>'
+    assert_includes html, '<strong><mark class="search--term">milk</mark></strong>'
     assert_includes html, 'Buy '
     assert_includes html, ' today'
   end
@@ -21,20 +21,20 @@ class Search::HighlightTest < ActiveSupport::TestCase
     html = Search::Highlight.call('<a href="https://example.com/milk">milk</a>', 'milk')
 
     assert_includes html, 'href="https://example.com/milk"'
-    assert_includes html, '<mark class="search--hit">milk</mark>'
+    assert_includes html, '<mark class="search--term">milk</mark>'
   end
 
   test 'marks each term and keeps the original case' do
     html = Search::Highlight.call('<p>Buy MILK now</p>', 'buy milk')
 
-    assert_includes html, '<mark class="search--hit">Buy</mark>'
-    assert_includes html, '<mark class="search--hit">MILK</mark>'
+    assert_includes html, '<mark class="search--term">Buy</mark>'
+    assert_includes html, '<mark class="search--term">MILK</mark>'
   end
 
   test 'marks a unicode prefix' do
     html = Search::Highlight.call('<p>молоко</p>', 'мол')
 
-    assert_includes html, '<mark class="search--hit">молоко</mark>'
+    assert_includes html, '<mark class="search-s-term">молоко</mark>'
   end
 
   test 'returns the original html when nothing matches' do

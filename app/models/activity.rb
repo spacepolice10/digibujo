@@ -1,10 +1,7 @@
 # frozen_string_literal: true
 
 class Activity < ApplicationRecord
-  ACTIONS = %w[
-    updated collected rescheduled completed uncompleted
-    created destroyed archived unarchived
-  ].freeze
+  ACTIONS = %w[rescheduled].freeze
 
   belongs_to :user
   belongs_to :subject, polymorphic: true, optional: true
@@ -13,14 +10,6 @@ class Activity < ApplicationRecord
 
   validates :action, inclusion: { in: ACTIONS }
   validates :subject, presence: true
-
-  def subject_name
-    metadata['name'].presence || subject&.name || 'Unknown'
-  end
-
-  def subject_present?
-    subject.present?
-  end
 
   def from_date
     return if metadata['from_pops_on'].blank?
@@ -32,11 +21,5 @@ class Activity < ApplicationRecord
     return if metadata['to_pops_on'].blank?
 
     metadata['to_pops_on'].to_date
-  end
-
-  def destination_collection
-    return unless action == 'collected'
-
-    user.collections.find_by(id: metadata['collection_id'])
   end
 end

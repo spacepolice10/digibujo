@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 # Inbound intake for external apps. Plaintext code is shown once at create.
-# POSTs to /hooks/:code land text bullets on the user's timeline.
-class Hook < ApplicationRecord
-  PREFIX = 'hk_'
-  CODE_BYTES = 24
+# POSTs to /webhooks/:code land text bullets on the user's timeline.
+class Webhook < ApplicationRecord
+  PREFIX = 'wh_'
+  CODE_BYTE = 24
   PREFIX_DISPLAY_LENGTH = 8
 
   belongs_to :user
@@ -41,7 +41,7 @@ class Hook < ApplicationRecord
   def generate_code
     return if code_digest.present?
 
-    self.code = "#{PREFIX}#{SecureRandom.base58(CODE_BYTES)}"
+    self.code = "#{PREFIX}#{SecureRandom.base58(CODE_BYTE)}"
     self.code_digest = self.class.digest(code)
     self.code_prefix = code.first(PREFIX_DISPLAY_LENGTH)
   end

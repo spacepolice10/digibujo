@@ -12,7 +12,7 @@
   <% @bullets.each do |bullet| %>
     <%= turbo_stream.remove_all bullet %>
     <% if bullet.pops_on == Date.current %>
-      <%= turbo_stream.append "timeline_section_today" do %>
+      <%= turbo_stream.append "timeline_section_current_date" do %>
         <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
       <% end %>
     <% end %>

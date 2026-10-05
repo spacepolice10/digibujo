@@ -1,24 +1,14 @@
 <% content_for(:title) { @bullet.name } %>
 
 
-  <article data-elevation="1">
-    <main>
-    <div class="utilities--text-lg">
-      <%= @bullet.body %>
+<article>
+  <footer>
+    <time datetime="<%= @bullet.created_at.iso8601 %>"><%= @bullet.created_at.strftime("%-d %b %Y") %></time>
+  </footer>
+</article>
 
-    </div>
-    </main>
+<br>
 
-    <footer class="public--published-footer">
-      <time class="public--published-date" datetime="<%= @bullet.created_at.iso8601 %>"><%= @bullet.created_at.strftime("%-d %b %Y") %></time>
-    </footer>
-
-
-  </article>
-  <br>
-  <input class="public--published-link"
-  type="text"
-  value="<%= published_url(@bullet.public_code) %>"
-  readonly
-  onclick="this.select()"
-  >
+<aside>
+  This is dotted
+</aside>

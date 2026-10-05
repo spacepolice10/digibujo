@@ -28,6 +28,7 @@ export default class extends Controller {
     this.boundSettlePinned = () => this.#settlePinned()
     this.boundSubmitStart = (event) => this.#pinOnComposerSubmit(event)
     this.boundSubmitEnd = (event) => this.#clearCreateFollow(event)
+    this.boundOptimisticCreate = () => this.#pinOnOptimisticCreate()
     this.boundEndGlide = () => this.#endGlide()
     this.opening = true
 
@@ -35,6 +36,8 @@ export default class extends Controller {
     this.element.addEventListener("scrollend", this.boundEndGlide)
     document.addEventListener("turbo:submit-start", this.boundSubmitStart)
     document.addEventListener("turbo:submit-end", this.boundSubmitEnd)
+    document.addEventListener("composer:optimistic-create", this.boundOptimisticCreate)
+    document.addEventListener("composer-attachment:optimistic-create", this.boundOptimisticCreate)
     this.#followCreatedBullets()
 
     if (this.#scrollPositionRestorable()) {
@@ -54,6 +57,8 @@ export default class extends Controller {
     clearTimeout(this.followCreateTimer)
     document.removeEventListener("turbo:submit-start", this.boundSubmitStart)
     document.removeEventListener("turbo:submit-end", this.boundSubmitEnd)
+    document.removeEventListener("composer:optimistic-create", this.boundOptimisticCreate)
+    document.removeEventListener("composer-attachment:optimistic-create", this.boundOptimisticCreate)
     if (this.boundOpenSettled) {
       this.element.removeEventListener("scrollend", this.boundOpenSettled)
     }
@@ -234,6 +239,14 @@ export default class extends Controller {
   #pinOnComposerSubmit(event) {
     if (!event.target.closest(".composer")) return
 
+    this.#armCreateFollow()
+  }
+
+  #pinOnOptimisticCreate() {
+    this.#armCreateFollow()
+  }
+
+  #armCreateFollow() {
     this.pinned = true
     this.followingCreate = true
     clearTimeout(this.followCreateTimer)
@@ -255,6 +268,9 @@ export default class extends Controller {
   }
 
   get #oldestRailId() {
-    return this.element.querySelector('[id^="bullet_"]')?.id?.split("_").pop()
+    const frame = [...this.element.querySelectorAll("turbo-frame.bullet[id]")].find((el) =>
+      /^bullet_\d+$/.test(el.id)
+    )
+    return frame?.id?.split("_").pop()
   }
 }

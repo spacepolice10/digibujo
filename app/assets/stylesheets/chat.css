@@ -34,7 +34,7 @@
   }
 
   /* Former in-flow gap between surface and composer — unused once the dock
-     overlays the scroller. Kept in the DOM for bulk-menu measurement. */
+     overlays the scroller. */
   .chat--window > br {
     display: none;
   }

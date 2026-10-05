@@ -1,5 +1,5 @@
 <%# locals: (bullet_ids: "", postpone_options: []) %>
-<article>
+<article data-elevation="1">
   <header>
     <h2>Schedule</h2>
 
@@ -20,7 +20,9 @@
 
   <main aria-label="Schedule">
     <% postpone_options.each do |option| %>
-      <%= form_with url: postpone_path, method: :post, data: { turbo_stream: true } do %>
+      <%= form_with url: postpone_path, method: :post,
+            class: "utilities--contents",
+            data: { turbo_stream: true } do %>
         <%= hidden_field_tag :bullet_ids, bullet_ids, data: { bulk_menu_target: "idList" } %>
         <%= hidden_field_tag :pops_on, option[:pops_on].iso8601 %>
 

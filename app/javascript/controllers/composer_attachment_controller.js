@@ -1,24 +1,70 @@
 import { Controller } from "@hotwired/stimulus"
+import { DirectUpload } from "@rails/activestorage"
+import { post } from "@rails/request.js"
+import { clientId, failPending, insertPending, notify, removePending } from "helpers/composer_helpers"
+
+const MAXIMUM_SIZE = 5 * 1024 * 1024
+const APPEND_TO = "timeline_section_current_date"
 
 export default class extends Controller {
-  static targets = ["file"]
+  static targets = ["file", "pendingFileTemplate"]
 
   choose(event) {
     event.preventDefault()
     this.fileTarget.click()
   }
 
-  attach() {
-    if (this.fileTarget.files.length == 0) return
+  async attach() {
+    const file = this.fileTarget.files[0]
+    if (!file) return
 
-    this.dispatch("lock")
-    this.fileTarget.form.requestSubmit()
+    const container = document.getElementById(APPEND_TO)
+    if (!container) return
+
+    const form = this.fileTarget.form
+    const action = form.action
+    const uploadLink =
+      this.fileTarget.dataset.directUploadUrl ||
+      "/rails/active_storage/direct_uploads"
+    const body = new FormData(form)
+    body.delete("bullet[body]")
+    this.fileTarget.value = ""
+
+    if (file.size > MAXIMUM_SIZE) {
+      notify("File is too large (maximum is 5 MB)")
+      return
+    }
+
+    const id = clientId()
+    this.#insertFilePending(id, file.name, container)
+    body.set("bullet[client_id]", id)
+    this.dispatch("optimistic-create", { bubbles: true })
+
+    try {
+      const signedId = await this.#directUpload(file, uploadLink)
+      body.set("bullet[file]", signedId)
+
+      const response = await post(action, { body, responseKind: "turbo-stream" })
+      if (!response.ok) removePending(id)
+    } catch {
+      failPending(id, "Upload failed")
+    }
   }
 
-  reset() {
-    if (this.fileTarget.files.length == 0) return
+  #directUpload(file, uploadLink) {
+    return new Promise((resolve, reject) => {
+      new DirectUpload(file, uploadLink).create((error, blob) => {
+        if (error) reject(error)
+        else resolve(blob.signed_id)
+      })
+    })
+  }
 
-    this.fileTarget.value = ""
-    this.dispatch("unlock")
+  #insertFilePending(id, filename, container) {
+    insertPending(this.pendingFileTemplateTarget, container, id, (node) => {
+      node.querySelectorAll("[data-pending-filename]").forEach((el) => {
+        el.textContent = filename
+      })
+    })
   }
 }

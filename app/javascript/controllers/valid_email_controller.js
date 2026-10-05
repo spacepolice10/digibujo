@@ -5,6 +5,10 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export default class extends Controller {
   static targets = ["input"];
 
+  connect() {
+    this.validate();
+  }
+
   validate() {
     const input = this.inputTarget;
     const value = input.value.trim();

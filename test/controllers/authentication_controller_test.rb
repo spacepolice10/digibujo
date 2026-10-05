@@ -10,8 +10,8 @@ class AuthenticationControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select 'header.header', count: 0
-    assert_select '#session-dots canvas'
-    assert_select '.session-layout--main form[action=?]', authentication_path
+    assert_select 'form[action=?][data-controller=?]', authentication_path, 'valid-email'
+    assert_select 'input[type=email][data-valid-email-target=?]', 'input'
     assert_select 'a[href=?]', features_path, text: /Features/
     assert_select 'a[href=?]', support_path, text: /Support/
   end

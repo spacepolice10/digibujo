@@ -6,16 +6,18 @@ class SearchesController < ApplicationController
   def show
     @q = params[:q].to_s.strip
 
-    @collections = Current.user.collections.active.order(:name)
-    @attachment_count = User::Attachments.new(Current.user).attachments.count
-    @archive_count = Current.user.bullets.archived.count
-
     if @q.present?
       # The search card shows at most ten rows. The compact menu keeps the global cap.
       limit = request.format.turbo_stream? ? Search::GlobalRequest::LIMIT : 10
       @entries = Search::GlobalRequest.call(user: Current.user, query: @q, limit:)
-    elsif request.format.html? || turbo_frame_request?
-      @selections = Search::Selection.in_menu(Current.user)
+    else
+      @collections = Current.user.collections.active.order(:name)
+      @attachment_count = User::Attachments.new(Current.user).attachments.count
+      @archive_count = Current.user.bullets.archived.count
+
+      if request.format.html? || turbo_frame_request?
+        @selections = Search::Selection.in_menu(Current.user)
+      end
     end
   end
 

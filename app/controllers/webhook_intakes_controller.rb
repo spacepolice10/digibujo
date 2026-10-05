@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
 # Unauthenticated intake: external apps POST JSON to create a timeline bullet.
-class HookIntakesController < ApplicationController
+class WebhookIntakesController < ApplicationController
   allow_unauthenticated_access
   skip_forgery_protection
 
   rate_limit to: 60, within: 1.minute, only: :create, with: -> { head :too_many_requests }
 
   def create
-    hook = Hook.authenticate(params[:code])
-    return head :not_found unless hook
+    webhook = Webhook.authenticate(params[:code])
+    return head :not_found unless webhook
 
-    @bullet = hook.create_bullet!(
+    @bullet = webhook.create_bullet!(
       author_name: intake_params[:author_name],
       body: intake_params[:body]
     )

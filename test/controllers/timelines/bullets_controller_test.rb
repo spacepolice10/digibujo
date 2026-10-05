@@ -28,7 +28,7 @@ module Timelines
       get bullets_path(before: cursor.id)
 
       assert_response :success
-      assert_select 'section#timeline_section_today .bullet', text: /#{earlier.name}/
+      assert_select 'section#timeline_section_current_date .bullet', text: /#{earlier.name}/
     end
 
     test 'before returns no content when nothing older exists' do

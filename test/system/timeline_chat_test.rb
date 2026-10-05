@@ -112,7 +112,7 @@ class TimelineChatSystemTest < ApplicationSystemTestCase
 
     visit bullets_path
 
-    assert_selector '#timeline_section_today h2.pill', text: 'Today'
+    assert_selector '#timeline_section_current_date h2.pill', text: 'Today'
     assert_selector '#timeline_section_last-week h2.pill', text: 'Last week'
     assert_selector '#timeline_section_last-week .bullet', text: 'Old line'
   end

@@ -28,23 +28,20 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
-  test 'bulk menu exposes the common action set without trait gating' do
+  test 'bulk menu gates complete and publish by selection status' do
     create_bullet!(@user, body: 'Selectable')
 
     get bullets_path
 
     assert_response :success
-    assert_select '.bulk-menu--actions'
-    assert_select '.bulk-menu--actions [data-bulk-menu-target="conditionalAction"]', count: 0
-    assert_select '.bulk-menu--actions form', minimum: 5
-    assert_match 'Complete', response.body
-    assert_match 'Uncomplete', response.body
-    assert_match 'Publish', response.body
-    assert_match 'Unpublish', response.body
+    assert_select '.bulk-menu--actions form[data-bulk-menu-target="complete"][hidden]', count: 1
+    assert_select '.bulk-menu--actions form[data-bulk-menu-target="uncomplete"][hidden]', count: 1
+    assert_select '.bulk-menu--actions form[data-bulk-menu-target="publish"][hidden]', count: 1
+    assert_select '.bulk-menu--actions form[data-bulk-menu-target="unpublish"][hidden]', count: 1
     assert_match 'Archive', response.body
     assert_select '.bulk-menu--actions button', text: 'Today', count: 0
-    assert_select 'input[data-bulk-completable]', count: 0
-    assert_select 'input[data-bulk-publishable]', count: 0
+    assert_select 'input[data-bulk-done]', minimum: 1
+    assert_select 'input[data-bulk-published]', minimum: 1
     assert_select 'input[data-bulk-scheduled]', count: 0
   end
 

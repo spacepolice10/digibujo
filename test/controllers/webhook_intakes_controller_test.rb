@@ -2,26 +2,26 @@
 
 require 'test_helper'
 
-class HookIntakesControllerTest < ActionDispatch::IntegrationTest
+class WebhookIntakesControllerTest < ActionDispatch::IntegrationTest
   setup do
     @user = users(:one)
-    @hook = @user.hooks.create!(name: 'Zapier')
-    @code = @hook.code
+    @webhook = @user.webhooks.create!(name: 'Zapier')
+    @code = @webhook.code
   end
 
   test 'create lands a text on the timeline with author_name' do
     assert_difference -> { @user.bullets.count }, 1 do
-      post hook_intake_path(@code),
+      post webhook_intake_path(@code),
            params: {
              author_name: 'GitHub',
-             body: 'Ship inbound hooks'
+             body: 'Ship inbound webhooks'
            },
            as: :json
     end
 
     assert_response :created
     body = response.parsed_body
-    assert_equal 'Ship inbound hooks', body['body']
+    assert_equal 'Ship inbound webhooks', body['body']
     assert_equal 'GitHub', body['author_name']
 
     bullet = @user.bullets.find(body['id'])
@@ -32,7 +32,7 @@ class HookIntakesControllerTest < ActionDispatch::IntegrationTest
 
   test 'create ignores a retired bulletable_type' do
     assert_difference -> { @user.bullets.count }, 1 do
-      post hook_intake_path(@code),
+      post webhook_intake_path(@code),
            params: { bulletable_type: 'Memo', body: 'Nope' },
            as: :json
     end
@@ -41,17 +41,17 @@ class HookIntakesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'create with unknown code returns not found' do
-    post hook_intake_path('hk_missing'),
+    post webhook_intake_path('wh_missing'),
          params: { body: 'Ghost' },
          as: :json
 
     assert_response :not_found
   end
 
-  test 'create with inactive hook returns not found' do
-    @hook.update!(active: false)
+  test 'create with inactive webhook returns not found' do
+    @webhook.update!(active: false)
 
-    post hook_intake_path(@code),
+    post webhook_intake_path(@code),
          params: { body: 'Ghost' },
          as: :json
 
@@ -61,7 +61,7 @@ class HookIntakesControllerTest < ActionDispatch::IntegrationTest
   test 'intake does not require authentication' do
     sign_out
 
-    post hook_intake_path(@code),
+    post webhook_intake_path(@code),
          params: { author_name: 'CLI', body: 'Anon' },
          as: :json
 
