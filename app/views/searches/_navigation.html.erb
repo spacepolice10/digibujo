@@ -3,9 +3,11 @@
     <li>
       <%= link_to attachments_path, data: { turbo_frame: "_top" } do %>
         <%= icon("paperclip") %>
+
         <p>Attachments</p>
-        <% if @attachment_count.positive? %>
-          <small class="search--navigation-item-counter"><%= @attachment_count %></small>
+
+        <% if attachments_count.positive? %>
+          <small class="search--navigation-item-counter"><%= attachments_count %></small>
         <% end %>
       <% end %>
     </li>
@@ -13,35 +15,48 @@
     <li>
       <%= link_to archived_index_path, data: { turbo_frame: "_top" } do %>
         <%= icon("archive") %>
+
         <p>Archive</p>
-        <% if @archive_count.positive? %>
-          <small class="search--navigation-item-counter"><%= @archive_count %></small>
+
+        <% if archived_count.positive? %>
+          <small class="search--navigation-item-counter"><%= archived_count %></small>
         <% end %>
+      <% end %>
+    </li>
+
+
+    <li>
+      <%= link_to collections_path, data: { turbo_frame: "_top" } do %>
+        <%= icon("folder") %>
+
+        <p>Collections</p>
       <% end %>
     </li>
 
     <li>
       <%= link_to bullets_path(from: Date.current + 1), data: { turbo_frame: "_top" } do %>
         <%= icon("calendar") %>
+
         <p>Upcoming</p>
       <% end %>
     </li>
   </ul>
 </article>
 
-<ul id="search_collections" data-layout="grid">
-  <li>
-    <%= link_to new_collection_path, class: "collection-chip", data: { turbo_frame: "_top" } do %>
-      <%= icon("plus") %>
-      <span>New</span>
-    <% end %>
-  </li>
-  <% @collections.each do |collection| %>
-    <li>
-      <%= link_to bullets_path(collection: collection.name), class: "collection-chip", data: { turbo_frame: "_top" } do %>
-        <%= icon("hash", style: ("color: #{colour(collection.colour)};" if collection.colour.present?)) %>
-        <span><%= collection.name %></span>
-      <% end %>
-    </li>
-  <% end %>
-</ul>
+<!-- <ul id="search_collections" data-layout="grid"> -->
+  <!-- <li> -->
+    <%#= link_to new_collection_path, class: "collection-chip", data: { turbo_frame: "_top" } do %>
+      <%#= icon("plus") %>
+      <!-- <span>New</span> -->
+    <%# end %>
+  <!-- </li> -->
+
+  <%# collections.each do |collection| %>
+    <!-- <li> -->
+      <%#= link_to collection_path(collection), class: "collection-chip", data: { turbo_frame: "_top" } do %>
+        <%#= icon("hash", style: ("color: #{colour(collection.colour)};" if collection.colour.present?)) %>
+        <!-- <span><%#= collection.name %></span> -->
+      <%# end %>
+    <!-- </li> -->
+  <%# end %>
+<!-- </ul> -->

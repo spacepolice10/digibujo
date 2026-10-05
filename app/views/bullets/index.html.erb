@@ -6,83 +6,47 @@
   <%= render "shared/back_tabbar" %>
 <% end %>
 
-<main class="chat--window" data-size="md">
-  <% if @filter.collection %>
-    <header>
-      <h1><%= @filter.collection.name %></h1>
-
-      <div class="dropdown--dock">
-        <button
-          type="button"
-          data-intent="secondary"
-          data-radius="full"
-          data-size="xs"
-          data-content="icon"
-          popovertarget="collection_actions"
-          aria-label="Collection options"
-          aria-haspopup="menu"
-        >
-          <%= icon("dots") %>
-        </button>
-
-        <div
-          id="collection_actions"
-          role="menu"
-          style="position-anchor: collection_actions"
-          popover
-          data-controller="grid-navigation"
-          data-grid-navigation-columns-value="1"
-          data-action="keydown->grid-navigation#navigate"
-        >
-          <nav role="listbox" aria-label="Collection options">
-            <%= link_to export_bullets_path(@filter.to_params),
-                  class: "dropdown-item picker--item",
-                  data: { turbo: false, grid_navigation_target: "item", action: "focus->grid-navigation#syncPosition" } do %>
-              <%= icon("file") %> Export
-            <% end %>
-
-            <%= link_to edit_collection_path(@filter.collection),
-                  class: "dropdown-item picker--item",
-                  data: { turbo_frame: "_top", grid_navigation_target: "item", action: "focus->grid-navigation#syncPosition" } do %>
-              <%= icon("pencil") %> Edit
-            <% end %>
-          </nav>
+<main class="timeline--window" data-size="md">
+  <% scroller = capture do %>
+    <div
+      id="<%= @filter.collection ? dom_id(@filter.collection) : 'timeline' %>"
+      class="timeline--scroller"
+      data-controller="timeline-scroll"
+      data-timeline-scroll-path-value="<%= bullets_path(@filter.to_params) %>"
+      data-bulk-menu-target="list"
+    >
+      <% if @more_bullets %>
+        <div class="timeline--load-more-trigger" data-timeline-scroll-target="trigger">
+          <%= icon("spinner", class: "icon icon--spin") %>
+          <span class="utilities--sr-only">Loading more bullets</span>
         </div>
-      </div>
-    </header>
+      <% end %>
+
+      <%= render "sections", bullets: @bullets, timeline: @timeline, mount_today: @filter.empty? %>
+    </div>
   <% end %>
 
-  <div
-    id="<%= @filter.collection ? dom_id(@filter.collection) : 'timeline' %>"
-    class="chat--scroller"
-    data-controller="chat-scroll"
-    data-chat-scroll-path-value="<%= bullets_path(@filter.to_params) %>"
-    data-bulk-menu-target="list"
-  >
-    <% if @more_bullets %>
-      <div class="chat--load-more-trigger" data-chat-scroll-target="trigger">
-        <%= icon("spinner", class: "icon icon--spin") %>
-        <span class="utilities--sr-only">Loading more bullets</span>
-      </div>
+  <% if @filter.collection %>
+    <%= turbo_frame_tag dom_id(@filter.collection, :timeline), class: "utilities--contents" do %>
+      <%= scroller %>
     <% end %>
-
-    <%= render "sections", bullets: @bullets, timeline: @timeline, mount_today: @filter.empty? %>
-  </div>
+  <% else %>
+    <%= scroller %>
+  <% end %>
 
   <br>
 
   <% if @filter.empty? %>
     <div
-      id="<%= @filter.collection ? dom_id(@filter.collection, :composer) : 'timeline_composer_dock' %>"
-      class="chat--composer composer--dock<%= ' timeline--composer' unless @filter.collection %>"
+      id="timeline_composer_dock"
+      class="timeline--composer composer--dock"
     >
       <%= render "bullets/composer",
           bullet: Bullet.new,
-          collection: @filter.collection,
+          collection: nil,
           pops_on: Date.current,
           preset: "default",
-          autofocus: false,
-          composer_id: @filter.collection ? dom_id(@filter.collection, :bullets_composer) : nil %>
+          autofocus: false %>
     </div>
   <% end %>
 </main>

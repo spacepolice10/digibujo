@@ -3,9 +3,13 @@
 class CollectionsController < ApplicationController
   include PrepareBullets, ReturnToPath
 
-  before_action :set_collection, only: %i[edit update destroy]
+  before_action :set_collection, only: %i[show edit update destroy]
   before_action :prepare_collect_context, only: %i[new create]
   return_to_from :param, only: %i[new create]
+
+  def index
+    @collections = Current.user.collections.active.order(:name)
+  end
 
   def new
     @collection = Current.user.collections.build
@@ -22,7 +26,7 @@ class CollectionsController < ApplicationController
           format.html { redirect_to collect_return_path, notice: 'Collection created' }
         end
       else
-        redirect_to bullets_path(collection: @collection.name), notice: 'Collection created'
+        redirect_to collections_path, notice: 'Collection created'
       end
     else
       render :new, status: :unprocessable_entity
@@ -37,11 +41,13 @@ class CollectionsController < ApplicationController
     end
   end
 
+  def show; end
+
   def edit; end
 
   def update
     if @collection.update(collection_params)
-      redirect_to bullets_path(collection: @collection.name), notice: 'Collection updated'
+      redirect_to collection_path(@collection), notice: 'Collection updated'
     else
       render :edit, status: :unprocessable_entity
     end
@@ -77,6 +83,6 @@ class CollectionsController < ApplicationController
   end
 
   def collect_return_path
-    @return_to.presence || bullets_path(collection: @collection.name)
+    @return_to.presence || collection_path(@collection)
   end
 end

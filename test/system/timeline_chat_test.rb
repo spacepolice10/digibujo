@@ -32,7 +32,7 @@ class TimelineChatSystemTest < ApplicationSystemTestCase
     scroll_to_top
     wait_for_stable_bullet_count(minimum: PAGE * 2)
 
-    assert_selector '.chat--load-more-trigger'
+    assert_selector '.timeline--load-more-trigger'
     previous = page.all("#{@list} .bullet").size
     anchor = find("#{@list} .bullet", match: :first)[:id]
     scroll_to_top
@@ -55,7 +55,7 @@ class TimelineChatSystemTest < ApplicationSystemTestCase
     assert_selector "#{@list} .bullet", count: 2
     gap = page.evaluate_script(<<~JS)
       (() => {
-        const scroller = document.querySelector('.chat--scroller')
+        const scroller = document.querySelector('.timeline--scroller')
         const pad = parseFloat(getComputedStyle(scroller).paddingBottom) || 0
         const last = [...scroller.querySelectorAll('.bullet')].pop()
         return Math.abs((scroller.getBoundingClientRect().bottom - pad) - last.getBoundingClientRect().bottom)
@@ -67,11 +67,11 @@ class TimelineChatSystemTest < ApplicationSystemTestCase
   test 'the older trigger disappears once the whole timeline is loaded' do
     create_lines(PAGE + 5)
     visit bullets_path
-    assert_selector '.chat--load-more-trigger'
+    assert_selector '.timeline--load-more-trigger'
 
     scroll_to_top
 
-    assert_no_selector '.chat--load-more-trigger'
+    assert_no_selector '.timeline--load-more-trigger'
     assert_selector "#{@list} .bullet", count: PAGE + 5
     assert_text 'Line 0'
   end
@@ -163,13 +163,13 @@ class TimelineChatSystemTest < ApplicationSystemTestCase
   end
 
   def scroll_to_top
-    page.execute_script("document.querySelector('.chat--scroller').scrollTop = 0")
+    page.execute_script("document.querySelector('.timeline--scroller').scrollTop = 0")
   end
 
   def distance_from_bottom
     page.evaluate_script(<<~JS)
       (() => {
-        const scroller = document.querySelector('.chat--scroller')
+        const scroller = document.querySelector('.timeline--scroller')
         return scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight
       })()
     JS

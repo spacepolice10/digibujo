@@ -12,7 +12,7 @@ class TimelinesControllerTest < ActionDispatch::IntegrationTest
     get root_path
 
     assert_response :success
-    assert_select '#timeline.chat--scroller[data-controller~="chat-scroll"]'
+    assert_select '#timeline.timeline--scroller[data-controller~="timeline-scroll"]'
   end
 
   test 'index mounts a hidden today section for the composer' do
@@ -22,7 +22,7 @@ class TimelinesControllerTest < ActionDispatch::IntegrationTest
     assert_select '#timeline_section_current_date'
     assert_select '#timeline_composer_dock input[name="bullet[file]"][type="file"]'
     assert_select '#timeline_composer_dock input[name="bullet[bulletable_type]"]', count: 0
-    assert_select '.chat--load-more-trigger', count: 0
+    assert_select '.timeline--load-more-trigger', count: 0
   end
 
   test 'index groups bullets into sections by age' do
@@ -64,7 +64,7 @@ class TimelinesControllerTest < ActionDispatch::IntegrationTest
 
     get bullets_path
 
-    assert_select '.chat--load-more-trigger'
+    assert_select '.timeline--load-more-trigger'
     assert_select '#timeline .bullet', count: Bullet::Pageable::PAGE_SIZE
   end
 

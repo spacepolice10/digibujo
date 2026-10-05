@@ -9,7 +9,7 @@ class BulletsController < ApplicationController
 
   def index
     if params[:before].present?
-      load_older_page
+      load_prev_page
     else
       @bullets = @timeline.last_page
       @more_bullets = @bullets.size == Bullet::Pageable::PAGE_SIZE
@@ -62,7 +62,7 @@ class BulletsController < ApplicationController
 
   private
 
-  def load_older_page
+  def load_prev_page
     cursor = @timeline.filtered.find_by(id: params[:before])
     return head :no_content unless cursor
 

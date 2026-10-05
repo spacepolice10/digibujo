@@ -8,7 +8,7 @@
  *   article         — elevated card / surface (may hold ul directly)
  *   ul[data-layout]  — column (default), flex, or grid
  *   ul[data-divider] — row/outer borders when "true"
- * Chat windows (.chat--window / .chat--scroller) opt out via chat.css
+ * Timeline windows (.timeline--window / .timeline--scroller) opt out via timeline.css
  * (full-height flex fill, no page-shell padding).
  */
 
@@ -16,7 +16,7 @@
 
   :root {
     --background-grid-size: 1.25rem;
-    --background-canvas-colour: light-dark(oklch(0.97 0 0), oklch(0.19 0 0));
+    --background-canvas-colour: light-dark(oklch(0.97 0 0), oklch(0.24 0 0));
     --background-grid-colour: light-dark(oklch(0.88 0 0), oklch(0.45 0 0 / 0.55));
     --background-grid-pattern: radial-gradient(circle,
         var(--background-grid-colour) 1px,
@@ -303,7 +303,7 @@
 
   a:not([class]) {
     text-decoration-skip-ink: auto;
-    color: currentColor;
+    color: var(--color-invert-2);
   }
 
   li {
@@ -313,26 +313,26 @@
   /* Appearance. Theming colors — on html with the dot-grid background. */
 
   html[data-appearance="warm"] {
-    --color-1: light-dark(oklch(0.97 0.015 78), oklch(0.19 0.025 78));
-    --color-2: light-dark(oklch(0.99 0.01 78), oklch(0.24 0.018 78));
+    --color-1: light-dark(oklch(0.97 0.015 78), oklch(0.25 0.025 78));
+    --color-2: light-dark(oklch(0.99 0.01 78), oklch(0.30 0.018 78));
     --background-grid-colour: light-dark(oklch(0.64 0.018 78 / 0.72), oklch(0.45 0.012 78 / 0.55));
   }
 
   html[data-appearance="cool"] {
-    --color-1: light-dark(oklch(0.97 0.015 250), oklch(0.19 0.025 255));
-    --color-2: light-dark(oklch(0.99 0.01 250), oklch(0.24 0.018 255));
+    --color-1: light-dark(oklch(0.97 0.015 250), oklch(0.25 0.025 255));
+    --color-2: light-dark(oklch(0.99 0.01 250), oklch(0.30 0.018 255));
     --background-grid-colour: light-dark(oklch(0.64 0.018 250 / 0.72), oklch(0.45 0.012 255 / 0.55));
   }
 
   html[data-appearance="nature"] {
-    --color-1: light-dark(oklch(0.97 0.015 145), oklch(0.19 0.025 145));
-    --color-2: light-dark(oklch(0.99 0.01 145), oklch(0.24 0.018 145));
+    --color-1: light-dark(oklch(0.97 0.015 145), oklch(0.25 0.025 145));
+    --color-2: light-dark(oklch(0.99 0.01 145), oklch(0.30 0.018 145));
     --background-grid-colour: light-dark(oklch(0.64 0.018 145 / 0.72), oklch(0.45 0.012 145 / 0.55));
   }
 
   html[data-appearance="cheese"] {
-    --color-1: light-dark(oklch(0.97 0.02 85), oklch(0.19 0.03 85));
-    --color-2: light-dark(oklch(0.99 0.014 85), oklch(0.24 0.022 85));
+    --color-1: light-dark(oklch(0.97 0.02 85), oklch(0.25 0.03 85));
+    --color-2: light-dark(oklch(0.99 0.014 85), oklch(0.30 0.022 85));
     --background-grid-colour: light-dark(oklch(0.64 0.022 85 / 0.72), oklch(0.45 0.014 85 / 0.55));
   }
 

@@ -70,7 +70,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select 'ul[data-layout=grid] a[href=?]', new_collection_path, text: 'New'
-    assert_select 'ul[data-layout=grid] a[href=?]', bullets_path(collection: collection.name), text: 'reading' do
+    assert_select 'ul[data-layout=grid] a[href=?]', collection_path(collection), text: 'reading' do
       assert_select '.icon-wrap[style*=?]', 'color: var(--model-color-3)'
       assert_select '.icon[style*=?]', '--icon-hash'
     end

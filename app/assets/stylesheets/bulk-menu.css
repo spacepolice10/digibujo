@@ -53,11 +53,13 @@
   .bulk-menu--action-button {
     padding: var(--space-v-half) var(--space-h-half);
     width: 100%;
-    height: var(--space-v-3);
+    height: var(--space-v-5);
     min-height: var(--space-v-3);
     padding-inline: var(--space-h);
     gap: var(--space-h-half);
     font-size: var(--font-size-xs);
+    text-align: left;
+    justify-content: start;
 
     svg {
       width: 1em;

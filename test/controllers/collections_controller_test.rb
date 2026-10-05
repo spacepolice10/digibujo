@@ -8,7 +8,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     sign_in_as @user
   end
 
-  test 'create saves the collection and redirects to its daylog' do
+  test 'create saves the collection and redirects to its show page' do
     assert_difference -> { Collection.count }, 1 do
       post collections_path, params: {
         collection: { name: 'Inbox', colour: 'teal', icon: 'folder', description: 'Things to sort' }
@@ -16,7 +16,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_equal 'Things to sort', Collection.last.description
-    assert_redirected_to bullets_path(collection: Collection.last.name)
+    assert_redirected_to collection_path(Collection.last)
   end
 
   test 'new with bullet_ids renders full page form and preview' do
@@ -47,7 +47,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     end
 
     collection = Collection.last
-    assert_redirected_to bullets_path(collection: collection.name)
+    assert_redirected_to collection_path(collection)
     assert_includes first.reload.collection_ids, collection.id
     assert_includes second.reload.collection_ids, collection.id
   end
@@ -85,7 +85,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Hold', response.body
   end
 
-  test 'filtered daylog lists a bullet collected into the collection' do
+  test 'filtered feed lists a bullet collected into the collection' do
     collection = create_collection!(@user, name: 'Inbox', colour: 'teal')
     bullet = create_bullet!(@user, body: 'Collected in', pops_on: Date.current)
     bullet.collect!(collection_id: collection.id)
@@ -93,6 +93,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     get bullets_path(collection: collection.name)
 
     assert_response :success
+    assert_select "turbo-frame##{dom_id(collection, :timeline)}"
     assert_select "turbo-frame##{dom_id(bullet)}" do
       assert_select '.bullet--marker', count: 1
       assert_select 'label.bullet--select-checkbox[aria-label=?]', 'Select bullet', count: 1
@@ -101,37 +102,45 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match 'Moved into inbox.', response.body
   end
 
-  test 'filtered daylog mounts the chat composer scoped to the collection' do
+  test 'filtered feed does not mount a composer' do
     collection = create_collection!(@user, name: 'Inbox')
 
     get bullets_path(collection: collection.name)
 
     assert_response :success
-    assert_select "##{ActionView::RecordIdentifier.dom_id(collection, :bullets_composer)}" do
-      assert_select 'lexxy-editor[preset=default]'
-      assert_select "input[name='bullet[collection_id]'][value=?]", collection.id.to_s
-      assert_select "input[name='bullet[file]'][type='file']"
-      assert_select "input[name='bullet[bulletable_type]']", count: 0
-    end
+    assert_select "##{ActionView::RecordIdentifier.dom_id(collection, :bullets_composer)}", count: 0
+    assert_select '#timeline_composer_dock', count: 0
+    assert_select '.composer--dock', count: 0
   end
 
-  test 'filtered daylog renders the chat frame with title and actions dropdown' do
+  test 'filtered feed has no collection management header' do
     collection = create_collection!(@user, name: 'Inbox', colour: 'teal', icon: 'folder')
 
     get bullets_path(collection: collection.name)
 
     assert_response :success
-    assert_select '.chat--window'
-    assert_select '.chat--window > .chat--scroller'
-    assert_select 'h1', text: /inbox/
-    assert_select '.chat--window[style*=?]', '--collection-bg: var(--model-color-3-bg)'
+    assert_select '.timeline--window'
+    assert_select "turbo-frame##{dom_id(collection, :timeline)}.utilities--contents .timeline--scroller"
+    assert_select 'button[popovertarget="collection_actions"]', count: 0
+    assert_select 'h1', count: 0
+  end
+
+  test 'show renders the management panel and lazy timeline frame' do
+    collection = create_collection!(@user, name: 'Inbox', colour: 'teal', icon: 'folder')
+
+    get collection_path(collection)
+
+    assert_response :success
+    assert_select '.timeline--window > header h1', text: /inbox/
     assert_select 'button[popovertarget="collection_actions"]'
     assert_select 'div#collection_actions[role=menu][data-controller=grid-navigation]'
     assert_select 'a.dropdown-item[href=?]', edit_collection_path(collection)
     assert_select 'a.dropdown-item[href=?]', export_bullets_path(collection: collection.name)
+    assert_select "turbo-frame##{dom_id(collection, :timeline)}.utilities--contents[src=?]",
+                  bullets_path(collection: collection.name)
   end
 
-  test 'filtered daylog groups tagged bullets into timeline sections' do
+  test 'filtered feed groups tagged bullets into timeline sections' do
     collection = create_collection!(@user, name: 'Inbox')
 
     create_bullet!(@user, collection: collection, body: 'Older day', pops_on: Date.current - 2)
@@ -156,7 +165,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
       collection: { name: 'New name', colour: 'gold', icon: 'heart', description: 'Updated' }
     }
 
-    assert_redirected_to bullets_path(collection: 'new name')
+    assert_redirected_to collection_path(collection)
     collection.reload
     assert_equal 'new name', collection.name
     assert_equal 'Updated', collection.description

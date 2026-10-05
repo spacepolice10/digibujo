@@ -3,10 +3,10 @@
 
 
         /* surfaces  */
-        --color-1: light-dark(oklch(0.99 0.002 80), oklch(0.20 0.007 82));
-        --color-2: light-dark(oklch(0.96 0.004 80), oklch(0.24 0.008 82));
-        --color-3: light-dark(oklch(0.92 0.006 80), oklch(0.28 0.009 82));
-        --color-4: light-dark(oklch(0.88 0.008 80), oklch(0.32 0.010 82));
+        --color-1: light-dark(oklch(0.99 0.002 80), oklch(0.25 0.007 82));
+        --color-2: light-dark(oklch(0.96 0.004 80), oklch(0.30 0.008 82));
+        --color-3: light-dark(oklch(0.92 0.006 80), oklch(0.35 0.009 82));
+        --color-4: light-dark(oklch(0.88 0.008 80), oklch(0.40 0.010 82));
 
         /* status  */
         --color-positive: light-dark(oklch(86.68% 0.29129 142.889), oklch(0.25 0.05 142.889));
@@ -14,9 +14,9 @@
 
         /* inverted */
         --color-invert-1: light-dark(oklch(0.02 0.004 80), oklch(0.98 0.007 82));
-        --color-invert-2: light-dark(oklch(0.22 0.010 80), oklch(0.82 0.014 82));
-        --color-invert-3: light-dark(oklch(0.42 0.014 80), oklch(0.66 0.018 82));
-        --color-invert-4: light-dark(oklch(0.62 0.016 80), oklch(0.50 0.020 82));
+        --color-invert-2: light-dark(oklch(0.22 0.010 80), oklch(0.86 0.014 82));
+        --color-invert-3: light-dark(oklch(0.42 0.014 80), oklch(0.72 0.018 82));
+        --color-invert-4: light-dark(oklch(0.62 0.016 80), oklch(0.58 0.020 82));
 
         --color-invert-positive: light-dark(oklch(15.31% 0.29129 142.889), oklch(0.95 0.05 142.889));
         --color-invert-negative: light-dark(oklch(0.20 0.13291 35.316), oklch(0.95 0.03 35));

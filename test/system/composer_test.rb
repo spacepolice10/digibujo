@@ -63,7 +63,7 @@ class ComposerSystemTest < ApplicationSystemTestCase
   end
 
   test 'chat composer docks over the full-height scroller' do
-    assert_selector '.chat--window > .chat--scroller[data-controller~="chat-scroll"]'
-    assert_selector '.chat--window > #timeline_composer_dock > #timeline_composer'
+    assert_selector '.timeline--window > .timeline--scroller[data-controller~="timeline-scroll"]'
+    assert_selector '.timeline--window > #timeline_composer_dock > #timeline_composer'
   end
 end

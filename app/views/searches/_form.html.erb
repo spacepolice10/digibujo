@@ -4,12 +4,14 @@
     <input
       type="search"
       name="q"
-      class="search--textform"
+      class="search--textform hotkey-hint"
       placeholder="Search…"
       value="<%= q.to_s %>"
       autocomplete="off"
       data-search-target="input"
-      data-action="input->search#input"
+      data-controller="hotkey"
+      data-action="keydown.shift+s@document->hotkey#focus input->search#input"
+      data-hotkey="S"
       aria-label="Search"
     >
 

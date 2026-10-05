@@ -34,14 +34,14 @@ Rails.application.routes.draw do
   end
 
   # --- Collections ---
-  resources :collections, except: %i[index show]
+  resources :collections
 
   # --- Search & navigation ---
   resource :search, only: :show, controller: 'searches' do
     scope module: :searches do
       resource :selection, only: :create
       resource :appearance, only: :update
-      post "appearance", to: "appearances#update"
+      post 'appearance', to: 'appearances#update'
     end
   end
 

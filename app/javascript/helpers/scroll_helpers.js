@@ -1,4 +1,4 @@
-// Scroll primitives for chat-style lists, where content grows at both ends.
+// Scroll primitives for timeline-style lists, where content grows at both ends.
 
 export function scrollToBottom(container, behavior = "instant") {
   container.scrollTo({ top: container.scrollHeight, behavior })

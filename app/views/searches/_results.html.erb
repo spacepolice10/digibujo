@@ -4,7 +4,7 @@
     <% if entry.is_a?(Bullet) %>
       <%= render partial: entry.to_partial_path, locals: { bullet: entry } %>
     <% else %>
-      <%= link_to bullets_path(collection: entry.name),
+      <%= link_to collection_path(entry),
             class: "collection-chip",
             data: { turbo_frame: "_top" } do %>
         <%= icon("hash", style: ("color: #{colour(entry.colour)};" if entry.colour.present?)) %>

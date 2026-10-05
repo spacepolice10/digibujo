@@ -12,12 +12,10 @@ class SearchesController < ApplicationController
       @entries = Search::GlobalRequest.call(user: Current.user, query: @q, limit:)
     else
       @collections = Current.user.collections.active.order(:name)
-      @attachment_count = User::Attachments.new(Current.user).attachments.count
-      @archive_count = Current.user.bullets.archived.count
+      @attachments_count = User::Attachments.new(Current.user).attachments.count
+      @archived_count = Current.user.bullets.archived.count
 
-      if request.format.html? || turbo_frame_request?
-        @selections = Search::Selection.in_menu(Current.user)
-      end
+      @selections = Search::Selection.in_menu(Current.user) if request.format.html? || turbo_frame_request?
     end
   end
 
@@ -26,6 +24,6 @@ class SearchesController < ApplicationController
   # Frame results and explicit page updates render full bullet rows.
   # A turbo-stream without view=page stays the compact list.
   def page_results?
-    params[:view] == "page" || turbo_frame_request?
+    params[:view] == 'page' || turbo_frame_request?
   end
 end

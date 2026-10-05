@@ -3,8 +3,7 @@
 <div
   id="<%= resolved_composer_id %>"
   class="composer"
-  data-controller="composer composer-attachment hotkey"
-  data-action="keydown.shift+f@document->hotkey#focus"
+  data-controller="composer composer-attachment"
 >
   <%= form_with model: bullet,
         multipart: true,
@@ -39,9 +38,10 @@
             placeholder: "What's up?",
             class: "hotkey-hint lexxy-editor--empty",
             data: {
-              action: "keydown->composer#submitByKeyboard:capture",
+              controller: "hotkey",
+              action: "keydown.shift+f@document->hotkey#focus composer#submitByKeyboard:capture",
               composer_target: "editor",
-              hotkey: "F"
+              hotkey: "F",
             } %>
     </span>
 

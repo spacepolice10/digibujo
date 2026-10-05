@@ -1,7 +1,7 @@
 <% content_for(:title, "Edit collection") %>
 
 <%= render "shared/back_tabbar",
-      url: bullets_path(collection: @collection.name),
+      url: collection_path(@collection),
       aria_label: "Back to collection" %>
 
 <main data-size="sm">

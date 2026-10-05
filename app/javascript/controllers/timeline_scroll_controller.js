@@ -7,7 +7,7 @@ const PINNED_THRESHOLD = 80
 // Upper bound for a follow-the-bottom animation when `scrollend` never fires.
 const GLIDE_TIMEOUT = 700
 
-// Generic chat list mounted directly on its scroller (scrollport + list in one),
+// Generic timeline list mounted directly on its scroller (scrollport + list in one),
 // opens at the newest bullet, pulls older pages from the top, and follows new
 // rows only while the reader is already at the bottom. The composer is a
 // sibling flex row, so this element owns all remaining space and scrolling.
