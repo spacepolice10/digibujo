@@ -1,29 +1,21 @@
-<article data-elevation="1" class="bulk-menu"
-     data-bulk-menu-target="menu"
-     data-action="keydown.esc@document->bulk-menu#escape"
-     tabindex="0"
-     hidden>
+<div
+  class="bulk-menu"
+  data-bulk-menu-target="menu"
+  data-action="keydown.esc@document->bulk-menu#escape"
+  tabindex="0"
+  hidden
+>
   <header>
-    <h2>Bulk edit</h2>
-    <button type="button"
-            class="dropdown--element-hide"
-            data-intent="primary"
-            data-radius="full"
-            data-size="xs"
-            data-content="icon"
-            data-action="bulk-menu#clear"
-            aria-label="Clear selection">
-      <%= icon("x") %>
-    </button>
+    <h2 class="utilities--sr-only">Bulk edit</h2>
   </header>
 
   <div class="bulk-menu--actions">
-
     <%= form_with url: completion_path, method: :post,
           class: "utilities--contents",
           data: { turbo_stream: true, bulk_menu_target: "complete" },
           html: { hidden: true } do %>
       <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
+
       <%= button_tag type: :submit,
             class: "hotkey-hint hotkey-hint--always bulk-menu--action-button",
             data: {
@@ -35,8 +27,7 @@
               action: "keydown.c@document->hotkey#click"
             },
             aria: { keyshortcuts: "C" } do %>
-        <%= icon("check") %>
-        Complete
+        <%= icon("check") %> Complete
       <% end %>
     <% end %>
 
@@ -44,6 +35,7 @@
           data: { turbo_stream: true, bulk_menu_target: "uncomplete" },
           html: { hidden: true } do %>
       <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
+
       <%= button_tag type: :submit,
             class: "hotkey-hint hotkey-hint--always bulk-menu--action-button",
             data: {
@@ -55,8 +47,7 @@
               action: "keydown.u@document->hotkey#click"
             },
             aria: { keyshortcuts: "U" } do %>
-        <%= icon("square") %>
-        Uncomplete
+        <%= icon("square") %> Uncomplete
       <% end %>
     <% end %>
 
@@ -65,6 +56,7 @@
           data: { turbo_stream: true, bulk_menu_target: "publish" },
           html: { hidden: true } do %>
       <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
+
       <%= button_tag type: :submit,
             class: "hotkey-hint hotkey-hint--always bulk-menu--action-button",
             data: {
@@ -76,8 +68,7 @@
               action: "keydown.shift+p@document->hotkey#click"
             },
             aria: { keyshortcuts: "Shift+P" } do %>
-        <%= icon("link") %>
-        Publish
+        <%= icon("link") %> Publish
       <% end %>
     <% end %>
 
@@ -86,6 +77,7 @@
           data: { turbo_stream: true, bulk_menu_target: "unpublish" },
           html: { hidden: true } do %>
       <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
+
       <%= button_tag type: :submit,
             class: "hotkey-hint hotkey-hint--always bulk-menu--action-button",
             data: {
@@ -97,8 +89,7 @@
               action: "keydown.shift+p@document->hotkey#click"
             },
             aria: { keyshortcuts: "Shift+P" } do %>
-        <%= icon("link") %>
-        Unpublish
+        <%= icon("link") %> Unpublish
       <% end %>
     <% end %>
 
@@ -106,6 +97,7 @@
           class: "utilities--contents",
           data: { turbo_stream: true } do %>
       <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
+
       <%= button_tag type: :submit,
             class: "hotkey-hint hotkey-hint--always bulk-menu--action-button",
             data: {
@@ -117,54 +109,75 @@
               action: "keydown.a@document->hotkey#click"
             },
             aria: { keyshortcuts: "A" } do %>
-        <%= icon("archive") %>
-        Archive
+        <%= icon("archive") %> Archive
       <% end %>
     <% end %>
 
-    <div class="dropdown--dock bulk-menu--action-dock" data-bulk-menu-target="popsDropdown">
-      <button type="button"
-              class="hotkey-hint hotkey-hint--always bulk-menu--action-button"
-              data-controller="hotkey"
-              data-intent="secondary"
-              data-radius="base"
-              data-size="sm"
-              data-hotkey="L"
-              data-action="bulk-menu#openPopsPicker keydown.l@document->hotkey#click"
-              aria-keyshortcuts="L"
-              aria-haspopup="menu">
-        <%= icon("arrow-up") %>
-        Later
-      </button>
-      <turbo-frame id="postpone_picker_dropdown_id"
-                   class="bulk-menu--picker bulk-menu--picker--schedule"
-                   popover
-                   loading="lazy"
-                   data-controller="grid-navigation"
-                   data-grid-navigation-columns-value="1"
-                   data-action="keydown->grid-navigation#navigate"></turbo-frame>
-    </div>
+    <button
+      type="button"
+      class="hotkey-hint hotkey-hint--always bulk-menu--action-button"
+      data-controller="hotkey"
+      data-intent="secondary"
+      data-radius="base"
+      data-size="sm"
+      data-hotkey="L"
+      data-action="bulk-menu#openPopsPicker keydown.l@document->hotkey#click"
+      aria-keyshortcuts="L"
+    >
+      <%= icon("arrow-up") %> Later
+    </button>
 
-    <div class="dropdown--dock bulk-menu--action-dock" data-bulk-menu-target="collectsDropdown">
-      <button type="button"
-              class="hotkey-hint hotkey-hint--always bulk-menu--action-button"
-              data-controller="hotkey"
-              data-intent="secondary"
-              data-radius="base"
-              data-size="sm"
-              data-hotkey="S"
-              data-action="bulk-menu#openCollectsPicker keydown.s@document->hotkey#click"
-              aria-keyshortcuts="S"
-              aria-haspopup="menu">
-        <%= icon("arrow-left") %>
-        Save
-      </button>
-      <turbo-frame id="collects_picker_dropdown_id"
-                   class="bulk-menu--picker bulk-menu--picker--collects"
-                   popover
-                   loading="lazy"></turbo-frame>
-    </div>
+    <button
+      type="button"
+      class="hotkey-hint hotkey-hint--always bulk-menu--action-button"
+      data-controller="hotkey"
+      data-intent="secondary"
+      data-radius="base"
+      data-size="sm"
+      data-hotkey="S"
+      data-action="bulk-menu#openCollectsPicker keydown.s@document->hotkey#click"
+      aria-keyshortcuts="S"
+    >
+      <%= icon("arrow-left") %> Save
+    </button>
   </div>
 
   <p class="bulk-menu--amount" data-bulk-menu-target="amount">0 selected</p>
-</article>
+
+  <button
+    type="button"
+    class="utilities--mx-auto"
+    data-intent="primary"
+    data-radius="base"
+    data-size="sm"
+    data-action="bulk-menu#clear"
+    aria-label="Clear selection"
+  >
+    <p>Clear selection</p>
+  </button>
+</div>
+
+<%= render "shared/dialog",
+      id: "postpone_picker_dialog",
+      standalone: true,
+      size: "sm" do %>
+  <turbo-frame
+    id="postpone_picker_dialog"
+    data-bulk-menu-target="popsDialog"
+    loading="lazy"
+    data-controller="grid-navigation"
+    data-grid-navigation-columns-value="1"
+    data-action="keydown->grid-navigation#navigate"
+  ></turbo-frame>
+<% end %>
+
+<%= render "shared/dialog",
+      id: "collects_picker_dialog",
+      standalone: true,
+      size: "lg" do %>
+  <turbo-frame
+    id="collects_picker_dialog"
+    data-bulk-menu-target="collectsDialog"
+    loading="lazy"
+  ></turbo-frame>
+<% end %>

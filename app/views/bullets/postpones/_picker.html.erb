@@ -1,21 +1,7 @@
 <%# locals: (bullet_ids: "", postpone_options: []) %>
-<article data-elevation="1">
-  <header>
-    <h2>Schedule</h2>
 
-    <button
-      type="button"
-      class="dropdown--element-hide"
-      data-intent="secondary"
-      data-radius="full"
-      data-size="xs"
-      data-content="icon"
-      popovertarget="postpone_picker_dropdown_id"
-      popovertargetaction="hide"
-      aria-label="Close schedule"
-    >
-      <%= icon("x") %>
-    </button>
+  <header>
+    <h2 class="utilities--sr-only">Schedule</h2>
   </header>
 
   <main aria-label="Schedule">
@@ -71,4 +57,4 @@
       <% end %>
     </div>
   </main>
-</article>
+

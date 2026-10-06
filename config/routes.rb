@@ -37,6 +37,8 @@ Rails.application.routes.draw do
   resources :collections
 
   # --- Search & navigation ---
+  get 'search/results', to: 'searches#results', as: :search_results
+
   resource :search, only: :show, controller: 'searches' do
     scope module: :searches do
       resource :selection, only: :create

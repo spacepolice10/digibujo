@@ -1,7 +1,7 @@
 <%# locals: (bullet:, preset:, autofocus: false, collection: nil, pops_on: Date.current, composer_id: nil) %>
-<% resolved_composer_id = composer_id.presence || (collection ? dom_id(collection, :composer) : "timeline_composer") %>
+
 <div
-  id="<%= resolved_composer_id %>"
+id="bullet_composer"
   class="composer"
   data-controller="composer composer-attachment"
 >
@@ -17,7 +17,7 @@
     <% end %>
     <%= fr.hidden_field :pops_on, value: pops_on %>
     <%= file_field_tag "bullet[file]",
-          id: "#{resolved_composer_id}_attachment_file",
+          id: "bullet_composer_attachment_file",
           hidden: true,
           direct_upload: true,
           data: { composer_attachment_target: "file", action: "change->composer-attachment#attach" } %>
@@ -39,7 +39,7 @@
             class: "hotkey-hint lexxy-editor--empty",
             data: {
               controller: "hotkey",
-              action: "keydown.shift+f@document->hotkey#focus composer#submitByKeyboard:capture",
+              action: "keydown.shift+f@document->hotkey#focus keydown.enter@document->composer#submitByKeyboard:capture",
               composer_target: "editor",
               hotkey: "F",
             } %>

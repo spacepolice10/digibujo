@@ -1,0 +1,19 @@
+<%# Global command palette: preloaded on every page, opened with Ctrl/Cmd+K. %>
+<button
+  type="button"
+  class="utilities--sr-only"
+  commandfor="search_picker_dialog"
+  command="show-modal"
+  aria-label="Open search"
+  data-controller="hotkey"
+  data-action="keydown.meta+k@document->hotkey#click keydown.ctrl+k@document->hotkey#click"
+>
+  Open search
+</button>
+
+<%= render "shared/dialog",
+      id: "search_picker_dialog",
+      standalone: true,
+      size: "lg" do %>
+  <%= render "searches/picker", q: "", entries: [] %>
+<% end %>

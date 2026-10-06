@@ -12,8 +12,8 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
     get user_path
 
     assert_response :success
-    assert_select 'main[data-size="md"] > h1', text: 'Account'
-    assert_select 'main article ul p', text: @user.email_address
+    assert_select 'main[data-size="sm"] h1', text: 'Account'
+    assert_select 'main p', text: @user.email_address
     assert_select 'a[href=?]', access_codes_path, text: /Access codes/
     assert_select 'a[href=?]', webhooks_path, text: /Webhooks/
     assert_select 'form[action=?][data-turbo-confirm=?]', authentication_path, 'Sign out of Dotted?'

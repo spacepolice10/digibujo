@@ -71,9 +71,9 @@ class AccessCodesControllerTest < ActionDispatch::IntegrationTest
     get access_codes_path
 
     assert_response :success
-    assert_select 'main[data-size="md"] header h2', text: 'Access codes'
-    assert_select 'a[data-content="icon"][aria-label="Back to Account"]'
-    assert_select '#access_codes article.access-code--item[data-elevation="2"]'
+    assert_select 'main[data-size="sm"] > h1', text: 'Access codes'
+    assert_select 'nav.tabbar--back a.tabbar--back-link[href=?][aria-label=?]', search_path, 'Back', text: 'Back'
+    assert_select '#access_codes article[data-elevation="2"]'
     assert_select 'form[action=?]', access_codes_path, count: 0
     assert_match access_code.code_prefix, response.body
     assert_select 'button[data-status="negative"]', text: /Revoke/

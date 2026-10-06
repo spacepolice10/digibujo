@@ -26,10 +26,28 @@ module Bullets
       get new_collect_path, params: { bullet_ids: card.id.to_s }
 
       assert_response :success
-      assert_select 'turbo-frame#collects_picker_dropdown_id'
+      assert_select 'turbo-frame#collects_picker_dialog'
+      assert_select '[popover]', count: 0
       assert_select 'form[action=?]', new_collect_path
       assert_select 'input[name="bullet_ids"][data-bulk-menu-target="idList"]'
       assert_match collection.name, response.body
+    end
+
+    test 'picker autofocuses on desktop but not on mobile' do
+      card = create_bullet!(@user, body: 'Move me')
+
+      get new_collect_path, params: { bullet_ids: card.id.to_s }
+
+      assert_response :success
+      assert_select 'turbo-frame#collects_picker_dialog input[name=q].search--textform[autofocus]', count: 1
+
+      get new_collect_path,
+          params: { bullet_ids: card.id.to_s },
+          headers: { 'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)' }
+
+      assert_response :success
+      assert_select 'turbo-frame#collects_picker_dialog input[name=q].search--textform', count: 1
+      assert_select 'turbo-frame#collects_picker_dialog input[name=q][autofocus]', count: 0
     end
 
     test 'new renders picker content inside turbo frame request' do
@@ -38,10 +56,10 @@ module Bullets
 
       get new_collect_path,
           params: { bullet_ids: card.id.to_s },
-          headers: { 'Turbo-Frame' => 'collects_picker_dropdown_id' }
+          headers: { 'Turbo-Frame' => 'collects_picker_dialog' }
 
       assert_response :success
-      assert_select 'turbo-frame#collects_picker_dropdown_id h2', text: 'Save to collection'
+      assert_select 'turbo-frame#collects_picker_dialog h2', text: 'To collection'
       assert_select 'input[name="bullet_ids"][data-bulk-menu-target="idList"]'
       assert_match collection.name, response.body
     end

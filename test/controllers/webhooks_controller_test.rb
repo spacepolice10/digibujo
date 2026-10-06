@@ -51,10 +51,10 @@ class WebhooksControllerTest < ActionDispatch::IntegrationTest
     get webhooks_path
 
     assert_response :success
-    assert_select 'main[data-size="md"] header h2', text: 'Webhooks'
-    assert_select 'a[data-content="icon"][aria-label="Back to Account"]'
+    assert_select 'main[data-size="sm"] > h1', text: 'Webhooks'
+    assert_select 'nav.tabbar--back a.tabbar--back-link[href=?][aria-label=?]', search_path, 'Back', text: 'Back'
     assert_select 'form[action=?]', webhooks_path, count: 0
-    assert_select 'header a[href=?][aria-label="Create Webhook"]', new_webhook_path
+    assert_select 'main a[href=?][aria-label=?]', new_webhook_path, 'Create Webhook'
     assert_match webhook.name, response.body
     assert_match webhook.code_prefix, response.body
     assert_select 'button[data-status="negative"]', text: /Revoke/
@@ -85,7 +85,7 @@ class WebhooksControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Zapier', response.body
     assert_select 'section.webhook--created[role="status"]' do
       assert_select 'strong', text: 'Webhook is ready'
-      assert_select '[aria-hidden="true"]', text: '⚡'
+      assert_select 'span[role="img"][aria-label=?]', 'Lightning'
       assert_select 'code.webhook--created-link'
     end
 

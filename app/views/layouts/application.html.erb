@@ -31,10 +31,12 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400..700;1,400..700&display=swap"
       rel="stylesheet"
     >
+
     <link
       href="https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&display=swap"
       rel="stylesheet"
@@ -51,9 +53,14 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body data-controller="dialog timezone-cookie bulk-menu">
+  <body
+    data-controller="dialog timezone-cookie bulk-menu"
+  >
     <%= render "shared/toasts_host" %>
 
     <%= yield %>
+
+    <%= render "bullets/bulk_menu" if Current.user %>
+    <%= render "searches/dialog" if Current.user %>
   </body>
 </html>

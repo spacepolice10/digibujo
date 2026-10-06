@@ -10,11 +10,8 @@ export default class extends Controller {
     this.focusPending = false;
     this.initTabindex();
 
-    if (!this.element.hasAttribute("popover")) return;
-
     this.abortController = new AbortController();
     const { signal } = this.abortController;
-    this.element.addEventListener("toggle", this.onToggle.bind(this), { signal });
     this.element.addEventListener("turbo:frame-load", this.onFrameLoad.bind(this), { signal });
   }
 
@@ -22,13 +19,8 @@ export default class extends Controller {
     this.abortController?.abort();
   }
 
-  onToggle(event) {
-    if (event.newState != "open") return;
-    this.focusFirst();
-  }
-
   onFrameLoad() {
-    if (!this.element.matches(":popover-open")) return;
+    if (!this.#isVisible()) return;
     this.focusFirst();
   }
 
@@ -94,6 +86,12 @@ export default class extends Controller {
     items.forEach((item, index) => {
       item.setAttribute("tabindex", index == this.currentPosition ? "0" : "-1");
     });
+  }
+
+  #isVisible() {
+    const dialog = this.element.closest("dialog");
+    if (!dialog) return this.element.isConnected;
+    return dialog.open;
   }
 
   #focusWhenReady(attempt = 0) {

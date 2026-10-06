@@ -22,7 +22,6 @@ class CollectionsController < ApplicationController
       if @bullet_ids.present?
         collect_bullets_into_collection!
         respond_to do |format|
-          format.turbo_stream
           format.html { redirect_to collect_return_path, notice: 'Collection created' }
         end
       else

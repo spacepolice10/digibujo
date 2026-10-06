@@ -1,57 +1,74 @@
 @layer components {
   .dialog {
+    position: fixed;
+    z-index: var(--z-dialog);
     padding: var(--space-v) var(--space-h);
+    margin-top: auto;
+    margin-bottom: 0;
+    margin-inline: auto;
     border: 0;
-    border-radius: var(--radius-strong);
-    background: var(--color-1);
+    border-bottom: var(--border-strong);
+    border-top-left-radius: var(--radius-strong);
+    border-top-right-radius: var(--radius-strong);
+    background: var(--background-canvas-colour);
     box-shadow:
       var(--shadow-base),
       /* 1px hairline — no stroke-width token in the design system */
       0 0 0 1px color-mix(in oklch, var(--color-2) 35%, transparent);
     color: var(--color-invert-2);
-    margin: auto;
-    width: min(calc(100vw - (2 * var(--space-h))),
-        calc(var(--space-h-2) * 13));
-    max-width: calc(100vw - (2 * var(--space-h)));
+    width: 100%;
+    max-width: 100%;
     overflow: scroll;
+    height: 100%;
     overscroll-behavior: none;
 
     @container layout (width < 800px) {
-      margin:
+      /* margin:
         max(var(--space-v), env(safe-area-inset-top, 0px)) auto
-        max(var(--space-v), env(safe-area-inset-bottom, 0px));
+        max(var(--space-v), env(safe-area-inset-bottom, 0px)); */
       max-height: min(
         90dvh,
         100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)
       );
     }
 
-    /* closed / exit state */
+    @container layout (width >= 800px) {
+      max-width: 800px;
+    }
+
+    &[data-size="sm"] {
+      height: fit-content;
+      max-width: 400px;
+    }
+    &[data-size="lg"] {
+      max-width: 650px;
+      height: 100%;
+    }
+
     opacity: 0;
-    scale: 0.96;
+    transform: translateY(100%);
     transition:
+      transform 120ms ease,
       opacity 120ms ease,
-      scale 120ms ease,
       display 120ms allow-discrete,
       overlay 120ms allow-discrete;
 
     &:modal,
     &[open] {
       opacity: 1;
-      scale: 1;
-      animation: popout 160ms ease-out;
-
+      transform: translateY(0);
+      
       @starting-style {
         opacity: 0;
-        scale: 0.9;
+        transform: translateY(100%);
       }
     }
 
     &::backdrop {
       background: oklch(0% 0 0 / 0);
-      backdrop-filter: blur(1px);
       transition:
         background 140ms ease,
+        transform 140ms ease,
         display 140ms allow-discrete,
         overlay 140ms allow-discrete;
     }
@@ -66,19 +83,11 @@
     }
   }
 
-  .dialog--lg {
-    width: 90vw;
-    @container layout (width >= 800px) {
-      width: 75vw;
-    }
-  }
-  
-  .dialog--fullscreen {
-    width: 100vw;
-    max-width: 100vw;
-  }
+
 
   .dialog--chrome {
+    position: sticky;
+    top: 0;
     display: flex;
     justify-content: flex-end;
     flex-shrink: 0;

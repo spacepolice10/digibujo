@@ -10,12 +10,17 @@
     display: none;
   }
 
-  .timeline--section > .pill { align-self: center; }
+  .timeline--section > .pill { 
+    position: sticky;
+    top: 0;
+    align-self: center; 
+    z-index: 1;
+  }
 
   /* Complete timeline window: full-viewport scroller with an overlaid composer.
      Assembled from timeline--* window classes so any page can build the shell. */
   .timeline--window {
-    --timeline-header-clearance: var(--space-v-10);
+    --timeline-header-clearance: var(--space-v);
     /* Room under the last bullet so it rests above the floating dock;
        content still scrolls behind the composer. */
     --timeline-dock-clearance: calc(
@@ -45,51 +50,6 @@
     padding: 0;
   }
 
-  /* Former in-flow gap between surface and composer — unused once the dock
-     overlays the scroller. */
-  .timeline--window > br {
-    display: none;
-  }
-
-  /* Full bottom-chrome veil (composer + tabbar band): bullets dissolve as they
-     enter the dock zone. Spans the viewport, not just the md column. */
-  .timeline--window::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    z-index: 1;
-    width: 100vw;
-    translate: -50% 0;
-    height: calc(var(--timeline-dock-clearance) + var(--space-v));
-    pointer-events: none;
-    background: linear-gradient(
-      to top,
-      var(--background-canvas-colour) 0%,
-      var(--background-canvas-colour) 62%,
-      transparent 100%
-    );
-  }
-
-  /* Composer floats over the scroller; bullets scroll underneath. */
-  .timeline--window > .timeline--composer {
-    position: absolute;
-    inset-inline: 0;
-    bottom: 0;
-    z-index: 2;
-    flex: unset;
-    justify-content: unset;
-    overflow: visible;
-    min-block-size: unset;
-  }
-
-  html:has(.timeline--window) body {
-    overflow-y: hidden !important;
-    height: 100dvh !important;
-    padding: 0 !important;
-    scroll-padding-bottom: 0 !important;
-  }
-
   /* Levitating header slot — frosted chips float over the scroller. */
   .timeline--header {
     position: sticky;
@@ -114,8 +74,8 @@
     overscroll-behavior-x: auto;
     gap: var(--space-v);
     padding-top: var(--timeline-header-clearance, 0px);
-    background: transparent;
     padding-bottom: var(--timeline-dock-clearance);
+    background: transparent;
     scroll-padding-bottom: var(--timeline-dock-clearance);
     > * {
       margin-block: 0;
@@ -137,12 +97,5 @@
     margin-block-end: auto;
     padding-block: var(--space-v);
     color: var(--color-invert-4);
-  }
-
-  .timeline--composer {
-    position: relative;
-    z-index: 2;
-    flex: 0 0 auto;
-    padding: var(--space-v-half) var(--space-h-half);
   }
 }

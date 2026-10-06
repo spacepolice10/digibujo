@@ -20,7 +20,7 @@ class TimelinesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select '#timeline_section_current_date'
-    assert_select '#timeline_composer_dock input[name="bullet[file]"][type="file"]'
+    assert_select '#composer_dock input[name="bullet[file]"][type="file"]'
     assert_select '#timeline_composer_dock input[name="bullet[bulletable_type]"]', count: 0
     assert_select '.timeline--load-more-trigger', count: 0
   end

@@ -1,30 +1,32 @@
 @layer components {
   .bulk-menu {
     position: fixed;
-    inset-inline: 0;
-    bottom: var(--space-v);
     z-index: var(--z-toasts);
-    anchor-name: --bulk-menu;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     gap: var(--space-v-half);
-    width: 90%;
-    max-width: min(100%, calc(var(--space-h-2) * 20));
+    width: 100%;
     margin-inline: auto;
-    background: var(--color-1);
-    border: var(--border-subtle);
-    border-radius: var(--radius-base);
-    box-shadow: var(--shadow-base);
-    transition: opacity 0.12s ease;
+    bottom: 0;
+    background: var(--background-canvas-colour);
+    border-top: var(--border-subtle);
 
+    transition: opacity 0.12s ease;
+    
     &[hidden] {
       opacity: 0;
       pointer-events: none;
     }
-
+    
     @container layout (width >=600px) {
+      right: var(--space-h);
+      top: var(--space-v);
       width: fit-content;
+      height: fit-content;
+      box-shadow: var(--shadow-base);
+      border: var(--border-subtle);
+      border-radius: var(--radius-strong);
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -35,6 +37,7 @@
   .bulk-menu--header> :is(button, .button) {
     flex: 0 0 auto;
     width: fit-content;
+    background: var(--color-1);
   }
 
   .bulk-menu--actions {
@@ -43,12 +46,11 @@
     align-items: stretch;
     gap: var(--space-h-half);
     padding: var(--space-v-half) var(--space-h-half);
+    @container layout (width >=600px) {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
   }
 
-
-  .bulk-menu--action-dock {
-    position: relative;
-  }
 
   .bulk-menu--action-button {
     padding: var(--space-v-half) var(--space-h-half);
@@ -73,33 +75,11 @@
     font-weight: 400;
     color: var(--color-invert-4);
     text-align: center;
+    padding-bottom: var(--space-v-half);
   }
 
-  /* Pickers share dropdown--element chrome (mood / create / pinned). */
-  [popover].bulk-menu--picker {
-    position-anchor: --bulk-menu;
-    position-area: block-start center;
-    margin: 0;
-    margin-bottom: var(--space-v-half);
-    position-try-fallbacks:
-      flip-block,
-      flip-inline,
-      flip-block flip-inline;
-    min-width: calc(var(--space-h-2) * 9);
-    max-width: min(calc(var(--space-h-2) * 12),
-        calc(100dvw - (2 * var(--space-h))));
-    max-height: min(calc(var(--space-h-2) * 14),
-        calc(100dvh - (2 * var(--space-h))));
-  }
-
-  [popover].bulk-menu--picker--collects {
-    min-width: calc(var(--space-h-2) * 12);
-    max-width: min(calc(var(--space-h-2) * 14),
-        calc(100dvw - (2 * var(--space-h))));
-  }
-
-  .bulk-menu--picker .dropdown--element-body {
-    padding: 0;
+  .bulk-menu--picker {
+    height: 90dvh;
   }
 
   .bulk-menu--picker-list {
@@ -179,12 +159,5 @@
     input {
       width: 100%;
     }
-  }
-
-  .bulk-menu--collect-empty {
-    margin: 0;
-    padding: 0;
-    color: var(--color-invert-4);
-    text-align: center;
   }
 }

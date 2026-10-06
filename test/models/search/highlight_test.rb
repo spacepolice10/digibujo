@@ -34,7 +34,7 @@ class Search::HighlightTest < ActiveSupport::TestCase
   test 'marks a unicode prefix' do
     html = Search::Highlight.call('<p>молоко</p>', 'мол')
 
-    assert_includes html, '<mark class="search-s-term">молоко</mark>'
+    assert_includes html, '<mark class="search--term">молоко</mark>'
   end
 
   test 'returns the original html when nothing matches' do

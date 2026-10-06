@@ -22,6 +22,17 @@ module ApplicationHelper
     Search::Highlight.call(html, query)
   end
 
+  # A search result row is itself one big link, so anchors inside a rich-text
+  # body would nest and break the row. Unwrap them, keeping their text.
+  def highlight_search_result(html, query)
+    highlighted = Search::Highlight.call(html, query)
+    return highlighted unless highlighted.include?('<a')
+
+    fragment = Loofah.html5_fragment(highlighted)
+    fragment.css('a').each { |anchor| anchor.replace(anchor.children) }
+    fragment.to_html.html_safe
+  end
+
   def search_results_count(size)
     label = size == Search::GlobalRequest::LIMIT ? "#{size}+" : size
     "#{label} #{'result'.pluralize(size)}"

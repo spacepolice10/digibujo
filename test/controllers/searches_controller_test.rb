@@ -8,48 +8,52 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     sign_in_as @user
   end
 
-  test 'show renders search-navigation inside the section frame' do
+  # --- /search : navigation only ---
+
+  test 'show renders search-navigation' do
     get search_path
 
     assert_response :success
-    assert_select 'turbo-frame#search_section.search--section'
-    assert_select 'turbo-frame#search_section .search--navigation > h1', text: 'Search'
-    assert_select 'turbo-frame#search_section .search--navigation article.search--navigation'
-    assert_select 'turbo-frame.search--section ul[data-layout=grid]'
+    assert_select '.search--navigation > h1', text: 'Search'
+    assert_select 'article.search--navigation'
+    assert_select 'ul#search_collections[data-layout=grid]'
     assert_select 'article.search--navigation a[href=?]', bullets_path(from: Date.current + 1), text: 'Upcoming'
-    assert_select '.search--dock.timeline--composer .search input.search--textform[name=q][type=search]'
-    assert_select '.search--dock .search button.search--cleanup[aria-label=?]', 'Clear search'
-    assert_select 'button.search--clear-button', count: 0
-    assert_select 'input#index-query', count: 0
-    assert_select 'turbo-frame#index_results', count: 0
   end
 
-  test 'show with a query still loads ranked entries for the backend' do
-    matching = create_bullet!(@user, body: 'Buy milk today')
-    create_bullet!(@user, body: 'Call mom tonight')
+  test 'show opens the search dialog instead of linking away' do
+    get search_path
+
+    assert_response :success
+    assert_select 'button.search--launch[commandfor=search_picker_dialog][command=show-modal]'
+    assert_select 'dialog#search_picker_dialog'
+    assert_select 'dialog#search_picker_dialog form[action=?][method=get]', search_results_path
+    assert_select 'dialog#search_picker_dialog input[type=search][name=q]'
+  end
+
+  test 'dialog picker autofocuses on desktop but not on mobile' do
+    get search_path
+    assert_select 'dialog#search_picker_dialog input[name=q][autofocus]', count: 1
+
+    get search_path, headers: { 'User-Agent' => 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X)' }
+
+    assert_response :success
+    assert_select 'dialog#search_picker_dialog input[name=q]', count: 1
+    assert_select 'dialog#search_picker_dialog input[name=q][autofocus]', count: 0
+  end
+
+  test 'show preloads the dialog empty, even with a query' do
+    create_bullet!(@user, body: 'Buy milk today')
 
     get search_path, params: { q: 'milk' }
 
     assert_response :success
-    controller = @controller
-    assert_equal 'milk', controller.instance_variable_get(:@q)
-    assert_includes controller.instance_variable_get(:@entries).map(&:id), matching.id
-    assert_select 'turbo-frame#search_section .search--results'
-    assert_select 'turbo-frame#search_section h1', count: 0
-    assert_select 'turbo-frame#search_section .search--navigation', count: 0
-    assert_select 'turbo-frame#search_section article.search--navigation', count: 0
+    assert_select 'a.search--result', count: 0
+    assert_select 'dialog#search_picker_dialog p', text: 'No results'
+    assert_select 'article.search--navigation a.search--result', count: 0
+    assert_select 'article.search--navigation', count: 1
   end
 
-  test 'show caps query results at ten' do
-    12.times { |i| create_collection!(@user, name: "indexed collection #{i}") }
-
-    get search_path, params: { q: 'indexed collection' }
-
-    assert_response :success
-    assert_equal 10, @controller.instance_variable_get(:@entries).size
-  end
-
-  test 'show with blank query loads recent selections' do
+  test 'show ignores the recent param' do
     collection = create_collection!(@user, name: 'recent alpha')
     Search::Selection.record!(
       user: @user,
@@ -57,34 +61,11 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
       searchable_id: collection.id
     )
 
-    get search_path
+    get search_path, params: { recent: '1' }
 
     assert_response :success
-    selections = @controller.instance_variable_get(:@selections)
-    assert_equal 1, selections.size
-    assert_equal collection, selections.first.searchable
-  end
-
-  test 'turbo frame with query returns results inside search_section' do
-    matching = create_bullet!(@user, body: 'Buy milk today')
-
-    get search_path, params: { q: 'milk' }, headers: { 'Turbo-Frame' => 'search_section' }
-
-    assert_response :success
-    assert_select 'turbo-frame#search_section .search--results'
-    assert_select "turbo-frame#search_section ##{dom_id(matching)}"
-    assert_select 'turbo-frame#search_section h1', count: 0
-    assert_select 'turbo-frame#search_section article.search--navigation', count: 0
-  end
-
-  test 'turbo frame without query returns search-navigation' do
-    get search_path, headers: { 'Turbo-Frame' => 'search_section' }
-
-    assert_response :success
-    assert_select 'turbo-frame#search_section .search--navigation > h1', text: 'Search'
-    assert_select 'turbo-frame#search_section article.search--navigation'
-    assert_select 'turbo-frame#search_section ul#search_collections'
-    assert_select 'turbo-frame#search_section .search--results', count: 0
+    assert_select 'a.search--result', count: 0
+    assert_select 'a.search--result[href=?]', collection_path(collection), count: 0
   end
 
   test 'mobile search keeps the three item tabbar' do
@@ -101,6 +82,153 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_path
 
     assert_select 'nav.tabbar--navigation a.tabbar--item', count: 2
+    assert_select 'nav.tabbar--navigation span.tabbar--item-active[aria-current=page]', text: 'Search'
+    assert_select 'nav.tabbar--navigation a[href=?]', search_path, count: 0
+  end
+
+  # --- /search/results : the search page ---
+
+  test 'results renders the search form wired to the results route' do
+    get search_results_path
+
+    assert_response :success
+    assert_select 'main.search--window[data-controller=search]'
+    assert_select 'main.search--window[data-search-path-value=?]', search_results_path
+    assert_select 'form[action=?][method=get]', search_results_path
+    assert_select 'input.search--textform[type=search][name=q]'
+    assert_select 'button.search--cleanup[aria-label=?]', 'Clear search'
+    assert_select '.search--navigation', count: 0
+  end
+
+  test 'results preloads the global palette with the command-k trigger' do
+    get search_results_path
+
+    assert_response :success
+    assert_select 'button[commandfor=search_picker_dialog][command=show-modal][aria-label=?]', 'Open search'
+    assert_select 'dialog#search_picker_dialog form[action=?][method=get]', search_results_path
+    assert_select 'dialog#search_picker_dialog input[type=search][name=q]'
+  end
+  test 'results answers turbo-stream for the dialog picker' do
+    matching = create_bullet!(@user, body: 'Buy milk today')
+
+    get search_results_path, params: { q: 'milk' }, headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
+
+    assert_response :success
+    assert_select 'turbo-stream[action=replace][target=search-results-list] a.search--result[href=?]', bullet_path(matching)
+  end
+
+  test 'results wraps the results list in the section frame' do
+    get search_results_path
+
+    assert_response :success
+    assert_select 'turbo-frame#search_section.search--section #search-results-list > .search--results'
+    assert_select 'turbo-frame#search_section p', text: 'No results'
+  end
+
+  test 'results loads ranked entries for the backend' do
+    matching = create_bullet!(@user, body: 'Buy milk today')
+    create_bullet!(@user, body: 'Call mom tonight')
+
+    get search_results_path, params: { q: 'milk' }
+
+    assert_response :success
+    controller = @controller
+    assert_equal 'milk', controller.instance_variable_get(:@q)
+    assert_includes controller.instance_variable_get(:@entries).map(&:id), matching.id
+    assert_select 'turbo-frame#search_section .search--results a.search--result'
+    assert_select 'article.search--navigation', count: 0
+  end
+
+  test 'results caps query results at ten' do
+    12.times { |i| create_collection!(@user, name: "indexed collection #{i}") }
+
+    get search_results_path, params: { q: 'indexed collection' }
+
+    assert_response :success
+    assert_equal 10, @controller.instance_variable_get(:@entries).size
+  end
+
+  test 'results marks the matching term inside the bullet body' do
+    create_bullet!(@user, body: 'Buy milk today')
+
+    get search_results_path, params: { q: 'milk' }
+
+    assert_response :success
+    assert_select 'turbo-frame#search_section mark.search--term', text: 'milk'
+  end
+
+  test 'results keeps formatting tags around the marked term' do
+    create_bullet!(@user, body: 'Buy <strong>milk</strong> today')
+
+    get search_results_path, params: { q: 'milk' }
+
+    assert_response :success
+    assert_select 'turbo-frame#search_section strong > mark.search--term', text: 'milk'
+  end
+
+  test 'results marks a term that only appears below the first line' do
+    create_bullet!(@user, body: 'Buy milk<p>and fresh bread</p>')
+
+    get search_results_path, params: { q: 'bread' }
+
+    assert_response :success
+    assert_select 'turbo-frame#search_section mark.search--term', text: 'bread'
+  end
+
+  test 'results derives each result path polymorphically' do
+    bullet = create_bullet!(@user, body: 'Buy milk today')
+    collection = create_collection!(@user, name: 'milk')
+
+    get search_results_path, params: { q: 'milk' }
+
+    assert_response :success
+    assert_select 'turbo-frame#search_section a.search--result[href=?]', bullet_path(bullet)
+    assert_select 'turbo-frame#search_section a.search--result[href=?]', collection_path(collection)
+  end
+
+  test 'results links a collection result and marks its name' do
+    collection = create_collection!(@user, name: 'milk')
+
+    get search_results_path, params: { q: 'milk' }
+
+    assert_response :success
+    assert_select 'turbo-frame#search_section a.search--result[href=?]', collection_path(collection)
+    assert_select 'turbo-frame#search_section .search--result-body', text: 'milk'
+    assert_select 'turbo-frame#search_section mark.search--term', text: 'milk'
+  end
+
+  test 'results does not nest links inside a bullet body' do
+    create_bullet!(@user, body: 'See <a href="https://example.com">milk</a> today')
+
+    get search_results_path, params: { q: 'milk' }
+
+    assert_response :success
+    assert_select 'turbo-frame#search_section a.search--result a', count: 0
+    assert_select 'turbo-frame#search_section mark.search--term', text: 'milk'
+  end
+
+  test 'results reports no results for a blank query' do
+    get search_results_path, params: { q: '   ' }
+
+    assert_response :success
+    assert_equal '', @controller.instance_variable_get(:@q)
+    assert_empty @controller.instance_variable_get(:@entries)
+    assert_select 'turbo-frame#search_section p', text: 'No results'
+  end
+
+  test 'results frame request returns the section frame for the query' do
+    matching = create_bullet!(@user, body: 'Buy milk today')
+
+    get search_results_path, params: { q: 'milk' }, headers: { 'Turbo-Frame' => 'search_section' }
+
+    assert_response :success
+    assert_select 'turbo-frame#search_section .search--results'
+    assert_select 'turbo-frame#search_section a.search--result[href=?]', bullet_path(matching)
+  end
+
+  test 'results keeps the search tab active in the tabbar' do
+    get search_results_path
+
     assert_select 'nav.tabbar--navigation span.tabbar--item-active[aria-current=page]', text: 'Search'
     assert_select 'nav.tabbar--navigation a[href=?]', search_path, count: 0
   end

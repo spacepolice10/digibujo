@@ -2,7 +2,7 @@
 
 <%= render "shared/back_tabbar" %>
 
-<main data-size="md">
+<main data-size="md" data-bulk-menu-target="list">
   <h1>Attachments</h1>
 
   <% if @attachments.any? %>
@@ -28,6 +28,6 @@
       <% end %>
     </section>
   <% else %>
-    <p class="attachment--empty">No attachments yet.</p>
+    <p class="utilities--mx-auto">No attachments yet.</p>
   <% end %>
 </main>

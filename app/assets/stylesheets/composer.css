@@ -24,7 +24,7 @@ lexxy-editor {
     }
 
     &:focus-within {
-        animation: composer-focus-bounce 0.35s ease-out;
+        animation: composer-bounce 0.35s ease-out;
         border-color: var(--model-color-2);
     }
 
@@ -37,7 +37,7 @@ lexxy-editor {
     }
 }
 
-@keyframes composer-focus-bounce {
+@keyframes composer-bounce {
     0% {
         scale: 1;
     }
@@ -58,6 +58,10 @@ lexxy-editor {
 /* Composer styling */
 @layer components {
     .composer--dock {
+        position: absolute;
+        bottom: 0;
+        z-index: 1;
+        padding-inline: var(--space-h-half);
         width: 100%;
         margin-inline: 0;
         box-shadow: none;
@@ -67,6 +71,17 @@ lexxy-editor {
         & .lexxy-editor__content {
             max-height: 50vh;
             overflow-y: auto;
+        }
+
+        &::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -calc(var(--space-v-5));
+            z-index: -1;
+            width: 100%;
+            height: calc(var(--tabbar-clearance) + var(--space-v-5));
+            background: linear-gradient(to top, var(--background-canvas-colour) 0%, transparent 100%);
         }
 
         @container layout (width < 600px) {

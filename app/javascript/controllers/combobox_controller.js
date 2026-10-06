@@ -53,12 +53,14 @@ export default class extends Controller {
     } else if (event.key == " " && (!this.hasSearchFieldTarget || event.target != this.searchFieldTarget)) {
       this._activate(event)
     } else if (event.key == "Escape") {
+      // Empty field: let the event through so an enclosing dialog closes natively.
+      if (this.hasSearchFieldTarget && !this.searchFieldTarget.value.trim()) return
+
       event.preventDefault()
       event.stopPropagation()
       this.currentPosition = -1
       this._updateItems()
       if (!this.hasSearchFieldTarget || !this.hasPathValue) return
-      if (!this.searchFieldTarget.value.trim()) return
 
       this.searchFieldTarget.value = ""
       this.#cancelPendingSearch()
@@ -99,7 +101,7 @@ export default class extends Controller {
       this.itemTargets.length,
     )
     if (this.currentPosition >= 0) {
-      this.itemTargets[this.currentPosition].scrollIntoView({ behavior: "instant", block: "start" })
+      this.itemTargets[this.currentPosition].scrollIntoView({ behavior: "instant", block: "center" })
     }
     this._updateItems()
   }

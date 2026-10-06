@@ -1,0 +1,3 @@
+<%= turbo_stream.replace "search-results-list" do %>
+  <%= render "searches/results_list", entries: @entries, q: @q %>
+<% end %>

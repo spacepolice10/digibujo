@@ -8,6 +8,12 @@
         --color-3: light-dark(oklch(0.92 0.006 80), oklch(0.35 0.009 82));
         --color-4: light-dark(oklch(0.88 0.008 80), oklch(0.40 0.010 82));
 
+        /* accent — interactive focus and highlights */
+        --color-accent-1: light-dark(oklch(0.743 0.123 241), oklch(0.82 0.11 241));
+        --color-accent-1-subtle: light-dark(oklch(0.92 0.06 241), oklch(0.34 0.09 241));
+        --color-accent-2: light-dark(oklch(0.775 0.154 56), oklch(0.84 0.14 56));
+        --color-accent-2-subtle: light-dark(oklch(0.92 0.08 56), oklch(0.35 0.10 56));
+
         /* status  */
         --color-positive: light-dark(oklch(86.68% 0.29129 142.889), oklch(0.25 0.05 142.889));
         --color-negative: light-dark(oklch(74.23% 0.13291 35.316), oklch(0.40 0.1 35));

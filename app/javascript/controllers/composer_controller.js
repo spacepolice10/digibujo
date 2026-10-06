@@ -47,8 +47,8 @@ export default class extends Controller {
 
   restore() {
     this.editorTarget.value = ""
-    if (this.#coarsePointer) return
     this.editorTarget.focus()
+    if (this.#coarsePointer) return
   }
 
   #insertTextPending(id, container) {

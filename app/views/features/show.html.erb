@@ -91,4 +91,13 @@
       </li>
     <% end %>
   </section>
+
+  <footer>
+    <%= link_to new_authentication_path,
+        class: "utilities--mx-auto",
+        data: { intent: "primary", radius: "full", size: "lg" },
+        aria: { label: "Create your own account" } do %>
+      Create your own
+    <% end %>
+  </footer>
 </main>

@@ -16,10 +16,13 @@
       data-bulk-menu-target="list"
     >
       <% if @more_bullets %>
-        <div class="timeline--load-more-trigger" data-timeline-scroll-target="trigger">
+        <div
+          class="timeline--load-more-trigger"
+          data-timeline-scroll-target="trigger"
+        >
           <%= icon("spinner", class: "icon icon--spin") %>
           <span class="utilities--sr-only">Loading more bullets</span>
-        </div>
+      </div>
       <% end %>
 
       <%= render "sections", bullets: @bullets, timeline: @timeline, mount_today: @filter.empty? %>
@@ -37,10 +40,7 @@
   <br>
 
   <% if @filter.empty? %>
-    <div
-      id="timeline_composer_dock"
-      class="timeline--composer composer--dock"
-    >
+    <div id="composer_dock" class="composer--dock">
       <%= render "bullets/composer",
           bullet: Bullet.new,
           collection: nil,
@@ -50,5 +50,3 @@
     </div>
   <% end %>
 </main>
-
-<%= render "bullets/bulk_menu" %>

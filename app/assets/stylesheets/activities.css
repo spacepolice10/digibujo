@@ -58,11 +58,6 @@
     margin: 0;
   }
 
-  .activity--empty {
-    padding: var(--space-v) var(--space-h);
-    text-align: center;
-  }
-
   .activity--subject-name {
     font-weight: var(--font-weight-medium);
   }

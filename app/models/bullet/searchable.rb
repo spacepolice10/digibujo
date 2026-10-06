@@ -15,4 +15,14 @@ module Bullet::Searchable
   def search_body
     [body_as_text, filename].compact.join(' ')
   end
+
+  # Search results render the whole rich body so marks land inside Lexxy's tags.
+  # File-only bullets have no body but are indexed by filename, so fall back to it.
+  def search_result_body
+    body.to_s.strip.presence || filename.presence || name
+  end
+
+  def search_result_icon = marker_icon.to_s.dasherize
+
+  def search_result_type = self.class.name.titleize
 end

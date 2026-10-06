@@ -45,6 +45,19 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'input[data-bulk-scheduled]', count: 0
   end
 
+  test 'bulk menu renders pickers as native dialogs wrapping lazy frames' do
+    get bullets_path
+
+    assert_response :success
+    assert_select 'dialog#postpone_picker_dialog[closedby="any"]', minimum: 1
+    assert_select 'dialog#postpone_picker_dialog turbo-frame#postpone_picker_dialog[loading="lazy"]', minimum: 1
+    assert_select 'dialog#collects_picker_dialog[closedby="any"]', minimum: 1
+    assert_select 'dialog#collects_picker_dialog turbo-frame#collects_picker_dialog[loading="lazy"]', minimum: 1
+    assert_select '[popover]', count: 0
+    assert_select '[data-bulk-menu-target="popsDropdown"]', count: 0
+    assert_select '[data-bulk-menu-target="collectsDropdown"]', count: 0
+  end
+
   test 'update turbo stream replaces bullet only' do
     assert_no_difference -> { Activity.count } do
       patch bullet_path(@bullet),

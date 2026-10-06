@@ -8,7 +8,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     sign_in_as @user
   end
 
-  test 'create saves the collection and redirects to its show page' do
+  test 'create saves the collection and redirects to the index' do
     assert_difference -> { Collection.count }, 1 do
       post collections_path, params: {
         collection: { name: 'Inbox', colour: 'teal', icon: 'folder', description: 'Things to sort' }
@@ -16,7 +16,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_equal 'Things to sort', Collection.last.description
-    assert_redirected_to collection_path(Collection.last)
+    assert_redirected_to collections_path
   end
 
   test 'new with bullet_ids renders full page form and preview' do

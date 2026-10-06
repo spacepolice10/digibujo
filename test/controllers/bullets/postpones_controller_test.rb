@@ -15,14 +15,14 @@ module Bullets
       get new_postpone_path, params: { bullet_ids: card.id.to_s }
 
       assert_response :success
-      assert_select 'turbo-frame#postpone_picker_dropdown_id[popover]'
-      assert_select 'turbo-frame#postpone_picker_dropdown_id.dropdown', count: 0
-      assert_select 'turbo-frame#postpone_picker_dropdown_id button[data-grid-navigation-target=?]', 'item', count: 5
-      assert_select 'turbo-frame#postpone_picker_dropdown_id label[data-grid-navigation-target=?]', 'item', count: 1
-      assert_select 'turbo-frame#postpone_picker_dropdown_id input[name="bullet_ids"][data-bulk-menu-target="idList"]',
+      assert_select 'turbo-frame#postpone_picker_dialog'
+      assert_select '[popover]', count: 0
+      assert_select 'turbo-frame#postpone_picker_dialog button[data-grid-navigation-target=?]', 'item', count: 5
+      assert_select 'turbo-frame#postpone_picker_dialog label[data-grid-navigation-target=?]', 'item', count: 1
+      assert_select 'turbo-frame#postpone_picker_dialog input[name="bullet_ids"][data-bulk-menu-target="idList"]',
                     count: 6
-      assert_select 'turbo-frame#postpone_picker_dropdown_id input[type=date][name=pops_on]'
-      assert_select 'turbo-frame#postpone_picker_dropdown_id input[name=bucket_id]', count: 0
+      assert_select 'turbo-frame#postpone_picker_dialog input[type=date][name=pops_on]'
+      assert_select 'turbo-frame#postpone_picker_dialog input[name=bucket_id]', count: 0
 
       assert_match 'Today', response.body
       assert_match 'Tomorrow', response.body
@@ -35,10 +35,10 @@ module Bullets
 
       get new_postpone_path,
           params: { bullet_ids: card.id.to_s },
-          headers: { 'Turbo-Frame' => 'postpone_picker_dropdown_id' }
+          headers: { 'Turbo-Frame' => 'postpone_picker_dialog' }
 
       assert_response :success
-      assert_select 'turbo-frame#postpone_picker_dropdown_id h2', text: 'Schedule'
+      assert_select 'turbo-frame#postpone_picker_dialog h2', text: 'Schedule'
       assert_select 'input[name="bullet_ids"][data-bulk-menu-target="idList"]', count: 6
     end
 

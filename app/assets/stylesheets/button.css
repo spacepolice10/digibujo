@@ -96,6 +96,12 @@
     background: var(--color-3);
   }
 
+  /* Focus — accent ring on every intent, offset clear of the border. */
+  :is(button, a)[data-intent]:focus-visible, [role="button"]:focus-visible {
+    outline: 2px solid var(--color-accent-1);
+    outline-offset: 2px;
+  }
+
   /* status — overrides intent color, 2 types, works on either intent */
   :is(button, a)[data-intent][data-status="negative"], [role="button"][data-status="negative"] {
     background: var(--color-negative);

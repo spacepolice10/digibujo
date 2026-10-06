@@ -1,29 +1,28 @@
 # frozen_string_literal: true
 
 class SearchesController < ApplicationController
-  helper_method :page_results?
-
+  # Navigation only. Searching lives on the results route.
   def show
-    @q = params[:q].to_s.strip
-
-    if @q.present?
-      # The search card shows at most ten rows. The compact menu keeps the global cap.
-      limit = request.format.turbo_stream? ? Search::GlobalRequest::LIMIT : 10
-      @entries = Search::GlobalRequest.call(user: Current.user, query: @q, limit:)
-    else
-      @collections = Current.user.collections.active.order(:name)
-      @attachments_count = User::Attachments.new(Current.user).attachments.count
-      @archived_count = Current.user.bullets.archived.count
-
-      @selections = Search::Selection.in_menu(Current.user) if request.format.html? || turbo_frame_request?
-    end
+    @collections = Current.user.collections.active.order(:name)
+    @attachments_count = User::Attachments.new(Current.user).attachments.count
+    @archived_count = Current.user.bullets.archived.count
   end
 
-  private
+  def results
+    @q = params[:q].to_s.strip
 
-  # Frame results and explicit page updates render full bullet rows.
-  # A turbo-stream without view=page stays the compact list.
-  def page_results?
-    params[:view] == 'page' || turbo_frame_request?
+    # A blank query is the empty state, not an error: the card shows at most
+    # ten rows. Search::GlobalRequest::LIMIT stays the global cap, so there is
+    # no turbo_stream format to negotiate here.
+    @entries = if @q.present?
+      Search::GlobalRequest.call(user: Current.user, query: @q, limit: 10)
+    else
+      []
+    end
+
+    respond_to do |format|
+      format.html
+      format.turbo_stream
+    end
   end
 end

@@ -2,7 +2,9 @@
 .search--textform {
   --search-textform-padding: var(--space-v-half);
   min-block-size: var(--space-h-2);
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: var(--z-dialog);
   display: flex;
   flex-grow: 1;
   min-inline-size: 0;
@@ -13,13 +15,13 @@
   font-family: inherit;
   font-size: var(--font-size-base-type);
   color: inherit;
-  background: var(--color-1);
   border: 1px solid transparent;
   border-radius: var(--radius-base);
   box-sizing: border-box;
-  padding-inline: var(--space-h);
-  padding-block: calc((var(--space-h-2) - 1lh - 2px) / 2);
   transition: min-block-size 0.2s ease-out;
+  background: var(--color-1);
+  padding-inline: var(--space-h);
+  width: 100%;
 
   &::-webkit-search-cancel-button,
   &::-webkit-search-decoration {
@@ -70,19 +72,12 @@
     width: 100%;
     margin-inline: 0;
     box-shadow: none;
-    margin-block-end: var(--tabbar-clearance);
     padding: var(--space-v-half) var(--space-h-half);
-
-    @container layout (width < 600px) {
-      width: 100%;
-      margin-inline: auto;
-      margin-block-start: var(--space-v-half);
-    }
   }
 
   /* Section fills the scroller; hub owns centering, results stay top-aligned. */
   .search--window .search--scroller {
-    padding-top: var(--space-v-4);
+    padding-top: var(--space-v-10);
     padding-inline: var(--space-h);
 
     > *:first-child {
@@ -187,11 +182,81 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-v);
+    margin-block-start: var(--space-v);
   }
 
-  .search--results-empty {
+  .search--results-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-v-half);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* One row, one link. Unclamped so a long rich body stays readable. */
+  .search--result {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-h-half);
+    padding: var(--space-v-half) var(--space-h);
+    color: var(--color-invert-1);
+    text-decoration: none;
+    background: var(--color-2);
+    border: 1px solid transparent;
+    border-radius: var(--radius-base);
+    &:focus-visible {
+      outline: 1px solid var(--model-color-2);
+    }
+  }
+
+  @media (hover: hover) {
+    .search--result:hover {
+      background: var(--color-3);
+    }
+  }
+
+  /* Combobox keyboard position. DOM focus stays in the field, so the
+     aria-selected flag is the only current-item signal. */
+  .search--result[aria-selected="true"] {
+    background: var(--color-3);
+  }
+
+  .search--result-icon {
+    flex-shrink: 0;
     color: var(--color-invert-4);
-    padding-block: var(--space-v);
+  }
+
+  .search--result-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-v-half);
+    min-inline-size: 0;
+  }
+
+  .search--result-type {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-invert-4);
+  }
+
+  .search--result-body:where(.lexxy-content) {
+    color: var(--color-invert-1);
+  }
+
+  .search--result-body {
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+    --lexxy-color-ink: var(--color-invert-1);
+  }
+
+  /* The UA default for <mark> is a yellow fill with black text, which breaks
+     in dark mode. The reset strips no mark styling, so set both here. */
+  .search--term {
+    padding-inline: 0.1em;
+    color: inherit;
+    background-color: color-mix(in oklch, var(--model-color-2) 22%, transparent) !important;
+    border-radius: var(--radius-subtle);
   }
 
   @media (pointer: coarse) {

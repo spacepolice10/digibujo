@@ -24,19 +24,19 @@ export default class extends Controller {
     this.inputTarget.value = ""
     this.inputTarget.dispatchEvent(new Event("input", { bubbles: true }))
     this.inputTarget.focus()
-    this.#replaceSection()
   }
 
+  // The frame wraps only the results list, so replacing its src never re-renders
+  // the input and the caret survives typing.
   #replaceSection() {
+    this.#load(this.inputTarget.value.trim() ? { q: this.inputTarget.value.trim() } : {})
+  }
+
+  #load(params) {
     if (!this.hasSectionTarget) return
 
-    const q = this.inputTarget.value.trim()
-    const url = new URL(this.pathValue || "/search", window.location.origin)
-    if (q) {
-      url.searchParams.set("q", q)
-    } else {
-      url.searchParams.delete("q")
-    }
+    const url = new URL(this.pathValue || "/search/results", window.location.origin)
+    Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, value))
 
     this.sectionTarget.src = `${url.pathname}${url.search}`
   }

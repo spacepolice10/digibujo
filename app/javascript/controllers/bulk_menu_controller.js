@@ -11,8 +11,8 @@ export default class extends Controller {
     "uncomplete",
     "publish",
     "unpublish",
-    "popsDropdown",
-    "collectsDropdown",
+    "popsDialog",
+    "collectsDialog",
   ];
 
   static values = {
@@ -94,11 +94,11 @@ export default class extends Controller {
   }
 
   openPopsPicker() {
-    this.#openPicker(this.#popsFrame(), this.popsPickerPathValue);
+    this.#openPicker(this.popsDialogTarget, this.popsPickerPathValue);
   }
 
   openCollectsPicker() {
-    this.#openPicker(this.#collectsFrame(), this.collectsPickerPathValue);
+    this.#openPicker(this.collectsDialogTarget, this.collectsPickerPathValue);
   }
 
   clear() {
@@ -109,53 +109,59 @@ export default class extends Controller {
     if (event.defaultPrevented) return;
     if (this.idListValue.length == 0) return;
 
-    if (this.#isPickerOpen()) {
-      this.#hidePickers();
-      return;
-    }
+    // An open picker closes itself natively — keep the selection intact.
+    if (this.#isPickerOpen()) return;
 
     this.#cleanupSelection();
   }
 
   // =====================================================================
-  // Picker popovers
+  // Picker dialogs
   // =====================================================================
 
-  #popsFrame() {
-    if (!this.hasPopsDropdownTarget) return null;
-    return this.popsDropdownTarget.querySelector("#postpone_picker_dropdown_id");
-  }
-
-  #collectsFrame() {
-    if (!this.hasCollectsDropdownTarget) return null;
-    return this.collectsDropdownTarget.querySelector("#collects_picker_dropdown_id");
-  }
-
   #pickerFrames() {
-    return [this.#popsFrame(), this.#collectsFrame()].filter(Boolean);
+    const frames = [];
+    if (this.haspopsDialogTarget) frames.push(this.popsDialogTarget);
+    if (this.hascollectsDialogTarget) frames.push(this.collectsDialogTarget);
+    return frames;
   }
 
-  #openPicker(element, path) {
-    if (!element) return;
+  #dialogFor(frame) {
+    return frame.closest("dialog");
+  }
+
+  #openPicker(frame, path) {
     if (this.idListValue.length == 0) return;
 
     const url = new URL(path, window.location.origin);
     url.searchParams.set("bullet_ids", this.idListValue.join(","));
-    element.src = url.pathname + url.search;
+    frame.src = url.pathname + url.search;
 
-    if (!element.matches(":popover-open")) element.showPopover();
+    const dialog = this.#dialogFor(frame);
+    if (!dialog || dialog.open) return;
+
+    try {
+      dialog.showModal();
+    } catch (error) {
+      if (error.name != "InvalidStateError") throw error;
+
+      dialog.close();
+      dialog.showModal();
+    }
   }
 
-  #hidePicker(element) {
-    if (element?.matches(":popover-open")) element.hidePopover();
-  }
-
-  #hidePickers() {
-    this.#pickerFrames().forEach((frame) => this.#hidePicker(frame));
+  #closePickers() {
+    this.#pickerFrames().forEach((frame) => {
+      const dialog = this.#dialogFor(frame);
+      if (dialog?.open) dialog.close();
+    });
   }
 
   #isPickerOpen() {
-    return this.#pickerFrames().some((frame) => frame.matches(":popover-open"));
+    return this.#pickerFrames().some((frame) => {
+      const dialog = this.#dialogFor(frame);
+      return dialog?.open ?? false;
+    });
   }
 
   // =====================================================================
@@ -181,11 +187,8 @@ export default class extends Controller {
   }
 
   #restore() {
-    try {
-      this.#hidePickers();
-    } finally {
-      this.#cleanupSelection();
-    }
+    this.#closePickers();
+    this.#cleanupSelection();
   }
 
   #cleanupSelection() {

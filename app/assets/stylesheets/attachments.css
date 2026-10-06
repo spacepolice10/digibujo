@@ -65,9 +65,6 @@
   }
 
   .attachment--gallery,
-  .attachment--empty { margin-block-start: var(--space-v-2); }
-
-  .attachment--empty { color: var(--color-invert-3); }
 
   .attachment--gallery {
     display: block;

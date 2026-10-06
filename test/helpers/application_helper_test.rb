@@ -6,6 +6,28 @@ class ApplicationHelperTest < ActionView::TestCase
   include ApplicationHelper
   include IconHelper
 
+  test 'highlight_search_result drops inner links so the row link stays valid' do
+    html = highlight_search_result('<p>See <a href="https://example.com">milk</a> today</p>', 'milk')
+
+    assert_includes html, '<mark class="search--term">milk</mark>'
+    assert_not_includes html, '<a'
+    assert_not_includes html, 'href'
+    assert_includes html, 'See '
+    assert_includes html, ' today'
+  end
+
+  test 'highlight_search_result keeps formatting tags around the marked term' do
+    html = highlight_search_result('<p>Buy <strong>milk</strong></p>', 'milk')
+
+    assert_includes html, '<strong><mark class="search--term">milk</mark></strong>'
+  end
+
+  test 'highlight_search_result returns the original html when nothing matches' do
+    html = '<p>Call mom</p>'.html_safe
+
+    assert_same html, highlight_search_result(html, 'zzz')
+  end
+
   test 'search_results_count marks a full page as a lower bound' do
     assert_equal '1 result', search_results_count(1)
     assert_equal '2 results', search_results_count(2)
