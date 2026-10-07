@@ -38,7 +38,7 @@ class BulletsController < ApplicationController
   def show
     @timeline = Timeline.new(Current.user)
     @bullets = @timeline.on(@bullet.pops_on).to_a
-    # An archived or not-yet-due bullet has no active siblings on its day, and
+    # A completed or not-yet-due bullet has no active siblings on its day, and
     # an empty rail would leave the page with nothing to look at.
     @bullets = [@bullet] if @bullets.empty?
   end

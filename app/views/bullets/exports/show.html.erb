@@ -19,9 +19,6 @@
         <% if bullet.pops_on.present? %>
           <span>Pop: <%= bullet.pops_on.strftime("%-d %b %Y") %></span>
         <% end %>
-        <% if bullet.archived? %>
-          <span class="export--tag">Archived</span>
-        <% end %>
         <% if task_completed %>
           <span class="export--tag">Completed</span>
         <% end %>

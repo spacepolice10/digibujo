@@ -20,7 +20,7 @@ class ActivityRecordingTest < ActiveSupport::TestCase
     assert_equal Date.current + 3, activity.to_date
   end
 
-  test 'complete collect and archive do not record activity' do
+  test 'complete and collect do not record activity' do
     collection = create_collection!(@user, name: 'Inbox')
     bullet = create_bullet!(@user, body: 'Quiet')
 
@@ -28,8 +28,6 @@ class ActivityRecordingTest < ActiveSupport::TestCase
       bullet.complete!
       bullet.uncomplete!
       bullet.collect!(collection_id: collection.id)
-      bullet.archive!
-      bullet.unarchive!
     end
   end
 end

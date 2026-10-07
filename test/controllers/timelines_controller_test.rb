@@ -47,10 +47,10 @@ class TimelinesControllerTest < ActionDispatch::IntegrationTest
     assert_operator response.body.index('Ancient line'), :<, response.body.index('Today line')
   end
 
-  test 'index hides upcoming and archived bullets and keeps tagged ones' do
+  test 'index hides upcoming and completed bullets and keeps tagged ones' do
     create_bullet!(@user, body: 'Future line', pops_on: Date.current + 3)
     create_bullet!(@user, body: 'Filed line', collection: create_collection!(@user, name: 'Work'))
-    create_bullet!(@user, body: 'Gone line').archive!
+    create_bullet!(@user, body: 'Gone line').complete!
 
     get bullets_path
 

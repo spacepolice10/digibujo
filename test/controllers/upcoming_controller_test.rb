@@ -18,10 +18,10 @@ class UpcomingControllerTest < ActionDispatch::IntegrationTest
     assert_operator response.body.index(sooner.name), :<, response.body.index(later.name)
   end
 
-  test 'from tomorrow leaves out todays bullets and archived ones' do
+  test 'from tomorrow leaves out todays bullets and completed ones' do
     create_bullet!(@user, body: 'On the timeline')
     tagged = create_bullet!(@user, body: 'Filed away', pops_on: Date.current + 2, collection: create_collection!(@user, name: 'Work'))
-    create_bullet!(@user, body: 'Dropped', pops_on: Date.current + 2).archive!
+    create_bullet!(@user, body: 'Dropped', pops_on: Date.current + 2).complete!
 
     get bullets_path(from: Date.current + 1)
 

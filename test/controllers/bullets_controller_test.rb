@@ -38,7 +38,8 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_select '.bulk-menu--actions form[data-bulk-menu-target="uncomplete"][hidden]', count: 1
     assert_select '.bulk-menu--actions form[data-bulk-menu-target="publish"][hidden]', count: 1
     assert_select '.bulk-menu--actions form[data-bulk-menu-target="unpublish"][hidden]', count: 1
-    assert_match 'Archive', response.body
+    assert_match 'Complete', response.body
+    assert_no_match 'Archive', response.body
     assert_select '.bulk-menu--actions button', text: 'Today', count: 0
     assert_select 'input[data-bulk-done]', minimum: 1
     assert_select 'input[data-bulk-published]', minimum: 1
@@ -134,16 +135,16 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_match 'Expanded content', response.body
   end
 
-  test 'show renders unarchive for archived bullet' do
-    bullet = create_bullet!(@user, body: 'Archived text')
-    bullet.archive!
+  test 'show renders uncomplete for completed bullet' do
+    bullet = create_bullet!(@user, body: 'Completed text')
+    bullet.complete!
 
     get bullet_path(bullet)
 
     assert_response :success
-    assert_select 'form[action=?][method=post]', archive_path do
+    assert_select '#bullet_actions form[action=?][method=post]', completion_path do
       assert_select 'input[name=_method][value=delete]'
-      assert_select 'button', text: /Unarchive/
+      assert_select 'button', text: /Uncomplete/
     end
   end
 
@@ -221,10 +222,10 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show falls back to the bullet alone when its day has no active bullets' do
-    focal = create_bullet!(@user, body: 'Archived focal', pops_on: Date.current - 3)
-    focal.archive!
-    same_day = create_bullet!(@user, body: 'Archived sibling', pops_on: Date.current - 3)
-    same_day.archive!
+    focal = create_bullet!(@user, body: 'Completed focal', pops_on: Date.current - 3)
+    focal.complete!
+    same_day = create_bullet!(@user, body: 'Completed sibling', pops_on: Date.current - 3)
+    same_day.complete!
 
     get bullet_path(focal)
 
@@ -243,18 +244,18 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_select "##{dom_id_of(focal)}", count: 1
   end
 
-  test 'show omits another user bullets and archived bullets from the day' do
+  test 'show omits another user bullets and completed bullets from the day' do
     day = Date.current - 3
     focal = create_bullet!(@user, body: 'Focal', pops_on: day)
     private_bullet = create_bullet!(users(:two), body: 'Private neighbour', pops_on: day)
-    archived = create_bullet!(@user, body: 'Archived neighbour', pops_on: day)
-    archived.archive!
+    completed = create_bullet!(@user, body: 'Completed neighbour', pops_on: day)
+    completed.complete!
 
     get bullet_path(focal)
 
     assert_response :success
     assert_no_match private_bullet.body_as_text, response.body
-    assert_no_match archived.body_as_text, response.body
+    assert_no_match completed.body_as_text, response.body
   end
 
   test 'show hands scrolling to the timeline controller current on the bullet' do

@@ -4,7 +4,7 @@
 
 <main class="timeline--window timeline--window--focus" data-size="md">
   <header>
-    <h1><%= @bullet.name %></h1>
+    <h1>Bullet</h1>
 
     <% if @bullet.published? %>
       <input <%# herb:disable html-input-require-autocomplete %>
@@ -54,19 +54,19 @@
             <%= @bullet.published? ? "Unpublish" : "Publish" %>
           <% end %>
 
-          <%= button_to archive_path,
-                method: @bullet.archived? ? :delete : :post,
+          <%= button_to completion_path,
+                method: @bullet.done? ? :delete : :post,
                 params: { bullet_ids: @bullet.id },
                 class: "dropdown-item picker--item",
                 form_class: "dropdown--menu-form",
-                form: (@bullet.archived? ? {} : { data: { turbo_confirm: "Are you sure?" } }),
+                form: (@bullet.done? ? {} : { data: { turbo_confirm: "Are you sure?" } }),
                 data: {
                   grid_navigation_target: "item",
                   action: "focus->grid-navigation#syncPosition"
                 },
-                aria: { label: "#{@bullet.archived? ? 'Unarchive' : 'Archive'} #{@bullet.name}" } do %>
-            <%= icon("archive") %>
-            <%= @bullet.archived? ? "Unarchive" : "Archive" %>
+                aria: { label: "#{@bullet.done? ? 'Uncomplete' : 'Complete'} #{@bullet.name}" } do %>
+            <%= icon("check") %>
+            <%= @bullet.done? ? "Uncomplete" : "Complete" %>
           <% end %>
         </nav>
       </div>
@@ -77,7 +77,7 @@
     id="timeline"
     class="timeline--scroller"
     data-controller="timeline-scroll"
-    data-timeline-scroll-focus-value="true"
+    data-timeline-scroll-current-value="true"
   >
     <section id="timeline_section_<%= @timeline.section_of(@bullet.pops_on).key %>" class="timeline--section">
       <h2 class="pill"><%= @bullet.pops_on.strftime("%A, %b %-d") %></h2>

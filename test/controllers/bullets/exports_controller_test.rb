@@ -50,16 +50,6 @@ module Bullets
       assert_match 'Second bullet', response.body
     end
 
-    test 'show excludes archived bullets' do
-      @first.archive!
-
-      get export_bullets_path(collection: @collection.name)
-
-      assert_response :success
-      assert_no_match 'First bullet', response.body
-      assert_match 'Second bullet', response.body
-    end
-
     test 'show excludes upcoming bullets from default due export' do
       create_bullet!(@user, body: 'Future bullet', collection: @collection, pops_on: Date.current + 3)
 

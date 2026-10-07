@@ -4,7 +4,6 @@ json.id bullet.id
 json.pops_on bullet.pops_on
 json.collection_ids bullet.collection_ids
 json.done bullet.done?
-json.archived bullet.archived?
 json.author_name bullet.author_name
 json.filename bullet.filename
 json.body bullet.body_as_text
