@@ -17,7 +17,7 @@ class Bullet::FilterTest < ActiveSupport::TestCase
     due = create_bullet!(@user, body: 'Due', pops_on: Date.current)
     later = create_bullet!(@user, body: 'Later', pops_on: Date.current + 1)
 
-    ids = filter.filtered(@user.bullets.active).pluck(:id)
+    ids = filter.filtered(@user.bullets.not_done).pluck(:id)
     assert_includes ids, due.id
     assert_not_includes ids, later.id
   end
@@ -30,7 +30,7 @@ class Bullet::FilterTest < ActiveSupport::TestCase
     due = create_bullet!(@user, body: 'Due', pops_on: Date.current)
     later = create_bullet!(@user, body: 'Later', pops_on: Date.current + 1)
 
-    ids = filter.filtered(@user.bullets.active).pluck(:id)
+    ids = filter.filtered(@user.bullets.not_done).pluck(:id)
     assert_not_includes ids, due.id
     assert_includes ids, later.id
   end
@@ -41,7 +41,7 @@ class Bullet::FilterTest < ActiveSupport::TestCase
     plain = create_bullet!(@user, body: 'Plain', pops_on: Date.current)
 
     filter = Bullet::Filter.from_params({ collection: 'loose notes' }, user: @user)
-    ids = filter.filtered(@user.bullets.active).pluck(:id)
+    ids = filter.filtered(@user.bullets.not_done).pluck(:id)
 
     assert_equal collection, filter.collection
     assert_includes ids, tagged.id

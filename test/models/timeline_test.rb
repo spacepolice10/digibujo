@@ -98,6 +98,14 @@ class TimelineTest < ActiveSupport::TestCase
     assert_not_includes timeline.filtered, archived
   end
 
+  test 'filtered excludes completed bullets' do
+    user = users(:one)
+    timeline = Timeline.new(user)
+    bullet = create_bullet!(user, body: 'Done line')
+    bullet.complete!
+    assert_not_includes timeline.filtered, bullet
+  end
+
   private
 
   def section(age)

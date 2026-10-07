@@ -3,8 +3,12 @@
 module Completable
   extend ActiveSupport::Concern
 
+  RETENTION_DAYS = 30
+
   included do
     scope :done, -> { where.not(done_at: nil) }
+    scope :not_done, -> { where(done_at: nil) }
+    scope :expired_done, -> { done.where(done_at: ...RETENTION_DAYS.days.ago) }
   end
 
   def done?
