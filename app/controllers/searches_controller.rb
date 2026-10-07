@@ -3,7 +3,7 @@
 class SearchesController < ApplicationController
   # Navigation only. Searching lives on the results route.
   def show
-    @collections = Current.user.collections.active.order(:name)
+    @collections = Current.user.collections.order(:name)
     @attachments_count = User::Attachments.new(Current.user).attachments.count
     @archived_count = Current.user.bullets.archived.count
     @completed_count = Current.user.bullets.done.count

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Collection < ApplicationRecord
-  include Archivable, Colourable, Iconable, Collection::Searchable, Collection::NameMatching
+  include Colourable, Iconable, Collection::Searchable, Collection::NameMatching
 
   belongs_to :user
   has_many :bullet_collections, dependent: :destroy

@@ -8,7 +8,7 @@ class CollectionsController < ApplicationController
   return_to_from :param, only: %i[new create]
 
   def index
-    @collections = Current.user.collections.active.order(:name)
+    @collections = Current.user.collections.order(:name)
   end
 
   def new
@@ -53,14 +53,14 @@ class CollectionsController < ApplicationController
   end
 
   def destroy
-    @collection.archive!
-    redirect_to search_path, notice: 'Collection archived'
+    @collection.destroy
+    redirect_to search_path, notice: 'Collection deleted'
   end
 
   private
 
   def set_collection
-    @collection = Current.user.collections.active.find(params[:id])
+    @collection = Current.user.collections.find(params[:id])
   end
 
   def collection_params

@@ -40,14 +40,14 @@ module Bullets
       assert_operator response.body.index('First bullet'), :<, response.body.index('Second bullet')
     end
 
-    test 'show marks completed bullets' do
+    test 'show excludes completed bullets' do
       @first.complete!
 
       get export_bullets_path(collection: @collection.name)
 
       assert_response :success
-      assert_match 'export--bullet-body--completed', response.body
-      assert_match 'Completed', response.body
+      assert_no_match 'First bullet', response.body
+      assert_match 'Second bullet', response.body
     end
 
     test 'show excludes archived bullets' do
@@ -75,10 +75,11 @@ module Bullets
       assert_response :not_found
     end
 
-    test 'show returns not found for archived collection' do
-      @collection.archive!
+    test 'show returns not found for deleted collection' do
+      name = @collection.name
+      @collection.destroy!
 
-      get export_bullets_path(collection: @collection.name)
+      get export_bullets_path(collection: name)
 
       assert_response :not_found
     end

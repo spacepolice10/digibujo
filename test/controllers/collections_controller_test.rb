@@ -173,17 +173,17 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'heart', collection.icon
   end
 
-  test 'destroy archives collection and hides it from active lists' do
-    collection = create_collection!(@user, name: 'Old inbox')
-    card = create_bullet!(@user, body: 'Stay', collection: collection)
+  test 'destroy hard-deletes collection and keeps bullets untagged' do
+    collection = create_collection!(@user, name: 'Gone')
+    card = create_bullet!(@user, body: 'Stays', collection: collection)
 
-    assert_no_difference -> { Collection.count } do
+    assert_difference -> { Collection.count }, -1 do
       delete collection_path(collection)
     end
 
     assert_redirected_to search_path
-    assert collection.reload.archived?
-    assert_includes card.reload.collection_ids, collection.id
-    assert_empty @user.collections.active.where(id: collection.id)
+    assert_not Collection.exists?(collection.id)
+    assert Bullet.exists?(card.id)
+    assert_empty card.reload.collections
   end
 end
