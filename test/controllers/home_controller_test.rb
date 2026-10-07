@@ -15,10 +15,9 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_heading 'Search', level: 1
-    assert_select 'main article.search--navigation ul a', count: 5
+    assert_select 'main article.search--navigation ul a', count: 4
     assert_select 'main article.search--navigation ul a[href=?]', attachments_path, text: 'Attachments'
     assert_select 'main article.search--navigation ul a[href=?]', completed_index_path, text: 'Completed'
-    assert_select 'main article.search--navigation ul a[href=?]', archived_index_path, text: 'Archive'
     assert_select 'main article.search--navigation ul a[href=?]', collections_path, text: 'Collections'
     assert_select 'main article.search--navigation ul a[href=?]', bullets_path(from: Date.current + 1), text: 'Upcoming'
     assert_select 'main small', count: 0

@@ -11,7 +11,7 @@ class Timeline
   attr_reader :user, :filter
 
   def filtered
-    filter.filtered(user.bullets.active.not_done)
+    filter.filtered(user.bullets.not_done)
   end
 
   def last_page

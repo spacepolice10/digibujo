@@ -21,7 +21,6 @@ Rails.application.routes.draw do
   # --- Bullets ---
   scope 'bullets', module: :bullets do
     resource :postpone, only: %i[new create]
-    resource :archive
     resource :collect, only: %i[new create]
     resource :completion, only: %i[create destroy]
     resource :publish
@@ -54,7 +53,6 @@ Rails.application.routes.draw do
   post 'webhooks/:code', to: 'webhook_intakes#create', as: :webhook_intake, constraints: { code: /wh_[A-Za-z0-9]+/ }
 
   resources :completed, only: %i[index]
-  resources :archived
 
   # --- Attachments ---
   resources :attachments, only: %i[index show], param: :signed_id

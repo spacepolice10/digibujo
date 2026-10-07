@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_03_135009) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_07_120000) do
   create_table "access_codes", force: :cascade do |t|
     t.string "code_digest", null: false
     t.string "code_prefix", null: false
@@ -71,16 +71,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_135009) do
     t.index ["subject_type", "subject_id", "created_at"], name: "index_activities_on_subject_type_and_subject_id_and_created_at"
     t.index ["user_id", "created_at"], name: "index_activities_on_user_id_and_created_at"
     t.index ["user_id"], name: "index_activities_on_user_id"
-  end
-
-  create_table "archives", force: :cascade do |t|
-    t.integer "archivable_id", null: false
-    t.string "archivable_type", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "user_id"
-    t.index ["archivable_type", "archivable_id"], name: "index_archives_on_archivable_type_and_archivable_id", unique: true
-    t.index ["user_id"], name: "index_archives_on_user_id"
   end
 
   create_table "auth_codes", force: :cascade do |t|
@@ -207,7 +197,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_03_135009) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "activities", "users"
-  add_foreign_key "archives", "users"
   add_foreign_key "auth_codes", "users"
   add_foreign_key "bullet_collections", "bullets"
   add_foreign_key "bullet_collections", "collections"

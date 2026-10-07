@@ -35,8 +35,8 @@ class TimelineTest < ActiveSupport::TestCase
     past = create_bullet!(user, body: 'Past', pops_on: Date.current - 20)
     later = create_bullet!(user, body: 'Later', pops_on: Date.current + 2)
     filed = create_bullet!(user, body: 'Filed', collection: create_collection!(user, name: 'work'))
-    archived = create_bullet!(user, body: 'Archived')
-    archived.archive!
+    done = create_bullet!(user, body: 'Done')
+    done.complete!
 
     timeline = Timeline.new(user)
 
@@ -54,24 +54,24 @@ class TimelineTest < ActiveSupport::TestCase
     assert_equal bullets.map(&:id), Timeline.new(user).on(day).map(&:id)
   end
 
-  test 'on skips other days, archived bullets, and upcoming ones' do
+  test 'on skips other days, completed bullets, and upcoming ones' do
     user = users(:one)
     day = Date.current - 3
     due = create_bullet!(user, body: 'Due', pops_on: day)
     create_bullet!(user, body: 'Earlier day', pops_on: day - 1)
     create_bullet!(user, body: 'Later day', pops_on: day + 1)
-    archived = create_bullet!(user, body: 'Archived', pops_on: day)
-    archived.archive!
+    done = create_bullet!(user, body: 'Done', pops_on: day)
+    done.complete!
     create_bullet!(user, body: 'Upcoming', pops_on: Date.current + 1)
 
     assert_equal [due.id], Timeline.new(user).on(day).map(&:id)
   end
 
-  test 'on is empty for a day with no active bullets' do
+  test 'on is empty for a day with no incomplete bullets' do
     user = users(:one)
     day = Date.current - 3
-    archived = create_bullet!(user, body: 'Archived', pops_on: day)
-    archived.archive!
+    done = create_bullet!(user, body: 'Done', pops_on: day)
+    done.complete!
 
     assert_empty Timeline.new(user).on(day)
   end
@@ -85,17 +85,17 @@ class TimelineTest < ActiveSupport::TestCase
     assert_equal bullets.first(2).map(&:id), timeline.prev_page(bullets[2]).map(&:id)
   end
 
-  test 'prev_page skips archived and upcoming bullets' do
+  test 'prev_page skips completed and upcoming bullets' do
     user = users(:one)
     bullets = Array.new(3) { |index| create_bullet!(user, body: "Day #{index}", pops_on: Date.current - (2 - index)) }
-    archived = create_bullet!(user, body: 'Archived', pops_on: Date.current - 5)
-    archived.archive!
+    done = create_bullet!(user, body: 'Done', pops_on: Date.current - 5)
+    done.complete!
     create_bullet!(user, body: 'Upcoming', pops_on: Date.current + 1)
     timeline = Timeline.new(user)
 
     assert_equal [bullets.first.id], timeline.prev_page(bullets[1]).map(&:id)
     assert_empty timeline.prev_page(bullets.first)
-    assert_not_includes timeline.filtered, archived
+    assert_not_includes timeline.filtered, done
   end
 
   test 'filtered excludes completed bullets' do

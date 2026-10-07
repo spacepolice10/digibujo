@@ -24,18 +24,6 @@
       <% end %>
     </li>
 
-    <li>
-      <%= link_to archived_index_path, data: { turbo_frame: "_top" } do %>
-        <%= icon("archive") %>
-
-        <p>Archive</p>
-
-        <% if archived_count.positive? %>
-          <small class="search--navigation-item-counter"><%= archived_count %></small>
-        <% end %>
-      <% end %>
-    </li>
-
 
     <li>
       <%= link_to collections_path, data: { turbo_frame: "_top" } do %>
