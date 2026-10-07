@@ -44,13 +44,58 @@ class TimelineTest < ActiveSupport::TestCase
     assert_not_includes timeline.filtered, later
   end
 
-  test 'last_page and page_before walk back through the feed' do
+  test 'on returns every bullet due on one day in reading order' do
+    user = users(:one)
+    day = Date.current - 3
+    bullets = Array.new(4) do |index|
+      create_bullet!(user, body: "Day #{index}", pops_on: day, created_at: (4 - index).minutes.ago)
+    end
+
+    assert_equal bullets.map(&:id), Timeline.new(user).on(day).map(&:id)
+  end
+
+  test 'on skips other days, archived bullets, and upcoming ones' do
+    user = users(:one)
+    day = Date.current - 3
+    due = create_bullet!(user, body: 'Due', pops_on: day)
+    create_bullet!(user, body: 'Earlier day', pops_on: day - 1)
+    create_bullet!(user, body: 'Later day', pops_on: day + 1)
+    archived = create_bullet!(user, body: 'Archived', pops_on: day)
+    archived.archive!
+    create_bullet!(user, body: 'Upcoming', pops_on: Date.current + 1)
+
+    assert_equal [due.id], Timeline.new(user).on(day).map(&:id)
+  end
+
+  test 'on is empty for a day with no active bullets' do
+    user = users(:one)
+    day = Date.current - 3
+    archived = create_bullet!(user, body: 'Archived', pops_on: day)
+    archived.archive!
+
+    assert_empty Timeline.new(user).on(day)
+  end
+
+  test 'last_page and prev_page walk back through the feed' do
     user = users(:one)
     bullets = Array.new(5) { |index| create_bullet!(user, body: "Day #{index}", pops_on: Date.current - (4 - index)) }
     timeline = Timeline.new(user)
 
     assert_equal bullets.map(&:id), timeline.last_page.map(&:id)
-    assert_equal bullets.first(2).map(&:id), timeline.page_before(bullets[2]).map(&:id)
+    assert_equal bullets.first(2).map(&:id), timeline.prev_page(bullets[2]).map(&:id)
+  end
+
+  test 'prev_page skips archived and upcoming bullets' do
+    user = users(:one)
+    bullets = Array.new(3) { |index| create_bullet!(user, body: "Day #{index}", pops_on: Date.current - (2 - index)) }
+    archived = create_bullet!(user, body: 'Archived', pops_on: Date.current - 5)
+    archived.archive!
+    create_bullet!(user, body: 'Upcoming', pops_on: Date.current + 1)
+    timeline = Timeline.new(user)
+
+    assert_equal [bullets.first.id], timeline.prev_page(bullets[1]).map(&:id)
+    assert_empty timeline.prev_page(bullets.first)
+    assert_not_includes timeline.filtered, archived
   end
 
   private

@@ -21,27 +21,27 @@ class Bullet::PageableTest < ActiveSupport::TestCase
     assert_equal bullets.map(&:id), @user.bullets.last_page(size: 3).map(&:id)
   end
 
-  test 'page_before returns the batch just older than the cursor' do
+  test 'prev_page returns the batch just older than the cursor' do
     bullets = create_bullets(6)
 
-    page = @user.bullets.page_before(bullets[3], size: 2)
+    page = @user.bullets.prev_page(bullets[3], size: 2)
 
     assert_equal bullets[1..2].map(&:id), page.map(&:id)
   end
 
-  test 'page_before is empty once the oldest bullet is the cursor' do
+  test 'prev_page is empty once the oldest bullet is the cursor' do
     bullets = create_bullets(2)
 
-    assert_empty @user.bullets.page_before(bullets.first)
+    assert_empty @user.bullets.prev_page(bullets.first)
   end
 
-  test 'page_before breaks created_at ties on id' do
+  test 'prev_page breaks created_at ties on id' do
     timestamp = 2.hours.ago
     bullets = Array.new(3) do |index|
       create_bullet!(@user, body: "Tied #{index}", created_at: timestamp)
     end
 
-    page = @user.bullets.page_before(bullets.last)
+    page = @user.bullets.prev_page(bullets.last)
 
     assert_equal bullets.first(2).map(&:id), page.map(&:id)
   end
@@ -56,12 +56,12 @@ class Bullet::PageableTest < ActiveSupport::TestCase
     assert_equal [old_created_today, early_yesterday, late_today].map(&:id), ids
   end
 
-  test 'page_before returns bullets from earlier days first' do
+  test 'prev_page returns bullets from earlier days first' do
     older = create_bullet!(@user, body: 'Older', pops_on: Date.current - 3)
     newer = create_bullet!(@user, body: 'Newer', pops_on: Date.current - 1)
 
-    assert_equal [older.id], @user.bullets.page_before(newer).map(&:id)
-    assert_empty @user.bullets.page_before(older)
+    assert_equal [older.id], @user.bullets.prev_page(newer).map(&:id)
+    assert_empty @user.bullets.prev_page(older)
   end
 
   private

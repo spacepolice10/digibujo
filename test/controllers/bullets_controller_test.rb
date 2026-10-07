@@ -147,6 +147,134 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test 'show renders the published link for a published bullet' do
+    bullet = create_bullet!(@user, body: 'Published text')
+    bullet.publish!
+
+    get bullet_path(bullet)
+
+    assert_response :success
+    assert_select 'input.bullet--published-link[readonly]', count: 1 do |inputs|
+      assert_equal published_url(bullet.public_code), inputs.first['value']
+    end
+  end
+
+  test 'show omits the published link for an unpublished bullet' do
+    get bullet_path(@bullet)
+
+    assert_response :success
+    assert_select 'input.bullet--published-link', count: 0
+  end
+
+  test 'show renders every bullet sharing the selected bullet day' do
+    day = Date.current - 3
+    focal = create_bullet!(@user, body: 'Focal', pops_on: day)
+    same_day = Array.new(4) { |index| create_bullet!(@user, body: "Same day #{index}", pops_on: day) }
+
+    get bullet_path(focal)
+
+    assert_response :success
+    assert_select "##{dom_id_of(focal)}", count: 1
+    same_day.each do |bullet|
+      assert_select "##{dom_id_of(bullet)}", count: 1
+      assert_match bullet.body_as_text, response.body
+    end
+  end
+
+  test 'show omits bullets from other days' do
+    day = Date.current - 3
+    focal = create_bullet!(@user, body: 'Focal', pops_on: day)
+    earlier = create_bullet!(@user, body: 'Earlier day', pops_on: day - 1)
+    later = create_bullet!(@user, body: 'Later day', pops_on: day + 1)
+
+    get bullet_path(focal)
+
+    assert_response :success
+    assert_select "##{dom_id_of(earlier)}", count: 0
+    assert_select "##{dom_id_of(later)}", count: 0
+  end
+
+  test 'show renders the day in timeline order' do
+    day = Date.current - 3
+    focal = create_bullet!(@user, body: 'Focal', pops_on: day)
+    ordered = Array.new(3) do |index|
+      create_bullet!(@user, body: "Line #{index}", pops_on: day, created_at: (3 - index).minutes.ago)
+    end
+
+    get bullet_path(focal)
+
+    assert_response :success
+    positions = ordered.map { |bullet| response.body.index(%(id="#{dom_id_of(bullet)}")) }
+    assert positions.none?(&:nil?), 'expected every bullet of the day to render'
+    assert_equal positions.sort, positions, 'expected the day in reading order'
+  end
+
+  test 'show renders no more than one day regardless of how busy it is' do
+    day = Date.current - 3
+    focal = create_bullet!(@user, body: 'Focal', pops_on: day)
+    60.times { |index| create_bullet!(@user, body: "Bulk #{index}", pops_on: day) }
+
+    get bullet_path(focal)
+
+    assert_response :success
+    assert_select '#timeline .bullet', 61
+  end
+
+  test 'show falls back to the bullet alone when its day has no active bullets' do
+    focal = create_bullet!(@user, body: 'Archived focal', pops_on: Date.current - 3)
+    focal.archive!
+    same_day = create_bullet!(@user, body: 'Archived sibling', pops_on: Date.current - 3)
+    same_day.archive!
+
+    get bullet_path(focal)
+
+    assert_response :success
+    assert_select '#timeline .bullet', 1
+    assert_select "##{dom_id_of(focal)}", count: 1
+  end
+
+  test 'show falls back to the bullet alone when it is not due yet' do
+    focal = create_bullet!(@user, body: 'Upcoming focal', pops_on: Date.current + 2)
+
+    get bullet_path(focal)
+
+    assert_response :success
+    assert_select '#timeline .bullet', 1
+    assert_select "##{dom_id_of(focal)}", count: 1
+  end
+
+  test 'show omits another user bullets and archived bullets from the day' do
+    day = Date.current - 3
+    focal = create_bullet!(@user, body: 'Focal', pops_on: day)
+    private_bullet = create_bullet!(users(:two), body: 'Private neighbour', pops_on: day)
+    archived = create_bullet!(@user, body: 'Archived neighbour', pops_on: day)
+    archived.archive!
+
+    get bullet_path(focal)
+
+    assert_response :success
+    assert_no_match private_bullet.body_as_text, response.body
+    assert_no_match archived.body_as_text, response.body
+  end
+
+  test 'show hands scrolling to the timeline controller focused on the bullet' do
+    get bullet_path(@bullet)
+
+    assert_response :success
+    assert_select '#timeline.timeline--scroller[data-controller=?]', 'timeline-scroll' do
+      assert_select '[data-timeline-scroll-focus-value=?]', 'true'
+    end
+  end
+
+  test 'show renders the bullet as current for highlighting' do
+    get bullet_path(@bullet)
+
+    assert_response :success
+    assert_select ".bullet--current[aria-current=true]", count: 1 do
+      assert_select "##{dom_id_of(@bullet)}", count: 1
+    end
+  end
+
   test 'edit path is removed' do
     get "/bullets/#{@bullet.id}/edit"
 
@@ -364,4 +492,8 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
   end
 
   private
+
+  def dom_id_of(bullet)
+    ActionView::RecordIdentifier.dom_id(bullet)
+  end
 end

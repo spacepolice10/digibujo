@@ -29,6 +29,31 @@
     color: var(--color-negative);
   }
 
+  /* Focal bullet in the `bullets#show` context window. The accent bar and tint
+     mark it outright; the surrounding window recedes so the eye lands on it
+     first without needing a heavy border. */
+  .bullet--current {
+    position: relative;
+
+    .bullet--body {
+      background: var(--color-accent-1-subtle);
+    }
+
+    .bullet--marker {
+      cursor: default;
+    }
+  }
+
+  .bullet--current::before {
+    content: "";
+    position: absolute;
+    inset-block: var(--space-v-half);
+    inset-inline-start: 0;
+    width: 2px;
+    border-radius: var(--radius-base);
+    background: var(--color-accent-1);
+  }
+
   .bullet {
     display: inline-flex;
     align-items: center;

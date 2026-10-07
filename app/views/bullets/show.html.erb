@@ -1,123 +1,93 @@
-<% content_for(:title) { @bullet.name } %>
+<% content_for(:title, @bullet.name) %>
 
-<main data-size="md">
-  <article data-elevation="1">
+<%= render "shared/back_tabbar" %>
 
-    <header>
-      <nav>
-      <%= back_link_to search_path, data: { intent: "secondary", radius: "full", size: "sm", content: "icon" } do %>
-        <%= icon("arrow-left", style: "color: var(--color-invert-2);") %>
-        <% end %>
-      </nav>
+<main class="timeline--window timeline--window--focus" data-size="md">
+  <header>
+    <h1><%= @bullet.name %></h1>
 
-      <nav>
-        <button type="button" data-intent="secondary" data-radius="full" data-size="sm" data-content="icon" aria-label="Actions" aria-haspopup="menu" popovertarget="<%= dom_id(@bullet, :actions) %>">
-          <%= icon("dots", style: "color: var(--color-invert-2);") %>
-        </button>
-        <div id="<%= dom_id(@bullet, :actions) %>"
-             style="position-anchor: <%= dom_id(@bullet, :actions) %>"
-             popover
-             data-controller="grid-navigation"
-             data-grid-navigation-columns-value="1"
-             data-action="keydown->grid-navigation#navigate">
-          <div class="dropdown--element-body">
-            <nav class="dropdown--menu" aria-label="Actions">
-              <% if @bullet.published? %>
-                <%= button_to publish_path,
-                      method: :delete,
-                      params: { bullet_ids: @bullet.id },
-                      class: "dropdown-item picker--item",
-                      form_class: "dropdown--menu-form",
-                      data: {
-                        grid_navigation_target: "item",
-                        action: "focus->grid-navigation#syncPosition"
-                      },
-                      aria: { label: "Unpublish #{@bullet.name}" } do %>
-                  <%= icon("link") %>
-                  Unpublish
-                <% end %>
-              <% else %>
-                <%= button_to publish_path,
-                      method: :post,
-                      params: { bullet_ids: @bullet.id },
-                      class: "dropdown-item picker--item",
-                      form_class: "dropdown--menu-form",
-                      data: {
-                        grid_navigation_target: "item",
-                        action: "focus->grid-navigation#syncPosition"
-                      },
-                      aria: { label: "Publish #{@bullet.name}" } do %>
-                  <%= icon("link") %>
-                  Publish
-                <% end %>
-              <% end %>
+    <% if @bullet.published? %>
+      <input <%# herb:disable html-input-require-autocomplete %>
+        type="text"
+        value="<%= published_url(@bullet.public_code) %>"
+        readonly
+        onclick="this.select()"
+        class="bullet--published-link"
+      >
+    <% end %>
 
-              <% if @bullet.archived? %>
-                <%= button_to archive_path,
-                      method: :delete,
-                      params: { bullet_ids: @bullet.id },
-                      class: "dropdown-item picker--item",
-                      form_class: "dropdown--menu-form",
-                      data: {
-                        grid_navigation_target: "item",
-                        action: "focus->grid-navigation#syncPosition"
-                      },
-                      aria: { label: "Unarchive #{@bullet.name}" } do %>
-                  <%= icon("archive") %>
-                  Unarchive
-                <% end %>
-              <% else %>
-                <%= button_to archive_path,
-                      method: :post,
-                      params: { bullet_ids: @bullet.id },
-                      class: "dropdown-item picker--item",
-                      form_class: "dropdown--menu-form",
-                      form: { data: { turbo_confirm: "Are you sure?" } },
-                      data: {
-                        grid_navigation_target: "item",
-                        action: "focus->grid-navigation#syncPosition"
-                      },
-                      aria: { label: "Archive #{@bullet.name}" } do %>
-                  <%= icon("archive") %>
-                  Archive
-                <% end %>
-              <% end %>
-            </nav>
-          </div>
-        </div>
-      </nav>
-    </header>
+    <div class="dropdown--dock">
+      <button
+        type="button"
+        data-intent="secondary"
+        data-radius="full"
+        data-size="xs"
+        data-content="icon"
+        popovertarget="bullet_actions"
+        aria-label="Bullet options"
+        aria-haspopup="menu"
+      >
+        <%= icon("dots") %>
+      </button>
 
-    <main class="bullet--show">
-      <div class="bullet--show-published-link">
-      <% if @bullet.published? %>
-        <input <%# herb:disable html-input-require-autocomplete %>
-          type="text"
-          value="<%= published_url(@bullet.public_code) %>"
-          readonly
-          onclick="this.select()"
-          class="bullet--published-link"
-        >
-        <% end %>
-      </div>
-
-      <% if @bullet.file.attached? %>
-        <% file = @bullet.file %>
-        <% if file.variable? %>
-          <%= image_tag file.variant(:display), alt: file.filename.to_s, class: "attachment--image" %>
-        <% else %>
-          <%= link_to rails_blob_path(file, disposition: "attachment"), class: "attachment--file", data: { turbo: false } do %>
-            <%= icon("paperclip") %>
-            <span class="attachment--file-name"><%= file.filename %></span>
-            <small><%= number_to_human_size(file.byte_size) %></small>
+      <div
+        id="bullet_actions"
+        role="menu"
+        style="position-anchor: bullet_actions"
+        popover
+        data-controller="grid-navigation"
+        data-grid-navigation-columns-value="1"
+        data-action="keydown->grid-navigation#navigate"
+      >
+        <nav role="listbox" aria-label="Bullet options">
+          <%= button_to publish_path,
+                method: @bullet.published? ? :delete : :post,
+                params: { bullet_ids: @bullet.id },
+                class: "dropdown-item picker--item",
+                form_class: "dropdown--menu-form",
+                data: {
+                  grid_navigation_target: "item",
+                  action: "focus->grid-navigation#syncPosition"
+                },
+                aria: { label: "#{@bullet.published? ? 'Unpublish' : 'Publish'} #{@bullet.name}" } do %>
+            <%= icon("link") %>
+            <%= @bullet.published? ? "Unpublish" : "Publish" %>
           <% end %>
+
+          <%= button_to archive_path,
+                method: @bullet.archived? ? :delete : :post,
+                params: { bullet_ids: @bullet.id },
+                class: "dropdown-item picker--item",
+                form_class: "dropdown--menu-form",
+                form: (@bullet.archived? ? {} : { data: { turbo_confirm: "Are you sure?" } }),
+                data: {
+                  grid_navigation_target: "item",
+                  action: "focus->grid-navigation#syncPosition"
+                },
+                aria: { label: "#{@bullet.archived? ? 'Unarchive' : 'Archive'} #{@bullet.name}" } do %>
+            <%= icon("archive") %>
+            <%= @bullet.archived? ? "Unarchive" : "Archive" %>
+          <% end %>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <div
+    id="timeline"
+    class="timeline--scroller"
+    data-controller="timeline-scroll"
+    data-timeline-scroll-focus-value="true"
+  >
+    <section id="timeline_section_<%= @timeline.section_of(@bullet.pops_on).key %>" class="timeline--section">
+      <h2 class="pill"><%= @bullet.pops_on.strftime("%A, %b %-d") %></h2>
+      <% @bullets.each do |bullet| %>
+        <% if bullet == @bullet %>
+          <%= render "bullets/current_bullet", bullet: bullet %>
+        <% else %>
+          <%= render "bullets/bullet", bullet: bullet %>
         <% end %>
-        <div><small class="bullet--filename"><%= @bullet.filename %></small></div>
-      <% else %>
-        <div class="bullet--show-body">
-          <%= @bullet.body %>
-        </div>
       <% end %>
-    </main>
-  </article>
+    </section>
+  </div>
 </main>

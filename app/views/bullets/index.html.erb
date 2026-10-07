@@ -25,7 +25,14 @@
       </div>
       <% end %>
 
-      <%= render "sections", bullets: @bullets, timeline: @timeline, mount_today: @filter.empty? %>
+      <% timeline_sections(@bullets, @timeline, mount_today: @filter.empty?).each do |section, section_bullets| %>
+        <section id="timeline_section_<%= section.key %>" class="timeline--section">
+          <h2 class="pill"><%= section.label %></h2>
+          <% section_bullets.each do |bullet| %>
+            <%= render "bullets/bullet", bullet: bullet %>
+          <% end %>
+        </section>
+      <% end %>
     </div>
   <% end %>
 

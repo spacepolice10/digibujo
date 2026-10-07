@@ -6,7 +6,6 @@ class BulletsController < ApplicationController
   before_action :set_bullet, only: %i[show update destroy]
   before_action :set_filter, only: :index
   before_action :set_timeline, only: :index
-
   def index
     if params[:before].present?
       load_prev_page
@@ -36,7 +35,13 @@ class BulletsController < ApplicationController
     failed_create_response
   end
 
-  def show; end
+  def show
+    @timeline = Timeline.new(Current.user)
+    @bullets = @timeline.on(@bullet.pops_on).to_a
+    # An archived or not-yet-due bullet has no active siblings on its day, and
+    # an empty rail would leave the page with nothing to look at.
+    @bullets = [@bullet] if @bullets.empty?
+  end
 
   def update
     if @bullet.update(bullet_params)
@@ -66,14 +71,11 @@ class BulletsController < ApplicationController
     cursor = @timeline.filtered.find_by(id: params[:before])
     return head :no_content unless cursor
 
-    @bullets = @timeline.page_before(cursor)
+    @bullets = @timeline.prev_page(cursor)
     return head :no_content if @bullets.empty?
 
     respond_to do |format|
-      format.html do
-        render partial: 'sections', layout: false,
-               locals: { bullets: @bullets, timeline: @timeline }
-      end
+      format.html { render :load_prev_page, layout: false }
       format.json { render 'bullets/index', formats: :json, if: stale?(etag: @bullets) }
     end
   end

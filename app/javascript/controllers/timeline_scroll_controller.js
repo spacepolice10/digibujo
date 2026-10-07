@@ -11,9 +11,13 @@ const GLIDE_TIMEOUT = 700
 // opens at the newest bullet, pulls older pages from the top, and follows new
 // rows only while the reader is already at the bottom. The composer is a
 // sibling flex row, so this element owns all remaining space and scrolling.
+//
+// A `focus` rail (`bullets#show`) is already complete and anchored on one row:
+// it centres that row instead of resting on the newest, and has no older page
+// to pull or new row to follow.
 export default class extends Controller {
   static targets = ["trigger"]
-  static values = { path: String, rootMargin: { type: String, default: "400px" } }
+  static values = { path: String, rootMargin: { type: String, default: "400px" }, current: Boolean }
 
   initialize() {
     this.pinned = true
@@ -34,6 +38,12 @@ export default class extends Controller {
 
     this.element.addEventListener("scroll", this.boundSettlePinned, { passive: true })
     this.element.addEventListener("scrollend", this.boundEndGlide)
+
+    // A focused rail is whole and has no composer, so the bottom-pinning
+    // machinery below has nothing to act on. It also ignores the saved index
+    // scroll position, which belongs to the timeline this visit is leaving.
+    if (this.currentValue) return this.#openAtFocal()
+
     document.addEventListener("turbo:submit-start", this.boundSubmitStart)
     document.addEventListener("turbo:submit-end", this.boundSubmitEnd)
     document.addEventListener("composer:optimistic-create", this.boundOptimisticCreate)
@@ -74,6 +84,15 @@ export default class extends Controller {
 
   preserveScrollPosition() {
     sessionStorage.setItem("scrollPosition", this.element.scrollTop)
+  }
+
+  // Instant on purpose: the rail paints at the final offset already, so a
+  // smooth glide in from the top reads as a mistake rather than an arrival.
+  #openAtFocal() {
+    const focal = this.element.querySelector('[aria-current="true"]')
+
+    this.opening = false
+    focal?.scrollIntoView({ block: "center" })
   }
 
   #scrollPositionRestorable() {

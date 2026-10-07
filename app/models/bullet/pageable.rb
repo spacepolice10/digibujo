@@ -25,7 +25,7 @@ module Bullet::Pageable
       by_date.last(size)
     end
 
-    def page_before(bullet, size: PAGE_SIZE)
+    def prev_page(bullet, size: PAGE_SIZE)
       earlier_date_than(bullet).last_page(size: size)
     end
   end
