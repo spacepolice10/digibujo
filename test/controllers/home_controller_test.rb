@@ -15,8 +15,9 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_heading 'Search', level: 1
-    assert_select 'main article.search--navigation ul a', count: 4
+    assert_select 'main article.search--navigation ul a', count: 5
     assert_select 'main article.search--navigation ul a[href=?]', attachments_path, text: 'Attachments'
+    assert_select 'main article.search--navigation ul a[href=?]', completed_index_path, text: 'Completed'
     assert_select 'main article.search--navigation ul a[href=?]', archived_index_path, text: 'Archive'
     assert_select 'main article.search--navigation ul a[href=?]', collections_path, text: 'Collections'
     assert_select 'main article.search--navigation ul a[href=?]', bullets_path(from: Date.current + 1), text: 'Upcoming'
@@ -92,12 +93,13 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'show renders count badges when destinations have records' do
-    create_bullet!(@user, body: 'Old note').archive!
+    done = create_bullet!(@user, body: 'Old note')
+    done.complete!
 
     get search_path
 
     assert_response :success
-    assert_select 'a[href=?] small', archived_index_path, text: '1'
+    assert_select 'a[href=?] small', completed_index_path, text: '1'
     assert_select 'a[href=?] small', attachments_path, count: 0
   end
 

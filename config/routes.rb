@@ -53,6 +53,7 @@ Rails.application.routes.draw do
   resources :webhooks, only: %i[index new create destroy]
   post 'webhooks/:code', to: 'webhook_intakes#create', as: :webhook_intake, constraints: { code: /wh_[A-Za-z0-9]+/ }
 
+  resources :completed, only: %i[index]
   resources :archived
 
   # --- Attachments ---

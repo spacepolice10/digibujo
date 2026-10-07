@@ -6,6 +6,7 @@ class SearchesController < ApplicationController
     @collections = Current.user.collections.active.order(:name)
     @attachments_count = User::Attachments.new(Current.user).attachments.count
     @archived_count = Current.user.bullets.archived.count
+    @completed_count = Current.user.bullets.done.count
   end
 
   def results

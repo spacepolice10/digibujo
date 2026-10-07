@@ -1,0 +1,20 @@
+<% content_for(:title) { "Completed" } %>
+
+<%= render "shared/back_tabbar" %>
+
+<main data-size="md">
+  <header>
+    <h1>Completed</h1>
+  </header>
+
+
+  <%= render layout: "pagination/paginated_list",
+              locals: {
+                page: @page,
+                pagination_link_path: ->(next_param) { completed_index_path(page: next_param) }
+              } do %>
+    <% @page.records.each do |bullet| %>
+      <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
+    <% end %>
+  <% end %>
+</main>

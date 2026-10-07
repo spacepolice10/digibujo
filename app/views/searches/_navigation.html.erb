@@ -13,6 +13,18 @@
     </li>
 
     <li>
+      <%= link_to completed_index_path, data: { turbo_frame: "_top" } do %>
+        <%= icon("check") %>
+
+        <p>Completed</p>
+
+        <% if completed_count.positive? %>
+          <small class="search--navigation-item-counter"><%= completed_count %></small>
+        <% end %>
+      <% end %>
+    </li>
+
+    <li>
       <%= link_to archived_index_path, data: { turbo_frame: "_top" } do %>
         <%= icon("archive") %>
 
