@@ -4,8 +4,7 @@ class CleanSoftDeletedRecordsJob < ApplicationJob
   UNATTACHED_BLOB_RETENTION = 2.days
 
   def perform
-    Bullet.expired_archived.destroy_all
-    Collection.expired_archived.destroy_all
+    Bullet.expired_done.destroy_all
     purge_unattached_blobs
   end
 
