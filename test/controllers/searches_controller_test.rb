@@ -108,6 +108,16 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     assert_select 'dialog#search_picker_dialog form[action=?][method=get]', search_results_path
     assert_select 'dialog#search_picker_dialog input[type=search][name=q]'
   end
+  test 'results excludes completed bullets' do
+    matching = create_bullet!(@user, body: 'Buy milk today')
+    matching.complete!
+
+    get search_results_path, params: { q: 'milk' }
+
+    assert_response :success
+    assert_empty @controller.instance_variable_get(:@entries)
+  end
+
   test 'results answers turbo-stream for the dialog picker' do
     matching = create_bullet!(@user, body: 'Buy milk today')
 

@@ -93,18 +93,18 @@ class Search::SelectionTest < ActiveSupport::TestCase
     assert_empty Search::Selection.in_menu(@user)
   end
 
-  test 'archive! removes bullet from recent selections' do
-    bullet = create_bullet!(@user, body: 'Park me')
+  test 'complete removes bullet from search index and uncomplete restores it' do
+    bullet = create_bullet!(@user, body: 'Park me somewhere')
 
-    Search::Selection.record!(
-      user: @user,
-      searchable_type: 'Bullet',
-      searchable_id: bullet.id
-    )
+    assert Search::Record.exists?(searchable_type: 'Bullet', searchable_id: bullet.id)
 
-    bullet.archive!
+    bullet.complete!
 
-    assert_empty Search::Selection.in_menu(@user)
+    assert_not Search::Record.exists?(searchable_type: 'Bullet', searchable_id: bullet.id)
+
+    bullet.uncomplete!
+
+    assert Search::Record.exists?(searchable_type: 'Bullet', searchable_id: bullet.id)
   end
 
   test 'in_menu returns selections with searchable loaded' do

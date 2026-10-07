@@ -189,9 +189,9 @@ module Bullets
       assert_match "Bullet collected into #{collection.name}", response.body
     end
 
-    test 'create rejects collect into archived collection' do
+    test 'create rejects collect into deleted collection' do
       collection = create_collection!(@user, name: 'Closed')
-      collection.archive!
+      collection.destroy!
       card = create_bullet!(@user, body: 'Move me')
 
       post collect_path, params: { bullet_ids: card.id.to_s, collection_id: collection.id }

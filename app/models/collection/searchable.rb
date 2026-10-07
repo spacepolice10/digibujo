@@ -5,7 +5,7 @@ module Collection::Searchable
   include ::Searchable
 
   def searchable?
-    !archived?
+    true
   end
 
   def search_name

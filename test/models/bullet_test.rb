@@ -134,6 +134,6 @@ class BulletTest < ActiveSupport::TestCase
     bullet.postpone!(pops_on: Date.current + 2)
 
     assert_not_includes Timeline.new(@user).filtered, bullet
-    assert_includes @user.bullets.active.upcoming, bullet
+    assert_includes @user.bullets.not_done.upcoming, bullet
   end
 end

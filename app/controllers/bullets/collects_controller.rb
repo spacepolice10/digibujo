@@ -10,7 +10,6 @@ module Bullets
     def new
       @collects_q = params[:q].to_s.strip.presence
       @collections = Current.user.collections
-        .active
         .matching_name(params[:q])
         .order(:name)
         .limit(10)

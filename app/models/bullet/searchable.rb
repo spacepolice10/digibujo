@@ -5,7 +5,7 @@ module Bullet::Searchable
   include ::Searchable
 
   def searchable?
-    !archived?
+    !done?
   end
 
   def search_name

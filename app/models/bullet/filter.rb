@@ -52,7 +52,7 @@ class Bullet::Filter
   def resolve_collection(name)
     return if name.blank?
 
-    user.collections.active.find_by(name: name.to_s.strip.downcase) || raise(Error)
+    user.collections.find_by(name: name.to_s.strip.downcase) || raise(Error)
   end
 
   def parse_date(value)

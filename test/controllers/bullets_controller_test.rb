@@ -257,12 +257,12 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match archived.body_as_text, response.body
   end
 
-  test 'show hands scrolling to the timeline controller focused on the bullet' do
+  test 'show hands scrolling to the timeline controller current on the bullet' do
     get bullet_path(@bullet)
 
     assert_response :success
     assert_select '#timeline.timeline--scroller[data-controller=?]', 'timeline-scroll' do
-      assert_select '[data-timeline-scroll-focus-value=?]', 'true'
+      assert_select '[data-timeline-scroll-current-value=?]', 'true'
     end
   end
 
