@@ -1,5 +1,6 @@
-<%# locals: (id:, close_on_submit: true, class_name: nil, standalone: false, controllers: nil, actions: nil, size: nil) %>
+<%# locals: (id:, name:, close_on_submit: true, class_name: nil, standalone: false, controllers: nil, actions: nil, size: nil) %>
 <%
+  name = local_assigns[:name]
   action_list = ["click->dialog#backdropHide"]
   action_list << "turbo:submit-end->dialog#submitSuccess" if close_on_submit
   action_list.concat(Array(actions))
@@ -15,6 +16,7 @@
   data-action="<%= action_list.join(" ") %>"
 >
   <div class="dialog--chrome">
+    <h2> <%= name %></h2>
     <button
       type="button"
       class="dialog--hide button dropdown--element-hide"

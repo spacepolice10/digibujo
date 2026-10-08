@@ -51,7 +51,7 @@
     &::placeholder {
       color: var(--color-invert-4);
       opacity: var(--opacity-half);
-      font-size: var(--font-size-base-type);
+      font-size: var(--font-size-base-read);
     }
 
     &:disabled {

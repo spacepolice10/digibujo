@@ -2,31 +2,31 @@
 
 <%= render "shared/tabbar" %>
 
-<main class="search--window" data-size="sm">
+<main id="search" data-size="sm">
   <div class="search--section">
-    <div class="search--navigation">
-      <h1>Search</h1>
-      <%= render "navigation", collections: @collections, attachments_count: @attachments_count, completed_count: @completed_count, upcoming_count: @upcoming_count, collections_count: @collections_count, search_selections: @search_selections %>
-    </div>
+    <h1>Search</h1>
+    <%= render "navigation", collections: @collections, attachments_count: @attachments_count, completed_count: @completed_count, upcoming_count: @upcoming_count, collections_count: @collections_count, search_selections: @search_selections %>
   </div>
 
   <div id="search_dock" class="search--dock">
     <%# Opens the global command palette preloaded in the layout. %>
-    <div class="search">
-      <button
-        type="button"
-        class="pill hotkey-hint utilities--mx-auto"
-        commandfor="search_picker_dialog"
-        command="show-modal"
-        aria-label="Search"
-        data-controller="hotkey"
-        data-hotkey="S"
-        data-action="keydown.shift+s@document->hotkey#click"
-      >
-        <%= icon("search") %>
-        <span>Search…</span>
-      </button>
-    </div>
+
+    <button
+      type="button"
+      class="pill hotkey-hint utilities--mx-auto"
+      commandfor="search_picker_dialog"
+      command="show-modal"
+      aria-label="Search"
+      data-controller="hotkey"
+      data-hotkey="S"
+      data-action="keydown.shift+s@document->hotkey#click"
+    >
+      <%= icon("search") %>
+      <span>Search…</span>
+    </button>
   </div>
-  <small class="utilities--mx-auto"> Press <kbd>Cmd/Ctrl</kbd> + <kbd>K</kbd> to search from any screen </small>
+
+  <small class="utilities--mx-auto">
+    Press <kbd>Cmd/Ctrl</kbd> + <kbd>K</kbd> to search from any screen
+  </small>
 </main>

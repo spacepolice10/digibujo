@@ -15,7 +15,7 @@
     <%= label_tag :q, "Search", class: "utilities--sr-only" %>
 
     <%= search_field_tag :q, q,
-          placeholder: "Search…",
+          placeholder: "Type to find a bullet or collection",
           autofocus: !mobile_variant?,
           autocomplete: "off",
           aria: { label: "Search" },
@@ -26,7 +26,7 @@
           } %>
   <% end %>
 
-  <div aria-label="Results">
-    <%= render "searches/results_list", entries: entries, q: q %>
+  <div id="search_dialog_results" aria-label="Results">
+    <%= render "searches/results", entries: entries, q: q %>
   </div>
 </main>

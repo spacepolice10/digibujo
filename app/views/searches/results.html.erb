@@ -8,9 +8,8 @@
   data-controller="search"
   data-search-path-value="<%= search_results_path %>"
 >
-
   <%= turbo_frame_tag "search_section", class: "search--section", data: { search_target: "section" } do %>
-    <%= render "results_list", entries: @entries, q: @q %>
+    <%= render "searches/results", entries: @entries, q: @q %>
   <% end %>
 
   <div id="search_dock" class="search--dock">

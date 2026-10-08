@@ -38,7 +38,8 @@ class SearchSystemTest < ApplicationSystemTestCase
     find('button.search--launch').click
     find('dialog#search_picker_dialog input[name=q]').set('milk')
 
-    assert_selector "dialog#search_picker_dialog a.search--result[href='#{bullet_path(match)}'] mark.search--term", text: 'milk'
+    assert_selector "dialog#search_picker_dialog a.search--result[href='#{bullet_path(match)}'] mark.search--term",
+                    text: 'milk'
     assert_no_selector "dialog#search_picker_dialog a.search--result[href='#{bullet_path(recent)}']"
     assert_current_path search_path
   end
@@ -56,7 +57,8 @@ class SearchSystemTest < ApplicationSystemTestCase
     assert_selector 'dialog#search_picker_dialog[open]'
     find('dialog#search_picker_dialog input[name=q]').set('milk')
 
-    assert_selector "dialog#search_picker_dialog a.search--result[href='#{bullet_path(match)}'] mark.search--term", text: 'milk'
+    assert_selector "dialog#search_picker_dialog a.search--result[href='#{bullet_path(match)}'] mark.search--term",
+                    text: 'milk'
     assert_current_path bullets_path
   end
 
@@ -132,7 +134,7 @@ class SearchSystemTest < ApplicationSystemTestCase
     # reset the value out from under the caret.
     assert_equal 'milk', find(@field).value
     assert page.evaluate_script("document.activeElement === document.querySelector('input.search--textform[name=q]')"),
-      'expected the input to still hold focus after the frame updated'
+           'expected the input to still hold focus after the frame updated'
   end
 
   test 'clearing the query returns to the empty state' do
@@ -168,8 +170,8 @@ class SearchSystemTest < ApplicationSystemTestCase
     field = find('dialog#search_picker_dialog input[name=q]')
     field.set('milk')
 
-    first = 'dialog#search_picker_dialog li.search--results-list-item:nth-child(1) a.search--result'
-    second = 'dialog#search_picker_dialog li.search--results-list-item:nth-child(2) a.search--result'
+    first = 'dialog#search_picker_dialog li.search--result-list-list-item:nth-child(1) a.search--result'
+    second = 'dialog#search_picker_dialog li.search--result-list-list-item:nth-child(2) a.search--result'
     assert_selector 'dialog#search_picker_dialog a.search--result', count: 2
     assert_equal 'true', find(first)['aria-selected']
     assert_equal 'false', find(second)['aria-selected']

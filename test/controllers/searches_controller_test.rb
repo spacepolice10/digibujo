@@ -124,14 +124,17 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_results_path, params: { q: 'milk' }, headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
 
     assert_response :success
-    assert_select 'turbo-stream[action=replace][target=search-results-list] a.search--result[href=?]', bullet_path(matching)
+    assert_select 'turbo-stream[action=update][target=search_section] a.search--result[href=?]',
+                  bullet_path(matching)
+    assert_select 'turbo-stream[action=update][target=search_dialog_results] a.search--result[href=?]',
+                  bullet_path(matching)
   end
 
   test 'results wraps the results list in the section frame' do
     get search_results_path
 
     assert_response :success
-    assert_select 'turbo-frame#search_section.search--section #search-results-list > .search--results'
+    assert_select 'turbo-frame#search_section.search--section .search--result-list'
     assert_select 'turbo-frame#search_section p', text: 'No results'
   end
 
@@ -145,7 +148,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     controller = @controller
     assert_equal 'milk', controller.instance_variable_get(:@q)
     assert_includes controller.instance_variable_get(:@entries).map(&:id), matching.id
-    assert_select 'turbo-frame#search_section .search--results a.search--result'
+    assert_select 'turbo-frame#search_section .search--result-list a.search--result'
     assert_select 'article.search--navigation', count: 0
   end
 
@@ -232,7 +235,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_results_path, params: { q: 'milk' }, headers: { 'Turbo-Frame' => 'search_section' }
 
     assert_response :success
-    assert_select 'turbo-frame#search_section .search--results'
+    assert_select 'turbo-frame#search_section .search--result-list'
     assert_select 'turbo-frame#search_section a.search--result[href=?]', bullet_path(matching)
   end
 
@@ -268,6 +271,9 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_results_path, headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
 
     assert_response :success
-    assert_select 'turbo-stream[action=replace][target=search-results-list] a.search--result[href=?]', collection_path(collection)
+    assert_select 'turbo-stream[action=update][target=search_section] a.search--result[href=?]',
+                  collection_path(collection)
+    assert_select 'turbo-stream[action=update][target=search_dialog_results] a.search--result[href=?]',
+                  collection_path(collection)
   end
 end
