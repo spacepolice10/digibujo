@@ -17,7 +17,7 @@ class SearchesController < ApplicationController
     @entries = if @q.present?
       Search::GlobalRequest.call(user: Current.user, query: @q, limit: 10)
     else
-      []
+      Search::Selection.in_menu(Current.user).filter_map(&:searchable)
     end
 
     respond_to do |format|

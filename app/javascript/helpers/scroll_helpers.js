@@ -4,10 +4,6 @@ export function scrollToBottom(container, behavior = "instant") {
   container.scrollTo({ top: container.scrollHeight, behavior })
 }
 
-export function distanceFromBottom(container) {
-  return container.scrollHeight - container.scrollTop - container.clientHeight
-}
-
 // Prepending pushes everything down by the height of the new rows. Restoring the
 // distance to the bottom edge leaves the row the reader was looking at exactly
 // where it was.

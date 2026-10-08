@@ -13,6 +13,7 @@ module Bullets
         .matching_name(params[:q])
         .order(:name)
         .limit(10)
+      @collected_collection_ids = collected_collection_ids
 
       respond_to do |format|
         format.html
@@ -27,6 +28,8 @@ module Bullets
       end
       @bullets.each(&:reload)
       @collection = Current.user.collections.find(collection_id)
+      @bullet_ids = params[:bullet_ids].to_s
+      @collected_collection_ids = collected_collection_ids
 
       respond_to do |format|
         format.turbo_stream
@@ -34,6 +37,20 @@ module Bullets
       end
     rescue ActiveRecord::RecordInvalid => e
       respond_with_failed_bullet(e)
+    end
+
+    private
+
+    # Collections containing every selected bullet (intersection), so the
+    # picker checkmark means "fully applied" for multi-select.
+    def collected_collection_ids
+      bullet_ids = @bullets.pluck(:id)
+      return [] if bullet_ids.empty?
+
+      BulletCollection.where(bullet_id: bullet_ids)
+        .group(:collection_id)
+        .having('COUNT(DISTINCT bullet_id) = ?', bullet_ids.size)
+        .pluck(:collection_id)
     end
   end
 end

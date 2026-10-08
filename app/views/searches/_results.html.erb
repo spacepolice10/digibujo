@@ -1,9 +1,12 @@
 <%# locals: (entries:, q:) %>
 <div class="search--results">
+  <% if q.blank? && entries.any? %>
+    <p class="utilities--mx-auto">Recent</p>
+  <% end %>
   <ul class="search--results-list" role="listbox">
     <% entries.each do |entry| %>
       <li class="search--results-list-item" role="option">
-        <%= render "search_result", entry: entry, query: q %>
+        <%= render "searches/search_result", entry: entry, query: q %>
       </li>
     <% end %>
 

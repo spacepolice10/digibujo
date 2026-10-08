@@ -64,8 +64,8 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_path, params: { recent: '1' }
 
     assert_response :success
-    assert_select 'a.search--result', count: 0
-    assert_select 'a.search--result[href=?]', collection_path(collection), count: 0
+    assert_select 'article.search--navigation a.search--result', count: 0
+    assert_select 'dialog#search_picker_dialog a.search--result[href=?]', collection_path(collection)
   end
 
   test 'mobile search keeps the three item tabbar' do
@@ -241,5 +241,33 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
 
     assert_select 'nav.tabbar--navigation span.tabbar--item-active[aria-current=page]', text: 'Search'
     assert_select 'nav.tabbar--navigation a[href=?]', search_path, count: 0
+  end
+
+  test 'results shows recent selections for a blank query' do
+    collection = create_collection!(@user, name: 'recent alpha')
+    Search::Selection.record!(
+      user: @user,
+      searchable_type: 'Collection',
+      searchable_id: collection.id
+    )
+
+    get search_results_path
+
+    assert_response :success
+    assert_select 'turbo-frame#search_section a.search--result[href=?]', collection_path(collection)
+  end
+
+  test 'results turbo-stream shows recent selections for a blank query' do
+    collection = create_collection!(@user, name: 'recent alpha')
+    Search::Selection.record!(
+      user: @user,
+      searchable_type: 'Collection',
+      searchable_id: collection.id
+    )
+
+    get search_results_path, headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
+
+    assert_response :success
+    assert_select 'turbo-stream[action=replace][target=search-results-list] a.search--result[href=?]', collection_path(collection)
   end
 end

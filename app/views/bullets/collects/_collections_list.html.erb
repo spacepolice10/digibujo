@@ -1,4 +1,4 @@
-<%# locals: (bullet_ids:, return_to:, collections:) %>
+<%# locals: (bullet_ids:, return_to:, collections:, collected_ids: []) %>
 <div id="collects-collections-list">
   <ul class="bulk-menu--picker-list" role="listbox">
     <br>
@@ -17,6 +17,6 @@
 
     <%= render partial: "bullets/collects/collection",
           collection: collections,
-          locals: { bullet_ids: bullet_ids } %>
+          locals: { bullet_ids: bullet_ids, collected_ids: collected_ids } %>
   </ul>
 </div>

@@ -36,9 +36,9 @@ export default class extends Controller {
     }
 
     const id = clientId()
-    this.#insertFilePending(id, file.name, container)
+    this.#insertFilePending(id, file, container)
     body.set("bullet[client_id]", id)
-    this.dispatch("optimistic-create", { bubbles: true })
+    this.dispatch("initiate-submit", { bubbles: true })
 
     try {
       const signedId = await this.#directUpload(file, uploadLink)
@@ -60,11 +60,42 @@ export default class extends Controller {
     })
   }
 
-  #insertFilePending(id, filename, container) {
+  #insertFilePending(id, file, container) {
     insertPending(this.pendingFileTemplateTarget, container, id, (node) => {
       node.querySelectorAll("[data-pending-filename]").forEach((el) => {
-        el.textContent = filename
+        el.textContent = file.name
       })
+      if (!file.type.startsWith("image/")) return
+
+      const img = node.querySelector("[data-pending-image]")
+      if (!img) return
+
+      const url = URL.createObjectURL(file)
+      img.src = url
+      img.alt = file.name
+      img.hidden = false
+      node.querySelectorAll(".attachment--file").forEach((el) => {
+        el.hidden = true
+      })
+      img.onload = () => URL.revokeObjectURL(url)
+      img.onerror = () => {
+        URL.revokeObjectURL(url)
+        img.hidden = true
+        node.querySelectorAll(".attachment--file").forEach((el) => {
+          el.hidden = false
+        })
+      }
+
+      // Reserve the final box upfront: same ratio the server render uses,
+      // so submit → upload → replace swaps pixels, not layout.
+      if (globalThis.createImageBitmap) {
+        createImageBitmap(file).then((bitmap) => {
+          if (bitmap.width && bitmap.height) {
+            img.style.aspectRatio = `${bitmap.width} / ${bitmap.height}`
+          }
+          bitmap.close?.()
+        }).catch(() => {})
+      }
     })
   }
 }

@@ -126,7 +126,7 @@
 
   <button
     type="button"
-    class="utilities--mx-auto"
+    class="utilities--mx-auto pill"
     data-intent="primary"
     data-radius="base"
     data-size="sm"
@@ -154,6 +154,7 @@
 <%= render "shared/dialog",
       id: "collects_picker_dialog",
       standalone: true,
+      close_on_submit: false,
       size: "lg" do %>
   <turbo-frame
     id="collects_picker_dialog"

@@ -1,4 +1,4 @@
-<%# locals: (bullet_ids:, return_to:, collects_q:, collections:) %>
+<%# locals: (bullet_ids:, return_to:, collects_q:, collections:, collected_ids: []) %>
 
   <header>
     <h2 class="utilities--sr-only">To collection</h2>
@@ -30,6 +30,7 @@
       <%= render "bullets/collects/collections_list",
             bullet_ids: bullet_ids,
             return_to: return_to,
-            collections: collections %>
+            collections: collections,
+            collected_ids: collected_ids %>
     </div>
   </main>

@@ -174,7 +174,6 @@ export default class extends Controller {
     const form = event.target;
     if (!form?.action) return;
 
-    const isCollect = form.action.includes("/bullets/collect");
     const isPop =
       form.action.includes("/bullets/postpone") &&
       form.method?.toLowerCase() == "post";
@@ -183,7 +182,9 @@ export default class extends Controller {
       this.menuTarget.contains(form) &&
       form.method?.toLowerCase() != "get";
 
-    if (isCollect || isPop || isMenuBulk) this.#restore();
+    // Collect stays open so the row can flip to its check icon; the user
+    // closes it via the dialog chrome button.
+    if (isPop || isMenuBulk) this.#restore();
   }
 
   #restore() {

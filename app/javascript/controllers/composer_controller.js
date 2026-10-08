@@ -22,7 +22,7 @@ export default class extends Controller {
 
     this.#insertTextPending(id, container)
     body.set("bullet[client_id]", id)
-    this.dispatch("optimistic-create", { bubbles: true })
+    this.dispatch("initiate-submit", { bubbles: true })
 
     this.restore()
 

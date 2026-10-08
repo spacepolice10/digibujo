@@ -27,7 +27,7 @@
         max(var(--space-v), env(safe-area-inset-top, 0px)) auto
         max(var(--space-v), env(safe-area-inset-bottom, 0px)); */
       max-height: min(
-        90dvh,
+        75dvh,
         100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)
       );
     }

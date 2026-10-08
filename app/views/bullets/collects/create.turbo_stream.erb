@@ -7,4 +7,10 @@
     <% message = @bullets.size == 1 ? "Bullet collected into #{@collection.name}" : "#{@bullets.size} bullets collected into #{@collection.name}" %>
     <%= render "shared/toasts", type: "notify", messages: [message] %>
   <% end %>
+  <%= turbo_stream.replace dom_id(@collection, :collect_row) do %>
+    <%= render "bullets/collects/collection",
+          collection: @collection,
+          bullet_ids: @bullet_ids,
+          collected_ids: @collected_collection_ids %>
+  <% end %>
 <% end %>
