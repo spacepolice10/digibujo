@@ -5,7 +5,7 @@
     gap: var(--space-h-half);
     padding: var(--space-v-half) var(--space-h);
     border-radius: var(--radius-full);
-    border: 1px solid var(--color-invert-4);
+    border: var(--border-subtle);
     background: var(--color-1);
     color: var(--color-invert-4);
     font-family: var(--font-family-mono);
@@ -16,6 +16,13 @@
     width: fit-content;
     height: fit-content;
   }
+
+  a,button {
+    &.pill:hover {
+      background: var(--color-2);
+    }
+  }
+
   .pill--notify {
     border: 1px solid var(--model-color-2);
     background: var(--model-color-2-bg);

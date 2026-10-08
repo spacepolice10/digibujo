@@ -1,29 +1,19 @@
-/* Base — design-level element defaults
- *
- * These are intentional design choices, not browser normalization.
- * Lives in @layer base so it sits between variables and utilities.
- *
- * Page chrome uses ordinary tags:
- *   body > main     — page shell (padding, size, title)
- *   article         — elevated card / surface (may hold ul directly)
- *   ul[data-layout]  — column (default), flex, or grid
- *   ul[data-divider] — row/outer borders when "true"
- * Timeline windows (.timeline--window / .timeline--scroller) opt out via timeline.css
- * (full-height flex fill, no page-shell padding).
- */
-
 @layer base {
-
   :root {
     --background-grid-size: 1.25rem;
-    --background-canvas-colour: light-dark(oklch(0.97 0 0), oklch(0.24 0 0));
-    --background-grid-colour: light-dark(oklch(0.88 0 0), oklch(0.45 0 0 / 0.55));
+
+    --background-canvas-colour: light-dark(oklch(0.97 0 0),
+        oklch(0.24 0 0));
+
+    --background-grid-colour: light-dark(oklch(0.88 0 0),
+        oklch(0.45 0 0 / 0.55));
+
     --background-grid-pattern: radial-gradient(circle,
         var(--background-grid-colour) 1px,
         transparent 1px);
+
     --background-grid:
-      var(--background-grid-pattern) 0 0 / var(--background-grid-size) var(--background-grid-size),
-      var(--background-canvas-colour);
+      var(--background-grid-pattern) 0 0 / var(--background-grid-size) var(--background-grid-size), var(--background-canvas-colour);
   }
 
   html {
@@ -34,307 +24,248 @@
   body {
     display: flex;
     flex-direction: column;
-    font-family: var(--font-family-mono);
-    font-size: var(--font-size-base-read);
     width: 100%;
     max-width: 1280px;
     min-height: 100dvh;
     margin-inline: auto;
     padding: 2.5px;
-    line-height: 1.5;
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-base-read);
+    line-height: 1.25;
     color: var(--color-invert-1);
     container: layout / inline-size;
     overscroll-behavior-y: none;
+  }
 
-    &>main {
-      container: inline-size;
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      justify-content: safe center;
-      gap: var(--space-v);
-      min-block-size: 0;
-      margin-inline: auto;
-      width: 100%;
-      height: 100%;
-      padding-block: var(--space-v-4);
-      padding-inline: var(--space-h);
-      padding-block-end: calc(var(--tabbar-clearance) + var(--space-h-2) + var(--space-v-2));
+  body>main {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    width: 100%;
+    min-block-size: 0;
+    gap: var(--space-v);
+    margin-inline: auto;
+    padding-block: var(--space-v-4);
+    padding-inline: var(--space-h);
+    padding-block-end: calc(var(--tabbar-clearance) + var(--space-h-2) + var(--space-v-2));
+    container: inline-size;
+  }
 
-      & h1 {
-        flex-shrink: 0;
-        font-family: var(--font-family-sans);
-        font-size: var(--font-size-2xl);
-        font-weight: var(--font-weight-strong);
-        color: var(--color-invert-1);
-      }
+  body>main[data-size="sm"] {
+    max-width: 640px;
+  }
 
-      /* Keep titles pinned & center the rest in the leftover space */
-      &:has(h1) {
-        justify-content: flex-start;
+  body>main[data-size="md"] {
+    max-width: 800px;
+  }
 
-        &>:first-child+* {
-          margin-block-start: auto;
-        }
+  body>main[data-size="lg"] {
+    max-width: 1280px;
+  }
 
-        &>*:last-child {
-          margin-block-end: auto;
-        }
-      }
+  body>footer {
+    width: 100%;
+    margin-inline: auto;
+  }
 
-      &[data-size="sm"] {
-        max-width: 640px;
-      }
-
-      &[data-size="md"] {
-        max-width: 800px;
-      }
-
-      &[data-size="lg"] {
-        max-width: 1280px;
-      }
-    }
-
-    & header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: var(--space-v-half) var(--space-h-half);
-    }
-
-    &>footer {
-      margin-inline: auto;
-      width: 100%;
-    }
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-h);
+    padding-block: var(--space-v-half);
+    padding-inline: var(--space-h-half);
   }
 
   section {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit,
+        minmax(250px, 1fr));
     gap: var(--space-v);
     height: 100%;
   }
 
   article {
-    border-radius: var(--radius-base);
+    --surface: var(--color-1);
+    --surface-padding-block: var(--space-v);
+    --surface-padding-inline: 0;
+    --surface-border: var(--border-subtle);
+
     width: 100%;
+    border: var(--surface-border);
+    border-radius: var(--radius-base);
+    background: var(--surface);
+  }
 
-    &>header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: var(--border-subtle);
-      width: 100%;
-      padding-inline: var(--space-h-half);
-      padding-block: var(--space-v-half);
+  article[data-elevation="1"] {
+    --surface: var(--color-1);
+    --surface-border: var(--border-subtle);
+  }
 
-      &>nav {
-        display: flex;
-        justify-content: start;
-        align-items: center;
-        gap: var(--space-h);
-      }
-    }
+  article[data-elevation="2"] {
+    --surface: var(--color-2);
+    --surface-border: var(--border-subtle);
+  }
 
-    >main {
-      flex: 1 1 0;
-      width: 100%;
-      padding-inline: var(--space-h-half);
-      padding-block: var(--space-v-half);
-    }
+  article>header {
+    width: 100%;
+    border-block-end: var(--surface-border);
+    padding-block-end: var(--space-v);
+    gap: var(--space-h);
+  }
 
-    /* Lists sit on article or inside its main.
-       column (default / empty / "column") gets the stacked card chrome.
-       data-divider="true" adds the outer border and row separators. */
-    >ul,
-    >main>ul {
+  article>main {
+    flex: 1 1 0;
+    width: 100%;
+    padding-block: var(--space-v-half);
+    padding-inline: var(--space-h-half);
+  }
+
+  article>footer {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  ul {
+    margin: 0;
+    padding: auto;
+
+    &>li {
       list-style: none;
-      width: 100%;
-
-      &>li {
-        list-style: none;
-      }
-
-      &:where(:not([data-layout]), [data-layout=""], [data-layout="column"]) {
-        display: flex;
-        flex-direction: column;
-        background: var(--color-1);
-        border-radius: var(--radius-strong);
-        overflow: hidden;
-
-        &>li> :is(a, button, div) {
-          width: 100%;
-          padding: var(--space-v) var(--space-h);
-          background: none;
-          border: 0;
-          text-align: start;
-
-          p {
-            flex: 1;
-            min-width: 0;
-            overflow-wrap: anywhere;
-          }
-        }
-
-        &>li> :is(button, div) {
-          display: flex;
-          align-items: center;
-          gap: var(--space-h-half);
-        }
-      }
-
-      &[data-divider="true"] {
-        border: var(--border-subtle);
-
-        &>li+li {
-          border-top: var(--border-subtle);
-        }
-      }
-    }
-
-    &>footer {
-      display: flex;
-      justify-content: start;
-    }
-
-    &[data-elevation="1"] {
-      background: var(--color-1);
-      border: var(--border-subtle);
-    }
-
-    &[data-elevation="2"] {
-      background: var(--color-2);
-      border: var(--border-subtle);
     }
   }
 
-  @media (hover: hover) {
-    article>ul:where(:not([data-layout]), [data-layout=""], [data-layout="column"]) :is(a, button):hover,
-    article>main>ul:where(:not([data-layout]), [data-layout=""], [data-layout="column"]) :is(a, button):hover {
-      background: var(--color-2);
-    }
+  ul,
+  ul[data-layout="column"] {
+    display: flex;
+    flex-direction: column;
   }
 
-  article>ul:where(:not([data-layout]), [data-layout=""], [data-layout="column"]) :is(a, button):focus-visible,
-  article>main>ul:where(:not([data-layout]), [data-layout=""], [data-layout="column"]) :is(a, button):focus-visible {
-    background: var(--color-2);
-  }
-
-  /* Shared list layouts — work inside or outside article */
   ul[data-layout="flex"] {
     display: flex;
     flex-flow: row wrap;
     gap: var(--space-h-half);
-    list-style: none;
-    background: none;
-    border: 0;
-    border-radius: 0;
-    overflow: visible;
   }
 
   ul[data-layout="grid"] {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-h-half);
-    list-style: none;
-    background: none;
-    border: 0;
-    border-radius: 0;
-    overflow: visible;
+    align-items: stretch;
   }
 
-  select[multiple] {
+  ul[data-layout="column"]>li> :is(a, button, div) {
     display: flex;
-    flex-direction: column;
-    gap: var(--space-v-half);
-    border: none;
-
-    &::checkmark {
-      display: none;
-    }
+    align-items: center;
+    width: 100%;
+    gap: var(--space-h-half);
+    padding: var(--space-v) var(--space-h);
+    border: 0;
+    background: none;
+    text-align: start;
+    text-decoration: none;
   }
 
-  /* Typography */
+  ul[data-layout="column"]>li> :is(a, button, div) p {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    text-decoration: none;
+  }
+
+  ul[data-divider="true"]>li+li {
+    border-block-start: var(--surface-border);
+  }
+
+  li:has(a, button):hover {
+    background: var(--color-2);
+  }
+
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    line-height: 1.1;
+    line-height: 1.25;
     text-wrap: balance;
+    overflow-wrap: break-word;
   }
 
   p,
   li {
     text-wrap: pretty;
-  }
-
-  p,
-  li,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
     overflow-wrap: break-word;
   }
 
-  * {
-    scrollbar-width: none;
+  h1 {
+    flex-shrink: 0;
+    line-height: 1.25;
+    font-family: var(--font-family-sans);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-strong);
+    color: var(--color-invert-1);
   }
 
-  /* Focus — thin soft ring, offset outward; follows border-radius on controls */
-  *:focus-visible {
-    outline: 0.5px solid color-mix(in oklch,
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-h-half);
+    text-decoration: none;
+  }
+
+  a:not([class]) {
+    color: var(--color-invert-2);
+    text-decoration-skip-ink: auto;
+  }
+
+  :focus-visible {
+    outline: 1px solid color-mix(in oklch,
         var(--color-accent-1) 80%,
         transparent);
     box-shadow: none;
     transition: none;
   }
 
-  /* Links — flex anatomy only; colour/size come from context or component classes */
-  a {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-h-half);
+  * {
+    scrollbar-width: none;
   }
+}
 
-  a:not([class]) {
-    text-decoration-skip-ink: auto;
-    color: var(--color-invert-2);
-  }
-
-  li {
-    list-style: none;
-  }
-
-  /* Appearance. Theming colors — on html with the dot-grid background. */
-
+@layer base {
   html[data-appearance="warm"] {
-    --color-1: light-dark(oklch(0.97 0.015 78), oklch(0.25 0.025 78));
-    --color-2: light-dark(oklch(0.99 0.01 78), oklch(0.30 0.018 78));
-    --background-grid-colour: light-dark(oklch(0.64 0.018 78 / 0.72), oklch(0.45 0.012 78 / 0.55));
+    --color-1: light-dark(oklch(0.97 0.015 78),
+        oklch(0.25 0.025 78));
+    --color-2: light-dark(oklch(0.99 0.01 78),
+        oklch(0.30 0.018 78));
+    --background-grid-colour: light-dark(oklch(0.64 0.018 78 / 0.72),
+        oklch(0.45 0.012 78 / 0.55));
   }
 
   html[data-appearance="cool"] {
-    --color-1: light-dark(oklch(0.97 0.015 250), oklch(0.25 0.025 255));
-    --color-2: light-dark(oklch(0.99 0.01 250), oklch(0.30 0.018 255));
-    --background-grid-colour: light-dark(oklch(0.64 0.018 250 / 0.72), oklch(0.45 0.012 255 / 0.55));
+    --color-1: light-dark(oklch(0.97 0.015 250),
+        oklch(0.25 0.025 255));
+    --color-2: light-dark(oklch(0.99 0.01 250),
+        oklch(0.30 0.018 255));
+    --background-grid-colour: light-dark(oklch(0.64 0.018 250 / 0.72),
+        oklch(0.45 0.012 255 / 0.55));
   }
 
   html[data-appearance="nature"] {
-    --color-1: light-dark(oklch(0.97 0.015 145), oklch(0.25 0.025 145));
-    --color-2: light-dark(oklch(0.99 0.01 145), oklch(0.30 0.018 145));
-    --background-grid-colour: light-dark(oklch(0.64 0.018 145 / 0.72), oklch(0.45 0.012 145 / 0.55));
+    --color-1: light-dark(oklch(0.97 0.015 145),
+        oklch(0.25 0.025 145));
+    --color-2: light-dark(oklch(0.99 0.01 145),
+        oklch(0.30 0.018 145));
+    --background-grid-colour: light-dark(oklch(0.64 0.018 145 / 0.72),
+        oklch(0.45 0.012 145 / 0.55));
   }
 
   html[data-appearance="cheese"] {
-    --color-1: light-dark(oklch(0.97 0.02 85), oklch(0.25 0.03 85));
-    --color-2: light-dark(oklch(0.99 0.014 85), oklch(0.30 0.022 85));
-    --background-grid-colour: light-dark(oklch(0.64 0.022 85 / 0.72), oklch(0.45 0.014 85 / 0.55));
+    --color-1: light-dark(oklch(0.97 0.02 85),
+        oklch(0.25 0.03 85));
+    --color-2: light-dark(oklch(0.99 0.014 85),
+        oklch(0.30 0.022 85));
+    --background-grid-colour: light-dark(oklch(0.64 0.022 85 / 0.72),
+        oklch(0.45 0.014 85 / 0.55));
   }
-
-
 }

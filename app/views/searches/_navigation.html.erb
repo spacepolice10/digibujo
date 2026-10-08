@@ -30,6 +30,10 @@
         <%= icon("folder") %>
 
         <p>Collections</p>
+
+        <% if collections_count.positive? %>
+          <small class="search--navigation-item-counter"><%= collections_count %></small>
+        <% end %>
       <% end %>
     </li>
 
@@ -38,6 +42,10 @@
         <%= icon("calendar") %>
 
         <p>Upcoming</p>
+
+        <% if upcoming_count.positive? %>
+          <small class="search--navigation-item-counter"><%= upcoming_count %></small>
+        <% end %>
       <% end %>
     </li>
   </ul>
@@ -45,11 +53,11 @@
 
 <ul id="search_collections" data-layout="grid">
   <%# collections.each do |collection| %>
-    <!-- <li> -->
-      <%#= link_to collection_path(collection), class: "collection-chip", data: { turbo_frame: "_top" } do %>
-        <%#= icon("hash", style: ("color: #{colour(collection.colour)};" if collection.colour.present?)) %>
-        <!-- <span><%#= collection.name %></span> -->
-      <%# end %>
-    <!-- </li> -->
+  <!-- <li> -->
+  <%#= link_to collection_path(collection), class: "collection-chip", data: { turbo_frame: "_top" } do %>
+  <%#= icon("hash", style: ("color: #{colour(collection.colour)};" if collection.colour.present?)) %>
+  <!-- <span><%#= collection.name %></span> -->
+  <%# end %>
+  <!-- </li> -->
   <%# end %>
 </ul>

@@ -37,9 +37,9 @@
   }
   :is(button, a)[data-intent][data-size="lg"], [role="button"][data-size="lg"] {
     height: calc(var(--space-v-3) + 1ch);
+    padding: var(--space-v-half) var(--space-h);
     width: fit-content;
-    padding: 0 var(--space-h-3);
-    font-size: var(--font-size-base-read);
+    font-size: var(--font-size-base-type);
   }
   :is(button, a)[data-intent][data-size="xl"], [role="button"][data-size="xl"] {
     height: var(--space-v-4);

@@ -7,21 +7,23 @@
       Questions, bugs, or feedback about Dotted — email the maintainer or open
       an issue on GitHub.
     </p>
+    <br>
+    <ul>
+      <li>
+        <%= mail_to "naysdemo@zohomail.com" do %>
+          <%= icon("mail") %> naysdemo@zohomail.com
+        <% end %>
+      </li>
+
+      <li>
+        <%= link_to "https://github.com/spacepolice10/digibujo" do %>
+          <%= icon("github") %> github.com/spacepolice10/digibujo
+        <% end %>
+      </li>
+    </ul>
   </main>
 
-  <ul>
-    <li>
-      <%= mail_to "naysdemo@zohomail.com" do %>
-        <%= icon("mail") %> naysdemo@zohomail.com
-      <% end %>
-    </li>
 
-    <li>
-      <%= link_to "https://github.com/spacepolice10/digibujo" do %>
-        <%= icon("github") %> github.com/spacepolice10/digibujo
-      <% end %>
-    </li>
-  </ul>
 </article>
 
 <%= render "shared/back_tabbar" %>

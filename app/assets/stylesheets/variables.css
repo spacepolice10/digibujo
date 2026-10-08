@@ -90,7 +90,7 @@
         --opacity-quarter: 0.25;
 
         /* border */
-        --border-subtle: 0.5px solid color-mix(in oklch, var(--color-invert-4) 18%, transparent);
+        --border-subtle: 1px solid color-mix(in oklch, var(--color-invert-4) 18%, transparent);
         --border-base: 1px solid color-mix(in oklch, var(--color-invert-3) 28%, transparent);
         --border-strong: 1px solid color-mix(in oklch, var(--color-invert-2) 45%, transparent);
 

@@ -1,16 +1,17 @@
 <% content_for(:title) { "Enter code" } %>
 
 <main data-size="sm">
-  <header>
-    <h1>Check your email</h1>
-  </header>
+  <article id="confirmation__form" data-elevation="1">
+    <header>
+      <h2>Check your email</h2>
+    </header>
 
+    <main>
+      <%= form_with url: authentication_confirmation_path, data: { controller: "auto-submit", auto_submit_length_value: 6 } do |form| %>
+        <label>
+          <small>We sent a 6-character code to <strong><%= @email %></strong>. Enter the code to sign in or create an account.</small>
 
-  <%= form_with url: authentication_confirmation_path, data: { controller: "auto-submit", auto_submit_length_value: 6 } do |form| %>
-  <label>
-    <p>Code</p>
-    <small>We sent a 6-character code to <strong><%= @email %></strong>.</small>
-      <%= form.text_field :code,
+          <%= form.text_field :code,
         required: true,
         autofocus: true,
         autocomplete: "one-time-code",
@@ -19,12 +20,16 @@
         placeholder: "······",
         aria: { label: "6-character login code" },
         data: { action: "input->auto-submit#submit" } %>
-    </label>
+        </label>
 
-    <%= form.button type: "submit", data: { intent: "primary", radius: "full", size: "lg" } do %>
-      Verify code
-    <% end %>
-  <% end %>
+        <%= form.button type: "submit", data: { intent: "primary", radius: "full", size: "lg" } do %>
+          Verify code
+        <% end %>
+      <% end %>
+    </main>
+  </article>
+
+  <br>
 
   <footer class="utilities--mx-auto">
     <nav>

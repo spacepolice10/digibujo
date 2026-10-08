@@ -5,16 +5,10 @@
   form {
     display: flex;
     flex-direction: column;
-    gap: var(--space-v-half);
-    border: var(--border-subtle);
-    border-radius: var(--radius-base);
-    background: var(--color-1);
-    padding-bottom: var(--space-v);
 
     &>fieldset,
     &>label {
       padding-block-end: var(--space-v-2);
-      padding-inline: var(--space-h-half);
 
     }
 
@@ -24,42 +18,33 @@
       font-size: var(--font-size-xl);
       font-weight: var(--font-weight-strong);
       color: var(--color-invert-1);
-      margin-left: 2px;
     }
-
     &>label>p {
       padding-block-start: var(--space-v);
-      padding-block-end: var(--space-v);
       font-size: var(--font-size-xl);
       font-weight: var(--font-weight-strong);
       color: var(--color-invert-1);
-      margin-left: 2px;
     }
-
     & small {
       display: block;
-      font-size: var(--font-size-xs);
-      color: var(--color-invert-4);
-      margin-bottom: var(--space-v-half);
+      font-size: var(--font-size-base-ready);
+      color: var(--color-invert-2);
+      margin-bottom: var(--space-v);
+      margin-left: 2px;
     }
     & button[type="submit"] {
       margin-inline: auto;
     }
   }
 
-  textarea {
-    field-sizing: content;
-  }
-
-  /* ── Shared input base ────────────────────────────── */
-
   form :is(input, textarea, select) {
     width: 100%;
-    padding: var(--space-v) var(--space-h-half);
-    border-radius: var(--radius-subtle);
+    height: calc(var(--space-v-3) + 1ch);
+    padding: var(--space-v-half) var(--space-h);
+    border-radius: var(--radius-full);
     font-family: var(--font-family-mono);
     font-size: var(--font-size-base-type);
-    background: transparent;
+    background: var(--color-1);
     border: var(--border-subtle);
     color: var(--color-invert-2);
 
@@ -67,10 +52,6 @@
       color: var(--color-invert-4);
       opacity: var(--opacity-half);
       font-size: var(--font-size-base-type);
-    }
-
-    &:hover {
-      background: var(--color-2);
     }
 
     &:disabled {
@@ -92,7 +73,7 @@
     cursor: pointer;
   }
 
-  /* ── Checkbox & Radio ─────────────────────────────── */
+  /* ── Checkbox & Radios ─────────────────────────────── */
 
   [role="radiogroup"] {
     display: flex;
@@ -114,19 +95,19 @@
 
   label:has(input[type="checkbox"]),
   label:has(input[type="radio"]) {
-    input[type="checkbox"] {
-      position: absolute;
-      right: var(--space-h-half);
-      top: var(--space-v-half);
-      opacity: 0;
-    }
-
     color: var(--color-invert-4);
     border: 1px solid transparent;
     border-radius: var(--radius-full);
     background: var(--color-2);
     transition: border-color 0.18s ease,
     background 0.06s ease;
+
+    input[type="checkbox"] {
+      position: absolute;
+      right: var(--space-h-half);
+      top: var(--space-v-half);
+      opacity: 0;
+    }
 
     &:hover {
       background: var(--color-2);
