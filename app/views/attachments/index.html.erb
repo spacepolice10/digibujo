@@ -5,13 +5,17 @@
 <main data-size="md" data-bulk-menu-target="list">
   <h1>Attachments</h1>
 
+  <p>
+    A gallery of your uploaded files.
+  </p>
+
   <% if @attachments.any? %>
     <section class="attachment--gallery">
       <% @attachments.each do |attachment| %>
         <% blob = attachment.blob %>
         <%= link_to attachment_path(blob.signed_id),
               class: "attachment--tile",
-              data: { kind: blob.variable? ? "image" : "file", turbo_frame: "_top" },
+              data: { kind: blob.variable? ? "picture" : "file", turbo_frame: "_top" },
               aria: { label: "View #{blob.filename}" } do %>
           <% if blob.variable? %>
             <%= image_tag blob.representation(resize_to_limit: [800, 1600]),

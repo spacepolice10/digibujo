@@ -1,19 +1,5 @@
 @layer components {
-  lexxy-editor .attachment.attachment--preview {
-    block-size: calc(var(--space-h-10) + var(--space-h-7) + var(--space-h-half)) !important;
-    display: grid !important;
-    grid-template-rows: minmax(0, 1fr) auto;
-  }
 
-  lexxy-editor .attachment.attachment--preview > :is(img, video, a) {
-    min-block-size: 0;
-  }
-
-  lexxy-editor .attachment.attachment--preview :is(img, video) {
-    block-size: 100% !important;
-    inline-size: 100%;
-    object-fit: contain;
-  }
 
   .bullet--body .attachment.attachment--preview {
     display: grid;
@@ -22,29 +8,14 @@
   }
 
   /* Lexxy's content styles are unlayered, so sizes need !important to win. */
-  .bullet--body :is(.attachment--image, .attachment.attachment--preview img) {
+  .bullet--body :is(.attachment--preview img) {
     block-size: var(--space-h-5) !important;
     inline-size: auto !important;
     max-inline-size: 100%;
     margin-inline: 0 !important;
     object-fit: cover;
     border-radius: var(--radius-base);
-  }
-
-  .bullet:has(.attachment--image-link, .attachment--file) .bullet--body {
-    align-items: center;
-    width: fit-content;
-    padding: var(--space-v-half);
-    white-space: normal;
-  }
-
-  .attachment--image-link { display: block; inline-size: fit-content; max-inline-size: 100%; }
-
-  .attachment--image {
-    display: block;
-    max-inline-size: 100%;
-    block-size: auto;
-    border-radius: var(--radius-base);
+    height: var(--space-h-10);
   }
 
   .attachment--file {
@@ -56,15 +27,21 @@
     text-decoration: none;
   }
 
-  .attachment--file-name { min-width: 0; flex: 1; }
-  .attachment--file small { color: var(--color-invert-4); font-size: var(--font-size-xs); }
+  .attachment--file-name {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .attachment--file small {
+    color: var(--color-invert-4);
+    font-size: var(--font-size-xs);
+  }
 
   main.attachment--page {
     height: auto;
     min-block-size: auto;
   }
 
-  .attachment--gallery,
 
   .attachment--gallery {
     display: block;
@@ -84,24 +61,11 @@
     background: var(--color-2);
     color: inherit;
     text-decoration: none;
-  }
-
-  .attachment--tile:hover { background: var(--color-3); }
-
-  .attachment--tile img {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-
-  .attachment--tile-file {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-end;
-    gap: var(--space-v-half);
-    min-block-size: var(--space-h-8);
     padding: var(--space-v);
+    border: var(--border-base);
+    &[data-kind="picture"] {
+      padding: 0;
+    }
   }
 
   .attachment--tile-file .icon-wrap {

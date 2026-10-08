@@ -32,28 +32,26 @@
     </span>
   </label>
 
-  <div class="bullet--content">
-    <div class="bullet--body">
-      <% if bullet.file.attached? %>
-        <% file = bullet.file %>
-        <% if file.variable? %>
-          <% width, height = file.blob.metadata.values_at("width", "height") %>
-          <%= link_to attachment_path(file.blob.signed_id), class: "attachment--image-link", data: { turbo_frame: "_top" } do %>
-            <%= image_tag file.variant(:thumb),
+
+  <div class="bullet--body">
+    <% if bullet.file.attached? %>
+      <% file = bullet.file %>
+      <% if file.variable? %>
+        <% width, height = file.blob.metadata.values_at("width", "height") %>
+        <%= link_to attachment_path(file.blob.signed_id), class: "attachment--preview", data: { turbo_frame: "_top" } do %>
+          <%= image_tag file.variant(:thumb),
                   alt: file.filename.to_s,
-                  class: "attachment--image",
                   style: (width.present? && height.present? ? "aspect-ratio: #{width} / #{height}" : nil) %>
-          <% end %>
-        <% else %>
-          <%= link_to rails_blob_path(file, disposition: "attachment"), class: "attachment--file", data: { turbo: false } do %>
-            <%= icon("paperclip") %>
-            <span class="attachment--file-name utilities--line-clamp-1"><%= file.filename %></span>
-            <small><%= number_to_human_size(file.byte_size) %></small>
-          <% end %>
         <% end %>
       <% else %>
-        <div class="bullet--note"><%= bullet.body %> </div>
+        <%= link_to rails_blob_path(file, disposition: "attachment"), class: "attachment--file", data: { turbo: false } do %>
+          <%= icon("paperclip") %>
+          <span class="attachment--file-name utilities--line-clamp-1"><%= file.filename %></span>
+          <small><%= number_to_human_size(file.byte_size) %></small>
+        <% end %>
       <% end %>
-    </div>
+    <% else %>
+      <%= bullet.body %>
+    <% end %>
   </div>
 </turbo-frame>

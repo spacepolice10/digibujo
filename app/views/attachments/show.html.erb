@@ -10,11 +10,9 @@
     </div>
   </header>
 
-  <main class="attachment--show">
+  <main>
     <% if @blob.representable? %>
-      <%= image_tag @blob.representation(resize_to_limit: [1600, 1600]),
-            alt: @blob.filename,
-            class: "attachment--show-image" %>
+      <%= image_tag @blob.representation(resize_to_limit: [1600, 1600]), alt: @blob.filename %>
     <% else %>
       <p>
         <%= link_to @blob.filename,
