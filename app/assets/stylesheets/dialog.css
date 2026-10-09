@@ -99,7 +99,7 @@
   }
 
   .dialog--hide {
-    border: 1px solid var(--color-invert-4);
+    border: var(--border-strong);
     border-radius: var(--radius-full);
   }
 

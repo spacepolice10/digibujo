@@ -1,5 +1,15 @@
 <%# locals: (entry:, query:) %>
-<%= link_to polymorphic_path(entry), class: "search--result", data: { combobox_target: "item" } do %>
+<%= link_to polymorphic_path(entry),
+      class: "search--result",
+      tabindex: "-1",
+      data: {
+        combobox_target: "item",
+        controller: "recent-search",
+        action: "click->recent-search#record",
+        recent_search_searchable_type_value: entry.class.name,
+        recent_search_searchable_id_value: entry.id.to_s,
+        recent_search_url_value: search_selection_path
+      } do %>
   <span class="search--result-icon">
     <%= icon(entry.search_result_icon, style: ("color: #{entry.colour_variable};" if entry.respond_to?(:colour_variable))) %>
   </span>

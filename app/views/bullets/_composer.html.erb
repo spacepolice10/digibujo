@@ -1,5 +1,16 @@
 <%# locals: (bullet:, preset:, autofocus: false, collection: nil, pops_on: Date.current, composer_id: nil) %>
 
+<% 
+  placeholders = [
+    "What's up?",
+    "What's on your mind?",
+    "Don't forget to...",
+    "Record your last idea!",
+    "What's happening?",
+    "Any news?"
+  ]
+%>
+
 <div
 id="bullet_composer"
   class="composer"
@@ -35,7 +46,7 @@ id="bullet_composer"
       <%= fr.rich_text_area :body,
             preset: preset,
             autofocus: autofocus,
-            placeholder: "What's up?",
+            placeholder: placeholders.sample,
             class: "hotkey-hint lexxy-editor--empty",
             data: {
               controller: "hotkey",

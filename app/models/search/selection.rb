@@ -11,10 +11,10 @@ class Search::Selection < ApplicationRecord
   scope :ordered, -> { order(selected_at: :desc) }
 
   class << self
-    def record!(user:, searchable_type:, searchable_id:, query: nil)
+    def record!(user:, searchable:)
       transaction do
-        selection = find_or_initialize_by(user:, searchable_type:, searchable_id:)
-        selection.update!(selected_at: Time.current, query: query.presence)
+        selection = find_or_initialize_by(user:, searchable:)
+        selection.update!(selected_at: Time.current)
         where(user:).ordered.offset(LIMIT).delete_all
       end
     end

@@ -10,8 +10,8 @@ lexxy-editor {
     flex-grow: 1;
     height: fit-content;
     font-size: var(--font-size-base-type);
-    background: var(--color-1);
-    border: 1px solid transparent;
+    background: var(--color-2);
+    border: var(--border-subtle);   
     border-radius: var(--radius-base);
     box-sizing: border-box;
     padding-inline: var(--space-h);

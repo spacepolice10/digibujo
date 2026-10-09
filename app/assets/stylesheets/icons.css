@@ -30,6 +30,7 @@
   :root {
     --icon-paperclip: url("icon-paperclip.svg");
     --icon-arrows-diagonal: url("icon-arrows-diagonal.svg");
+    --icon-arrow-forward-up: url("icon-arrow-forward-up.svg");
     --icon-bold: url("icon-bold.svg");
     --icon-italic: url("icon-italic.svg");
     --icon-link: url("icon-link.svg");

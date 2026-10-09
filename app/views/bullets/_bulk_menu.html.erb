@@ -6,7 +6,7 @@
   hidden
 >
   <header>
-    <h2 class="utilities--sr-only">Bulk edit</h2>
+    <h2 class="utilities--mx-auto">Bulk edit</h2>
   </header>
 
   <div class="bulk-menu--actions">
@@ -32,6 +32,7 @@
     <% end %>
 
     <%= form_with url: completion_path, method: :delete,
+          class: "utilities--contents",
           data: { turbo_stream: true, bulk_menu_target: "uncomplete" },
           html: { hidden: true } do %>
       <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
@@ -104,7 +105,7 @@
       data-action="bulk-menu#openPopsPicker keydown.l@document->hotkey#click"
       aria-keyshortcuts="L"
     >
-      <%= icon("arrow-up") %> Later
+      <%= icon("arrow-forward-up") %> Later
     </button>
 
     <button
@@ -118,7 +119,7 @@
       data-action="bulk-menu#openCollectsPicker keydown.s@document->hotkey#click"
       aria-keyshortcuts="S"
     >
-      <%= icon("arrow-left") %> Save
+      <%= icon("hash") %> Tag
     </button>
   </div>
 

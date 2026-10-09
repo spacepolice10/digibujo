@@ -110,6 +110,47 @@ class SearchSystemTest < ApplicationSystemTestCase
     assert_no_selector '.search--result'
   end
 
+  test 'clicking a result records a recent search' do
+    bullet = create_bullet!(@user, body: 'Buy milk today')
+
+    visit bullets_path
+    page.execute_script("document.querySelector('button[commandfor=search_picker_dialog]').click()")
+    assert_selector 'dialog#search_picker_dialog[open]'
+
+    find('dialog#search_picker_dialog input[name=q]').set('milk')
+    find("dialog#search_picker_dialog a.search--result[href='#{bullet_path(bullet)}']").click
+
+    assert_selector 'main.timeline--window--focus'
+
+    selection = nil
+    10.times do
+      selection = Search::Selection.find_by(user: @user, searchable_type: 'Bullet', searchable_id: bullet.id)
+      break if selection
+
+      sleep 0.5
+    end
+
+    assert_equal bullet.id, selection&.searchable_id
+  end
+
+  test 'tab skips result links while arrows still navigate the list' do
+    create_bullet!(@user, body: 'Buy milk today')
+    create_bullet!(@user, body: 'Buy milk tomorrow')
+
+    visit bullets_path
+    page.execute_script("document.querySelector('button[commandfor=search_picker_dialog]').click()")
+    assert_selector 'dialog#search_picker_dialog[open]'
+
+    field = find('dialog#search_picker_dialog input[name=q]')
+    field.set('milk')
+    assert_selector 'dialog#search_picker_dialog a.search--result', count: 2
+
+    field.send_keys(:tab)
+
+    assert page.evaluate_script("!document.activeElement.closest('a.search--result')"),
+      'expected tab to skip result links to the element after the list'
+  end
+
   # --- typing updates the frame ---
 
   test 'typing updates the results inside the section frame' do

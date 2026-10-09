@@ -9,23 +9,12 @@ class Search::SelectionTest < ActiveSupport::TestCase
   end
 
   test 'record! upserts the same target' do
-    Search::Selection.record!(
-      user: @user,
-      searchable_type: 'Collection',
-      searchable_id: @collection.id,
-      query: 'alp'
-    )
+    Search::Selection.record!(user: @user, searchable: @collection)
 
     travel 1.hour do
-      Search::Selection.record!(
-        user: @user,
-        searchable_type: 'Collection',
-        searchable_id: @collection.id,
-        query: 'alpha'
-      )
+      Search::Selection.record!(user: @user, searchable: @collection)
 
       selection = @user.search_selections.sole
-      assert_equal 'alpha', selection.query
       assert_in_delta Time.current, selection.selected_at, 1.second
     end
 
@@ -36,11 +25,7 @@ class Search::SelectionTest < ActiveSupport::TestCase
     collections = (Search::Selection::LIMIT + 1).times.map { |i| create_collection!(@user, name: "collection #{i}") }
 
     collections.each do |collection|
-      Search::Selection.record!(
-        user: @user,
-        searchable_type: 'Collection',
-        searchable_id: collection.id
-      )
+      Search::Selection.record!(user: @user, searchable: collection)
     end
 
     assert_equal Search::Selection::LIMIT, @user.search_selections.count
@@ -51,11 +36,7 @@ class Search::SelectionTest < ActiveSupport::TestCase
     collections = (Search::Selection::LIMIT + 1).times.map { |i| create_collection!(@user, name: "menu collection #{i}") }
 
     collections.each do |collection|
-      Search::Selection.record!(
-        user: @user,
-        searchable_type: 'Collection',
-        searchable_id: collection.id
-      )
+      Search::Selection.record!(user: @user, searchable: collection)
     end
 
     selections = Search::Selection.in_menu(@user)
@@ -68,8 +49,8 @@ class Search::SelectionTest < ActiveSupport::TestCase
     deleted = create_collection!(@user, name: 'gone')
     kept = create_collection!(@user, name: 'kept')
 
-    Search::Selection.record!(user: @user, searchable_type: 'Collection', searchable_id: deleted.id)
-    Search::Selection.record!(user: @user, searchable_type: 'Collection', searchable_id: kept.id)
+    Search::Selection.record!(user: @user, searchable: deleted)
+    Search::Selection.record!(user: @user, searchable: kept)
 
     deleted.destroy!
 
@@ -82,11 +63,7 @@ class Search::SelectionTest < ActiveSupport::TestCase
   test 'complete! removes bullet from recent selections' do
     bullet = create_bullet!(@user, body: 'Finish me')
 
-    Search::Selection.record!(
-      user: @user,
-      searchable_type: 'Bullet',
-      searchable_id: bullet.id
-    )
+    Search::Selection.record!(user: @user, searchable: bullet)
 
     bullet.complete!
 
@@ -108,11 +85,7 @@ class Search::SelectionTest < ActiveSupport::TestCase
   end
 
   test 'in_menu returns selections with searchable loaded' do
-    Search::Selection.record!(
-      user: @user,
-      searchable_type: 'Collection',
-      searchable_id: @collection.id
-    )
+    Search::Selection.record!(user: @user, searchable: @collection)
 
     selection = Search::Selection.in_menu(@user).sole
 

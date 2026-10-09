@@ -55,11 +55,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
 
   test 'show ignores the recent param' do
     collection = create_collection!(@user, name: 'recent alpha')
-    Search::Selection.record!(
-      user: @user,
-      searchable_type: 'Collection',
-      searchable_id: collection.id
-    )
+    Search::Selection.record!(user: @user, searchable: collection)
 
     get search_path, params: { recent: '1' }
 
@@ -248,11 +244,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
 
   test 'results shows recent selections for a blank query' do
     collection = create_collection!(@user, name: 'recent alpha')
-    Search::Selection.record!(
-      user: @user,
-      searchable_type: 'Collection',
-      searchable_id: collection.id
-    )
+    Search::Selection.record!(user: @user, searchable: collection)
 
     get search_results_path
 
@@ -262,11 +254,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
 
   test 'results turbo-stream shows recent selections for a blank query' do
     collection = create_collection!(@user, name: 'recent alpha')
-    Search::Selection.record!(
-      user: @user,
-      searchable_type: 'Collection',
-      searchable_id: collection.id
-    )
+    Search::Selection.record!(user: @user, searchable: collection)
 
     get search_results_path, headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
 
@@ -275,5 +263,17 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
                   collection_path(collection)
     assert_select 'turbo-stream[action=update][target=search_dialog_results] a.search--result[href=?]',
                   collection_path(collection)
+  end
+
+  test 'results link records the search via the recent-search controller' do
+    bullet = create_bullet!(@user, body: 'Buy milk today')
+
+    get search_results_path, params: { q: 'milk' }
+
+    assert_response :success
+    assert_select 'turbo-frame#search_section a.search--result[href=?][data-controller=?][data-action=?]',
+                  bullet_path(bullet), 'recent-search', 'click->recent-search#record'
+    assert_select 'turbo-frame#search_section a.search--result[href=?][data-recent-search-searchable-type-value=?][data-recent-search-searchable-id-value=?]',
+                  bullet_path(bullet), 'Bullet', bullet.id.to_s
   end
 end

@@ -3,7 +3,31 @@
 module Searchable
   extend ActiveSupport::Concern
 
+  # Every including model registers itself here. Rails 8 no longer tracks
+  # descendants without the descendants_tracker gem, so the concern keeps its
+  # own list and a new searchable needs no central registry.
+  @searchable_models = []
+
+  class << self
+    attr_reader :searchable_models
+
+    # Only real tables belong in the registry: an abstract ancestor shares its
+    # subclass's table, so Bullet::Searchable must not register alongside Bullet.
+    def register(model)
+      return unless model.is_a?(Class) && model < ApplicationRecord
+      return if model.name.blank? || model.base_class != model
+
+      searchable_models << model unless searchable_models.include?(model)
+    end
+  end
+
   included do
+    # Associations to eager-load when this record comes back from the index.
+    # Declared per model so adding a searchable needs no central registry.
+    class_attribute :search_preload, default: [], instance_accessor: false
+
+    Searchable.register(self)
+
     after_create_commit :create_in_search_index
     after_update_commit :update_in_search_index
     after_destroy_commit :remove_from_search_index

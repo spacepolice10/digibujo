@@ -4,6 +4,11 @@ module Bullet::Searchable
   extend ActiveSupport::Concern
   include ::Searchable
 
+  # Runs after ::Searchable's included block, so the class_attribute exists.
+  included do
+    self.search_preload = %i[collections rich_text_body published_entity]
+  end
+
   def searchable?
     !done?
   end

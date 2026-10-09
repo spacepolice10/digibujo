@@ -3,17 +3,9 @@
 module Searches
   class SelectionsController < ApplicationController
     def create
-      searchable_type = params.require(:searchable_type)
-      searchable_id = params.require(:searchable_id)
+      searchable = find_searchable!(params.require(:searchable_type), params.require(:searchable_id))
 
-      searchable = find_searchable!(searchable_type, searchable_id)
-
-      Search::Selection.record!(
-        user: Current.user,
-        searchable_type: searchable_type,
-        searchable_id: searchable.id,
-        query: params[:query]
-      )
+      Search::Selection.record!(user: Current.user, searchable:)
 
       head :no_content
     rescue ActiveRecord::RecordNotFound
@@ -22,13 +14,20 @@ module Searches
 
     private
 
+    # Resolves through the registered searchables rather than a hand-maintained
+    # whitelist, so a new searchable needs no edit here. Scoped to the current
+    # user, so a valid id belonging to someone else is still a miss.
     def find_searchable!(type, id)
-      case type
-      when 'Collection' then Current.user.collections.find(id)
-      when 'Bullet' then Current.user.bullets.find(id)
-      else
-        raise ActiveRecord::RecordNotFound
+      model = Searchable.searchable_models.find { |candidate| candidate.name == type }
+      raise ActiveRecord::RecordNotFound unless model
+
+      model.find_by!(id:).then do |searchable|
+        belongs_to_current_user?(searchable) ? searchable : raise(ActiveRecord::RecordNotFound)
       end
+    end
+
+    def belongs_to_current_user?(searchable)
+      searchable.respond_to?(:user_id) && searchable.user_id == Current.user.id
     end
   end
 end

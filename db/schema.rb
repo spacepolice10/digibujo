@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_07_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_08_153759) do
   create_table "access_codes", force: :cascade do |t|
     t.string "code_digest", null: false
     t.string "code_prefix", null: false
@@ -145,7 +145,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_07_120000) do
 
   create_table "search_selections", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.string "query"
     t.integer "searchable_id", null: false
     t.string "searchable_type", null: false
     t.datetime "selected_at", null: false

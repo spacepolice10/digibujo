@@ -6,11 +6,6 @@ class Search::GlobalRequest
   FTS5_CANDIDATE_LIMIT = 100
   FUZZY_SCAN_LIMIT = 200
 
-  SEARCHABLE_INCLUDES = {
-    'Collection' => [],
-    'Bullet' => %i[collections rich_text_body published_entity]
-  }.freeze
-
   class << self
     def call(user:, query:, limit: LIMIT)
       new(user:, query:, limit:).call
@@ -81,8 +76,10 @@ class Search::GlobalRequest
   end
 
   def preload_searchables(records)
-    records.group_by(&:searchable_type).each do |type, type_records|
-      includes = SEARCHABLE_INCLUDES[type] || []
+    records.group_by(&:searchable_type).each_value do |type_records|
+      includes = type_records.first.searchable&.class&.search_preload || []
+      next if includes.empty?
+
       ActiveRecord::Associations::Preloader.new(
         records: type_records,
         associations: { searchable: includes }

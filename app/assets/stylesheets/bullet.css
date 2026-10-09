@@ -158,6 +158,12 @@
     border-radius: 0;
   }
 
+  .bullet:has(> input:focus-visible) .bullet--body {
+    outline: 1px solid color-mix(in oklch,
+        var(--color-accent-1) 80%,
+        transparent);
+  }
+
   .bullet[data-bullet-done="true"] {
     opacity: 0.75;
 
