@@ -106,6 +106,17 @@ class TimelineTest < ActiveSupport::TestCase
     assert_not_includes timeline.filtered, bullet
   end
 
+  test 'completed filter returns done newest-first and pages backwards' do
+    user = users(:one)
+    old_done = create_bullet!(user, body: 'Old done', done_at: 3.days.ago)
+    fresh_done = create_bullet!(user, body: 'Fresh done').tap(&:complete!)
+    create_bullet!(user, body: 'Not done')
+    timeline = Timeline.new(user, filter: Bullet::Filter.from_params({ completed: 'true' }, user: user))
+    assert_equal [fresh_done.id, old_done.id], timeline.last_page.map(&:id)
+    assert_equal [old_done.id], timeline.prev_page(fresh_done).map(&:id)
+    assert_empty timeline.prev_page(old_done)
+  end
+
   private
 
   def section(age)

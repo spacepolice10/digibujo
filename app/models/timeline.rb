@@ -11,14 +11,19 @@ class Timeline
   attr_reader :user, :filter
 
   def filtered
-    filter.filtered(user.bullets.not_done)
+    base = filter.completed? ? user.bullets.done : user.bullets.not_done
+    filter.filtered(base)
   end
 
   def last_page
+    return filtered.last_completed_page if filter.completed?
+
     filtered.last_page
   end
 
   def prev_page(bullet)
+    return filtered.prev_completed_page(bullet) if filter.completed?
+
     filtered.prev_page(bullet)
   end
 

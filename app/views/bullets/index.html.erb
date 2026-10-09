@@ -25,7 +25,11 @@
         </div>
       <% end %>
 
-      <%= render "bullets/timeline_sections", bullets: @bullets, timeline: @timeline %>
+      <% if @filter.completed? %>
+        <%= render "bullets/completed_list", bullets: @bullets %>
+      <% else %>
+        <%= render "bullets/timeline_sections", bullets: @bullets, timeline: @timeline %>
+      <% end %>
 
     </div>
   <% end %>

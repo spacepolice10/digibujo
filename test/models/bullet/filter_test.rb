@@ -54,6 +54,30 @@ class Bullet::FilterTest < ActiveSupport::TestCase
     end
   end
 
+  test 'completed flag selects done-only feed' do
+    filter = Bullet::Filter.from_params({ completed: 'true' }, user: @user)
+
+    assert filter.completed?
+    assert_not filter.empty?
+    assert_equal 'Completed', filter.name
+    assert_equal({ completed: true }, filter.to_params)
+  end
+
+  test 'missing completed flag means undone feed' do
+    filter = Bullet::Filter.from_params({}, user: @user)
+
+    assert_not filter.completed?
+    assert filter.empty?
+  end
+
+  test 'completed flag ignores the default due-date window' do
+    filter = Bullet::Filter.from_params({ completed: 'true' }, user: @user)
+    future_done = create_bullet!(@user, body: 'Future done', pops_on: Date.current + 5)
+    future_done.complete!
+
+    assert_includes filter.filtered(@user.bullets.done).map(&:id), future_done.id
+  end
+
   test 'inverted date range raises' do
     assert_raises(Bullet::Filter::Error) do
       Bullet::Filter.from_params({ from: '2026-10-02', to: '2026-09-01' }, user: @user)

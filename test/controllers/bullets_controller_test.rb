@@ -28,6 +28,24 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  test 'index with completed shows done newest-first as flat list' do
+    old_done = create_bullet!(@user, body: 'Old done')
+    old_done.complete!
+    old_done.update!(done_at: 3.days.ago)
+    fresh_done = create_bullet!(@user, body: 'Fresh done')
+    fresh_done.complete!
+    create_bullet!(@user, body: 'Not done')
+
+    get bullets_path(completed: true)
+
+    assert_response :success
+    assert_equal 'Completed', @controller.instance_variable_get(:@filter).name
+    assert_operator response.body.index('Fresh done'), :<, response.body.index('Old done')
+    assert_no_match 'Not done', response.body
+    assert_select '.timeline--section', count: 0
+    assert_select '[data-timeline-scroll-path-value=?]', bullets_path(completed: true)
+  end
+
   test 'bulk menu gates complete and publish by selection status' do
     create_bullet!(@user, body: 'Selectable')
 

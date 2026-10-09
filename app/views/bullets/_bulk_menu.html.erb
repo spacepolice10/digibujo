@@ -1,12 +1,16 @@
 <div
   class="bulk-menu"
-  data-bulk-menu-target="menu"
+  data-bulk-menu-target="menu floatingCard"
   data-action="keydown.esc@document->bulk-menu#escape"
   tabindex="0"
   hidden
 >
+  <div class="bulk-menu--spacer" aria-hidden="true"></div>
+
+  <div class="bulk-menu--card">
   <header>
-    <h2 class="utilities--mx-auto">Bulk edit</h2>
+    <span class="bulk-menu--grabber-pill" aria-hidden="true"></span>
+    <h2 class="utilities--mx-auto utilities--text-center">Bulk edit</h2>
   </header>
 
   <div class="bulk-menu--actions">
@@ -136,6 +140,7 @@
   >
     <p>Clear selection</p>
   </button>
+  </div>
 </div>
 
 <%= render "shared/dialog",

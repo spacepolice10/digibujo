@@ -8,21 +8,11 @@ class CompletedControllerTest < ActionDispatch::IntegrationTest
     sign_in_as @user
   end
 
-  test 'index lists done bullets newest first' do
-    old = create_bullet!(@user, body: 'Old done')
-    old.complete!
-    old.update!(done_at: 2.days.ago)
-    fresh = create_bullet!(@user, body: 'Fresh done')
-    fresh.complete!
-    create_bullet!(@user, body: 'Not done')
-
+  test 'index renders lazy timeline frame for completed feed' do
     get completed_index_path
 
     assert_response :success
     assert_select 'main h1', 'Completed'
-    assert_includes response.body, 'Fresh done'
-    assert_includes response.body, 'Old done'
-    assert_not_includes response.body, 'Not done'
-    assert_operator response.body.index('Fresh done'), :<, response.body.index('Old done')
+    assert_select 'turbo-frame#completed_timeline[src=?]', bullets_path(completed: true)
   end
 end

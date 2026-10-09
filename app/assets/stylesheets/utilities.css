@@ -43,6 +43,13 @@
     margin-block: auto;
   }
 
+  .utilities--text-center {
+    text-align: center;
+  }
+  .utilities--text-balance {
+    text-align: balance;
+  }
+
   .utilities--stretch {
     height: stretch;
     width: stretch;

@@ -15,7 +15,12 @@ class Bullet::Filter
     @collection = resolve_collection(params[:collection])
     @from = parse_date(params[:from])
     @to = parse_date(params[:to])
+    @completed = ActiveModel::Type::Boolean.new.cast(params[:completed])
     raise Error if @from && @to && @from > @to
+  end
+
+  def completed?
+    !!@completed
   end
 
   def empty?
@@ -23,6 +28,7 @@ class Bullet::Filter
   end
 
   def name
+    return 'Completed' if completed?
     return collection.name if collection
     return 'Upcoming' if upcoming_only?
 
@@ -30,7 +36,7 @@ class Bullet::Filter
   end
 
   def upcoming_only?
-    from == Date.current + 1 && to.nil? && collection.nil?
+    !completed? && from == Date.current + 1 && to.nil? && collection.nil?
   end
 
   def to_params
@@ -38,16 +44,24 @@ class Bullet::Filter
       params[:collection] = collection.name if collection
       params[:from] = from.iso8601 if from
       params[:to] = to.iso8601 if to
+      params[:completed] = true if completed?
     end
   end
 
   def filtered(relation)
-    relation = filter_by_date(relation)
+    relation = filter_by_date(relation) unless skip_default_date_window?
     relation = relation.tagged_with(collection) if collection
     relation
   end
 
   private
+
+  # The completed feed is every done bullet newest-first; the undone Daylog
+  # default (due through today) must not hide future-dated completions.
+  # Explicit from/to still narrow it.
+  def skip_default_date_window?
+    completed? && from.nil? && to.nil?
+  end
 
   def resolve_collection(name)
     return if name.blank?

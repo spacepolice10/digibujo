@@ -17,6 +17,7 @@ Rails.application.routes.draw do
 
   resource :features, only: :show, controller: 'features'
   resource :support, only: :show, controller: 'support'
+  resource :landing, only: :show, controller: 'landings'
 
   # --- Bullets ---
   scope 'bullets', module: :bullets do

@@ -2,20 +2,19 @@
 
 <%= render "shared/back_tabbar" %>
 
-<main id="completed-wrap" data-size="md">
+<main id="completed-wrap" class="timeline--window"  data-size="sm">
   <header>
     <h1>Completed</h1>
     <p>Those will be automatically removed after 30 days.</p>
   </header>
 
 
-  <%= render layout: "pagination/paginated_list",
-              locals: {
-                page: @page,
-                pagination_link_path: ->(next_param) { completed_index_path(page: next_param) }
-              } do %>
-    <% @page.records.each do |bullet| %>
-      <%= render partial: bullet.to_partial_path, locals: { bullet: bullet } %>
-    <% end %>
+  <%= turbo_frame_tag "completed_timeline",
+    class: "utilities--contents",
+    src: bullets_path(completed: true) do %>
+    <div class="timeline--load-more-trigger" aria-busy="true">
+      <%= icon("spinner", class: "icon icon--spin") %>
+      <span class="utilities--sr-only">Loading completed</span>
+    </div>
   <% end %>
 </main>

@@ -86,5 +86,22 @@ module Timelines
       assert_select '.bullet', text: /Tagged old/
       assert_no_match 'Plain old', response.body
     end
+
+    test 'before with completed returns older completions as flat list' do
+      old_done = create_bullet!(@user, body: 'Old done')
+      old_done.complete!
+      old_done.update!(done_at: 3.days.ago)
+      cursor = create_bullet!(@user, body: 'Cursor done')
+      cursor.complete!
+      create_bullet!(@user, body: 'Not done')
+
+      get bullets_path(before: cursor.id, completed: true)
+
+      assert_response :success
+      assert_match 'Old done', response.body
+      assert_no_match 'Cursor done', response.body
+      assert_no_match 'Not done', response.body
+      assert_select '.timeline--section', count: 0
+    end
   end
 end
