@@ -15,7 +15,7 @@
   data-dialog-target="dialog"
   data-action="<%= action_list.join(" ") %>"
 >
-  <div class="dialog--chrome">
+  <header>
     <h2> <%= name %></h2>
     <button
       type="button"
@@ -30,8 +30,8 @@
     >
       <%= icon("x") %>
     </button>
-  </div>
-  <div class="dialog--body">
+  </header>
+  <main>
     <%= yield %>
-  </div>
+  </main>
 </dialog>

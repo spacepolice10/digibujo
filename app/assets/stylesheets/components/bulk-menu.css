@@ -10,9 +10,13 @@
     max-width: 400px;
     margin-inline: auto;
     padding: var(--space-v) var(--space-h-half);
+    left: 0;
     bottom: 0;
     background: var(--background-canvas-colour);
-    border-top: var(--border-subtle);
+    border: var(--border-subtle);
+    border-radius: 0;
+    border-top-left-radius: var(--radius-strong);
+    border-top-right-radius: var(--radius-strong);
 
     &:not([hidden]) {
       opacity: 1;
