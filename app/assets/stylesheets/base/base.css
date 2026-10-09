@@ -46,39 +46,42 @@
     gap: var(--space-v);
     margin-inline: auto;
     padding-block: var(--space-v-4);
-    padding-inline: var(--space-h-half);
+    padding-inline: var(--space-h);
     padding-block-end: calc(var(--tabbar-clearance) + var(--space-h-2) + var(--space-v-2));
     container: inline-size;
-  }
 
-  body>main[data-size="xs"] {
-    max-width: 480px;
-  }
+    &>header {
+      margin-block: var(--space-v);
+      padding-inline: 0;
+      &>nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-h);
+      }
+    }
 
-  body>main[data-size="sm"] {
-    max-width: 640px;
-  }
+    &>footer {
+      width: 100%;
+      margin-inline: auto;
+    }
 
-  body>main[data-size="lg"] {
-    max-width: 800px;
-  }
+    &[data-size="xs"] {
+      max-width: 480px;
+    }
 
-  body>main[data-size="xl"] {
-    max-width: 1280px;
-  }
+    &[data-size="sm"] {
+      max-width: 640px;
+    }
 
-  body>footer {
-    width: 100%;
-    margin-inline: auto;
-  }
+    &[data-size="lg"] {
+      max-width: 800px;
+    }
 
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-h);
-    padding-block: var(--space-v-half);
-    padding-inline: var(--space-h-half);
+    &[data-size="xl"] {
+      max-width: 1280px;
+    }
+
   }
 
   section {
@@ -121,7 +124,6 @@
     &>header {
       width: 100%;
       border-block-end: var(--surface-border);
-      gap: var(--space-h);
     }
 
     &>main {

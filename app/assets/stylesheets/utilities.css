@@ -19,6 +19,22 @@
   .utilities--sticky {
     position: sticky;
   }
+  .utilities--relative {
+    position: relative;
+  }
+
+  .utilities--desktop-only {
+    display: none;
+    @media (pointer: fine) {
+      display: block;
+    }
+  }
+  .utilities--mobile-only {
+    display: none;
+    @media (pointer: coarse) {
+      display: block;
+    }
+  }
 
   .utilities--mx-auto {
     margin-inline: auto;

@@ -4,16 +4,17 @@
 
 <main id="search" data-size="sm">
   <section>
-    <h1>Search</h1>
+    <h1>Index</h1>
     <%= render "navigation", collections: @collections, attachments_count: @attachments_count, completed_count: @completed_count, upcoming_count: @upcoming_count, collections_count: @collections_count, search_selections: @search_selections %>
   </section>
 
   <div id="search_dock" class="search--dock">
-    <%# Opens the global command palette preloaded in the layout. %>
 
     <button
       type="button"
-      class="pill hotkey-hint utilities--mx-auto"
+      data-intent="secondary"
+      data-size="sm"
+      class="hotkey-hint utilities--mx-auto"
       commandfor="search_picker_dialog"
       command="show-modal"
       aria-label="Search"
@@ -26,7 +27,8 @@
     </button>
   </div>
 
-  <small class="utilities--mx-auto">
+
+  <small class="utilities--mx-auto utilities--desktop-only">
     Press <kbd>Cmd/Ctrl</kbd> + <kbd>K</kbd> to search from any screen
   </small>
 </main>

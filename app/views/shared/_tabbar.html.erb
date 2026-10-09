@@ -1,20 +1,20 @@
 <nav class="tabbar--navigation" aria-label="Primary">
   <% if controller_name == "searches" %>
     <span class="tabbar--item hotkey-hint tabbar--item-active" aria-current="page" aria-label="Search">
-      <%= icon("search", class: "tabbar--item-icon") %>
-      <span class="tabbar--item-name">Search</span>
+      <%= icon("indent-increase", class: "tabbar--item-icon") %>
+      <span class="tabbar--item-name">Index</span>
     </span>
   <% else %>
     <%= link_to search_path,
           class: "tabbar--item hotkey-hint",
-          aria: { label: "Search" },
+          aria: { label: "Index" },
           data: {
             controller: "hotkey",
             hotkey: "1",
             action: "keydown.1@document->hotkey#click"
           } do %>
-      <%= icon("search", class: "tabbar--item-icon") %>
-      <span class="tabbar--item-name">Search</span>
+      <%= icon("indent-increase", class: "tabbar--item-icon") %>
+      <span class="tabbar--item-name">Index</span>
     <% end %>
   <% end %>
 

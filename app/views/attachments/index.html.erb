@@ -3,16 +3,19 @@
 <%= render "shared/back_tabbar" %>
 
 <main data-size="md" data-bulk-menu-target="list">
-  <h1>Attachments</h1>
+  <header>
+    <h1>Attachments</h1>
 
-  <p>
-    A gallery of your uploaded files.
-  </p>
+    <p>
+      A gallery of your uploaded files.
+    </p>
+  </header>
 
   <% if @attachments.any? %>
     <section class="attachment--gallery">
       <% @attachments.each do |attachment| %>
         <% blob = attachment.blob %>
+
         <%= link_to attachment_path(blob.signed_id),
               class: "attachment--tile",
               data: { kind: blob.variable? ? "picture" : "file", turbo_frame: "_top" },

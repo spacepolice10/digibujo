@@ -7,7 +7,7 @@
         <p>Attachments</p>
 
         <% if attachments_count.positive? %>
-          <small class="search--navigation-item-counter"><%= attachments_count %></small>
+          <small class="pill"><%= attachments_count %></small>
         <% end %>
       <% end %>
     </li>
@@ -19,7 +19,7 @@
         <p>Completed</p>
 
         <% if completed_count.positive? %>
-          <small class="search--navigation-item-counter"><%= completed_count %></small>
+          <small class="pill"><%= completed_count %></small>
         <% end %>
       <% end %>
     </li>
@@ -32,7 +32,7 @@
         <p>Collections</p>
 
         <% if collections_count.positive? %>
-          <small class="search--navigation-item-counter"><%= collections_count %></small>
+          <small class="pill"><%= collections_count %></small>
         <% end %>
       <% end %>
     </li>
@@ -44,7 +44,7 @@
         <p>Upcoming</p>
 
         <% if upcoming_count.positive? %>
-          <small class="search--navigation-item-counter"><%= upcoming_count %></small>
+          <small class="pill"><%= upcoming_count %></small>
         <% end %>
       <% end %>
     </li>

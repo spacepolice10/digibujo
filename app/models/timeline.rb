@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Timeline
-  Section = Data.define(:key, :label)
+  Section = Data.define(:id, :name)
 
   def initialize(user, filter: nil)
     @user = user

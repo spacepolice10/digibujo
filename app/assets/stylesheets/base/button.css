@@ -37,7 +37,7 @@
   :is(button, a)[data-intent][data-size="sm"],
   [role="button"][data-size="sm"] {
     height: calc(var(--space-v-3) + var(--space-v-half));
-    padding: 0 var(--space-h-2);
+    padding: 0 var(--space-h);
     font-size: var(--font-size-base-read);
   }
 

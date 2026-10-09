@@ -81,6 +81,7 @@
       top: var(--space-v-half);
       padding-inline: var(--space-h);
       border-bottom: var(--border-subtle);
+      padding-block: var(--space-v);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -91,6 +92,8 @@
         align-items: center;
         justify-content: center;
         aspect-ratio: 1 / 1;
+        width: var(--space-v-6);
+        height: var(--space-v-4);
         flex-shrink: 0;
         border: var(--border-strong);
         border-radius: var(--radius-full);

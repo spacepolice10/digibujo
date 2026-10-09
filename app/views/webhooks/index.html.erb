@@ -3,12 +3,14 @@
 <%= render "shared/back_tabbar" %>
 
 <main id="webhooks-wrap" data-size="sm">
-  <h1>Webhooks</h1>
+  <header>
+    <h1>Webhooks</h1>
 
-  <p>
-    Give an external app a URL. When it posts, Dotted drops a bullet into your
-    daylog.
-  </p>
+    <p>
+      Give an external app a URL. When it posts, Dotted drops a bullet into your
+      daylog.
+    </p>
+  </header>
 
   <% if @created_webhook_code.present? %>
     <section class="webhook--created" role="status">
