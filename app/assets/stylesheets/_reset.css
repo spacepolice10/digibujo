@@ -8,7 +8,7 @@
  * In @layer reset so components always win.
  */
 
-@layer reset, variables, base, layout, components, utilities;
+
 
 @layer reset {
 
@@ -79,6 +79,7 @@
     font: inherit;        /* browsers default form controls to system-ui; match page font */
     color: inherit;       /* match surrounding text color */
     line-height: inherit; /* prevent mismatched line heights inside controls */
+    resize: none;
   }
 
   button {

@@ -1,17 +1,16 @@
 <%# locals: (bullet_ids:, return_to:, collections:, collected_ids: []) %>
 <div id="collects-collections-list">
-  <ul class="bulk-menu--picker-list" role="listbox">
+  <ul data-layout="column" role="listbox" class="combobox">
     <br>
 
-    <li class="bulk-menu--picker-list-item" role="option">
+    <li role="option">
       <%= link_to new_collection_path(bullet_ids: bullet_ids, return_to: return_to),
-            class: "picker--item",
             data: {
               turbo_frame: "_top",
               combobox_target: "item"
             } do %>
         <%= icon("plus") %>
-        <span class="utilities--line-clamp-1">New collection</span>
+        <p>New collection</p>
       <% end %>
     </li>
 

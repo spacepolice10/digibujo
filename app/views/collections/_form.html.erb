@@ -10,25 +10,29 @@
               "Create"
             end %>
 
-<%= form_with model: collection, html: { id: form_id, class: "form" } do |f| %>
-  <% if ids.present? %>
-    <%= hidden_field_tag :bullet_ids, ids %>
-    <%= hidden_field_tag :return_to, destination if destination.present? %>
-  <% end %>
+<article>
+  <main>
+    <%= form_with model: collection, html: { id: form_id, class: "form" } do |f| %>
+      <% if ids.present? %>
+        <%= hidden_field_tag :bullet_ids, ids %>
+        <%= hidden_field_tag :return_to, destination if destination.present? %>
+      <% end %>
 
-  <label>
-    <p>Name</p>
-    <%= f.text_field :name, required: true, autocomplete: "off", maxlength: 140, placeholder: "Reading list, groceries, etc." %>
+      <label>
+        <small>Name</small>
+        <%= f.text_field :name, required: true, autocomplete: "off", maxlength: 140, placeholder: "Reading list, groceries, etc." %>
 
-    <% if collection.errors[:name].any? %>
-      <small class="form--errors"><%= collection.errors.full_messages_for(:name).to_sentence %></small>
+        <% if collection.errors[:name].any? %>
+          <small class="form--errors"><%= collection.errors.full_messages_for(:name).to_sentence %></small>
+        <% end %>
+      </label>
+
+      <%= render "shared/form/colour_picker", form: f %>
+      <%= render "shared/form/icon_picker", form: f %>
+
+      <%= f.button type: "submit", data: { intent: "primary", size: "lg" } do %>
+        <%= submit %>
+      <% end %>
     <% end %>
-  </label>
-
-  <%= render "shared/form/colour_picker", form: f %>
-  <%= render "shared/form/icon_picker", form: f %>
-
-  <%= f.button type: "submit", data: { intent: "primary", radius: "full", size: "sm" } do %>
-    <%= submit %>
-  <% end %>
-<% end %>
+  </main>
+</article>

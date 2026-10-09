@@ -1,0 +1,15 @@
+<%# locals: (bullets:, timeline:, bullet_partial: "bullets/bullet") %>
+<%# Groups reading-ordered bullets into a section per span and renders them
+    oldest first. The today section is always mounted so the composer keeps an
+    append target; CSS hides it until the first bullet lands. %>
+<% sections = bullets.group_by { |bullet| timeline.section_of(bullet.pops_on) } %>
+<% sections[timeline.section_of(Date.current)] ||= [] %>
+
+<% sections.each do |section, section_bullets| %>
+  <section id="timeline_section_<%= section.key %>" class="timeline--section">
+    <h2 class="pill"><%= section.label %></h2>
+    <% section_bullets.each do |bullet| %>
+      <%= render partial: bullet_partial, locals: { bullet: bullet } %>
+    <% end %>
+  </section>
+<% end %>

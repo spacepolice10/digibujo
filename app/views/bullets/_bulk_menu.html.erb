@@ -27,7 +27,7 @@
               action: "keydown.c@document->hotkey#click"
             },
             aria: { keyshortcuts: "C" } do %>
-        <%= icon("check") %> Complete
+        <%= icon("check", style: "color: var(--color-accent-1)") %> Complete
       <% end %>
     <% end %>
 
@@ -69,7 +69,7 @@
               action: "keydown.shift+p@document->hotkey#click"
             },
             aria: { keyshortcuts: "Shift+P" } do %>
-        <%= icon("link") %> Publish
+        <%= icon("link", style: "color: var(--color-accent-2)") %> Publish
       <% end %>
     <% end %>
 
@@ -90,7 +90,7 @@
               action: "keydown.shift+p@document->hotkey#click"
             },
             aria: { keyshortcuts: "Shift+P" } do %>
-        <%= icon("link") %> Unpublish
+        <%= icon("link", style: "color: var(--color-accent-2)") %> Unpublish
       <% end %>
     <% end %>
 
@@ -105,7 +105,7 @@
       data-action="bulk-menu#openPopsPicker keydown.l@document->hotkey#click"
       aria-keyshortcuts="L"
     >
-      <%= icon("arrow-forward-up") %> Later
+      <%= icon("arrow-forward-up", style: "color: var(--model-color-3)") %> Later
     </button>
 
     <button
@@ -119,7 +119,7 @@
       data-action="bulk-menu#openCollectsPicker keydown.s@document->hotkey#click"
       aria-keyshortcuts="S"
     >
-      <%= icon("hash") %> Tag
+      <%= icon("hash", style: "color: var(--model-color-5)") %> Tag
     </button>
   </div>
 

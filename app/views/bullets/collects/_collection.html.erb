@@ -1,21 +1,25 @@
 <%# locals: (collection:, bullet_ids: "", collected_ids: []) %>
 <% selected = collected_ids.map(&:to_i).include?(collection.id) %>
-<li class="bulk-menu--picker-list-item" role="option" id="<%= dom_id(collection, :collect_row) %>" aria-selected="<%= selected %>">
+
   <%= form_with url: collect_path,
         method: :post,
         class: "utilities--contents",
         data: { turbo_stream: true } do %>
     <%= hidden_field_tag :bullet_ids, bullet_ids, data: { bulk_menu_target: "idList" } %>
     <%= hidden_field_tag :collection_id, collection.id %>
-    <button type="submit"
-            class="picker--item"
-            data-combobox-target="item"
-            aria-pressed="<%= selected %>">
+
+    <button
+      class="combobox--item"
+      type="submit"
+      data-combobox-target="item"
+      aria-pressed="<%= selected %>"
+    >
       <%= icon(collection.icon, style: "color: #{colour(collection.colour)};") %>
-      <span class="utilities--line-clamp-1"><%= collection.name %></span>
+      <p><%= collection.name %></p>
+
       <% if selected %>
-        <span class="picker--check"><%= icon("check") %></span>
+        <%= icon("check") %>
       <% end %>
     </button>
   <% end %>
-</li>
+

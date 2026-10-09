@@ -113,6 +113,17 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     assert_select '.composer--dock', count: 0
   end
 
+  test 'filtered feed still mounts the today section' do
+    collection = create_collection!(@user, name: 'Inbox')
+    create_bullet!(@user, collection: collection, body: 'Tagged row', pops_on: Date.current - 3)
+
+    get bullets_path(collection: collection.name)
+
+    assert_response :success
+    assert_select 'section#timeline_section_current_date'
+    assert_select 'section#timeline_section_current_date .bullet', count: 0
+  end
+
   test 'filtered feed has no collection management header' do
     collection = create_collection!(@user, name: 'Inbox', colour: 'teal', icon: 'folder')
 

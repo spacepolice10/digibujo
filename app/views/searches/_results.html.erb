@@ -1,18 +1,13 @@
 <%# locals: (entries:, q:) %>
-<div class="search--result-list">
-  <% if q.blank? && entries.any? %>
-    <p class="utilities--mx-auto">Recent</p>
-  <% end %>
-  <ul data-layout="column" data-divider="true" role="listbox" class="utilities--contents">
-    <% entries.each do |entry| %>
-      <li class="search--result-list-list-item" role="option">
-        <%= render "searches/search_result", entry: entry, query: q %>
-      </li>
-    <% end %>
 
-    <% if entries.empty? %>
-      <br>
-      <p class="utilities--mx-auto">No results</p>
-    <% end %>
-  </ul>
-</div>
+<br>
+<ul role="listbox" class="combobox">
+  <% entries.each do |entry| %>
+    <%= render "searches/search_result", entry: entry, query: q %>
+  <% end %>
+
+  <% if entries.empty? %>
+    <br>
+    <p class="utilities--mx-auto">No results</p>
+  <% end %>
+</ul>

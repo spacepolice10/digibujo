@@ -6,7 +6,7 @@
   <%= render "shared/back_tabbar" %>
 <% end %>
 
-<main class="timeline--window" data-size="md">
+<main class="timeline--window" data-size="lg">
   <% scroller = capture do %>
     <div
       id="<%= @filter.collection ? dom_id(@filter.collection) : 'timeline' %>"
@@ -22,17 +22,11 @@
         >
           <%= icon("spinner", class: "icon icon--spin") %>
           <span class="utilities--sr-only">Loading more bullets</span>
-      </div>
+        </div>
       <% end %>
 
-      <% timeline_sections(@bullets, @timeline, mount_today: @filter.empty?).each do |section, section_bullets| %>
-        <section id="timeline_section_<%= section.key %>" class="timeline--section">
-          <h2 class="pill"><%= section.label %></h2>
-          <% section_bullets.each do |bullet| %>
-            <%= render "bullets/bullet", bullet: bullet %>
-          <% end %>
-        </section>
-      <% end %>
+      <%= render "bullets/timeline_sections", bullets: @bullets, timeline: @timeline %>
+
     </div>
   <% end %>
 

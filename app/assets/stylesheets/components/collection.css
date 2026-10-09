@@ -3,9 +3,9 @@
     justify-content: flex-start;
     width: 100%;
     min-width: 0;
-    padding: var(--space-v-half) var(--space-h-half);
+    padding: var(--space-v) var(--space-h-half);
     color: var(--color-invert-2);
-    font-size: var(--font-size-base-read);
+    font-size: var(--font-size-base-type);
     font-weight: var(--font-weight-medium);
     text-decoration: none;
     background: var(--color-2);

@@ -1,8 +1,1 @@
-<% timeline_sections(@bullets, @timeline).each do |section, section_bullets| %>
-  <section id="timeline_section_<%= section.key %>" class="timeline--section">
-    <h2 class="pill"><%= section.label %></h2>
-    <% section_bullets.each do |bullet| %>
-      <%= render "bullets/bullet", bullet: bullet %>
-    <% end %>
-  </section>
-<% end %>
+<%= render "bullets/timeline_sections", bullets: @bullets, timeline: @timeline %>

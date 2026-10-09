@@ -1,7 +1,4 @@
 @layer base {
-
-  /* ── Label ────────────────────────────────────────── */
-
   form {
     display: flex;
     flex-direction: column;
@@ -19,12 +16,14 @@
       font-weight: var(--font-weight-strong);
       color: var(--color-invert-1);
     }
+
     &>label>p {
       padding-block-start: var(--space-v);
       font-size: var(--font-size-xl);
       font-weight: var(--font-weight-strong);
       color: var(--color-invert-1);
     }
+
     & small {
       display: block;
       font-size: var(--font-size-base-ready);
@@ -32,6 +31,7 @@
       margin-bottom: var(--space-v);
       margin-left: 2px;
     }
+
     & button[type="submit"] {
       margin-inline: auto;
     }
@@ -58,19 +58,6 @@
       opacity: var(--opacity-half);
       cursor: not-allowed;
     }
-  }
-
-  /* ── Textarea ─────────────────────────────────────── */
-
-  textarea {
-    resize: none;
-  }
-
-  /* ── Select ───────────────────────────────────────── */
-
-  select {
-    appearance: base-select;
-    cursor: pointer;
   }
 
   /* ── Checkbox & Radios ─────────────────────────────── */
@@ -100,7 +87,7 @@
     border-radius: var(--radius-full);
     background: var(--color-2);
     transition: border-color 0.18s ease,
-    background 0.06s ease;
+      background 0.06s ease;
 
     input[type="checkbox"] {
       position: absolute;
@@ -160,10 +147,6 @@
     background: var(--color-negative);
     border: 1px solid var(--color-invert-negative);
     color: var(--color-invert-negative);
-
-    p {
-      margin: 0 0 var(--space-v-half);
-    }
 
     ul {
       list-style: none;

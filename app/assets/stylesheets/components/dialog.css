@@ -1,5 +1,6 @@
 @layer components {
-  .dialog {
+
+  dialog {
     position: fixed;
     z-index: var(--z-dialog);
     padding: var(--space-v) var(--space-h);
@@ -13,7 +14,6 @@
     background: var(--background-canvas-colour);
     box-shadow:
       var(--shadow-base),
-      /* 1px hairline — no stroke-width token in the design system */
       0 0 0 1px color-mix(in oklch, var(--color-2) 35%, transparent);
     color: var(--color-invert-2);
     width: 100%;
@@ -80,8 +80,6 @@
     }
   }
 
-
-
   .dialog--chrome {
     position: sticky;
     top: 0;
@@ -90,12 +88,6 @@
     align-items: center;
     flex-shrink: 0;
     margin-block-end: var(--space-v-half);
-  }
-
-  .dialog--body {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
   }
 
   .dialog--hide {
@@ -116,38 +108,4 @@
     flex: 1;
   }
 
-  .dialog--header {
-    position: relative;
-    justify-content: flex-start;
-    border-bottom: 0;
-  }
-
-  .dialog--header .button--tertiary {
-    flex: 0 0 auto;
-  }
-
-  .dialog--name {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    margin: 0;
-    color: var(--color-invert-4);
-    text-align: center;
-  }
-
-  .dialog--footer {
-    justify-content: center;
-    gap: var(--space-h-half);
-    border-top: 0;
-  }
-
-  .dialog--footer button {
-    flex: 1;
-  }
-
-  .dialog--footer .button--secondary,
-  .dialog--footer .button--primary {
-    justify-content: center;
-    text-align: center;
-  }
 }

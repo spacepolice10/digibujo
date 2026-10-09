@@ -31,6 +31,17 @@ module Timelines
       assert_select 'section#timeline_section_current_date .bullet', text: /#{earlier.name}/
     end
 
+    test 'before mounts an empty today section so the composer keeps its target' do
+      create_bullet!(@user, body: 'Old row', pops_on: Date.current - 20)
+      cursor = create_bullet!(@user, body: 'Cursor row')
+
+      get bullets_path(before: cursor.id)
+
+      assert_response :success
+      assert_select 'section#timeline_section_current_date'
+      assert_select 'section#timeline_section_current_date .bullet', count: 0
+    end
+
     test 'before returns no content when nothing older exists' do
       cursor = create_bullet!(@user, body: 'Only row')
 

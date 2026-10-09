@@ -3,10 +3,10 @@
 <%= render "shared/tabbar" %>
 
 <main id="search" data-size="sm">
-  <div class="search--section">
+  <section>
     <h1>Search</h1>
     <%= render "navigation", collections: @collections, attachments_count: @attachments_count, completed_count: @completed_count, upcoming_count: @upcoming_count, collections_count: @collections_count, search_selections: @search_selections %>
-  </div>
+  </section>
 
   <div id="search_dock" class="search--dock">
     <%# Opens the global command palette preloaded in the layout. %>

@@ -18,7 +18,7 @@
       opacity: 1;
       transform: translateY(0);
       transition: transform 120ms ease,
-      opacity 120ms ease;
+        opacity 120ms ease;
 
       @starting-style {
         opacity: 0;
@@ -45,14 +45,14 @@
         opacity: 1;
         transform: translateX(0);
         transition: transform 120ms ease,
-        opacity 120ms ease;
-  
+          opacity 120ms ease;
+
         @starting-style {
           opacity: 0;
           transform: translateX(100%);
         }
       }
-  
+
       opacity: 0;
       transform: translateX(100%);
       transition: transform 120ms ease,
@@ -112,88 +112,5 @@
     color: var(--color-invert-4);
     text-align: center;
     padding-bottom: var(--space-v-half);
-  }
-
-  .bulk-menu--picker {
-    height: 90dvh;
-  }
-
-  .bulk-menu--picker-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-v-half);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .bulk-menu--picker-list-item {
-    margin: 0;
-    padding: 0;
-  }
-
-  .bulk-menu--picker-list-item .picker--item {
-    box-sizing: border-box;
-    width: 100%;
-    margin: 0;
-    font: inherit;
-    cursor: pointer;
-    appearance: none;
-
-    @media (hover: hover) {
-      &:hover {
-        background: var(--color-2);
-      }
-    }
-
-    &:focus-visible,
-    &[aria-selected="true"] {
-      outline: none;
-      background: var(--color-2);
-    }
-  }
-
-  .bulk-menu--picker-date {
-    display: flex;
-    flex-direction: column;
-
-    & form {
-      display: none;
-    }
-  }
-
-  .bulk-menu--picker-date:has(input:checked)>form {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-h-half);
-    margin-inline: var(--space-h);
-    padding-top: var(--space-v-half);
-    border-top: var(--border-subtle);
-  }
-
-  .bulk-menu--picker-date-form {
-    input {
-      flex: 1 1 auto;
-      min-width: calc(var(--space-h-2) * 7);
-    }
-  }
-
-  .bulk-menu--collect-picker {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-v);
-    padding: var(--space-v-half) var(--space-h-half) var(--space-h-half);
-  }
-
-  .bulk-menu--collect-search {
-    max-width: none;
-    margin-top: var(--space-v-half);
-    padding: 0;
-    gap: 0;
-
-    input {
-      width: 100%;
-    }
   }
 }

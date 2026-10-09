@@ -21,8 +21,6 @@
     /* Anchor positioning */
     position-area: block-end span-inline-end;
 
-
-
     /* Animation */
     opacity: 0;
     transform: translateY(calc(var(--space-v-half) * -1));
@@ -43,12 +41,4 @@
       }
     }
   }
-
-  /* .dropdown--anchor-inline-start {
-    position-area: block-start span-inline-start;
-  }
-
-  .dropdown--anchor-inline-end {
-    position-area: block-start span-inline-end;
-  } */
 }

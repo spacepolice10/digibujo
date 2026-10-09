@@ -1,0 +1,112 @@
+@layer base {
+
+  :is(button, a)[data-intent],
+  [role="button"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-h-half);
+    font: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    width: 100%;
+    flex-shrink: 0;
+    text-decoration: none;
+    border: 1px solid transparent;
+    border-radius: var(--radius-full);
+    transition: background .08s ease, color .08s ease, border-color .08s ease;
+  }
+
+  :is(button, a)[data-intent]:disabled,
+  [role="button"]:disabled {
+    opacity: var(--opacity-half);
+    cursor: not-allowed;
+  }
+
+  :is(button, a)[data-intent]:focus-visible,
+  [role="button"]:focus-visible {
+    outline: 2px solid var(--color-accent-1);
+    outline-offset: 2px;
+  }
+
+  :is(button, a)[data-intent][data-size],
+  [role="button"][data-size] {
+    width: fit-content;
+  }
+
+  :is(button, a)[data-intent][data-size="sm"],
+  [role="button"][data-size="sm"] {
+    height: calc(var(--space-v-3) + var(--space-v-half));
+    padding: 0 var(--space-h-2);
+    font-size: var(--font-size-base-read);
+  }
+
+  :is(button, a)[data-intent][data-size="lg"],
+  [role="button"][data-size="lg"] {
+    height: calc(var(--space-v-3) + 1ch);
+    padding: var(--space-v-half) var(--space-h-2);
+    font-size: var(--font-size-base-type);
+  }
+
+  @media (pointer: coarse) {
+    :is(button, a)[data-intent],
+    [role="button"] {
+      min-height: var(--coarse-target);
+    }
+  }
+
+  :is(button, a)[data-intent="primary"],
+  [role="button"][data-intent="primary"] {
+    --button-bg: var(--color-invert-2);
+    --button-fg: var(--color-1);
+    --button-hovered-bg: var(--color-1);
+    --button-hovered-fg: var(--color-invert-2);
+    --button-active-bg: var(--color-invert-3);
+    --button-active-fg: var(--color-1);
+  }
+
+  :is(button, a)[data-intent="secondary"],
+  [role="button"][data-intent="secondary"] {
+    --button-bg: var(--color-2);
+    --button-fg: var(--color-invert-2);
+    --button-hovered-bg: var(--color-2);
+    --button-hovered-fg: var(--color-invert-2);
+    --button-active-bg: var(--color-3);
+    --button-active-fg: var(--color-invert-2);
+    border: var(--border-subtle);
+  }
+
+  :is(button, a)[data-intent="danger"],
+  [role="button"][data-intent="danger"] {
+    --button-bg: var(--color-negative);
+    --button-fg: var(--color-invert-2);
+    --button-hovered-bg: var(--color-invert-negative);
+    --button-hovered-fg: var(--color-negative);
+    --button-active-bg: var(--color-negative);
+    --button-active-fg: var(--color-invert-2);
+  }
+
+  :is(button, a)[data-intent],
+  [role="button"] {
+    background: var(--button-bg);
+    border-color: var(--button-bg);
+    color: var(--button-fg);
+  }
+
+  @media (hover: hover) {
+
+    :is(button, a)[data-intent]:hover:not(:disabled),
+    [role="button"]:hover:not(:disabled) {
+      background: var(--button-hovered-bg);
+      border-color: var(--button-hovered-bg);
+      color: var(--button-hovered-fg);
+    }
+  }
+
+  :is(button, a)[data-intent]:active:not(:disabled),
+  [role="button"]:active:not(:disabled) {
+    background: var(--button-active-bg);
+    border-color: var(--button-active-bg);
+    color: var(--button-active-fg);
+  }
+}
