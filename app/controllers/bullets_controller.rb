@@ -36,6 +36,8 @@ class BulletsController < ApplicationController
   end
 
   def show
+    return render :show, formats: :json if request.format.json?
+
     @timeline = Timeline.new(Current.user)
     @bullets = @timeline.on(@bullet.pops_on).to_a
     # A completed or not-yet-due bullet has no active siblings on its day, and
@@ -48,11 +50,13 @@ class BulletsController < ApplicationController
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to bullet_path(@bullet) }
+        format.json { render :show }
       end
     else
       respond_to do |format|
         format.turbo_stream { notify_failure }
         format.html { redirect_to bullet_path(@bullet), alert: bullet_errors.to_sentence, status: :see_other }
+        format.json { render json: bullet_errors_by_attribute, status: :unprocessable_entity }
       end
     end
   end
@@ -62,6 +66,7 @@ class BulletsController < ApplicationController
     respond_to do |format|
       format.turbo_stream
       format.html { redirect_to bullets_path }
+      format.json { head :no_content }
     end
   end
 

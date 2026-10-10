@@ -34,6 +34,7 @@ module Bullets
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_back fallback_location: bullets_path }
+        format.json { render 'bullets/bulk' }
       end
     rescue ActiveRecord::RecordInvalid => e
       respond_with_failed_bullet(e)

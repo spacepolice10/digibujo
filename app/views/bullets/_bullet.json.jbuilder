@@ -11,6 +11,7 @@ json.body_html bullet.body.to_s
 json.created_at bullet.created_at
 json.updated_at bullet.updated_at
 json.url bullet_url(bullet)
+json.public_url published_url(bullet.public_code) if bullet.published?
 
 if bullet.file.attached?
   json.content_type bullet.file.content_type

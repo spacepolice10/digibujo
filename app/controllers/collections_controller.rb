@@ -23,12 +23,19 @@ class CollectionsController < ApplicationController
         collect_bullets_into_collection!
         respond_to do |format|
           format.html { redirect_to collect_return_path, notice: 'Collection created' }
+          format.json { render :show, status: :created, location: @collection }
         end
       else
-        redirect_to collections_path, notice: 'Collection created'
+        respond_to do |format|
+          format.html { redirect_to collections_path, notice: 'Collection created' }
+          format.json { render :show, status: :created, location: @collection }
+        end
       end
     else
-      render :new, status: :unprocessable_entity
+      respond_to do |format|
+        format.html { render :new, status: :unprocessable_entity }
+        format.json { render json: @collection.errors.to_hash, status: :unprocessable_entity }
+      end
     end
   rescue ActiveRecord::RecordInvalid => e
     @failed_bullet = e.record
@@ -37,6 +44,7 @@ class CollectionsController < ApplicationController
       format.html do
         redirect_back fallback_location: search_path, alert: e.record.errors.full_messages.to_sentence
       end
+      format.json { render json: e.record.errors.to_hash, status: :unprocessable_entity }
     end
   end
 
@@ -46,15 +54,24 @@ class CollectionsController < ApplicationController
 
   def update
     if @collection.update(collection_params)
-      redirect_to collection_path(@collection), notice: 'Collection updated'
+      respond_to do |format|
+        format.html { redirect_to collection_path(@collection), notice: 'Collection updated' }
+        format.json { render :show }
+      end
     else
-      render :edit, status: :unprocessable_entity
+      respond_to do |format|
+        format.html { render :edit, status: :unprocessable_entity }
+        format.json { render json: @collection.errors.to_hash, status: :unprocessable_entity }
+      end
     end
   end
 
   def destroy
     @collection.destroy
-    redirect_to search_path, notice: 'Collection deleted'
+    respond_to do |format|
+      format.html { redirect_to search_path, notice: 'Collection deleted' }
+      format.json { head :no_content }
+    end
   end
 
   private

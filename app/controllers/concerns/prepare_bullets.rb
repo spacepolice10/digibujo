@@ -35,6 +35,7 @@ module PrepareBullets
         redirect_back fallback_location: bullets_path,
                       alert: error.record.errors.full_messages.to_sentence
       end
+      format.json { render json: error.record.errors.to_hash, status: :unprocessable_entity }
     end
   end
 end

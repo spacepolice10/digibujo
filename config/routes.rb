@@ -24,7 +24,7 @@ Rails.application.routes.draw do
     resource :postpone, only: %i[new create]
     resource :collect, only: %i[new create]
     resource :completion, only: %i[create destroy]
-    resource :publish
+    resource :publish, only: %i[create destroy]
   end
 
   resources :bullets, except: %i[new edit] do
@@ -59,5 +59,5 @@ Rails.application.routes.draw do
   resources :attachments, only: %i[index show], param: :signed_id
 
   # --- Publishing ---
-  resources :published, param: :code
+  resources :published, only: %i[index show], param: :code
 end

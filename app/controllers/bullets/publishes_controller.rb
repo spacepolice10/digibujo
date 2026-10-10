@@ -15,6 +15,7 @@ module Bullets
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to published_path(@bullets.first.public_code) }
+        format.json { render 'bullets/bulk' }
       end
     rescue ActiveRecord::RecordInvalid => e
       respond_with_failed_bullet(e)
@@ -29,6 +30,7 @@ module Bullets
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to root_path }
+        format.json { render 'bullets/bulk' }
       end
     rescue ActiveRecord::RecordInvalid => e
       respond_with_failed_bullet(e)

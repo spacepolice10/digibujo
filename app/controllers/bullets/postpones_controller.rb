@@ -29,12 +29,14 @@ module Bullets
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_back fallback_location: bullets_path }
+        format.json { render 'bullets/bulk' }
       end
     rescue ActionController::ParameterMissing, ArgumentError
       @failed_bullet = @bullets&.first
       respond_to do |format|
         format.turbo_stream { render :create, status: :unprocessable_entity }
         format.html { redirect_back fallback_location: bullets_path, alert: 'Invalid date' }
+        format.json { render json: { pops_on: ['is invalid'] }, status: :unprocessable_entity }
       end
     rescue ActiveRecord::RecordInvalid => e
       respond_with_failed_bullet(e)
