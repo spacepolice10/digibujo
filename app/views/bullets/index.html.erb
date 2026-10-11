@@ -38,6 +38,10 @@
     <%= turbo_frame_tag dom_id(@filter.collection, :timeline), class: "utilities--contents" do %>
       <%= scroller %>
     <% end %>
+  <% elsif @filter.completed? %>
+    <%= turbo_frame_tag "completed_timeline", class: "utilities--contents" do %>
+      <%= scroller %>
+    <% end %>
   <% else %>
     <%= scroller %>
   <% end %>

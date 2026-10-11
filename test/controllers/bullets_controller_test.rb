@@ -28,6 +28,13 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  test 'index with completed wraps feed in matching turbo frame' do
+    get bullets_path(completed: true)
+
+    assert_response :success
+    assert_select 'turbo-frame#completed_timeline', minimum: 1
+  end
+
   test 'index with completed shows done newest-first as flat list' do
     old_done = create_bullet!(@user, body: 'Old done')
     old_done.complete!

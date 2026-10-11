@@ -9,6 +9,8 @@ class FeaturesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match 'Rapid logging', response.body
     assert_no_match 'Email code', response.body
+    assert_select 'link[rel="stylesheet"][href*="button"]', minimum: 1
+    assert_select 'link[rel="stylesheet"][href*="landing"]', count: 1
   end
 
   test 'show includes create account call to action' do

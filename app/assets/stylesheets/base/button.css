@@ -59,8 +59,8 @@
   [role="button"][data-intent="primary"] {
     --button-bg: var(--color-invert-2);
     --button-fg: var(--color-1);
-    --button-hovered-bg: var(--color-1);
-    --button-hovered-fg: var(--color-invert-2);
+    --button-hovered-bg: var(--color-invert-3);
+    --button-hovered-fg: var(--color-2);
     --button-active-bg: var(--color-invert-3);
     --button-active-fg: var(--color-1);
   }
@@ -69,8 +69,8 @@
   [role="button"][data-intent="secondary"] {
     --button-bg: var(--color-2);
     --button-fg: var(--color-invert-2);
-    --button-hovered-bg: var(--color-2);
-    --button-hovered-fg: var(--color-invert-2);
+    --button-hovered-bg: var(--color-3);
+    --button-hovered-fg: var(--color-invert-3);
     --button-active-bg: var(--color-3);
     --button-active-fg: var(--color-invert-2);
     border: var(--border-subtle);
@@ -84,6 +84,36 @@
     --button-hovered-fg: var(--color-negative);
     --button-active-bg: var(--color-negative);
     --button-active-fg: var(--color-invert-2);
+  }
+
+  :is(button, a)[data-intent="accent"],
+  [role="button"][data-intent="accent"] {
+    --button-bg: var(--model-color-9);
+    --button-fg: var(--color-1);
+    --button-hovered-bg: var(--model-color-2);
+    --button-hovered-fg: var(--color-1);
+    --button-active-bg: var(--model-color-2);
+    --button-active-fg: var(--color-1);
+
+    font-family: var(--font-family-sans);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    isolation: isolate;
+    clip-path: polygon(5% 10%, 46% 1%, 46% 10%, 100% 0, 95% 90%, 31% 100%, 31% 90%, 0 100%);
+    animation: button-accent-morphing 3s steps(1, end) infinite;
+  }
+
+  :is(button, a)[data-intent="accent"][data-size="lg"],
+  [role="button"][data-intent="accent"][data-size="lg"] {
+    height: 62px;
+    padding: 0 62px;
+    font-size: 28px;
+  }
+
+  :is(button, a)[data-intent="accent"]:focus-visible,
+  [role="button"][data-intent="accent"]:focus-visible {
+    outline: 3px solid var(--model-color-2);
+    outline-offset: 7px;
   }
 
   :is(button, a)[data-intent],
@@ -108,5 +138,38 @@
     background: var(--button-active-bg);
     border-color: var(--button-active-bg);
     color: var(--button-active-fg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :is(button, a)[data-intent="accent"],
+    [role="button"][data-intent="accent"],
+    :is(button, a)[data-intent="accent"]:hover:not(:disabled),
+    [role="button"][data-intent="accent"]:hover:not(:disabled) {
+      animation: none;
+    }
+  }
+
+  @keyframes button-accent-morphing {
+    0% {
+      clip-path: polygon(5% 10%, 46% 1%, 46% 10%, 100% 0, 95% 90%, 31% 100%, 31% 90%, 0 100%);
+    }
+    16.66% {
+      clip-path: polygon(3% 15%, 60% 0, 60% 12%, 98% 5%, 97% 85%, 45% 100%, 45% 88%, 0 95%);
+    }
+    33.33% {
+      clip-path: polygon(7% 5%, 30% 3%, 30% 14%, 100% 8%, 93% 95%, 20% 98%, 20% 86%, 2% 100%);
+    }
+    50% {
+      clip-path: polygon(4% 12%, 70% 2%, 70% 11%, 99% 3%, 96% 88%, 55% 100%, 55% 90%, 0 98%);
+    }
+    66.66% {
+      clip-path: polygon(6% 8%, 22% 0, 22% 13%, 100% 6%, 94% 92%, 38% 99%, 38% 87%, 1% 100%);
+    }
+    83.33% {
+      clip-path: polygon(5% 14%, 52% 4%, 52% 9%, 97% 0, 95% 94%, 26% 100%, 26% 91%, 0 96%);
+    }
+    100% {
+      clip-path: polygon(5% 10%, 46% 1%, 46% 10%, 100% 0, 95% 90%, 31% 100%, 31% 90%, 0 100%);
+    }
   }
 }

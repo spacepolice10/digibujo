@@ -1,0 +1,376 @@
+.landing-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: var(--space-h);
+  padding-inline: var(--space-h);
+}
+
+.landing-menu {
+  flex: 1;
+  min-width: 0;
+}
+
+.landing-menu-toggle:checked + .landing-menu-label .icon {
+  rotate: 180deg;
+}
+
+.landing-menu-chevron {
+  transition: rotate 0.2s ease;
+}
+
+.landing-menu nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-h);
+}
+
+@media (min-width: 801px) {
+  .landing-menu-toggle,
+  .landing-menu-label {
+    display: none;
+  }
+
+  .landing-menu nav a:nth-child(3) {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 800px) {
+  .landing-header {
+    top: 25px;
+    justify-content: space-between;
+  }
+
+  .landing-menu {
+    position: relative;
+    flex: none;
+  }
+
+  .landing-menu-toggle {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+  }
+
+  .landing-menu-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-h-half);
+    height: calc(var(--space-v-3) + 1ch);
+    padding: var(--space-v-half) var(--space-h-2);
+    border: var(--border-subtle);
+    border-radius: var(--radius-full);
+    background: var(--color-2);
+    color: var(--color-invert-2);
+    font-size: var(--font-size-base-type);
+    cursor: pointer;
+  }
+
+  .landing-menu-toggle:focus-visible + .landing-menu-label {
+    outline: 2px solid var(--color-accent-1);
+    outline-offset: 2px;
+  }
+
+  .landing-menu-label:hover {
+    background: var(--color-3);
+  }
+
+  .landing-menu nav {
+    display: none;
+  }
+
+  .landing-menu-toggle:checked ~ nav {
+    display: flex;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 1;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-v);
+    min-width: 12rem;
+    padding-top: var(--space-v);
+  }
+
+  .landing-menu nav a {
+    width: 100%;
+  }
+}
+
+/* the ONCE mark is a dense solid glyph, so it needs a squarer slot,
+   and it keeps its own brand blue rather than the inherited ink */
+.once-mark {
+  width: 2.6ch;
+  height: 2.6ch;
+  color: oklch(0.55 0.19 258);
+}
+
+.once-mark .icon {
+  --icon-mask: var(--icon-once);
+}
+
+.landing-logo {
+  width: 24px;
+  height: 24px;
+}
+
+.landing-hero {
+  position: relative;
+  isolation: isolate;
+  flex: 1;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: clip;
+}
+
+.landing-title {
+  font-size: clamp(72px, 10vw, 128px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-align: center;
+  margin: 0;
+}
+
+.landing-title-dot {
+  color: var(--model-color-9);
+}
+
+.landing-tagline {
+  font-size: clamp(20px, 3vw, 32px);
+  font-weight: 400;
+  color: var(--color-invert-4);
+  line-height: 1.5;
+  text-align: center;
+  text-wrap: balance;
+  max-width: 35ch;
+  margin: 35px 0px;
+}
+
+.landing-pile {
+  position: relative;
+  padding: 12vh 0 16vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pile-kicker {
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-invert-4);
+  margin: 0 0 8px;
+}
+
+.landing-bits {
+  list-style: none;
+  padding: 0;
+  margin: 50px auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: min(620px, calc(100% - 48px));
+  position: relative;
+}
+
+/* binding thread down the middle */
+.landing-bits::before {
+  content: "";
+  position: absolute;
+  top: -18px;
+  bottom: -18px;
+  left: 50%;
+  border-left: 2px dashed color-mix(in oklch, var(--color-invert-4) 28%, transparent);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.landing-bits li {
+  --shift: 0px;
+  --tilt: 0deg;
+  --dot: var(--model-color-9);
+  position: relative;
+  width: fit-content;
+  max-width: 100%;
+  background: var(--color-1);
+  border: var(--border-subtle);
+  border-radius: var(--radius-base);
+  box-shadow: var(--shadow-subtle);
+  padding: 12px 20px 12px 46px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-invert-2);
+  word-spacing: 2px;
+  text-align: left;
+  text-wrap: balance;
+  transform: translateX(var(--shift)) rotate(var(--tilt));
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  animation: pile-drop 1.1s cubic-bezier(0.2, 0.9, 0.25, 1.15) both;
+}
+
+.landing-bits li:nth-child(1) {
+  --shift: -38px;
+  --tilt: -1.4deg;
+  --dot: var(--model-color-9);
+  animation-delay: 0.6s;
+}
+.landing-bits li:nth-child(2) {
+  --shift: 30px;
+  --tilt: 0.9deg;
+  --dot: var(--model-color-2);
+  animation-delay: 0.84s;
+}
+.landing-bits li:nth-child(3) {
+  --shift: -16px;
+  --tilt: -0.7deg;
+  --dot: var(--model-color-2);
+  animation-delay: 1.08s;
+}
+.landing-bits li:nth-child(4) {
+  --shift: 44px;
+  --tilt: 1deg;
+  --dot: var(--model-color-1);
+  animation-delay: 1.32s;
+}
+.landing-bits li:nth-child(5) {
+  --shift: -32px;
+  --tilt: 0.8deg;
+  --dot: var(--model-color-8);
+  animation-delay: 1.56s;
+}
+.landing-bits li:nth-child(6) {
+  --shift: 22px;
+  --tilt: -1.1deg;
+  --dot: var(--model-color-4);
+  animation-delay: 1.8s;
+}
+.landing-bits li:nth-child(7) {
+  --shift: -10px;
+  --tilt: 0.6deg;
+  --dot: var(--model-color-7);
+  animation-delay: 2.04s;
+}
+.landing-bits li:nth-child(8) {
+  --shift: 34px;
+  --tilt: -0.9deg;
+  --dot: var(--model-color-3);
+  animation-delay: 2.28s;
+}
+.landing-bits li:nth-child(9) {
+  --shift: -24px;
+  --tilt: 1deg;
+  --dot: var(--model-color-5);
+  animation-delay: 2.52s;
+}
+.landing-bits li:nth-child(10) {
+  --shift: 28px;
+  --tilt: -0.8deg;
+  --dot: var(--model-color-2);
+  animation-delay: 2.76s;
+}
+.landing-bits li:nth-child(11) {
+  --shift: -30px;
+  --tilt: 0.9deg;
+  --dot: var(--model-color-9);
+  animation-delay: 3.0s;
+}
+.landing-bits li:nth-child(12) {
+  --shift: 40px;
+  --tilt: 1.2deg;
+  --dot: var(--model-color-6);
+  animation-delay: 3.24s;
+}
+
+.landing-bits .feature-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  color: var(--dot);
+  transform: translateY(-50%);
+}
+
+.landing-bits li:hover {
+  transform: translateX(var(--shift)) rotate(0deg) translateY(-3px);
+  box-shadow: var(--shadow-strong);
+  z-index: 1;
+}
+
+@keyframes pile-drop {
+  0% {
+    opacity: 0;
+    transform: translateX(var(--shift)) translateY(-190px) rotate(calc(var(--tilt) * 4));
+  }
+  55% {
+    opacity: 1;
+    transform: translateX(var(--shift)) translateY(10px) rotate(var(--tilt));
+  }
+  75% {
+    transform: translateX(var(--shift)) translateY(-4px) rotate(var(--tilt));
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(var(--shift)) translateY(0) rotate(var(--tilt));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-hero::before {
+    animation: none;
+  }
+  .landing-bits li {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* Progressive enhancement: where supported, each card falls
+   as it scrolls into view. Time-based pile-drop above stays
+   the fallback. Note: scroll-driven scrubs, so scrolling back
+   up reverses the fall — pure CSS can't stick "first time only". */
+@supports (animation-timeline: view()) {
+  .landing-bits li {
+    animation-timeline: view();
+    animation-range: entry 0% cover 30%;
+    animation-delay: 0s;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .landing-bits li {
+      animation: none;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .landing-bits li:nth-child(1) { --shift: -8px; }
+  .landing-bits li:nth-child(2) { --shift: 10px; }
+  .landing-bits li:nth-child(3) { --shift: -6px; }
+  .landing-bits li:nth-child(4) { --shift: 8px; }
+  .landing-bits li:nth-child(5) { --shift: -8px; }
+  .landing-bits li:nth-child(6) { --shift: 10px; }
+  .landing-bits li:nth-child(7) { --shift: -6px; }
+  .landing-bits li:nth-child(8) { --shift: 8px; }
+  .landing-bits li:nth-child(9) { --shift: -8px; }
+  .landing-bits li:nth-child(10) { --shift: 10px; }
+  .landing-bits li:nth-child(11) { --shift: -6px; }
+  .landing-bits li:nth-child(12) { --shift: 8px; }
+  .landing-bits li {
+    padding: 10px 14px 10px 40px;
+    font-size: 15px;
+  }
+}
