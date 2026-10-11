@@ -61,7 +61,7 @@ class BulkMenuPickerSystemTest < ApplicationSystemTestCase
     visit bullets_path
     select_bullet
 
-    find_button('Save').click
+    find_button('Tag').click
 
     assert_selector 'dialog#collects_picker_dialog[open]'
     assert_selector 'dialog#collects_picker_dialog h2', text: 'To collection'
@@ -76,10 +76,10 @@ class BulkMenuPickerSystemTest < ApplicationSystemTestCase
   test 'collecting a bullet closes the dialog and clears the selection' do
     visit bullets_path
     select_bullet
-    find_button('Save').click
+    find_button('Tag').click
     assert_selector 'dialog#collects_picker_dialog[open]'
 
-    find('dialog#collects_picker_dialog #collects-collections-list li[role="option"] form button',
+    find('dialog#collects_picker_dialog #collects-collections-list form button',
          match: :first).click
 
     assert_no_selector 'dialog#collects_picker_dialog[open]'

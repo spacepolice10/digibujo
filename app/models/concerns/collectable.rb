@@ -5,8 +5,8 @@ module Collectable
 
   def collect!(collection_id:)
     destination = user.collections.find(collection_id)
-    return if collections.exists?(destination.id)
+    return if self.collection_id == destination.id
 
-    collections << destination
+    update!(collection: destination)
   end
 end

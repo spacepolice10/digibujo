@@ -42,15 +42,14 @@ module Bullets
 
     private
 
-    # Collections containing every selected bullet (intersection), so the
-    # picker checkmark means "fully applied" for multi-select.
+    # A checkmark means every selected bullet is in this collection.
     def collected_collection_ids
       bullet_ids = @bullets.pluck(:id)
       return [] if bullet_ids.empty?
 
-      BulletCollection.where(bullet_id: bullet_ids)
+      @bullets.where.not(collection_id: nil)
         .group(:collection_id)
-        .having('COUNT(DISTINCT bullet_id) = ?', bullet_ids.size)
+        .having('COUNT(*) = ?', bullet_ids.size)
         .pluck(:collection_id)
     end
   end

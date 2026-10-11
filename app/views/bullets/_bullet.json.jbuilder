@@ -2,7 +2,7 @@
 
 json.id bullet.id
 json.pops_on bullet.pops_on
-json.collection_ids bullet.collection_ids
+json.collection_id bullet.collection_id
 json.done bullet.done?
 json.author_name bullet.author_name
 json.filename bullet.filename

@@ -85,7 +85,7 @@ module Bullets
 
       post postpone_path, params: { bullet_ids: card.id.to_s, pops_on: target.iso8601 }
 
-      assert_includes card.reload.collections, collection
+      assert_equal collection, card.reload.collection
       assert_equal target, card.pops_on
     end
 

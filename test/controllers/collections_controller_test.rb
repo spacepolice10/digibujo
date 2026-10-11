@@ -48,8 +48,8 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
 
     collection = Collection.last
     assert_redirected_to collection_path(collection)
-    assert_includes first.reload.collection_ids, collection.id
-    assert_includes second.reload.collection_ids, collection.id
+    assert_equal collection, first.reload.collection
+    assert_equal collection, second.reload.collection
   end
 
   test 'create with bullet_ids redirects back to return_to' do
@@ -63,7 +63,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
          }
 
     assert_redirected_to search_path
-    assert_includes card.reload.collection_ids, Collection.last.id
+    assert_equal Collection.last, card.reload.collection
   end
 
   test 'create with invalid collection and bullet_ids re-renders full page form' do
@@ -79,7 +79,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_response :unprocessable_entity
-    assert_empty card.reload.collections
+    assert_nil card.reload.collection
     assert_select 'main[data-size="sm"]'
     assert_match 'Create and collect', response.body
     assert_match 'Hold', response.body
@@ -195,6 +195,6 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to search_path
     assert_not Collection.exists?(collection.id)
     assert Bullet.exists?(card.id)
-    assert_empty card.reload.collections
+    assert_nil card.reload.collection
   end
 end

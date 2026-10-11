@@ -90,7 +90,7 @@ class JsonApiTest < ActionDispatch::IntegrationTest
     collection = create_collection!(@user, name: 'Group')
     post collect_path, params: { bullet_ids: ids, collection_id: collection.id }, as: :json
     assert_response :success
-    assert_includes response.parsed_body.first['collection_ids'], collection.id
+    assert_equal collection.id, response.parsed_body.first['collection_id']
 
     post publish_path, params: { bullet_ids: ids }, as: :json
     assert_response :success

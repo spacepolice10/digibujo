@@ -5,10 +5,7 @@ class Bullet < ApplicationRecord
           Bullet::Searchable, ActivityTrackable
 
   belongs_to :user
-  has_many :bullet_collections, dependent: :destroy
-  has_many :collections, through: :bullet_collections
-
-  attr_accessor :collection_id
+  belongs_to :collection, optional: true
 
   has_rich_text :body
   has_one_attached :file do |attachable|
@@ -22,17 +19,17 @@ class Bullet < ApplicationRecord
 
   validate :content_is_either_file_or_text
   validate :file_must_be_smaller
+  validate :collection_belongs_to_user
   validates :author_name, length: { maximum: 100 }, allow_blank: true
   # Uniqueness enforced by DB index + controller rescue (avoids race toast on :taken).
   validates :client_id, format: { with: /\A[0-9a-f-]{36}\z/i }, allow_nil: true
 
   before_validation :default_pops_on
-  after_create :assign_initial_collection
 
   scope :current, -> { where(pops_on: ..Date.current) }
   scope :upcoming, -> { where(pops_on: (Date.current + 1.day)..) }
   scope :tagged_with, lambda { |collection|
-    joins(:bullet_collections).where(bullet_collections: { collection_id: collection.id }).distinct
+    where(collection_id: collection.id)
   }
 
   def body_as_text = body.to_plain_text.to_s
@@ -65,9 +62,7 @@ class Bullet < ApplicationRecord
     self.pops_on ||= Date.current
   end
 
-  def assign_initial_collection
-    return if collection_id.blank?
-
-    collect!(collection_id: collection_id)
+  def collection_belongs_to_user
+    errors.add(:collection, 'must belong to your account') if collection && collection.user_id != user_id
   end
 end

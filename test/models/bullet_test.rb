@@ -112,20 +112,31 @@ class BulletTest < ActiveSupport::TestCase
     assert_includes timeline.filtered, bullet
     bullet.collect!(collection_id: collection.id)
 
-    assert_includes bullet.reload.collections, collection
+    assert_equal collection, bullet.reload.collection
     assert_includes timeline.filtered, bullet
   end
 
-  test 'collect can attach many collections to one bullet' do
+  test 'collect moves a bullet between collections' do
     first = create_collection!(@user, name: 'ideas')
     second = create_collection!(@user, name: 'later')
     bullet = create_bullet!(@user, body: 'Shared')
 
     bullet.collect!(collection_id: first.id)
-    bullet.collect!(collection_id: second.id)
-    bullet.collect!(collection_id: first.id)
+    assert_equal first, bullet.reload.collection
 
-    assert_equal [first.id, second.id].sort, bullet.reload.collection_ids.sort
+    bullet.collect!(collection_id: second.id)
+    bullet.collect!(collection_id: second.id)
+
+    assert_equal second, bullet.reload.collection
+    assert_empty first.bullets
+  end
+
+  test 'a bullet cannot be assigned to another user collection' do
+    other_collection = create_collection!(users(:two), name: 'Private')
+    bullet = @user.bullets.new(body: 'Note', collection: other_collection)
+
+    assert_not bullet.valid?
+    assert_includes bullet.errors[:collection], 'must belong to your account'
   end
 
   test 'postponing into the future moves the bullet to upcoming' do

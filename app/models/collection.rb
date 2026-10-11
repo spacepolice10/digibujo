@@ -4,8 +4,7 @@ class Collection < ApplicationRecord
   include Colourable, Iconable, Collection::Searchable, Collection::NameMatching
 
   belongs_to :user
-  has_many :bullet_collections, dependent: :destroy
-  has_many :bullets, through: :bullet_collections
+  has_many :bullets, dependent: :nullify
 
   validates :name, presence: true, uniqueness: { scope: :user_id }
   validates :description, length: { maximum: 280 }, allow_blank: true

@@ -25,7 +25,7 @@ class WebhookIntakesControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'GitHub', body['author_name']
 
     bullet = @user.bullets.find(body['id'])
-    assert_empty bullet.collections
+    assert_nil bullet.collection
     assert_equal Date.current, bullet.pops_on
     assert_equal 'GitHub', bullet.author_name
   end

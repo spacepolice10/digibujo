@@ -112,7 +112,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
     bullet = @user.bullets.order(:created_at).last
     assert_equal Date.current, bullet.pops_on
-    assert_empty bullet.collections
+    assert_nil bullet.collection
   end
 
   test 'turbo stream create replaces the pending bullet' do
@@ -140,7 +140,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match %(turbo-stream action="replace" target="bullet_client_#{client_id}"), response.body
     assert_match 'Fresh today', response.body
-    assert_includes @user.bullets.order(:created_at).last.collections, collection
+    assert_equal collection, @user.bullets.order(:created_at).last.collection
   end
 
   test 'create persists rich content in body' do
@@ -340,7 +340,7 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     end
 
     bullet = @user.bullets.order(:created_at).last
-    assert_includes bullet.collections, collection
+    assert_equal collection, bullet.collection
     assert_redirected_to bullet_path(bullet)
   end
 

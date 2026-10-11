@@ -27,7 +27,7 @@
             } %>
     <% end %>
 
-    <div aria-label="Collections">
+    <div aria-label="Collections" data-action="turbo:submit-end->dialog#submitSuccess">
       <%= render "bullets/collects/collections_list",
             bullet_ids: bullet_ids,
             return_to: return_to,
