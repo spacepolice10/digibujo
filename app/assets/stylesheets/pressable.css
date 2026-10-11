@@ -57,12 +57,13 @@
 
   :is(button, a, :where(.button))[data-intent="primary"],
   [role="button"][data-intent="primary"] {
-    --button-bg: var(--color-invert-2);
-    --button-fg: var(--color-1);
-    --button-hovered-bg: var(--color-invert-3);
-    --button-hovered-fg: var(--color-2);
-    --button-active-bg: var(--color-invert-3);
-    --button-active-fg: var(--color-1);
+    --button-bg: var(--model-color-2);
+    --button-fg: light-dark(var(--color-invert-1), var(--color-1));
+    --button-hovered-bg: var(--model-color-9);
+    --button-hovered-fg: var(--button-fg);
+    --button-active-bg: var(--model-color-2);
+    --button-active-fg: var(--button-fg);
+    font-weight: var(--font-weight-strong);
   }
 
   :is(button, a, :where(.button))[data-intent="secondary"],
@@ -91,11 +92,11 @@
   :is(button, a, :where(.button))[data-intent="accent"],
   [role="button"][data-intent="accent"] {
     --button-bg: var(--model-color-9);
-    --button-fg: var(--color-1);
+    --button-fg: light-dark(var(--color-invert-1), var(--color-1));
     --button-hovered-bg: var(--model-color-2);
-    --button-hovered-fg: var(--color-1);
+    --button-hovered-fg: var(--button-fg);
     --button-active-bg: var(--model-color-2);
-    --button-active-fg: var(--color-1);
+    --button-active-fg: var(--button-fg);
 
     font-family: var(--font-family-sans);
     font-weight: 800;

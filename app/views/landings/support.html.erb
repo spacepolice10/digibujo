@@ -2,7 +2,7 @@
 
 
 <main data-page="support" data-size="sm">
-  <header><h1>Support</h1></header>
+  <header class="landing-heading"><h1>Support</h1></header>
 
   <article>
     <main>
@@ -10,15 +10,15 @@
         Questions, bugs, or feedback about Dotted — email the maintainer or open
         an issue on GitHub.
       </p>
-      <ul>
+      <ul class="support-links">
         <li>
           <%= mail_to "naysdemo@zohomail.com" do %>
-            <%= icon("mail") %> naysdemo@zohomail.com
+            <%= icon("mail") %><span>naysdemo@zohomail.com</span>
           <% end %>
         </li>
         <li>
           <%= link_to "https://github.com/spacepolice10/digibujo" do %>
-            <%= icon("github") %> github.com/spacepolice10/digibujo
+            <%= icon("github") %><span>github.com/spacepolice10/digibujo</span>
           <% end %>
         </li>
       </ul>

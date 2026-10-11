@@ -111,7 +111,7 @@ body:has(.tabbar--navigation) {
   }
 
   &:is(.tabbar--item-active, :focus-visible) {
-    color: var(--color-invert-2);
+    color: var(--color-invert-1);
   }
 
   @media (hover: hover) {
@@ -149,8 +149,12 @@ body:has(.tabbar--navigation) {
   z-index: -1;
   border-radius: inherit;
   background: var(--model-color-2-bg);
-  border: 1px solid var(--model-color-2);
+  border: 2px solid var(--model-color-2);
   box-shadow: var(--shadow-base);
+}
+
+.tabbar--item-active .tabbar--item-name {
+  font-weight: var(--font-weight-strong);
 }
 
 .tabbar--mark {

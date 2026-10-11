@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   end
 
   get 'features', to: 'landings#features', as: :features
+  get 'agents', to: 'landings#agents', as: :agents
   get 'support', to: 'landings#support', as: :support
   get 'landing', to: 'landings#landing', as: :landing
   get 'once', to: 'landings#once', as: :once

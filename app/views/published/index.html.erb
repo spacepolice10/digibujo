@@ -6,7 +6,6 @@
       <% if @bullets.any? %>
         <%= render partial: "published/bullet", collection: @bullets, as: :bullet %>
       <% else %>
-        <p>
-          Here you'll find all the bullets you've published with their corresponding public links. You can revoke access at any time.</p>
+        <%= render "shared/empty_state", icon_name: "link", name: "Nothing published yet", description: "Published bullets and their public links will appear here." %>
       <% end %>
 </main>

@@ -36,7 +36,7 @@ class Search::Highlight
       text.scan(pattern) do
         last_matched_from_thread = Regexp.last_match
         pieces << ERB::Util.html_escape(text[cursor...last_matched_from_thread.begin(0)])
-        pieces << %(<mark class="search--term">#{ERB::Util.html_escape(last_matched_from_thread[0])}</mark>)
+        pieces << %(<mark class="search--term decoration--circle decoration-colour--sky">#{ERB::Util.html_escape(last_matched_from_thread[0])}</mark>)
         cursor = last_matched_from_thread.end(0)
       end
 

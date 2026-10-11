@@ -1,3 +1,7 @@
+.landing-heading {
+  text-align: center;
+}
+
 .branding-heading {
   font-size: clamp(72px, 10vw, 128px);
   font-weight: 800;

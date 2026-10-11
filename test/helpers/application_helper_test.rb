@@ -9,7 +9,7 @@ class ApplicationHelperTest < ActionView::TestCase
   test 'highlight_search_result drops inner links so the row link stays valid' do
     html = highlight_search_result('<p>See <a href="https://example.com">milk</a> today</p>', 'milk')
 
-    assert_includes html, '<mark class="search--term">milk</mark>'
+    assert_includes html, '<mark class="search--term decoration--circle decoration-colour--sky">milk</mark>'
     assert_not_includes html, '<a'
     assert_not_includes html, 'href'
     assert_includes html, 'See '
@@ -19,7 +19,7 @@ class ApplicationHelperTest < ActionView::TestCase
   test 'highlight_search_result keeps formatting tags around the marked term' do
     html = highlight_search_result('<p>Buy <strong>milk</strong></p>', 'milk')
 
-    assert_includes html, '<strong><mark class="search--term">milk</mark></strong>'
+    assert_includes html, '<strong><mark class="search--term decoration--circle decoration-colour--sky">milk</mark></strong>'
   end
 
   test 'highlight_search_result returns the original html when nothing matches' do

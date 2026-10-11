@@ -33,6 +33,8 @@
     <section id="webhooks" class="card-list">
       <%= render partial: "webhooks/webhook", collection: @webhooks, as: :webhook %>
     </section>
+  <% else %>
+    <%= render "shared/empty_state", icon_name: "webhook", name: "No webhooks yet", description: "Connect another app to send new bullets into your daylog." %>
   <% end %>
 
   <%= link_to new_webhook_path,

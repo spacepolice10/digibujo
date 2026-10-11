@@ -16,5 +16,7 @@
     <section id="access_codes" class="card-list">
       <%= render partial: "access_codes/access_code", collection: @access_codes, as: :access_code %>
     </section>
+  <% else %>
+    <%= render "shared/empty_state", icon_name: "code", name: "No access codes", description: "Codes you create through the API will appear here." %>
   <% end %>
 </main>

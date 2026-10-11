@@ -20,6 +20,8 @@ class LandingsController < ApplicationController
 
   def features; end
 
+  def agents; end
+
   def support; end
 
   def once; end

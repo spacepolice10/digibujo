@@ -18,7 +18,7 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
 
     <%# Keep the landing's shared styles without loading app-only components. %>
-    <%= stylesheet_link_tag "_application", "_reset", "base", "card", "pressable", "highlight", "icons", "landing", "typography", "variables" %>
+    <%= stylesheet_link_tag "_application", "_reset", "base", "card", "empty-state", "pressable", "highlight", "icons", "landing", "typography", "variables" %>
   </head>
 
   <body class="landing">
@@ -38,11 +38,13 @@
 
         <nav aria-label="Product">
           <a role="button" data-intent="secondary" data-size="lg" href="<%= features_path %>">Features</a>
+          <a role="button" data-intent="secondary" data-size="lg" href="<%= agents_path %>">Agents</a>
           <a role="button" data-intent="secondary" data-size="lg" href="<%= once_path %>">
             <span class="icon-wrap once-mark"><i class="icon" aria-hidden="true"></i></span>
             ONCE
           </a>
-          <a role="button" data-intent="secondary" data-size="lg" href="<%= new_authentication_path %>">Sign in</a>
+          <a role="button" data-intent="secondary" data-size="lg" href="<%= support_path %>">Support</a>
+          <a role="button" class="landing-sign-in" data-intent="secondary" data-size="lg" href="<%= new_authentication_path %>">Sign in</a>
           <a role="button" data-intent="secondary" data-size="lg" href="https://github.com/spacepolice10/digibujo">
             <%= icon("github") %> GitHub
           </a>

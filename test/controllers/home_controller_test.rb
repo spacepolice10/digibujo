@@ -65,9 +65,8 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   end
 
   # TODO: the collections tag grid is still specified in
-  # docs/superpowers/specs/2026-10-01-unified-search-page-design.md but its loop
-  # is commented out in app/views/searches/_navigation.html.erb. Restore the grid
-  # and re-add per-collection coverage here.
+  # docs/superpowers/specs/2026-10-01-unified-search-page-design.md but remains
+  # empty in app/views/searches/show.html.erb. Restore it and add per-collection coverage.
   test 'show renders an empty collections grid container' do
     get search_path
 

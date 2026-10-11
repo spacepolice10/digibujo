@@ -10,7 +10,7 @@ lexxy-editor {
     flex-grow: 1;
     height: fit-content;
     font-size: var(--font-size-base-type);
-    background: var(--color-2);
+    background: var(--color-1);
     border: var(--border-subtle);   
     border-radius: var(--radius-base);
     box-sizing: border-box;
@@ -26,6 +26,7 @@ lexxy-editor {
     &:focus-within {
         animation: composer-bounce 0.35s ease-out;
         border-color: var(--model-color-2);
+        box-shadow: 0 0 0 3px var(--model-color-2-bg);
     }
 
     & table {
@@ -175,16 +176,25 @@ lexxy-editor {
         }
     }
 
+    .composer--attach {
+        background-color: var(--color-2);
+        color: var(--color-invert-2);
+
+        &:hover {
+            background-color: var(--color-3);
+            color: var(--color-invert-1);
+        }
+    }
 
     .composer--submit-button {
         appearance: none;
-        background-color: var(--color-invert-2);
-        color: var(--color-2);
+        background-color: var(--model-color-9);
+        color: light-dark(var(--color-invert-1), var(--color-1));
         border: transparent;
 
         &:hover {
-            background: var(--color-2);
-            color: var(--color-invert-2);
+            background: var(--model-color-2);
+            color: light-dark(var(--color-invert-1), var(--color-1));
         }
     }
 

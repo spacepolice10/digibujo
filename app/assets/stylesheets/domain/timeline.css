@@ -4,17 +4,47 @@
     height: auto;
     flex-direction: column;
     gap: var(--space-v);
+    position: relative;
+    padding-block-end: var(--space-v);
+  }
+
+  .timeline--section::before {
+    content: "";
+    position: absolute;
+    inset-block: var(--space-v-2) 0;
+    inset-inline-start: var(--space-h);
+    border-inline-start: 2px dashed color-mix(in oklch, var(--model-color-2) 40%, transparent);
+    pointer-events: none;
+  }
+
+  @media (any-pointer: coarse) {
+    .timeline--section::before {
+      inset-inline-start: calc(var(--space-h-half) + var(--coarse-target) / 2);
+    }
   }
 
   .timeline--section:not(:has(.bullet)) {
     display: none;
   }
 
-  .timeline--section > .pill { 
+  .timeline--section > .pill {
     position: sticky;
     top: 0;
-    align-self: center; 
-    z-index: 1;
+    align-self: flex-start;
+    z-index: 2;
+    padding: var(--space-v-half) var(--space-h);
+    border: 2px solid var(--model-color-2);
+    background: var(--model-color-2-bg);
+    color: var(--color-invert-1);
+    font-family: var(--font-family-sans);
+    font-size: clamp(1rem, 1.4vw, 1.2rem);
+    font-weight: var(--font-weight-strong);
+    letter-spacing: -0.02em;
+    box-shadow: var(--shadow-strong);
+  }
+
+  .timeline--scroller:has(.bullet) > .empty-state {
+    display: none;
   }
 
   /* Complete timeline window: full-viewport scroller with an overlaid composer.

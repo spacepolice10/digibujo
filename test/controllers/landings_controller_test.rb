@@ -9,7 +9,7 @@ class LandingsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select 'html[lang="en"]', count: 1
     assert_select 'link[rel="preconnect"][href="https://fonts.gstatic.com"]', count: 1
-    assert_select 'link[rel="stylesheet"][href^="/assets/"]', count: 10
+    assert_select 'link[rel="stylesheet"][href^="/assets/"]', count: 11
     assert_select 'link[rel="stylesheet"][href*="landing"]', count: 1
     assert_select 'link[rel="stylesheet"][href*="typography"]', count: 1
     assert_select 'h1.branding-heading', text: 'dotted', count: 1
@@ -18,8 +18,10 @@ class LandingsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'link[rel="stylesheet"][href*="domain/search"]', count: 0
     assert_select 'script', count: 0
     assert_select 'body > header.landing-header .landing-menu-toggle[type="checkbox"]', count: 1
-    assert_select 'header.landing-header nav[aria-label="Product"] a', count: 4
+    assert_select 'header.landing-header nav[aria-label="Product"] a', count: 6
+    assert_select 'header.landing-header nav[aria-label="Product"] a[href=?]', agents_path, text: 'Agents'
     assert_select 'header.landing-header nav[aria-label="Product"] a[href=?]', once_path, text: /ONCE/
+    assert_select 'header.landing-header nav[aria-label="Product"] a[href=?]', support_path, text: 'Support'
 
     csp = response.headers.fetch('Content-Security-Policy')
     assert_includes csp, "default-src 'none'"
@@ -34,14 +36,27 @@ class LandingsControllerTest < ActionDispatch::IntegrationTest
     get features_path
 
     assert_response :success
-    assert_match 'Rapid logging', response.body
-    assert_no_match 'Email code', response.body
+    assert_no_match 'Rapid logging', response.body
     assert_select 'html[lang="en"]', count: 1
     assert_select 'link[rel="stylesheet"][href*="landing"]', count: 1
     assert_select 'body > header.landing-header', count: 1
-    assert_select 'main[data-page="features"] > header.landing-page-heading h1', text: 'Features'
+    assert_select 'main[data-page="features"] > header.landing-heading h1', text: 'Features'
+    assert_select 'main[data-page="features"] > .empty-state h2', text: 'Coming soon'
+    assert_select 'main[data-page="features"] > .empty-state p', text: /Dotted’s features/
+    assert_select 'main[data-page="features"] article', count: 0
     assert_select 'header.landing-header a[href=?]', landing_path
-    assert_select 'a[href=?]', new_authentication_path, text: /Create your own/
+    assert_includes response.headers.fetch('Content-Security-Policy'), "default-src 'none'"
+  end
+
+  test 'agents page is public and previews the CLI' do
+    get agents_path
+
+    assert_response :success
+    assert_select 'title', text: 'Agents — Dotted'
+    assert_select 'main[data-page="agents"] > header.landing-heading h1', text: 'Agents'
+    assert_select 'main[data-page="agents"] > .empty-state h2', text: 'Coming soon'
+    assert_select 'main[data-page="agents"] > .empty-state p', text: /CLI/
+    assert_select 'link[rel="stylesheet"][href*="empty-state"]', count: 1
     assert_includes response.headers.fetch('Content-Security-Policy'), "default-src 'none'"
   end
 
@@ -52,6 +67,7 @@ class LandingsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'html[lang="en"]', count: 1
     assert_select 'link[rel="stylesheet"][href*="landing"]', count: 1
     assert_select 'body > main[data-page="support"]', count: 1
+    assert_select 'main[data-page="support"] > header.landing-heading h1', text: 'Support'
     assert_select 'body > header.landing-header', count: 1
     assert_select 'header.landing-header a[href=?]', landing_path
     assert_select 'a[href=?]', 'mailto:naysdemo@zohomail.com'
@@ -87,7 +103,7 @@ class LandingsControllerTest < ActionDispatch::IntegrationTest
     get landing_path
     landing_header = css_select('header.landing-header').first.to_html
 
-    [features_path, support_path, once_path].each do |path|
+    [features_path, agents_path, support_path, once_path].each do |path|
       get path
       assert_response :success
       assert_equal landing_header, css_select('header.landing-header').first.to_html

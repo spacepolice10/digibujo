@@ -20,6 +20,10 @@
     <% end %>
   </ul>
 
+  <% if @collections.empty? %>
+    <%= render "shared/empty_state", icon_name: "folder", name: "Make a little space", description: "Create a collection to keep related bullets together." %>
+  <% end %>
+
   <%= link_to new_collection_path, class: "button utilities--mx-auto", data: { turbo_frame: "_top", intent: "primary", radius: "full", size: "lg" } do %>
     <%= icon("plus") %> New collection
   <% end %>

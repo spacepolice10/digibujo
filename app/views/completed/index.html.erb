@@ -2,19 +2,19 @@
 
 <%= render "shared/back_tabbar" %>
 
-<main id="completed-wrap" class="timeline--window"  data-size="sm">
+<main data-size="sm">
   <header>
     <h1>Completed</h1>
     <p>Those will be automatically removed after 30 days.</p>
   </header>
-
-
-  <%= turbo_frame_tag "completed_timeline",
-    class: "utilities--contents",
-    src: bullets_path(completed: true) do %>
-    <div class="timeline--load-more-trigger" aria-busy="true">
-      <%= icon("spinner", class: "icon icon--spin") %>
-      <span class="utilities--sr-only">Loading completed</span>
-    </div>
-  <% end %>
+  <div class="timeline--window">
+    <%= turbo_frame_tag "completed_timeline",
+      class: "utilities--contents",
+      src: bullets_path(completed: true) do %>
+      <div class="timeline--load-more-trigger" aria-busy="true">
+        <%= icon("spinner", class: "icon icon--spin") %>
+        <span class="utilities--sr-only">Loading completed</span>
+      </div>
+    <% end %>
+  </div>
 </main>

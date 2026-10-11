@@ -39,9 +39,7 @@
   }
 
   .search--term {
-    padding-inline: var(--space-h-half);
     color: inherit;
-    background-color: color-mix(in oklch, var(--model-color-3) 22%, transparent) !important;
-    border-radius: var(--radius-subtle);
+    background: transparent;
   }
 }

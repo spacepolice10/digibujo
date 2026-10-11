@@ -35,6 +35,6 @@
       <% end %>
     </section>
   <% else %>
-    <p class="utilities--mx-auto">No attachments yet.</p>
+    <%= render "shared/empty_state", icon_name: "paperclip", name: "Nothing attached yet", description: "Files you add to bullets will appear here." %>
   <% end %>
 </main>

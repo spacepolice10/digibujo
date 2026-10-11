@@ -31,6 +31,16 @@
         <%= render "bullets/timeline_sections", bullets: @bullets, timeline: @timeline %>
       <% end %>
 
+      <% if @bullets.empty? && !@more_bullets %>
+        <% if @filter.completed? %>
+          <%= render "shared/empty_state", icon_name: "check", name: "A clear page", description: "Completed bullets will appear here." %>
+        <% elsif @filter.collection %>
+          <%= render "shared/empty_state", icon_name: "folder", name: "Room for ideas", description: "Bullets added to this collection will appear here." %>
+        <% else %>
+          <%= render "shared/empty_state", icon_name: "pencil", name: "Start anywhere", description: "Write a thought, task, or memory in the composer below." %>
+        <% end %>
+      <% end %>
+
     </div>
   <% end %>
 
