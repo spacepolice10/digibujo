@@ -11,93 +11,63 @@ class BulletMenuFloatingCardSystemTest < ApplicationSystemTestCase
             screen_size: [390, 844],
             options: { name: :selenium_mobile } do |options|
     options.add_argument("--user-agent=#{MOBILE_UA}")
-    options.add_argument("--use-fake-device-for-media-stream")
-    options.add_argument("--use-fake-ui-for-media-stream")
   end
 
   setup do
     @user = users(:one)
     sign_in_as(@user)
-    create_bullet!(@user, body: "Selectable line", created_at: Time.current)
-    create_bullet!(@user, body: "Second line", created_at: Time.current)
+    8.times { |i| create_bullet!(@user, body: "Selectable line #{i}", created_at: Time.current) }
   end
 
-  test "bullet menu opens expanded and swipes down to heading peek via scroll snap" do
+  test "expanded card leaves uncovered bullets clickable and collapses into a pill" do
     visit bullets_path
-    page.execute_script("document.querySelectorAll('[data-bullet-menu-target=checkbox]')[0].click()")
-    assert_selector ".bullet-menu", visible: true
+    page.execute_script("document.querySelector('[data-bullet-menu-target=checkbox]').click()")
+    assert_selector ".bullet-menu--card[open]"
 
-    snap = page.evaluate_script(
-      "getComputedStyle(document.querySelector('.bullet-menu')).scrollSnapType"
+    assert_equal "none", page.evaluate_script(
+      "getComputedStyle(document.querySelector('.bullet-menu')).pointerEvents"
     )
-    assert_includes snap, "mandatory"
-
-    # Opening scrolls to expanded (smooth animation — wait for it to settle).
-    state = nil
-    start = Time.now
-    loop do
-      state = floating_card_state
-      break if (state["max"] - state["scrollTop"]).abs <= 2
-      raise "floating card never opened expanded" if Time.now - start > 5
-
-      sleep 0.1
-    end
-    assert state["scrollable"], "expected floating card to be scrollable"
-
-    # Swipe down to the heading peek.
-    page.execute_script(
-      "document.querySelector('.bullet-menu').scrollTo({ top: 0, behavior: 'instant' })"
+    assert_equal "auto", page.evaluate_script(
+      "getComputedStyle(document.querySelector('.bullet-menu--card')).pointerEvents"
     )
+    center_offset = page.evaluate_script(<<~JS)
+      (() => {
+        const card = document.querySelector('.bullet-menu--card').getBoundingClientRect();
+        const button = document.querySelector('.bullet-menu--clear-row button').getBoundingClientRect();
+        return Math.abs((card.left + card.right - button.left - button.right) / 2);
+      })()
+    JS
+    assert_operator center_offset, :<=, 2, "Clear selection should be centered in the card"
 
-    peek = page.evaluate_script(
-      <<~JS
-        (() => {
-          const header = document.querySelector('.bullet-menu--card header, .bullet-menu header').getBoundingClientRect();
-          const actions = document.querySelector('.bullet-menu--actions').getBoundingClientRect();
-          return {
-            headerVisible: header.top < window.innerHeight && header.bottom > 0,
-            actionsTop: actions.top
-          };
-        })()
-      JS
-    )
-    assert peek["headerVisible"], "expected heading to stay visible in peek state"
-    assert_operator peek["actionsTop"], :>=, window_height - 2,
-      "expected actions to be pushed below the viewport in peek state"
+    clicked_bullet = page.evaluate_script(<<~JS)
+      (() => {
+        const cardTop = document.querySelector('.bullet-menu--card').getBoundingClientRect().top;
+        const bullet = [...document.querySelectorAll('.bullet')].find((row) => {
+          const rect = row.getBoundingClientRect();
+          return rect.top >= 0 && rect.bottom < cardTop && !row.querySelector('input').checked;
+        });
+        if (!bullet) return false;
+        const rect = bullet.querySelector('.bullet--marker').getBoundingClientRect();
+        const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        if (!bullet.contains(hit)) return false;
+        hit.click();
+        return true;
+      })()
+    JS
+    assert clicked_bullet, "expected an uncovered bullet to receive a tap"
+    assert_selector '[data-bullet-menu-target=checkbox]:checked', count: 2, visible: :all
 
-    # Selecting more bullets while collapsed must not expand the floating card.
-    page.execute_script("document.querySelectorAll('[data-bullet-menu-target=checkbox]')[1].click()")
-    assert_selector ".bullet-menu", visible: true
-    collapsed = floating_card_state
-    assert_in_delta 0, collapsed["scrollTop"], 4,
-      "expected selecting another bullet to keep the floating card collapsed"
-    assert_text "2 selected"
+    find('.bullet-menu--card summary').click
+    assert_selector '.bullet-menu--card:not([open])'
+    assert_no_selector '.bullet-menu--actions', visible: true
+    assert_selector '.bullet-menu--card summary', text: '2 selected', visible: true
 
-    # Swipe back up to the full menu.
-    page.execute_script(
-      "document.querySelector('.bullet-menu').scrollTo({ top: document.querySelector('.bullet-menu').scrollHeight, behavior: 'instant' })"
-    )
-    assert_selector ".bullet-menu--actions", visible: true
-  end
+    page.execute_script("document.querySelectorAll('[data-bullet-menu-target=checkbox]')[2].click()")
+    assert_selector '.bullet-menu--card:not([open])'
+    assert_selector '.bullet-menu--card summary', text: '3 selected', visible: true
 
-  private
-
-  def floating_card_state
-    page.evaluate_script(
-      <<~JS
-        (() => {
-          const menu = document.querySelector('.bullet-menu');
-          return {
-            scrollTop: menu.scrollTop,
-            max: menu.scrollHeight - menu.clientHeight,
-            scrollable: menu.scrollHeight > menu.clientHeight + 1
-          };
-        })()
-      JS
-    )
-  end
-
-  def window_height
-    page.evaluate_script("window.innerHeight")
+    find('.bullet-menu--card summary').click
+    assert_selector '.bullet-menu--card[open]'
+    assert_selector '.bullet-menu--actions', visible: true
   end
 end

@@ -4,7 +4,7 @@ export default class extends Controller {
   static targets = [
     "list",
     "menu",
-    "floatingCard",
+    "card",
     "checkbox",
     "idList",
     "amount",
@@ -71,9 +71,8 @@ export default class extends Controller {
 
     if (this.hasMenuTarget && this.idListValue.length > 0) {
       this.menuTarget.focus({ preventScroll: true });
-      // Expand only when the menu just opened. Selecting more bullets
-      // while it is already visible leaves the floating card where the user put it.
-      if (wasHidden) this.#expandFloatingCard();
+      // Keep a manually collapsed menu compact while selecting more bullets.
+      if (wasHidden && this.hasCardTarget) this.cardTarget.open = true;
     }
 
     this.selectModeValue = this.idListValue.length > 0;
@@ -135,25 +134,6 @@ export default class extends Controller {
     if (this.#isPickerOpen()) return;
 
     this.#cleanupSelection();
-  }
-
-  // =====================================================================
-  // Floating card (mobile swipeable card)
-  // =====================================================================
-
-  #expandFloatingCard() {
-    if (!this.hasFloatingCardTarget) return;
-
-    const floatingCard = this.floatingCardTarget;
-    const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-      ? "instant"
-      : "smooth";
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        floatingCard.scrollTo({ top: floatingCard.scrollHeight, behavior });
-      });
-    });
   }
 
   // =====================================================================

@@ -1,17 +1,15 @@
 <div
   class="bullet-menu"
-  data-bullet-menu-target="menu floatingCard"
+  data-bullet-menu-target="menu"
   data-action="keydown.esc@document->bullet-menu#escape"
   tabindex="0"
   hidden
 >
-  <div class="bullet-menu--spacer" aria-hidden="true"></div>
-
-  <div class="bullet-menu--card">
-  <header>
-    <span class="bullet-menu--grabber-pill" aria-hidden="true"></span>
-    <h2 class="utilities--mx-auto utilities--text-center">Bulk edit</h2>
-  </header>
+  <details class="bullet-menu--card" data-bullet-menu-target="card">
+  <summary>
+    <span>Bulk edit</span>
+    <span data-bullet-menu-target="amount">0 selected</span>
+  </summary>
 
   <div class="bullet-menu--actions">
     <%= form_with url: completion_path, method: :post,
@@ -131,20 +129,19 @@
     </button>
   </div>
 
-  <p class="bullet-menu--amount" data-bullet-menu-target="amount">0 selected</p>
-
-  <button
-    type="button"
-    class="utilities--mx-auto pill"
-    data-intent="primary"
-    data-radius="base"
-    data-size="sm"
-    data-action="bullet-menu#clear"
-    aria-label="Clear selection"
-  >
-    <p>Clear selection</p>
-  </button>
-  </div>
+  <br>
+    <button
+      type="button"
+      class="utilities--mx-auto"
+      data-intent="primary"
+      data-radius="base"
+      data-size="sm"
+      data-action="bullet-menu#clear"
+      aria-label="Clear selection"
+    >
+      <p>Clear selection</p>
+    </button>
+  </details>
 </div>
 
 <%= render "bullets/bullet_picker_dialog",

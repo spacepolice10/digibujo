@@ -11,7 +11,7 @@
   .timeline--section::before {
     content: "";
     position: absolute;
-    inset-block: var(--space-v-2) 0;
+    inset-block: var(--space-v-2) -10px;
     inset-inline-start: var(--space-h);
     border-inline-start: 2px dashed color-mix(in oklch, var(--model-color-2) 40%, transparent);
     pointer-events: none;
@@ -19,7 +19,7 @@
 
   @media (any-pointer: coarse) {
     .timeline--section::before {
-      inset-inline-start: calc(var(--space-h-half) + var(--coarse-target) / 2);
+      inset-inline-start: calc(var(--space-h-half) + 0.575rem);
     }
   }
 
@@ -32,15 +32,13 @@
     top: 0;
     align-self: flex-start;
     z-index: 2;
-    padding: var(--space-v-half) var(--space-h);
-    border: 2px solid var(--model-color-2);
-    background: var(--model-color-2-bg);
-    color: var(--color-invert-1);
+    border: var(--border-subtle);
+    background: var(--color-1);
+    color: var(--color-invert-3);
     font-family: var(--font-family-sans);
-    font-size: clamp(1rem, 1.4vw, 1.2rem);
-    font-weight: var(--font-weight-strong);
+    font-size: 0.875rem;
+    font-weight: var(--font-weight-medium);
     letter-spacing: -0.02em;
-    box-shadow: var(--shadow-strong);
   }
 
   .timeline--scroller:has(.bullet) > .empty-state {

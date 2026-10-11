@@ -19,6 +19,7 @@
     overflow: scroll;
     height: 100%;
     overscroll-behavior: none;
+    border-bottom: var(--border-subtle);
 
     @container layout (width < 800px) {
       max-height: min(75dvh,
