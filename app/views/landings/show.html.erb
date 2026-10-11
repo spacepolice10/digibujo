@@ -8,8 +8,10 @@
 
     <div class="landing-menu">
       <input type="checkbox" id="landing-menu-toggle" class="landing-menu-toggle" aria-label="Menu">
-      <label for="landing-menu-toggle" class="landing-menu-label">
-        Menu <%= icon("chevron-down", class: "landing-menu-chevron") %>
+      <label for="landing-menu-toggle" class="landing-menu-label button" data-intent="secondary" data-size="lg">
+        <%= image_tag "/icon.svg", class: "landing-logo", alt: "" %>
+        Dotted
+        <%= icon("chevron-down", class: "landing-menu-chevron") %>
       </label>
 
       <nav aria-label="Product">
@@ -27,9 +29,7 @@
   </header>
 
   <section class="landing-hero">
-    <h1 class="landing-title">
-      <span class="landing-title-dot"> . </span> dotted
-    </h1>
+    <h1 class="branding-heading">dotted</h1>
 
     <p class="landing-tagline">
       A digital bullet journal implementation, personalized, open &amp;

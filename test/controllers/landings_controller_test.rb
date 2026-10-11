@@ -9,8 +9,10 @@ class LandingsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select 'html[lang="en"]', count: 1
     assert_select 'link[rel="preconnect"][href="https://fonts.gstatic.com"]', count: 1
-    assert_select 'link[rel="stylesheet"][href^="/assets/"]', count: 8
+    assert_select 'link[rel="stylesheet"][href^="/assets/"]', count: 9
     assert_select 'link[rel="stylesheet"][href*="landing"]', count: 1
+    assert_select 'link[rel="stylesheet"][href*="typography"]', count: 1
+    assert_select 'h1.branding-heading', text: 'dotted', count: 1
     assert_select 'link[rel="stylesheet"][href*="button"]', minimum: 1
     assert_select 'link[rel="stylesheet"][href*="components/search"]', count: 0
     assert_select 'script', count: 0
