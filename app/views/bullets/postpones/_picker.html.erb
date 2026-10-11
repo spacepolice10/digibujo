@@ -9,7 +9,7 @@
     <%= form_with url: postpone_path, method: :post,
             class: "utilities--contents",
             data: { turbo_stream: true } do %>
-      <%= hidden_field_tag :bullet_ids, bullet_ids, data: { bulk_menu_target: "idList" } %>
+      <%= hidden_field_tag :bullet_ids, bullet_ids, data: { bullet_menu_target: "idList" } %>
       <%= hidden_field_tag :pops_on, option[:pops_on].iso8601 %>
 
       <%= button_tag type: :submit,
@@ -45,7 +45,7 @@
     </label>
 
     <%= form_with url: postpone_path, method: :post, data: { turbo_stream: true } do |f| %>
-      <%= f.hidden_field :bullet_ids, value: bullet_ids, data: { bulk_menu_target: "idList" } %>
+      <%= f.hidden_field :bullet_ids, value: bullet_ids, data: { bullet_menu_target: "idList" } %>
       <%= f.date_field :pops_on, value: Date.current %>
 
       <br>

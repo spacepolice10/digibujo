@@ -2,7 +2,7 @@
 
 require 'application_system_test_case'
 
-class BulkMenuMobileSystemTest < ApplicationSystemTestCase
+class BulletMenuMobileSystemTest < ApplicationSystemTestCase
   MOBILE_UA = 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 ' \
               '(KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36'
 
@@ -37,13 +37,13 @@ class BulkMenuMobileSystemTest < ApplicationSystemTestCase
       })()
     JS
 
-    page.execute_script("document.querySelector('[data-bulk-menu-target=checkbox]').click()")
-    assert_selector '.bulk-menu'
+    page.execute_script("document.querySelector('[data-bullet-menu-target=checkbox]').click()")
+    assert_selector '.bullet-menu'
 
     after = page.evaluate_script(<<~JS)
       (() => {
         const main = document.querySelector('body > main').getBoundingClientRect()
-        const menu = document.querySelector('.bulk-menu').getBoundingClientRect()
+        const menu = document.querySelector('.bullet-menu').getBoundingClientRect()
         const tabbar = document.querySelector('.tabbar--navigation')
         const composer = document.querySelector('.composer--dock')
         return {
@@ -63,7 +63,7 @@ class BulkMenuMobileSystemTest < ApplicationSystemTestCase
   end
 end
 
-class BulkMenuDesktopSystemTest < ApplicationSystemTestCase
+class BulletMenuDesktopSystemTest < ApplicationSystemTestCase
   setup do
     @user = users(:one)
     sign_in_as(@user)
@@ -77,13 +77,13 @@ class BulkMenuDesktopSystemTest < ApplicationSystemTestCase
       "document.querySelector('body > main').getBoundingClientRect().height"
     )
 
-    page.execute_script("document.querySelector('[data-bulk-menu-target=checkbox]').click()")
-    assert_selector '.bulk-menu'
+    page.execute_script("document.querySelector('[data-bullet-menu-target=checkbox]').click()")
+    assert_selector '.bullet-menu'
 
     metrics = page.evaluate_script(<<~JS)
       (() => {
         const main = document.querySelector('body > main').getBoundingClientRect()
-        const menu = document.querySelector('.bulk-menu').getBoundingClientRect()
+        const menu = document.querySelector('.bullet-menu').getBoundingClientRect()
         return {
           mainHeight: main.height,
           mainBottom: main.bottom,

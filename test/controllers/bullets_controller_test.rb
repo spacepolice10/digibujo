@@ -53,35 +53,35 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_select '[data-timeline-scroll-path-value=?]', bullets_path(completed: true)
   end
 
-  test 'bulk menu gates complete and publish by selection status' do
+  test 'bullet menu gates complete and publish by selection status' do
     create_bullet!(@user, body: 'Selectable')
 
     get bullets_path
 
     assert_response :success
-    assert_select '.bulk-menu--actions form[data-bulk-menu-target="complete"][hidden]', count: 1
-    assert_select '.bulk-menu--actions form[data-bulk-menu-target="uncomplete"][hidden]', count: 1
-    assert_select '.bulk-menu--actions form[data-bulk-menu-target="publish"][hidden]', count: 1
-    assert_select '.bulk-menu--actions form[data-bulk-menu-target="unpublish"][hidden]', count: 1
+    assert_select '.bullet-menu--actions form[data-bullet-menu-target="complete"][hidden]', count: 1
+    assert_select '.bullet-menu--actions form[data-bullet-menu-target="uncomplete"][hidden]', count: 1
+    assert_select '.bullet-menu--actions form[data-bullet-menu-target="publish"][hidden]', count: 1
+    assert_select '.bullet-menu--actions form[data-bullet-menu-target="unpublish"][hidden]', count: 1
     assert_match 'Complete', response.body
     assert_no_match 'Archive', response.body
-    assert_select '.bulk-menu--actions button', text: 'Today', count: 0
+    assert_select '.bullet-menu--actions button', text: 'Today', count: 0
     assert_select 'input[data-bulk-done]', minimum: 1
     assert_select 'input[data-bulk-published]', minimum: 1
     assert_select 'input[data-bulk-scheduled]', count: 0
   end
 
-  test 'bulk menu renders pickers as native dialogs wrapping lazy frames' do
+  test 'bullet menu renders pickers as native dialogs wrapping lazy frames' do
     get bullets_path
 
     assert_response :success
-    assert_select 'dialog#postpone_picker_dialog[closedby="any"]', minimum: 1
-    assert_select 'dialog#postpone_picker_dialog turbo-frame#postpone_picker_dialog[loading="lazy"]', minimum: 1
-    assert_select 'dialog#collects_picker_dialog[closedby="any"]', minimum: 1
-    assert_select 'dialog#collects_picker_dialog turbo-frame#collects_picker_dialog[loading="lazy"]', minimum: 1
+    assert_select 'dialog#postpone_dialog[closedby="any"]', minimum: 1
+    assert_select 'dialog#postpone_dialog turbo-frame#postpone_picker[loading="lazy"]', minimum: 1
+    assert_select 'dialog#collects_dialog[closedby="any"]', minimum: 1
+    assert_select 'dialog#collects_dialog turbo-frame#collects_picker[loading="lazy"]', minimum: 1
     assert_select '[popover]', count: 0
-    assert_select '[data-bulk-menu-target="popsDropdown"]', count: 0
-    assert_select '[data-bulk-menu-target="collectsDropdown"]', count: 0
+    assert_select '[data-bullet-menu-target="popsDropdown"]', count: 0
+    assert_select '[data-bullet-menu-target="collectsDropdown"]', count: 0
   end
 
   test 'update turbo stream replaces bullet only' do

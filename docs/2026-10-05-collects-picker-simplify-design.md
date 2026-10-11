@@ -2,7 +2,7 @@
 
 ## Goal
 
-Simplify the bulk-menu “Save to collection” picker: show name-focused rows, fix live-search turbo replace, drop pagination, keep search with a hard cap of 10 results.
+Simplify the bullet-menu “Save to collection” picker: show name-focused rows, fix live-search turbo replace, drop pagination, keep search with a hard cap of 10 results.
 
 ## Decisions
 

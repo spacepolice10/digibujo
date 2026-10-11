@@ -15,9 +15,9 @@ class BulletKeyboardFocusSystemTest < ApplicationSystemTestCase
     # Real typing puts the page in keyboard modality, so a subsequent
     # programmatic focus matches :focus-visible the way Tab would.
     find('.bullet .bullet--body')
-    page.execute_script("document.querySelector('[data-bulk-menu-target=checkbox]').focus()")
+    page.execute_script("document.querySelector('[data-bullet-menu-target=checkbox]').focus()")
 
-    assert page.evaluate_script("document.querySelector('[data-bulk-menu-target=checkbox]').matches(':focus-visible')"),
+    assert page.evaluate_script("document.querySelector('[data-bullet-menu-target=checkbox]').matches(':focus-visible')"),
       'expected the select checkbox to match :focus-visible'
 
     outline_style = page.evaluate_script(
@@ -31,7 +31,7 @@ class BulletKeyboardFocusSystemTest < ApplicationSystemTestCase
     visit bullets_path
 
     tabbable = page.evaluate_script(
-      "[...document.querySelectorAll('.bullet')].map((bullet) => [...bullet.querySelectorAll('a[href], button, input, [tabindex]:not([tabindex=\"-1\"])')].map((el) => el.matches('[data-bulk-menu-target=checkbox]') ? 'checkbox' : el.tagName.toLowerCase()))"
+      "[...document.querySelectorAll('.bullet')].map((bullet) => [...bullet.querySelectorAll('a[href], button, input, [tabindex]:not([tabindex=\"-1\"])')].map((el) => el.matches('[data-bullet-menu-target=checkbox]') ? 'checkbox' : el.tagName.toLowerCase()))"
     )
 
     assert_equal [['checkbox']], tabbable

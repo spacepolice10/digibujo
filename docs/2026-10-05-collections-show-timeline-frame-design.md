@@ -31,7 +31,7 @@ resources :collections, except: %i[index] # adds :show; keep new/create/edit/upd
 - `main.timeline--window`
   - header panel: `h1` name + dropdown (Export → `export_bullets_path(collection:)`, Edit → `edit_collection_path`) — same actions as today’s index header
   - `turbo_frame_tag dom_id(@collection, :timeline), src: bullets_path(collection: @collection.name)` with a small loading placeholder
-- `bullets/bulk_menu` (selection targets live inside the framed scroller)
+- `bullets/bullet_menu` (selection targets live inside the framed scroller)
 
 ### `bullets/index.html.erb`
 

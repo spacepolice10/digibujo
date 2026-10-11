@@ -48,7 +48,7 @@ Do **not** introduce a `TimelinePaged` concern unless the `before` response bloc
 - `shared/tabbar`
 - `main.timeline--window` → scroller (`#timeline`) with `timeline-scroll`, path = Daylog route; sections with `mount_today: true` (composer append target — Daylog-only)
 - composer dock
-- `bullets/bulk_menu`
+- `bullets/bullet_menu`
 
 **`bullets/index.html.erb`**
 - `shared/back_tabbar`
@@ -56,7 +56,7 @@ Do **not** introduce a `TimelinePaged` concern unless the `before` response bloc
 - scroller id: `dom_id(@filter.collection)` when collection, else `"bullets"` (Daylog keeps `"#timeline"`)
 - sections with `mount_today: false`
 - no composer
-- `bullets/bulk_menu`
+- `bullets/bullet_menu`
 
 **Tabbar:** Daylog active state and link target `TimelinesController` / `root_path` (or `timeline_path`), not `bullets`.
 

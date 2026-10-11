@@ -49,7 +49,7 @@ Goal: simplify mental model — one finished state instead of done vs archived.
 
 Delete: `Archive` model, `Archivable` concern, `Bullets::ArchivesController` + both turbo views, `ArchivedController` + `archived/index.html.erb`, `archives` table.
 Routes: remove `resource :archive` and `resources :archived`; add `resources :completed, only: :index`.
-Bulk menu (`_bulk_menu.html.erb:96-114`): delete the Archive form; hotkey `A` retired.
+Bullet menu (`_bullet_menu.html.erb:96-114`): delete the Archive form; hotkey `A` retired.
 `CollectionsController#destroy`: `@collection.archive!` → `@collection.destroy`; notice "Collection archived" → "Collection deleted".
 Collect/publish guards referencing archived collections collapse to existence checks (a deleted collection is simply not found).
 

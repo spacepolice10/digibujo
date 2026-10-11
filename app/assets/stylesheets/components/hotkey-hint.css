@@ -1,7 +1,7 @@
 @layer components {
   /*
    * Keyboard shortcut badges (::after on .hotkey-hint).
-   * --always: in-flow kbd (bulk menu).
+   * --always: in-flow kbd (bullet menu).
    * Shift-held: same kbd chrome, absolutely positioned to avoid layout shift.
    */
 

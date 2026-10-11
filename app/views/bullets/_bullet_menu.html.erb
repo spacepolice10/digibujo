@@ -1,27 +1,27 @@
 <div
-  class="bulk-menu"
-  data-bulk-menu-target="menu floatingCard"
-  data-action="keydown.esc@document->bulk-menu#escape"
+  class="bullet-menu"
+  data-bullet-menu-target="menu floatingCard"
+  data-action="keydown.esc@document->bullet-menu#escape"
   tabindex="0"
   hidden
 >
-  <div class="bulk-menu--spacer" aria-hidden="true"></div>
+  <div class="bullet-menu--spacer" aria-hidden="true"></div>
 
-  <div class="bulk-menu--card">
+  <div class="bullet-menu--card">
   <header>
-    <span class="bulk-menu--grabber-pill" aria-hidden="true"></span>
+    <span class="bullet-menu--grabber-pill" aria-hidden="true"></span>
     <h2 class="utilities--mx-auto utilities--text-center">Bulk edit</h2>
   </header>
 
-  <div class="bulk-menu--actions">
+  <div class="bullet-menu--actions">
     <%= form_with url: completion_path, method: :post,
           class: "utilities--contents",
-          data: { turbo_stream: true, bulk_menu_target: "complete" },
+          data: { turbo_stream: true, bullet_menu_target: "complete" },
           html: { hidden: true } do %>
-      <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
+      <%= hidden_field_tag :bullet_ids, "", data: { bullet_menu_target: "idList" } %>
 
       <%= button_tag type: :submit,
-            class: "hotkey-hint hotkey-hint--always bulk-menu--action-button",
+            class: "hotkey-hint hotkey-hint--always bullet-menu--action-button",
             data: {
               intent: "secondary",
               radius: "base",
@@ -37,12 +37,12 @@
 
     <%= form_with url: completion_path, method: :delete,
           class: "utilities--contents",
-          data: { turbo_stream: true, bulk_menu_target: "uncomplete" },
+          data: { turbo_stream: true, bullet_menu_target: "uncomplete" },
           html: { hidden: true } do %>
-      <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
+      <%= hidden_field_tag :bullet_ids, "", data: { bullet_menu_target: "idList" } %>
 
       <%= button_tag type: :submit,
-            class: "hotkey-hint hotkey-hint--always bulk-menu--action-button",
+            class: "hotkey-hint hotkey-hint--always bullet-menu--action-button",
             data: {
               intent: "secondary",
               radius: "base",
@@ -58,12 +58,12 @@
 
     <%= form_with url: publish_path, method: :post,
           class: "utilities--contents",
-          data: { turbo_stream: true, bulk_menu_target: "publish" },
+          data: { turbo_stream: true, bullet_menu_target: "publish" },
           html: { hidden: true } do %>
-      <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
+      <%= hidden_field_tag :bullet_ids, "", data: { bullet_menu_target: "idList" } %>
 
       <%= button_tag type: :submit,
-            class: "hotkey-hint hotkey-hint--always bulk-menu--action-button",
+            class: "hotkey-hint hotkey-hint--always bullet-menu--action-button",
             data: {
               intent: "secondary",
               radius: "base",
@@ -79,12 +79,12 @@
 
     <%= form_with url: publish_path, method: :delete,
           class: "utilities--contents",
-          data: { turbo_stream: true, bulk_menu_target: "unpublish" },
+          data: { turbo_stream: true, bullet_menu_target: "unpublish" },
           html: { hidden: true } do %>
-      <%= hidden_field_tag :bullet_ids, "", data: { bulk_menu_target: "idList" } %>
+      <%= hidden_field_tag :bullet_ids, "", data: { bullet_menu_target: "idList" } %>
 
       <%= button_tag type: :submit,
-            class: "hotkey-hint hotkey-hint--always bulk-menu--action-button",
+            class: "hotkey-hint hotkey-hint--always bullet-menu--action-button",
             data: {
               intent: "secondary",
               radius: "base",
@@ -100,13 +100,15 @@
 
     <button
       type="button"
-      class="hotkey-hint hotkey-hint--always bulk-menu--action-button"
+      class="hotkey-hint hotkey-hint--always bullet-menu--action-button"
       data-controller="hotkey"
       data-intent="secondary"
       data-radius="base"
       data-size="sm"
       data-hotkey="L"
-      data-action="bulk-menu#openPopsPicker keydown.l@document->hotkey#click"
+      data-action="bullet-menu#openPicker keydown.l@document->hotkey#click"
+      data-bullet-menu-dialog-param="postpone_dialog"
+      data-bullet-menu-url-param="<%= new_postpone_path %>"
       aria-keyshortcuts="L"
     >
       <%= icon("arrow-forward-up", style: "color: var(--model-color-3)") %> Later
@@ -114,20 +116,22 @@
 
     <button
       type="button"
-      class="hotkey-hint hotkey-hint--always bulk-menu--action-button"
+      class="hotkey-hint hotkey-hint--always bullet-menu--action-button"
       data-controller="hotkey"
       data-intent="secondary"
       data-radius="base"
       data-size="sm"
       data-hotkey="S"
-      data-action="bulk-menu#openCollectsPicker keydown.s@document->hotkey#click"
+      data-action="bullet-menu#openPicker keydown.s@document->hotkey#click"
+      data-bullet-menu-dialog-param="collects_dialog"
+      data-bullet-menu-url-param="<%= new_collect_path %>"
       aria-keyshortcuts="S"
     >
       <%= icon("hash", style: "color: var(--model-color-5)") %> Tag
     </button>
   </div>
 
-  <p class="bulk-menu--amount" data-bulk-menu-target="amount">0 selected</p>
+  <p class="bullet-menu--amount" data-bullet-menu-target="amount">0 selected</p>
 
   <button
     type="button"
@@ -135,7 +139,7 @@
     data-intent="primary"
     data-radius="base"
     data-size="sm"
-    data-action="bulk-menu#clear"
+    data-action="bullet-menu#clear"
     aria-label="Clear selection"
   >
     <p>Clear selection</p>
@@ -143,30 +147,20 @@
   </div>
 </div>
 
-<%= render "shared/dialog",
+<%= render "bullets/bullet_picker_dialog",
       name: "Later",
-      id: "postpone_picker_dialog",
-      standalone: true,
-      size: "sm" do %>
-  <turbo-frame
-    id="postpone_picker_dialog"
-    data-bulk-menu-target="popsDialog"
-    loading="lazy"
-    data-controller="grid-navigation"
-    data-grid-navigation-columns-value="1"
-    data-action="keydown->grid-navigation#navigate"
-  ></turbo-frame>
-<% end %>
+      dialog_id: "postpone_dialog",
+      frame_id: "postpone_picker",
+      size: "sm",
+      frame_data: {
+        controller: "grid-navigation",
+        grid_navigation_columns_value: 1,
+        action: "keydown->grid-navigation#navigate"
+      } %>
 
-<%= render "shared/dialog",
+<%= render "bullets/bullet_picker_dialog",
       name: "Save",
-      id: "collects_picker_dialog",
-      standalone: true,
-      close_on_submit: false,
-      size: "lg" do %>
-  <turbo-frame
-    id="collects_picker_dialog"
-    data-bulk-menu-target="collectsDialog"
-    loading="lazy"
-  ></turbo-frame>
-<% end %>
+      dialog_id: "collects_dialog",
+      frame_id: "collects_picker",
+      size: "lg",
+      close_on_submit: false %>

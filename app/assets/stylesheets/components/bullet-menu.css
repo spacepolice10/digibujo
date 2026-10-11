@@ -1,6 +1,6 @@
 @layer components {
-  .bulk-menu {
-    --bulk-menu-peek: 44px;
+  .bullet-menu {
+    --bullet-menu-peek: 44px;
     position: fixed;
     z-index: var(--z-toasts);
     inset-inline: 0;
@@ -75,7 +75,7 @@
     }
   }
 
-  .bulk-menu--card {
+  .bullet-menu--card {
     scroll-snap-align: end;
     scroll-snap-stop: always;
     pointer-events: auto;
@@ -111,8 +111,8 @@
     }
   }
 
-  .bulk-menu--spacer {
-    height: calc(100dvh - var(--bulk-menu-peek));
+  .bullet-menu--spacer {
+    height: calc(100dvh - var(--bullet-menu-peek));
     scroll-snap-align: start;
     scroll-snap-stop: always;
 
@@ -121,7 +121,7 @@
     }
   }
 
-  .bulk-menu--card>header {
+  .bullet-menu--card>header {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -140,7 +140,7 @@
     }
   }
 
-  .bulk-menu--grabber-pill {
+  .bullet-menu--grabber-pill {
     width: 36px;
     height: 4px;
     border-radius: var(--radius-full);
@@ -152,7 +152,7 @@
     }
   }
 
-  .bulk-menu--actions {
+  .bullet-menu--actions {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     align-items: stretch;
@@ -165,7 +165,7 @@
   }
 
 
-  .bulk-menu--action-button {
+  .bullet-menu--action-button {
     padding: var(--space-v-half) var(--space-h-half);
     width: 100%;
     height: var(--space-v-5);
@@ -186,7 +186,7 @@
     }
   }
 
-  .bulk-menu--amount {
+  .bullet-menu--amount {
     width: 100%;
     margin: 0;
     font-weight: 400;

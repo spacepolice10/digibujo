@@ -2,7 +2,7 @@
 
 require "application_system_test_case"
 
-class BulkMenuFloatingCardSystemTest < ApplicationSystemTestCase
+class BulletMenuFloatingCardSystemTest < ApplicationSystemTestCase
   MOBILE_UA = "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 " \
               "(KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36"
 
@@ -22,13 +22,13 @@ class BulkMenuFloatingCardSystemTest < ApplicationSystemTestCase
     create_bullet!(@user, body: "Second line", created_at: Time.current)
   end
 
-  test "bulk menu opens expanded and swipes down to heading peek via scroll snap" do
+  test "bullet menu opens expanded and swipes down to heading peek via scroll snap" do
     visit bullets_path
-    page.execute_script("document.querySelectorAll('[data-bulk-menu-target=checkbox]')[0].click()")
-    assert_selector ".bulk-menu", visible: true
+    page.execute_script("document.querySelectorAll('[data-bullet-menu-target=checkbox]')[0].click()")
+    assert_selector ".bullet-menu", visible: true
 
     snap = page.evaluate_script(
-      "getComputedStyle(document.querySelector('.bulk-menu')).scrollSnapType"
+      "getComputedStyle(document.querySelector('.bullet-menu')).scrollSnapType"
     )
     assert_includes snap, "mandatory"
 
@@ -46,14 +46,14 @@ class BulkMenuFloatingCardSystemTest < ApplicationSystemTestCase
 
     # Swipe down to the heading peek.
     page.execute_script(
-      "document.querySelector('.bulk-menu').scrollTo({ top: 0, behavior: 'instant' })"
+      "document.querySelector('.bullet-menu').scrollTo({ top: 0, behavior: 'instant' })"
     )
 
     peek = page.evaluate_script(
       <<~JS
         (() => {
-          const header = document.querySelector('.bulk-menu--card header, .bulk-menu header').getBoundingClientRect();
-          const actions = document.querySelector('.bulk-menu--actions').getBoundingClientRect();
+          const header = document.querySelector('.bullet-menu--card header, .bullet-menu header').getBoundingClientRect();
+          const actions = document.querySelector('.bullet-menu--actions').getBoundingClientRect();
           return {
             headerVisible: header.top < window.innerHeight && header.bottom > 0,
             actionsTop: actions.top
@@ -66,8 +66,8 @@ class BulkMenuFloatingCardSystemTest < ApplicationSystemTestCase
       "expected actions to be pushed below the viewport in peek state"
 
     # Selecting more bullets while collapsed must not expand the floating card.
-    page.execute_script("document.querySelectorAll('[data-bulk-menu-target=checkbox]')[1].click()")
-    assert_selector ".bulk-menu", visible: true
+    page.execute_script("document.querySelectorAll('[data-bullet-menu-target=checkbox]')[1].click()")
+    assert_selector ".bullet-menu", visible: true
     collapsed = floating_card_state
     assert_in_delta 0, collapsed["scrollTop"], 4,
       "expected selecting another bullet to keep the floating card collapsed"
@@ -75,9 +75,9 @@ class BulkMenuFloatingCardSystemTest < ApplicationSystemTestCase
 
     # Swipe back up to the full menu.
     page.execute_script(
-      "document.querySelector('.bulk-menu').scrollTo({ top: document.querySelector('.bulk-menu').scrollHeight, behavior: 'instant' })"
+      "document.querySelector('.bullet-menu').scrollTo({ top: document.querySelector('.bullet-menu').scrollHeight, behavior: 'instant' })"
     )
-    assert_selector ".bulk-menu--actions", visible: true
+    assert_selector ".bullet-menu--actions", visible: true
   end
 
   private
@@ -86,7 +86,7 @@ class BulkMenuFloatingCardSystemTest < ApplicationSystemTestCase
     page.evaluate_script(
       <<~JS
         (() => {
-          const menu = document.querySelector('.bulk-menu');
+          const menu = document.querySelector('.bullet-menu');
           return {
             scrollTop: menu.scrollTop,
             max: menu.scrollHeight - menu.clientHeight,

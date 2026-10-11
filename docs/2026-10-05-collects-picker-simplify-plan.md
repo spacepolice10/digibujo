@@ -173,12 +173,12 @@ Expected: PASS for limit once views still render buttons (may still fail other n
 
 ```erb
 <%# locals: (collection:, bullet_ids: "") %>
-<li class="bulk-menu--picker-list-item" role="option">
+<li class="bullet-menu--picker-list-item" role="option">
   <%= form_with url: collect_path,
         method: :post,
         class: "dropdown--menu-form",
         data: { turbo_stream: true } do %>
-    <%= hidden_field_tag :bullet_ids, bullet_ids, data: { bulk_menu_target: "idList" } %>
+    <%= hidden_field_tag :bullet_ids, bullet_ids, data: { bullet_menu_target: "idList" } %>
     <%= hidden_field_tag :collection_id, collection.id %>
     <button type="submit"
             class="picker--item"
@@ -195,8 +195,8 @@ Expected: PASS for limit once views still render buttons (may still fail other n
 ```erb
 <%# locals: (bullet_ids:, return_to:, collects_q:, collections:) %>
 <div id="collects-collections-list">
-  <ul class="bulk-menu--picker-list" role="listbox">
-    <li class="bulk-menu--picker-list-item" role="option">
+  <ul class="bullet-menu--picker-list" role="listbox">
+    <li class="bullet-menu--picker-list-item" role="option">
       <%= link_to new_collection_path(bullet_ids: bullet_ids, return_to: return_to),
             class: "picker--item",
             data: {
@@ -234,7 +234,7 @@ Update locals comment at top of `_picker.html.erb` to drop `collections_page`.
 `new.html.erb`:
 
 ```erb
-<turbo-frame id="collects_picker_dropdown_id" class="bulk-menu--picker bulk-menu--picker--collects" popover>
+<turbo-frame id="collects_picker_dropdown_id" class="bullet-menu--picker bullet-menu--picker--collects" popover>
   <%= render "picker",
         bullet_ids: params[:bullet_ids].to_s,
         return_to: @return_to,

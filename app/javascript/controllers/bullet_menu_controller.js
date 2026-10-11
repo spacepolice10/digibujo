@@ -12,15 +12,12 @@ export default class extends Controller {
     "uncomplete",
     "publish",
     "unpublish",
-    "popsDialog",
-    "collectsDialog",
+    "pickerElement",
   ];
 
   static values = {
     idList: { type: Array, default: [] },
     selectMode: { type: Boolean, default: false },
-    popsPickerPath: { type: String, default: "/bullets/postpone/new" },
-    collectsPickerPath: { type: String, default: "/bullets/collect/new" },
   };
 
   connect() {
@@ -38,7 +35,7 @@ export default class extends Controller {
 
   toggle(event) {
     const checkbox = event.currentTarget;
-    if (checkbox.closest("[data-bulk-menu-ignore]")) {
+    if (checkbox.closest("[data-bullet-menu-ignore]")) {
       checkbox.checked = false;
       return;
     }
@@ -102,12 +99,28 @@ export default class extends Controller {
     input.value = this.idListValue.join(",");
   }
 
-  openPopsPicker() {
-    this.#openPicker(this.popsDialogTarget, this.popsPickerPathValue);
-  }
+  openPicker(event) {
+    if (this.idListValue.length == 0) return;
 
-  openCollectsPicker() {
-    this.#openPicker(this.collectsDialogTarget, this.collectsPickerPathValue);
+    const { dialog: dialogId, url: path } = event.params;
+    const picker = this.pickerElementTargets.find((target) => target.closest("dialog")?.id == dialogId);
+    if (!picker || !path) return;
+    const dialog = picker.closest("dialog");
+
+    const url = new URL(path, window.location.origin);
+    url.searchParams.set("bullet_ids", this.idListValue.join(","));
+    picker.src = url.pathname + url.search;
+
+    if (dialog.open) return;
+
+    try {
+      dialog.showModal();
+    } catch (error) {
+      if (error.name != "InvalidStateError") throw error;
+
+      dialog.close();
+      dialog.showModal();
+    }
   }
 
   clear() {
@@ -147,49 +160,15 @@ export default class extends Controller {
   // Picker dialogs
   // =====================================================================
 
-  #pickerFrames() {
-    const frames = [];
-    if (this.haspopsDialogTarget) frames.push(this.popsDialogTarget);
-    if (this.hascollectsDialogTarget) frames.push(this.collectsDialogTarget);
-    return frames;
-  }
-
-  #dialogFor(frame) {
-    return frame.closest("dialog");
-  }
-
-  #openPicker(frame, path) {
-    if (this.idListValue.length == 0) return;
-
-    const url = new URL(path, window.location.origin);
-    url.searchParams.set("bullet_ids", this.idListValue.join(","));
-    frame.src = url.pathname + url.search;
-
-    const dialog = this.#dialogFor(frame);
-    if (!dialog || dialog.open) return;
-
-    try {
-      dialog.showModal();
-    } catch (error) {
-      if (error.name != "InvalidStateError") throw error;
-
-      dialog.close();
-      dialog.showModal();
-    }
-  }
-
   #closePickers() {
-    this.#pickerFrames().forEach((frame) => {
-      const dialog = this.#dialogFor(frame);
-      if (dialog?.open) dialog.close();
+    this.pickerElementTargets.forEach((picker) => {
+      const dialog = picker.closest("dialog");
+      if (dialog.open) dialog.close();
     });
   }
 
   #isPickerOpen() {
-    return this.#pickerFrames().some((frame) => {
-      const dialog = this.#dialogFor(frame);
-      return dialog?.open ?? false;
-    });
+    return this.pickerElementTargets.some((picker) => picker.closest("dialog")?.open);
   }
 
   // =====================================================================
@@ -200,20 +179,11 @@ export default class extends Controller {
     if (!event.detail.success) return;
 
     const form = event.target;
-    if (!form?.action) return;
+    if (!(form instanceof HTMLFormElement) || form.method.toLowerCase() == "get") return;
 
-    const isPop =
-      form.action.includes("/bullets/postpone") &&
-      form.method?.toLowerCase() == "post";
-    const isCollect =
-      form.action.includes("/bullets/collect") &&
-      form.method?.toLowerCase() == "post";
-    const isMenuBulk =
-      this.hasMenuTarget &&
-      this.menuTarget.contains(form) &&
-      form.method?.toLowerCase() != "get";
-
-    if (isPop || isCollect || isMenuBulk) this.#restore();
+    const inMenu = this.hasMenuTarget && this.menuTarget.contains(form);
+    const inPicker = this.pickerElementTargets.some((picker) => picker.contains(form));
+    if (inMenu || inPicker) this.#restore();
   }
 
   #restore() {

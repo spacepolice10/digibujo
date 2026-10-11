@@ -247,7 +247,7 @@ git commit -m "feat: purge expired completed bullets"
 ### Task 6: Remove archive UI surface
 
 **Files:**
-- Modify: `app/views/bullets/_bulk_menu.html.erb:96-114` (delete Archive form)
+- Modify: `app/views/bullets/_bullet_menu.html.erb:96-114` (delete Archive form)
 - Modify: `app/views/bullets/show.html.erb:57-70` (Archive/Unarchive dropdown → Complete/Uncomplete via `completion_path`)
 - Modify: `app/views/bullets/exports/show.html.erb:22-24` (drop `archived?` tag)
 - Modify: `app/views/bullets/_bullet.json.jbuilder:7` (drop `archived` key)

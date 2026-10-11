@@ -15,14 +15,14 @@ module Bullets
       get new_postpone_path, params: { bullet_ids: card.id.to_s }
 
       assert_response :success
-      assert_select 'turbo-frame#postpone_picker_dialog'
+      assert_select 'turbo-frame#postpone_picker'
       assert_select '[popover]', count: 0
-      assert_select 'turbo-frame#postpone_picker_dialog button[data-grid-navigation-target=?]', 'item', count: 5
-      assert_select 'turbo-frame#postpone_picker_dialog label[data-grid-navigation-target=?]', 'item', count: 1
-      assert_select 'turbo-frame#postpone_picker_dialog input[name="bullet_ids"][data-bulk-menu-target="idList"]',
+      assert_select 'turbo-frame#postpone_picker button[data-grid-navigation-target=?]', 'item', count: 5
+      assert_select 'turbo-frame#postpone_picker label[data-grid-navigation-target=?]', 'item', count: 1
+      assert_select 'turbo-frame#postpone_picker input[name="bullet_ids"][data-bullet-menu-target="idList"]',
                     count: 6
-      assert_select 'turbo-frame#postpone_picker_dialog input[type=date][name=pops_on]'
-      assert_select 'turbo-frame#postpone_picker_dialog input[name=bucket_id]', count: 0
+      assert_select 'turbo-frame#postpone_picker input[type=date][name=pops_on]'
+      assert_select 'turbo-frame#postpone_picker input[name=bucket_id]', count: 0
 
       assert_match 'Today', response.body
       assert_match 'Tomorrow', response.body
@@ -35,11 +35,11 @@ module Bullets
 
       get new_postpone_path,
           params: { bullet_ids: card.id.to_s },
-          headers: { 'Turbo-Frame' => 'postpone_picker_dialog' }
+          headers: { 'Turbo-Frame' => 'postpone_picker' }
 
       assert_response :success
-      assert_select 'turbo-frame#postpone_picker_dialog h2', text: 'Schedule'
-      assert_select 'input[name="bullet_ids"][data-bulk-menu-target="idList"]', count: 6
+      assert_select 'turbo-frame#postpone_picker h2', text: 'Schedule'
+      assert_select 'input[name="bullet_ids"][data-bullet-menu-target="idList"]', count: 6
     end
 
     test 'new without bullet_ids returns not found' do
