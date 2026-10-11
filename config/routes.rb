@@ -15,9 +15,10 @@ Rails.application.routes.draw do
     end
   end
 
-  resource :features, only: :show, controller: 'features'
-  resource :support, only: :show, controller: 'support'
-  resource :landing, only: :show, controller: 'landings'
+  get 'features', to: 'landings#features', as: :features
+  get 'support', to: 'landings#support', as: :support
+  get 'landing', to: 'landings#landing', as: :landing
+  get 'once', to: 'landings#once', as: :once
 
   # --- Bullets ---
   scope 'bullets', module: :bullets do

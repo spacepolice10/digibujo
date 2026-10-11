@@ -51,7 +51,7 @@ class WebhooksControllerTest < ActionDispatch::IntegrationTest
     get webhooks_path
 
     assert_response :success
-    assert_select 'main[data-size="sm"] > h1', text: 'Webhooks'
+    assert_select 'main[data-size="sm"] > header h1', text: 'Webhooks'
     assert_select 'nav.tabbar--back a.tabbar--back-link[href=?][aria-label=?]', search_path, 'Back', text: 'Back'
     assert_select 'form[action=?]', webhooks_path, count: 0
     assert_select 'main a[href=?][aria-label=?]', new_webhook_path, 'Create Webhook'
@@ -64,7 +64,7 @@ class WebhooksControllerTest < ActionDispatch::IntegrationTest
     get new_webhook_path
 
     assert_response :success
-    assert_select 'main[data-size="sm"] > h1', text: 'Webhook'
+    assert_select 'main[data-size="sm"] > header h1', text: 'Webhook'
     assert_select 'a[data-content="icon"][aria-label="Back to Webhooks"]', count: 0
     assert_select 'form[action=?]', webhooks_path
     assert_select 'nav.tabbar--back a.tabbar--back-link[href=?][aria-label=?]', webhooks_path, 'Back to Webhooks', text: 'Back'
@@ -83,16 +83,16 @@ class WebhooksControllerTest < ActionDispatch::IntegrationTest
     assert_match(/Copy this URL now/, response.body)
     assert_match(%r{/webhooks/wh_}, response.body)
     assert_match 'Zapier', response.body
-    assert_select 'section.webhook--created[role="status"]' do
+    assert_select 'article.card[role="status"]' do
       assert_select 'strong', text: 'Webhook is ready'
       assert_select 'span[role="img"][aria-label=?]', 'Lightning'
-      assert_select 'code.webhook--created-link'
+      assert_select 'main code'
     end
 
     get webhooks_path
 
     assert_no_match(/Copy this URL now/, response.body)
-    assert_select 'section.webhook--created', count: 0
+    assert_select 'article.card[role="status"]', count: 0
   end
 
   test 'html destroy revokes the webhook' do

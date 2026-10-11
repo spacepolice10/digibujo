@@ -75,8 +75,9 @@
   },
 ] %>
 
-<main>
-  <ul data-layout="grid">
+<main data-page="features">
+  <header class="landing-page-heading"><h1>Features</h1></header>
+  <ul data-layout="auto-grid">
     <% features.each do |feature| %>
       <li>
         <article data-elevation="1">
@@ -91,13 +92,4 @@
       </li>
     <% end %>
   </ul>
-
-  <footer>
-    <%= link_to new_authentication_path,
-        class: "utilities--mx-auto",
-        data: { intent: "primary", radius: "full", size: "lg" },
-        aria: { label: "Create your own account" } do %>
-      Create your own
-    <% end %>
-  </footer>
 </main>

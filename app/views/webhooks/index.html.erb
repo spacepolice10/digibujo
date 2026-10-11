@@ -13,7 +13,7 @@
   </header>
 
   <% if @created_webhook_code.present? %>
-    <section class="webhook--created" role="status">
+    <article class="card" data-elevation="2" role="status">
       <header>
         <span aria-hidden="true">
           <span role="img" aria-label="Lightning">⚡️</span>
@@ -22,13 +22,15 @@
         <strong>Webhook is ready</strong>
       </header>
 
-      <p>Copy this URL now. You won’t see it again.</p>
-      <code class="webhook--created-link"><%= webhook_intake_url(@created_webhook_code) %></code>
-    </section>
+      <main>
+        <p>Copy this URL now. You won’t see it again.</p>
+        <code><%= webhook_intake_url(@created_webhook_code) %></code>
+      </main>
+    </article>
   <% end %>
 
   <% if @webhooks.any? %>
-    <section id="webhooks" class="webhook--list">
+    <section id="webhooks" class="card-list">
       <%= render partial: "webhooks/webhook", collection: @webhooks, as: :webhook %>
     </section>
   <% end %>

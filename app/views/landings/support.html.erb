@@ -1,0 +1,28 @@
+<% content_for(:title) { "Support — Dotted" } %>
+
+
+<main data-page="support" data-size="sm">
+  <header><h1>Support</h1></header>
+
+  <article>
+    <main>
+      <p>
+        Questions, bugs, or feedback about Dotted — email the maintainer or open
+        an issue on GitHub.
+      </p>
+      <ul>
+        <li>
+          <%= mail_to "naysdemo@zohomail.com" do %>
+            <%= icon("mail") %> naysdemo@zohomail.com
+          <% end %>
+        </li>
+        <li>
+          <%= link_to "https://github.com/spacepolice10/digibujo" do %>
+            <%= icon("github") %> github.com/spacepolice10/digibujo
+          <% end %>
+        </li>
+      </ul>
+    </main>
+  </article>
+</main>
+

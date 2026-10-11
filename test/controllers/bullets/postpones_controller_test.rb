@@ -18,10 +18,12 @@ module Bullets
       assert_select 'turbo-frame#postpone_picker'
       assert_select '[popover]', count: 0
       assert_select 'turbo-frame#postpone_picker button[data-grid-navigation-target=?]', 'item', count: 5
-      assert_select 'turbo-frame#postpone_picker label[data-grid-navigation-target=?]', 'item', count: 1
+      assert_select 'turbo-frame#postpone_picker label[data-grid-navigation-target=?]', 'item', count: 0
       assert_select 'turbo-frame#postpone_picker input[name="bullet_ids"][data-bullet-menu-target="idList"]',
                     count: 6
-      assert_select 'turbo-frame#postpone_picker input[type=date][name=pops_on]'
+      assert_select 'turbo-frame#postpone_picker input[type=date][name=pops_on][aria-label="Choose date"]'
+      assert_select 'turbo-frame#postpone_picker form.postpone-picker--manual-date button[type=submit]',
+                    text: 'Confirm'
       assert_select 'turbo-frame#postpone_picker input[name=bucket_id]', count: 0
 
       assert_match 'Today', response.body

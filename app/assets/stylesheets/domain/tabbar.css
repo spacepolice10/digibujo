@@ -40,29 +40,27 @@
   }
 }
 
-/* Geometry as tokens so the composer can clear the tabbar before JS measures. */
+/* Share one safe-area inset across the tabbar, composer, and timeline. */
 :root {
-  --tabbar-safe-area: max(var(--space-v), env(safe-area-inset-bottom, 0px));
+  --tabbar-bottom: max(var(--space-v), env(safe-area-inset-bottom, 0px));
   --tabbar-icon-size: calc(var(--space-h) * 1.25);
   --tabbar-size: calc(var(--tabbar-icon-size) + var(--space-v-2) + 2px);
-  --tabbar-offset: var(--space-v);
   --tabbar-clearance: 0px;
 }
 
 body:has(.tabbar--navigation) {
-  --tabbar-clearance: calc(var(--tabbar-offset) + var(--tabbar-safe-area) + var(--tabbar-size));
+  --tabbar-clearance: calc(var(--tabbar-bottom) + var(--tabbar-size));
 }
 
 .tabbar--navigation {
   position: fixed;
-  bottom: var(--tabbar-offset);
+  bottom: var(--tabbar-bottom);
   left: 50%;
   transform: translateX(-50%);
   z-index: var(--z-dropdown);
   display: flex;
   gap: var(--space-h-half);
   padding: var(--space-v-half) var(--space-h-half);
-  margin-bottom: var(--tabbar-safe-area);
   border-radius: var(--radius-full);
 
   &::before {
@@ -74,6 +72,19 @@ body:has(.tabbar--navigation) {
     background-color: var(--color-1);
     border: var(--border-subtle);
     box-shadow: var(--shadow-base);
+  }
+}
+
+@media (pointer: coarse) {
+  body:has(.composer--dock:focus-within) {
+    --tabbar-clearance: var(--tabbar-bottom);
+  }
+
+  body:has(.composer--dock:focus-within) .tabbar--navigation {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, calc(100% + var(--tabbar-bottom)));
   }
 }
 
@@ -170,10 +181,11 @@ body:has(.tabbar--navigation) {
     animation: page-enter 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
-  /* Hide the tabbar while the composer is focused. */
+  /* Keep touch navigation transitions in the same motion mode. */
   .tabbar--navigation {
     transition: transform 280ms cubic-bezier(0.32, 0.72, 0, 1),
-      opacity 280ms cubic-bezier(0.32, 0.72, 0, 1);
+      opacity 280ms cubic-bezier(0.32, 0.72, 0, 1),
+      visibility 280ms;
   }
 
   /* Names must be unique; classes let the pseudo-element rules below stay generic. */

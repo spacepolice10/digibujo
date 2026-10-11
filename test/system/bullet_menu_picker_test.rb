@@ -6,7 +6,7 @@ class BulletMenuPickerSystemTest < ApplicationSystemTestCase
   setup do
     @user = users(:one)
     sign_in_as(@user)
-    create_bullet!(@user, body: 'Selectable line', created_at: Time.current)
+    @bullet = create_bullet!(@user, body: 'Selectable line', created_at: Time.current)
     create_collection!(@user, name: 'Reading')
   end
 
@@ -56,6 +56,25 @@ class BulletMenuPickerSystemTest < ApplicationSystemTestCase
 
     assert_no_selector 'dialog#postpone_dialog[open]'
     assert_no_selector '.bullet-menu', visible: true
+  end
+
+  test 'confirm schedules the manually selected date' do
+    target = Date.current + 3.days
+
+    visit bullets_path
+    select_bullet
+    find_button('Later').click
+    assert_selector 'dialog#postpone_dialog[open] input[type=date]'
+
+    page.execute_script(
+      "document.querySelector('dialog#postpone_dialog input[type=date]').value = arguments[0]",
+      target.iso8601
+    )
+    find_button('Confirm').click
+
+    assert_no_selector 'dialog#postpone_dialog[open]'
+    assert_no_selector '.bullet-menu', visible: true
+    assert_equal target, @bullet.reload.pops_on
   end
 
   test 'save opens the collections dialog and closes it on the chrome button' do

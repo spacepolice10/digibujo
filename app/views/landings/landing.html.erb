@@ -1,33 +1,5 @@
 <% content_for(:title) { "Dotted" } %>
 <main class="landing">
-  <header class="landing-header">
-    <a role="button" data-intent="secondary" data-size="lg" href="<%= root_path %>">
-      <%= image_tag "/icon.svg", class: "landing-logo", alt: "" %>
-      Dotted
-    </a>
-
-    <div class="landing-menu">
-      <input type="checkbox" id="landing-menu-toggle" class="landing-menu-toggle" aria-label="Menu">
-      <label for="landing-menu-toggle" class="landing-menu-label button" data-intent="secondary" data-size="lg">
-        <%= image_tag "/icon.svg", class: "landing-logo", alt: "" %>
-        Dotted
-        <%= icon("chevron-down", class: "landing-menu-chevron") %>
-      </label>
-
-      <nav aria-label="Product">
-        <a role="button" data-intent="secondary" data-size="lg" href="<%= features_path %>">Features</a>
-        <a role="button" data-intent="secondary" data-size="lg" href="<%= new_authentication_path %>">
-          <span class="icon-wrap once-mark"><i class="icon" aria-hidden="true"></i></span>
-          ONCE
-        </a>
-        <a role="button" data-intent="secondary" data-size="lg" href="<%= new_authentication_path %>">Sign in</a>
-        <a role="button" data-intent="secondary" data-size="lg" href="<%= new_authentication_path %>">
-          <%= icon("github") %> GitHub
-        </a>
-      </nav>
-    </div>
-  </header>
-
   <section class="landing-hero">
     <h1 class="branding-heading">dotted</h1>
 

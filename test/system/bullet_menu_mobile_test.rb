@@ -21,6 +21,21 @@ class BulletMenuMobileSystemTest < ApplicationSystemTestCase
     create_bullet!(@user, body: 'Selectable line', created_at: Time.current)
   end
 
+  test 'tapping the bullet body selects it' do
+    visit bullets_path
+    assert_selector '.bullet--body', text: 'Selectable line'
+    page.driver.browser.execute_cdp('Emulation.setTouchEmulationEnabled', enabled: true)
+    assert page.evaluate_script("matchMedia('(any-pointer: coarse)').matches")
+
+    page.execute_script(<<~JS)
+      const body = document.querySelector('.bullet .bullet--body').getBoundingClientRect()
+      document.elementFromPoint(body.right - 8, body.top + body.height / 2).click()
+    JS
+
+    assert_selector '[data-bullet-menu-target=checkbox]:checked', visible: :all
+    assert_selector '.bullet-menu', visible: true
+  end
+
   test 'on mobile the open menu overlays without moving the page' do
     visit bullets_path
 

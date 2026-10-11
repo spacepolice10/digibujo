@@ -12,7 +12,7 @@
     <%= button_to webhook_path(webhook),
       method: :delete,
       class: "utilities--mx-auto",
-      data: { intent: "secondary", radius: "full", size: "xs", status: "negative" },
+      data: { intent: "secondary", radius: "full", size: "sm", status: "negative" },
       form: { data: { turbo_confirm: "Revoke this webhook? External apps using it will stop working." }, class: "utilities--contents" } do %>
   <%= icon("trash") %>
   Revoke

@@ -121,7 +121,7 @@
   :is(button, a, :where(.button))[data-intent],
   [role="button"] {
     background-color: var(--button-bg);
-    background-image: linear-gradient(to bottom, var(--button-gradient-start, rgb(255 255 255 / 12%)), var(--button-gradient-end, rgb(0 0 0 / 7%)));
+
     border-color: var(--button-bg);
     color: var(--button-fg);
   }

@@ -137,19 +137,10 @@
 
   .bullet--select-checkbox {
     position: absolute;
-    inset: 0 auto auto 0;
-    width: var(--space-h);
-    height: var(--space-h);
+    inset: 0;
     border-radius: var(--radius-full);
     cursor: pointer;
     z-index: 1;
-    width: 100%;
-    height: 100%;
-
-    @media (any-pointer: coarse) {
-      width: var(--coarse-target);
-      height: var(--coarse-target);
-    }
   }
 
   [data-mode="select"] .bullet--select-checkbox {

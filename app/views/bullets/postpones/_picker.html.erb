@@ -28,28 +28,13 @@
     <% end %>
   <% end %>
 
-  <div>
-    <label
-      for="pops_on_date_picker"
-      class="picker--item"
-      tabindex="-1"
-      data-grid-navigation-target="item"
-      data-action="focus->grid-navigation#syncPosition"
-    >
-      <input
-        type="checkbox"
-        id="pops_on_date_picker"
-        name="pops_on_date_picker"
-        class="utilities--sr-only"
-      >
-    </label>
-
-    <%= form_with url: postpone_path, method: :post, data: { turbo_stream: true } do |f| %>
-      <%= f.hidden_field :bullet_ids, value: bullet_ids, data: { bullet_menu_target: "idList" } %>
-      <%= f.date_field :pops_on, value: Date.current %>
-
-      <br>
-
-    <% end %>
-  </div>
+  <br>
+  <%= form_with url: postpone_path, method: :post,
+        class: "postpone-picker--manual-date",
+        data: { turbo_stream: true } do |f| %>
+    <%= f.hidden_field :bullet_ids, value: bullet_ids, data: { bullet_menu_target: "idList" } %>
+    <%= f.date_field :pops_on, value: Date.current, required: true,
+          class: "postpone-picker--date", aria: { label: "Choose date" } %>
+    <%= f.button "Confirm", type: :submit, data: { intent: "primary", size: "sm", radius: "base" } %>
+  <% end %>
 </main>

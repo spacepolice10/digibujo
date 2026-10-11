@@ -57,4 +57,22 @@
         margin-left: auto;
       }
     }
+
+    #postpone_picker {
+      display: block;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .postpone-picker--manual-date {
+      min-width: 0;
+      gap: var(--space-v-half);
+    }
+
+    .postpone-picker--date {
+      min-width: 0;
+      max-width: 100%;
+      width: 100%;
+      width: -webkit-fill-available;
+    }
   }
