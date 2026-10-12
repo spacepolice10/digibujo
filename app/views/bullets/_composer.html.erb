@@ -1,16 +1,5 @@
 <%# locals: (bullet:, preset:, autofocus: false, collection: nil, pops_on: Date.current, composer_id: nil) %>
 
-<% 
-  placeholders = [
-    "What's up?",
-    "What's on your mind?",
-    "Don't forget to...",
-    "Record your last idea!",
-    "What's happening?",
-    "Any news?"
-  ]
-%>
-
 <div
 id="bullet_composer"
   class="composer"
@@ -46,7 +35,7 @@ id="bullet_composer"
       <%= fr.rich_text_area :body,
             preset: preset,
             autofocus: autofocus,
-            placeholder: placeholders.sample,
+            placeholder: "What's on your mind?",
             class: "hotkey-hint lexxy-editor--empty",
             data: {
               controller: "hotkey",
@@ -56,7 +45,7 @@ id="bullet_composer"
             } %>
     </span>
 
-    <%= fr.button class: "composer--control composer--submit-button", aria: { label: "Save bullet" } do %>
+    <%= fr.button class: "composer--control composer--submit-button", aria: { label: "Save bullet" }, data: { action: "pointerdown->composer#submit" } do %>
       <%= icon("arrow-up") %>
     <% end %>
   <% end %>
@@ -64,9 +53,7 @@ id="bullet_composer"
   <template data-composer-target="pendingTextTemplate">
     <turbo-frame id="bullet_client_CLIENT_ID" class="bullet bullet--pending" data-bullet-done="false">
       <span class="bullet--marker" aria-hidden="true">
-        <span style="display: flex;">
-          <%= icon("circle", class: "bullet--marker-icon") %>
-        </span>
+        <%= icon("circle", class: "bullet--marker-icon") %>
       </span>
       <div class="bullet--content">
         <div class="bullet--body">
@@ -79,9 +66,7 @@ id="bullet_composer"
   <template data-composer-attachment-target="pendingFileTemplate">
     <turbo-frame id="bullet_client_CLIENT_ID" class="bullet bullet--pending" data-bullet-done="false">
       <span class="bullet--marker" aria-hidden="true">
-        <span style="display: flex;">
-          <%= icon("circle", class: "bullet--marker-icon") %>
-        </span>
+        <%= icon("circle", class: "bullet--marker-icon") %>
       </span>
       <div class="bullet--content">
         <div class="bullet--body">

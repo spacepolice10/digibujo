@@ -25,11 +25,8 @@
         </div>
       <% end %>
 
-      <% if @filter.completed? %>
-        <%= render "bullets/completed_list", bullets: @bullets %>
-      <% else %>
-        <%= render "bullets/timeline_sections", bullets: @bullets, timeline: @timeline %>
-      <% end %>
+      <%= render "bullets/timeline_sections", bullets: @bullets, timeline: @timeline,
+          ensure_current_date: @filter.includes_date?(Date.current) %>
 
       <% if @bullets.empty? && !@more_bullets %>
         <% if @filter.completed? %>

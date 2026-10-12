@@ -120,8 +120,8 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     get bullets_path(collection: collection.name)
 
     assert_response :success
-    assert_select 'section#timeline_section_current_date'
-    assert_select 'section#timeline_section_current_date .bullet', count: 0
+    assert_select 'div#timeline_section_current_date'
+    assert_select 'div#timeline_section_current_date .bullet', count: 0
   end
 
   test 'filtered feed has no collection management header' do

@@ -17,7 +17,7 @@ class Bullet::FilterTest < ActiveSupport::TestCase
     due = create_bullet!(@user, body: 'Due', pops_on: Date.current)
     later = create_bullet!(@user, body: 'Later', pops_on: Date.current + 1)
 
-    ids = filter.filtered(@user.bullets.not_done).pluck(:id)
+    ids = filter.filtered(@user.bullets).pluck(:id)
     assert_includes ids, due.id
     assert_not_includes ids, later.id
   end
@@ -30,7 +30,7 @@ class Bullet::FilterTest < ActiveSupport::TestCase
     due = create_bullet!(@user, body: 'Due', pops_on: Date.current)
     later = create_bullet!(@user, body: 'Later', pops_on: Date.current + 1)
 
-    ids = filter.filtered(@user.bullets.not_done).pluck(:id)
+    ids = filter.filtered(@user.bullets).pluck(:id)
     assert_not_includes ids, due.id
     assert_includes ids, later.id
   end
@@ -41,7 +41,7 @@ class Bullet::FilterTest < ActiveSupport::TestCase
     plain = create_bullet!(@user, body: 'Plain', pops_on: Date.current)
 
     filter = Bullet::Filter.from_params({ collection: 'loose notes' }, user: @user)
-    ids = filter.filtered(@user.bullets.not_done).pluck(:id)
+    ids = filter.filtered(@user.bullets).pluck(:id)
 
     assert_equal collection, filter.collection
     assert_includes ids, tagged.id
@@ -70,12 +70,24 @@ class Bullet::FilterTest < ActiveSupport::TestCase
     assert filter.empty?
   end
 
+  test 'includes_date only when active date range covers it' do
+    today = Date.current
+
+    assert Bullet::Filter.from_params({}, user: @user).includes_date?(today)
+    assert_not Bullet::Filter.from_params({ from: (today + 1).iso8601 }, user: @user).includes_date?(today)
+    assert_not Bullet::Filter.from_params({ to: (today - 1).iso8601 }, user: @user).includes_date?(today)
+    assert_not Bullet::Filter.from_params({ completed: true }, user: @user).includes_date?(today)
+  end
+
   test 'completed flag ignores the default due-date window' do
     filter = Bullet::Filter.from_params({ completed: 'true' }, user: @user)
     future_done = create_bullet!(@user, body: 'Future done', pops_on: Date.current + 5)
     future_done.complete!
+    active = create_bullet!(@user, body: 'Active')
 
-    assert_includes filter.filtered(@user.bullets.done).map(&:id), future_done.id
+    ids = filter.filtered(@user.bullets).map(&:id)
+    assert_includes ids, future_done.id
+    assert_not_includes ids, active.id
   end
 
   test 'inverted date range raises' do

@@ -26,12 +26,8 @@
     for="<%= dom_id(bullet, :select_checkbox) %>"
     aria-label="Select bullet"
   >
-    <span aria-hidden="true" style="display: flex;">
-      <%= icon(bullet.marker_icon.to_s.dasherize, class: "bullet--marker-icon") %>
-      <span class="bullet--marker-select-indicator" aria-hidden="true"></span>
-    </span>
+    <%= icon(bullet.marker_icon.to_s.dasherize, class: "bullet--marker-icon") %>
   </label>
-
 
   <div class="bullet--body">
     <% if bullet.file.attached? %>

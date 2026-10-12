@@ -38,7 +38,6 @@ export default class extends Controller {
     const id = clientId()
     this.#insertFilePending(id, file, container)
     body.set("bullet[client_id]", id)
-    this.dispatch("initiate-submit", { bubbles: true })
 
     try {
       const signedId = await this.#directUpload(file, uploadLink)

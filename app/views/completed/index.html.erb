@@ -2,12 +2,7 @@
 
 <%= render "shared/back_tabbar" %>
 
-<main data-size="sm">
-  <header>
-    <h1>Completed</h1>
-    <p>Those will be automatically removed after 30 days.</p>
-  </header>
-  <div class="timeline--window">
+<main class="timeline--window" data-size="sm">
     <%= turbo_frame_tag "completed_timeline",
       class: "utilities--contents",
       src: bullets_path(completed: true) do %>
@@ -16,5 +11,4 @@
         <span class="utilities--sr-only">Loading completed</span>
       </div>
     <% end %>
-  </div>
 </main>

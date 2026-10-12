@@ -68,8 +68,8 @@
 
   :is(button, a, :where(.button))[data-intent="secondary"],
   [role="button"][data-intent="secondary"] {
-    --button-gradient-start: rgb(255 255 255 / 5%);
-    --button-gradient-end: rgb(0 0 0 / 3%);
+    --button-gradient-starts: rgb(255 255 255 / 5%);
+    --button-gradient-ends: rgb(0 0 0 / 3%);
     --button-bg: var(--color-2);
     --button-fg: var(--color-invert-2);
     --button-hovered-bg: var(--color-3);
@@ -122,8 +122,6 @@
   :is(button, a, :where(.button))[data-intent],
   [role="button"] {
     background-color: var(--button-bg);
-
-    border-color: var(--button-bg);
     color: var(--button-fg);
   }
 

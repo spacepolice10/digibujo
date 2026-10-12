@@ -22,7 +22,6 @@ export default class extends Controller {
 
     this.#insertTextPending(id, container)
     body.set("bullet[client_id]", id)
-    this.dispatch("initiate-submit", { bubbles: true })
 
     this.restore()
 
@@ -39,7 +38,7 @@ export default class extends Controller {
     event.stopImmediatePropagation()
     const metaReturn = event.key == "Enter" && (event.metaKey || event.ctrlKey)
     const justReturn = event.keyCode == 13 && !event.shiftKey && !event.isComposing
-    if (!this.#coarsePointer && (metaReturn || justReturn)) {
+    if (metaReturn || justReturn) {
       event.preventDefault()
       this.submit(event)
     }
@@ -48,7 +47,6 @@ export default class extends Controller {
   restore() {
     this.editorTarget.value = ""
     this.editorTarget.focus()
-    if (this.#coarsePointer) return
   }
 
   #insertTextPending(id, container) {

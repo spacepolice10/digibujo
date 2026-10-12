@@ -1,3 +1,5 @@
+import { scrollToBottom } from "helpers/scroll_helpers"
+
 export function clientId() {
   if (globalThis.crypto?.randomUUID) return crypto.randomUUID()
 
@@ -47,4 +49,6 @@ export function insertPending(template, container, id, fill) {
   frame.id = `bullet_client_${id}`
   fill(node)
   container.append(node)
+  const scroller = container.closest(".timeline--scroller")
+  if (scroller) scrollToBottom(scroller)
 }

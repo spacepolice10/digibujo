@@ -35,11 +35,10 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'turbo-frame#completed_timeline', minimum: 1
   end
 
-  test 'index with completed shows done newest-first as flat list' do
-    old_done = create_bullet!(@user, body: 'Old done')
+  test 'index with completed groups done bullets by scheduled date' do
+    old_done = create_bullet!(@user, body: 'Old done', pops_on: Date.current - 1)
     old_done.complete!
-    old_done.update!(done_at: 3.days.ago)
-    fresh_done = create_bullet!(@user, body: 'Fresh done')
+    fresh_done = create_bullet!(@user, body: 'Fresh done', pops_on: Date.current)
     fresh_done.complete!
     create_bullet!(@user, body: 'Not done')
 
@@ -47,9 +46,10 @@ class BulletsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_equal 'Completed', @controller.instance_variable_get(:@filter).name
-    assert_operator response.body.index('Fresh done'), :<, response.body.index('Old done')
+    assert_operator response.body.index('Old done'), :<, response.body.index('Fresh done')
     assert_no_match 'Not done', response.body
-    assert_select '.timeline--section', count: 0
+    assert_select '#timeline_section_yesterday .bullet', text: /Old done/
+    assert_select '#timeline_section_current_date .bullet', text: /Fresh done/
     assert_select '[data-timeline-scroll-path-value=?]', bullets_path(completed: true)
   end
 

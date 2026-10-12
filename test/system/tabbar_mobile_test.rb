@@ -19,17 +19,15 @@ class TabbarMobileSystemTest < ApplicationSystemTestCase
 
     page.execute_script("document.querySelector('lexxy-editor .lexxy-editor__content').focus()")
     assert_selector '.composer--dock:focus-within'
-    assert_no_selector '.tabbar--navigation', visible: true
+    wait_for_tabbar_offscreen
 
     focused = layout_metrics
-    assert_equal 'hidden', focused['visibility']
     assert_equal 'none', focused['pointerEvents']
     assert_in_delta before['bottomInset'], focused['dockGap'], 2
     assert_operator focused['tabbarTop'], :>=, focused['viewportHeight'] - 1
 
     page.execute_script("document.activeElement.blur()")
-    assert_selector '.tabbar--navigation', visible: true
-    assert_equal 'visible', layout_metrics['visibility']
+    wait_for_tabbar_onscreen
   end
 
   test 'a larger PWA safe area moves the tabbar and composer by the same amount' do
@@ -41,11 +39,53 @@ class TabbarMobileSystemTest < ApplicationSystemTestCase
 
     page.execute_script("document.querySelector('lexxy-editor .lexxy-editor__content').focus()")
     assert_selector '.composer--dock:focus-within'
-    assert_no_selector '.tabbar--navigation', visible: true
+    wait_for_tabbar_offscreen
 
     focused = layout_metrics
-    assert_equal 'hidden', focused['visibility']
+    assert_equal 'none', focused['pointerEvents']
     assert_in_delta 34, focused['dockGap'], 1
+  end
+
+  test 'touching submit preserves editor focus until click' do
+    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
+    editor.send_keys('Touch sequence')
+    page.execute_script(<<~JS)
+      window.composerTouchEvents = []
+      for (const type of ['pointerdown', 'touchstart', 'focusout', 'pointerup', 'touchend', 'click', 'submit']) {
+        document.addEventListener(type, (event) => {
+          if (!event.target.closest('#bullet_composer')) return
+          const button = document.querySelector('#bullet_composer .composer--submit-button')
+          window.composerTouchEvents.push({
+            type,
+            target: event.target.tagName,
+            focused: document.activeElement?.className,
+            top: button.getBoundingClientRect().top,
+            bottom: button.getBoundingClientRect().bottom
+          })
+        }, true)
+      }
+    JS
+
+    rect = page.evaluate_script(<<~JS)
+      (() => {
+        const rect = document.querySelector('#bullet_composer .composer--submit-button').getBoundingClientRect()
+        return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
+      })()
+    JS
+    browser = page.driver.browser
+    browser.execute_cdp('Input.dispatchTouchEvent', type: 'touchStart', touchPoints: [{ x: rect['x'], y: rect['y'] }])
+    sleep 0.15
+    browser.execute_cdp('Input.dispatchTouchEvent', type: 'touchEnd', touchPoints: [])
+
+    assert_selector '#timeline .bullet', text: 'Touch sequence'
+    events = page.evaluate_script('window.composerTouchEvents')
+    click = events.index { |event| event['type'] == 'click' }
+    assert click
+    assert_nil events[0...click].find { |event| event['type'] == 'focusout' }
+    assert events.any? { |event| event['type'] == 'submit' }
+    start = events.find { |event| event['type'] == 'touchstart' }
+    ending = events.find { |event| event['type'] == 'touchend' }
+    assert_in_delta start['top'], ending['top'], 10
   end
 
   test 'ordinary pages keep a small scroll buffer above the floating tabbar' do
@@ -82,6 +122,23 @@ class TabbarMobileSystemTest < ApplicationSystemTestCase
 
   private
 
+  def wait_for_tabbar_offscreen
+    deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + Capybara.default_max_wait_time
+    until layout_metrics['tabbarTop'] >= layout_metrics['viewportHeight'] - 1
+      flunk 'tabbar did not move offscreen' if Process.clock_gettime(Process::CLOCK_MONOTONIC) >= deadline
+      sleep 0.05
+    end
+  end
+
+  def wait_for_tabbar_onscreen
+    deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + Capybara.default_max_wait_time
+    until layout_metrics['tabbarTop'] < layout_metrics['viewportHeight'] - 1
+      flunk 'tabbar did not return onscreen' if Process.clock_gettime(Process::CLOCK_MONOTONIC) >= deadline
+      sleep 0.05
+    end
+    assert_equal 'auto', layout_metrics['pointerEvents']
+  end
+
   def layout_metrics
     page.evaluate_script(<<~JS)
       (() => {
@@ -96,7 +153,6 @@ class TabbarMobileSystemTest < ApplicationSystemTestCase
           tabbarHeight: rect.height,
           viewportHeight: innerHeight,
           dockGap: parseFloat(getComputedStyle(dock).marginBottom),
-          visibility: style.visibility,
           pointerEvents: style.pointerEvents
         }
       })()

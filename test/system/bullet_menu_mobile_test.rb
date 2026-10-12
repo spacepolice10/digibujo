@@ -36,6 +36,46 @@ class BulletMenuMobileSystemTest < ApplicationSystemTestCase
     assert_selector '.bullet-menu', visible: true
   end
 
+  test 'selecting a partly visible bullet does not move the timeline' do
+    18.times { |i| create_bullet!(@user, body: "Older line #{i}", created_at: (18 - i).minutes.ago) }
+    visit bullets_path
+    page.driver.browser.execute_cdp('Emulation.setTouchEmulationEnabled', enabled: true)
+
+    point = page.evaluate_script(<<~JS)
+      (() => {
+        const scroller = document.querySelector('.timeline--scroller')
+        scroller.scrollTop = 35
+        const row = [...scroller.querySelectorAll('.bullet')].find((row) => {
+          const rect = row.getBoundingClientRect()
+          const top = scroller.getBoundingClientRect().top
+          return rect.top < top + 60 && rect.bottom > top + 10
+        })
+        if (!row) return null
+        const rect = row.querySelector('.bullet--select-checkbox').getBoundingClientRect()
+        window.selectionScrollBefore = scroller.scrollTop
+        window.selectionScrollEvents = []
+        scroller.addEventListener('scroll', () => window.selectionScrollEvents.push(scroller.scrollTop))
+        return { x: rect.left + rect.width / 2, y: Math.max(rect.top + rect.height / 2, scroller.getBoundingClientRect().top + 15) }
+      })()
+    JS
+    assert point
+
+    browser = page.driver.browser
+    browser.execute_cdp('Input.dispatchTouchEvent', type: 'touchStart', touchPoints: [{ x: point['x'], y: point['y'] }])
+    browser.execute_cdp('Input.dispatchTouchEvent', type: 'touchEnd', touchPoints: [])
+
+    assert_selector '[data-bullet-menu-target=checkbox]:checked', visible: :all
+    result = page.evaluate_script(<<~JS)
+      ({ before: window.selectionScrollBefore,
+         after: document.querySelector('.timeline--scroller').scrollTop,
+         events: window.selectionScrollEvents,
+         menuFocused: document.activeElement === document.querySelector('.bullet-menu') })
+    JS
+    assert result['menuFocused']
+    assert_in_delta result['before'], result['after'], 1
+    assert result['events'].all? { |position| (position - result['before']).abs <= 1 }
+  end
+
   test 'on mobile the open menu overlays without moving the page' do
     visit bullets_path
 

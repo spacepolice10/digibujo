@@ -38,10 +38,6 @@
     .bullet--body {
       background: var(--color-accent-1-subtle);
     }
-
-    .bullet--marker {
-      cursor: default;
-    }
   }
 
   .bullet--current::before {
@@ -58,7 +54,7 @@
     display: inline-flex;
     align-items: center;
     position: relative;
-    gap: var(--space-v);
+    gap: var(--space-v-half);
     width: 100%;
     box-sizing: border-box;
     padding: 0;
@@ -69,45 +65,34 @@
     padding-inline: var(--space-h-half);
     color: var(--color-invert-1);
 
-    @media (any-pointer: coarse) {
-      gap: var(--space-v-half);
-    }
-
     @media (hover: hover) {
       &:hover .bullet--body {
         background: var(--color-2);
-        border-color: color-mix(in oklch, var(--model-color-2) 45%, var(--color-invert-4));
-        box-shadow: var(--shadow-strong);
-      }
-
-      &:hover .bullet--marker {
-        cursor: pointer;
+        border-color: var(--color-2);
+        box-shadow: var(--shadow-subtle);
       }
     }
   }
 
   .bullet--marker {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-v-half);
-    flex-shrink: 0;
-    justify-content: center;
-    position: relative;
-    box-sizing: border-box;
-    border-radius: var(--radius-full);
+    display: grid;
+    place-items: center;
+    flex: none;
     width: var(--space-h);
     height: var(--space-h);
-    color: var(--color-invert-2);
-    background: var(--model-color-2-bg);
-    border: 1px solid color-mix(in oklch, var(--model-color-2) 55%, transparent);
+    cursor: pointer;
+  }
 
-    @media (any-pointer: coarse) {
-      width: 1.25rem;
-      height: 1.25rem;
+  .bullet--marker-icon {
+    scale: 0.8;
+    border-radius: var(--radius-full);
+    background: var(--background-canvas-colour);
+
+    .icon {
+      color: light-dark(oklch(0.57 0.04 241), oklch(0.72 0.045 241));
     }
   }
-  
+
   .bullet--body {
     --lexxy-color-ink: var(--color-invert-1);
     display: flex;
@@ -117,28 +102,16 @@
     box-sizing: border-box;
     align-items: center;
     gap: var(--space-v-half);
-    border: var(--border-subtle);
+    border: 1px solid var(--color-1);
     border-radius: var(--radius-base);
     padding: var(--space-v) var(--space-h);
     background: var(--color-1);
     box-shadow: var(--shadow-subtle);
     color: var(--color-invert-1);
     line-height: 1.5;
-    transition: box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease;
-
 
     & a {
       overflow-wrap: anywhere;
-    }
-  }
-
-  .bullet--marker-icon {
-    width: var(--space-h) !important;
-    height: var(--space-h) !important;
-
-    .icon {
-      width: 100%;
-      height: 100%;
     }
   }
 
@@ -188,33 +161,10 @@
   .bullet:has(input:checked) {
     .bullet--body {
       border-color: var(--model-color-2);
-      box-shadow: 0 0 0 1px var(--model-color-2), var(--shadow-strong);
+      box-shadow: 0 0 0 1px var(--model-color-2), var(--shadow-subtle);
       background: var(--model-color-2-bg);
       color: var(--color-invert-1);
       animation: bullet-select-bounce 0.18s ease-out;
     }
-
-    .bullet--marker::after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 42%;
-      height: 42%;
-      transform: translate(-50%, -50%);
-      border-radius: var(--radius-full);
-      background: var(--model-color-2);
-      pointer-events: none;
-      z-index: var(--z-dropdown);
-
-      @media (any-pointer: coarse) {
-        width: 22%;
-        height: 22%;
-      }
-    }
   }
-
-
-
-
 }

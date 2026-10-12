@@ -129,7 +129,7 @@
     min-height: var(--space-v-3);
     padding-inline: var(--space-h);
     gap: var(--space-h-half);
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-base-read);
     text-align: left;
     justify-content: start;
 
@@ -141,11 +141,5 @@
     &::after {
       margin-left: auto;
     }
-  }
-
-  .bullet-menu--clear-row {
-    display: flex;
-    justify-content: center;
-    width: 100%;
   }
 }

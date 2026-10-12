@@ -39,6 +39,10 @@ class Bullet::Filter
     !completed? && from == Date.current + 1 && to.nil? && collection.nil?
   end
 
+  def includes_date?(date)
+    !completed? && (from.nil? || from <= date) && (to.nil? || to >= date)
+  end
+
   def to_params
     {}.tap do |params|
       params[:collection] = collection.name if collection
@@ -49,6 +53,7 @@ class Bullet::Filter
   end
 
   def filtered(relation)
+    relation = completed? ? relation.done : relation.not_done
     relation = filter_by_date(relation) unless skip_default_date_window?
     relation = relation.tagged_with(collection) if collection
     relation
@@ -56,9 +61,8 @@ class Bullet::Filter
 
   private
 
-  # The completed feed is every done bullet newest-first; the undone Daylog
-  # default (due through today) must not hide future-dated completions.
-  # Explicit from/to still narrow it.
+  # Completed bullets include future-dated items unless an explicit date
+  # range narrows the feed.
   def skip_default_date_window?
     completed? && from.nil? && to.nil?
   end

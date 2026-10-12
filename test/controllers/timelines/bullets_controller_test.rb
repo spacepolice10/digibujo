@@ -16,7 +16,7 @@ module Timelines
       get bullets_path(before: cursor.id)
 
       assert_response :success
-      assert_select 'section#timeline_section_last-month .bullet', text: /Old row/
+      assert_select 'div#timeline_section_last-month .bullet', text: /Old row/
       assert_no_match 'Cursor row', response.body
       assert_equal old.id, @user.bullets.find_by!(pops_on: Date.current - 20).id
     end
@@ -28,18 +28,17 @@ module Timelines
       get bullets_path(before: cursor.id)
 
       assert_response :success
-      assert_select 'section#timeline_section_current_date .bullet', text: /#{earlier.name}/
+      assert_select 'div#timeline_section_current_date .bullet', text: /#{earlier.name}/
     end
 
-    test 'before mounts an empty today section so the composer keeps its target' do
+    test 'before omits an empty today section so pagination cannot duplicate the append target' do
       create_bullet!(@user, body: 'Old row', pops_on: Date.current - 20)
       cursor = create_bullet!(@user, body: 'Cursor row')
 
       get bullets_path(before: cursor.id)
 
       assert_response :success
-      assert_select 'section#timeline_section_current_date'
-      assert_select 'section#timeline_section_current_date .bullet', count: 0
+      assert_select 'div#timeline_section_current_date', count: 0
     end
 
     test 'before returns no content when nothing older exists' do
@@ -87,10 +86,9 @@ module Timelines
       assert_no_match 'Plain old', response.body
     end
 
-    test 'before with completed returns older completions as flat list' do
-      old_done = create_bullet!(@user, body: 'Old done')
+    test 'before with completed returns older bullets in date sections' do
+      old_done = create_bullet!(@user, body: 'Old done', pops_on: Date.current - 3)
       old_done.complete!
-      old_done.update!(done_at: 3.days.ago)
       cursor = create_bullet!(@user, body: 'Cursor done')
       cursor.complete!
       create_bullet!(@user, body: 'Not done')
@@ -98,10 +96,9 @@ module Timelines
       get bullets_path(before: cursor.id, completed: true)
 
       assert_response :success
-      assert_match 'Old done', response.body
+      assert_select '#timeline_section_this-week .bullet', text: /Old done/
       assert_no_match 'Cursor done', response.body
       assert_no_match 'Not done', response.body
-      assert_select '.timeline--section', count: 0
     end
   end
 end

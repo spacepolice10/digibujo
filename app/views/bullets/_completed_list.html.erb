@@ -1,6 +1,0 @@
-<%# locals: (bullets:) %>
-<%# Flat newest-first list for the completed feed (ordered by done_at desc,
-    no pops_on sections). %>
-<% bullets.each do |bullet| %>
-  <%= render "bullets/bullet", bullet: bullet %>
-<% end %>

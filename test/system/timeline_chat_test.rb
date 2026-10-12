@@ -56,9 +56,10 @@ class TimelineChatSystemTest < ApplicationSystemTestCase
     gap = page.evaluate_script(<<~JS)
       (() => {
         const scroller = document.querySelector('.timeline--scroller')
-        const pad = parseFloat(getComputedStyle(scroller).paddingBottom) || 0
+        const clearance = parseFloat(getComputedStyle(scroller).scrollPaddingBottom) || 0
         const last = [...scroller.querySelectorAll('.bullet')].pop()
-        return Math.abs((scroller.getBoundingClientRect().bottom - pad) - last.getBoundingClientRect().bottom)
+        const sectionPadding = parseFloat(getComputedStyle(last.parentElement).paddingBottom) || 0
+        return Math.abs((scroller.getBoundingClientRect().bottom - clearance - sectionPadding) - last.getBoundingClientRect().bottom)
       })()
     JS
     assert_operator gap, :<=, 2, 'expected the short list to sit on the bottom of the scroller'
@@ -80,7 +81,7 @@ class TimelineChatSystemTest < ApplicationSystemTestCase
     create_lines(70)
     visit bullets_path
 
-    editor = find('#timeline_composer lexxy-editor .lexxy-editor__content')
+    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
     editor.click
     editor.send_keys('Fresh line')
     # Default type is Text — desktop send is Cmd/Ctrl+Enter.
@@ -97,13 +98,52 @@ class TimelineChatSystemTest < ApplicationSystemTestCase
 
     scroll_to_top
 
-    editor = find('#timeline_composer lexxy-editor .lexxy-editor__content')
+    page.execute_script(<<~JS)
+      const scroller = document.querySelector('.timeline--scroller')
+      scroller.pendingScrollCalls = 0
+      const originalScrollTo = scroller.scrollTo.bind(scroller)
+      scroller.scrollTo = (...args) => {
+        scroller.pendingScrollCalls += 1
+        return originalScrollTo(...args)
+      }
+    JS
+
+    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
     editor.click
     editor.send_keys('Fresh line from above')
-    editor.send_keys([modifier_key, :enter])
+    find('#bullet_composer .composer--submit-button').click
 
-    assert_text 'Fresh line from above'
+    assert_selector '#timeline .bullet:not(.bullet--pending)', text: 'Fresh line from above'
     assert_pinned_to_bottom
+    assert_equal 1, page.evaluate_script("document.querySelector('.timeline--scroller').pendingScrollCalls")
+    gap = page.evaluate_script(<<~JS)
+      (() => {
+        const scroller = document.querySelector('.timeline--scroller')
+        const last = scroller.querySelector('.timeline--section:last-of-type > .bullet:last-child')
+        const clearance = parseFloat(getComputedStyle(scroller).scrollPaddingBottom) || 0
+        const sectionPadding = parseFloat(getComputedStyle(last.parentElement).paddingBottom) || 0
+        return (scroller.getBoundingClientRect().bottom - last.getBoundingClientRect().bottom) - clearance - sectionPadding
+      })()
+    JS
+    assert_in_delta 0, gap, 2
+  end
+
+  test 'loading an older part of today keeps one append target at the end' do
+    create_lines(PAGE + 5)
+    visit bullets_path
+
+    scroll_to_top
+    wait_for_stable_bullet_count(minimum: PAGE + 5)
+
+    assert_selector '#timeline_section_current_date', count: 1
+    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
+    editor.send_keys('Newest line')
+    find('#bullet_composer .composer--submit-button').click
+
+    assert_selector '#timeline_section_current_date > turbo-frame.bullet', count: PAGE + 6
+    assert_equal 'Newest line', page.evaluate_script(
+      "document.querySelector('#timeline_section_current_date > turbo-frame.bullet:last-child').innerText.trim()"
+    )
   end
 
   test 'older bullets are grouped under a heading for their span' do

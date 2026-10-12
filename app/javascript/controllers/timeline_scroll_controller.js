@@ -21,16 +21,10 @@ export default class extends Controller {
     // has nothing to act on.
     if (this.currentValue) return this.#openAtCurrent()
 
-    this.boundInitiateSubmit = () => this.#scrollToNewest()
-    document.addEventListener("composer:initiate-submit", this.boundInitiateSubmit)
-    document.addEventListener("composer-attachment:initiate-submit", this.boundInitiateSubmit)
-
     scrollToBottom(this.element)
   }
 
   disconnect() {
-    document.removeEventListener("composer:initiate-submit", this.boundInitiateSubmit)
-    document.removeEventListener("composer-attachment:initiate-submit", this.boundInitiateSubmit)
     this.triggerObserver?.disconnect()
   }
 
@@ -44,13 +38,6 @@ export default class extends Controller {
     const current = this.element.querySelector('[aria-current="true"]')
 
     current?.scrollIntoView({ block: "center" })
-  }
-
-  // The reader's own bullet always deserves to be seen, even if they had
-  // scrolled up before writing it. Pessimistic on purpose: scroll on submit
-  // without waiting for the turbo-stream response.
-  #scrollToNewest() {
-    scrollToBottom(this.element)
   }
 
   // IntersectionObserver only reports changes, so a trigger that stays on screen
@@ -112,8 +99,8 @@ export default class extends Controller {
   // last section then continues the one already on screen, so its rows move
   // there instead of duplicating the heading.
   #mergeBoundarySection(fragment) {
-    const incoming = [...fragment.children].filter((child) => child.matches("section[id]")).at(-1)
-    const existing = incoming && this.element.querySelector(`section[id="${incoming.id}"]`)
+    const incoming = [...fragment.children].filter((child) => child.matches(".timeline--section[id]")).at(-1)
+    const existing = incoming && this.element.querySelector(`.timeline--section[id="${incoming.id}"]`)
     if (!existing) return fragment
 
     const rows = [...incoming.children].filter((child) => !child.matches("h2"))

@@ -81,8 +81,6 @@ body:has(.tabbar--navigation) {
   }
 
   body:has(.composer--dock:focus-within) .tabbar--navigation {
-    visibility: hidden;
-    opacity: 0;
     pointer-events: none;
     transform: translate(-50%, calc(100% + var(--tabbar-bottom)));
   }
@@ -187,9 +185,7 @@ body:has(.tabbar--navigation) {
 
   /* Keep touch navigation transitions in the same motion mode. */
   .tabbar--navigation {
-    transition: transform 280ms cubic-bezier(0.32, 0.72, 0, 1),
-      opacity 280ms cubic-bezier(0.32, 0.72, 0, 1),
-      visibility 280ms;
+    transition: transform 280ms cubic-bezier(0.32, 0.72, 0, 1);
   }
 
   /* Names must be unique; classes let the pseudo-element rules below stay generic. */
