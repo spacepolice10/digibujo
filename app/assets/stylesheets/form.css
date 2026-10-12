@@ -158,3 +158,61 @@
     }
   }
 }
+
+@layer components {
+  .settings-form {
+    --surface-shadow: var(--shadow-medium);
+    border-radius: var(--radius-strong);
+  }
+
+  .settings-form > header {
+    padding: var(--space-v-2) var(--space-h-2);
+  }
+
+  .settings-form > header h2 {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-strong);
+  }
+
+  .settings-form > header p {
+    margin-block-start: var(--space-v-half);
+    color: var(--color-invert-3);
+    font-size: var(--font-size-base-read);
+  }
+
+  .settings-form > main {
+    padding: var(--space-v-2) var(--space-h-2) var(--space-v-3);
+  }
+
+  .settings-form .form {
+    gap: var(--space-v-2);
+  }
+
+  .settings-form .form > fieldset {
+    min-width: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .settings-form .form > fieldset > legend {
+    padding: 0;
+  }
+
+  .settings-form .form > fieldset [role="radiogroup"] {
+    gap: var(--space-v-half);
+  }
+
+  .settings-form .form > .form--errors {
+    margin-block-start: calc(-1 * var(--space-v));
+  }
+
+  .settings-form .form > button[type="submit"] {
+    margin-block-start: var(--space-v-half);
+  }
+
+  @media (max-width: 480px) {
+    .settings-form > :is(header, main) {
+      padding-inline: var(--space-h);
+    }
+  }
+}

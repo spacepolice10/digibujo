@@ -53,7 +53,7 @@ Rails.application.routes.draw do
 
   resource :user, only: :show
 
-  resources :access_codes, only: %i[index create destroy]
+  resources :access_codes, only: %i[index new create destroy]
   resources :webhooks, only: %i[index new create destroy]
   post 'webhooks/:code', to: 'webhook_intakes#create', as: :webhook_intake, constraints: { code: /wh_[A-Za-z0-9]+/ }
 

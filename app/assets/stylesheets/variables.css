@@ -57,6 +57,8 @@
                 /* borders and elevation */
                 --shadow-subtle: 0 0 0 1px light-dark(oklch(0% 0 0 / 0.04),
                                 oklch(100% 0 0 / 0.05));
+                --shadow-medium: 0 3px 12px light-dark(oklch(0% 0 0 / 0.10),
+                                oklch(0% 0 0 / 0.28));
                 --shadow-strong: 0 6px 18px light-dark(oklch(0% 0 0 / 0.18),
                                 oklch(0% 0 0 / 0.42));
 

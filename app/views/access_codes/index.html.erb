@@ -1,4 +1,5 @@
 <% content_for(:title, "Access codes") %>
+<% content_for(:head) { tag.meta(name: "turbo-cache-control", content: "no-cache") } if @created_access_code.present? %>
 
 <%= render "shared/back_tabbar" %>
 
@@ -7,16 +8,38 @@
     <h1>Access codes</h1>
 
     <p>
-      Long-lived codes for CLI and integrations. Create them via the API; revoke
-      any code you no longer trust here.
+      Give your CLI or integrations access to Dotted. Revoke any code you no longer trust here.
     </p>
   </header>
+
+  <% if @created_access_code.present? %>
+    <article class="card card--warning" data-elevation="2" role="status">
+      <header>
+        <span aria-hidden="true">
+          <%= icon("code") %>
+        </span>
+
+        <strong>Access code is ready</strong>
+      </header>
+
+      <main>
+        <p>Copy this code now. You won’t see it again.</p>
+        <code><%= @created_access_code %></code>
+      </main>
+    </article>
+  <% end %>
 
   <% if @access_codes.any? %>
     <section id="access_codes" class="card-list">
       <%= render partial: "access_codes/access_code", collection: @access_codes, as: :access_code %>
     </section>
   <% else %>
-    <%= render "shared/empty_state", icon_name: "code", name: "No access codes", description: "Codes you create through the API will appear here." %>
+    <%= render "shared/empty_state", icon_name: "code", name: "No access codes yet", description: "Create a code to connect a CLI or integration to Dotted." %>
+  <% end %>
+
+  <%= link_to new_access_code_path,
+      data: { intent: "primary", radius: "full", size: "lg" },
+      aria: { label: "Create Access Code" }, class: "utilities--mx-auto" do %>
+    <%= icon("plus") %> New access code
   <% end %>
 </main>

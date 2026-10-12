@@ -83,3 +83,46 @@
     }
   }
 }
+
+@layer components {
+  .card--warning {
+    --surface-colour: var(--model-color-4-bg);
+    --surface-border: 1px solid color-mix(in oklch, var(--model-color-4) 55%, var(--color-invert-3));
+    --surface-shadow: 0 0 0 1px color-mix(in oklch, var(--model-color-4) 18%, transparent), var(--shadow-medium);
+
+    border-radius: var(--radius-strong);
+  }
+
+  .card--warning > header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-h-half);
+  }
+
+  .card--warning > header > span {
+    display: inline-grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius-full);
+    background: var(--color-1);
+  }
+
+  .card--warning > header > strong {
+    font-weight: var(--font-weight-strong);
+  }
+
+  .card--warning > main {
+    display: grid;
+    gap: var(--space-v);
+  }
+
+  .card--warning code {
+    display: block;
+    padding: var(--space-v) var(--space-h-half);
+    border: var(--border-subtle);
+    border-radius: var(--radius-subtle);
+    background: var(--color-1);
+    user-select: all;
+  }
+}

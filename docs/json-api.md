@@ -1,9 +1,10 @@
 # JSON routes for a future CLI
 
 Send `Accept: application/json` (or use the `.json` route suffix). Authenticate
-with `Authorization: Bearer <access-code>`; create an access code through the
-JSON email-code sign-in flow and `POST /access_codes.json`. Browser sessions
-also work. JSON write requests from a CLI do not need a CSRF token.
+with `Authorization: Bearer <access-code>`; create an access code on the Access
+codes web page, or through the JSON email-code sign-in flow and
+`POST /access_codes.json`. Browser sessions also work. JSON write requests
+from a CLI do not need a CSRF token.
 
 ## Available operations
 
