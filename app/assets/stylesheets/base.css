@@ -198,6 +198,8 @@
   h5,
   h6 {
     line-height: var(--line-height-heading);
+    font-family: var(--font-family-sans);
+    font-weight: var(--font-weight-medium);
     text-wrap: balance;
     overflow-wrap: break-word;
     color: var(--color-invert-1);
@@ -211,8 +213,6 @@
 
   h1 {
     flex-shrink: 0;
-    line-height: var(--line-height-heading);
-    font-family: var(--font-family-sans);
     font-size: var(--font-size-2xl);
     font-weight: var(--font-weight-strong);
     color: var(--color-invert-1);

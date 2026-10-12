@@ -3,12 +3,12 @@
   id="<%= dom_id(webhook) %>"
   data-elevation="2"
 >
-  <header class="utilities--padding-x-1 utilities--padding-y-1">
+  <header>
       <strong><%= webhook.name %></strong>
       <code><%= webhook.code_prefix %>…</code>
 
   </header>
-  <footer class="utilities--padding-y-1 ">
+  <footer>
     <%= button_to webhook_path(webhook),
       method: :delete,
       class: "utilities--mx-auto",

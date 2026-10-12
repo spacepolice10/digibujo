@@ -66,12 +66,12 @@
                 --z-dropdown: 3;
                 --z-toasts: 4;
 
-                /* font families — JetBrains Mono everywhere for now */
+                /* font families */
                 --font-family-sans: "Geologica", ui-sans-serif, system-ui, sans-serif;
                 --font-family-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
                 --line-height-paragraph: 1.25;
-                --line-height-heading: 1.5;
+                --line-height-heading: 1.25;
 
                 --font-size-2xl: clamp(2.2rem, 4vw + 1rem, 3.4rem);
                 --font-size-xl: clamp(1rem, 1.4vw + 0.24rem, 2rem);

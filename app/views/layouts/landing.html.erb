@@ -38,20 +38,27 @@
 
         <nav aria-label="Product">
           <a role="button" data-intent="secondary" data-size="lg" href="<%= features_path %>">Features</a>
-          <a role="button" data-intent="secondary" data-size="lg" href="<%= agents_path %>">Agents</a>
-          <a role="button" data-intent="secondary" data-size="lg" href="<%= once_path %>">
-            <span class="icon-wrap once-mark"><i class="icon" aria-hidden="true"></i></span>
-            ONCE
-          </a>
-          <a role="button" data-intent="secondary" data-size="lg" href="<%= support_path %>">Support</a>
+          <a role="button" data-intent="secondary" data-size="lg" href="<%= terminal_path %>">CLI &amp; Agents</a>
           <a role="button" class="landing-sign-in" data-intent="secondary" data-size="lg" href="<%= new_authentication_path %>">Sign in</a>
-          <a role="button" data-intent="secondary" data-size="lg" href="https://github.com/spacepolice10/digibujo">
-            <%= icon("github") %> GitHub
-          </a>
         </nav>
       </div>
     </header>
 
     <%= yield %>
+
+    <footer>
+      <p>Don’t forget to have fun<span aria-hidden="true">!</span></p>
+
+      <nav aria-label="Footer">
+        <a role="button" data-intent="secondary" data-size="lg" href="<%= support_path %>">Support</a>
+        <a role="button" data-intent="secondary" data-size="lg" href="<%= once_path %>">
+          <%= icon("once", style: "color: oklch(0.55 0.19 258); width: 2.6ch; height: 2.6ch") %> ONCE
+        </a>
+        <a role="button" data-intent="secondary" data-size="lg" href="https://github.com/spacepolice10/digibujo">
+          <%= icon("github") %> GitHub
+        </a>
+        <a role="button" data-intent="secondary" data-size="lg" href="<%= faqs_path %>">FAQs</a>
+      </nav>
+    </footer>
   </body>
 </html>

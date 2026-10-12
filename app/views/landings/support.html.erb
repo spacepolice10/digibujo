@@ -10,19 +10,18 @@
         Questions, bugs, or feedback about Dotted — email the maintainer or open
         an issue on GitHub.
       </p>
-      <ul class="support-links">
+      <ul data-layout="column" data-divider="single">
         <li>
           <%= mail_to "naysdemo@zohomail.com" do %>
-            <%= icon("mail") %><span>naysdemo@zohomail.com</span>
+            <%= icon("mail", style: "color: var(--model-color-2)") %><p>naysdemo@zohomail.com</p>
           <% end %>
         </li>
         <li>
           <%= link_to "https://github.com/spacepolice10/digibujo" do %>
-            <%= icon("github") %><span>github.com/spacepolice10/digibujo</span>
+            <%= icon("github", style: "color: var(--model-color-7)") %><p>github.com/spacepolice10/digibujo</p>
           <% end %>
         </li>
       </ul>
     </main>
   </article>
 </main>
-

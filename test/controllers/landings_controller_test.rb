@@ -18,10 +18,10 @@ class LandingsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'link[rel="stylesheet"][href*="domain/search"]', count: 0
     assert_select 'script', count: 0
     assert_select 'body > header.landing-header .landing-menu-toggle[type="checkbox"]', count: 1
-    assert_select 'header.landing-header nav[aria-label="Product"] a', count: 6
-    assert_select 'header.landing-header nav[aria-label="Product"] a[href=?]', agents_path, text: 'Agents'
-    assert_select 'header.landing-header nav[aria-label="Product"] a[href=?]', once_path, text: /ONCE/
-    assert_select 'header.landing-header nav[aria-label="Product"] a[href=?]', support_path, text: 'Support'
+    assert_select 'header.landing-header nav[aria-label="Product"] a', count: 3
+    assert_select 'header.landing-header nav[aria-label="Product"] a[href=?]', terminal_path, text: 'CLI & Agents'
+    assert_select 'header.landing-header nav[aria-label="Product"] a[href=?]', once_path, count: 0
+    assert_select 'header.landing-header nav[aria-label="Product"] a[href=?]', support_path, count: 0
 
     csp = response.headers.fetch('Content-Security-Policy')
     assert_includes csp, "default-src 'none'"
@@ -48,16 +48,27 @@ class LandingsControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.headers.fetch('Content-Security-Policy'), "default-src 'none'"
   end
 
-  test 'agents page is public and previews the CLI' do
-    get agents_path
+  test 'terminal page is public and previews CLI and agent workflows' do
+    get terminal_path
 
     assert_response :success
-    assert_select 'title', text: 'Agents — Dotted'
-    assert_select 'main[data-page="agents"] > header.landing-heading h1', text: 'Agents'
-    assert_select 'main[data-page="agents"] > .empty-state h2', text: 'Coming soon'
-    assert_select 'main[data-page="agents"] > .empty-state p', text: /CLI/
-    assert_select 'link[rel="stylesheet"][href*="empty-state"]', count: 1
+    assert_select 'title', text: 'CLI & Agents — Dotted'
+    assert_select 'main[data-page="terminal"][data-size="md"]', count: 1
+    assert_select 'section.terminal-card h1', text: 'Your journal, from the terminal.'
+    assert_select 'section.terminal-card .terminal-card-kicker', count: 0
+    assert_select '.terminal-session[aria-label="Illustrative agent session"]', count: 1
+    assert_select '.terminal-session', text: /codex/
+    assert_select '.terminal-session .terminal-response', text: /Added “Review project notes” to your daylog.*Tomorrow you have/
+    assert_select '.terminal-card-intro', text: /Use the Dotted CLI/
+    assert_select '.terminal-capabilities li', count: 5
+    assert_select '.terminal-capabilities a[href=?]', 'https://github.com/spacepolice10/digibujo'
     assert_includes response.headers.fetch('Content-Security-Policy'), "default-src 'none'"
+  end
+
+  test 'old agents URL redirects to terminal page' do
+    get '/agents'
+
+    assert_redirected_to terminal_path
   end
 
   test 'support page uses the landing layout and security policy' do
@@ -75,7 +86,7 @@ class LandingsControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.headers.fetch('Content-Security-Policy'), "default-src 'none'"
   end
 
-  test 'once guide is public and uses the landing layout' do
+  test 'once page links to installation resources and uses the landing layout' do
     get once_path
 
     assert_response :success
@@ -83,8 +94,10 @@ class LandingsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'body > header.landing-header', count: 1
     assert_select 'main[data-page="once"][data-size="md"]', count: 1
     assert_select 'section.once-card h1', text: /Dotted.*ONCE-ready/, count: 1
-    assert_select 'article[data-elevation="1"]', count: 3
-    assert_select 'pre code', text: /once deploy ghcr\.io\/spacepolice10\/digibujo:latest/
+    assert_select 'section.once-card ul[data-layout="column"][data-divider="single"] li', count: 2
+    assert_select 'section.once-card a[href=?]', 'https://once.com/', text: 'Explore ONCE'
+    assert_select 'section.once-card a[href=?]', 'https://github.com/spacepolice10/digibujo#install-with-once', text: 'Read Dotted installation instructions'
+    assert_select 'pre code', count: 0
     assert_select 'link[rel="stylesheet"][href*="landing"]', count: 1
     assert_select 'script', count: 0
   end
@@ -103,10 +116,38 @@ class LandingsControllerTest < ActionDispatch::IntegrationTest
     get landing_path
     landing_header = css_select('header.landing-header').first.to_html
 
-    [features_path, agents_path, support_path, once_path].each do |path|
+    [features_path, terminal_path, support_path, once_path].each do |path|
       get path
       assert_response :success
       assert_equal landing_header, css_select('header.landing-header').first.to_html
     end
+  end
+
+  test 'all landing pages share the footer and its links' do
+    [landing_path, features_path, terminal_path, support_path, once_path, faqs_path].each do |path|
+      get path
+
+      assert_response :success
+      assert_select 'body > footer', count: 1
+      assert_select 'body > footer > p', text: 'Don’t forget to have fun!'
+      assert_select 'body > footer > nav[aria-label="Footer"] a', count: 4
+      assert_select 'body > footer > nav a[role="button"][data-intent="secondary"][data-size="lg"]', count: 4
+      assert_select 'body > footer a[href=?]', support_path, text: 'Support'
+      assert_select 'body > footer a[href=?]', once_path, text: 'ONCE' do
+        assert_select '.icon-wrap .icon[aria-hidden="true"]', count: 1
+      end
+      assert_select 'body > footer a[href=?]', 'https://github.com/spacepolice10/digibujo', text: 'GitHub' do
+        assert_select '.icon', count: 1
+      end
+      assert_select 'body > footer a[href=?]', faqs_path, text: 'FAQs'
+    end
+  end
+
+  test 'faqs placeholder is available without authentication' do
+    get faqs_path
+
+    assert_response :success
+    assert_select 'main[data-page="faqs"] h1', text: 'FAQs'
+    assert_select 'main[data-page="faqs"] .empty-state h2', text: 'Coming soon'
   end
 end

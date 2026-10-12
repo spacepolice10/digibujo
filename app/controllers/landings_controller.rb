@@ -20,9 +20,11 @@ class LandingsController < ApplicationController
 
   def features; end
 
-  def agents; end
+  def terminal; end
 
   def support; end
+
+  def faqs; end
 
   def once; end
 end

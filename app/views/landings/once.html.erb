@@ -4,81 +4,27 @@
   <section class="once-card" aria-labelledby="once-heading">
     <h1 id="once-heading">Dotted <small>ONCE-ready</small></h1>
     <h2>Put it on your own server, without a subscription.</h2>
+
     <p>
       ONCE installs Docker apps with one command. It handles HTTPS, persistent
       storage, updates, and backups. You keep the machine and the data. Dotted
-      is source-available under the <a href="https://osaasy.dev/">O’Saasy license</a>.
+      is source-available under the
+      <a href="https://osaasy.dev/">O’Saasy license</a>.
     </p>
-    <p>
-      These steps use Dotted’s <a href="https://github.com/spacepolice10/digibujo#install-with-once">ONCE-ready Docker image</a>.
-    </p>
-  </section>
 
-  <section data-layout="column" aria-label="Install Dotted with ONCE">
-    <article data-elevation="1">
-      <header>
-        <h2>What you need</h2>
-        <p>A computer you control, a hostname, and an email service for sign-in codes.</p>
-      </header>
-      <main>
-        <h3 id="once-host-heading">A host</h3>
-        <section data-layout="grid" aria-labelledby="once-host-heading">
-          <figure>
-            <%= image_tag "landings/host.jpg", alt: "", width: 80, height: 80, loading: "lazy" %>
-          </figure>
-          <p>Use an ONCE-supported computer or VPS. Keep ports 80 and 443 available for web traffic.</p>
-        </section>
 
-        <h3 id="once-hostname-heading">A hostname</h3>
-        <section data-layout="grid" aria-labelledby="once-hostname-heading">
-          <figure>
-            <%= image_tag "landings/hostname.jpg", alt: "", width: 80, height: 80, loading: "lazy" %>
-          </figure>
-          <p>Point a DNS A record, such as <code>dotted.example.com</code>, to the host’s public IP address.</p>
-        </section>
+    <ul data-layout="column" data-divider="single">
+      <li>
+        <%= link_to "https://once.com/" do %>
+          <p>Explore ONCE</p>
+        <% end %>
+      </li>
 
-        <h3 id="once-smtp-heading">SMTP credentials</h3>
-        <section data-layout="grid" aria-labelledby="once-smtp-heading">
-          <figure>
-            <%= image_tag "landings/smtp.jpg", alt: "", width: 80, height: 80, loading: "lazy" %>
-          </figure>
-          <p>Dotted signs people in with emailed codes. Set up outgoing mail before anyone tries to sign in.</p>
-        </section>
-      </main>
-    </article>
-
-    <article data-elevation="1">
-      <header>
-        <h2>Installation</h2>
-        <p>Install ONCE, point DNS, then deploy the Dotted image.</p>
-      </header>
-      <main>
-        <h3>Install ONCE</h3>
-        <p>Open the host’s terminal or connect with SSH, then run:</p>
-        <pre><code>curl https://get.once.com | sh</code></pre>
-
-        <h3>Point DNS</h3>
-        <p>Create an A record for your chosen hostname. Set it to the host’s public IP address before deployment.</p>
-
-        <h3>Deploy Dotted</h3>
-        <pre><code>once deploy ghcr.io/spacepolice10/digibujo:latest --host dotted.example.com</code></pre>
-        <p>Replace the example hostname with yours, then open it when ONCE reports that the app is running.</p>
-      </main>
-    </article>
-
-    <article data-elevation="1">
-      <header>
-        <h2>After it boots</h2>
-        <p>Configure email and keep the storage volume backed up.</p>
-      </header>
-      <main>
-        <h3>Configure email</h3>
-        <p>Use ONCE’s Email Settings for your SMTP server. Dotted reads the SMTP address, port, username, password, domain, and sender address from the environment. Set <code>APP_HOST</code> to your public hostname.</p>
-
-        <h3>Sign in</h3>
-        <p>Open your Dotted hostname and request a sign-in code. Delivery needs working SMTP settings.</p>
-      </main>
-    </article>
-
+      <li>
+        <%= link_to "https://github.com/spacepolice10/digibujo#install-with-once" do %>
+          <p>Read Dotted installation instructions</p>
+        <% end %>
+      </li>
+    </ul>
   </section>
 </main>

@@ -2,7 +2,7 @@
   .card-list {
     display: flex;
     flex-direction: column;
-    gap: var(--space-v-half);
+    gap: var(--space-v);
   }
 
   article,
@@ -49,27 +49,33 @@
     &>header {
       width: 100%;
       border-block-end: var(--surface-border);
-      padding-inline: var(--space-h-half);
-      padding-block: var(--space-v-half);
+      padding-inline: var(--space-h);
+      padding-block: var(--space-v);
+
+      &>strong {
+        font-family: var(--font-family-sans);
+        font-weight: var(--font-weight-medium);
+      }
     }
 
     &>main {
       flex: 1 1 0;
       width: 100%;
-      padding-block: var(--space-v);
-      padding-inline: var(--space-h-half);
+      padding-block: var(--space-v-2);
+      padding-inline: var(--space-h);
     }
 
     &>div {
       flex: 1 1 0;
       width: 100%;
-      padding-block: var(--space-v-half);
-      padding-inline: var(--space-h-half);
+      padding-block: var(--space-v);
+      padding-inline: var(--space-h);
     }
 
     &>footer {
       display: flex;
       justify-content: flex-start;
+      padding: var(--space-v) var(--space-h);
     }
 
     & code {
