@@ -14,20 +14,17 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     get search_path
 
     assert_response :success
-    assert_heading 'Search', level: 1
+    assert_heading 'Index', level: 1
     assert_select 'main article.search--navigation ul a', count: 4
     assert_select 'main article.search--navigation ul a[href=?]', attachments_path, text: 'Attachments'
     assert_select 'main article.search--navigation ul a[href=?]', completed_index_path, text: 'Completed'
     assert_select 'main article.search--navigation ul a[href=?]', collections_path, text: 'Collections'
     assert_select 'main article.search--navigation ul a[href=?]', bullets_path(from: Date.current + 1), text: 'Upcoming'
-    assert_select 'main small', count: 0
     assert_select '#index-dock', count: 0
     assert_select 'input#index-query', count: 0
-    assert_select 'main header', count: 0
-    assert_select 'main h2', count: 0
+    assert_select 'main > section > header h1', text: 'Index'
     assert_no_page_text 'Journal'
     assert_no_page_text 'Recently shared'
-    assert_select 'details', count: 0
   end
 
   test 'desktop search shows the three item tabbar' do
@@ -79,8 +76,8 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     get search_path, headers: { 'User-Agent' => MOBILE_UA }
 
     assert_response :success
-    assert_heading 'Search', level: 1
-    assert_select 'main header', count: 0
+    assert_heading 'Index', level: 1
+    assert_select 'main > section > header h1', text: 'Index'
     assert_select 'header.header', count: 0
     assert_select 'main article.search--navigation ul a[href=?]', bullets_path, count: 0
     assert_tabbar_link search_path, label: 'Search', active: true

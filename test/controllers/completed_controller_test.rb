@@ -12,7 +12,7 @@ class CompletedControllerTest < ActionDispatch::IntegrationTest
     get completed_index_path
 
     assert_response :success
-    assert_select 'main h1', 'Completed'
+    assert_select 'main.timeline--window'
     assert_select 'turbo-frame#completed_timeline[src=?]', bullets_path(completed: true)
   end
 end

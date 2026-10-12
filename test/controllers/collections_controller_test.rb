@@ -142,7 +142,7 @@ class CollectionsControllerTest < ActionDispatch::IntegrationTest
     get collection_path(collection)
 
     assert_response :success
-    assert_select '.timeline--window > header h1', text: /inbox/
+    assert_select 'main > header nav h1', text: 'inbox'
     assert_select 'button[popovertarget="collection_actions"]'
     assert_select 'div#collection_actions[role=menu][data-controller=grid-navigation]'
     assert_select 'a.dropdown-item[href=?]', edit_collection_path(collection)

@@ -33,7 +33,7 @@ class BulletMenuFloatingCardSystemTest < ApplicationSystemTestCase
     center_offset = page.evaluate_script(<<~JS)
       (() => {
         const card = document.querySelector('.bullet-menu--card').getBoundingClientRect();
-        const button = document.querySelector('.bullet-menu--clear-row button').getBoundingClientRect();
+        const button = document.querySelector('.bullet-menu--card button[aria-label="Clear selection"]').getBoundingClientRect();
         return Math.abs((card.left + card.right - button.left - button.right) / 2);
       })()
     JS

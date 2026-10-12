@@ -17,17 +17,17 @@ class SearchSystemTest < ApplicationSystemTestCase
     assert_selector '#search_navigation'
     assert_selector 'dialog#search_picker_dialog', visible: false
     assert_no_selector 'dialog#search_picker_dialog[open]'
-    assert_no_selector '.search--result'
+    assert_no_selector 'a.combobox--item'
   end
 
   test 'activating the field stand-in opens the search dialog' do
     visit search_path
 
-    find('button.search--launch').click
+    find('#search_dock button[aria-label=Search]').click
 
     assert_current_path search_path
     assert_selector 'dialog#search_picker_dialog[open]'
-    assert_selector 'dialog#search_picker_dialog input.search--textform[name=q]'
+    assert_selector 'dialog#search_picker_dialog input[name=q]'
   end
 
   test 'typing in the dialog filters results without leaving the page' do
@@ -35,12 +35,12 @@ class SearchSystemTest < ApplicationSystemTestCase
     match = create_bullet!(@user, body: 'Buy milk today')
 
     visit search_path
-    find('button.search--launch').click
+    find('#search_dock button[aria-label=Search]').click
     find('dialog#search_picker_dialog input[name=q]').set('milk')
 
-    assert_selector "dialog#search_picker_dialog a.search--result[href='#{bullet_path(match)}'] mark.search--term",
+    assert_selector "dialog#search_picker_dialog a.combobox--item[href='#{bullet_path(match)}'] mark.search--term",
                     text: 'milk'
-    assert_no_selector "dialog#search_picker_dialog a.search--result[href='#{bullet_path(recent)}']"
+    assert_no_selector "dialog#search_picker_dialog a.combobox--item[href='#{bullet_path(recent)}']"
     assert_current_path search_path
   end
 
@@ -57,14 +57,14 @@ class SearchSystemTest < ApplicationSystemTestCase
     assert_selector 'dialog#search_picker_dialog[open]'
     find('dialog#search_picker_dialog input[name=q]').set('milk')
 
-    assert_selector "dialog#search_picker_dialog a.search--result[href='#{bullet_path(match)}'] mark.search--term",
+    assert_selector "dialog#search_picker_dialog a.combobox--item[href='#{bullet_path(match)}'] mark.search--term",
                     text: 'milk'
     assert_current_path bullets_path
   end
 
   test 'escape with an empty field closes the dialog' do
     visit search_path
-    find('button.search--launch').click
+    find('#search_dock button[aria-label=Search]').click
     assert_selector 'dialog#search_picker_dialog[open]'
 
     find('dialog#search_picker_dialog input[name=q]').send_keys(:escape)
@@ -76,16 +76,16 @@ class SearchSystemTest < ApplicationSystemTestCase
     match = create_bullet!(@user, body: 'Buy milk today')
 
     visit search_path
-    find('button.search--launch').click
+    find('#search_dock button[aria-label=Search]').click
     field = find('dialog#search_picker_dialog input[name=q]')
     field.set('milk')
-    assert_selector "dialog#search_picker_dialog a.search--result[href='#{bullet_path(match)}']"
+    assert_selector "dialog#search_picker_dialog a.combobox--item[href='#{bullet_path(match)}']"
 
     field.send_keys(:escape)
 
     assert_equal '', field.value
     assert_selector 'dialog#search_picker_dialog[open]'
-    assert_no_selector 'dialog#search_picker_dialog a.search--result'
+    assert_no_selector 'dialog#search_picker_dialog a.combobox--item'
 
     field.send_keys(:escape)
 
@@ -97,7 +97,7 @@ class SearchSystemTest < ApplicationSystemTestCase
 
     visit search_results_path(q: 'milk')
 
-    assert_selector "#search_section a.search--result[href='#{bullet_path(matching)}'] mark.search--term", text: 'milk'
+    assert_selector "#search_section a.combobox--item[href='#{bullet_path(matching)}'] mark.search--term", text: 'milk'
     assert_equal 'milk', find(@field).value
   end
 
@@ -107,7 +107,7 @@ class SearchSystemTest < ApplicationSystemTestCase
     visit search_path(q: 'milk')
 
     assert_selector '#search_navigation'
-    assert_no_selector '.search--result'
+    assert_no_selector 'a.combobox--item'
   end
 
   test 'clicking a result records a recent search' do
@@ -118,7 +118,7 @@ class SearchSystemTest < ApplicationSystemTestCase
     assert_selector 'dialog#search_picker_dialog[open]'
 
     find('dialog#search_picker_dialog input[name=q]').set('milk')
-    find("dialog#search_picker_dialog a.search--result[href='#{bullet_path(bullet)}']").click
+    find("dialog#search_picker_dialog a.combobox--item[href='#{bullet_path(bullet)}']").click
 
     assert_selector 'main.timeline--window--focus'
 
@@ -143,12 +143,12 @@ class SearchSystemTest < ApplicationSystemTestCase
 
     field = find('dialog#search_picker_dialog input[name=q]')
     field.set('milk')
-    assert_selector 'dialog#search_picker_dialog a.search--result', count: 2
+    assert_selector 'dialog#search_picker_dialog a.combobox--item', count: 2
 
     field.send_keys(:tab)
 
-    assert page.evaluate_script("!document.activeElement.closest('a.search--result')"),
-      'expected tab to skip result links to the element after the list'
+    assert page.evaluate_script("!document.activeElement.closest('a.combobox--item')"),
+           'expected tab to skip result links to the element after the list'
   end
 
   # --- typing updates the frame ---
@@ -160,8 +160,8 @@ class SearchSystemTest < ApplicationSystemTestCase
     visit search_results_path
     find(@field).set('milk')
 
-    assert_selector "#search_section a.search--result[href='#{bullet_path(match)}'] mark.search--term", text: 'milk'
-    assert_no_selector "#search_section a.search--result[href='#{bullet_path(recent)}']"
+    assert_selector "#search_section a.combobox--item[href='#{bullet_path(match)}'] mark.search--term", text: 'milk'
+    assert_no_selector "#search_section a.combobox--item[href='#{bullet_path(recent)}']"
   end
 
   test 'the input keeps focus and caret across a frame update' do
@@ -182,12 +182,12 @@ class SearchSystemTest < ApplicationSystemTestCase
     create_bullet!(@user, body: 'Buy milk today')
 
     visit search_results_path(q: 'milk')
-    assert_selector '#search_section .search--result'
+    assert_selector '#search_section a.combobox--item'
 
     find('.search--cleanup').click
 
-    assert_selector '#search_section p', text: 'No results'
-    assert_no_selector '#search_section .search--result'
+    assert_selector '#search_section .empty-state h2', text: 'No results'
+    assert_no_selector '#search_section a.combobox--item'
   end
 
   test 'the first result is visible above the field without any scrolling' do
@@ -211,9 +211,9 @@ class SearchSystemTest < ApplicationSystemTestCase
     field = find('dialog#search_picker_dialog input[name=q]')
     field.set('milk')
 
-    first = 'dialog#search_picker_dialog li.search--result-list-list-item:nth-child(1) a.search--result'
-    second = 'dialog#search_picker_dialog li.search--result-list-list-item:nth-child(2) a.search--result'
-    assert_selector 'dialog#search_picker_dialog a.search--result', count: 2
+    first = 'dialog#search_picker_dialog ul[role=listbox] a.combobox--item:nth-of-type(1)'
+    second = 'dialog#search_picker_dialog ul[role=listbox] a.combobox--item:nth-of-type(2)'
+    assert_selector 'dialog#search_picker_dialog a.combobox--item', count: 2
     assert_equal 'true', find(first)['aria-selected']
     assert_equal 'false', find(second)['aria-selected']
 
@@ -235,6 +235,6 @@ class SearchSystemTest < ApplicationSystemTestCase
   end
 
   def first_result_top
-    page.evaluate_script("Math.round(document.querySelector('.search--result').getBoundingClientRect().top)")
+    page.evaluate_script("Math.round(document.querySelector('a.combobox--item').getBoundingClientRect().top)")
   end
 end

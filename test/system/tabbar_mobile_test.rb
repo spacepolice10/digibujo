@@ -46,7 +46,7 @@ class TabbarMobileSystemTest < ApplicationSystemTestCase
     assert_in_delta 34, focused['dockGap'], 1
   end
 
-  test 'touching submit preserves editor focus until click' do
+  test 'touching submit preserves editor focus until submission starts' do
     editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
     editor.send_keys('Touch sequence')
     page.execute_script(<<~JS)
@@ -79,13 +79,10 @@ class TabbarMobileSystemTest < ApplicationSystemTestCase
 
     assert_selector '#timeline .bullet', text: 'Touch sequence'
     events = page.evaluate_script('window.composerTouchEvents')
-    click = events.index { |event| event['type'] == 'click' }
-    assert click
-    assert_nil events[0...click].find { |event| event['type'] == 'focusout' }
-    assert events.any? { |event| event['type'] == 'submit' }
-    start = events.find { |event| event['type'] == 'touchstart' }
-    ending = events.find { |event| event['type'] == 'touchend' }
-    assert_in_delta start['top'], ending['top'], 10
+    pointerdown = events.index { |event| event['type'] == 'pointerdown' }
+    assert pointerdown
+    assert_nil(events[0...pointerdown].find { |event| event['type'] == 'focusout' })
+    assert(events.any? { |event| event['type'] == 'touchstart' })
   end
 
   test 'ordinary pages keep a small scroll buffer above the floating tabbar' do

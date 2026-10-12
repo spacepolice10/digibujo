@@ -9,7 +9,7 @@ class ButtonFocusSystemTest < ApplicationSystemTestCase
 
   test 'a keyboard-focused button shows the accent ring' do
     visit search_path
-    find('button.search--launch').click
+    find('#search_dock button[aria-label=Search]').click
 
     # Real typing puts the page in keyboard modality, so a subsequent
     # programmatic focus matches :focus-visible the way Tab would.

@@ -14,7 +14,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_path
 
     assert_response :success
-    assert_select '.search--navigation > h1', text: 'Search'
+    assert_select 'main#search > section > header h1', text: 'Index'
     assert_select 'article.search--navigation'
     assert_select 'ul#search_collections[data-layout=grid]'
     assert_select 'article.search--navigation a[href=?]', bullets_path(from: Date.current + 1), text: 'Upcoming'
@@ -24,7 +24,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_path
 
     assert_response :success
-    assert_select 'button.search--launch[commandfor=search_picker_dialog][command=show-modal]'
+    assert_select 'button[commandfor=search_picker_dialog][command=show-modal][aria-label=Search]'
     assert_select 'dialog#search_picker_dialog'
     assert_select 'dialog#search_picker_dialog form[action=?][method=get]', search_results_path
     assert_select 'dialog#search_picker_dialog input[type=search][name=q]'
@@ -47,9 +47,9 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_path, params: { q: 'milk' }
 
     assert_response :success
-    assert_select 'a.search--result', count: 0
-    assert_select 'dialog#search_picker_dialog p', text: 'No results'
-    assert_select 'article.search--navigation a.search--result', count: 0
+    assert_select 'a.combobox--item', count: 0
+    assert_select 'dialog#search_picker_dialog .empty-state h2', text: 'No results'
+    assert_select 'article.search--navigation a.combobox--item', count: 0
     assert_select 'article.search--navigation', count: 1
   end
 
@@ -60,8 +60,8 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_path, params: { recent: '1' }
 
     assert_response :success
-    assert_select 'article.search--navigation a.search--result', count: 0
-    assert_select 'dialog#search_picker_dialog a.search--result[href=?]', collection_path(collection)
+    assert_select 'article.search--navigation a.combobox--item', count: 0
+    assert_select 'dialog#search_picker_dialog a.combobox--item[href=?]', collection_path(collection)
   end
 
   test 'mobile search keeps the three item tabbar' do
@@ -70,7 +70,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select 'nav.tabbar--back', count: 0
     assert_select 'nav.tabbar--navigation a.tabbar--item', count: 2
-    assert_select 'nav.tabbar--navigation span.tabbar--item-active[aria-current=page]', text: 'Search'
+    assert_select 'nav.tabbar--navigation span.tabbar--item-active[aria-current=page]', text: 'Index'
     assert_select 'nav.tabbar--navigation a[href=?]', search_path, count: 0
   end
 
@@ -78,7 +78,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_path
 
     assert_select 'nav.tabbar--navigation a.tabbar--item', count: 2
-    assert_select 'nav.tabbar--navigation span.tabbar--item-active[aria-current=page]', text: 'Search'
+    assert_select 'nav.tabbar--navigation span.tabbar--item-active[aria-current=page]', text: 'Index'
     assert_select 'nav.tabbar--navigation a[href=?]', search_path, count: 0
   end
 
@@ -120,9 +120,9 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_results_path, params: { q: 'milk' }, headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
 
     assert_response :success
-    assert_select 'turbo-stream[action=update][target=search_section] a.search--result[href=?]',
+    assert_select 'turbo-stream[action=update][target=search_section] a.combobox--item[href=?]',
                   bullet_path(matching)
-    assert_select 'turbo-stream[action=update][target=search_dialog_results] a.search--result[href=?]',
+    assert_select 'turbo-stream[action=update][target=search_dialog_results] a.combobox--item[href=?]',
                   bullet_path(matching)
   end
 
@@ -130,8 +130,8 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_results_path
 
     assert_response :success
-    assert_select 'turbo-frame#search_section.search--section .search--result-list'
-    assert_select 'turbo-frame#search_section p', text: 'No results'
+    assert_select 'turbo-frame#search_section.search--section ul[role=listbox]'
+    assert_select 'turbo-frame#search_section .empty-state h2', text: 'No results'
   end
 
   test 'results loads ranked entries for the backend' do
@@ -144,7 +144,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     controller = @controller
     assert_equal 'milk', controller.instance_variable_get(:@q)
     assert_includes controller.instance_variable_get(:@entries).map(&:id), matching.id
-    assert_select 'turbo-frame#search_section .search--result-list a.search--result'
+    assert_select 'turbo-frame#search_section ul[role=listbox] a.combobox--item'
     assert_select 'article.search--navigation', count: 0
   end
 
@@ -191,8 +191,8 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_results_path, params: { q: 'milk' }
 
     assert_response :success
-    assert_select 'turbo-frame#search_section a.search--result[href=?]', bullet_path(bullet)
-    assert_select 'turbo-frame#search_section a.search--result[href=?]', collection_path(collection)
+    assert_select 'turbo-frame#search_section a.combobox--item[href=?]', bullet_path(bullet)
+    assert_select 'turbo-frame#search_section a.combobox--item[href=?]', collection_path(collection)
   end
 
   test 'results links a collection result and marks its name' do
@@ -201,7 +201,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_results_path, params: { q: 'milk' }
 
     assert_response :success
-    assert_select 'turbo-frame#search_section a.search--result[href=?]', collection_path(collection)
+    assert_select 'turbo-frame#search_section a.combobox--item[href=?]', collection_path(collection)
     assert_select 'turbo-frame#search_section .search--result-body', text: 'milk'
     assert_select 'turbo-frame#search_section mark.search--term', text: 'milk'
   end
@@ -212,7 +212,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_results_path, params: { q: 'milk' }
 
     assert_response :success
-    assert_select 'turbo-frame#search_section a.search--result a', count: 0
+    assert_select 'turbo-frame#search_section a.combobox--item a', count: 0
     assert_select 'turbo-frame#search_section mark.search--term', text: 'milk'
   end
 
@@ -222,7 +222,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_equal '', @controller.instance_variable_get(:@q)
     assert_empty @controller.instance_variable_get(:@entries)
-    assert_select 'turbo-frame#search_section p', text: 'No results'
+    assert_select 'turbo-frame#search_section .empty-state h2', text: 'No results'
   end
 
   test 'results frame request returns the section frame for the query' do
@@ -231,14 +231,14 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_results_path, params: { q: 'milk' }, headers: { 'Turbo-Frame' => 'search_section' }
 
     assert_response :success
-    assert_select 'turbo-frame#search_section .search--result-list'
-    assert_select 'turbo-frame#search_section a.search--result[href=?]', bullet_path(matching)
+    assert_select 'turbo-frame#search_section ul[role=listbox]'
+    assert_select 'turbo-frame#search_section a.combobox--item[href=?]', bullet_path(matching)
   end
 
   test 'results keeps the search tab active in the tabbar' do
     get search_results_path
 
-    assert_select 'nav.tabbar--navigation span.tabbar--item-active[aria-current=page]', text: 'Search'
+    assert_select 'nav.tabbar--navigation span.tabbar--item-active[aria-current=page]', text: 'Index'
     assert_select 'nav.tabbar--navigation a[href=?]', search_path, count: 0
   end
 
@@ -249,7 +249,7 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_results_path
 
     assert_response :success
-    assert_select 'turbo-frame#search_section a.search--result[href=?]', collection_path(collection)
+    assert_select 'turbo-frame#search_section a.combobox--item[href=?]', collection_path(collection)
   end
 
   test 'results turbo-stream shows recent selections for a blank query' do
@@ -259,9 +259,9 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_results_path, headers: { 'Accept' => 'text/vnd.turbo-stream.html' }
 
     assert_response :success
-    assert_select 'turbo-stream[action=update][target=search_section] a.search--result[href=?]',
+    assert_select 'turbo-stream[action=update][target=search_section] a.combobox--item[href=?]',
                   collection_path(collection)
-    assert_select 'turbo-stream[action=update][target=search_dialog_results] a.search--result[href=?]',
+    assert_select 'turbo-stream[action=update][target=search_dialog_results] a.combobox--item[href=?]',
                   collection_path(collection)
   end
 
@@ -271,9 +271,10 @@ class SearchesControllerTest < ActionDispatch::IntegrationTest
     get search_results_path, params: { q: 'milk' }
 
     assert_response :success
-    assert_select 'turbo-frame#search_section a.search--result[href=?][data-controller=?][data-action=?]',
+    assert_select 'turbo-frame#search_section a.combobox--item[href=?][data-controller=?][data-action=?]',
                   bullet_path(bullet), 'recent-search', 'click->recent-search#record'
-    assert_select 'turbo-frame#search_section a.search--result[href=?][data-recent-search-searchable-type-value=?][data-recent-search-searchable-id-value=?]',
-                  bullet_path(bullet), 'Bullet', bullet.id.to_s
+    selector = 'turbo-frame#search_section a.combobox--item[href=?]' \
+               '[data-recent-search-searchable-type-value=?][data-recent-search-searchable-id-value=?]'
+    assert_select selector, bullet_path(bullet), 'Bullet', bullet.id.to_s
   end
 end

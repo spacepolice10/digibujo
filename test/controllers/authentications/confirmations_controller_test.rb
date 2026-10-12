@@ -12,7 +12,7 @@ module Authentications
 
       assert_response :success
       assert_select 'header.header', count: 0
-      assert_select 'h1.branding-heading', text: 'Dotted', count: 1
+      assert_select 'h1.branding-heading', text: 'dotted', count: 1
       assert_select 'h2', text: 'Check your email', count: 1
       assert_select 'form[action=?]', authentication_confirmation_path
     end

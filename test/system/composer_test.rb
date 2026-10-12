@@ -10,9 +10,9 @@ class ComposerSystemTest < ApplicationSystemTestCase
   end
 
   test 'creates a text bullet through the shared composer' do
-    editor = find('#timeline_composer lexxy-editor .lexxy-editor__content')
+    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
     editor.send_keys('Fresh note')
-    find('#timeline_composer .composer--submit-button').click
+    find('#bullet_composer .composer--submit-button').click
 
     assert_text 'Fresh note'
     assert_equal 'Fresh note', @user.bullets.reload.last.body_as_text
@@ -31,22 +31,22 @@ class ComposerSystemTest < ApplicationSystemTestCase
   end
 
   test 'shift f focuses the composer from elsewhere on the page' do
-    assert_selector '#timeline_composer lexxy-editor.hotkey-hint[data-hotkey="F"]'
+    assert_selector '#bullet_composer lexxy-editor.hotkey-hint[data-hotkey="F"]'
     find('body').send_keys([:shift, 'f'])
 
-    assert_selector '#timeline_composer lexxy-editor .lexxy-editor__content:focus'
+    assert_selector '#bullet_composer lexxy-editor .lexxy-editor__content:focus'
   end
 
   test 'the editor has no formatting toolbar' do
-    assert_selector '#timeline_composer lexxy-editor'
-    assert_no_selector '#timeline_composer lexxy-toolbar'
-    assert_no_selector '#timeline_composer [aria-label="Toggle formatting toolbar"]'
+    assert_selector '#bullet_composer lexxy-editor'
+    assert_no_selector '#bullet_composer lexxy-toolbar'
+    assert_no_selector '#bullet_composer [aria-label="Toggle formatting toolbar"]'
   end
 
   test 'typing swaps the paperclip for the send button' do
-    editor = find('#timeline_composer lexxy-editor .lexxy-editor__content')
-    send = '#timeline_composer .composer--submit-button'
-    attach = '#timeline_composer button[aria-label="Attach file"]'
+    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
+    send = '#bullet_composer .composer--submit-button'
+    attach = '#bullet_composer button[aria-label="Attach file"]'
 
     assert_selector attach
     assert_no_selector send
@@ -64,6 +64,6 @@ class ComposerSystemTest < ApplicationSystemTestCase
 
   test 'chat composer docks over the full-height scroller' do
     assert_selector '.timeline--window > .timeline--scroller[data-controller~="timeline-scroll"]'
-    assert_selector '.timeline--window > #timeline_composer_dock > #timeline_composer'
+    assert_selector '.timeline--window > #composer_dock > #bullet_composer'
   end
 end

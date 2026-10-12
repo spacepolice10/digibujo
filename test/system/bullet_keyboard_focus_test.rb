@@ -14,7 +14,7 @@ class BulletKeyboardFocusSystemTest < ApplicationSystemTestCase
 
     # Real typing puts the page in keyboard modality, so a subsequent
     # programmatic focus matches :focus-visible the way Tab would.
-    find('.bullet .bullet--body')
+    find('body').send_keys(:tab)
     page.execute_script("document.querySelector('[data-bullet-menu-target=checkbox]').focus()")
 
     assert page.evaluate_script("document.querySelector('[data-bullet-menu-target=checkbox]').matches(':focus-visible')"),

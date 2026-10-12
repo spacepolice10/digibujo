@@ -33,11 +33,12 @@ class ComposerAttachmentSystemTest < ApplicationSystemTestCase
   end
 
   test 'a typed bullet is not a file bullet' do
-    editor = find('#timeline_composer lexxy-editor .lexxy-editor__content')
+    editor = find('#bullet_composer lexxy-editor .lexxy-editor__content')
     editor.send_keys('Fresh note')
-    find('#timeline_composer .composer--submit-button').click
+    find('#bullet_composer .composer--submit-button').click
 
-    assert_selector '#timeline_section_current_date turbo-frame.bullet:not(.bullet--pending)', text: 'Fresh note', wait: 10
+    assert_selector '#timeline_section_current_date turbo-frame.bullet:not(.bullet--pending)',
+                    text: 'Fresh note', wait: 10
 
     bullet = @user.bullets.reload.last
     assert_not bullet.file.attached?
