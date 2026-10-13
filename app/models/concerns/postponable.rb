@@ -10,7 +10,12 @@ module Postponable
     return if self.pops_on == target
 
     from = self.pops_on
-    update!(pops_on: target)
+    attributes = { pops_on: target }
+    if from.present? && target > from
+      attributes[:last_postponed_at] = Time.current
+      attributes[:postponements_number] = postponements_number + 1
+    end
+    update!(attributes)
     record_activity!(
       'rescheduled',
       metadata: { 'from_pops_on' => from&.iso8601, 'to_pops_on' => target.iso8601 }

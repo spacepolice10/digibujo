@@ -10,9 +10,9 @@ module Bullets
     def new
       @collects_q = params[:q].to_s.strip.presence
       @collections = Current.user.collections
-        .matching_name(params[:q])
-        .order(:name)
-        .limit(10)
+                            .matching_name(params[:q])
+                            .order(:name)
+                            .limit(10)
       @collected_collection_ids = collected_collection_ids
 
       respond_to do |format|
@@ -48,9 +48,9 @@ module Bullets
       return [] if bullet_ids.empty?
 
       @bullets.where.not(collection_id: nil)
-        .group(:collection_id)
-        .having('COUNT(*) = ?', bullet_ids.size)
-        .pluck(:collection_id)
+              .group(:collection_id)
+              .having('COUNT(*) = ?', bullet_ids.size)
+              .pluck(:collection_id)
     end
   end
 end

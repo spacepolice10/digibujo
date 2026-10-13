@@ -1,4 +1,5 @@
 mod auth;
+mod bullets;
 mod credentials;
 
 fn main() {
@@ -12,7 +13,7 @@ fn main() {
                 eprintln!("{message}");
                 std::process::exit(1);
             }
-            println!("Dotted login saved in the system credential store.");
+            println!("Dotted login saved in macOS Keychain.");
         }
         [auth, logout] if auth == "auth" && logout == "logout" => {
             if let Err(message) = credentials::logout() {
@@ -20,7 +21,7 @@ fn main() {
                 std::process::exit(1);
             }
             println!(
-                "Dotted login removed from this device. Revoke the access code on the web if needed."
+                "Saved login removed from macOS Keychain. Revoke the code on the web if needed."
             );
         }
         [auth, check] if auth == "auth" && check == "check" => {
@@ -30,10 +31,15 @@ fn main() {
             }
             println!("Authenticated with Dotted.");
         }
-        [bullet, list] if bullet == "bullet" && list == "list" => {
-            match auth::get_json_with_current_login("/bullets.json")
-                .and_then(|json| format_bullet_list(&json))
-            {
+        [bullet, list, rest @ ..] if bullet == "bullet" && list == "list" => {
+            let options = match bullets::ListOptions::parse(rest) {
+                Ok(options) => options,
+                Err(message) => {
+                    eprintln!("{message}");
+                    std::process::exit(2);
+                }
+            };
+            match bullets::list(&options) {
                 Ok(bullets) => println!("{bullets}"),
                 Err(message) => {
                     eprintln!("{message}");
@@ -48,32 +54,50 @@ fn main() {
     }
 }
 
-fn format_bullet_list(json: &str) -> Result<String, String> {
-    let bullets: Vec<serde_json::Value> = serde_json::from_str(json)
-        .map_err(|_| "Dotted returned an invalid bullet list.".to_string())?;
-    serde_json::to_string_pretty(&bullets)
-        .map_err(|_| "Could not format Dotted's bullet list.".to_string())
-}
-
 fn print_help() {
-    println!(
-        "Dotted CLI\n\nUsage: dotted-cli <command>\n\nCommands:\n  help            Show this command contract; no credentials needed\n  auth login URL  Verify and save a web-created access code; prompts without echo\n  auth check      Verify the saved login with Dotted\n  auth logout     Remove the saved login from this device (does not revoke code)\n  bullet list     Print a formatted JSON array of bullets to stdout\n\nAuthentication:\n  Create an access code in Dotted's web Access codes page, then run auth login\n  with the server origin, such as https://dotted.example.com. Paste the code\n  when prompted. The code is stored in the system credential store.\n  DOTTED_URL and DOTTED_TOKEN may both be set to use temporary environment\n  credentials instead. Never put access codes in command arguments or logs.\n  Access codes grant full account access. HTTPS is required except on localhost.\n\nOutput contract:\n  bullet list returns at most 20 recent, incomplete bullets due through today.\n  It does not include completed or future bullets or fetch additional pages.\n  Errors go to stderr with a nonzero exit status; stdout is for results.\n  Unknown commands exit 2. Only the commands above are implemented."
+    print!(
+        r#"Dotted CLI
+
+Usage: dotted-cli <command>
+
+Commands:
+  help                   Show this command contract; no credentials needed
+  auth login URL         Verify and save a web-created access code; hidden prompt
+  auth check             Verify the saved login with Dotted
+  auth logout            Remove the saved login (does not revoke the code)
+  bullet list [options]  Print a formatted JSON array of bullets to stdout
+
+Bullet list options:
+  --from YYYY-MM-DD       Include bullets on or after this date
+  --to YYYY-MM-DD         Include bullets on or before this date
+  --collection NAME       Filter by collection name
+  --completed             List completed instead of incomplete bullets
+  --all                   Fetch every matching page; otherwise show latest 20
+
+Authentication:
+  Create an access code on Dotted's web Access codes page, then run auth login
+  with the server origin, such as https://dotted.example.com. Paste the code
+  when prompted. The code is stored in macOS Keychain. Never put access codes
+  in command arguments or logs.
+  Access codes grant full account access. HTTPS is required except on localhost.
+  For automation, set DOTTED_URL and DOTTED_TOKEN together in the process
+  environment; they override the saved login for that invocation.
+
+Output contract:
+  With no filters, bullet list shows recent incomplete bullets due through today.
+  Date bounds are inclusive; an explicit range can include future bullets.
+  Errors go to stderr with a nonzero exit status; stdout is for results.
+  Invalid options and unknown commands exit 2.
+
+Using with agents:
+  Ask the agent to run help first and use only the listed commands.
+  If login is missing, run auth login yourself; never paste a code into a chat.
+  Ask for --all when you need more than the latest 20 matching bullets.
+
+Example prompts:
+  "Show all incomplete bullets in my Ideas collection."
+  "List completed bullets dated last month."
+  "Summarize bullets due this week in the Work collection."
+"#
     );
-}
-
-#[cfg(test)]
-mod tests {
-    use super::format_bullet_list;
-
-    #[test]
-    fn bullet_list_is_readable_json_with_original_field_order() {
-        let input = r#"[{"id":1,"body":"First\nsecond","done":false}]"#;
-        let formatted = format_bullet_list(input).unwrap();
-        assert_eq!(
-            formatted,
-            "[\n  {\n    \"id\": 1,\n    \"body\": \"First\\nsecond\",\n    \"done\": false\n  }\n]"
-        );
-        assert!(format_bullet_list("not json").is_err());
-        assert!(format_bullet_list("{}").is_err());
-    }
 }

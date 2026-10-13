@@ -16,6 +16,12 @@
     min-block-size: 0;
   }
 
+  .search--textform {
+    position: sticky;
+    top: var(--space-v-7);
+    z-index: var(--z-dialog);
+  }
+
   .search--result-icon {
     flex-shrink: 0;
     color: var(--color-invert-4);

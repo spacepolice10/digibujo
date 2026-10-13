@@ -15,18 +15,18 @@ class Timeline
   end
 
   def last_page
-    filtered.last_page
+    filtered.preload(:collection).last_page
   end
 
   def prev_page(bullet)
-    filtered.prev_page(bullet)
+    filtered.preload(:collection).prev_page(bullet)
   end
 
   # Every active bullet due on one day, oldest first. A single day is a bounded
   # rail, so `bullets#show` renders it whole instead of windowing around a
   # focal row.
   def on(date)
-    filtered.by_date.where(pops_on: date)
+    filtered.preload(:collection).by_date.where(pops_on: date)
   end
 
   def section_of(date)

@@ -98,6 +98,19 @@
 
     <button
       type="button"
+      class="bullet-menu--action-button"
+      data-bullet-menu-target="copyLink"
+      data-action="bullet-menu#copyLink"
+      data-intent="secondary"
+      data-radius="base"
+      data-size="sm"
+      hidden
+    >
+      <%= icon("link", style: "color: var(--color-accent-2)") %> Copy publish link
+    </button>
+
+    <button
+      type="button"
       class="hotkey-hint hotkey-hint--always bullet-menu--action-button"
       data-controller="hotkey"
       data-intent="secondary"

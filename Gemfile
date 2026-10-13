@@ -42,7 +42,6 @@ gem 'kamal', require: false
 gem 'thruster', require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-gem 'geared_pagination'
 gem 'image_processing', '~> 2.2'
 gem 'ruby-vips', '~> 2.3'
 
@@ -63,7 +62,6 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem 'herb', require: false
-  gem 'htmlbeautifier', require: false
   gem 'ruby-lsp', require: false
   gem 'web-console'
 end

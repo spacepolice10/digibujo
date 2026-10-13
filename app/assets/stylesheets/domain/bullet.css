@@ -87,15 +87,16 @@
     scale: 0.8;
     border-radius: var(--radius-full);
     background: var(--background-canvas-colour);
+    color: light-dark(oklch(0.57 0.04 241), oklch(0.72 0.045 241));
 
     .icon {
-      color: light-dark(oklch(0.57 0.04 241), oklch(0.72 0.045 241));
+      color: inherit;
     }
   }
 
   .bullet--body {
     --lexxy-color-ink: var(--color-invert-1);
-    display: flex;
+
     min-width: 5rem;
     max-width: 100%;
     width: fit-content;

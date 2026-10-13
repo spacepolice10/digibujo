@@ -11,6 +11,7 @@ module Bullets
         @bullets.lock.find_each(&:complete!)
       end
       @bullets.each(&:reload)
+      preload_bullet_collections
 
       respond_to do |format|
         format.turbo_stream
@@ -26,6 +27,7 @@ module Bullets
         @bullets.lock.find_each(&:uncomplete!)
       end
       @bullets.each(&:reload)
+      preload_bullet_collections
 
       respond_to do |format|
         format.turbo_stream

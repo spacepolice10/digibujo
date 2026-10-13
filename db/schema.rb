@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_11_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_13_120000) do
   create_table "access_codes", force: :cascade do |t|
     t.string "code_digest", null: false
     t.string "code_prefix", null: false
@@ -92,7 +92,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_11_120000) do
     t.string "filename"
     t.string "client_id"
     t.integer "collection_id"
+    t.datetime "last_postponed_at"
+    t.integer "postponements_number", default: 0, null: false
     t.index ["collection_id"], name: "index_bullets_on_collection_id"
+    t.index ["last_postponed_at"], name: "index_bullets_on_last_postponed_at"
     t.index ["user_id", "client_id"], name: "index_bullets_on_user_id_and_client_id", unique: true
     t.index ["user_id", "collection_id", "pops_on"], name: "index_bullets_on_user_collection_pops_on"
     t.index ["user_id"], name: "index_bullets_on_user_id"

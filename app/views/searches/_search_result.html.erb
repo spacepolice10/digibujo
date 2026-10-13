@@ -11,7 +11,8 @@
         recent_search_url_value: search_selection_path
       } do %>
   <span class="search--result-icon">
-    <%= icon(entry.search_result_icon, style: ("color: #{entry.colour_variable};" if entry.respond_to?(:colour_variable))) %>
+    <% result_icon = entry.is_a?(Bullet) ? bullet_marker_colour(entry) : ("color: #{entry.colour_variable};" if entry.respond_to?(:colour_variable)) %>
+    <%= icon(entry.search_result_icon, style: result_icon) %>
   </span>
   <span class="search--result-content">
     <span class="search--result-type"><%= entry.search_result_type %></span>

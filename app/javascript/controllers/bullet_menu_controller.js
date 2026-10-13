@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import { notify } from "helpers/composer_helpers";
 
 export default class extends Controller {
   static targets = [
@@ -12,6 +13,7 @@ export default class extends Controller {
     "uncomplete",
     "publish",
     "unpublish",
+    "copyLink",
     "pickerElement",
   ];
 
@@ -126,6 +128,21 @@ export default class extends Controller {
     this.#restore();
   }
 
+  async copyLink() {
+    const selected = this.checkboxTargets.filter((checkbox) => checkbox.checked);
+    if (selected.length != 1) return;
+
+    const url = selected[0].dataset.publicUrl;
+    if (!url) return;
+
+    try {
+      await navigator.clipboard.writeText(url);
+      notify("Publish link copied", "notify");
+    } catch {
+      notify("Could not copy publish link");
+    }
+  }
+
   escape(event) {
     if (event.defaultPrevented) return;
     if (this.idListValue.length == 0) return;
@@ -191,6 +208,10 @@ export default class extends Controller {
     if (this.hasUncompleteTarget) this.uncompleteTarget.hidden = done != "true";
     if (this.hasPublishTarget) this.publishTarget.hidden = published != "false";
     if (this.hasUnpublishTarget) this.unpublishTarget.hidden = published != "true";
+    if (this.hasCopyLinkTarget) {
+      const singlePublished = checked.length == 1 && checked[0].dataset.bulkPublished == "true";
+      this.copyLinkTarget.hidden = !singlePublished;
+    }
   }
 
   #sharedDataset(checkboxes, key) {

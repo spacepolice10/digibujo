@@ -13,7 +13,7 @@
   </header>
 
   <% if @created_webhook_code.present? %>
-    <article class="card card--warning" data-elevation="2" role="status">
+    <article class="card card--warning" data-elevation="2" data-turbo-temporary="true" role="status">
       <header>
         <span aria-hidden="true">
           <span role="img" aria-label="Lightning">⚡️</span>

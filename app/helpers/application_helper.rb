@@ -5,6 +5,13 @@ module ApplicationHelper
     Current.user
   end
 
+  def bullet_marker_colour(bullet)
+    return if bullet.done?
+
+    marker_colour = Colourable.colour_variable_of(bullet.collection&.colour)
+    "color: #{marker_colour};" if marker_colour.present?
+  end
+
   def mobile_variant?
     request.variant.include?(:mobile)
   end
@@ -16,10 +23,6 @@ module ApplicationHelper
     data[:action] = [data[:action], 'click->navigation#back'].compact_blank.join(' ')
 
     link_to(url, options.merge(data: data), &block)
-  end
-
-  def highlight_search(html, query)
-    Search::Highlight.call(html, query)
   end
 
   # A search result row is itself one big link, so anchors inside a rich-text

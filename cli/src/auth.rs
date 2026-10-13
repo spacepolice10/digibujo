@@ -5,16 +5,21 @@ pub fn check_current() -> Result<(), String> {
     check(&url, &token)
 }
 
-pub fn get_json_with_current_login(path: &str) -> Result<String, String> {
-    let (url, token) = crate::credentials::current()?;
-    get_json(&url, &token, path)
-}
-
 pub(crate) fn check(url: &str, token: &str) -> Result<(), String> {
     get_json(url, token, "/access_codes.json").map(|_| ())
 }
 
 fn get_json(url: &str, token: &str, path: &str) -> Result<String, String> {
+    get_json_with_query(url, token, path, &[])?
+        .ok_or_else(|| "Dotted returned no JSON.".to_string())
+}
+
+pub(crate) fn get_json_with_query(
+    url: &str,
+    token: &str,
+    path: &str,
+    query: &[(&str, &str)],
+) -> Result<Option<String>, String> {
     let endpoint = format!("{}{}", server_origin(url)?, path);
     validate_token(token)?;
 
@@ -26,12 +31,15 @@ fn get_json(url: &str, token: &str, path: &str) -> Result<String, String> {
         .build();
     let agent: ureq::Agent = config.into();
 
-    match agent
+    let mut request = agent
         .get(&endpoint)
         .header("Accept", "application/json")
-        .header("Authorization", format!("Bearer {token}"))
-        .call()
-    {
+        .header("Authorization", format!("Bearer {token}"));
+    for &(name, value) in query {
+        request = request.query(name, value);
+    }
+
+    match request.call() {
         Ok(mut response) if response.status().as_u16() == 200 => {
             let json_response = response
                 .headers()
@@ -45,16 +53,18 @@ fn get_json(url: &str, token: &str, path: &str) -> Result<String, String> {
             response
                 .body_mut()
                 .read_to_string()
+                .map(Some)
                 .map_err(|_| "Could not read Dotted's response.".to_string())
         }
+        Ok(response) if response.status().as_u16() == 204 => Ok(None),
         Ok(response) => Err(format!(
-            "Dotted returned HTTP {} while checking the access code.",
+            "Dotted returned HTTP {} for {path}.",
             response.status().as_u16()
         )),
         Err(ureq::Error::StatusCode(401)) => Err("Dotted rejected the access code.".to_string()),
-        Err(ureq::Error::StatusCode(status)) => Err(format!(
-            "Dotted returned HTTP {status} while checking the access code."
-        )),
+        Err(ureq::Error::StatusCode(status)) => {
+            Err(format!("Dotted returned HTTP {status} for {path}."))
+        }
         Err(_) => Err("Could not reach Dotted. Check DOTTED_URL and the connection.".to_string()),
     }
 }
@@ -193,6 +203,27 @@ mod tests {
         assert_eq!(get_json(&url, TEST_TOKEN, "/bullets.json").unwrap(), "[]");
         let request = server.join().unwrap();
         assert!(request.starts_with("GET /bullets.json HTTP/1.1\r\n"));
+    }
+
+    #[test]
+    fn encodes_filter_params_and_accepts_end_of_pages() {
+        let (url, server) = serve_once("200 OK");
+        let query = [("collection", "Work & Ideas"), ("from", "2026-10-01")];
+        assert_eq!(
+            get_json_with_query(&url, TEST_TOKEN, "/bullets.json", &query).unwrap(),
+            Some("[]".into())
+        );
+        let request = server.join().unwrap();
+        assert!(request.starts_with(
+            "GET /bullets.json?collection=Work%20%26%20Ideas&from=2026-10-01 HTTP/1.1\r\n"
+        ));
+
+        let (url, server) = serve_once("204 No Content");
+        assert_eq!(
+            get_json_with_query(&url, TEST_TOKEN, "/bullets.json", &[("before", "42")]).unwrap(),
+            None
+        );
+        server.join().unwrap();
     }
 
     #[test]

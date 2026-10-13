@@ -36,7 +36,11 @@ class Bullet < ApplicationRecord
   def name = body_as_text.lines.first&.strip.presence || filename.presence || 'Untitled'
 
   def marker_icon
-    done? ? :check : :circle
+    return 'arrow-forward-up' if last_postponed_at.present?
+    return 'link' if published?
+    return 'check' if done?
+
+    :circle
   end
 
   private

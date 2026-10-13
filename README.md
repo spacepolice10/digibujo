@@ -73,13 +73,8 @@ bin/ci
 
 CI runs Minitest, RuboCop, Brakeman, and dependency audits.
 
-## Security
-
-Report vulnerabilities: [SECURITY.md](SECURITY.md)
-
 ## Documentation
 
-- **Architecture and conventions:** [ARCHITECTURE.md](ARCHITECTURE.md)
 - **Framework reference (Rails, Turbo, Stimulus, Lexxy):** [docs/](docs/)
 - **Agent/coding workflow (for AI assistants):** [AGENTS.md](AGENTS.md)
 

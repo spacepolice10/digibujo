@@ -4,8 +4,6 @@
 
 <main class="timeline--window timeline--window--focus" data-size="md">
   <header>
-    <h1>Bullet</h1>
-
     <% if @bullet.published? %>
       <input <%# herb:disable html-input-require-autocomplete %>
         type="text"
@@ -15,62 +13,6 @@
         class="bullet--published-link"
       >
     <% end %>
-
-    <div class="dropdown--dock">
-      <button
-        type="button"
-        data-intent="secondary"
-        data-radius="full"
-        data-size="xs"
-        data-content="icon"
-        popovertarget="bullet_actions"
-        aria-label="Bullet options"
-        aria-haspopup="menu"
-      >
-        <%= icon("dots") %>
-      </button>
-
-      <div
-        id="bullet_actions"
-        role="menu"
-        style="position-anchor: bullet_actions"
-        popover
-        data-controller="grid-navigation"
-        data-grid-navigation-columns-value="1"
-        data-action="keydown->grid-navigation#navigate"
-      >
-        <nav role="listbox" aria-label="Bullet options">
-          <%= button_to publish_path,
-                method: @bullet.published? ? :delete : :post,
-                params: { bullet_ids: @bullet.id },
-                class: "dropdown-item picker--item",
-                form_class: "dropdown--menu-form",
-                data: {
-                  grid_navigation_target: "item",
-                  action: "focus->grid-navigation#syncPosition"
-                },
-                aria: { label: "#{@bullet.published? ? 'Unpublish' : 'Publish'} #{@bullet.name}" } do %>
-            <%= icon("link") %>
-            <%= @bullet.published? ? "Unpublish" : "Publish" %>
-          <% end %>
-
-          <%= button_to completion_path,
-                method: @bullet.done? ? :delete : :post,
-                params: { bullet_ids: @bullet.id },
-                class: "dropdown-item picker--item",
-                form_class: "dropdown--menu-form",
-                form: (@bullet.done? ? {} : { data: { turbo_confirm: "Are you sure?" } }),
-                data: {
-                  grid_navigation_target: "item",
-                  action: "focus->grid-navigation#syncPosition"
-                },
-                aria: { label: "#{@bullet.done? ? 'Uncomplete' : 'Complete'} #{@bullet.name}" } do %>
-            <%= icon("check") %>
-            <%= @bullet.done? ? "Uncomplete" : "Complete" %>
-          <% end %>
-        </nav>
-      </div>
-    </div>
   </header>
 
   <div

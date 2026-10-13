@@ -79,10 +79,12 @@
     }
     &>header {
       position: sticky;
-      top: var(--space-v-half);
+      top: 0;
       padding-inline: var(--space-h);
       border-bottom: var(--border-subtle);
       padding-block: var(--space-v);
+      background: var(--background-canvas-colour);
+      z-index: var(--z-dialog);
       display: flex;
       justify-content: space-between;
       align-items: center;

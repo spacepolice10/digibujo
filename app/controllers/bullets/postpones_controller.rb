@@ -25,6 +25,7 @@ module Bullets
         @bullets.lock.find_each { |bullet| bullet.postpone!(pops_on: pops_on) }
       end
       @bullets.each(&:reload)
+      preload_bullet_collections
 
       respond_to do |format|
         format.turbo_stream

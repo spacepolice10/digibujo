@@ -17,7 +17,7 @@ module PrepareBullets
     bullet_ids = prepare_bullet_list_from(bullet_id_parameter)
     raise ActiveRecord::RecordNotFound if bullet_ids.empty? || bullet_ids.size > MAX_BULK_BULLET_IDS
 
-    bullets = Current.user.bullets.where(id: bullet_ids).order(:id)
+    bullets = Current.user.bullets.where(id: bullet_ids).preload(:collection).order(:id)
     raise ActiveRecord::RecordNotFound if bullets.count != bullet_ids.size
 
     bullets
@@ -25,6 +25,10 @@ module PrepareBullets
 
   def prepare_bullets
     @bullets = prepare_bullets_from(params[:bullet_ids])
+  end
+
+  def preload_bullet_collections
+    ActiveRecord::Associations::Preloader.new(records: @bullets, associations: :collection).call
   end
 
   def respond_with_failed_bullet(error, template: action_name)

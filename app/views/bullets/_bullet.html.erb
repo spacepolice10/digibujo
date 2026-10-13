@@ -16,6 +16,7 @@
     value="<%= bullet.id %>"
     data-bulk-done="<%= bullet.done? %>"
     data-bulk-published="<%= bullet.published? %>"
+    data-public-url="<%= published_url(bullet.public_code) if bullet.published? %>"
     data-bullet-menu-target="checkbox"
     data-action="bullet-menu#toggle"
     class="utilities--sr-only"
@@ -26,7 +27,11 @@
     for="<%= dom_id(bullet, :select_checkbox) %>"
     aria-label="Select bullet"
   >
-    <%= icon(bullet.marker_icon.to_s.dasherize, class: "bullet--marker-icon") %>
+    <%= icon(
+          bullet.marker_icon.to_s.dasherize,
+          class: "bullet--marker-icon",
+          style: bullet_marker_colour(bullet)
+        ) %>
   </label>
 
   <div class="bullet--body">
@@ -50,4 +55,5 @@
       <%= bullet.body %>
     <% end %>
   </div>
+
 </turbo-frame>
